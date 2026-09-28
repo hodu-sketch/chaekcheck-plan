@@ -1,0 +1,388 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>설계 제안: 사이클 01 도서 제목 검색 → 전자도서관 대출 가능 여부</title>
+<style>
+:root{color-scheme:light}
+body{background:#ffffff;color:#1f2328;font:15px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI","Malgun Gothic",sans-serif;max-width:1000px;margin:0 auto;padding:32px 24px 80px}
+h1{font-size:26px;border-bottom:2px solid #d0d7de;padding-bottom:8px}
+h2{font-size:21px;margin-top:40px;border-bottom:1px solid #d0d7de;padding-bottom:6px}
+h3{font-size:17px;margin-top:28px}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:14px}
+th,td{border:1px solid #d0d7de;padding:6px 10px;vertical-align:top;text-align:left}
+th{background:#f6f8fa}
+tr:nth-child(even) td{background:#fbfcfd}
+code{background:#eff1f3;color:#1f2328;padding:1px 5px;border-radius:4px;font-size:13px}
+pre{background:#f6f8fa;border:1px solid #d0d7de;border-radius:6px;padding:12px;overflow:auto}
+pre code{background:none;padding:0}
+strong{color:#0b3d91}
+a{color:#0969da}
+hr{border:0;border-top:1px solid #d0d7de;margin:32px 0}
+blockquote{border-left:4px solid #d0d7de;margin:0;padding:0 12px;color:#57606a}
+.mermaid{background:#fff;border:1px solid #d0d7de}
+</style></head><body>
+<h1 id="01">설계 제안: 사이클 01 도서 제목 검색 → 전자도서관 대출 가능 여부</h1>
+<ul>
+<li>작성: architect 서브에이전트, 2026-09-27</li>
+<li>근거 문서: <code>scope.md</code>, <code>spec.md</code>, <code>flow.md</code>, dev <code>CLAUDE.md</code>, dev skill 4종 (spring-modulith, postgres-patterns, jpa-patterns, api-design)</li>
+<li>사용자가 확정하지 않은 이름·경로·한도는 모두 [안]입니다.</li>
+<li><strong>검토 방법</strong>: 각 결정에서 고를 안에 주석을 달거나, 채팅으로 &quot;결정 1 B, 결정 3 A…&quot;처럼 알려 주세요. 전부 추천안대로 가려면 Approve를 누르시면 됩니다.</li>
+</ul>
+<h2 id="">결정할 것 한눈에 보기</h2>
+<table>
+<thead>
+<tr><th>#</th><th>결정</th><th>선택지</th><th>추천</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td>지역 목록을 둘 모듈</td><td>A <code>library</code> 안 / B <code>region</code> 모듈 따로</td><td>B</td></tr>
+<tr><td>2-1</td><td>스키마 나누기</td><td>A 모듈마다 PostgreSQL 스키마 / B <code>public</code> 하나 + 접두어</td><td>A</td></tr>
+<tr><td>2-2</td><td>폐지·대체 연결</td><td>A <code>replaced_by_id</code> 컬럼 하나 / B 연결 테이블</td><td>B</td></tr>
+<tr><td>2-3</td><td>기관 범위 자리</td><td>A nullable 컬럼만 / B 빈 <code>institution</code> 테이블 / C 다형 참조 컬럼</td><td>A</td></tr>
+<tr><td>2-4</td><td>가입 조건 종류</td><td>규칙 유무로 계산 / <code>join_policy</code> 컬럼</td><td>계산</td></tr>
+<tr><td>3</td><td>&quot;먼저 응답한 도서관부터&quot; API</td><td>A 대상 도서관 + 도서관별 호출 / B SSE 스트리밍 / C 모두 기다림</td><td>A</td></tr>
+<tr><td>3&#39;</td><td>정렬 담당</td><td>백엔드는 정렬용 값 계산, 프론트가 정렬</td><td>(A와 묶임)</td></tr>
+<tr><td>4-1</td><td>캐시</td><td>A Caffeine 메모리 / B DB 테이블 / C Redis</td><td>A</td></tr>
+<tr><td>4-2</td><td>호출 간격 제어</td><td>A 직접 구현 / B Resilience4j</td><td>A</td></tr>
+<tr><td>4-2&#39;</td><td>제어 단위와 간격 기준</td><td>호스트 단위, &quot;이전 종료 → 다음 시작&quot; 1초</td><td>호스트, 종료→시작</td></tr>
+<tr><td>5</td><td>폐지 지역 ID 해석</td><td>A 해석 전용 API / B 목록 API가 이력 포함 / C 도서관 API가 자동 교체</td><td>A</td></tr>
+</tbody>
+</table>
+<h2 id="">현재 상태</h2>
+<ul>
+<li>모듈, 테이블, 엔드포인트, ADR 모두 아직 없습니다. dev 프로젝트에 <code>backend/</code>, <code>web/</code> 코드가 없습니다 (2026-09-27 확인).</li>
+<li>base package와 Gradle group ID는 정해지지 않았습니다. 아래에서는 <code>&lt;base-package&gt;</code>로 적습니다.</li>
+</ul>
+<h2 id="">이번 슬라이스가 요구하는 것</h2>
+<table>
+<thead>
+<tr><th>요구/수용 기준</th><th>설계에서 필요한 것</th></tr>
+</thead>
+<tbody>
+<tr><td>5.1, AC-2~5 대상 도서관 고르기</td><td>자격 규칙(근거 × 범위) 저장, 시군구가 시도에 속하는지 판정, &quot;지역 없음 / 고름&quot; 두 모드를 지원하는 대상 도서관 API</td></tr>
+<tr><td>4장 가입 조건·자격 문구·가입 방법</td><td>도서관 속성으로 저장</td></tr>
+<tr><td>AC-6 지역은 브라우저에만 저장</td><td>서버는 지역을 요청 조건으로만 받음. 저장 테이블 없음</td></tr>
+<tr><td>5.2, AC-13 먼저 응답한 도서관부터 표시</td><td>도서관별로 따로 받는 API 또는 스트리밍 (결정 3)</td></tr>
+<tr><td>5.2, AC-14 타임아웃 3/5/8초, 도서관별 실패</td><td>도서관별 실패 표현, 8초 제한을 거는 위치</td></tr>
+<tr><td>5.3 수량 읽기</td><td>플랫폼 adapter 2개 (KYOBO, YES24)</td></tr>
+<tr><td>5.4, AC-9·10 순서</td><td>재고, 도서관 대출률(첫 페이지 기준), 원래 순서(rank) 제공. 정렬 담당 (결정 3)</td></tr>
+<tr><td>5.5, AC-15 전체 건수, 더 보기</td><td>도서관별 totalCount, hasMore, page 파라미터</td></tr>
+<tr><td>5.6, AC-16 캐시 3분, &quot;N분 전 조회&quot;</td><td>캐시 키 = 도서관 + 정규화한 검색어 + 페이지. 조회 시각을 함께 저장 (결정 4)</td></tr>
+<tr><td>5.6, AC-17 같은 도서관 동시 1건, 간격 1초</td><td>호출 간격 제어 (결정 4)</td></tr>
+<tr><td>5.6, AC-18 User-Agent</td><td>설정값 (값은 확인 필요)</td></tr>
+<tr><td>5.6, AC-11 설명문·표지 없음</td><td>adapter가 제목·저자·출판사·공급 업체·수량만 뽑음. 응답 DTO에도 그 필드가 없음</td></tr>
+<tr><td>5.7, AC-19 도서관 사용 여부</td><td><code>enabled</code> 컬럼. 재시작 없이 반영</td></tr>
+<tr><td>5.8, AC-20 지역 내부 ID, 폐지, 대체</td><td>지역 테이블 + 대체 연결(나뉨까지 표현) + 옛 ID 해석 API (결정 5)</td></tr>
+<tr><td>9장 재학·소속·기관 구조</td><td>근거에 SCHOOL, AFFILIATION, 범위에 INSTITUTION 참조 자리 (결정 2)</td></tr>
+<tr><td>AC-12 출처·연락처</td><td>프론트 고정 문구. 백엔드 변경 없음</td></tr>
+</tbody>
+</table>
+<hr>
+<h2 id="1">결정 1: 모듈 경계와 지역 목록의 위치</h2>
+<p><code>library</code>와 <code>availability</code>는 scope.md의 [안]을 따릅니다. 실제 선택지는 지역 목록을 어디에 두느냐입니다.</p>
+<h3 id="a-library-2">A안: 지역을 <code>library</code> 안에 둠 (모듈 2개)</h3>
+<ul>
+<li><code>library</code>가 지역 테이블, 지역 목록 API, 폐지 지역 해석 API까지 가짐</li>
+<li>장점: 모듈이 2개뿐이고, 자격 판정에 모듈 경계를 넘는 호출이 없음</li>
+<li>단점: 지역은 도서관과 수명 주기가 다름(행정안전부 공지로 반년마다 바뀜). 나중에 회원 모듈 등이 지역을 쓰면 <code>library</code>에 의존하게 되어 방향이 어색함</li>
+<li>되돌리는 비용: 중간 (스키마, 패키지, API 경로 이동. 브라우저에 저장된 ID는 그대로 씀)</li>
+</ul>
+<h3 id="b-region-region-library-availability">B안: <code>region</code> 모듈을 따로 둠 (<code>region</code> ← <code>library</code> ← <code>availability</code>)</h3>
+<ul>
+<li><code>region</code>이 지역 테이블, 대체 연결, 지역 목록 API, 해석 API를 가짐. <code>library</code>는 <code>region</code>의 공개 API로 &quot;시군구 ID들을 {자기, 상위 시도} 집합으로 펼치기&quot;를 호출</li>
+<li>장점: 참조 데이터와 도서관 도메인이 분리되고 의존 방향이 한쪽으로만 흐름. Liquibase 변경분도 모듈별로 나뉨</li>
+<li>단점: 모듈이 하나 늘고, 자격 판정에 모듈 경계를 넘는 호출이 한 번 생김 (같은 프로세스 안의 메서드 호출)</li>
+<li>되돌리는 비용: 낮음 (합치기는 쉬움)</li>
+<li>주의: <code>region</code>은 공통 유틸을 넣는 &quot;common&quot; 모듈이 아니라, 지역이라는 도메인 하나만 가진 모듈로 유지</li>
+</ul>
+<p><strong>추천: B안</strong> — 지역에는 폐지·대체·코드 갱신이라는 자체 규칙과 API가 있고 도서관과 수명 주기가 다릅니다. 지금 나누는 비용이 나중에 떼는 비용보다 작습니다.</p>
+<h3 id="3">정렬 담당 (결정 3과 묶임)</h3>
+<ul>
+<li>백엔드(<code>availability</code>): 줄마다 재고 <code>available = holdings − loaned</code>, 원래 순서 <code>rank</code>, 페이지의 도서관 대출률 <code>loanRate</code> 계산</li>
+<li>프론트: 도서관 결과가 도착할 때마다 spec 5.4 규칙으로 다시 정렬. 결정 3에서 A안을 고르면 결과를 브라우저에서 합쳐야 하므로 정렬은 프론트가 맡을 수밖에 없음</li>
+<li>이 안을 고르면 scope.md의 <code>availability</code> 책임 문구 &quot;정렬&quot;을 &quot;정렬에 쓰는 값 계산&quot;으로 고쳐야 함</li>
+</ul>
+<hr>
+<h2 id="2">결정 2: 테이블 구조</h2>
+<h3 id="2-1">2-1. 스키마 나누기</h3>
+<ul>
+<li><strong>A안: 모듈마다 PostgreSQL 스키마</strong> (<code>region</code>, <code>library</code>). 소유 경계가 DB에서도 보이고 나중에 DB를 나누기 쉬움. 대신 Liquibase·JPA에 스키마 이름을 적어야 함</li>
+<li>B안: <code>public</code> 하나 + 테이블 이름 접두어. 설정은 단순하지만 경계가 이름 규칙에만 기대고 실수로 JOIN하기 쉬움</li>
+<li><strong>추천: A안.</strong> <code>availability</code>는 소유 테이블이 없음 (캐시는 메모리)</li>
+</ul>
+<h3 id="2-2">2-2. 폐지·대체 연결</h3>
+<ul>
+<li>A안: <code>region.replaced_by_id</code> 컬럼 하나. 합쳐짐은 표현되지만 <strong>나뉨은 표현하지 못해</strong> spec 5.8(&quot;둘 이상으로 나뉘면 다시 고르라고 안내&quot;)과 맞지 않음</li>
+<li><strong>B안: <code>region_replacement</code> 연결 테이블</strong> (여러 대 여러). 합쳐짐과 나뉨 모두 표현</li>
+<li><strong>추천: B안</strong></li>
+</ul>
+<h3 id="2-3-institution-spec-9">2-3. 기관(institution) 범위를 담는 방법 (spec 9장)</h3>
+<ul>
+<li><strong>A안: <code>eligibility_rule.scope_institution_id</code> nullable 컬럼과 <code>scope_type=&#39;INSTITUTION&#39;</code> 값만 지금 만듦.</strong> <code>institution</code> 테이블과 소유 모듈은 다음 사이클에서 정함. 모듈 경계를 넘는 참조라 FK는 어차피 없음. 다음 사이클에 규칙 테이블을 바꿀 필요가 없음</li>
+<li>B안: 빈 <code>institution</code> 테이블을 지금 만듦. 이번 슬라이스에 필요 없는 테이블이고 소유 모듈을 미리 정해야 함</li>
+<li>C안: <code>scope_ref_id</code> 컬럼 하나 + <code>scope_type</code>으로 뜻 구분 (다형 참조). 컬럼 뜻이 행마다 달라지고 검증이 약함</li>
+<li><strong>추천: A안</strong></li>
+</ul>
+<h3 id="2-4">2-4. 가입 조건 종류(누구나 가입 / 자격 필요)를 저장할지</h3>
+<ul>
+<li><strong>추천: 컬럼 없이 규칙 유무로 계산</strong> (spec 2장 정의 &quot;규칙이 하나 이상이면 자격 필요&quot;와 같음)</li>
+<li>대안: <code>join_policy</code> 컬럼. 규칙을 실수로 지웠을 때 &quot;누구나 가입&quot;으로 바뀌는 사고를 막지만, 같은 사실이 두 곳에 저장됨</li>
+</ul>
+<hr>
+<h2 id="3-api">결정 3: &quot;먼저 응답한 도서관부터&quot; API 방식</h2>
+<h3 id="a">A안: 대상 도서관 조회 + 도서관별 검색 호출 (프론트가 병렬 호출)</h3>
+<ul>
+<li>① <code>GET /api/v1/libraries?residenceRegionIds=&amp;workRegionIds=</code>로 대상 도서관과 가입 가능 여부를 받음</li>
+<li>② 도서관마다 <code>GET /api/v1/availability/libraries/{libraryId}/ebooks?q=&amp;page=</code>를 동시에 호출. &quot;더 보기&quot;도 ②를 <code>page</code>만 바꿔 다시 씀</li>
+<li>실패 표현: 도서관별 HTTP 상태. 502 <code>upstream_error</code>, 504 <code>upstream_timeout</code>, 404 <code>library_not_found</code>(없거나 꺼짐). 프론트는 400이 아닌 실패를 모두 &quot;조회 실패&quot;로 표시</li>
+<li>8초 제한: 백엔드가 요청마다 8초 제한을 검 (호출 차례 대기 + 연결 + 응답 읽기 포함). 모든 도서관 호출을 같은 시각에 보내므로 사실상 검색 전체 8초가 됨. 프론트는 네트워크 사고 대비 안전 타임아웃만 둠</li>
+<li>장점: 단순함. 첫 검색과 더 보기가 같은 엔드포인트. 캐시 키와 엔드포인트 단위가 같음. 한 도서관의 실패가 다른 도서관에 영향 없음</li>
+<li>단점: 도서관 수만큼 브라우저 요청이 나감. HTTP/1.1은 같은 출처 동시 연결이 약 6개라 도서관이 많아지면 HTTP/2나 다른 방식 필요. 대상 도서관 조회라는 왕복이 하나 더 생김</li>
+<li>되돌리는 비용: 낮음 (나중에 SSE를 더해도 ②는 더 보기용으로 계속 씀)</li>
+</ul>
+<h3 id="b-sse">B안: SSE 스트리밍 엔드포인트 하나</h3>
+<ul>
+<li><code>GET /api/v1/ebook-searches/stream?...</code>가 <code>targets</code> → 도서관마다 <code>library-result</code>/<code>library-failed</code> → <code>done</code> 이벤트를 보냄</li>
+<li>장점: 요청이 하나. 서버가 동시 호출과 8초를 한곳에서 관리해서 도서관이 많아져도 브라우저 연결 수 제한이 없음</li>
+<li>단점: 더 보기용 도서관별 엔드포인트가 결국 따로 필요해서 API가 두 형태가 됨. Spring MVC 비동기 처리, 프록시 버퍼링을 챙겨야 함. EventSource 자동 재연결로 도서관 요청이 다시 나갈 위험. 오류 처리와 테스트가 더 복잡함</li>
+</ul>
+<h3 id="c">C안 (비추천): 모든 도서관을 기다렸다가 한 번에 응답</h3>
+<ul>
+<li>AC-13을 만족하지 못함</li>
+</ul>
+<p><strong>추천: A안</strong> — 시범 도서관 2곳이라 연결 수 제한이 문제가 되지 않고, 더 보기와 같은 경로를 써서 API가 한 형태로 끝납니다. 도서관이 크게 늘 때의 SSE 전환은 backlog 후보로 둡니다.</p>
+<h3 id="a">A안 기준 응답에 담는 값</h3>
+<ul>
+<li><code>fetchedAt</code>(원본 조회 시각), <code>cached</code>, <code>cacheAgeSeconds</code>: 서버가 나이를 계산해서 브라우저 시계가 틀려도 &quot;N분 전&quot;이 맞게 나옴</li>
+<li><code>totalCount</code>, <code>pageSize</code>, <code>hasMore</code></li>
+<li><code>loanRate</code>: 그 페이지 결과의 (대출 중 합계 ÷ 보유 합계). 보유 합계가 0이면 null. 프론트는 page 1 값만 도서관 대출률로 고정해서 씀</li>
+<li><code>rank</code>: 도서관 안의 원래 순서 = <code>(page−1) × pageSize + 순번</code></li>
+</ul>
+<hr>
+<h2 id="4">결정 4: 캐시와 호출 간격 제어</h2>
+<h3 id="4-1">4-1. 캐시</h3>
+<ul>
+<li><strong>A안: Caffeine 메모리 캐시.</strong> 쓰기 후 3분 만료(설정값), 최대 항목 수 [안]. 같은 키로 동시에 요청이 오면 한 번만 조회. 실패는 캐시하지 않음. 인프라 추가 없음, 원본을 디스크에 쌓지 않음. 대신 재시작하면 비워지고, 인스턴스가 여러 대면 캐시와 호출 제어가 따로 돎 (지금은 1대 전제 [확인 필요])</li>
+<li>B안: PostgreSQL 캐시 테이블. 재시작 후에도 남고 공유되지만, 쓰기 부하와 만료 청소가 필요하고 <strong>검색 결과를 DB에 쌓게 되어 spec 10장(&quot;쌓아 두지 않음&quot;, 저작권법 제93조 검토)과 부딪힘</strong></li>
+<li>C안: Redis. 공유와 TTL은 좋지만 새 인프라가 생기고 이번에는 필요 없음</li>
+<li><strong>추천: A안.</strong> 캐시 키의 검색어는 앞뒤 공백 제거 + 연속 공백을 하나로 정규화 [안]. 도서관에 보내는 검색어도 같은 값을 씀</li>
+<li>버전: Caffeine 최신 릴리스 3.3.0 (https://github.com/ben-manes/caffeine/releases, 2026-09-27 확인. 연도 표시가 없어 [확인 필요]). Spring Boot 4.1 연동은 dev에서 Context7로 확인</li>
+</ul>
+<h3 id="4-2-1-1">4-2. 호출 간격 제어 (같은 도서관 동시 1건, 간격 1초 이상)</h3>
+<ul>
+<li><strong>A안: 직접 구현 <code>HostThrottle</code>.</strong> 호스트마다 공정한 세마포어 1개와 마지막 요청 종료 시각. 차례를 받으면 &quot;이전 종료 + 1초&quot;까지 기다린 뒤 요청하고, 응답을 다 받은 뒤 차례를 돌려줌. 기다리는 시간은 8초 제한 안에서만, 넘으면 504. AC-17을 정확히 지키고 코드가 작음. 직접 테스트해야 함</li>
+<li>B안: Resilience4j RateLimiter + Bulkhead. 이미 있는 라이브러리지만, RateLimiter는 시간을 주기로 나누고 <strong>주기가 시작될 때 허가를 다시 채우므로</strong> 한 주기 끝과 다음 주기 시작에 요청 두 건이 1초 안에 나갈 수 있어 AC-17을 어길 수 있음 (https://resilience4j.readme.io/docs/ratelimiter, 2026-09-27 확인)</li>
+<li><strong>추천: A안</strong></li>
+<li>제어 단위: spec은 &quot;같은 도서관&quot;. 두 도서관이 같은 호스트를 쓰는 경우까지 보호하려면 <strong>호스트 단위(host:port)</strong>가 더 엄격함. 시범 2곳은 호스트가 달라 결과는 같음. 호스트 단위 추천 [안]</li>
+<li>간격 기준: <strong>이전 요청 종료 → 다음 요청 시작</strong>이 1초 이상 (시작 기준보다 엄격함) 추천 [안]</li>
+</ul>
+<hr>
+<h2 id="5-id">결정 5: 브라우저에 저장된 폐지 지역 ID 해석</h2>
+<ul>
+<li><strong>A안: 해석 전용 API</strong> <code>GET /api/v1/regions/resolutions?ids=...</code>. 서버가 대체 연결을 끝까지 따라가서(여러 번 바뀐 경우 포함, 순환 방지) ID마다 <code>ACTIVE | REPLACED | SPLIT | UNKNOWN</code>을 돌려줌. 프론트는 앱을 열 때 저장된 지역이 있으면 먼저 호출. 규칙이 서버 한곳에 있음. 요청이 하나 늘어남 (저장된 지역이 있을 때만)</li>
+<li>B안: 목록 API가 폐지 지역과 대체 정보까지 돌려주고 프론트가 해석. 모달에 필요 없는 데이터가 오고, 연결을 따라가는 규칙이 프론트에 생김</li>
+<li>C안: 대상 도서관 API가 폐지 ID를 알아서 바꾸고 안내를 붙임. 도서관 API에 지역 이력 책임이 섞이고 브라우저 값을 바꾸는 시점이 불분명함</li>
+<li><strong>추천: A안.</strong> 대상 도서관 API는 폐지·없음·시도 ID를 받으면 422 <code>invalid_region</code>을 돌려주고, 프론트는 이때 해석 API를 다시 부름 (지역 데이터 배포 직후 대비)</li>
+</ul>
+<hr>
+<h2 id="">추천안 기준 초안</h2>
+<h3 id="">모듈 [안]</h3>
+<table>
+<thead>
+<tr><th>모듈</th><th>책임</th><th>공개 API</th><th>이벤트</th><th>소유 테이블</th></tr>
+</thead>
+<tbody>
+<tr><td><code>region</code></td><td>시도·시군구 목록, 법정동 코드, 폐지·대체 연결, 옛 ID 해석</td><td>Java: <code>RegionDirectory</code> (<code>expandForMatching</code>, <code>resolve</code>) / REST: <code>/api/v1/regions</code>, <code>/api/v1/regions/resolutions</code></td><td>없음</td><td><code>region.region</code>, <code>region.region_replacement</code></td></tr>
+<tr><td><code>library</code></td><td>전자도서관 목록, 플랫폼, 조회 기본 주소, 가입 방법, 자격 문구, 자격 규칙, 사용 여부, 대상 도서관 판정</td><td>Java: <code>LibraryCatalog</code> (<code>findTargets</code>, <code>findEnabledSearchTarget</code>) / REST: <code>/api/v1/libraries</code></td><td>없음</td><td><code>library.library</code>, <code>library.eligibility_rule</code></td></tr>
+<tr><td><code>availability</code></td><td>플랫폼 adapter(KYOBO, YES24), 실시간 조회, 캐시, 호출 간격 제어, 정렬용 값 계산</td><td>REST: <code>/api/v1/availability/libraries/{libraryId}/ebooks</code></td><td>없음</td><td>없음 (메모리 캐시)</td></tr>
+</tbody>
+</table>
+<ul>
+<li>의존 방향: <code>availability → library → region</code> (순환 없음, <code>ApplicationModules.verify()</code>로 확인)</li>
+<li>이벤트는 이번에 필요 없음 → event publication registry도 도입하지 않음</li>
+<li><code>enabled</code>는 요청마다 DB에서 읽음 (2행). 메모리에 두면 AC-19가 재시작 전까지 반영되지 않음</li>
+<li>설정 키 (값은 spec 5.6 [확정], 접두어는 [안]): <code>cache-ttl=3m</code>, <code>host-max-concurrency=1</code>, <code>host-min-interval=1s</code>, <code>connect-timeout=3s</code>, <code>read-timeout=5s</code>, <code>request-deadline=8s</code>, <code>user-agent=&lt;확인 필요&gt;</code>, <code>kyobo.record-count=50</code>. YES24 페이지 크기 10은 사이트가 고정한 값</li>
+</ul>
+<h3 id="">데이터</h3>
+<pre class="mermaid">erDiagram
+  REGION ||--o{ REGION : &quot;parent_id (같은 모듈)&quot;
+  REGION ||--o{ REGION_REPLACEMENT : &quot;region_id&quot;
+  REGION ||--o{ REGION_REPLACEMENT : &quot;replaced_by_id&quot;
+  LIBRARY ||--o{ ELIGIBILITY_RULE : &quot;library_id (같은 모듈)&quot;
+  ELIGIBILITY_RULE }o..o| REGION : &quot;scope_region_id (ID 참조만, FK 없음)&quot;</pre>
+<p><strong><code>region.region</code></strong> [안]</p>
+<table>
+<thead>
+<tr><th>컬럼</th><th>타입</th><th>제약</th></tr>
+</thead>
+<tbody>
+<tr><td>id</td><td>bigint</td><td>PK. 자동 증가 없이 seed에서 직접 부여 (브라우저에 저장되므로 모든 환경에서 같아야 함)</td></tr>
+<tr><td>parent_id</td><td>bigint</td><td>NULL, FK → region.region(id)</td></tr>
+<tr><td>level</td><td>text</td><td>NOT NULL, CHECK IN (&#39;SIDO&#39;,&#39;SIGUNGU&#39;)</td></tr>
+<tr><td>name</td><td>text</td><td>NOT NULL (예: &quot;서울특별시&quot;, &quot;마포구&quot;)</td></tr>
+<tr><td>short_name</td><td>text</td><td>NULL (시도 표시용, 예: &quot;서울&quot;)</td></tr>
+<tr><td>legal_dong_code</td><td>text</td><td>NOT NULL, 10자리 숫자 CHECK</td></tr>
+<tr><td>status</td><td>text</td><td>NOT NULL, CHECK IN (&#39;ACTIVE&#39;,&#39;ABOLISHED&#39;)</td></tr>
+<tr><td>abolished_on</td><td>date</td><td>NULL</td></tr>
+<tr><td>created_at, updated_at</td><td>timestamptz</td><td>NOT NULL DEFAULT now()</td></tr>
+</tbody>
+</table>
+<ul>
+<li>CHECK: 시도면 parent_id가 없고, 시군구면 있음 / 폐지면 abolished_on이 있음</li>
+<li>UNIQUE <code>(legal_dong_code) WHERE status=&#39;ACTIVE&#39;</code> (폐지된 코드가 다시 쓰일 수 있어 사용 중인 지역만 유일)</li>
+<li>INDEX <code>(parent_id) WHERE status=&#39;ACTIVE&#39;</code></li>
+</ul>
+<p><strong><code>region.region_replacement</code></strong> [안]</p>
+<table>
+<thead>
+<tr><th>컬럼</th><th>타입</th><th>제약</th></tr>
+</thead>
+<tbody>
+<tr><td>region_id</td><td>bigint</td><td>NOT NULL, FK → region.region(id)</td></tr>
+<tr><td>replaced_by_id</td><td>bigint</td><td>NOT NULL, FK → region.region(id)</td></tr>
+<tr><td>effective_on</td><td>date</td><td>NOT NULL</td></tr>
+</tbody>
+</table>
+<ul>
+<li>PK <code>(region_id, replaced_by_id)</code>, CHECK <code>region_id &lt;&gt; replaced_by_id</code>, INDEX <code>(replaced_by_id)</code></li>
+<li>대체하는 쪽이 둘 이상이면 나뉨(SPLIT)</li>
+</ul>
+<p><strong><code>library.library</code></strong> [안]</p>
+<table>
+<thead>
+<tr><th>컬럼</th><th>타입</th><th>제약</th></tr>
+</thead>
+<tbody>
+<tr><td>id</td><td>bigint</td><td>PK, GENERATED BY DEFAULT AS IDENTITY (seed는 ID를 직접 넣음)</td></tr>
+<tr><td>name</td><td>text</td><td>NOT NULL, UNIQUE</td></tr>
+<tr><td>platform</td><td>text</td><td>NOT NULL, CHECK IN (&#39;KYOBO&#39;,&#39;YES24&#39;)</td></tr>
+<tr><td>base_url</td><td>text</td><td>NOT NULL (origin만. 경로와 파라미터는 adapter가 붙임)</td></tr>
+<tr><td>eligibility_summary</td><td>text</td><td>NULL (예: &quot;서울 거주·재직·재학&quot;)</td></tr>
+<tr><td>join_method</td><td>text</td><td>NOT NULL</td></tr>
+<tr><td>enabled</td><td>boolean</td><td>NOT NULL DEFAULT true</td></tr>
+<tr><td>created_at, updated_at</td><td>timestamptz</td><td>NOT NULL DEFAULT now()</td></tr>
+</tbody>
+</table>
+<ul>
+<li>자격 문구는 규칙에서 자동으로 만들지 않고 텍스트로 저장 (조합 규칙이 필요 없어 단순함. 규칙과 문구가 어긋날 수 있으므로 같은 Liquibase changeset에서 함께 고침)</li>
+</ul>
+<p><strong><code>library.eligibility_rule</code></strong> [안]</p>
+<table>
+<thead>
+<tr><th>컬럼</th><th>타입</th><th>제약</th></tr>
+</thead>
+<tbody>
+<tr><td>id</td><td>bigint</td><td>PK, GENERATED BY DEFAULT AS IDENTITY</td></tr>
+<tr><td>library_id</td><td>bigint</td><td>NOT NULL, FK → library.library(id) ON DELETE CASCADE</td></tr>
+<tr><td>basis</td><td>text</td><td>NOT NULL, CHECK IN (&#39;RESIDENCE&#39;,&#39;WORK&#39;,&#39;SCHOOL&#39;,&#39;AFFILIATION&#39;)</td></tr>
+<tr><td>scope_type</td><td>text</td><td>NOT NULL, CHECK IN (&#39;REGION&#39;,&#39;INSTITUTION&#39;)</td></tr>
+<tr><td>scope_region_id</td><td>bigint</td><td>NULL (<code>region</code> 모듈 ID라서 FK 없음)</td></tr>
+<tr><td>scope_institution_id</td><td>bigint</td><td>NULL (다음 사이클용, FK 없음)</td></tr>
+<tr><td>created_at</td><td>timestamptz</td><td>NOT NULL DEFAULT now()</td></tr>
+</tbody>
+</table>
+<ul>
+<li>CHECK: scope_type이 REGION이면 scope_region_id만, INSTITUTION이면 scope_institution_id만 있음</li>
+<li>UNIQUE NULLS NOT DISTINCT <code>(library_id, basis, scope_type, scope_region_id, scope_institution_id)</code> (PostgreSQL 15 이상)</li>
+<li>seed: 강서구 = RESIDENCE/WORK/SCHOOL × 서울특별시 3행, 고흥군 = 0행 (누구나 가입)</li>
+<li>판정: 규칙 없음 → <code>OPEN</code>. 지역을 안 보냄 → 자격 필요 도서관은 <code>UNKNOWN</code>. 지역을 보냄 → RESIDENCE는 거주 ID를, WORK는 직장 ID를 펼친 집합과 비교해 맞으면 <code>ELIGIBLE</code>, 아니면 제외. SCHOOL·AFFILIATION은 이번에 비교하지 않음</li>
+<li><code>library</code>는 <code>region</code> 테이블을 JOIN하지 않고 <code>RegionDirectory</code>를 호출함</li>
+</ul>
+<h3 id="api">API [안]</h3>
+<p>공통: 성공 <code>{ &quot;data&quot;: ..., &quot;meta&quot;: ... }</code>, 오류 <code>{ &quot;error&quot;: { &quot;code&quot;, &quot;message&quot;, &quot;details&quot; } }</code> (api-design skill 형식), JSON 필드 camelCase, 모두 인증 없는 GET</p>
+<p><strong>1) <code>GET /api/v1/regions</code></strong> — 사용 중인 지역 트리 (S2 모달)</p>
+<pre><code class="language-json">{ &quot;data&quot;: [
+  { &quot;id&quot;: 11, &quot;name&quot;: &quot;서울특별시&quot;, &quot;shortName&quot;: &quot;서울&quot;,
+    &quot;children&quot;: [ { &quot;id&quot;: 1101, &quot;name&quot;: &quot;강서구&quot; }, { &quot;id&quot;: 1102, &quot;name&quot;: &quot;마포구&quot; } ] }
+] }</code></pre>
+<p><strong>2) <code>GET /api/v1/regions/resolutions?ids=1101,9001,9002</code></strong> — 저장된 ID 해석</p>
+<pre><code class="language-json">{ &quot;data&quot;: [
+  { &quot;id&quot;: 1101, &quot;status&quot;: &quot;ACTIVE&quot;, &quot;label&quot;: &quot;서울 강서구&quot;, &quot;replacements&quot;: [] },
+  { &quot;id&quot;: 9001, &quot;status&quot;: &quot;REPLACED&quot;, &quot;label&quot;: &quot;OO시 △△구&quot;,
+    &quot;replacements&quot;: [ { &quot;id&quot;: 9101, &quot;label&quot;: &quot;OO특별시 △△구&quot; } ] },
+  { &quot;id&quot;: 9002, &quot;status&quot;: &quot;SPLIT&quot;, &quot;label&quot;: &quot;OO군&quot;,
+    &quot;replacements&quot;: [ { &quot;id&quot;: 9201, &quot;label&quot;: &quot;...&quot; }, { &quot;id&quot;: 9202, &quot;label&quot;: &quot;...&quot; } ] },
+  { &quot;id&quot;: 12345, &quot;status&quot;: &quot;UNKNOWN&quot;, &quot;label&quot;: null, &quot;replacements&quot;: [] }
+] }</code></pre>
+<ul>
+<li>오류: 400 <code>validation_error</code> (ids 없음, 숫자 아님, 개수 초과 — 최대 개수 [안])</li>
+</ul>
+<p><strong>3) <code>GET /api/v1/libraries?residenceRegionIds=1102&amp;workRegionIds=</code></strong> — 대상 도서관</p>
+<pre><code class="language-json">{ &quot;data&quot;: [
+  { &quot;id&quot;: 1, &quot;name&quot;: &quot;서울 강서구 전자도서관&quot;, &quot;joinPolicy&quot;: &quot;QUALIFIED&quot;,
+    &quot;eligibilitySummary&quot;: &quot;서울 거주·재직·재학&quot;, &quot;eligibility&quot;: &quot;ELIGIBLE&quot;,
+    &quot;joinMethod&quot;: &quot;도서관 방문 회원증 발급 또는 서울시민카드 간편가입&quot; },
+  { &quot;id&quot;: 2, &quot;name&quot;: &quot;고흥군립도서관 전자도서관&quot;, &quot;joinPolicy&quot;: &quot;OPEN&quot;,
+    &quot;eligibilitySummary&quot;: null, &quot;eligibility&quot;: &quot;OPEN&quot;,
+    &quot;joinMethod&quot;: &quot;도서관 홈페이지 가입 후 로그인&quot; }
+],
+  &quot;meta&quot;: { &quot;regionFilterApplied&quot;: true } }</code></pre>
+<ul>
+<li>꺼진 도서관은 넣지 않음 (AC-19). <code>eligibility</code>: <code>OPEN | ELIGIBLE | UNKNOWN</code></li>
+<li>AC-4 안내는 프론트가 판단: <code>regionFilterApplied=true</code>이고 <code>QUALIFIED</code>가 하나도 없을 때</li>
+<li>오류: 422 <code>invalid_region</code>, 400 <code>validation_error</code></li>
+</ul>
+<p><strong>4) <code>GET /api/v1/availability/libraries/{libraryId}/ebooks?q=사랑&amp;page=1</code></strong> — 도서관 하나의 한 페이지</p>
+<pre><code class="language-json">{ &quot;data&quot;: {
+  &quot;libraryId&quot;: 2, &quot;query&quot;: &quot;사랑&quot;, &quot;page&quot;: 1, &quot;pageSize&quot;: 50,
+  &quot;totalCount&quot;: 103, &quot;hasMore&quot;: true,
+  &quot;fetchedAt&quot;: &quot;2026-09-27T05:12:00Z&quot;, &quot;cached&quot;: true, &quot;cacheAgeSeconds&quot;: 140,
+  &quot;loanRate&quot;: 0.41,
+  &quot;librarySearchUrl&quot;: &quot;https://www.ghlib.go.kr:446/elibrary-front/search/searchList.ink?...&quot;,
+  &quot;items&quot;: [
+    { &quot;rank&quot;: 1, &quot;title&quot;: &quot;...&quot;, &quot;author&quot;: &quot;...&quot;, &quot;publisher&quot;: &quot;...&quot;, &quot;supplier&quot;: &quot;교보문고&quot;,
+      &quot;holdings&quot;: 10, &quot;loaned&quot;: 0, &quot;reservations&quot;: 0, &quot;available&quot;: 10 }
+  ]
+} }</code></pre>
+<ul>
+<li>설명문·표지 필드 없음 (AC-11)</li>
+<li>오류: 400 <code>invalid_query</code> (2글자 미만 [확정], 최대 길이 [안]), 400 <code>invalid_page</code>, 404 <code>library_not_found</code>, 502 <code>upstream_error</code> (원본 오류나 파싱 실패), 504 <code>upstream_timeout</code> (차례 대기 포함 8초 초과)</li>
+<li>프론트가 요청을 끊어도 백엔드는 조회를 끝까지 하고 캐시에 넣음</li>
+</ul>
+<p><strong>프론트 흐름</strong>: 앱 시작 → (저장된 지역이 있으면) 2) → 검색하면 3) → 도서관마다 4) 동시 호출 → 도착할 때마다 spec 5.4로 다시 정렬. &quot;더 보기&quot;는 4)를 <code>page+1</code>로 호출</p>
+<hr>
+<h2 id="15">확인 필요 / 사용자 결정 필요 (결정 1~5 외)</h2>
+<table>
+<thead>
+<tr><th>항목</th><th>종류</th><th>확인 방법</th></tr>
+</thead>
+<tbody>
+<tr><td>모듈 이름, 스키마 이름, API 경로 (특히 <code>/api/v1/availability/...</code> 접두어)</td><td>사용자 결정</td><td>질문</td></tr>
+<tr><td>User-Agent 문자열 (형식 예: <code>chaekcheck/&lt;version&gt; (+&lt;service-url&gt;; &lt;contact&gt;)</code> [안])</td><td>사용자에게 질문</td><td>spec 12장 연락처와 함께</td></tr>
+<tr><td>검색어 최대 길이, 해석 API ids 최대 개수, Caffeine 최대 항목 수, 프론트 안전 타임아웃 여유</td><td>사용자 결정 ([안] 값만)</td><td>질문</td></tr>
+<tr><td>&quot;N분 전 조회&quot;를 1분 미만일 때 표시 (예: &quot;방금 조회&quot;)</td><td>사용자 결정</td><td>질문</td></tr>
+<tr><td>교보 <code>recordCount=50</code> + <code>pageIndex=2</code>가 51~100번째를 빠짐없이 주는지, YES24 <code>page_num</code> + <code>sort=now</code>에서 페이지가 겹치지 않는지</td><td>확인 필요</td><td>API 호출 시험</td></tr>
+<tr><td>일반구가 있는 시(예: 고양시 4128000000, 덕양구 4128100000)를 시만 넣을지 구까지 넣을지</td><td>확인 필요</td><td>사용자에게 질문 + 법정동 코드 파일</td></tr>
+<tr><td>서울 시군구·고흥군의 2026-07-01 이후 법정동 코드</td><td>확인 필요</td><td>행정안전부 jscode20260701 파일</td></tr>
+<tr><td>운영 인스턴스 수 (메모리 캐시와 호출 제어는 1대 전제)</td><td>확인 필요</td><td>사용자에게 질문</td></tr>
+<tr><td>HTTP 클라이언트에서 &quot;연결 3초 / 읽기 5초&quot;를 정확히 거는 방법</td><td>확인 필요</td><td>dev에서 공식 문서 + 프로토타입</td></tr>
+<tr><td>Spring Boot 4.1에 맞는 Spring Modulith 버전</td><td>확인 불가 (https://docs.spring.io/spring-modulith/reference/appendix.html, 2026-09-27에 4.1 행 미확인)</td><td>dev에서 공식 문서 확인</td></tr>
+<tr><td>HTML 파서(예: jsoup) 선택과 버전</td><td>확인 필요</td><td>dev에서 공식 문서 확인</td></tr>
+<tr><td>도서관 사용 여부 변경 방법: 운영자가 SQL 직접 실행 [안] (인증이 없어 관리 API는 만들지 않음)</td><td>사용자 결정</td><td>질문</td></tr>
+<tr><td>응답·오류 형식: skill 형식(envelope) vs Spring ProblemDetail(RFC 9457)</td><td>사용자 결정</td><td>질문</td></tr>
+</tbody>
+</table>
+<h2 id="adr">ADR 후보</h2>
+<ol>
+<li>모듈 경계 <code>region</code> / <code>library</code> / <code>availability</code>와 의존 방향 (결정 1)</li>
+<li>모듈별 PostgreSQL 스키마 (2-1)</li>
+<li>지역 내부 ID(직접 부여, 환경 간 고정)와 폐지·대체 연결 테이블 (2-2)</li>
+<li>자격 규칙 모델 basis × scope, institution은 nullable 참조만 (2-3), 가입 조건 종류 계산 (2-4)</li>
+<li>조회 API: 대상 도서관 + 도서관별 호출, 정렬은 프론트 (결정 3)</li>
+<li>검색 캐시: Caffeine 메모리, 동시 요청 한 번만 조회, 실패는 캐시 안 함 (4-1)</li>
+<li>호출 간격 제어: 직접 구현, 8초 제한에 차례 대기 포함 (4-2)</li>
+<li>폐지 지역 해석 API와 422 <code>invalid_region</code> (결정 5)</li>
+<li>도서관 사용 여부: DB 컬럼, 요청마다 조회, 수동 SQL로 변경</li>
+<li>API 응답·오류 형식</li>
+</ol>
+<h2 id="backlog">backlog 후보</h2>
+<ul>
+<li>도서관이 늘어날 때 SSE 스트리밍 (브라우저 연결 수 제한 대응)</li>
+<li>들어오는 요청의 IP별 rate limit (무작위 검색어로 캐시를 우회하면 호출 대기열이 차서 정상 사용자가 504를 받을 수 있음)</li>
+<li>인증이 붙은 운영자용 도서관 사용 여부 관리 API</li>
+<li>여러 인스턴스 운영 시 캐시·호출 제어 공유 (Redis 등)</li>
+<li><code>institution</code> 테이블과 소유 모듈 (다음 사이클의 재학·소속 입력과 함께)</li>
+<li>지역 목록 API의 HTTP 캐시 헤더</li>
+</ul>
+<script type="module">
+const mermaid=(await import('https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs')).default;
+mermaid.initialize({startOnLoad:false,theme:'default'});
+await mermaid.run({querySelector:'.mermaid'});
+</script></body></html>

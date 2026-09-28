@@ -1,0 +1,8 @@
+.DS_Store
+Thumbs.db
+.claude/settings.local.json
+CLAUDE.local.md
+# Old copy of .claude from the first setup (2026-09-25); .claude/ is the current one
+_claude-setup/
+# Raw public-data download used during cycle 02 research; the findings are in docs/cycles/02-library-expansion
+전국도서관표준데이터.csv

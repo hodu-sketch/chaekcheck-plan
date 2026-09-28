@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "additionalDirectories": [
+      "C:\\Users\\yujun\\Documents\\Claude\\Projects\\chaekcheck-dev"
+    ],
+    "deny": [
+      "Edit(//c/Users/yujun/Documents/Claude/Projects/chaekcheck-dev/**)",
+      "Write(//c/Users/yujun/Documents/Claude/Projects/chaekcheck-dev/**)"
+    ],
+    "allow": [
+      "Bash(ecc-plan-canvas *)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard.mjs\""
+          }
+        ]
+      }
+    ]
+  }
+}
