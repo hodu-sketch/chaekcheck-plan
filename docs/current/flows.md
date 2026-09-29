@@ -2,9 +2,9 @@
 
 현재 설계의 주요 흐름을 그림으로 모은 문서입니다. 변경 기록이 아닙니다.
 
-마지막 반영: 사이클 02 cycle-close (2026-09-28). 아래 흐름은 모두 **설계됨(미구현)** 입니다. 다음 `/cycle-start`에서 dev 코드와 대조한 뒤 "구현됨"으로 바꿉니다.
+마지막 반영: 사이클 03 cycle-close (2026-09-29). 사이클 02까지의 흐름은 **구현됨**입니다(dev 코드·테스트·plan-feedback 실측으로 대조). 사이클 03 변경(요청 파라미터 `title`/`author`/`publisher`, "흐름 5: 검색 조건 바꾸기")은 **설계됨(미구현)** 입니다.
 
-- 근거: `docs/cycles/02-library-expansion/design-delta.md` "구조 그림", ADR-0011, ADR-0014, ADR-0015, ADR-0019
+- 근거: `docs/cycles/02-library-expansion/design-delta.md` "구조 그림", `retro.md`, ADR-0011, ADR-0014, ADR-0015, ADR-0019, ADR-0020
 - 모듈 구성도와 도메인 모델은 `module-map.md`에 있습니다.
 
 ## 도서관 하나의 조회 상태 (브라우저)
@@ -26,7 +26,8 @@ stateDiagram-v2
 - 다음 바퀴: `HasMore`인 사이트를 계획 순서대로 다음 쪽으로 보냅니다.
 - 모두 `Exhausted`나 `Failed`이면 목록 맨 아래 "더 보기"를 없앱니다.
 - `Failed`는 같은 검색에서 다시 조회하지 않습니다 [확정] (ADR-0014).
-- 필터나 지역이 바뀌면 상태를 버리고 첫 묶음부터 다시 검색합니다 [확정].
+- 필터, 조회 범위(`scope`), 지역, 검색 조건(제목/저자/출판사)이 바뀌면 상태를 버리고 첫 묶음부터 다시 검색합니다 [확정]. 검색 조건은 사이클 03, 설계됨(미구현).
+- 조회 서버가 모두 멈춘 동안에는 후보가 곧바로 실패해 한 묶음이 계획 대부분을 `Failed`로 만듭니다. 그 검색에서는 다시 묻지 않습니다(알려진 한계, 다음 사이클 후보).
 
 ## 흐름 1: 첫 묶음 검색
 
@@ -37,17 +38,21 @@ sequenceDiagram
   participant L as library
   participant C as 캐시·throttle
   participant S as SiteFetcher (직접 또는 조회 서버)
-  W->>A: GET /api/v1/ebook-searches/stream?q&residenceRegionIds&workRegionIds&filter
+  W->>A: GET /api/v1/ebook-searches/stream?{title|author|publisher}&residenceRegionIds&workRegionIds&filter&scope
+  alt 조건 파라미터 없음·둘 이상, 검색어 글자 수 오류
+    A-->>W: 400 validation_error / invalid_query (스트림을 열지 않음)
+  end
   A->>L: planSearch(residence, work)
   alt 지역 ID 오류
     L-->>A: InvalidRegionException
     A-->>W: 422 invalid_region (스트림을 열지 않음)
   end
   L-->>A: 정렬된 SearchTarget 목록
+  Note over A: scope=joinable이면 가입 확정 도서관만 남김
   A-->>W: event targets (전체 계획)
-  loop 계획 순서, 동시 P개, 셈한 줄이 20을 넘거나 시작 마감 전까지
+  loop 계획 순서, 동시 P개, 셈한 줄이 20을 넘거나 시작 마감 전까지 (같은 호스트가 바쁘면 다음 후보 먼저, ADR-0020)
     A-->>W: event library-requested (libraryId, page 1)
-    A->>C: get(libraryId, q, 1)
+    A->>C: get(libraryId, field, q, 1)
     alt 캐시 있음
       C-->>A: 해석된 페이지
     else 캐시 없음
@@ -71,7 +76,7 @@ sequenceDiagram
   participant A as availability
   participant L as library
   W->>W: 계획에서 다음 후보 계산 (1바퀴: 미요청 1쪽 / 다음 바퀴: HasMore 다음 쪽), 최대 K개
-  W->>A: GET /api/v1/ebook-searches/batches/stream?q&filter&batchNo&candidates=31:1,32:1,1:2
+  W->>A: GET /api/v1/ebook-searches/batches/stream?{title|author|publisher}&filter&batchNo&candidates=31:1,32:1,1:2
   alt 형식 오류, K 초과, 중복
     A-->>W: 400 validation_error
   end
@@ -87,7 +92,7 @@ sequenceDiagram
   W->>W: 새 묶음을 구분선 아래에 붙이고 그 안에서만 정렬. 요청 안 된 후보는 NotRequested로 남김
 ```
 
-- 도서관별 "더 보기"는 `GET /api/v1/availability/libraries/{libraryId}/ebooks?q&page`(사이클 01 경로 그대로)를 부르고, 결과를 목록 맨 아래 새 묶음으로 붙입니다. 이 API는 JSON 한 번에 응답하므로, 상세 판정이 필요한 줄은 판정을 읽은 뒤(최대 30초) 함께 돌려줍니다 [안].
+- 도서관별 "더 보기"는 `GET /api/v1/availability/libraries/{libraryId}/ebooks?{title|author|publisher}&page`(사이클 01 경로, 사이클 03에서 조건 파라미터로 바뀜)를 부르고, 결과를 목록 맨 아래 새 묶음으로 붙입니다. 이 API는 JSON 한 번에 응답하므로, 상세 판정이 필요한 줄은 판정을 읽은 뒤(최대 30초) 함께 돌려줍니다 [안].
 
 ## 흐름 3: 경북·전북 포털 상세 판정
 
@@ -118,7 +123,8 @@ sequenceDiagram
 ```
 
 - 30초는 **묶음을 시작한 시각부터**입니다 [안]. 묶음의 8초 마감은 검색 페이지 요청에만 적용합니다.
-- 30초 동안 한 호스트에서 읽을 수 있는 상세는 대략 25건입니다 (1초 간격). 첫 요청이 10줄이라 대부분 끝날 것으로 봅니다 [확인 필요: 프로토타입].
+- 30초 동안 한 호스트에서 읽을 수 있는 상세는 대략 25건입니다 (1초 간격). 실측(dev, 2026-09-29, `사랑` 첫·둘째 묶음): 경북·전북 대출 중 줄은 각 1~2건이었고 모두 30초 안에 끝났습니다.
+- 인천 포털은 상세 페이지가 로그인을 요구해, 대출 1 이상 줄은 모두 `UNKNOWN`("대출 가능 여부 확인 필요")입니다.
 
 ## 흐름 4: 조회 서버 경유 모드에서 서버 넘기기
 
@@ -140,3 +146,24 @@ sequenceDiagram
   end
   Note over A: 모든 조회 서버가 "쉼"이면 조회 실패. 직접 호출로 자동 전환하지 않음 (ADR-0015)
 ```
+
+## 흐름 5: 검색 조건 바꾸기 — 설계됨(미구현, 사이클 03)
+
+```mermaid
+sequenceDiagram
+  participant U as 사용자
+  participant W as web
+  participant A as availability
+  U->>W: 결과가 보이는 상태에서 드롭다운 "출판사"
+  alt 입력창 검색어 2자 미만
+    W-->>U: 입력 오류 문구, 이전 결과 그대로 (요청 없음)
+  else 2~50자
+    W->>W: 진행 중 스트림 끊고 묶음 상태 버림
+    W->>W: 주소 /search?publisher=…
+    W->>A: GET /api/v1/ebook-searches/stream?publisher=…
+    A-->>W: targets {publisher, …} → … → done (첫 묶음부터)
+  end
+```
+
+- 검색 전(첫 화면)에서 드롭다운을 바꾸면 안내 문구만 바뀌고 검색하지 않습니다. 드롭다운 기본값은 항상 제목입니다.
+- 포털의 저자·출판사 검색은 1쪽부터 `table.do` + 거르기로 부릅니다(ADR-0026). `table.do`에서 목록 판정 칸이 비는 포털은 흐름 3(상세 판정)으로 이어집니다.

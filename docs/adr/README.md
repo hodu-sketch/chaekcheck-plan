@@ -23,3 +23,10 @@
 | [ADR-0017](0017-library-row-per-unit.md) | 도서관 한 줄 = 이용 단위 하나, 종류 칸으로 전자·실물 구분 | Accepted | 2026-09-28 | 02 |
 | [ADR-0018](0018-server-title-key.md) | 같은 제목 판단 키를 서버가 만들어 응답에 넣음 | Accepted | 2026-09-28 | 02 |
 | [ADR-0019](0019-resolver-delivery-interfaces.md) | 판정 방식과 SSE 전달을 인터페이스로 분리 | Accepted | 2026-09-28 | 02 |
+| [ADR-0020](0020-skip-busy-host-in-batch.md) | 묶음 안에서 바쁜 호스트의 후보는 뒤로 미룸 | Accepted | 2026-09-29 | 02 (03 시작 때 기록) |
+| [ADR-0021](0021-single-instance-ready-for-many.md) | 운영은 본 서비스 1대, 설계는 여러 대 대비 | Accepted | 2026-09-28 | 02 (03 시작 때 기록) |
+| [ADR-0022](0022-library-site-tls-compatibility.md) | 도서관 사이트 TLS 호환: 중간 인증서 보충, RSA 키 교환 허용, 연결 5초 | Accepted | 2026-09-29 | 02 (03 시작 때 기록) |
+| [ADR-0023](0023-platform-type-generation-names.md) | 화면 종류 이름에 세대 번호 | Accepted | 2026-09-28 | 02 (03 시작 때 기록) |
+| [ADR-0024](0024-named-search-condition-params.md) | 검색 조건은 이름 있는 파라미터 하나로 받음 | Superseded by 0025 | 2026-09-29 | 03 |
+| [ADR-0025](0025-named-search-condition-params-no-legacy-url.md) | 검색 조건은 이름 있는 파라미터 하나로 받음 (옛 주소 변환 없음) | Accepted | 2026-09-29 | 03 |
+| [ADR-0026](0026-portal-author-publisher-facet.md) | 포털 저자·출판사 검색은 검색어 + 정확히 일치하는 거르기 | Accepted | 2026-09-29 | 03 |
