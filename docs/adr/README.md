@@ -30,3 +30,4 @@
 | [ADR-0024](0024-named-search-condition-params.md) | 검색 조건은 이름 있는 파라미터 하나로 받음 | Superseded by 0025 | 2026-09-29 | 03 |
 | [ADR-0025](0025-named-search-condition-params-no-legacy-url.md) | 검색 조건은 이름 있는 파라미터 하나로 받음 (옛 주소 변환 없음) | Accepted | 2026-09-29 | 03 |
 | [ADR-0026](0026-portal-author-publisher-facet.md) | 포털 저자·출판사 검색은 검색어 + 정확히 일치하는 거르기 | Accepted | 2026-09-29 | 03 |
+| [ADR-0027](0027-visit-join-filter-and-order.md) | 방문 가입 도서관은 필터로 뺄 수 있고, 가입 가능한 도서관 중 맨 뒤에 조회 | Accepted | 2026-09-30 | 03 (회고 때 기록) |

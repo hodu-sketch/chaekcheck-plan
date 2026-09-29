@@ -20,7 +20,7 @@ Do not plan or design the whole product up front. One cycle takes one small feat
 5. `/adr <title>` — record each decision as it is made
 6. `/cycle-close` — review (`design-reviewer`), update `docs/current/`, write the handoff (`planner`)
 
-Current cycle: none (last: docs/cycles/03-search-conditions, handed off)
+Current cycle: none (last: docs/cycles/03-search-conditions, retro done)
 
 ## Documents
 
@@ -28,6 +28,7 @@ Current cycle: none (last: docs/cycles/03-search-conditions, handed off)
 - `docs/current/` — the design as it stands now: `module-map.md`, `data-model.md`, `api.md`, `flows.md`, `handoff.md`
 - `docs/adr/README.md` — ADR index; `docs/adr/NNNN-<slug>.md` — decision records
 - `docs/cycles/NN-<slug>/` — `scope.md`, `spec.md`, `flow.md`, `design-delta.md`, `handoff.md`, `retro.md`
+- `docs/research/<topic>/` — research done outside any cycle to prepare later work (data sources, collection methods). Research and methods only: no module, table or API design here; a cycle that uses it links to it from its `scope.md` or `spec.md`
 
 The dev project imports `docs/current/handoff.md` from its `CLAUDE.md`, so keep that file limited to the current handoff.
 

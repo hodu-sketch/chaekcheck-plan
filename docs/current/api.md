@@ -2,7 +2,7 @@
 
 현재 설계 전체를 적은 문서입니다. 요청·응답 예시는 사이클 01 `docs/cycles/01-ebook-availability-search/design-delta.md`와 사이클 02 `docs/cycles/02-library-expansion/design-delta.md`에 있습니다.
 
-마지막 반영: 사이클 03 cycle-close (2026-09-29). 사이클 02까지는 dev 컨트롤러 코드와 대조했습니다(구현됨). **사이클 03 변경(검색어 `q` → `title`/`author`/`publisher` 중 하나, `targets`의 조건 칸, 포털 저자·출판사 검색)은 설계됨(미구현)** 입니다 (ADR-0025, ADR-0026). 요청·응답 예시는 `docs/cycles/03-search-conditions/design-delta.md`.
+마지막 반영: 사이클 03 회고 (2026-09-30). 모두 dev 컨트롤러 코드와 대조했습니다(구현됨). 사이클 03 요청·응답 예시는 `docs/cycles/03-search-conditions/design-delta.md`, 개발 중 바뀐 것은 같은 폴더 `retro.md`.
 
 ## 공통 규칙 (ADR-0008)
 
@@ -16,24 +16,26 @@
 |---|---|---|---|
 | GET | `/api/v1/regions` | `region` | 사용 중인 시도·시군구 트리 |
 | GET | `/api/v1/regions/resolutions?ids=` | `region` | 저장된 지역 ID를 `ACTIVE / REPLACED / SPLIT / UNKNOWN`으로 해석 (최대 20개) |
-| GET | `/api/v1/ebook-searches/stream?{title\|author\|publisher}=&residenceRegionIds=&workRegionIds=&filter=&scope=` | `availability` | 조회 계획 + 첫 묶음 (SSE, ADR-0014). 이벤트: `targets`(전체 계획, 순서대로) → `library-requested` / `library-result` / `library-failed` … → `batch-done` → `row-verdict` … → `done`. `filter=all\|available`(없으면 all). `scope=all\|joinable`(없으면 all): `joinable`이면 가입이 확정된 도서관(`OPEN`/`ELIGIBLE`이고 `extraConditionText` 없음)만 계획에 남김 (C2-U-10). 지역 ID는 쉼표 구분, 필드당 최대 20개 |
-| GET | `/api/v1/ebook-searches/batches/stream?{title\|author\|publisher}=&filter=&batchNo=&candidates=libraryId:page,…` | `availability` | 다음 묶음 (SSE). 브라우저가 계획에서 고른 후보(최대 K=50 [안])만 조회. 이벤트는 위에서 `targets`를 뺀 것. `batchNo`는 2 이상, 쪽 번호 최대 5자리. `scope`는 받지 않음(후보가 이미 계획에서 나옴) |
+| GET | `/api/v1/ebook-searches/stream?{title\|author\|publisher}=&residenceRegionIds=&workRegionIds=&filter=&scope=&visit=` | `availability` | 조회 계획 + 첫 묶음 (SSE, ADR-0014). 이벤트: `targets`(전체 계획, 순서대로) → `library-requested` / `library-result` / `library-failed` … → `batch-done` → `row-verdict` … → `done`. `filter=all\|available`(없으면 all). `scope=all\|joinable`(없으면 all): `joinable`이면 가입이 확정된 도서관(`OPEN`/`ELIGIBLE`)만 계획에 남김 (C2-U-10). 추가 문구(`extraConditionText`, 예: 책이음)는 참고 글일 뿐 판정·범위에 영향 없음 (C3-U-2). `visit=any\|none`(없으면 any): `none`이면 방문 가입 도서관(`visitRequired`)을 계획에서 빼서 요청하지 않음 (C3-U-1, ADR-0027). `any`일 때 계획 순서는 ADR-0027(가입 가능한 방문 가입 도서관은 방문 없는 가입 가능 도서관 모두 뒤). 지역 ID는 쉼표 구분, 필드당 최대 20개 |
+| GET | `/api/v1/ebook-searches/batches/stream?{title\|author\|publisher}=&filter=&batchNo=&candidates=libraryId:page,…` | `availability` | 다음 묶음 (SSE). 브라우저가 계획에서 고른 후보(최대 K=50 [안])만 조회. 이벤트는 위에서 `targets`를 뺀 것. `batchNo`는 2 이상, 쪽 번호 최대 5자리. `scope`·`visit`는 받지 않음(후보가 이미 계획에서 나옴) |
 | GET | `/api/v1/availability/libraries/{libraryId}/ebooks?{title\|author\|publisher}=&page=` | `availability` | 도서관 하나의 한 페이지 (도서관별 더 보기). 판정이 나중에 정해지는 줄은 판정을 읽은 뒤(최대 30초) 응답. `page`가 없으면 1 |
 | POST | 조회 서비스 `/v1/fetches` (내부) | 조회 서비스 | URL 한 개를 GET으로 가져와 `{outcome, status, contentType, location, body(base64), startedAt, endedAt}`. `outcome`: `RESPONDED \| TIMEOUT \| CONNECT_FAILED \| ERROR`. 조회 서버 자신이 정상이면 항상 200. 401 토큰 없음·틀림(헤더 `X-Fetch-Token` [안, 임시]), 400 잘못된 URL·사설 주소, 503 과부하·종료 중 (ADR-0015) |
 
-## 검색 조건 파라미터 (ADR-0025) — 설계됨(미구현)
+## 검색 조건 파라미터 (ADR-0025)
 
 세 API는 검색어를 `q` 대신 `title` / `author` / `publisher` 중 **정확히 하나**로 받습니다. `q`는 없고, 웹도 옛 `?q=` 주소를 처리하지 않습니다(배포 전).
 
 | 경우 | 응답 |
 |---|---|
 | 하나, 값 2~50자(정규화 후) | 정상. 그 필드로 검색 |
-| 하나도 없음, 값이 비어 있음, `q`만 옴 | 400 `validation_error`, `errors[].code: required` [안] |
-| 둘 이상 | 400 `validation_error`, `errors[].code: too_many` [안] |
-| 같은 이름 두 번 | 400 `validation_error`, `errors[].code: duplicate` [안] |
+| 하나도 없음, 값이 비어 있음, `q`만 옴 | 400 `validation_error`, `errors: [{"field":"title","code":"required"}]` |
+| 둘 이상 | 400 `validation_error`, 들어온 조건마다 한 줄 `code: too_many` (순서 title, author, publisher) |
+| 같은 이름 두 번 | 400 `validation_error`, `code: duplicate` |
+
+- 빈 값은 없는 것으로 셉니다: `?title=&author=김달`은 저자 검색입니다 (dev 결정). `detail`은 다른 `validation_error`와 같은 "Request validation failed"입니다.
 | 값 1자, 51자 이상 | 400 `invalid_query` |
 
-- 검증 순서 [안]: 조건 → `filter` → `scope` → 지역. 첫 오류 하나만 돌려줍니다.
+- 검증 순서: 첫 묶음은 조건 → `filter` → `scope` → `visit` → 지역, 다음 묶음은 조건 → `filter` → `batchNo` → `candidates`, 도서관별 더 보기는 조건 → `page` → 도서관. 첫 오류 하나만 돌려줍니다.
 - 웹 주소도 같은 이름을 씁니다: `/search?author=김달`. 조건이 둘 이상인 주소는 title → author → publisher 순서로 하나만 씁니다 [확정].
 
 ## 묶음 실행 규칙 (요약, 자세한 것은 사이클 02 design-delta)
@@ -46,13 +48,13 @@
 
 ## `targets` 이벤트
 
-`title` / `author` / `publisher` 중 요청과 같은 칸 하나(값은 검색어), `filter`, `scope`, `regionFilterApplied`, `libraries[]`. 사이클 02의 `query` 칸은 없어집니다 (ADR-0025, 설계됨(미구현)). 도서관 항목: `id`, `name`, `libraryType`, `platformType`, `priorityGroup`, `deferred`, `eligibility`, `eligibilitySummary`, `extraConditionText`, `visitRequired`, `joinMethod`, `joinUrl`, `joinCaution`, `joinNotice`, `homepageUrl`.
+`title` / `author` / `publisher` 중 요청과 같은 칸 하나(값은 검색어, 나머지 둘은 JSON에서 빠짐), `filter`, `scope`, `visit`, `regionFilterApplied`, `libraries[]`. 사이클 02의 `query` 칸은 없습니다 (ADR-0025). 도서관 항목: `id`, `name`, `libraryType`, `platformType`, `priorityGroup`, `deferred`, `eligibility`, `eligibilitySummary`, `extraConditionText`, `visitRequired`, `joinMethod`, `joinUrl`, `joinCaution`, `joinNotice`, `homepageUrl`.
 
 - 크기: 278곳 156,368바이트(gzip 했다면 16,271) (dev 측정, 2026-09-29)
 
 ## 검색 방식 (ADR-0009, ADR-0025, ADR-0026)
 
-고른 조건을 사이트의 해당 칸으로 검색합니다. 제목은 구현됨, 저자·출판사는 설계됨(미구현, 사이클 03).
+고른 조건을 사이트의 해당 칸으로 검색합니다.
 
 | 화면 종류 | 제목 | 저자 | 출판사 |
 |---|---|---|---|
@@ -61,7 +63,9 @@
 | `GANGNAM_V1` | `search=title` | `search=author` | `search=publisher` |
 | `ELIB_PORTAL_V1` | 기본 검색(제목 전용 칸 없음) | `table.do?search_text={q}&author_name={q}` | `table.do?search_text={q}&book_pubname={q}` |
 
-- 부분 일치입니다("김달" → "김달우"도). 포털 저자·출판사만 정확히 일치입니다 (ADR-0026).
+- 부분 일치입니다("김달" → "김달우"도). 포털 저자·출판사만 정확히 일치입니다 (ADR-0026). 그래서 포털에서는 "김달 저", "김달 지음"처럼 적힌 줄이 빠집니다 (dev 실측 2026-09-29, 부산 11줄 중 3줄).
+- 포털 기본(제목) 검색은 제목뿐 아니라 저자·출판사도 찾습니다.
+- 포털 "도서관에서 보기"(`librarySearchUrl`)는 가져온 주소가 `index.do`가 아니면(저자·출판사, 제목 2쪽 이후) `index.do?menu_idx=M&search_text=…`로 만듭니다. `table.do`는 화면 조각이라 새 창에서 깨집니다.
 - 포털 `search_type`의 AUTHOR/TITLE/PUBLER는 자료 종류라서 필드 검색에 쓰지 않습니다.
 - YES24는 `sort=title`로 부릅니다. `sort=now`는 "지금 빌릴 수 있는 책만" 거르는 필터라서 쓰지 않습니다.
 - EUC-KR 사이트(`YES24_V1`, `YES24_V3`, 강남구)는 검색어를 EUC-KR로 보냅니다.
@@ -89,7 +93,7 @@
 
 | code | HTTP | 어디서 |
 |---|---|---|
-| `validation_error` | 400 | 지역 해석 API, 스트림의 지역 파라미터(숫자 아님, 20개 초과), `filter`·`scope` 값 오류, 다음 묶음의 `candidates`·`batchNo`, 세 API의 검색 조건 파라미터(없음·둘 이상, 사이클 03 설계됨). `errors[].code`: `required`, `invalid_format`, `too_many`, `duplicate` |
+| `validation_error` | 400 | 지역 해석 API, 스트림의 지역 파라미터(숫자 아님, 20개 초과), `filter`·`scope` 값 오류, 다음 묶음의 `candidates`·`batchNo`, 세 API의 검색 조건 파라미터(없음·둘 이상·중복), 스트림의 `visit` 값 오류. `errors[].code`: `required`, `invalid_format`, `too_many`, `duplicate` |
 | `invalid_query` | 400 | 스트림(시작 전), 더 보기 — 정규화 후 2글자 미만 또는 50자 초과 |
 | `invalid_page` | 400 | 더 보기 |
 | `invalid_region` | 422 | 스트림(시작 전) — `errors[].code`: `abolished`, `not_found`, `not_sigungu` |
