@@ -31,3 +31,10 @@
 | [ADR-0025](0025-named-search-condition-params-no-legacy-url.md) | 검색 조건은 이름 있는 파라미터 하나로 받음 (옛 주소 변환 없음) | Accepted | 2026-09-29 | 03 |
 | [ADR-0026](0026-portal-author-publisher-facet.md) | 포털 저자·출판사 검색은 검색어 + 정확히 일치하는 거르기 | Accepted | 2026-09-29 | 03 |
 | [ADR-0027](0027-visit-join-filter-and-order.md) | 방문 가입 도서관은 필터로 뺄 수 있고, 가입 가능한 도서관 중 맨 뒤에 조회 | Accepted | 2026-09-30 | 03 (회고 때 기록) |
+| [ADR-0028](0028-catalog-module.md) | 수집한 책 목록은 새 모듈 catalog가 가짐 | Accepted | 2026-09-30 | 04 |
+| [ADR-0029](0029-detail-page-lookup.md) | 책별 대출 상황은 상세 페이지로 읽고, adapter와 묶음 실행기를 넓혀 처리 | Accepted | 2026-09-30 | 04 |
+| [ADR-0030](0030-books-api-and-holding-stream.md) | 책 검색 API와 소장 단위 스트림을 나눔 | Accepted | 2026-09-30 | 04 |
+| [ADR-0031](0031-catalog-importer-in-backend.md) | 한 번 가져오기는 서비스 백엔드 Java, 정리 규칙 코드 한 벌 | Accepted | 2026-09-30 | 04 |
+| [ADR-0032](0032-postgres-pg-bigm-contributors.md) | 책 목록 검색은 PostgreSQL + pg_bigm, 저자는 사람별 표 | Accepted | 2026-09-30 | 04 |
+| [ADR-0033](0033-web-url-multiple-conditions.md) | 웹 주소에 여러 검색 조건을 담음 (ADR-0025의 웹 주소 규칙 변경) | Accepted | 2026-09-30 | 04 |
+| [ADR-0034](0034-store-ebook-catalog.md) | 전자책 목록(사실 정보)을 서비스 DB에 저장함 | Accepted | 2026-09-30 | 04 |
