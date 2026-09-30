@@ -36,7 +36,7 @@
   - 통합 포털 표지 파일 이름이 ISBN-13인 줄 10,213줄 (예 `…/DRMCon/images/9791194267676.jpg`). 표지 주소에서 나온 값이라 종이책·전자책 ISBN 중 무엇인지 모름
   - 강남구 `book_num`이 `978`·`979`로 시작하는 13자리 96줄
   - 강서(YES24) 10줄, 영주·경산 각 1줄은 예전 파서로 받은 채 남아 `goods_id`가 잘렸을 수 있음
-- 규칙 전체 검증: ISBN 서지정보와 표본 대조 [확인 필요: API 호출 시험]
+- 규칙 검증: 국가서지 일반도서 전체와 대조해 978·979 모두 약 95% 제목 일치 (4.2절)
 - YES24 재수집 전 수치가 섞였을 수 있음 (`search-and-normalization.md` 머리말 주의)
 
 ## 4. ISBN을 찾을 출처 (확인 2026-09-30)
@@ -53,6 +53,24 @@
 | 네이버 책 검색 | — | 2026-07-31 종료로 보이나 공식 공지 미확인 [확인 필요] | 제외 |
 | 경기도서관 전자책 Open API (https://ebook.library.kr/info/open-search) | 소장형·구독형 전자책 서지(ISBN 포함) | 경기도서관 회원만, 제한·약관 미확인 | 참고 |
 
+### 4.2 국가서지 일반도서 전체 파일 대조 (2026-09-30)
+
+사용자 허락을 받아 `book_ttl_20260807.zip`(1.10GB, 압축 해제 7.7GB, TTL 20개)을 scratchpad에 받았습니다. 다운로드 전 이용 설문은 사용자가 정한 내용으로 제출(기관명 "개인 개발자 (비영리 도서 검색 웹 서비스 개발)", 목적 "웹 개발").
+
+- 일반도서 3,936,503건 중 ISBN이 있는 것 3,165,282건 (ISBN-10·부가기호 붙은 글자를 ISBN-13으로 정리)
+- 수집 데이터에서 교보식 코드로 계산한 종이책 ISBN 173,276개 중 **132,839개(76.7%)가 국가서지에 있음**
+- 제목 비교(NFKC, 기호·공백 제거 뒤 앞 8글자 같음 또는 한쪽이 다른 쪽을 포함):
+
+| ISBN | 국가서지에 있음 | 제목 같음 | 제목 다름 |
+|---|---|---|---|
+| `978-89` (계산 87,790개) | 72,379 | 68,166 (94.2%) | 4,213 |
+| `979-11` (계산 85,486개) | 60,460 | 57,982 (95.9%) | 2,478 |
+
+- **교보식 코드 → 종이책 ISBN 규칙은 `979-11`까지 맞음** [확정] (국가서지 대조 기준)
+- "제목 다름"의 대부분은 같은 책의 표기 차이로 보임: 국가서지가 앞에 붙이는 괄호 관제(`(장난감 피아노로 시작하는) 엄마표 피아노 레슨`), 영문판 원제(`(The) tale of squirrel nutkin` ↔ `다람쥐 넛킨 이야기(영문판)`), 시리즈 표기(`Who? 김연아` ↔ `Who? Special 김연아`). 다른 책으로 보이는 예도 있음(`얼음 꿈의 시작` ↔ `두뇌 속 국어`, 지식과감성) [확인 필요: 표본 조사]
+- 국가서지에 없는 23.3%는 납본되지 않았거나 ISBN이 없는 레코드일 수 있음 [확인 필요]
+- 국가서지 제목 표기 특징: 앞 괄호 관제 `(…)`, 관사 `(The)`, 출판사 뒤 `#` 같은 잡음(`지식과감성#`)
+
 ### 4.1 국가서지 LOD 표본 확인 (2026-09-30)
 
 사용자 허락을 받아 표본 두 개만 받았습니다 (`Online_sample.ttl` 6.5MB, `book_sample.ttl` 1.4MB, 각 1,000건, scratchpad에만 저장).
@@ -61,6 +79,15 @@
 - 일반도서 표본 1,000건 중 ISBN이 있는 것은 115건이고, `"7500004087 (34)"`처럼 해외 ISBN이 섞여 있습니다. 필드: `dcterms:title`, `nlon:remainderOfTitle`(부제), `dc:creator`, `dc:publisher`, `nlon:datePublished`, `nlon:kdc`, `bibo:isbn`, `nlon:titleOfSeries`, `bibo:volume`
 - **교보식 코드 → ISBN 규칙 대조**: 표본 ISBN을 ISBN-13으로 정리(ISBN-10·부가기호 포함 글자 처리)하니 354개였고, 수집 데이터에서 계산한 ISBN 17.3만 개와 **10개가 겹쳤으며 10개 모두 제목·출판사가 같은 책**이었습니다 (예: 「순수이성 비판 서문」 책세상 `9788970133010`, 「전쟁론1」/「전쟁론 1」 갈무리 `9788986114843`, 「바람의 딸 걸어서 지구 세 바퀴 반 1권」/「… 반. 1」 푸른숲 `9788971847473`). 겹친 ISBN은 모두 온라인자료 표본(대체자료가 원본 종이책 ISBN을 적음)에서 나왔고 모두 `978-89`라서, `979-11` 쪽 규칙은 아직 이 방법으로 확인하지 못했습니다
 - 표본은 파일 앞부분 일부라 전체를 대표하는지 알 수 없습니다. 지금으로서는 **ISBN 매핑의 기본은 ISBN 서지정보 API**로 두고, 국가서지 파일은 종이책 ISBN 대조가 더 필요할 때 일반도서 전체 파일로 다시 시험합니다 [안]
+
+### 4.3 ISBN 서지정보 API 형식 (공식 안내 페이지, 2026-09-30)
+
+- 요청: `https://www.nl.go.kr/seoji/SearchApi.do` (출판 예정 자료는 `deposit_yn=N`)
+- 필수: `cert_key`, `result_style`(json·xml), `page_no`(1부터), `page_size`(최대값 미공개, 초과 시 오류 013)
+- 검색: `isbn`·`set_isbn`(앞부분 일치), `title`·`author`·`publisher`·`series_title`(형태소 + n-gram), `start_publish_date`·`end_publish_date`(yyyymmdd), `ebook_yn`, `cip_yn`, `deposit_yn`, `form`(종이책·혼합자료·전자책·오디오북·기타 전자출판물), `sort`(PUBLISH_PREDATE·INPUT_DATE·INDEX_TITLE·INDEX_PUBLISHER), `order_by`
+- 응답: `TOTAL_COUNT`, `PAGE_NO`, `TITLE`, `VOL`, `SERIES_TITLE`, `SERIES_NO`, `AUTHOR`, `EA_ISBN`, `EA_ADD_CODE`, `SET_ISBN`, `SET_ADD_CODE`, `SET_EXPRESSION`, `PUBLISHER`, `EDITION_STMT`, `PRE_PRICE`, `KDC`, `DDC`, `PAGE`, `BOOK_SIZE`, `FORM`, `FORM_DETAIL`, `PUBLISH_PREDATE`, `SUBJECT`, `EBOOK_YN`, `CIP_YN`, `CONTROL_NO`, `DEPOSIT_YN`, `BIB_YN`, `RELATED_ISBN`, `TITLE_URL`, `BOOK_TB_CNT_URL`, `BOOK_INTRODUCTION_URL`, `BOOK_SUMMARY_URL`, `PUBLISHER_URL`, `INPUT_DATE`, `UPDATE_DATE`
+- 오류: 000 시스템, 010 키 없음, 011 키 틀림, 012 필수 파라미터 없음, 013 쪽당 건수 초과
+- 응답 값의 실제 모양(ISBN 하이픈 여부, 날짜 형식, `RELATED_ISBN` 내용)은 인증키 발급 후 확인 [확인 필요]
 
 ## 5. 묶기 절차 [안]
 
@@ -93,7 +120,7 @@
 
 | 항목 | 확인 방법 |
 |---|---|
-| 교보식 코드 → 종이책 ISBN 규칙 전체 | API 호출 시험 (인증키 발급 후 표본 대조) |
+| 교보식 코드 → 종이책 ISBN 규칙 | 확인함 (4.2절). 제목이 다른 약 5%의 원인은 표본 조사 |
 | `RELATED_ISBN`이 종이책과 전자책을 잇는지 | API 호출 시험 |
 | ISBN 서지정보 일 한도 | 공식 문서 확인 또는 기관 문의 |
 | 국가서지 파일의 플랫폼 전자책 포함 정도, 레코드별 ISBN 여부 | 표본 확인함(4.1절): 표본으로는 판단 불가. 일반도서 전체 파일(1,051.4MB) 시험은 사용자 결정 |
