@@ -278,7 +278,7 @@ erDiagram
 }
 ```
 
-- `joinTier` [안 값]: 그 책을 가진 계획 도서관 중 가장 앞 단계. 지역 있음: `MY_SIGUNGU` → `MY_SIDO` → `OPEN` (모두 방문 없음) → `VISIT_ONLY` → `NEEDS_CHECK`. 지역 없음: `OPEN` → `VISIT_ONLY` → `NEEDS_CHECK`(자격 필요·확인 필요). 기본 순서의 첫 기준 [확정] (사용자 "이대로", ""지역이 있을 때 책도 내 지역 먼", 2026-09-30). 한 책 안 도서관 순서(ADR-0027)와 기준이 같음
+- `joinTier` [안 값]: 그 책을 가진 계획 도서관 중 가장 앞 단계. 지역 있음: `MY_SIGUNGU` → `MY_SIDO` → `OPEN` (모두 방문 없음) → `VISIT_ONLY` → `NEEDS_CHECK`. 지역 없음: `OPEN` → `VISIT_ONLY` → `NEEDS_CHECK`(자격 필요·확인 필요). 기본 순서의 첫 기준 [확정] (사용자 "이대로", "지역이 있을 때 책도 내 지역 먼저", 2026-09-30). 한 책 안 도서관 순서(ADR-0027)와 기준이 같음
 - 조회 범위·방문 필터를 적용한 뒤 계획 도서관이 하나도 없는 책은 목록에서 뺌 [확정] (사용자, 2026-09-30). `holdingLibraryCount`도 계획 도서관만 셈
 
 `targets` 이벤트 예시
