@@ -116,7 +116,7 @@
   - HTML 상세검색 폼에는 `name`(서명)·저자·출판사 칸이 따로 있음(`searchType=detail`) → 필드별 AND 후보 [확인 필요]
 - `<Product>` 항목: `num`(북큐브 번호, 예 `F0003004`), `legacyCode`(교보식 `480…` 코드), `name`, `publisher`, `author`, `supplier`(예 "교보 전자책"), `category`, `category_type`, `publisherDate`, `buyDate`(도서관 구매일), 표지 4종, `longExplain`·`shortExplain`·`contents`(저장하지 않음), `volume`(보유 권수), `nowLendCount`, `nowReserveCount`, `format`(epub·pdf·xml·flash 확인), `isReservable`
 - HTML 화면: `/FxLibrary/product/list/`, 상세 `/FxLibrary/product/view/?num=`
-- 오디오북: 표본에서는 `category_type=book`만 봄. 오디오북은 `format`·`category_type` 값으로 가를 수 있을 것으로 보임 [확인 필요: 오디오북이 있는 북큐브 사이트에서]
+- 오디오북: `category_type`은 모두 `book`이고, **`format`이 `aud`이면 오디오북** [확정] (2026-10-01, 134곳 수집 결과 19,417줄). 다른 형식 값: epub, pdf, xml, `pdf/epub`, flash, image, kml, xdf, zip
 - 다산(`*.dasangng.co.kr`)은 북큐브네트웍스가 운영하는 같은 프로그램. XML도 같음(주왕산숲속 100건)
 - 후보 확인 결과(2026-09-30, 웹러브 북스 목록에서 공공도서관으로 보이는 174곳): 열림·XML 확인 134곳, 오류 40곳(주소 없어짐·접속 거부). 134곳 합계 1,187,834종 [확정] (`totalItem` 합)
 
@@ -138,7 +138,7 @@
 | YES24 | `/search/` = 전자책, `/audiobook/` = 오디오북 | `section=MAIN|AUDIO`, `SITE_SECTION` |
 | 통합 포털 | `type=EBK` / `ADO` 목록 | `section=EBK|ADO`, `SITE_SECTION` |
 | 강남구 | `div.publish_ebook` 표시 | `SITE_LABEL` |
-| 북큐브 | `format`·`category_type` [확인 필요] | — |
+| 북큐브 | `format`이 `aud` | `content_kind`=`book/aud`, `SITE_LABEL` |
 | 알라딘 | 사이트 단위 | — |
 
 - 정리된 종류는 SQLite 뷰 `holding_typed.content_type`(EBOOK, AUDIOBOOK, VIDEO_BOOK, KIDS_BOOK, PAPER, UNKNOWN). 교보의 "오디오"와 "오디오북"은 둘 다 AUDIOBOOK으로 봄 [안]
@@ -150,7 +150,6 @@
 |---|---|
 | 교보 구독형 `cttsDvsnCode=002`가 오디오북 목록인지 | API 호출 시험 |
 | YES24 `sort=pubdt`가 등록일순인지 출간일순인지 | API 호출 시험 |
-| 북큐브 오디오북의 `format`·`category_type` 값 | 오디오북이 있는 북큐브 사이트 호출 |
 | 북큐브 상세검색으로 필드별 AND가 되는지 | API 호출 시험 |
 | 알라딘 출판사 검색 값, 알라딘 화면 종류별 목록 방법 | API 호출 시험 |
 | 국회도서관(교보) 화면, 영천·영주 YES24 화면 | API 호출 시험 |

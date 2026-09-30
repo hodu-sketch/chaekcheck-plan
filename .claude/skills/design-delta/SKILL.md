@@ -7,7 +7,7 @@ Write `design-delta.md` in the current cycle folder: the change from `docs/curre
 
 ## Steps
 
-1. Read `scope.md`, `spec.md`, `flow.md` and `docs/current/`.
+1. Read `scope.md`, `spec.md`, `flow.md` and `docs/current/`. If the slice touches library collection or classification, book collection, or book normalization or grouping, also read the documents `docs/reference-index.md` lists for that topic, and pass their paths to the `architect` subagent.
 2. Delegate to the `architect` subagent. In the task, name the cycle folder and ask for alternatives only where there is a real choice.
 3. Show the user the alternatives and the recommendation (안), and let the user choose. Do not choose for them.
    - If `ecc-plan-canvas` is installed (`ecc-plan-canvas --help` succeeds), save the proposal as `architect-proposal.md` in the cycle folder and review it with the `plan-canvas` skill, so the user can annotate the alternatives in the browser.

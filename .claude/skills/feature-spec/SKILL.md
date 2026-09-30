@@ -8,7 +8,7 @@ Write `spec.md` in the current cycle folder (see `Current cycle:` in `CLAUDE.md`
 ## Steps
 
 1. Read `scope.md`. Only include behavior that is inside its 포함 section.
-2. Research the "먼저 조사할 것" items first. Use official sources; record URL and check date.
+2. Research the "먼저 조사할 것" items first. Use official sources; record URL and check date. Check `docs/reference-index.md` first: if a listed document already records the answer (with its source and check date), link it instead of researching again.
 3. Ask the user (AskUserQuestion, up to 4 questions at a time) about rules you would otherwise guess: input rules, sorting, what to show when data is missing.
 4. Write the spec. Put newly discovered out-of-scope ideas into `docs/backlog.md`, one line each.
 5. Finish with the verdict section and tell the user the verdict.

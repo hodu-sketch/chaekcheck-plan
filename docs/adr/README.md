@@ -39,3 +39,5 @@
 | [ADR-0033](0033-web-url-multiple-conditions.md) | 웹 주소에 여러 검색 조건을 담음 (ADR-0025의 웹 주소 규칙 변경) | Accepted | 2026-09-30 | 04 |
 | [ADR-0034](0034-store-ebook-catalog.md) | 전자책 목록(사실 정보)을 서비스 DB에 저장함 | Accepted | 2026-09-30 | 04 |
 | [ADR-0035](0035-grouping-step4-and-code-spaces.md) | 같은 책 묶기 ④(정리한 전체 제목·저자·출판사)와 책 번호 체계 공유 범위 | Accepted | 2026-09-30 | 04 (2026-10-01 늦게 기록) |
+| [ADR-0036](0036-auth-and-member-modules.md) | 계정(`auth`)과 회원 자료(`member`)를 다른 모듈로 둠 | Accepted | 2026-10-01 | 05 |
+| [ADR-0037](0037-search-unaware-of-member-library-ids.md) | 검색 모듈은 회원을 모르고, 웹이 "내 도서관"을 파라미터로 넘김 | Accepted | 2026-10-01 | 05 (구현은 06) |

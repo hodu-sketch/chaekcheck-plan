@@ -20,7 +20,7 @@ Do not plan or design the whole product up front. One cycle takes one small feat
 5. `/adr <title>` — record each decision as it is made
 6. `/cycle-close` — review (`design-reviewer`), update `docs/current/`, write the handoff (`planner`)
 
-Current cycle: none (last: docs/cycles/04-and-search, handed off)
+Current cycle: docs/cycles/05-login-account
 
 ## Documents
 

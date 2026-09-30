@@ -18,6 +18,8 @@ Delegate to the `design-reviewer` subagent with the cycle folder. Show the findi
 
 Apply `design-delta.md` to `docs/current/module-map.md`, `data-model.md` and `api.md`. Merge its `구조 그림` too: the module diagram and domain model into `module-map.md`, the sequence diagrams into `docs/current/flows.md` (create it if missing), so `docs/current/` always shows the whole current structure. These files describe the whole current design; keep them as current-state descriptions, not change logs. Mark items as "설계됨(미구현)" until the next `/cycle-start` confirms them against the code.
 
+If this cycle added, moved or replaced a reference document (research, procedure, rule source), update `docs/reference-index.md` in the same step so the index stays the entry point.
+
 ## 4. Handoff
 
 Delegate to the `planner` subagent with the cycle folder. Save its output as `docs/cycles/NN-<slug>/handoff.md` and review it with the user: with the `plan-canvas` skill when `ecc-plan-canvas` is installed (an Approve verdict confirms it), otherwise in the conversation. After approval:

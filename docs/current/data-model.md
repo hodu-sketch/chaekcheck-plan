@@ -2,7 +2,7 @@
 
 현재 설계 전체를 적은 문서입니다.
 
-마지막 반영: 사이클 04 cycle-close (2026-09-30). 2026-10-01 부분 갱신: 스키마 `catalog`는 dev에 구현되어 커밋됨(`c6028c9`, 2026-09-30)이나 실제 데이터 적재·AC 확인은 미룸(backlog "미뤄 둔 사이클 04 마무리 작업"). 개발 중 바뀐 값(`content_type`, `holding.content_type`, `collected_at` 대체, 묶기 ④)만 아래에 반영했고, Liquibase 파일과의 전체 대조는 다음 `/cycle-start` 회고에서 합니다. 그 밖은 사이클 03 회고 (2026-09-30) 기준: 모든 테이블을 dev Liquibase 파일과 대조했습니다(구현됨). 사이클 03은 테이블 변경이 없고, seed `003`~`006` csv의 `visit_required`·`join_method` 값만 고쳤습니다(C3-U-1, 배포 전 규칙).
+마지막 반영: 사이클 04 회고 (2026-10-01). 모든 테이블을 dev Liquibase 파일과 대조했습니다(구현됨). `catalog` 스키마는 데이터 미적재(backlog "미뤄 둔 사이클 04 마무리 작업"). Liquibase에만 있는 세부: `book.isbn13` CHECK `^97[89][0-9]{10}$`, `holding.detail_url` CHECK `^https?://`, `catalog_import` 건수 CHECK `>= 0`, 인덱스 이름 `book_title_norm_bigm` 등(`catalog/001-catalog-schema.yaml`). 그 밖은 사이클 03 회고 (2026-09-30) 기준: 모든 테이블을 dev Liquibase 파일과 대조했습니다(구현됨). 사이클 03은 테이블 변경이 없고, seed `003`~`006` csv의 `visit_required`·`join_method` 값만 고쳤습니다(C3-U-1, 배포 전 규칙).
 
 - Liquibase 파일: `region/001-region-schema.yaml`, `region/002-region-seed.yaml`(+CSV), `region/900-region-test-abolished.yaml`(context `test-data`), `library/001-library-schema.yaml`, `library/002-library-seed.yaml`, `library/003-library-seed-cycle02.yaml`, `004-library-seed-kyobo.yaml`, `005-library-seed-yes24.yaml`, `006-library-seed-moved.yaml`(각각 CSV `loadData`)
 - CHECK, 부분 인덱스, `UNIQUE NULLS NOT DISTINCT`는 Liquibase OSS YAML이 지원하지 않아 changeset 안의 `sql`로 만듦
@@ -94,7 +94,7 @@ erDiagram
 - UNIQUE NULLS NOT DISTINCT `(library_id, basis, scope_type, scope_region_id, scope_institution_id)`, INDEX `(library_id)`
 - **규칙이 없는 도서관 = 자격 미확인** (ADR-0013). 규칙이 SCHOOL/AFFILIATION뿐인 도서관은 "지역 규칙 있음"과 같이 봄 (지역 없음 → `QUALIFIED`)
 
-## 스키마 `catalog` (소유: `catalog` 모듈) — 설계됨(미구현, 사이클 04)
+## 스키마 `catalog` (소유: `catalog` 모듈) — 구현됨(사이클 04), 데이터 미적재
 
 수집한 전자책 목록(사실 정보)입니다. 데이터는 Liquibase가 아니라 `catalog` importer가 한 번 넣습니다(ADR-0031). 주기 갱신은 별도 사이클(`docs/research/ebook-catalog/catalog-refresh.md`).
 

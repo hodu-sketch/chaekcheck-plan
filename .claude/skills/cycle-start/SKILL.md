@@ -15,6 +15,7 @@ Start a cycle for the slice: $ARGUMENTS
   - Ask the user what changed during development and why.
   - Write `retro.md` (Korean): 계획대로 된 것 / 달라진 것과 이유 (the user's words, else [이유 미확인]) / 새로 알게 된 제약 / 다음 사이클 후보.
   - Update `docs/current/` so it matches the real code. Record structural differences as ADRs with `/adr`.
+  - If development changed how libraries or books are collected, classified, normalized or grouped, update the source documents listed in `docs/reference-index.md` and the index itself (new documents, moved sources, rework checklist in its section 6).
 - If a previous cycle has no `handoff.md`, it is still open: ask whether to continue it instead.
 
 ## 2. Pick the slice
@@ -30,6 +31,8 @@ Start a cycle for the slice: $ARGUMENTS
 - A slice is one user-visible capability that can be built, tested and shown in one development pass. If it is larger, propose how to split it and let the user choose.
 
 ## 3. Write the scope
+
+Before writing, read `docs/reference-index.md` and open the documents it lists for this slice's topic (library collection or classification, book collection, book normalization or grouping, members and alerts). Link the ones the slice relies on from `scope.md` instead of repeating their content, and copy the matching "재작업 시 확인할 것" items into "먼저 조사할 것".
 
 Create `docs/cycles/NN-<slug>/scope.md` (NN = next two-digit number, slug = short English kebab-case). Ask the user with AskUserQuestion for anything you would otherwise assume.
 

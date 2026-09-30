@@ -44,8 +44,8 @@
 | 문서 | 무엇 | 상태 |
 |---|---|---|
 | plan `docs/research/ebook-catalog/crawl-method.md` | 원칙(호스트 1건·1초, UA), 종류(전체/신간), 절차, 날짜 3층, 저장 항목 [확정], 실행 도구(8절) | 수집 세션이 관리 |
-| plan `docs/research/ebook-catalog/crawl-runbook.md` | 운영: `resume.cmd`, `status`, 이어 받기 규칙, 순위 1~4 규모, 받지 않는 도서관(5-1절 `crawl_skip`), `verify_detail_urls.py` | 수집 세션이 관리, 2026-10-01 갱신 중 |
-| plan `docs/research/ebook-catalog/platforms.md` | 플랫폼별 URL·선택자·한 쪽 크기·오디오북 구분, 신간 정렬 값(10절) | 수집 세션이 관리 |
+| plan `docs/research/ebook-catalog/crawl-runbook.md` | **입구 문서 (먼저 읽음)**: 읽는 순서(0절), 지금 상태(1절), 이어 받기·상태 보기(3절), 수집기 규칙 요약(4절), 명령 모음(5절), 받지 않는 도서관(5-1절 `crawl_skip`), 문제별 대처(6절), 새 사이트·플랫폼 붙이는 순서(7절), 상세 URL·오디오북 표시(9·10절) | 수집 세션이 관리, 2026-10-01 |
+| plan `docs/research/ebook-catalog/platforms.md` | **플랫폼별 크롤링 방법**: 검색·전체 목록 URL, 한 쪽 크기, 줄 선택자, 상세 URL, 오디오북 구분, 사이트별 예외(교보·교보 구독형·YES24·통합 포털·강남구·북큐브·알라딘) | 수집 세션이 관리, 2026-10-01 |
 | plan `docs/research/ebook-catalog/research.md` | 수집 조사(범위, 법적 검토 3절, 항목 4·5절) | 기록 |
 | `chaekcheck-data/README.md`, `scripts/crawl_catalog.py`, `ebook-catalog.sqlite` | 수집기 코드와 수집 DB(두 저장소 밖) | [확인 필요: 이 색인에서 내용 확인 안 함] |
 | dev `catalog/internal/importer/CollectedCatalog.java` | 가져올 때 제외 규칙(오디오북·동영상북, 서비스에 없는 도서관, 빠진 책, http 아닌 주소, 호스트 불일치, 제목 없음) | 구현 |
@@ -69,7 +69,8 @@
 |---|---|
 | plan `docs/research/member-and-alerts/outline.md` | 회원 → 알림 밑그림 [안], 내 도서관 정의, 필터 제안, 사이클에서 정할 것 |
 | plan `docs/research/member-and-alerts/signup-security.md` | 소셜 로그인·세션·개인정보법 공식 문서 확인 결과(2026-10-01), 지켜야 할 것 15개 |
-| plan `docs/research/member-and-alerts/integration-plan.md` | 회원·알림을 프로젝트에 넣는 구조 제안 [안]: 모듈, 검색 연결, 세션, 표, API, 사이클 자르기 (2026-10-01) |
+| plan `docs/research/member-and-alerts/integration-plan.md` | 회원·알림을 프로젝트에 넣는 구조: 모듈(`auth`+`member`), 검색 연결(웹이 `libraryIds`), 세션, 표, API, 사이클 자르기 05·06·07 (사용자 결정 2026-10-01) |
+| plan `docs/cycles/05-login-account/scope.md` | 현재 사이클(로그인·계정) 범위·완료 기준·먼저 조사할 것 |
 
 ## 6. 재작업 시 확인할 것 (한 곳에 모음)
 
@@ -93,7 +94,7 @@
 
 ### 책 수집 (수집 다시 돌릴 때)
 
-- 받지 않는 도서관 4곳(국회 44, 전북교육청 135, 군포 261, 김천 269)과 계속 실패하는 곳: `crawl-runbook.md` 5-1, `catalog-refresh.md` 변경 기록
+- 받지 않는 도서관 4곳(국회 44, 전북교육청 135, 군포 261, 김천 269)과 문제별 대처: `crawl-runbook.md` 5-1·6절, `catalog-refresh.md` 변경 기록
 - 전체 성공 기록 없는 도서관 12곳(어느 곳인지 목록 없음): `catalog-refresh.md` 4절
 - 큰 교보 구독형 16곳(2~3일)·북큐브 134곳 수집 상태, 순위 4 명령 없음: `crawl-runbook.md` 2절
 - YES24·포털 77곳 재수집 완료 여부와 `verify_detail_urls.py` 재실행: `crawl-runbook.md`
