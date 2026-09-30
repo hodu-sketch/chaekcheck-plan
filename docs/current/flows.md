@@ -233,7 +233,9 @@ sequenceDiagram
   end
 ```
 
-## 흐름 8: 수집 목록 한 번 가져오기 — 설계됨(미구현, 사이클 04)
+## 흐름 8: 수집 목록 한 번 가져오기 — 구현됨(dev `c6028c9`), 실제 적재는 미룸 (2026-10-01)
+
+개발 중 더한 것: 묶기 4(정리한 전체 제목 + 대표 저자 + 정리한 출판사, 사용자 결정 2026-09-30)와 dry run 옵션(`--chaekcheck.catalog.import.dry-run=true`: 읽고 묶기만, DB에 쓰지 않음). 규칙은 `docs/research/ebook-catalog/same-book-isbn.md` 5절.
 
 ```mermaid
 sequenceDiagram
@@ -249,6 +251,7 @@ sequenceDiagram
   I->>I: 묶기 1·2: 같은 플랫폼 코드, 교보식 코드 → 종이책 ISBN
   I->>T: 줄 단위로 읽어 ISBN 사전 (필요한 ISBN만)
   I->>I: 묶기 3: 국가서지 ISBN (제목·저자·출판사 정리값이 하나로 맞을 때만)
+  I->>I: 묶기 4: 정리한 전체 제목 + 대표 저자 + 정리한 출판사 (dry run이면 여기서 요약만 내고 끝)
   I->>P: COPY book · book_contributor · holding · catalog_library_snapshot, 끝나면 인덱스
   I->>P: catalog_import 기록
   I-->>O: 건수 요약, 종료

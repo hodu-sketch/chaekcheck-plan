@@ -371,6 +371,7 @@ data: {"batchNo":1,"holdingId":5501,"bookId":1024,"libraryId":81,
 - [ADR-0032](../../adr/0032-postgres-pg-bigm-contributors.md) 책 목록 검색은 PostgreSQL + pg_bigm, 저자는 사람별 표 — 측정(research 3.2.1) + "사람별 표" 선택
 - [ADR-0033](../../adr/0033-web-url-multiple-conditions.md) 웹 주소는 여러 검색 조건을 담음 (ADR-0025의 웹 주소 규칙 변경) — AND 검색 결정에 따름
 - [ADR-0034](../../adr/0034-store-ebook-catalog.md) 전자책 목록(사실 정보)을 서비스 DB에 저장함 (사이클 01의 "쌓아 두지 않음" 변경) — 사용자 요청 "크롤링한 데이터베이스를 미리 가지고 있는게 어떨까 해"
+- [ADR-0035](../../adr/0035-grouping-step4-and-code-spaces.md) 같은 책 묶기 ④(정리한 전체 제목·저자·출판사)와 책 번호 체계 공유 범위 — 개발 중 결정(2026-09-30), 2026-10-01 늦게 기록. 이 문서의 "묶기 ④ 이번에 하지 않음"[안]은 이 ADR로 바뀜. 구현 규칙은 `docs/research/ebook-catalog/same-book-isbn.md` 5절
 
 ## 확인 필요
 

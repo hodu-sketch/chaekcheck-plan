@@ -2,7 +2,7 @@
 
 현재 설계 전체를 적은 문서입니다. 변경 기록이 아닙니다.
 
-마지막 반영: 사이클 04 cycle-close (2026-09-30). 사이클 03까지는 dev 코드와 `Documenter` 출력으로 대조했습니다(구현됨). **사이클 04 변경(새 모듈 `catalog`, `library.planSearch(PlanOptions)`, `availability`의 상세 페이지 조회·소장 스트림)은 설계됨(미구현)** 입니다 (ADR-0028~0034, `docs/cycles/04-and-search/design-delta.md`).
+마지막 반영: 사이클 04 cycle-close (2026-09-30). 사이클 03까지는 dev 코드와 `Documenter` 출력으로 대조했습니다(구현됨). 사이클 04 변경(새 모듈 `catalog`, `library.planSearch(PlanOptions)`, `availability`의 상세 페이지 조회·소장 스트림)은 **dev에 구현되어 커밋됨(`c6028c9`, 2026-09-30)** 이나 실제 데이터 적재·AC 확인·`Documenter` 대조는 아직입니다(2026-10-01, backlog "미뤄 둔 사이클 04 마무리 작업"). 아래 표의 "설계됨(미구현)" 표시는 다음 `/cycle-start` 회고에서 대조 뒤 고칩니다 (ADR-0028~0034, `docs/cycles/04-and-search/design-delta.md`).
 
 | 모듈 | 책임 | 공개 API | 발행/구독 이벤트 | 소유 테이블 | 상태 |
 |---|---|---|---|---|---|

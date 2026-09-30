@@ -2,6 +2,7 @@
 
 - 조사일: 2026-09-28
 - 방법: `collection-method.md` 4절. 운영 기관으로 묶고, 기관·도서관 이름으로 회원가입 안내를 찾음
+- **2026-10-01 안내**: 최신 판정은 dev `docs/library-research/join-classification-2026-09-29.tsv`(+`-notes.md`), `-new42-` 파일, `scripts/library/join_overrides.tsv`(사람이 정한 값이 마지막에 이김), seed csv입니다. 이 문서는 검색 요약 단계의 기록입니다. notes가 이 문서 값 4곳(연천·정읍·하남·광진·의왕)을 원문으로 정정했습니다. 판정 규칙은 ADR-0013·ADR-0027, 문서 색인은 `docs/reference-index.md` 2절.
 - **태그:** 아래 값은 모두 [확인 필요]입니다. 대부분 검색 결과 요약으로 확인했고 원문 페이지를 직접 읽지 않았습니다. seed에 넣기 전에 출처 페이지를 열어 한 번 더 확인합니다.
 - 전자도서관 자격이 대출회원(정회원) 자격과 같은 곳이 대부분입니다. 다른 경우는 비고에 적었습니다.
 - 진행: 전자도서관 338곳 중 334곳 조사 (공공도서관이 아닌 4곳 제외). 전자도서관별 결과는 `eligibility-by-library.md`. 아래 표는 첫 조사 때의 요약이고, 최신 값은 `eligibility-by-library.md`가 기준입니다

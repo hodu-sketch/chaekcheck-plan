@@ -46,6 +46,7 @@
 
 ## 참고 문서 (chaekcheck-plan, 읽기 전용)
 
+- `../chaekcheck-plan/docs/reference-index.md`: 도서관 수집·분류, 책 수집·정리·묶기를 다시 할 때 볼 문서 색인과 재작업 체크리스트 (2026-10-01 추가). 개발 중 바뀐 묶기 ④·번호 체계는 ADR-0035와 `docs/research/ebook-catalog/same-book-isbn.md` 5절
 - `../chaekcheck-plan/docs/cycles/04-and-search/design-delta.md`: **기준 문서**
   - 모듈 표, 데이터 표·인덱스, API 표·이벤트 예시
   - 외부 연동 표(화면 종류별 상세 페이지), 웹 변경 표, 테스트 목록, 확인 필요

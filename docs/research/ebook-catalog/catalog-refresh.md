@@ -16,10 +16,10 @@
 
 ## 2. 순서 [안]
 
-1. 도서관 목록 확인 (켜진 도서관, 바뀐 주소)
+1. 도서관 목록 확인 (켜진 도서관, 바뀐 주소). **책 번호 체계 점검을 같이** 함 [확정] (사용자, 2026-09-30): dev `docs/library-maintenance.md` 4-11, `scripts/library/check_code_spaces.py`. 비율이 크게 바뀌거나 새 화면 종류가 생기면 사용자에게 알림(기준 변경 폭은 미정)
 2. 소장 수집: 전체(주 1회) 또는 신간(매일). 도서관 한 곳 결과를 임시 테이블에 넣고 바뀐 것만 반영 (`search-and-normalization.md` 3.3절)
 3. 새로 생기거나 바뀐 책만 정리 규칙 적용 (`search-and-normalization.md` 4절)
-4. 같은 책 묶기: 같은 플랫폼 코드 → 교보식 코드 ISBN → 국가서지 파일 → ISBN 서지정보 API → 정리한 글자 (`same-book-isbn.md` 5절)
+4. 같은 책 묶기: ① 같은 플랫폼 코드(번호 체계 안에서) → ② 교보식 코드 ISBN → ③ 국가서지 파일 → (ISBN 서지정보 API, 인증키 뒤) → ④ 정리한 전체 제목 + 대표 저자 + 정리한 출판사 (`same-book-isbn.md` 5절, 사이클 04 구현)
 5. 대표 서지 정하기: ISBN이 있으면 공공 서지, 없으면 가장 많이 나온 원문
 6. 실행 기록과 이상 알림 (사이트 총 건수와 다름, 반 이상 줄어듦, 화면 모양 바뀜)
 
@@ -43,6 +43,10 @@
 | 서비스하지 않는 책 | 검색 결과에서 뺌. 알아보는 방법 미정 | [확인 필요] |
 | 국가서지에 없는 계산 ISBN 23% | 신간·미납본 가능성 | [확인 필요] |
 | ISBN 서지정보 API 하루 한도 | 미공개 | [확인 필요: 기관 문의] |
+| 전체 성공 수집 기록(`last_full_success_at`) 없는 도서관 12곳 | 가져오기가 소장의 가장 늦은 `last_seen_at`으로 대신함. 어느 곳인지 목록 없음 | [확인 필요] (dev plan-feedback 731·753행) |
+| 묶기 ④로 합친 책 중 출판일 2년 넘게 차이 11,019권 | 표본 40개만 봄. 갱신 때 판 차이 여부 조사 | [확인 필요: 표본] (`same-book-isbn.md` 5.1) |
+| 판 여러 개 인기책은 국가서지 ③으로 ISBN 안 붙음 | ②로만 얻음. ISBN 서지정보 API로 보완 검토 | [확인 필요] |
+| 수집 원천 `content_type` 새 값 | 지금은 6값. 새 값이 생기면 가져오기 CHECK(`EBOOK`/`KIDS_BOOK`/`PAPER`/`UNKNOWN`)에 걸림 | 갱신 때 확인 |
 
 ## 5. 정해지지 않은 것 (갱신 사이클에서 정함)
 
@@ -67,7 +71,9 @@
 - 검색 저장소·정리 규칙 `search-and-normalization.md`
 - 같은 책 묶기·ISBN `same-book-isbn.md`
 - 수집 DB `chaekcheck-data/ebook-catalog.sqlite`, 안내 `chaekcheck-data/README.md`
-- backlog "도서정보·소장 주기 갱신"
+- backlog "도서정보·소장 주기 갱신", "2026-10-01 정리: 사이클 05 이후로 미룬 것"
+- 결정: ADR-0034(목록 저장), ADR-0031(정리 코드 한 벌), ADR-0035(묶기 ④·번호 체계). 현재 스키마 `docs/current/data-model.md` `catalog` 절, 가져오기 흐름 `docs/current/flows.md` 흐름 8
+- 도서관 목록 점검 절차(2절 1번): dev `docs/library-maintenance.md` 4-9·4-11, dev `docs/library-site-issues.md`. 재작업 체크리스트: `docs/reference-index.md` 6절
 
 ## 변경 기록
 
@@ -83,3 +89,4 @@
   - HTML 읽기(`html.parser`)가 느려 여러 스레드가 막혔음 → lxml 사용
   - User-Agent에 개인 연락처를 넣지 않음. 교보 구독형은 데스크톱 브라우저 표시가 없으면 모바일 화면(총 건수 없음)을 줌
 - 2026-09-30: 5.1절 사용자 방향(원문 저장, 표 swap) 추가 (chaekcheck-plan 세션)
+- 2026-10-01: 사이클 04 구현 결과 반영 — 2절 1번 책 번호 체계 점검, 4번 묶기 ④, 4절 할 일 4줄 (chaekcheck-plan 세션). 문서 목록은 `docs/reference-index.md`
