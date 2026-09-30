@@ -3,6 +3,7 @@
 - 작성: 2026-09-30 (chaekcheck-plan 세션)
 - 성격: 사이클 밖 사전 준비 자료입니다. 테이블·모듈·API는 이 기능을 다루는 사이클(backlog "같은 책 묶기")의 `design-delta.md`와 ADR에서 정합니다.
 - 관련: 항목 정리 규칙 `search-and-normalization.md` 4절, 수집 조사 `research.md`
+- 주기 갱신(batch) 참고 문서: `catalog-refresh.md`
 - 요청 (사용자, 2026-09-30): "'한 책 묶음'이 필요하긴 할거니까 만약에 공공데이터를 활용해서 isbn이랑 같이 매핑할 수 있으면 좋을것같아"
 
 ## 1. 결정
