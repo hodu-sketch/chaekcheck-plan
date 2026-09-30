@@ -2,7 +2,7 @@
 
 현재 설계의 주요 흐름을 그림으로 모은 문서입니다. 변경 기록이 아닙니다.
 
-마지막 반영: 사이클 03 회고 (2026-09-30). 모든 흐름이 **구현됨**입니다(dev 코드·테스트·plan-feedback 실측으로 대조).
+마지막 반영: 사이클 04 cycle-close (2026-09-30). 흐름 1~5는 **구현됨**, 흐름 6~8은 **설계됨(미구현, 사이클 04)** 입니다. 사이클 04부터 흐름 1~2는 "도서관에서 직접 찾기"의 흐름입니다.
 
 - 근거: `docs/cycles/02-library-expansion/design-delta.md` "구조 그림", `retro.md`, ADR-0011, ADR-0014, ADR-0015, ADR-0019, ADR-0020
 - 모듈 구성도와 도메인 모델은 `module-map.md`에 있습니다.
@@ -167,3 +167,89 @@ sequenceDiagram
 
 - 검색 전(첫 화면)에서 드롭다운을 바꾸면 안내 문구만 바뀌고 검색하지 않습니다. 드롭다운 기본값은 항상 제목입니다.
 - 포털의 저자·출판사 검색은 1쪽부터 `table.do` + 거르기로 부릅니다(ADR-0026). `table.do`에서 목록 판정 칸이 비는 포털은 흐름 3(상세 판정)으로 이어집니다. 실측(dev, 2026-09-29): 부산·대구·경기교육청은 상세 0~1건, 수량 칸이 없는 전북은 쪽마다 10건(약 20초, 30초 안).
+
+## 흐름 6: 책 목록 검색과 바로 보기 — 설계됨(미구현, 사이클 04)
+
+```mermaid
+sequenceDiagram
+  participant W as web
+  participant C as catalog
+  participant L as library
+  participant A as availability
+  participant S as 도서관 사이트
+  W->>C: GET /books?title=행동&author=새폴스키&sort=default&지역·scope·visit
+  alt 칸 없음·형식 오류
+    C-->>W: 400 validation_error / invalid_query
+  end
+  C->>L: planSearch(지역, PlanOptions(scope, visit))
+  L-->>C: SearchTarget 목록 (가입 판정·방문 여부)
+  C->>C: pg_bigm 칸별 단어 AND, 계획 도서관 소장만, 가입 단계 → 완전 일치 → 보유 수 → 출판일
+  alt 0건
+    C-->>W: items=[] → "도서관에서 직접 찾기" 버튼
+  else 있음
+    C-->>W: items(책, 보유 도서관 수, 가입 단계), hasMore
+    W->>A: SSE /book-availabilities/stream?bookIds=…&지역·filter·scope·visit
+    A->>C: holdingsOf(bookIds)
+    A->>L: planSearch(…)
+    A-->>W: event targets (libraries[], holdings[] 계획 순서)
+    loop 묶음 (20줄, 8초, 같은 호스트 1건·1초, 바쁜 호스트 건너뛰기)
+      alt 교보 구독형
+        A-->>W: holding-result (SUBSCRIPTION, 요청 없음)
+      else 그 밖
+        A->>S: GET 상세 페이지 (캐시 3분)
+        alt 성공
+          A-->>W: holding-result (보유·대출·예약·availability)
+        else 404·시간 초과·읽기 실패
+          A-->>W: holding-failed (upstream_error / upstream_timeout)
+        end
+      end
+    end
+    A-->>W: batch-done → done
+    W->>A: 목록 맨 아래 "더 보기": /book-availabilities/batches/stream?candidates=holdingId,…
+  end
+```
+
+- 도서관 하나의 조회 상태 그림(맨 위)은 사이클 04에서 도서관 대신 소장(`holdingId`) 단위로 같게 적용합니다. 상세 페이지 조회라 "다음 쪽" 상태는 없습니다.
+
+## 흐름 7: 책 먼저 고르기 → 책 화면 — 설계됨(미구현, 사이클 04)
+
+```mermaid
+sequenceDiagram
+  participant W as web
+  participant C as catalog
+  participant A as availability
+  participant S as 도서관 사이트
+  W->>C: GET /books?…(view는 웹 주소에만)
+  C-->>W: 책 목록 (도서관 요청 없음)
+  W->>W: 책 고름 → /books/{bookId}
+  W->>C: GET /api/v1/books/{bookId}
+  alt 없는 책
+    C-->>W: 404 book_not_found → "책을 찾을 수 없어요"
+  else 있음
+    C-->>W: 대표 서지, 보유 도서관 수, 도서관별 기준일
+    W->>A: SSE /book-availabilities/stream?bookIds={bookId}&…
+    A->>S: 가진 도서관 상세 페이지 (흐름 1과 같은 규칙)
+    A-->>W: targets → holding-result / holding-failed … → done
+  end
+```
+
+## 흐름 8: 수집 목록 한 번 가져오기 — 설계됨(미구현, 사이클 04)
+
+```mermaid
+sequenceDiagram
+  participant O as 운영자
+  participant I as catalog importer (프로필 catalog-import)
+  participant Q as 수집 SQLite (읽기 전용)
+  participant T as 국가서지 일반도서 TTL
+  participant P as PostgreSQL catalog 스키마
+  O->>I: 실행 (SQLite 경로, TTL 경로)
+  I->>Q: 도서관 목록 대조 (서비스 library와 id·base_url 같은 곳만)
+  I->>Q: 소장 읽기 (removed_at IS NULL, 전자책만, detail_url 있음)
+  I->>I: 정리 규칙 (본제목, 저자 이름·역할, 출판사, 출판일)
+  I->>I: 묶기 1·2: 같은 플랫폼 코드, 교보식 코드 → 종이책 ISBN
+  I->>T: 줄 단위로 읽어 ISBN 사전 (필요한 ISBN만)
+  I->>I: 묶기 3: 국가서지 ISBN (제목·저자·출판사 정리값이 하나로 맞을 때만)
+  I->>P: COPY book · book_contributor · holding · catalog_library_snapshot, 끝나면 인덱스
+  I->>P: catalog_import 기록
+  I-->>O: 건수 요약, 종료
+```

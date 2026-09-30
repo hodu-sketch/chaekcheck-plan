@@ -2,7 +2,7 @@
 
 현재 설계 전체를 적은 문서입니다. 요청·응답 예시는 사이클 01 `docs/cycles/01-ebook-availability-search/design-delta.md`와 사이클 02 `docs/cycles/02-library-expansion/design-delta.md`에 있습니다.
 
-마지막 반영: 사이클 03 회고 (2026-09-30). 모두 dev 컨트롤러 코드와 대조했습니다(구현됨). 사이클 03 요청·응답 예시는 `docs/cycles/03-search-conditions/design-delta.md`, 개발 중 바뀐 것은 같은 폴더 `retro.md`.
+마지막 반영: 사이클 04 cycle-close (2026-09-30). 책 검색·소장 스트림 API는 **설계됨(미구현)** 입니다(ADR-0030, 요청·응답 예시는 `docs/cycles/04-and-search/design-delta.md`). 그 밖은 사이클 03 회고 (2026-09-30) 기준: 모두 dev 컨트롤러 코드와 대조했습니다(구현됨). 사이클 03 요청·응답 예시는 `docs/cycles/03-search-conditions/design-delta.md`, 개발 중 바뀐 것은 같은 폴더 `retro.md`.
 
 ## 공통 규칙 (ADR-0008)
 
@@ -19,9 +19,15 @@
 | GET | `/api/v1/ebook-searches/stream?{title\|author\|publisher}=&residenceRegionIds=&workRegionIds=&filter=&scope=&visit=` | `availability` | 조회 계획 + 첫 묶음 (SSE, ADR-0014). 이벤트: `targets`(전체 계획, 순서대로) → `library-requested` / `library-result` / `library-failed` … → `batch-done` → `row-verdict` … → `done`. `filter=all\|available`(없으면 all). `scope=all\|joinable`(없으면 all): `joinable`이면 가입이 확정된 도서관(`OPEN`/`ELIGIBLE`)만 계획에 남김 (C2-U-10). 추가 문구(`extraConditionText`, 예: 책이음)는 참고 글일 뿐 판정·범위에 영향 없음 (C3-U-2). `visit=any\|none`(없으면 any): `none`이면 방문 가입 도서관(`visitRequired`)을 계획에서 빼서 요청하지 않음 (C3-U-1, ADR-0027). `any`일 때 계획 순서는 ADR-0027(가입 가능한 방문 가입 도서관은 방문 없는 가입 가능 도서관 모두 뒤). 지역 ID는 쉼표 구분, 필드당 최대 20개 |
 | GET | `/api/v1/ebook-searches/batches/stream?{title\|author\|publisher}=&filter=&batchNo=&candidates=libraryId:page,…` | `availability` | 다음 묶음 (SSE). 브라우저가 계획에서 고른 후보(최대 K=50 [안])만 조회. 이벤트는 위에서 `targets`를 뺀 것. `batchNo`는 2 이상, 쪽 번호 최대 5자리. `scope`·`visit`는 받지 않음(후보가 이미 계획에서 나옴) |
 | GET | `/api/v1/availability/libraries/{libraryId}/ebooks?{title\|author\|publisher}=&page=` | `availability` | 도서관 하나의 한 페이지 (도서관별 더 보기). 판정이 나중에 정해지는 줄은 판정을 읽은 뒤(최대 30초) 응답. `page`가 없으면 1 |
+| GET | `/api/v1/books?title=&author=&publisher=&exact=&roles=&sort=&residenceRegionIds=&workRegionIds=&scope=&visit=&page=&pageSize=` | `catalog` | 수집 목록 책 검색 (도서관 요청 없음). 채운 칸끼리 AND, 칸 안은 띄어쓰기로 나눈 단어 AND(정리값 비교), `exact`(title,author,publisher), `roles`(translator,illustrator,editor), `sort`(default\|newest\|oldest). `pageSize` 기본·최대 20 [안]. 응답: 페이지 객체 + `collectedFrom`·`collectedTo`. 계획 도서관이 없는 책은 뺌. 설계됨(미구현) |
+| GET | `/api/v1/books/{bookId}` | `catalog` | 책 하나(S3): 대표 서지, `holdingLibraryCount`, `libraries[]{libraryId, collectedAt}`. 404 `book_not_found`. 설계됨(미구현) |
+| GET | `/api/v1/book-availabilities/stream?bookIds=&residenceRegionIds=&workRegionIds=&filter=&scope=&visit=` | `availability` | 책을 가진 계획 도서관의 상세 페이지를 읽는 소장 단위 스트림. `bookIds` 최대 20 [안]. 이벤트 `targets`(libraries[], holdings[]) → `holding-requested` / `holding-result` / `holding-failed` → `batch-done` → `done`. 교보 구독형은 요청 없이 `SUBSCRIPTION`. 설계됨(미구현) |
+| GET | `/api/v1/book-availabilities/batches/stream?filter=&batchNo=&candidates=holdingId,…` | `availability` | 다음 묶음 (K=50 [안]). 설계됨(미구현) |
 | POST | 조회 서비스 `/v1/fetches` (내부) | 조회 서비스 | URL 한 개를 GET으로 가져와 `{outcome, status, contentType, location, body(base64), startedAt, endedAt}`. `outcome`: `RESPONDED \| TIMEOUT \| CONNECT_FAILED \| ERROR`. 조회 서버 자신이 정상이면 항상 200. 401 토큰 없음·틀림(헤더 `X-Fetch-Token` [안, 임시]), 400 잘못된 URL·사설 주소, 503 과부하·종료 중 (ADR-0015) |
 
-## 검색 조건 파라미터 (ADR-0025)
+## 검색 조건 파라미터 (ADR-0025, 도서관에서 직접 찾기)
+
+사이클 04부터 이 세 API는 "도서관에서 직접 찾기"(사이트 검색)에 씁니다. 웹 주소는 여러 조건을 담고, 직접 찾기일 때만 첫 칸 하나를 이 API로 보냅니다 (ADR-0033, 설계됨).
 
 세 API는 검색어를 `q` 대신 `title` / `author` / `publisher` 중 **정확히 하나**로 받습니다. `q`는 없고, 웹도 옛 `?q=` 주소를 처리하지 않습니다(배포 전).
 
@@ -97,6 +103,7 @@
 | `invalid_query` | 400 | 스트림(시작 전), 더 보기 — 정규화 후 2글자 미만 또는 50자 초과 |
 | `invalid_page` | 400 | 더 보기 |
 | `invalid_region` | 422 | 스트림(시작 전) — `errors[].code`: `abolished`, `not_found`, `not_sigungu` |
+| `book_not_found` | 404 | 책 하나 조회 — 없는 책 (사이클 04 설계됨) |
 | `library_not_found` | 404 | 더 보기 — 없거나 꺼진 도서관. 다음 묶음에서는 그 도서관만 `library-failed` |
 | `upstream_error` | 502 | 더 보기, 스트림의 `library-failed` — 도서관 오류 응답, 3xx, 파싱 실패, 모든 조회 서버가 쉼 |
 | `upstream_timeout` | 504 | 더 보기, 스트림의 `library-failed` — 8초 초과, 조회 서버 읽기 시간 초과 |
