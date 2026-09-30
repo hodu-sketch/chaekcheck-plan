@@ -233,6 +233,7 @@ erDiagram
 - 같은 모듈 안 FK는 모두 `ON DELETE CASCADE` [안] (가져오기를 다시 할 때 책·가져오기 단위로 지움)
 - `holding.library_id` → `catalog_library_snapshot` FK는 두지 않음 [안]: 두 표 모두 한 번 가져오기에서 같이 채워지고, 주기 갱신 사이클에서 도서관 단위 교체 순서를 정할 때까지 삽입 순서 제약을 만들지 않기 위함 (Claude 제안)
 
+- 가져오기는 수집 SQLite를 직접 읽음. `sqlite-jdbc`는 가져오기 도구 전용 설정에만 두고 운영 실행에는 넣지 않음 [확정] (사용자: "일단 sqlite를 직접 읽도록 하고 나중에 postgresql 원문 표를 거치는 것을 고려해야겠다", 2026-09-30). PostgreSQL 원문 표를 거치는 방식은 주기 갱신 사이클에서 검토
 - Liquibase: 새 파일 `catalog/001-catalog-schema.yaml`. `CREATE EXTENSION IF NOT EXISTS pg_bigm`은 sql changeset. **데이터는 Liquibase로 넣지 않음** (importer, ADR-0031)
 - 가져오기 범위 [확정]: `removed_at IS NULL`, 전자책(오디오북·동영상북 제외), 서비스 `library`와 id·`base_url`이 같은 도서관. 꺼진 59·131번은 대조에서 빠짐
 - 묶기 [확정 범위]: ① 같은 플랫폼 코드 ② 교보식 코드 → 종이책 ISBN ③ 국가서지 ISBN (정리한 본제목·대표 저자·출판사로 하나만 맞을 때). 정리한 글자만으로 묶는 단계는 이번에 하지 않음 [안]
