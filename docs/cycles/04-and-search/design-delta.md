@@ -183,7 +183,7 @@ classDiagram
 erDiagram
   BOOK ||--o{ BOOK_CONTRIBUTOR : "book_id"
   BOOK ||--|{ HOLDING : "book_id"
-  CATALOG_LIBRARY_SNAPSHOT ||--o{ HOLDING : "library_id (같은 모듈, FK 없음)"
+  CATALOG_LIBRARY_SNAPSHOT ||--o{ HOLDING : "library_id (같은 모듈, FK 없음 [안])"
   HOLDING }o..|| LIBRARY : "library_id (ID만)"
   CATALOG_IMPORT ||--o{ CATALOG_LIBRARY_SNAPSHOT : "import_id"
 ```
@@ -210,7 +210,7 @@ erDiagram
 | `book_contributor.role` | text | NOT NULL, CHECK IN ('AUTHOR','TRANSLATOR','ILLUSTRATOR','EDITOR','OTHER','UNKNOWN') | 역할. 글그림은 AUTHOR와 ILLUSTRATOR 두 줄 | [안] 값 |
 | `book_contributor.position` | smallint | NOT NULL | 원문 순서 | |
 | `holding.id` | bigint | PK, IDENTITY | 스트림 키 `holdingId` | |
-| `holding.book_id` | bigint | NOT NULL, FK → book(id) | | |
+| `holding.book_id` | bigint | NOT NULL, FK → book(id) ON DELETE CASCADE | | |
 | `holding.library_id` | bigint | NOT NULL | `library` 모듈 ID (FK 없음) | |
 | `holding.platform` | text | NOT NULL | 수집 원천의 플랫폼 | |
 | `holding.item_key` | text | NOT NULL | 도서관 안 책 코드 | |
@@ -219,7 +219,7 @@ erDiagram
 | `holding.first_seen_at` | timestamptz | NOT NULL | 수집 원천 값 | |
 | `catalog_library_snapshot.library_id` | bigint | PK | 도서관 (ID만) | [안] 테이블 이름 |
 | `catalog_library_snapshot.collected_at` | timestamptz | NOT NULL | 그 도서관 목록을 마지막으로 성공 수집한 시각 → 화면 "○월 ○일 기준" | [확정] 도서관별 기준일 (사용자, 2026-09-30) |
-| `catalog_library_snapshot.import_id` | bigint | NOT NULL, FK → catalog_import(id) | | |
+| `catalog_library_snapshot.import_id` | bigint | NOT NULL, FK → catalog_import(id) ON DELETE CASCADE | | |
 | `catalog_import.id` | bigint | PK, IDENTITY | | |
 | `catalog_import.source` | text | NOT NULL | 예: `chaekcheck-data/ebook-catalog.sqlite` | |
 | `catalog_import.imported_at` | timestamptz | NOT NULL | | |
@@ -230,6 +230,8 @@ erDiagram
 - `book_contributor`: GIN `gin_bigm_ops` (`name_norm`) / B-tree `(name_exact COLLATE "C")` / `(book_id)`
 - `holding`: UNIQUE `(library_id, item_key)`, `(book_id, library_id)`
 - 파티션 없음 (research 3.3)
+- 같은 모듈 안 FK는 모두 `ON DELETE CASCADE` [안] (가져오기를 다시 할 때 책·가져오기 단위로 지움)
+- `holding.library_id` → `catalog_library_snapshot` FK는 두지 않음 [안]: 두 표 모두 한 번 가져오기에서 같이 채워지고, 주기 갱신 사이클에서 도서관 단위 교체 순서를 정할 때까지 삽입 순서 제약을 만들지 않기 위함 (Claude 제안)
 
 - Liquibase: 새 파일 `catalog/001-catalog-schema.yaml`. `CREATE EXTENSION IF NOT EXISTS pg_bigm`은 sql changeset. **데이터는 Liquibase로 넣지 않음** (importer, ADR-0031)
 - 가져오기 범위 [확정]: `removed_at IS NULL`, 전자책(오디오북·동영상북 제외), 서비스 `library`와 id·`base_url`이 같은 도서관. 꺼진 59·131번은 대조에서 빠짐
@@ -241,10 +243,10 @@ erDiagram
 
 | 메서드 | 경로 | 설명 | 요청 | 응답 | 에러 |
 |---|---|---|---|---|---|
-| GET | `/api/v1/books` | 수집 목록에서 책 검색 (도서관 요청 없음) | `title`, `author`, `publisher` (하나 이상, 칸마다 2~50자), `exact` (`title,author,publisher` 중), `roles` (`translator,illustrator,editor` 중), `sort` (`default` \| `newest` \| `oldest`, 없으면 default), `residenceRegionIds`, `workRegionIds`, `scope`, `visit`, `page` (1부터), `pageSize` (기본 20, 최대 50 [안]) | 페이지 객체: `items[]`, `page`, `pageSize`, `totalCount`, `hasMore` | 400 `validation_error` (`required`, `invalid_format`, `duplicate`), 400 `invalid_query`, 422 `invalid_region` |
+| GET | `/api/v1/books` | 수집 목록에서 책 검색 (도서관 요청 없음) | `title`, `author`, `publisher` (하나 이상, 칸마다 2~50자), `exact` (`title,author,publisher` 중), `roles` (`translator,illustrator,editor` 중), `sort` (`default` \| `newest` \| `oldest`, 없으면 default), `residenceRegionIds`, `workRegionIds`, `scope`, `visit`, `page` (1부터), `pageSize` (기본·최대 20 [안]. 소장 스트림 `bookIds` 상한과 같게) | 페이지 객체: `items[]`, `page`, `pageSize`, `totalCount`, `hasMore`, `collectedFrom`, `collectedTo` (결과 책을 가진 계획 도서관들의 수집일 범위, 화면 "○월 ○일~○일 기준") [안] | 400 `validation_error` (`required`, `invalid_format`, `duplicate`), 400 `invalid_query`, 422 `invalid_region` |
 | GET | `/api/v1/books/{bookId}` | 책 하나 (S3) | `residenceRegionIds`, `workRegionIds`, `scope`, `visit` (보유 수 계산용) | 대표 서지, `holdingLibraryCount`, `libraries[]{libraryId, collectedAt}` | 404 `book_not_found`, 422 `invalid_region` |
 | GET | `/api/v1/book-availabilities/stream` | 첫 묶음 (SSE) | `bookIds` (쉼표, 최대 20 [안]), `residenceRegionIds`, `workRegionIds`, `filter`, `scope`, `visit` | 이벤트 `targets` → `holding-requested` / `holding-result` / `holding-failed` … → `batch-done` → `done` | 400 `validation_error` (`required`, `too_many`, `invalid_format`), 422 `invalid_region` (모두 스트림 열기 전) |
-| GET | `/api/v1/book-availabilities/batches/stream` | 다음 묶음 (SSE) | `filter`, `batchNo` (2 이상), `candidates` (`holdingId` 쉼표, 최대 K=50) | `targets`를 뺀 같은 이벤트 | 400 `validation_error`. 없는 소장·꺼진 도서관은 그 줄만 `holding-failed` (`library_not_found`) |
+| GET | `/api/v1/book-availabilities/batches/stream` | 다음 묶음 (SSE) | `filter`, `batchNo` (2 이상), `candidates` (`holdingId` 쉼표, 최대 K=50 [안]) | `targets`를 뺀 같은 이벤트 | 400 `validation_error`. 없는 소장·꺼진 도서관은 그 줄만 `holding-failed` (`library_not_found`) |
 
 - 기존 `ebook-searches/stream`, `…/batches/stream`, `availability/libraries/{id}/ebooks`는 그대로입니다 (도서관에서 직접 찾기, ADR-0025 조건 하나).
 - 쪽 넘김: 책 검색은 offset (`page`) — 검색 결과는 쪽 번호를 쓰는 dev api-design 기준
@@ -270,11 +272,13 @@ erDiagram
   "page": 1,
   "pageSize": 20,
   "totalCount": 1,
-  "hasMore": false
+  "hasMore": false,
+  "collectedFrom": "2026-09-28",
+  "collectedTo": "2026-09-30"
 }
 ```
 
-- `joinTier` [안 값]: `OPEN`(누구나, 방문 없음) → `ELIGIBLE`(내 지역, 방문 없음) → `VISIT_ONLY`(누구나·내 지역 중 방문 가입만) → `NEEDS_CHECK`(가입 자격 확인 필요만). 기본 순서의 첫 기준 [확정] (사용자 "이대로", 2026-09-30)
+- `joinTier` [안 값]: 그 책을 가진 계획 도서관 중 가장 앞 단계. 지역 있음: `MY_SIGUNGU` → `MY_SIDO` → `OPEN` (모두 방문 없음) → `VISIT_ONLY` → `NEEDS_CHECK`. 지역 없음: `OPEN` → `VISIT_ONLY` → `NEEDS_CHECK`(자격 필요·확인 필요). 기본 순서의 첫 기준 [확정] (사용자 "이대로", ""지역이 있을 때 책도 내 지역 먼", 2026-09-30). 한 책 안 도서관 순서(ADR-0027)와 기준이 같음
 - 조회 범위·방문 필터를 적용한 뒤 계획 도서관이 하나도 없는 책은 목록에서 뺌 [확정] (사용자, 2026-09-30). `holdingLibraryCount`도 계획 도서관만 셈
 
 `targets` 이벤트 예시
@@ -345,7 +349,7 @@ data: {"batchNo":1,"holdingId":5501,"bookId":1024,"libraryId":81,
 | AC-3 띄어쓰기 | 칸별 단어 AND on 정리값. **AC-3을 "붙여 쓴 검색어의 결과는 띄어 쓴 검색어의 결과에 모두 들어 있다"로 고침** (사용자 선택 "단어별 AND", 2026-09-30) |
 | AC-4 완전 일치 | `exact`, `COLLATE "C"` B-tree |
 | AC-5 역할 | `roles`, `book_contributor.role` |
-| AC-6 순서 | `joinTier` → 완전 일치 → 보유 수 → 출판일, 출판일 인덱스 NULLS LAST |
+| AC-6 순서 | `joinTier`(지역 유무별) → 완전 일치 → 보유 수 → 출판일, 출판일 인덱스 NULLS LAST |
 | AC-7 가진 도서관 상세 페이지만 | 소장 스트림, `detail_url` 호스트 검사 |
 | AC-8 화면 종류 7개 | 외부 연동 표 |
 | AC-9 직접 찾기 | 기존 API + 웹 |
