@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>책 수집과 같은 책 묶기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#15171a;--card:#1e2125;--text:#e7e9ec;--muted:#a3abb5;--line:#343a41;--accent:#8db8e3;--accent-bg:#1f2d3b;--ok:#7fd3a0;--ok-bg:#183123;--warn:#f0c46a;--warn-bg:#352a13;--no:#f09a93;--no-bg:#3a1c1a;--code-bg:#272b30}}
+:root[data-theme="dark"]{--bg:#15171a;--card:#1e2125;--text:#e7e9ec;--muted:#a3abb5;--line:#343a41;--accent:#8db8e3;--accent-bg:#1f2d3b;--ok:#7fd3a0;--ok-bg:#183123;--warn:#f0c46a;--warn-bg:#352a13;--no:#f09a93;--no-bg:#3a1c1a;--code-bg:#272b30}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:860px;margin:0 auto;padding:40px 16px 64px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+h3{font-size:21px;margin:26px 0 10px}
+ul.items{list-style:none;padding:0;margin:0}
+ul.items>li{display:grid;grid-template-columns:34px 1fr;gap:14px;padding:14px 0;border-top:1px solid var(--line)}
+ul.items>li:first-child{border-top:none}
+ul.items svg{width:30px;height:30px;stroke:var(--accent);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;margin-top:4px}
+.items b{display:block}
+.q{color:var(--muted)}
+.tag{display:inline-block;font-size:16px;font-weight:500;border-radius:6px;padding:1px 8px;margin-left:4px;white-space:nowrap}
+.t-ok{background:var(--ok-bg);color:var(--ok)}.t-warn{background:var(--warn-bg);color:var(--warn)}.t-no{background:var(--no-bg);color:var(--no)}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:10px 0}
+th,td{text-align:left;padding:8px 10px;border-top:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:500}
+figure{margin:0 0 8px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:18px;margin-top:8px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+</style>
+</head>
+<body>
+<main>
+<p class="lead">책은 "모으고 → 정리하고 → 같은 책끼리 묶는" 세 단계로 다룹니다.</p>
+<p class="sub">시리즈 4장. 도서관 사이트에서 전자책 목록을 모으는 방법(수집), 제목·저자·출판사를 고르게 만드는 규칙(정리), 여러 도서관의 같은 책을 한 권으로 보는 규칙(묶기)과 그 결정(ADR-0035)을 설명합니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>전체 흐름</h2>
+<div class="gist">수집은 plan 문서(수집 세션 관리)와 별도 폴더의 파이썬 도구가, 정리·묶기는 dev의 Java 코드가 합니다. 규칙 문서는 plan에 있고 실제 동작은 dev 코드입니다.</div>
+<figure>
+<svg viewBox="0 0 820 170" role="img" aria-label="수집, 정리, 묶기, 저장 흐름">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+<g font-family="Noto Sans KR, sans-serif" text-anchor="middle" fill="var(--text)">
+<rect x="10" y="20" width="180" height="100" rx="12" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+<text x="100" y="55" font-size="20" font-weight="700">① 수집</text><text x="100" y="82" font-size="15" fill="var(--muted)">도서관 사이트 → SQLite</text><text x="100" y="104" font-size="15" fill="var(--muted)">crawl-method · runbook</text>
+<line x1="192" y1="70" x2="216" y2="70" stroke="var(--muted)" stroke-width="2" marker-end="url(#ar)"/>
+<rect x="220" y="20" width="180" height="100" rx="12" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+<text x="310" y="55" font-size="20" font-weight="700">② 정리</text><text x="310" y="82" font-size="15" fill="var(--muted)">제목·저자·출판사·날짜</text><text x="310" y="104" font-size="15" fill="var(--muted)">search-and-normalization 4절</text>
+<line x1="402" y1="70" x2="426" y2="70" stroke="var(--muted)" stroke-width="2" marker-end="url(#ar)"/>
+<rect x="430" y="20" width="180" height="100" rx="12" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+<text x="520" y="55" font-size="20" font-weight="700">③ 묶기 ①~④</text><text x="520" y="82" font-size="15" fill="var(--muted)">같은 책 = 한 권</text><text x="520" y="104" font-size="15" fill="var(--muted)">same-book-isbn 5절</text>
+<line x1="612" y1="70" x2="636" y2="70" stroke="var(--muted)" stroke-width="2" marker-end="url(#ar)"/>
+<rect x="640" y="20" width="170" height="100" rx="12" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/>
+<text x="725" y="55" font-size="20" font-weight="700">④ 저장</text><text x="725" y="82" font-size="15" fill="var(--muted)">PostgreSQL catalog</text><text x="725" y="104" font-size="15" fill="var(--muted)">data-model.md</text>
+<text x="410" y="152" font-size="15" fill="var(--muted)">②③④는 dev의 가져오기 도구(프로필 catalog-import) 한 번 실행으로 이어짐. 원문은 항상 보관하므로 규칙을 바꾸면 다시 계산만 하면 됨</text>
+</g></svg>
+<figcaption>실제 실행(④까지)은 아직 하지 않았습니다. dry run(③까지 세기만)은 2026-09-30에 했습니다.</figcaption>
+</figure>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>① 수집: 어떻게 모으나</h2>
+<div class="gist">같은 사이트에는 한 번에 한 건, 1초 넘게 간격을 두고 요청합니다. 소개글은 저장하지 않고 표지 주소만 둡니다. 수량(대출·예약)은 저장하지 않고 사용자가 볼 때 실시간으로 읽습니다.</div>
+<ul class="items">
+<li><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7M21 4v5h-5"/></svg><div><b>전체 수집과 신간 수집</b>전체는 주 1회, 신간은 매일이 계획입니다 [확정]. 단, 큰 교보 구독형 16곳은 한 번에 2~3일이 걸려 신간 위주로 하자는 안이 있습니다. 세부는 주기 갱신 사이클에서 정합니다.</div></li>
+<li><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h6"/></svg><div><b>어디까지 받았나는 문서에 없습니다</b><code>python scripts\crawl_catalog.py status</code>로만 알 수 있습니다. 받지 않는 도서관 4곳(국회 44, 전북교육청 135, 군포 261, 김천 269)은 <code>crawl-runbook.md</code> 5-1절.</div></li>
+<li><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg><div><b>서비스로 가져올 때 빼는 것</b>오디오북·동영상북, 서비스 도서관 목록에 없는 기관, 빠진 책, 상세 주소가 없거나 다른 호스트인 줄. dry run 기준 읽은 3,773,137줄 중 1,217,651줄을 뺐습니다(대부분 서비스에 없는 기관).</div></li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>② 정리: 사이클 04에서 바뀐 두 가지</h2>
+<div class="gist">정리는 원문을 두고 옆에 "정리한 값"을 만드는 것입니다. 검색어에도 같은 규칙을 적용해서 "행동  경제학"과 "행동경제학"이 같이 찾힙니다. 개발 중 저자 규칙과 자료 종류가 바뀌었습니다.</div>
+<ul class="items">
+<li><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5M15 15c3 0 6 1.5 6 4.5"/></svg>
+<div><b>저자 나누기: 쉼표 항목마다 역할을 읽습니다</b>수집한 저자 칸에 "그레타 가드 저자, 김현미 번역, 노고운 번역"처럼 쉼표마다 역할이 붙은 줄이 90,816개 있었습니다. 이제 항목마다 역할을 읽고, 역할이 없는 항목은 뒤 항목의 역할을 받습니다("A, B 공저" → 둘 다 지은이). "역자·번역"은 옮긴이로, "공편·편자·편집"은 엮은이로 읽습니다. 편집부·위원회 같은 단체 이름(79,649줄)은 그냥 저자로 둡니다.</div></li>
+<li><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+<div><b>자료 종류: 전자책만이 아니라 넷을 넣습니다</b>처음 안은 전자책(<code>EBOOK</code>)만이었는데, 사용자 결정으로 키즈북(<code>KIDS_BOOK</code> 3,003줄), 종류 미상(<code>UNKNOWN</code> 391줄), 학술논문(<code>PAPER</code> 74줄)도 넣습니다. 소장마다 원래 종류를 적고, 책의 종류는 소장들 중 가장 많은 종류로 합니다.</div></li>
+<li><svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+<div><b>바뀌지 않은 규칙</b>제목은 NFKC·소문자·공백 제거. 본제목은 첫 " : " 또는 " - " 앞. 출판사는 (주)·주식회사·도서출판 제거. 출판일은 가장 많이 나온 날짜, 같으면 이른 것, 미래 날짜는 오류로 봄.</div></li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>③ 묶기: 네 단계로 같은 책을 한 권으로</h2>
+<div class="gist">앞 단계에서 안 묶인 책만 다음 단계로 갑니다. ①~③은 인계서대로, ④는 개발 중 사용자 결정으로 더했습니다(ADR-0035). dry run에서 827,614권이 648,267권으로 줄었습니다.</div>
+<figure>
+<svg viewBox="0 0 820 200" role="img" aria-label="묶기 네 단계와 단계별 책 수">
+<defs><marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+<g font-family="Noto Sans KR, sans-serif" text-anchor="middle" fill="var(--text)">
+<rect x="10" y="20" width="185" height="110" rx="12" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+<text x="102" y="50" font-size="18" font-weight="700">① 같은 번호</text><text x="102" y="76" font-size="15" fill="var(--muted)">교보·YES24 책 번호</text><text x="102" y="112" font-size="17">827,614권</text>
+<line x1="197" y1="75" x2="216" y2="75" stroke="var(--muted)" stroke-width="2" marker-end="url(#ar2)"/>
+<rect x="220" y="20" width="185" height="110" rx="12" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+<text x="312" y="50" font-size="18" font-weight="700">② 교보 코드→ISBN</text><text x="312" y="76" font-size="15" fill="var(--muted)">480+ISBN 규칙</text><text x="312" y="112" font-size="17">827,614권 (변화 없음)</text>
+<line x1="407" y1="75" x2="426" y2="75" stroke="var(--muted)" stroke-width="2" marker-end="url(#ar2)"/>
+<rect x="430" y="20" width="185" height="110" rx="12" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+<text x="522" y="50" font-size="18" font-weight="700">③ 국가서지 ISBN</text><text x="522" y="76" font-size="15" fill="var(--muted)">제목+저자+출판사로 찾음</text><text x="522" y="112" font-size="17">784,994권</text>
+<line x1="617" y1="75" x2="636" y2="75" stroke="var(--muted)" stroke-width="2" marker-end="url(#ar2)"/>
+<rect x="640" y="20" width="170" height="110" rx="12" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="3"/>
+<text x="725" y="50" font-size="18" font-weight="700">④ 정리한 글자</text><text x="725" y="76" font-size="15" fill="var(--muted)">전체 제목+저자+출판사</text><text x="725" y="112" font-size="17" font-weight="700">648,267권</text>
+<text x="410" y="170" font-size="15" fill="var(--muted)">2026-09-30 dry run. 읽은 줄 3,773,137 → 서비스 대상 2,555,486줄 → 책 648,267권</text>
+</g></svg>
+<figcaption>네 단계 모두 "정리한 값이 같으면 같은 책"이라는 같은 원리입니다. 단계마다 비교하는 값만 다릅니다.</figcaption>
+</figure>
+<table>
+<tr><th>단계</th><th>무엇이 같으면 한 권인가</th><th>알아 둘 것</th></tr>
+<tr><td>①</td><td>같은 책 번호. 교보·교보 구독형·YES24 세 세대는 번호를 같이 봄. 통합 포털과 강남구 번호는 그 도서관 안에서만</td><td>카드 5</td></tr>
+<tr><td>②</td><td>교보 코드에서 계산한 종이책 ISBN</td><td>지금은 ①과 1:1이라 새로 합치는 것이 없음. 북큐브가 들어오면 달라짐</td></tr>
+<tr><td>③</td><td>국가서지 파일에서 제목·첫 저자·출판사로 찾은 ISBN. 딱 하나로 맞을 때만</td><td>인기 책은 판마다 ISBN이 여럿이라 "모호"로 남음(5,303건). 예 「작별하지 않는다」</td></tr>
+<tr><td>④</td><td>정리한 전체 제목(괄호 속 판 표시 포함) + 첫 저자 + 정리한 출판사</td><td>저자나 출판사가 없으면 안 합침. 카드 6</td></tr>
+</table>
+</section>
+
+<section class="card">
+<h2><span class="num">5</span>책 번호 체계: 어느 도서관끼리 번호를 같이 보나</h2>
+<div class="gist">교보·교보 구독형·YES24(V1·V2·V3)는 같은 번호면 같은 책으로 봅니다. 통합 포털과 강남구는 도서관마다 같은 번호에 다른 책이 붙어 있어 그 도서관 안에서만 씁니다.</div>
+<table>
+<tr><th>비교한 쌍 (같은 번호끼리 제목 앞 8글자)</th><th>같음</th><th>다름</th></tr>
+<tr><td>교보 ↔ 교보 구독형</td><td>42,714</td><td>197</td></tr>
+<tr><td>교보 ↔ YES24 V1</td><td>67,038</td><td>468</td></tr>
+<tr><td>교보 ↔ YES24 V2</td><td>49,328</td><td>881</td></tr>
+<tr><td>YES24 V1 ↔ V2</td><td>30,093</td><td>492</td></tr>
+<tr><td>YES24 V1 ↔ V3</td><td>6,102</td><td>602</td></tr>
+<tr><td>통합 포털 (여러 도서관에 있는 <code>book_idx</code> 32,449개)</td><td>0</td><td>32,449</td></tr>
+</table>
+<p>"다름"은 부제·시리즈 표기 차이가 대부분으로 보이지만 표본은 보지 않았습니다 [확인 필요]. 이 기준은 도서관 목록을 확인할 때마다 같이 점검합니다. 사용자: <span class="q">"코드 규칙은 언제든지 달라질 수 있으니 도서관 목록 확인할 때 같이 점검하는 걸로 하면 좋을거 같아"</span>. 점검 도구는 dev <code>scripts/library/check_code_spaces.py</code>, 기준값 표는 dev <code>library-maintenance.md</code> 4-11. 비율이 얼마나 바뀌면 기준을 바꿀지는 그때 묻습니다.</p>
+</section>
+
+<section class="card">
+<h2><span class="num">6</span>ADR-0035: 왜 ④를 넣었고, 무엇을 감수하나</h2>
+<div class="gist">인계서는 "④는 이번에 안 함"이었는데, 같은 작품이 네 권으로 갈라지는 것을 보고 사용자가 넣기로 했습니다. 판 표시가 없는 개정판이 원판과 합쳐지는 것을 감수합니다.</div>
+<ul class="items">
+<li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+<div><b>무슨 문제였나</b>「작별하지 않는다」(한강, 문학동네) 소장 98줄이 ①~③ 뒤에도 4권으로 남았습니다. 교보 ISBN 74줄, YES24 번호 22줄, 강남구 1줄, YES24 다른 번호 1줄. 국가서지에 이 책의 판이 여럿이라 ③으로도 못 합쳤습니다.</div></li>
+<li><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><circle cx="12" cy="12" r="9"/></svg>
+<div><b>무엇을 정했나</b>정리한 <b>전체 제목</b>(괄호 속 "(개정판)" 같은 판 표시까지 포함) + 첫 저자 + 정리한 출판사가 같으면 한 권. 사용자: <span class="q">"전체 제목+저자+출판사까지 같으면 합침 (추천) 이걸로 해줘"</span>. 그 전에 사용자가 물은 것: <span class="q">"판마다 전자책 내용이 달라질 수 있지 않아?"</span></div></li>
+<li><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+<div><b>"전체 제목"에는 부제도 들어갑니다</b>도서관 사이트가 제목 칸에 적은 글자 전부입니다. 본제목, 부제(" : "이나 " - " 뒤), 괄호 속 판 표시, 맨 앞 시리즈 표시, 권 번호가 다 들어가고 떼어내는 것이 없습니다. 비교 전에 하는 정리는 문자 통일·영문 소문자·공백 제거뿐입니다. (2026-10-03 추가, dev 코드로 확인)
+<table>
+<tr><th>두 제목 (저자·출판사는 같을 때)</th><th>결과</th><th>이유</th></tr>
+<tr><td>"작별하지 않는다" / "작별하지 않는다" (번호만 다름)</td><td>한 권</td><td>글자가 같음</td></tr>
+<tr><td>"행동 경제학" / "행동경제학"</td><td>한 권</td><td>공백만 다름</td></tr>
+<tr><td>"이기적 유전자" / "이기적 유전자(40주년 기념판)"</td><td>따로</td><td>괄호 속 글자가 다름</td></tr>
+<tr><td>"삼체 3부 - 사신의 영생" / "삼체 3부"</td><td>따로</td><td>부제가 한쪽에만 있음</td></tr>
+<tr><td>"[100분 고전 013] 논어" / "논어"</td><td>따로</td><td>앞의 시리즈 표시가 한쪽에만 있음</td></tr>
+</table>
+"본제목"은 다른 값입니다. 앞의 시리즈 표시를 떼고 첫 " : "이나 " - " 앞까지만 남긴 것으로, 제목 완전 일치 검색·결과 순서·국가서지 대조에만 쓰고 묶기 ④에는 쓰지 않습니다.</div></li>
+<li><svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+<div><b>다른 선택지는 무엇이었나</b>B: ①~③만(인계서 원안) → 같은 작품이 플랫폼별로 따로 나옴. C: 본제목으로 묶기 → 부제만 다른 해설서·개정판까지 다 합쳐짐. 사용자에게 제시된 선택지가 "전체 제목"이었고, B·C를 고르지 않은 이유는 따로 말하지 않았습니다 [이유 미확인].</div></li>
+<li><svg viewBox="0 0 24 24"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg>
+<div><b>감수하는 것</b>두 방향입니다. 덜 합쳐지는 쪽: 같은 책인데 도서관마다 부제나 시리즈 표시를 적은 방식이 다르면 따로 남습니다(번호 체계가 다른 플랫폼 사이에서만, 몇 권인지는 세지 않음). 잘못 합쳐지는 쪽: 제목에 판 표시가 없는 개정판은 원판과 합쳐집니다. 합친 책 중 대표 출판일이 2년 넘게 차이 나는 책이 11,019권인데, 표본 40개는 대부분 등록일 차이였고 「마녀 프레임」「악플 전쟁」「1984년」처럼 판이 다를 수 있는 예도 있습니다 [확인 필요: 표본 조사].</div></li>
+<li><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7M21 4v5h-5"/></svg>
+<div><b>되돌리려면</b>원문이 보관돼 있으니 ④를 끄고 다시 가져오면 됩니다(표를 비우고 다시 채움). 단, 책 번호가 바뀌어 공유한 책 주소(<code>/books/{bookId}</code>)가 깨지므로, 주기 갱신 사이클의 번호 유지 장치와 같이 봐야 합니다.</div></li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="num">7</span>다시 가져오거나 규칙을 바꿀 때 확인할 것</h2>
+<div class="gist">전체 목록은 <code>same-book-isbn.md</code> 5.3절과 <code>reference-index.md</code> 6절에 있습니다. 가장 큰 것 다섯입니다.</div>
+<table>
+<tr><th>확인할 것</th><th>지금 상태</th></tr>
+<tr><td>실제 가져오기, 검색 응답 시간, AC-1~14</td><td>미실행 (미룸)</td></tr>
+<tr><td>④로 합친 책 중 출판일 2년 차이 11,019권이 판 차이인지</td><td>표본 40개만 봄</td></tr>
+<tr><td>교보 코드 <code>48090…</code> 37,678줄과 확인 숫자 안 맞는 5,352줄의 뜻</td><td>모름, ISBN 계산에서 제외</td></tr>
+<tr><td>국가서지와 제목이 다른 약 5%, 국가서지에 없는 23%</td><td>원인 미조사</td></tr>
+<tr><td>pg_bigm은 <code>shared_preload_libraries</code> 설정이 필요 — 운영 호스팅이 허용하는지</td><td>호스팅 미정</td></tr>
+</table>
+</section>
+
+<p class="foot">이 글은 요약이며 근거는 원본에 있습니다: <code>docs/research/ebook-catalog/same-book-isbn.md</code> 5절, <code>search-and-normalization.md</code> 4절, <code>crawl-method.md</code>, <code>crawl-runbook.md</code>, <code>docs/adr/0035-grouping-step4-and-code-spaces.md</code>, dev <code>docs/plan-feedback.md</code> "# 사이클 04".</p>
+</main></body></html>

@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>chaekcheck 다음 할 일</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f5f2; --card:#ffffff; --text:#1f2328; --muted:#5b636e; --line:#dcd9d2;
+  --accent:#2f5d8a; --accent-bg:#e7eef6;
+  --ok:#1f7a45; --ok-bg:#e3f3ea; --warn:#8a5a00; --warn-bg:#fbf0d9; --no:#a1302b; --no-bg:#f8e3e1;
+  --code-bg:#f0eee9;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15171a; --card:#1e2125; --text:#e7e9ec; --muted:#a3abb5; --line:#343a41;
+    --accent:#8db8e3; --accent-bg:#1f2d3b;
+    --ok:#7fd3a0; --ok-bg:#183123; --warn:#f0c46a; --warn-bg:#352a13; --no:#f09a93; --no-bg:#3a1c1a;
+    --code-bg:#272b30;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15171a; --card:#1e2125; --text:#e7e9ec; --muted:#a3abb5; --line:#343a41;
+  --accent:#8db8e3; --accent-bg:#1f2d3b;
+  --ok:#7fd3a0; --ok-bg:#183123; --warn:#f0c46a; --warn-bg:#352a13; --no:#f09a93; --no-bg:#3a1c1a;
+  --code-bg:#272b30;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;font-weight:400;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:860px;margin:0 auto;padding:40px 16px 64px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+h3{font-size:21px;margin:26px 0 10px}
+ul.items{list-style:none;padding:0;margin:0}
+ul.items>li{display:grid;grid-template-columns:34px 1fr;gap:14px;padding:14px 0;border-top:1px solid var(--line)}
+ul.items>li:first-child{border-top:none}
+ul.items svg{width:30px;height:30px;stroke:var(--accent);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;margin-top:4px}
+.items b{display:block}
+.items ul{margin:6px 0 0;padding-left:20px}
+.q{color:var(--muted)}
+.tag{display:inline-block;font-size:16px;font-weight:500;border-radius:6px;padding:1px 8px;margin-left:4px;white-space:nowrap}
+.t-ok{background:var(--ok-bg);color:var(--ok)}
+.t-warn{background:var(--warn-bg);color:var(--warn)}
+.t-no{background:var(--no-bg);color:var(--no)}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+pre{background:var(--code-bg);border-radius:8px;padding:14px;overflow-x:auto;font-size:15px;line-height:1.5;margin:10px 0}
+pre code{background:none;padding:0;word-break:normal}
+figure{margin:0 0 8px}
+figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:18px;margin-top:8px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+.nb{white-space:nowrap}
+</style>
+</head>
+<body>
+<main>
+
+<p class="lead">지금은 dev에서 사이클 04를<br>끝내는 것이 먼저입니다.</p>
+<p class="sub">실제 데이터를 가져오고, 검색 속도를 재고, AC-1~14를 확인합니다. 그다음 plan에서 회고하고 사이클 05를 고릅니다. 아래는 먼 것부터 가까운 것 순서이고, 가까울수록 자세히 적었습니다.</p>
+
+<!-- 1 -->
+<section class="card">
+<h2><span class="num">1</span>전체 순서는 네 단계입니다</h2>
+<div class="gist">사이클 04 코드는 dev에 커밋됐습니다(<code>c6028c9</code>). 남은 것은 실제 데이터로 돌려 보는 일입니다.</div>
+<figure>
+<svg viewBox="0 0 820 150" role="img" aria-label="지금 04 마무리, 곧 회고, 다음 05 고르기, 나중 큰 덩어리">
+  <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+  <g font-family="Noto Sans KR, sans-serif" text-anchor="middle">
+    <rect x="10" y="20" width="170" height="100" rx="12" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="3"/>
+    <text x="95" y="60" font-size="20" fill="var(--muted)">지금 · dev</text>
+    <text x="95" y="95" font-size="23" font-weight="700" fill="var(--text)">04 마무리</text>
+    <line x1="182" y1="70" x2="216" y2="70" stroke="var(--muted)" stroke-width="2" marker-end="url(#ar)"/>
+    <rect x="220" y="20" width="170" height="100" rx="12" fill="none" stroke="var(--accent)" stroke-width="2"/>
+    <text x="305" y="60" font-size="20" fill="var(--muted)">곧 · plan</text>
+    <text x="305" y="95" font-size="23" font-weight="700" fill="var(--text)">04 회고</text>
+    <line x1="392" y1="70" x2="426" y2="70" stroke="var(--muted)" stroke-width="2" marker-end="url(#ar)"/>
+    <rect x="430" y="20" width="170" height="100" rx="12" fill="none" stroke="var(--muted)" stroke-width="2" stroke-dasharray="8 6"/>
+    <text x="515" y="60" font-size="20" fill="var(--muted)">다음</text>
+    <text x="515" y="95" font-size="23" font-weight="700" fill="var(--text)">05 고르기</text>
+    <line x1="602" y1="70" x2="636" y2="70" stroke="var(--muted)" stroke-width="2" marker-end="url(#ar)"/>
+    <rect x="640" y="20" width="170" height="100" rx="12" fill="none" stroke="var(--muted)" stroke-width="2" stroke-dasharray="8 6"/>
+    <text x="725" y="60" font-size="20" fill="var(--muted)">나중</text>
+    <text x="725" y="95" font-size="23" font-weight="700" fill="var(--text)">큰 덩어리</text>
+  </g>
+</svg>
+<figcaption>실선은 할 일이 정해진 단계, 점선은 아직 고르지 않은 단계입니다. 앞 단계의 결과가 다음 단계의 입력이 됩니다.</figcaption>
+</figure>
+</section>
+
+<!-- 2 -->
+<section class="card">
+<h2><span class="num">2</span>나중: backlog의 큰 덩어리 다섯</h2>
+<div class="gist">모두 <code>docs/backlog.md</code>에 적혀만 있고, 아직 어느 사이클에도 들어가지 않았습니다.</div>
+<ul class="items">
+<li><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+<div><b>회원</b>네이버·카카오로 가입하고, 거주지 같은 자격을 서버에 저장합니다. 내가 쓰는 도서관을 직접 추가하는 기능, 대학·회사 소속 자격도 여기에 있습니다.</div></li>
+<li><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6"/></svg>
+<div><b>실물 도서관</b>도서관 정보나루 <code>bookExist</code> API로 도서관별 소장·대출 가능 여부를 보여 줍니다(전날 기준). 시작할 때 "운영 기관으로 묶는 테이블"을 반드시 다시 검토하기로 했습니다.</div></li>
+<li><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21h4"/></svg>
+<div><b>알림·추천·통계</b>원하는 책의 예약이 가능해지면 알림, 베스트셀러·인기도서 통계, 관심도서 추천입니다.</div></li>
+<li><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg>
+<div><b>전자책 구독·구매</b>밀리의서재·SAM·YES24 같은 구독 서비스 비용 비교, 할인 이벤트 알림, 전자책 구매처 안내입니다.</div></li>
+<li><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="6" rx="1"/><rect x="3" y="14" width="18" height="6" rx="1"/><path d="M7 7h.01M7 17h.01"/></svg>
+<div><b>운영·배포</b>호스팅 정하기, 도서관 정보(자격·주소·플랫폼) 정기 재조사, 폰·태블릿 화면 대응입니다.</div></li>
+</ul>
+</section>
+
+<!-- 3 -->
+<section class="card">
+<h2><span class="num">3</span>다음: 사이클 05 후보</h2>
+<div class="gist">사이클 04에서 "이번에 하지 않는 것"으로 뺀 것들이 가장 가까운 후보입니다. 고르는 것은 회고(<code>/cycle-start</code>) 때 정합니다.</div>
+<ul class="items">
+<li><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7M21 4v5h-5"/></svg>
+<div><b>책 목록 주기 갱신 <span class="tag t-ok">별도 사이클 확정</span></b>지금 책 목록은 한 번 가져온 것이라 시간이 지나면 도서관 실제 소장과 달라집니다. 주기적으로 다시 모으고, ISBN·서지를 새로 받고, 같은 책 묶기를 다시 계산합니다. 목록이 오래됐다는 경고 기준도 여기서 정합니다.
+<ul><li>참고 문서: <code>docs/research/ebook-catalog/catalog-refresh.md</code></li>
+<li>사이클 04에서 정한 "도서관 번호 체계 점검"(카드 4의 3번)도 이 갱신과 같이 돌리기로 했습니다.</li></ul></div></li>
+<li><svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+<div><b>정렬 옵션</b>제목 가나다순, 보유 도서관 많은 순, 가입 가능 도서관 책 먼저, 대출 가능 많은 순입니다. <span class="q">사용자: "정렬은 다른 cycle로 빼자 복잡하다"</span></div></li>
+<li><svg viewBox="0 0 24 24"><path d="M4 21V8l8-4 8 4v13M4 13h16"/></svg>
+<div><b>수집 목록에만 있는 기관</b>대학·기업·학교 전자도서관, 북큐브 도서관처럼 책 목록에는 있지만 서비스 도서관 목록에는 없는 곳입니다. 읽는 코드가 없는 화면 7종(경남교육청, 서울도서관, 북큐브 등)의 adapter와 이어집니다.</div></li>
+<li><svg viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg>
+<div><b>운영에 올리기</b>호스팅을 정하고, 그 호스팅이 pg_bigm의 <code>shared_preload_libraries</code> 설정을 허용하는지 확인합니다. 가져온 책 목록을 운영 DB로 옮기는 방법은 아직 사용자 결정 대기입니다. 저작권법 제93조·부정경쟁방지법 위험은 출시 전 전문가 확인으로 남아 있습니다.</div></li>
+<li><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+<div><b>검색 품질</b>오타 보정, "행동하는"으로 "행동" 찾기, 감수·기획·사진 같은 역할 검색, 표지·소개 표시입니다.</div></li>
+</ul>
+<p><span class="tag t-warn">제안</span> 가져오기에 실제로 걸린 시간과 책 수를 본 뒤 고르는 편이 낫습니다. 주기 갱신을 얼마나 자주 돌릴 수 있는지가 그 수치에 달려 있습니다.</p>
+</section>
+
+<!-- 4 -->
+<section class="card">
+<h2><span class="num">4</span>곧: plan에서 사이클 04 회고</h2>
+<div class="gist">plan에서 <code>/cycle-start</code>를 실행하면, dev <code>docs/plan-feedback.md</code>의 <code># 사이클 04</code> 절과 dev 코드를 대조해 <code>retro.md</code>를 쓰고 <code>docs/current/</code>를 실제 코드에 맞춥니다.</div>
+
+<h3>docs/current에 반영할 것: dev가 인계서와 다르게 만든 것</h3>
+<ul class="items">
+<li><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+<div><b>1. 가져오는 자료 종류를 넓혔습니다</b>책 종류가 <code>EBOOK</code>만이었는데 <code>KIDS_BOOK</code>(3,003줄), <code>UNKNOWN</code>(391줄), <code>PAPER</code>(74줄)도 넣습니다. 소장마다 원래 종류를 적는 <code>holding.content_type</code> 칸이 새로 생겼습니다. 사용자 결정입니다.</div></li>
+<li><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+<div><b>2. 같은 책 묶기에 4단계를 더했습니다</b>제목 전체(괄호 속 판 표시 포함)·첫 저자·출판사가 모두 같으면 한 권으로 합칩니다. 인계서에서는 "이번에 하지 않음"이었습니다. <span class="q">사용자: "전체 제목+저자+출판사까지 같으면 합침 (추천) 이걸로 해줘"</span>
+<ul><li>dry run에서 책 수가 784,994권 → 648,267권으로 줄었습니다.</li>
+<li>합친 책 중 11,019권은 출판일이 2년 넘게 벌어집니다. 판이 다른 책이 섞였는지는 확인하지 않았습니다 <span class="tag t-warn">확인 필요</span></li>
+<li>제목에 판 표시가 없는 개정판은 원판과 합쳐집니다(알려진 한계).</li></ul></div></li>
+<li><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>
+<div><b>3. 어느 도서관끼리 책 번호를 같이 보는지 정했습니다</b>교보·교보 구독형·YES24(V1~V3)는 같은 번호면 같은 책으로 봅니다. 통합 포털과 강남구 번호는 그 도서관 안에서만 씁니다(도서관마다 같은 번호에 다른 책이 붙어 있었음).
+<ul><li><span class="q">사용자: "코드 규칙은 언제든지 달라질 수 있으니 도서관 목록 확인할 때 같이 점검하는 걸로 하면 좋을거 같아"</span></li>
+<li>dev의 부탁: 이 기준을 design-delta와 research <code>same-book-isbn.md</code> 5절에 적고, 도서관 목록 점검 절차에 넣기.</li>
+<li>비율이 얼마나 바뀌면 기준을 바꿀지는 정하지 않았습니다.</li></ul></div></li>
+<li><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5M15 15c3 0 6 1.5 6 4.5"/></svg>
+<div><b>4. 저자 나누는 규칙을 보완했습니다</b>수집 데이터에 "그레타 가드 저자, 김현미 번역, 노고운 번역"처럼 쉼표마다 역할이 붙은 모양이 많았습니다. 이제 쉼표로 나눈 항목마다 역할을 읽고, 역할이 없는 항목은 뒤 항목의 역할을 받습니다. 역자·번역은 옮긴이로, 공편·편자·편집은 엮은이로 읽습니다.</div></li>
+<li><svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+<div><b>5. dev가 스스로 정한 것</b>
+<ul><li>채우지 않은 칸의 완전 일치, 저자 칸이 없을 때의 역할 선택은 오류 없이 무시합니다.</li>
+<li>소장 스트림의 첫 이벤트에는 계획 전체가 아니라 그 책을 가진 도서관만 담습니다.</li>
+<li>도서관의 수집 완료 시각이 없으면 그 도서관 소장 중 가장 늦게 본 시각으로 "○월 ○일 기준"을 표시합니다.</li>
+<li>바로 보기·책 화면에는 도서관 요약 줄이 없습니다(상세 페이지에는 대출률이 없어서).</li>
+<li>국가서지 파일은 저장소 안 <code>data/nlk/</code>에 둡니다(git 제외, 사용자 결정).</li></ul></div></li>
+</ul>
+
+<h3>그 밖에 plan에서 정리할 것</h3>
+<ul class="items">
+<li><svg viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg>
+<div><b>커밋 안 된 조사 문서 4개</b><code>docs/research/ebook-catalog/</code>의 <code>crawl-method.md</code>, <code>crawl-runbook.md</code>, <code>platforms.md</code>, <code>research.md</code>가 plan 저장소에 커밋되지 않았습니다.</div></li>
+<li><svg viewBox="0 0 24 24"><path d="M3 12h18M12 3v18"/></svg>
+<div><b>새 제약 두 가지를 기록</b>pg_bigm은 <code>shared_preload_libraries</code> 설정이 있어야 돌아갑니다. 인기 책은 판마다 ISBN이 달라 국가서지로는 ISBN이 붙지 않고 교보 번호로만 얻습니다.</div></li>
+</ul>
+</section>
+
+<!-- 5 -->
+<section class="card">
+<h2><span class="num">5</span>지금: dev에서 사이클 04 끝내기</h2>
+<div class="gist">코드는 다 있고, 실제 데이터로 돌리는 세 가지가 남았습니다. 사용자가 "코드까지 만들고 실행은 나중에 알려 줄 때"를 골라서 멈춰 둔 상태입니다.</div>
+<ul class="items">
+<li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+<div><b>0. 먼저 확인할 것</b>
+<ul><li>전자책 목록 수집 세션이 쉬고 있는지. 가져오기는 수집 SQLite 파일을 읽으므로 수집이 쉴 때 돌립니다.</li>
+<li>WSL이 켜져 있는지. WSL은 마지막 프로세스가 끝나면 몇 초 뒤 꺼지고, 그러면 DB가 내려갑니다.</li></ul></div></li>
+<li><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>
+<div><b>1. 실제 가져오기 (인계서 5단계 마지막)</b>dev <code>backend/</code>에서 실행합니다.
+<pre><code>./gradlew bootRun --args='--spring.profiles.active=catalog-import --chaekcheck.catalog.import.sqlite-path=../../chaekcheck-data/ebook-catalog.sqlite --chaekcheck.catalog.import.ttl-path=../data/nlk/ttl'</code></pre>
+<ul><li>개발 DB의 책 목록을 비우고 새로 채웁니다. 화면 확인용으로 넣어 둔 4권은 지워집니다.</li>
+<li>끝나면 요약 로그가 나옵니다: 읽은 줄, 이유별 건너뛴 줄, 묶기 단계별 책 수, 최종 책·소장·저자 수, 걸린 시간, 인덱스 크기.</li>
+<li>dry run 기준으로 책은 약 648,267권이 나와야 합니다.</li></ul></div></li>
+<li><svg viewBox="0 0 24 24"><path d="M12 14l4-4"/><path d="M3.3 19a9 9 0 1 1 17.4 0"/></svg>
+<div><b>2. 검색 속도 재기 (인계서 6단계)</b><code>EXPLAIN (ANALYZE, BUFFERS)</code>로 검색어 7가지를 잽니다: "행동", "사랑", "행동"+"새폴스키", "사랑"+"문학동네", "사랑" 최신순, 전체 건수 세기, "행동 의"(한 글자 단어가 섞인 경우).</div></li>
+<li><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+<div><b>3. AC-1~14 확인 (인계서 14단계)</b>실제 도서관 사이트 요청은 손으로 적게, 1초 간격을 지켜 보냅니다.
+<ul><li>검색 결과가 맞는지: AC-2~6 ("행동"+"새폴스키"면 「행동」만, 띄어쓰기, 완전 일치, 옮긴이 켜기, 정렬 순서)</li>
+<li>도서관에 보내는 요청이 맞는지: AC-7·8·13 (그 책을 가진 도서관의 상세 페이지만, 화면 종류 7개 읽기, 간격·User-Agent)</li>
+<li>화면 동작: AC-1·9·11·12·14 (검색 칸, 0건일 때 직접 찾기, 새로고침 뒤 유지, 지역·범위 반영, 책 먼저 고르기)</li>
+<li>데이터: AC-10 (빠진 책·오디오북·동영상북이 없는지)</li></ul></div></li>
+<li><svg viewBox="0 0 24 24"><path d="M4 4h16v12H8l-4 4z"/></svg>
+<div><b>4. 결과를 dev <code>docs/plan-feedback.md</code>에 적기</b><code># 사이클 04</code> 절의 "측정 (아직)" 목록을 채웁니다. 함께 볼 표본: 출판일이 2년 넘게 벌어진 11,019권, <code>48090…</code>·확인 숫자가 안 맞는 교보 코드 수, 국가서지와 제목이 다른 약 5%, YES24 재수집 뒤 수치. 이 절이 카드 4 회고의 입력이 됩니다.</div></li>
+</ul>
+</section>
+
+<p class="foot">이 글은 요약이며 근거는 원본에 있습니다: dev <code>docs/plan-feedback.md</code>(# 사이클 04 절), plan <code>docs/current/handoff.md</code>, <code>docs/backlog.md</code>. 2026-09-30 기준.</p>
+</main>
+</body>
+</html>

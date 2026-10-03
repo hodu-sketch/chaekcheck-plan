@@ -12,6 +12,7 @@ Write `spec.md` in the current cycle folder (see `Current cycle:` in `CLAUDE.md`
 3. Ask the user (AskUserQuestion, up to 4 questions at a time) about rules you would otherwise guess: input rules, sorting, what to show when data is missing.
 4. Write the spec. Put newly discovered out-of-scope ideas into `docs/backlog.md`, one line each.
 5. Finish with the verdict section and tell the user the verdict.
+6. Review `spec.md` with the `plan-canvas` skill in proposal review mode (when `ecc-plan-canvas` is installed). Once every `[안]` is decided, go straight on to `/screen-flow` without asking.
 
 ## Rules
 

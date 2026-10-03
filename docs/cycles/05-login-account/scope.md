@@ -2,6 +2,7 @@
 
 - 시작: 2026-10-01. 사이클 04 회고: `../04-and-search/retro.md`
 - 밑그림·근거: `docs/research/member-and-alerts/integration-plan.md`(구조, 사용자 결정 3가지), `outline.md`, `signup-security.md`(공식 문서 확인)
+- 이 사이클 문서: `spec.md`(동작 규칙·수용 기준), `research.md`(아래 "먼저 조사할 것" 중 확인한 결과), `flow.md`(화면 흐름)
 - 번호 대응: integration-plan의 "05a" = 이 사이클(05), "05b" = 사이클 06 내 도서관·검색 연결, "06 알림" = 사이클 07 (사용자 확인, 2026-10-01)
 
 ## 목표 (한 문장)
@@ -10,13 +11,14 @@
 
 ## 포함
 
-사용자 선택 (2026-10-01): "공통 + 웹훅 + 이벤트·저장소".
+사용자 선택 (2026-10-01): "공통 + 웹훅 + 이벤트·저장소". `/feature-spec`에서 더 정한 것(사용자, 2026-10-01): 계정 표를 둘로(우리 계정 + 연결된 소셜 계정, 연결 기능은 나중), 세션은 DB(Spring Session JDBC), 탈퇴 전 본인 확인(네이버·카카오 둘 다), 네이버 연결끊기 Callback 포함, 이용약관 동의 포함, 로그인 유지 30일. 자세한 규칙은 `spec.md`.
 
-- 새 모듈 `auth` [안 이름]: Spring Security `oauth2Login`으로 네이버·카카오 provider 등록, 계정 표(`account`: provider + provider_user_id, UNIQUE), 동의 기록 표
-- 로그인 상태 유지: 서버 세션 쿠키 [안] (`Secure`·`HttpOnly`·`SameSite`, 로그인 시 세션 ID 재발급, 만료 값은 spec에서)
-- 동의 화면(개인정보 보호법 제15조② 고지 4가지 + 동의 표시)과 개인정보 처리방침 페이지(제30조), 처리방침 버전 기록
+- 새 모듈 `auth` [안 이름]: Spring Security `oauth2Login`으로 네이버·카카오 provider 등록, 우리 계정 표와 연결된 소셜 계정 표(provider + provider_user_id, UNIQUE), 동의 기록 표
+- 로그인 상태 유지: 서버 세션 쿠키, 세션은 DB [확정] (`Secure`·`HttpOnly`·`SameSite`, 로그인 시 세션 ID 재발급, 30일)
+- 동의 화면(개인정보 보호법 제15조② 고지 4가지 + 이용약관·개인정보 수집·이용·만 14세 이상 확인란)과 이용약관·개인정보 처리방침 페이지(제30조), 문서 버전 기록
+- 네이버 연결끊기 Callback 수신 주소: 네이버 쪽에서 동의를 철회하면 같은 삭제 처리 뒤 204
 - `GET /api/v1/me`(계정 정보·동의 상태, 비로그인 401 `unauthorized`), `POST /api/v1/me/consents`, `POST /logout`, `DELETE /api/v1/me`(탈퇴)
-- 탈퇴: 카카오 `unlink`·네이버 연동 해제 호출 → 계정과 동의 기록 물리 삭제 → 세션 전부 종료
+- 탈퇴: 가입한 제공자로 본인 확인 → 카카오 `unlink`·네이버 연동 해제 호출 → 계정·소셜 연결·동의 기록 물리 삭제 → 세션 전부 종료
 - 카카오 연결 해제 웹훅 수신 주소: 카카오 쪽에서 연결을 끊으면 같은 삭제 처리 뒤 3초 내 200
 - `AccountDeleted` 이벤트 발행 + Spring Modulith 영속 발행 저장소(Liquibase로 표 생성). 이번에는 받는 모듈이 없음. 사이클 06의 `member`가 첫 소비자
 - CSRF: Spring 기본 유지, SPA용 `csrf.spa()`. 변경 메서드에 토큰

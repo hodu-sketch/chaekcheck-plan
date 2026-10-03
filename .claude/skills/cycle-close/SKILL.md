@@ -22,7 +22,7 @@ If this cycle added, moved or replaced a reference document (research, procedure
 
 ## 4. Handoff
 
-Delegate to the `planner` subagent with the cycle folder. Save its output as `docs/cycles/NN-<slug>/handoff.md` and review it with the user: with the `plan-canvas` skill when `ecc-plan-canvas` is installed (an Approve verdict confirms it), otherwise in the conversation. After approval:
+Delegate to the `planner` subagent with the cycle folder. Save its output as `docs/cycles/NN-<slug>/handoff.md` and review it with the user: with the `plan-canvas` skill in proposal review mode when `ecc-plan-canvas` is installed (every `[안]` decided, or an Approve verdict, confirms it; then continue without asking), otherwise in the conversation. After approval:
 - replace `docs/current/handoff.md` with the same content (the dev project's CLAUDE.md imports this file)
 
 ## 5. Finish

@@ -12,6 +12,22 @@ description: Review a chaekcheck-plan document (spec.md, flow.md, architect-prop
 - The ECC hook `stop:plan-canvas-pending` is **not** installed here. Before ending a turn while a review is open, run `ecc-plan-canvas pending` yourself.
 - An Approve verdict confirms the reviewed document. Record any decision it contains with `/adr`.
 
+## Proposal review mode (chaekcheck-plan default)
+
+The user asked (2026-10-01) that every `[안]` be decided one by one in the canvas, and that the cycle move on by itself once all are decided. Use this mode for every document review in this project (spec, flow, architect proposal, design-delta, handoff):
+
+1. Build the review page: `node .claude/skills/plan-canvas/proposal-review.cjs <doc.md>`. It writes `<dir>/.review/<name>.review.html` (git-ignored) and `<name>.proposals.json` (chip number → source line and context).
+2. Open and await the **.html** page, not the .md: `ecc-plan-canvas open <dir>/.review/<name>.review.html`, then `await` in the background.
+3. In the page each `[안]` is a numbered chip (💡 안 #N). Clicking it offers exactly three buttons: 승인 / 미승인 / 기타 (user's choice 2026-10-01: no separate 제안 button, because a suggestion can be written in 기타). Choices are queued and sent with the 보내기 button. They arrive as annotations `"[안 #N] 승인"`, `"[안 #N] 미승인: <reason>"`, `"[안 #N] 기타: <free text>"` with `anchor.snippet` = the item's text. `[확정]` and `[확인 필요]` are shown as badges.
+4. Apply decisions to the .md (map #N with the JSON or the snippet; if several decisions for the same #N arrive, the last one wins):
+   - 승인 → change that `[안]` to `[확정]` with `(사용자 승인, YYYY-MM-DD)`.
+   - 미승인 → remove or replace the proposal as the user's reason says. If a replacement is needed and the reason does not give it, ask in the canvas; the replacement comes back as a new `[안]` to decide.
+   - 기타 → free text: a question or the user's own suggestion. Answer a question in the canvas with `--reply` (the chip stays undecided). For a suggestion, replace the proposal with it and tag it `[확정]` with `(사용자 제안, YYYY-MM-DD)`, quoting the user's words; if it is not concrete enough to write down, or conflicts with another decision or rule, reply in the canvas and put the worked-out version back as a new `[안]` to decide.
+   Also update the same value in other cycle documents (`spec.md`, `flow.md`, `scope.md`) where it appears.
+5. Re-run the script after each edit (the canvas live-reloads the .html), reply in the canvas with what changed, and keep awaiting.
+6. 승인 and 미승인 count as decisions, and so does a 기타 suggestion once applied; a 기타 question does not. When no `[안]` is left in the document (all decided) or the user sends Approve, end the canvas session and **continue to the skill's next step without asking** (e.g. after `/screen-flow` start `/design-delta`). Record decisions that need an ADR with `/adr` first.
+7. Chat messages and freeform annotations in the canvas are handled as before.
+
 
 # Plan Canvas
 

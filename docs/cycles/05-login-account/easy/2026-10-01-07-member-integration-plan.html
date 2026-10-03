@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>회원 구조, 결정된 것</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--code-bg:#f0eee9}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#15171a;--card:#1e2125;--text:#e7e9ec;--muted:#a3abb5;--line:#343a41;--accent:#8db8e3;--accent-bg:#1f2d3b;--ok:#7fd3a0;--ok-bg:#183123;--warn:#f0c46a;--warn-bg:#352a13;--code-bg:#272b30}}
+:root[data-theme="dark"]{--bg:#15171a;--card:#1e2125;--text:#e7e9ec;--muted:#a3abb5;--line:#343a41;--accent:#8db8e3;--accent-bg:#1f2d3b;--ok:#7fd3a0;--ok-bg:#183123;--warn:#f0c46a;--warn-bg:#352a13;--code-bg:#272b30}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:900px;margin:0 auto;padding:40px 16px 64px}
+h1,h2{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:10px 0}
+th,td{text-align:left;padding:8px 10px;border-top:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:500}
+figure{margin:0 0 8px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:18px;margin-top:8px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+</style>
+</head>
+<body>
+<main>
+<p class="lead">모듈은 <code>auth</code>와 <code>member</code> 둘,<br>사이클은 05a → 05b → 06입니다.</p>
+<p class="sub">2026-10-01 사용자 결정을 반영한 구성도입니다. 근거와 세부는 <code>docs/research/member-and-alerts/integration-plan.md</code>.</p>
+
+<section class="card">
+<h2><span class="num">1</span>모듈 구성도 (05b 뒤)</h2>
+<div class="gist"><code>auth</code>는 아무 모듈에도 기대지 않습니다. <code>member</code>는 <code>auth</code>(현재 계정, 계정 삭제 이벤트)와 <code>library</code>·<code>region</code>을 읽습니다. <code>catalog</code>·<code>availability</code>는 둘 다 모릅니다.</div>
+<figure>
+<svg viewBox="0 0 900 540" role="img" aria-label="auth와 member 모듈이 추가된 구성도">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+<g font-family="Noto Sans KR, sans-serif" fill="var(--text)">
+<rect x="300" y="20" width="300" height="70" rx="12" fill="none" stroke="var(--accent)" stroke-width="2"/>
+<text x="450" y="48" text-anchor="middle" font-size="19" font-weight="700">web (React)</text>
+<text x="450" y="74" text-anchor="middle" font-size="15" fill="var(--muted)">로그인 버튼 · 설정 창(내 도서관) · 필터 스위치</text>
+<rect x="20" y="140" width="860" height="310" rx="14" fill="none" stroke="var(--muted)" stroke-width="2" stroke-dasharray="6 5"/>
+<text x="35" y="168" font-size="16" fill="var(--muted)">본 서비스 (Spring Modulith, 1대)</text>
+<!-- auth -->
+<rect x="40" y="190" width="200" height="120" rx="12" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="3"/>
+<text x="140" y="220" text-anchor="middle" font-size="20" font-weight="700">auth (05a)</text>
+<text x="140" y="246" text-anchor="middle" font-size="14">로그인 · 세션 · 동의</text>
+<text x="140" y="268" text-anchor="middle" font-size="14">탈퇴 · 연결 끊기 · 웹훅</text>
+<text x="140" y="294" text-anchor="middle" font-size="13" fill="var(--muted)">account · account_consent</text>
+<!-- member -->
+<rect x="270" y="190" width="200" height="120" rx="12" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="3"/>
+<text x="370" y="220" text-anchor="middle" font-size="20" font-weight="700">member (05b)</text>
+<text x="370" y="246" text-anchor="middle" font-size="14">지역 자격 · 직접 추가 도서관</text>
+<text x="370" y="268" text-anchor="middle" font-size="14">(06: 관심 책)</text>
+<text x="370" y="294" text-anchor="middle" font-size="13" fill="var(--muted)">member_region · member_library</text>
+<!-- catalog -->
+<rect x="500" y="190" width="170" height="80" rx="12" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+<text x="585" y="223" text-anchor="middle" font-size="20" font-weight="700">catalog</text>
+<text x="585" y="250" text-anchor="middle" font-size="14" fill="var(--muted)">책 검색 (회원 모름)</text>
+<!-- availability -->
+<rect x="690" y="190" width="180" height="80" rx="12" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+<text x="780" y="223" text-anchor="middle" font-size="20" font-weight="700">availability</text>
+<text x="780" y="250" text-anchor="middle" font-size="14" fill="var(--muted)">실시간 조회 (회원 모름)</text>
+<!-- library, region -->
+<rect x="400" y="350" width="200" height="70" rx="12" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+<text x="500" y="380" text-anchor="middle" font-size="20" font-weight="700">library</text>
+<text x="500" y="405" text-anchor="middle" font-size="14" fill="var(--muted)">도서관 · 자격 · planSearch</text>
+<rect x="660" y="350" width="180" height="70" rx="12" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+<text x="750" y="380" text-anchor="middle" font-size="20" font-weight="700">region</text>
+<text x="750" y="405" text-anchor="middle" font-size="14" fill="var(--muted)">시도·시군구</text>
+<!-- idp -->
+<rect x="40" y="470" width="200" height="46" rx="12" fill="none" stroke="var(--muted)" stroke-width="2"/>
+<text x="140" y="500" text-anchor="middle" font-size="16">네이버 · 카카오</text>
+<g stroke="var(--muted)" stroke-width="2" fill="none">
+<line x1="360" y1="92" x2="170" y2="187" marker-end="url(#ar)"/>
+<line x1="430" y1="92" x2="380" y2="187" marker-end="url(#ar)"/>
+<line x1="500" y1="92" x2="570" y2="187" marker-end="url(#ar)"/>
+<line x1="540" y1="92" x2="760" y2="187" marker-end="url(#ar)"/>
+<line x1="270" y1="250" x2="243" y2="250" marker-end="url(#ar)"/>
+<line x1="420" y1="312" x2="470" y2="347" marker-end="url(#ar)"/>
+<path d="M370 312 L370 435 L750 435 L750 423" marker-end="url(#ar)"/>
+<line x1="585" y1="272" x2="530" y2="347" marker-end="url(#ar)"/>
+<line x1="740" y1="272" x2="580" y2="350" marker-end="url(#ar)"/>
+<line x1="690" y1="240" x2="673" y2="240" marker-end="url(#ar)"/>
+<line x1="780" y1="272" x2="760" y2="347" marker-end="url(#ar)"/>
+<line x1="140" y1="312" x2="140" y2="467" marker-end="url(#ar)"/>
+</g>
+<g font-size="13" fill="var(--muted)">
+<text x="200" y="130" text-anchor="middle">/me · 동의 · 탈퇴 · /logout</text>
+<text x="395" y="150" text-anchor="middle">/me/regions · /me/libraries</text>
+<text x="640" y="130" text-anchor="middle">…&amp;libraryIds= (기존 API + 칸 하나)</text>
+<text x="256" y="238" text-anchor="middle">AccountId</text>
+<text x="256" y="278" text-anchor="middle">AccountDeleted</text>
+<text x="80" y="395">OAuth2 · unlink</text>
+<text x="380" y="455">읽기</text>
+</g>
+</g></svg>
+<figcaption>화살표는 "부른다". <code>member → auth</code>는 두 가지뿐입니다: 현재 계정이 누구인지(<code>AccountId</code>), 계정이 지워졌다는 이벤트(<code>AccountDeleted</code>). 이벤트는 재시작해도 잃지 않게 저장소를 둡니다.</figcaption>
+</figure>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>결정된 것 세 가지 (사용자, 2026-10-01)</h2>
+<div class="gist">이유는 따로 말씀하지 않아서 문서에는 [이유 미확인]으로 적었습니다. 이유를 알려 주시면 그대로 옮깁니다.</div>
+<table>
+<tr><th>무엇</th><th>결정</th><th>뜻</th></tr>
+<tr><td>모듈</td><td><code>auth</code> + <code>member</code> 둘</td><td>인증(외부 로그인·세션·탈퇴)과 회원 자료(지역·도서관)를 처음부터 다른 모듈로. 나중에 서비스로 나눌 때 그대로 둘</td></tr>
+<tr><td>검색 연결</td><td>웹이 파라미터로</td><td>웹이 <code>/me</code>로 지역·직접 추가 목록을 받아 기존 지역 파라미터 + <code>scope=joinable</code> + 새 칸 <code>libraryIds</code>로 보냄. 검색 모듈은 회원을 모름</td></tr>
+<tr><td>사이클</td><td>05a 로그인·계정 → 05b 내 도서관·검색 연결 → 06 알림</td><td>05a에서 인증 위험(검수·세션·탈퇴)을 먼저 끝냄. 05b에서 "로그인하면 내 도서관이 저장되고 검색에 쓰임"</td></tr>
+</table>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>사이클마다 들어가는 것</h2>
+<div class="gist">05a는 계정만, 05b는 저장과 검색 연결, 06은 알림입니다.</div>
+<table>
+<tr><th>사이클</th><th>모듈</th><th>들어가는 것</th><th>보이는 것</th></tr>
+<tr><td>05a</td><td><code>auth</code></td><td>네이버·카카오 로그인, 서버 세션, 동의 화면·처리방침 페이지, 로그아웃, 탈퇴(연결 끊기 → 삭제 → 세션 종료), 카카오 웹훅, 계정 삭제 이벤트, CSRF, 네이버 검수 준비</td><td>로그인 버튼, 로그인 상태, 계정 절</td></tr>
+<tr><td>05b</td><td><code>member</code> + 기존 검색에 칸 하나</td><td>지역 저장(브라우저 값을 서버로 옮기기), 직접 추가 도서관, <code>libraryIds</code>, 설정 창 "내 도서관", "내 도서관만" 스위치, 계정 삭제 이벤트 처리</td><td>로그인하면 내 도서관이 저장되고 검색에 바로 쓰임</td></tr>
+<tr><td>06</td><td><code>notification</code> + <code>member</code>(관심 책)</td><td>관심 책, 상세 페이지 주기 읽기(v1), 전달 수단, 알림 끄기</td><td>관심 책 표시, 알림 받기</td></tr>
+</table>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>다음에 할 일</h2>
+<div class="gist"><code>/cycle-start 05a</code>에서 이 문서를 <code>scope.md</code>로 잘라 내고, 결정 세 가지를 ADR로 기록합니다.</div>
+<table>
+<tr><th>05a에서 물을 것</th><th>05b에서 물을 것</th></tr>
+<tr><td>서버 재시작 때 로그아웃을 감수할지(메모리 세션 / Spring Session JDBC)<br>만 14세 미만 정책, 소상공인 해당 여부<br>처리방침 문구·버전 관리</td><td>자동 매핑 도서관을 뺄 수 있게 할지<br>로그인 후 기본 필터<br>직접 추가 도서관의 정렬 위치와 상한<br><code>/me</code>에 지역·도서관을 합쳐 줄지</td></tr>
+</table>
+</section>
+
+<p class="foot">이 글은 요약이며 근거는 원본에 있습니다: <code>docs/research/member-and-alerts/integration-plan.md</code>.</p>
+</main></body></html>

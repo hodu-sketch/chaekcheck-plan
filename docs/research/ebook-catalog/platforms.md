@@ -11,7 +11,7 @@
 | 항목 | 값 | 태그 |
 |---|---|---|
 | 같은 호스트 동시 요청 | 1건, 요청 사이 1초 이상 | [확정] (사이클 01 spec 5.6) |
-| 같은 서버를 쓰는 여러 사이트 | `*.dkyobobook.co.kr`은 한 서버로 보고 한 줄로 세움. `ebook.jne.go.kr`·`ebook.jbe.go.kr`·`elib.gyeongnam.go.kr`처럼 포트만 다른 사이트도 같은 호스트 | [안] |
+| 같은 서버를 쓰는 여러 사이트 | 공용 호스팅 `*.dkyobobook.co.kr`, `*.bookcube.biz`, `*.dasangng.co.kr`, `*.aladinebook.co.kr`, `*.yes24library.com`, `*.libworks.co.kr`, `*.hongjicns.co.kr`은 각각 한 서버로 보고 한 줄로 세움. `ebook.jne.go.kr`·`ebook.jbe.go.kr`·`elib.gyeongnam.go.kr`처럼 포트만 다른 사이트도 같은 호스트. 서버가 다르면 병렬 | [확정] (사용자, 2026-10-03) |
 | User-Agent | `Mozilla/5.0 (Windows NT 10.0; Win64; x64) chaekcheck-crawler/0.1 (catalog survey)`. 개인 연락처는 넣지 않음. 앞의 `Mozilla/5.0 (Windows…)`가 없으면 교보 구독형이 모바일 화면(전체 건수 없음)을 보냄 | 문자열 [안], 모바일 화면 [확정] |
 | TLS | 인증서 체인이 불완전하거나 옛 RSA 키 교환만 되는 도서관이 많음(dev ADR-0022). 공개 목록 조회에 한해 검증을 끄고 `SECLEVEL=0`으로 호출 | [확정] (현상), 처리 방법 [안] |
 | 문자 인코딩 | UTF-8과 EUC-KR이 섞여 있음. 검색어도 그 사이트 인코딩으로 보내야 하는 곳이 있음(YES24 V1·V3, 강남구) | [확정] |
@@ -47,6 +47,7 @@
 - 예외: 국회도서관(`ebook.nanet.go.kr:8089`)은 브라우저가 아닌 요청에는 머리글과 관계없이 빈 쪽(19바이트)을 줌. 브라우저로는 17,162권 확인. 자동 접근 차단으로 보고 우회하지 않음 (2026-10-01)
 - 예외: 전북교육청 통합 교보(`ebook.jbe.go.kr:10111`)는 브라우저에도 "L7 Secure connect fail". 같은 교육청 책은 통합 포털(`lib.jbe.go.kr/elib`, 도서관 15)에 교보 47,868줄로 있음
 - 작은 서버(칠곡, 전북 교육문화회관)는 500줄 쪽에서 끊김 → 100줄
+- 분야별 목록: `{base}/elibrary-front/content/contentList.ink?cttsDvsnCode=001&contentAll=Y&ctgrId={분야 코드 앞 두 자리}&orderByKey=cttsHnglName&pageIndex=N&recordCount=N`. 분야마다 "총 N 개"가 있음. 정렬 값은 구독형과 같음(`publDate`, `cttsHnglName` …). 칠곡은 특정 책이 든 쪽이 정렬과 관계없이 늘 시간 초과 → 분야별로 나누고, 끊긴 쪽은 10권·1권 쪽으로 다시 읽어 채움. 1권 쪽은 모두 열려 9,347/9,348권 [확정] (2026-10-03)
 
 ## 3. 교보 구독형 `KYOBO_SUBSCRIPTION_V1` [확정] (표본: 세종 구독 `https://sejonglib.dkyobobook.co.kr` 외 20곳)
 
@@ -61,6 +62,8 @@
   - 큰 목록 16곳: 180,392~244,765권(세종 208,968, 동해 244,765 등). 같은 서버라 한 곳씩 받으면 각 4시간 안팎
   - 작은 목록 5곳: 9~804권(거제시청, 노형꿈틀, 대구교육청, 박정희대통령기념, 울릉)
 - 모바일 화면: User-Agent에 데스크톱 브라우저 표시가 없으면 전체 건수가 없는 모바일 화면이 옴
+- 교보 기관 사이트(`*.dkyobobook.co.kr`)는 첫 화면 스크립트에 `library_model: '대여'|'소장'|'혼합'`이 있음 [확정] (2026-10-03). 대여·혼합은 교보 구독 목록이 붙어 20만 권 안팎(신용보증기금 238,118), 소장은 대개 수백~수천 권. 경로가 `/elibrary-front` 없이 `/main.ink`, `/content/contentList.ink`이면 구독형과 같은 방법으로 받음
+- `contentList.ink`의 `recordCount`는 20·40·60·80만 받음(1이나 99면 HTTP 500) [확정] (2026-10-03). "총" 다음에 `&nbsp;`가 있어 HTML 엔티티를 풀고 읽어야 함
 
 ## 4. YES24 [확정] (표본: 화성 `hsg.yes24library.com`(V2), 성동 `ebook.sdlib.or.kr:8092`(V1), 춘천 `elib.chuncheon.go.kr:447`(V2))
 
@@ -126,6 +129,7 @@
 - 전체 목록: `{root}/sub/sub.htm?nav_code={전자책 메뉴 코드}&view_level=1&list_scale={N}&startPage={쪽}` — 전자책 메뉴 코드는 첫 화면의 `sub.htm?nav_code=…&view_level=1&scroll=0` 링크에서 찾음(울산과학대 `ebo1655356114`). "총 2,048 건의 도서가 있습니다". `list_scale` 100 동작
 - 검색: `sub.htm?nav_code={코드}&code=search&search_item={title|author}&search_order={검색어}&view_level=1` (제목 "사랑" 63건, 저자 "김" 579건). 출판사 값은 못 찾음 [확인 필요]
 - 목록 줄 `li.line`: 제목 `h2.book_tit a`, `span.writer`, `span.pub`, `span.volumecnt`(보유)·`uselendingcnt`(대출)·`usereservecnt`(예약), 상세 `sub.htm?mode=view&mv_data={base64}&goods_id={알라딘 상품 번호}`, 공급사 표시 `div.companyALADIN`
+- 수집기 `ALADIN_V1` (2026-10-03): 목록 `{root}/sub/sub.htm?nav_code={전자책 메뉴}&order_list=2&list_scale=100&view_level=1&startPage=N` — `order_list` 0 최다대출, 1 출판일, 2 제목, 3 최다예약, 4 대출가능. 줄 `ul.list > li.line`의 `h2.book_tit a`(`goods_id`), `span.writer`, `span.pub`, 표지 `div.book-img1` 배경 주소, 공급사 `div.com div.company…`. 상세는 짧은 주소 `{root}/sub/sub.htm?mode=view&nav_code=…&goods_id=…`도 열림(긴 `mv_data`는 필요 없음). 상세에 파일포맷(epub 등) 있음. 목록에는 출간일이 없음 [확정] (울산과학대 표본)
 - 사이트마다 차이가 큼(2026-09-30, 공공으로 보이는 28곳): 위 방법으로 센 곳 4곳(경북도서관 오디오북 2,610, 다산도서관 4,092, 테라테크 체험 57,027, 하용조기념 137), 다른 화면 15곳, 오류 9곳. 경남·경북·경기교육청 등은 통합 포털이나 다른 화면으로 옮김
 - **오디오북**: "경북도서관 오디오북"(`www.gb.go.kr:8089`)처럼 사이트 전체가 오디오북인 곳이 있음 → 도서관(사이트) 단위로 종류를 기록해야 함
 

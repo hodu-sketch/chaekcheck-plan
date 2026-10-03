@@ -10,7 +10,7 @@ Write `design-delta.md` in the current cycle folder: the change from `docs/curre
 1. Read `scope.md`, `spec.md`, `flow.md` and `docs/current/`. If the slice touches library collection or classification, book collection, or book normalization or grouping, also read the documents `docs/reference-index.md` lists for that topic, and pass their paths to the `architect` subagent.
 2. Delegate to the `architect` subagent. In the task, name the cycle folder and ask for alternatives only where there is a real choice.
 3. Show the user the alternatives and the recommendation (안), and let the user choose. Do not choose for them.
-   - If `ecc-plan-canvas` is installed (`ecc-plan-canvas --help` succeeds), save the proposal as `architect-proposal.md` in the cycle folder and review it with the `plan-canvas` skill, so the user can annotate the alternatives in the browser.
+   - If `ecc-plan-canvas` is installed (`ecc-plan-canvas --help` succeeds), save the proposal as `architect-proposal.md` in the cycle folder and review it with the `plan-canvas` skill in proposal review mode, so the user decides each `[안]` (승인/미승인/기타) in the browser.
    - Otherwise ask with AskUserQuestion.
 4. For each choice the user makes, run `/adr` so the decision and the user's stated reason are recorded.
 5. Write `design-delta.md` from the chosen alternatives. Check it against the dev skills:
@@ -29,6 +29,7 @@ Write `design-delta.md` in the current cycle folder: the change from `docs/curre
    - Prefer top-to-bottom (`flowchart TB`) for module diagrams so they fit a phone.
    - If the canvas is unavailable, say so in one line so the user knows why a page was sent instead.
 7. Do not edit `docs/current/` yet; `/cycle-close` merges the delta after review.
+8. Review `design-delta.md` with the `plan-canvas` skill in proposal review mode. Once every `[안]` is decided, go straight on to `/cycle-close` without asking.
 
 Precondition: `spec.md` ends with the verdict **설계 진행 가능**. If it says **확인 필요**, list the blocking items and stop.
 

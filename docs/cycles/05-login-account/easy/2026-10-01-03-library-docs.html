@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>도서관 목록 수집과 분류</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#15171a;--card:#1e2125;--text:#e7e9ec;--muted:#a3abb5;--line:#343a41;--accent:#8db8e3;--accent-bg:#1f2d3b;--ok:#7fd3a0;--ok-bg:#183123;--warn:#f0c46a;--warn-bg:#352a13;--no:#f09a93;--no-bg:#3a1c1a;--code-bg:#272b30}}
+:root[data-theme="dark"]{--bg:#15171a;--card:#1e2125;--text:#e7e9ec;--muted:#a3abb5;--line:#343a41;--accent:#8db8e3;--accent-bg:#1f2d3b;--ok:#7fd3a0;--ok-bg:#183123;--warn:#f0c46a;--warn-bg:#352a13;--no:#f09a93;--no-bg:#3a1c1a;--code-bg:#272b30}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:860px;margin:0 auto;padding:40px 16px 64px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+ul.items{list-style:none;padding:0;margin:0}
+ul.items>li{display:grid;grid-template-columns:34px 1fr;gap:14px;padding:14px 0;border-top:1px solid var(--line)}
+ul.items>li:first-child{border-top:none}
+ul.items svg{width:30px;height:30px;stroke:var(--accent);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;margin-top:4px}
+.items b{display:block}
+.tag{display:inline-block;font-size:16px;font-weight:500;border-radius:6px;padding:1px 8px;margin-left:4px;white-space:nowrap}
+.t-ok{background:var(--ok-bg);color:var(--ok)}.t-warn{background:var(--warn-bg);color:var(--warn)}.t-no{background:var(--no-bg);color:var(--no)}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:10px 0}
+th,td{text-align:left;padding:8px 10px;border-top:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:500}
+figure{margin:0 0 8px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:18px;margin-top:8px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+</style>
+</head>
+<body>
+<main>
+<p class="lead">도서관 목록은 dev 문서 한 권으로<br>다시 만들 수 있습니다.</p>
+<p class="sub">시리즈 3장. "도서관 목록을 어디서 얻고, 화면 종류와 가입 자격을 어떻게 나누는가"는 dev <code>docs/library-maintenance.md</code>가 절차 원본입니다. 이 페이지는 그 절차를 풀어 쓴 것입니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>도서관 목록은 네 곳에서 모읍니다</h2>
+<div class="gist">공식 전체 목록은 없습니다. 네 출처를 합친 뒤, 사이트가 살아 있는지 도구로 확인해 넣습니다.</div>
+<figure>
+<svg viewBox="0 0 820 220" role="img" aria-label="네 출처에서 후보를 모아 확인 도구로 확정하는 흐름">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+<g font-family="Noto Sans KR, sans-serif" fill="var(--text)" font-size="16">
+<rect x="10" y="15" width="250" height="38" rx="8" fill="var(--accent-bg)"/><text x="20" y="40">교보 공식 목록 (216곳)</text>
+<rect x="10" y="63" width="250" height="38" rx="8" fill="var(--accent-bg)"/><text x="20" y="88">전국도서관표준데이터 (공공데이터)</text>
+<rect x="10" y="111" width="250" height="38" rx="8" fill="var(--accent-bg)"/><text x="20" y="136">통합 포털 목록</text>
+<rect x="10" y="159" width="250" height="38" rx="8" fill="var(--accent-bg)"/><text x="20" y="184">웹러브 북스 (제3자 사이트)</text>
+<g stroke="var(--muted)" stroke-width="2" fill="none">
+<line x1="262" y1="34" x2="330" y2="100"/><line x1="262" y1="82" x2="330" y2="103"/><line x1="262" y1="130" x2="330" y2="107"/><line x1="262" y1="178" x2="330" y2="110"/>
+<line x1="330" y1="105" x2="356" y2="105" marker-end="url(#ar)"/>
+</g>
+<rect x="360" y="70" width="190" height="70" rx="10" fill="none" stroke="var(--accent)" stroke-width="2"/>
+<text x="455" y="98" text-anchor="middle" font-weight="700">주소 모양으로</text><text x="455" y="124" text-anchor="middle" font-weight="700">화면 종류 나누기</text>
+<line x1="552" y1="105" x2="586" y2="105" stroke="var(--muted)" stroke-width="2" marker-end="url(#ar)"/>
+<rect x="590" y="70" width="220" height="70" rx="10" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/>
+<text x="700" y="98" text-anchor="middle" font-weight="700">확인 도구로 확정</text><text x="700" y="124" text-anchor="middle" font-size="15">CheckKyoboSites · CheckYes24Sites</text>
+</g></svg>
+<figcaption>출처는 dev <code>library-maintenance.md</code> 4-0~4-6, 확인 도구는 3절. 포털·강남구용 확인 도구는 아직 없습니다.</figcaption>
+</figure>
+<ul class="items">
+<li><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h6"/></svg><div><b>결과는 seed 파일에 들어갑니다</b>켜진 도서관 278곳(2026-09-29). 도서관 한 줄 = 전자도서관 사이트 하나(ADR-0017). 꺼 둔 곳은 id 59 대구학생, id 131 서구 통합(2027-01에 재개 확인).</div></li>
+<li><svg viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg><div><b>robots.txt는 기록만 하고, 막혀도 넣습니다</b>사용자 결정(2026-09-28). plan <code>collection-method.md</code> 2절의 "막히면 검색 안 보냄"은 옛 규칙이라 지금 쓰지 않습니다.</div></li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>화면 종류 7가지</h2>
+<div class="gist">도서관 사이트는 화면(HTML 구조)이 7종입니다. 종류마다 읽는 코드(adapter)가 하나씩 있고(ADR-0016), 읽는 코드가 없는 화면은 목록에 넣지 않습니다.</div>
+<table>
+<tr><th>값</th><th>어떤 사이트</th><th>알아보는 단서</th></tr>
+<tr><td><code>KYOBO_V1</code></td><td>교보 전자도서관</td><td>주소 모양, 대출 수량 표시 "대출 : 0/5"</td></tr>
+<tr><td><code>KYOBO_SUBSCRIPTION_V1</code></td><td>교보 구독형</td><td><code>*.dkyobobook.co.kr</code>. 대출 수 없이 "구독"</td></tr>
+<tr><td><code>YES24_V1</code> / <code>V2</code> / <code>V3</code></td><td>YES24 전자도서관 세대별</td><td>경로 모양·문자셋이 다름. 새 화면이 나오면 다음 번호(ADR-0023)</td></tr>
+<tr><td><code>ELIB_PORTAL_V1</code></td><td>통합 전자도서관 포털</td><td><code>book_idx</code>, <code>menu_idx</code> 규칙</td></tr>
+<tr><td><code>GANGNAM_V1</code></td><td>강남구</td><td>ASP·EUC-KR</td></tr>
+</table>
+<p>판별 절차는 dev <code>library-maintenance.md</code> 1-3·4-6입니다. 인코딩을 먼저 봅니다. 읽는 코드가 없는 화면 7종(경남교육청, 서울도서관, 북큐브 등)은 backlog에 있습니다.</p>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>가입 자격은 원문으로만 정합니다</h2>
+<div class="gist">도서관 사이트의 회원가입 안내 원문을 읽어 판정합니다. 추정하지 않고, 못 찾으면 "자격 미확인"으로 둡니다(ADR-0013).</div>
+<ul class="items">
+<li><svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></svg><div><b>판정 값 네 가지</b>지역 규칙 있음(REGION) / 누구나(OPEN) / 누구나이지만 주의 문구 있음(OPEN_CAUTION) / 미확인(UNVERIFIED). 2026-09-29 기준 122 / 13 / 1 / 26곳.</div></li>
+<li><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6"/></svg><div><b>방문 가입(<code>visit_required</code>)</b>전자책을 쓰려면 도서관에 가야 하면 true. 판단 순서 4단계는 dev 4-10. 4번 규칙으로 true가 된 18곳은 원문을 다시 볼 후보입니다.</div></li>
+<li><svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><div><b>사람이 정한 값이 마지막에 이깁니다</b>dev <code>scripts/library/join_overrides.tsv</code>에 적으면 자동 판정보다 우선합니다. 최신 판정 표는 dev <code>docs/library-research/join-classification-2026-09-29.tsv</code>.</div></li>
+<li><svg viewBox="0 0 24 24"><path d="M3 12h18M12 3v18"/></svg><div><b>지역 ID 규칙</b>시도 2자리, 시군구 4자리(시도 + 법정동 순서). 세종은 <code>3601</code> 하나. 전남광주통합은 시·도 12로 처리하는데, 옛 광주 거주자가 전남교육청 12곳에 가입 가능으로 나오는 문제가 사용자 확인 대기입니다(dev 14절).</div></li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>검색 순서: 가입하기 쉬운 곳부터</h2>
+<div class="gist">지역을 넣으면 내 시군구 → 내 시도 → 누구나 → 방문 가입만 → 확인 필요 순서입니다. 방문 가입 도서관은 같은 무리의 맨 뒤로 갑니다(ADR-0027).</div>
+<p>이 순서(<code>joinTier</code>, <code>priorityGroup</code>)는 dev 안내서에는 없고 ADR-0027과 사이클 04 design-delta에만 있습니다. 재조사할 때 ADR-0027을 같이 봐야 합니다.</p>
+</section>
+
+<section class="card">
+<h2><span class="num">5</span>다시 조사할 때 확인할 것</h2>
+<div class="gist">정기 재조사 주기는 아직 정하지 않았습니다. 처음 재조사 때 아래를 봅니다. 전체 목록은 <code>docs/reference-index.md</code> 6절.</div>
+<table>
+<tr><th>확인할 것</th><th>어디를 보나</th></tr>
+<tr><td>새 주소 못 찾은 약 20곳</td><td>plan <code>cycles/02/research.md</code> 12절, dev <code>library-site-issues.md</code> 1·2·7절</td></tr>
+<tr><td>로그인해야 전자책 주소가 보이는 8곳(포항·고령·레인보우영동·광주동구·서귀포·정읍·함평·창원)</td><td>dev <code>library-site-issues.md</code> 7절 — 사람이 로그인</td></tr>
+<tr><td>사용자 확인 대기 13건(경산·김천·대구·음성·경북·성동·고창·책이음 4곳·진천·양천·전남 12곳·세종북자람 등)</td><td>dev <code>library-maintenance.md</code> 14절</td></tr>
+<tr><td>중간 인증서 만료 2027-05-21, 2027-11-02</td><td>dev <code>library-site-issues.md</code> 3절</td></tr>
+<tr><td><b>책 번호 체계 점검</b> — 도서관 목록 확인 때마다 같이(사용자 결정)</td><td>dev <code>library-maintenance.md</code> 4-11, <code>scripts/library/check_code_spaces.py</code>. 4장 카드 4</td></tr>
+</table>
+</section>
+
+<p class="foot">이 글은 요약이며 근거는 원본에 있습니다: dev <code>docs/library-maintenance.md</code>, <code>docs/library-site-issues.md</code>, plan <code>docs/reference-index.md</code> 1·2·6절.</p>
+</main></body></html>

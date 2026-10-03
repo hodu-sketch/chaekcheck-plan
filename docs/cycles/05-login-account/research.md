@@ -1,0 +1,67 @@
+# 사이클 05 조사: 명세의 "확인 필요" 다섯 가지
+
+- 조사일: 2026-10-01 (chaekcheck-plan 세션). 아래 "확인 날짜"는 모두 이날입니다.
+- 대상: `spec.md` "확인 필요" 표 중 설계를 막지 않는다고 적은 다섯 가지. 결과는 `spec.md`에 반영했습니다.
+- 앞선 조사: `docs/research/member-and-alerts/signup-security.md` (소셜 로그인·세션·개인정보법). 이 문서는 그 뒤에 더 확인한 것만 적습니다.
+- 확인 방법 주의: 페이지를 직접 열어 요약 도구로 읽었습니다. 네이버 콜백 절은 원문을 그대로 옮겨 받았고, 나머지는 요약이므로 값(색 코드 등)을 코드에 넣기 전에 원문을 한 번 더 봅니다.
+
+## 1. PKCE를 네이버·카카오가 받는가
+
+| 제공자 | 확인한 사실 | 출처 | 태그 |
+|---|---|---|---|
+| 네이버 | OIDC 연동 절(3.5.4 연동 URL 생성, 3.5.6 접근 토큰 발급)에 `code_challenge`("해시처리된 PKCE value"), `code_challenge_method`("PKCE 알고리즘"), `code_verifier`("PKCE로 동작하는 경우 추가")가 있음 | https://github.com/naver/naver-openapi-guide/blob/master/ko/login/devguide/devguide.md | [확정] OIDC 흐름에 있음. 일반 OAuth 2.0 흐름에서도 받는지는 [확인 필요: 호출 시험] |
+| 카카오 | 인가 코드 요청 파라미터는 `client_id`, `redirect_uri`, `response_type`, `scope`, `prompt`, `login_hint`, `service_terms`, `state`, `nonce`. 토큰 요청은 `grant_type`, `client_id`, `redirect_uri`, `code`, `client_secret`. PKCE 파라미터 없음 | https://developers.kakao.com/docs/ko/kakaologin/rest-api | [확정] 문서에 없음 |
+
+- 뜻: Spring Security는 제공자마다 PKCE를 켜고 끌 수 있습니다(`requireProofKey`, `signup-security.md` A3-2). 카카오는 끄고 세션에 묶인 `state`로 막습니다(RFC 9700: PKCE를 받지 않는 서버면 `state`). 네이버는 호출 시험에서 받으면 켭니다 [안].
+- 설계에서 볼 것: 네이버·카카오 모두 OIDC를 제공합니다(카카오 `nonce` 파라미터, 네이버 3.5절). OIDC로 붙이면 식별자를 ID 토큰의 `sub`로 받는데, 그 값이 프로필 API의 `id`·회원번호와 같은지는 확인하지 않았습니다 [확인 필요: 공식 문서 확인]. OAuth 2.0 + 프로필 API로 갈지 OIDC로 갈지는 `design-delta`에서 정합니다.
+
+## 2. 네이버에서 식별자만 받을 수 있는가
+
+- 프로필 API 응답에는 `id`, `nickname`, `name`, `email`, `gender`, `age`, `birthday`, `profile_image`, `birthyear`, `mobile`이 있고, `id`는 항상 옵니다. (https://github.com/naver/naver-openapi-guide/blob/master/ko/login/profile/profile.md) [확정]
+- 검수 가이드는 "권한 선택: 실제 활용되는 정보만 선택"을 요구합니다. 앱 등록 화면에서 제공 정보를 고른다는 뜻입니다. (같은 저장소 `verify/verify.md`) [확정]
+- **아무 항목도 고르지 않았을 때 `id`만 오는지**는 문서에 없습니다 [확인 필요: 사용자가 네이버 개발자센터 앱 등록 화면에서 확인]. `signup-security.md` A1-2는 "필수 제공: 이용자 식별자, 닉네임"으로 읽었는데, 닉네임이 빠질 수 있는지 이 화면에서 같이 봅니다.
+- 닉네임이 빠지지 않더라도 **저장하지 않고 화면에도 쓰지 않습니다** [확정: spec "저장하는 것", 사용자 2026-10-01]. 그 경우 동의 고지의 "항목"에는 "네이버가 제공하는 닉네임(저장하지 않음)"을 적을지 검토합니다 [확인 필요: 처리방침 문구].
+- 카카오는 동의항목 없이 회원번호와 `connected_at`만 받을 수 있습니다 [확정] (spec 데이터 출처).
+
+## 3. 네이버 연결끊기 Callback의 암호 세부 (원문 확인)
+
+출처: https://github.com/naver/naver-openapi-guide/blob/master/ko/login/devguide/devguide.md 4.4절. 모두 [확정].
+
+- 요청: `POST <등록한 Callback URL>`, `Content-Type: application/x-www-form-urlencoded`. 등록 위치는 네이버 개발자센터 > 애플리케이션 > API 설정 > 연결끊기 Callback URL.
+- 변수: `clientId`(발급받은 Client ID), `encryptUniqueId`(암호화한 이용자 고유 식별자), `timestamp`(unix epoch 초), `signature`(서명).
+- 응답: 성공 204(본문 없음). 그 밖에 400, 403, 404, 50x. **"네이버에서는 실패 요청에 대해서 재시도를 수행하지 않습니다."**
+- 키: `CLIENT_SECRET`을 MD5 한 바이트 배열의 앞 16바이트. 암호화와 서명에 같은 키를 씁니다.
+- 식별자 암호화: AES128 / CBC / PKCS5Padding. `encryptUniqueId = base64( iv(16바이트) + 암호문 )`. 예제 코드는 URL-safe Base64(`encodeBase64URLSafeString`)를 씁니다. 복호화는 앞 16바이트를 IV로 떼고 나머지를 풉니다.
+- 서명: HmacSHA256. 서명 원문은 `clientId=<값>&encryptUniqueId=<값>&timestamp=<값>`, 결과는 URL-safe Base64. 우리가 같은 방식으로 계산한 값이 `signature`와 같아야 합니다.
+- 설계에서 정할 것 [안]: `timestamp`가 너무 오래된 요청을 거절할지(문서에 기준 없음), `clientId`가 우리 것과 다른 요청 거절, 서명 비교는 시간 차가 드러나지 않는 비교로.
+
+## 4. 로그인 버튼 디자인 지침
+
+| 제공자 | 지침 | 출처 | 태그 |
+|---|---|---|---|
+| 카카오 | 버튼 바탕 `#FEE500`, 말풍선 심볼 `#000000`, 글자 `#000000` 85%. 이 색을 벗어나면 안 됨. 심볼은 필수이고 모양·비율·색을 바꿀 수 없음. 글자는 "카카오 로그인" 또는 줄여서 "로그인"(영문 "Login with Kakao"). 모서리 12px. 폭은 양쪽 여백을 같게 늘려 조절 가능. 다른 로그인 버튼을 돋보이게 하려고 카카오 버튼을 덜 눈에 띄게 하면 안 됨 | https://developers.kakao.com/docs/ko/kakaologin/design-guide | [확정] |
+| 네이버 | 완성형(로고+글자, 권장)과 아이콘형. 지정 색은 바꿀 수 없고 녹색 바탕 권장. 글자는 네이버 로그인의 목적에 맞으면 됨("네이버로 간편가입", "Log in with Naver" 등). 로고 모양 변형·그러데이션 금지. 다른 로그인 버튼과 나란히 둘 때 네이버 버튼만 작게 하면 안 됨 | https://github.com/naver/naver-openapi-guide/blob/master/ko/login/bi/bi.md | [확정] 규칙 / 녹색의 색 코드는 [확인 필요: 원문 값 확인. 공식 제공 버튼 이미지를 쓰면 값 확인 없이 지킬 수 있음] |
+
+- 화면에 주는 영향: 두 버튼을 **같은 크기로 나란히** 둡니다. 우리 서비스 색으로 칠하지 않습니다. 네이버 검수 항목(브랜딩)과 이어집니다.
+
+## 5. 약관·처리방침 문구와 보호책임자
+
+- 처리방침에 담을 법정 항목은 개인정보 보호법 제30조①과 시행령 제31조①입니다 (`signup-security.md` C8-1, C8-3) [확정].
+- 개인정보보호위원회가 「개인정보 처리방침 작성지침(2025.4.)」을 공개했습니다(2025-04-21). 사례와 작성 방법이 들어 있습니다. (https://www.pipc.go.kr/np/cop/bbs/selectBoardArticle.do?bbsId=BS217&mCode=D010030000&nttId=11134 , https://www.privacy.go.kr/front/bbs/bbsView.do?bbsNo=BBSMSTR_000000000049&bbscttNo=20806) [확정] 문서가 있음 / 본문 PDF는 열지 못함 [확인 필요: PDF를 읽고 문구 초안 작성].
+- 보호책임자:
+  - "소상공인"은 「중소기업기본법」상 소기업 중 상시 근로자 수가 10명 미만이고, 업종별 기준(광업·제조업·건설업·운수업 10명 미만, 그 밖의 업종 5명 미만)에 맞는 자입니다. (소상공인기본법 제2조, 시행령 제3조. 확인은 생활법령정보 https://easylaw.go.kr/CSP/CnpClsMain.laf?csmSeq=1973&ccfNo=1&cciNo=1&cnpClsNo=1 요약으로 했고 law.go.kr 조문 화면은 열리지 않음) [확정: 요약 출처]
+  - 소상공인이면 보호책임자를 따로 지정하지 않아도 되고 대표자가 책임자가 됩니다 (개인정보 보호법 제31조, 시행령 제32조①, `signup-security.md` C10-2) [확정].
+  - 사업자등록이 없는 개인 운영자가 "소기업"에 들어가는지는 확인하지 못했습니다 [확인 필요: 사용자에게 사업자 형태 질문, 필요하면 개인정보보호위원회 문의].
+  - **어느 쪽이든 결과는 같습니다** [안]: 운영자 본인을 보호책임자로 처리방침에 적습니다(소상공인이면 법에 따라, 아니면 지정해서). 그래서 설계와 구현을 막지 않습니다.
+- 이용약관: 법이 정한 필수 기재 양식은 확인하지 못했습니다 [확인 필요: 공식 문서 확인 — 약관의 규제에 관한 법률, 공정거래위원회 표준약관 중 해당하는 것이 있는지]. 이번 사이클은 "이용약관 페이지와 버전, 가입 때 동의 기록"까지 만들고, 문구는 배포 전에 사용자가 검토합니다 [확정: 사용자 2026-10-01 "이용약관도"].
+
+## 6. 남은 것 (누가, 언제)
+
+| 항목 | 누가 | 언제 |
+|---|---|---|
+| 네이버 앱 등록 화면에서 아무 항목도 고르지 않으면 `id`만 오는지 | 사용자 (개발자센터 로그인 필요) | 구현 전 |
+| 네이버 일반 OAuth 2.0 흐름이 PKCE를 받는지 | dev (호출 시험) | 구현 |
+| OIDC의 `sub`가 프로필 `id`·회원번호와 같은지 | plan (공식 문서 확인) | `design-delta` |
+| 네이버 버튼 녹색의 색 코드 | dev (원문 또는 공식 이미지 사용) | 구현 |
+| 처리방침 작성지침 PDF 읽고 문구 초안 | plan → 사용자 검토 | 배포 전 |
+| 사업자 형태(보호책임자 기재 방식), 이용약관 문구 | 사용자 | 배포 전 |

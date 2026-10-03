@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 05 조사와 화면 흐름</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--code-bg:#f0eee9}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#15171a;--card:#1e2125;--text:#e7e9ec;--muted:#a3abb5;--line:#343a41;--accent:#8db8e3;--accent-bg:#1f2d3b;--ok:#7fd3a0;--ok-bg:#183123;--warn:#f0c46a;--warn-bg:#352a13;--code-bg:#272b30}}
+:root[data-theme="dark"]{--bg:#15171a;--card:#1e2125;--text:#e7e9ec;--muted:#a3abb5;--line:#343a41;--accent:#8db8e3;--accent-bg:#1f2d3b;--ok:#7fd3a0;--ok-bg:#183123;--warn:#f0c46a;--warn-bg:#352a13;--code-bg:#272b30}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:900px;margin:0 auto;padding:40px 16px 64px}
+h1,h2{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:10px 0}
+th,td{text-align:left;padding:8px 10px;border-top:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.tag{display:inline-block;font-size:16px;font-weight:500;border-radius:6px;padding:1px 8px;white-space:nowrap}
+.t-ok{background:var(--ok-bg);color:var(--ok)}.t-warn{background:var(--warn-bg);color:var(--warn)}
+figure{margin:0 0 8px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:18px;margin-top:8px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+</style>
+</head>
+<body>
+<main>
+<p class="lead">조사 다섯 가지 중 둘은 끝났고,<br>셋은 나중에 확인하면 됩니다.</p>
+<p class="sub">사이클 05(로그인·계정). 조사 결과와 화면 흐름을 한 장에 담았습니다. 설계를 막는 것은 없습니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>조사 결과 다섯 가지</h2>
+<div class="gist">네이버 콜백 방식과 버튼 규칙은 확인이 끝났습니다. 나머지 셋은 개발할 때나 배포 전에 확인합니다.</div>
+<table>
+<tr><th>무엇</th><th>결과</th><th>상태</th></tr>
+<tr><td>PKCE(로그인 요청에 붙이는 추가 확인 값)</td><td>네이버는 OIDC 방식 문서에 PKCE 파라미터가 있습니다. 카카오는 문서에 없습니다. 그래서 카카오는 끄고 <code>state</code> 값으로 막고, 네이버는 개발할 때 실제로 보내 보고 되면 켭니다</td><td><span class="tag t-warn">개발 때 시험</span></td></tr>
+<tr><td>네이버에서 식별자만 받기</td><td>앱을 등록할 때 받을 정보를 고릅니다. 아무것도 안 고르면 식별자만 오는지는 문서에 없습니다. 네이버 개발자센터 화면에서 직접 봐야 합니다. 닉네임이 같이 오더라도 저장하지 않습니다</td><td><span class="tag t-warn">사용자가 화면 확인</span></td></tr>
+<tr><td>네이버 "연결끊기 Callback" 방식</td><td>네이버가 우리 주소로 POST를 보냅니다. 서명(HmacSHA256)을 확인하고, 암호화된 이용자 번호(AES)를 풀어 그 계정을 지운 뒤 204로 답합니다. 네이버는 실패해도 다시 보내지 않습니다. 원문을 그대로 확인했습니다</td><td><span class="tag t-ok">확인 끝</span></td></tr>
+<tr><td>로그인 버튼 규칙</td><td>카카오는 노란 바탕(<code>#FEE500</code>)·말풍선·"카카오 로그인". 네이버는 지정된 녹색·로고. 두 버튼을 같은 크기로 나란히 두고, 우리 색으로 바꾸지 않습니다</td><td><span class="tag t-ok">확인 끝</span></td></tr>
+<tr><td>약관·처리방침 글, 보호책임자</td><td>개인정보보호위원회가 낸 「개인정보 처리방침 작성지침(2025.4.)」을 따라 씁니다(PDF는 아직 안 읽음). 보호책임자는 어느 경우든 운영자 본인을 적으면 됩니다</td><td><span class="tag t-warn">배포 전 글 검토</span></td></tr>
+</table>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>화면 흐름</h2>
+<div class="gist">새 화면은 넷입니다: 로그인 선택(S5), 가입 동의(S6), 탈퇴 안내(S7), 약관·처리방침(S8·S9). 검색 화면(S1)과 설정 창(S4)에는 버튼만 더합니다.</div>
+<figure>
+<svg viewBox="0 0 900 430" role="img" aria-label="로그인에서 탈퇴까지 화면 흐름">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+<g font-family="Noto Sans KR, sans-serif" fill="var(--text)" text-anchor="middle">
+<!-- row 1 -->
+<rect x="10" y="60" width="150" height="80" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+<text x="85" y="92" font-size="17" font-weight="700">S1 검색</text><text x="85" y="118" font-size="14" fill="var(--muted)">위쪽에 "로그인"</text>
+<rect x="195" y="60" width="150" height="80" rx="10" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/>
+<text x="270" y="92" font-size="17" font-weight="700">S5 로그인 선택</text><text x="270" y="118" font-size="14" fill="var(--muted)">네이버 · 카카오</text>
+<rect x="380" y="60" width="150" height="80" rx="40" fill="none" stroke="var(--muted)" stroke-width="2" stroke-dasharray="6 5"/>
+<text x="455" y="92" font-size="16" font-weight="700">제공자 화면</text><text x="455" y="118" font-size="14" fill="var(--muted)">네이버·카카오</text>
+<rect x="565" y="60" width="150" height="80" rx="10" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/>
+<text x="640" y="92" font-size="17" font-weight="700">S6 가입 동의</text><text x="640" y="118" font-size="14" fill="var(--muted)">확인란 셋 → 가입</text>
+<rect x="750" y="60" width="140" height="80" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+<text x="820" y="92" font-size="17" font-weight="700">S1 검색</text><text x="820" y="118" font-size="14" fill="var(--muted)">위쪽에 "로그아웃"</text>
+<g stroke="var(--muted)" stroke-width="2" fill="none">
+<line x1="162" y1="100" x2="192" y2="100" marker-end="url(#ar)"/>
+<line x1="347" y1="100" x2="377" y2="100" marker-end="url(#ar)"/>
+<line x1="532" y1="100" x2="562" y2="100" marker-end="url(#ar)"/>
+<line x1="717" y1="100" x2="747" y2="100" marker-end="url(#ar)"/>
+<path d="M455 58 L455 28 L820 28 L820 57" marker-end="url(#ar)"/>
+</g>
+<text x="637" y="20" font-size="14" fill="var(--muted)">이미 가입한 계정은 동의 없이 바로</text>
+<text x="547" y="160" font-size="14" fill="var(--muted)">처음 온 계정</text>
+<!-- row 2 -->
+<rect x="750" y="280" width="140" height="80" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+<text x="820" y="312" font-size="17" font-weight="700">S4 설정 창</text><text x="820" y="338" font-size="14" fill="var(--muted)">계정 절 · 탈퇴</text>
+<rect x="565" y="280" width="150" height="80" rx="10" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/>
+<text x="640" y="312" font-size="17" font-weight="700">S7 탈퇴 안내</text><text x="640" y="338" font-size="14" fill="var(--muted)">되돌릴 수 없어요</text>
+<rect x="380" y="280" width="150" height="80" rx="40" fill="none" stroke="var(--muted)" stroke-width="2" stroke-dasharray="6 5"/>
+<text x="455" y="312" font-size="16" font-weight="700">제공자 화면</text><text x="455" y="338" font-size="14" fill="var(--muted)">한 번 더 본인 확인</text>
+<rect x="150" y="280" width="195" height="80" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+<text x="247" y="312" font-size="17" font-weight="700">S1 검색</text><text x="247" y="338" font-size="14" fill="var(--muted)">"탈퇴했습니다" 안내</text>
+<g stroke="var(--muted)" stroke-width="2" fill="none">
+<line x1="820" y1="142" x2="820" y2="277" marker-end="url(#ar)"/>
+<line x1="748" y1="320" x2="718" y2="320" marker-end="url(#ar)"/>
+<line x1="563" y1="320" x2="533" y2="320" marker-end="url(#ar)"/>
+<line x1="378" y1="320" x2="348" y2="320" marker-end="url(#ar)"/>
+</g>
+<text x="812" y="215" font-size="14" fill="var(--muted)" text-anchor="end">설정을 엶</text>
+<text x="455" y="390" font-size="14" fill="var(--muted)">다른 계정·취소·시간 초과면 탈퇴 안 됨(S7로)</text>
+<text x="450" y="420" font-size="14" fill="var(--muted)">S8 이용약관 · S9 개인정보 처리방침: 모든 화면 아래 링크와 S6에서 열림. 로그아웃은 S1 위쪽 버튼 한 번</text>
+</g></svg>
+<figcaption>녹색은 새 화면, 파란색은 있던 화면, 점선은 네이버·카카오 쪽 화면입니다.</figcaption>
+</figure>
+<table>
+<tr><th>화면</th><th>하는 일</th></tr>
+<tr><td>S1 검색 (바뀜)</td><td>위 오른쪽에 "로그인", 로그인하면 같은 자리에 "로그아웃". 제공자 이름·닉네임은 안 보임</td></tr>
+<tr><td>S5 로그인 선택 (새)</td><td>작은 창에 네이버·카카오 버튼 둘</td></tr>
+<tr><td>S6 가입 동의 (새)</td><td>수집 고지 표와 확인란 셋(이용약관, 개인정보 수집·이용, 만 14세 이상). 셋 다 표시해야 "가입". 가입 전에는 아무것도 저장 안 함</td></tr>
+<tr><td>S4 설정 창 (바뀜)</td><td>"계정" 절에 로그아웃·탈퇴</td></tr>
+<tr><td>S7 탈퇴 안내 (새)</td><td>지워지는 것과 되돌릴 수 없음을 알리고, 제공자 화면에서 한 번 더 본인 확인</td></tr>
+<tr><td>S8·S9 (새)</td><td>이용약관, 개인정보 처리방침 전문. 로그인 없이 열림</td></tr>
+</table>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>지금 해 주실 것</h2>
+<div class="gist">이 PC의 브라우저에 검토 페이지 두 개를 열어 두었습니다. 문서의 "안 #N" 칩을 눌러 승인 / 미승인 / 기타 중 하나를 고르고 "보내기"를 누르면 됩니다.</div>
+<table>
+<tr><th>문서</th><th>고를 안</th><th>예</th></tr>
+<tr><td>명세 <code>spec.md</code></td><td>22개</td><td>절대 만료 90일, 탈퇴 본인 확인 유효 5분, 로그인 뒤 보던 주소로 복귀</td></tr>
+<tr><td>화면 흐름 <code>flow.md</code></td><td>21개</td><td>로그인 버튼 위치, 로그인 선택을 작은 창으로, 가입 동의 주소 <code>/signup</code></td></tr>
+</table>
+<p>모두 고르시면 묻지 않고 다음 단계(설계, <code>/design-delta</code>)로 넘어갑니다. "기타"에는 질문이나 바꿀 내용을 적으면 됩니다.</p>
+</section>
+
+<p class="foot">이 글은 요약이며 근거는 원본에 있습니다: <code>docs/cycles/05-login-account/research.md</code>, <code>spec.md</code>, <code>flow.md</code>.</p>
+</main></body></html>

@@ -14,6 +14,7 @@
 | `docs/adr/README.md` | 결정 목록 (ADR-0001~0034) |
 | dev `docs/plan-feedback.md` | dev가 개발 중 바꾼 것·측정·질문. 사이클별 절(`# 사이클 04`는 702행~). **다음 회고의 입력** |
 | dev `CLAUDE.md` | 스택·모듈 규칙 (plan에서 다시 적지 않음) |
+| `docs/cycles/NN-<slug>/easy/README.md` (지금은 `docs/cycles/05-login-account/easy/`) | 쉬운 설명 페이지(HTML) 모음과 목록. 사이클별로 둠. 사용자가 상황을 빠르게 파악할 때 봄. 요약이므로 값의 원본은 각 문서 |
 
 ## 1. 도서관 목록 수집 (어디서 목록을 얻고, 살아 있는지 확인하고, 넣고 끄는가)
 
@@ -57,7 +58,7 @@
 | plan `docs/research/ebook-catalog/search-and-normalization.md` 4절 | 정리 규칙: 저자 나누기·역할(4.1, 사이클 04 규칙 반영), 제목·본제목(4.2), 출판사(4.3), 출판일·대표값(4.4), **자료 종류(4.6, 2026-10-01 추가)** | 2026-10-01 갱신 |
 | plan `docs/research/ebook-catalog/search-and-normalization.md` 3절 | 검색 저장소 비교, pg_bigm 측정, `shared_preload_libraries` 필요 [확정] | 갱신 |
 | plan `docs/research/ebook-catalog/same-book-isbn.md` 5절 | **묶기 ①②③④ 구현 기준**(번호 체계, 국가서지 모호 규칙, ④ 정리한 전체 제목+저자+출판사), 5.1 dry run 수치, 5.2 대표값, 5.3 재작업 시 확인할 것 | 2026-10-01 갱신 |
-| plan `docs/research/ebook-catalog/same-book-isbn.md` 3·4절 | 교보식 코드 → 종이책 ISBN 규칙, 국가서지 파일·ISBN 서지정보 API | 확정/확인 필요 혼재 |
+| plan `docs/research/ebook-catalog/same-book-isbn.md` 3·4절 | 교보식 코드 → 종이책 ISBN 규칙, 국가서지 파일, ISBN 서지정보 API 시험·사용법·국립중앙도서관 API 종류(4.4~4.6). API는 지금 쓰지 않기로 함(1절, 2026-10-03) | 확정/확인 필요 혼재 |
 | dev `docs/library-maintenance.md` 4-11, `scripts/library/check_code_spaces.py` | **책 번호 체계 점검** 절차와 기준값 표. 도서관 목록 확인 때마다 [확정] | 최신 |
 | dev `catalog/internal/normalize/{CatalogText,Contributors,Isbn,PublishedDates}.java`, `importer/{BookGrouping,NationalBibliography,CatalogImporter}.java` | 규칙의 실제 코드. 문서와 코드가 다르면 코드가 실제 동작 | 구현 |
 | plan `docs/adr/0031-catalog-importer-in-backend.md`, `0032-postgres-pg-bigm-contributors.md`, `0034-store-ebook-catalog.md`, `0035-grouping-step4-and-code-spaces.md` | 정리 코드 한 벌, pg_bigm·사람별 표, 목록 저장, 묶기 ④·번호 체계 결정 | 확정 |
@@ -70,7 +71,8 @@
 | plan `docs/research/member-and-alerts/outline.md` | 회원 → 알림 밑그림 [안], 내 도서관 정의, 필터 제안, 사이클에서 정할 것 |
 | plan `docs/research/member-and-alerts/signup-security.md` | 소셜 로그인·세션·개인정보법 공식 문서 확인 결과(2026-10-01), 지켜야 할 것 15개 |
 | plan `docs/research/member-and-alerts/integration-plan.md` | 회원·알림을 프로젝트에 넣는 구조: 모듈(`auth`+`member`), 검색 연결(웹이 `libraryIds`), 세션, 표, API, 사이클 자르기 05·06·07 (사용자 결정 2026-10-01) |
-| plan `docs/cycles/05-login-account/scope.md` | 현재 사이클(로그인·계정) 범위·완료 기준·먼저 조사할 것 |
+| plan `docs/cycles/05-login-account/scope.md`, `spec.md` | 현재 사이클(로그인·계정) 범위·완료 기준, 동작 규칙·수용 기준. `spec.md` "데이터 출처"에 카카오 연결 끊기·웹훅, 네이버 재인증·검수, Spring Session·Modulith 확인 결과 |
+| plan `docs/cycles/05-login-account/research.md` | 사이클 05 조사(2026-10-01): PKCE, 네이버 제공 항목, 네이버 연결끊기 Callback 원문(암호·서명), 로그인 버튼 지침, 처리방침 작성지침·보호책임자 |
 
 ## 6. 재작업 시 확인할 것 (한 곳에 모음)
 
@@ -104,7 +106,7 @@
 
 ### 책 정리·묶기 (규칙 바꾸거나 다시 가져올 때)
 
-- `same-book-isbn.md` 5.3절 표 그대로: 번호 체계 비율, ④ 출판일 2년 차이 11,019권, `48090…`·확인 숫자 불일치 코드, 국가서지 제목 다른 5%·없는 23%, 모호 키 5,303, ② 실효, YES24 재수집 뒤 수치, 국가서지 파일 갱신·API 인증키
+- `same-book-isbn.md` 5.3절 표 그대로: 번호 체계 비율, ④ 출판일 2년 차이 11,019권, `48090…`·확인 숫자 불일치 코드, 국가서지 제목 다른 5%·없는 23%, 모호 키 5,303, ② 실효, YES24 재수집 뒤 수치, 국가서지 파일 갱신, ISBN 서지정보 API는 쓰지 않음(2026-10-03 결정, 묶기 문제가 많아지면 다시 검토)
 - 저자: 단체 이름 79,649줄, 영문 "성, 이름" 1,607줄, 저자 빈 줄 746, ` - ` 제목 91,693줄: `search-and-normalization.md` 4.1·4.2
 - 출판사 별칭 목록 비어 있음, 1950년 이전 날짜, 도서관마다 출간일 다른 13%: `search-and-normalization.md` 4.3·4.4·5절
 - 실제 가져오기 미실행, 응답 시간 미측정, AC-1~14 미확인: `backlog.md` "미뤄 둔 사이클 04 마무리 작업", dev `plan-feedback.md` "측정 (아직)"

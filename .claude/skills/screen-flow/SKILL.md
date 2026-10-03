@@ -10,6 +10,7 @@ Write `flow.md` in the current cycle folder. Cover only the screens this slice n
 1. Read `scope.md` and `spec.md`.
 2. Draft the flow and show it to the user before saving. Ask about entry points and navigation you would otherwise assume.
 3. Check that every AC in `spec.md` appears on some screen and every state in 상태별 동작 has a screen state.
+4. Review `flow.md` with the `plan-canvas` skill in proposal review mode (when `ecc-plan-canvas` is installed; it also renders the Mermaid diagrams). Once every `[안]` is decided, go straight on to `/design-delta` without asking.
 
 ## Template (Korean, screen IDs in English)
 

@@ -43,6 +43,7 @@ The dev project imports `docs/current/handoff.md` from its `CLAUDE.md`, so keep 
 
 - Ask the user before deciding. Present choices as proposals (안) with trade-offs; the user decides.
 - Review documents in the browser with the `plan-canvas` skill when `ecc-plan-canvas` is installed; otherwise review in the conversation and tell the user the canvas is unavailable.
+- Review documents with the plan-canvas skill in proposal review mode (each [안] decided 승인/미승인/기타 in the canvas, 기타 = question or suggestion; once all are decided, move to the next step without asking).
 - Whenever a document gains or changes Mermaid diagrams, show them to the user rendered (canvas, or a rendered HTML page sent with `SendUserFile`), not only as text.
 - Use AskUserQuestion for decisions during a cycle; subagents cannot ask the user, so collect answers in the main conversation.
 - Verify external facts (APIs, libraries, versions, data sources) against official sources and cite the URL and check date. If it cannot be verified, say so.
