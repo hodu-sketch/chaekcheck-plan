@@ -13,7 +13,7 @@
 1. **최소 구현**: Spring Security `oauth2Login()`(authorization code)으로 네이버·카카오를 커스텀 provider로 등록. 서버 세션(HttpSession) + Spring 기본 CSRF(SPA면 `csrf.spa()`) + 세션 쿠키 `Secure`/`HttpOnly`/`SameSite`. `state`는 Spring이 자동 처리하고 두 IdP가 요구·권장. PKCE는 confidential client에도 강력 권장(RFC 9700)이나 네이버·카카오 문서에 PKCE 언급이 없음 [확인 필요: 호출 시험].
 2. **회원 식별 키는 `(provider, provider_user_id)`** 만. 카카오 회원번호·네이버 id 모두 "앱별로 다른 값". 이메일은 바뀔 수 있어 식별자로 쓰지 말 것(카카오 공식). 두 IdP 사이 동일인 판별은 불가.
 3. **법적 최소 의무**: 수집·이용 동의(제15조② 고지 4가지), 최소 수집(제16조, 입증책임은 처리자), 처리방침 게시(제30조 + 시행령 제31조), 안전조치(제29조 → 고시 제2026-9호), 탈퇴 시 지체 없는 파기(제21조). 소상공인이면 보호책임자 별도 지정 없이 대표자가 책임자(제31조②). 만 14세 미만은 법정대리인 동의(제22조의2) → 연령을 안 받으면 확인 불가하므로 정책 결정 필요.
-4. **정식 오픈 전 검수**: 네이버는 검수 전 등록된 테스트 ID만 로그인 가능. 카카오는 이메일 동의항목이 비즈 앱(사업자 정보) 전용 → 개인 개발자·비영리는 이메일을 못 받을 수 있음. **알림 사이클(연락처)에 직접 영향**.
+4. **정식 오픈 전 검수**: 네이버는 검수 전 등록된 테스트 ID만 로그인 가능. 카카오는 이메일 동의항목을 비즈 앱에서 설정함. (2026-10-03 정정) 개인도 본인인증만으로 "개인 개발자 비즈 앱"으로 전환할 수 있음(사업자등록번호 불필요). 2026-10-03 확인, `docs/cycles/05-login-account/research.md` 7절. 카카오 로그인 자체는 사업자·검수 없이 쓸 수 있음. 개인 개발자 비즈 앱에서 이메일 필수 동의가 되는지는 [확인 필요: 전환 뒤 화면]. 알림 사이클(연락처)에 영향.
 5. **가장 큰 위험**: (a) 탈퇴/연결 끊기 누락 — 카카오는 탈퇴 시 연결 끊기 API 호출 + 즉시 파기, 연결 해제 웹훅에 3초 내 200 응답. (b) 유출 시 과징금(제64조의2: 매출액 3% 또는 매출 없으면 20억 이하)과 법정손해배상(제39조의2: 300만원 이하). "안전조치를 다한 경우"는 과징금 제외 → 고시 준수 증빙이 방어선.
 
 ## 2. 항목별 확인 표
@@ -28,7 +28,7 @@
 | A2-1 | 카카오 회원번호 | `id` = 앱별 사용자 고유 ID, 불변, 식별자로 권장. 이메일은 바뀔 수 있어 식별·동일인 판단에 쓰지 말 것. 이메일 쓸 때 `is_email_valid`/`is_email_verified` 확인 | https://developers.kakao.com/docs/latest/ko/kakaologin/common , …/kakaologin/utilize | [확정] |
 | A2-2 | 카카오 토큰 수명 | 액세스: REST 6시간, JavaScript 2시간, Android/iOS 12시간. 리프레시: 2달, 만료 1달 남은 시점부터 갱신 가능 | …/kakaologin/common , …/kakaologin/rest-api | [확정] |
 | A2-3 | 카카오 인가 파라미터 | `GET https://kauth.kakao.com/oauth/authorize` (`client_id, redirect_uri, response_type=code`). `state` 선택이나 권장. PKCE 언급 없음 | …/kakaologin/rest-api | state [확정] / PKCE [확인 필요: 호출 시험] |
-| A2-4 | 카카오 동의항목·비즈 앱 | 이메일(`account_email`) 동의 설정은 비즈 앱·테스트 앱만. 일부 항목은 추가 권한 신청·검수(3~5 영업일). 앱에 개인정보 처리방침 URL 등록 필요 | https://developers.kakao.com/docs/latest/ko/kakaologin/prerequisite , …/utilize | [확정] (비즈 앱 전환에 사업자등록번호가 필요한지 [확인 필요]: 앱 설정 문서 404) |
+| A2-4 | 카카오 동의항목·비즈 앱 | 이메일(`account_email`) 동의 설정은 비즈 앱·테스트 앱만. 일부 항목은 추가 권한 신청·검수(3~5 영업일). 앱에 개인정보 처리방침 URL 등록 필요 | https://developers.kakao.com/docs/latest/ko/kakaologin/prerequisite , …/utilize | [확정]. 2026-10-03 추가 확인: 사업자등록번호가 없어도 앱 소유자 본인인증 + 카카오비즈니스 통합 서비스 약관 동의로 "개인 개발자 비즈 앱" 전환 가능 (https://developers.kakao.com/docs/ko/app-setting/app). 이 경우 비즈니스 채널 연결은 불가. 개인 개발자 비즈 앱의 이메일 필수 동의 가능 여부는 문서에 명시 없음 [확인 필요] |
 | A2-5 | 카카오 연결 끊기·탈퇴 의무 | 탈퇴 시 `POST https://kapi.kakao.com/v1/user/unlink` 호출 포함. 운영정책 제1조②: 탈퇴 시 모든 개인정보 파기, 24시간 내 미가입 시 파기, 카카오 제공 개인정보 송수신 암호화 | …/kakaologin/common , https://developers.kakao.com/terms/ko/site-policies (시행 2026-04-20) | [확정] |
 | A2-6 | 카카오 연결 해제 웹훅 | 사용자가 카카오 쪽에서 연결 끊기·계정 탈퇴 시 발송. 페이로드 `app_id, user_id, referrer_type`. 서비스는 처리 뒤 **3초 내 HTTP 200** | https://developers.kakao.com/docs/latest/ko/kakaologin/callback | [확정] |
 | A3-1 | Spring Security OAuth2 Login | `oauth2Login()` = Authorization Code Grant. 커스텀 provider 설정 `spring.security.oauth2.client.registration.{id}.*` + `provider.{id}.{authorization-uri, token-uri, user-info-uri, user-name-attribute}`. 네이버·카카오는 `CommonOAuth2Provider`에 없음. 네이버 응답은 `response` 객체로 중첩 → `OAuth2UserService` 커스터마이즈 필요 | https://docs.spring.io/spring-security/reference/servlet/oauth2/login/core.html , …/login/advanced.html | [확정] |
@@ -64,7 +64,7 @@
 8. 세션: 서버 세션, 로그인 시 세션 ID 재발급(기본), 쿠키 `Secure; HttpOnly; SameSite=Lax`(또는 Strict) + `__Host-`·Domain 미설정, JSESSIONID 이름 변경, idle 30분 이내·절대 타임아웃 [안: 값은 사이클에서], 로그아웃 POST + `Clear-Site-Data` (B4-1, B5 V7, B6-1, A3-3)
 9. CSRF는 Spring 기본 유지, SPA용 `csrf.spa()`. 세션·토큰을 URL에 싣지 않음 (A3-3, B4-2, B5 14.2.1)
 10. 내 도서관·지역 코드 조회·수정 API는 현재 세션의 member id로만(IDOR 방지). 클라이언트가 보낸 member id를 믿지 않음 (B5 8.2.2)
-11. 정식 오픈 전 네이버 사전 검수, 카카오 동의항목 검수. 이메일이 필요해지는 알림 사이클 전에 카카오 비즈 앱 전환 가능 여부 확인 (A1-5, A2-4)
+11. 정식 오픈 전 네이버 사전 검수. 카카오 로그인 자체는 검수 요구가 문서에 없음(2026-10-03 확인). 이메일이 필요해지는 알림 사이클 전에 개인 개발자 비즈 앱으로 전환해 이메일 동의항목이 켜지는지 확인 (A1-5, A2-4)
 12. 안전조치 최소: 운영자 계정별 발급·안전한 인증수단, DB 접속 IP 제한, 운영자 접속기록 1년 이상, TLS, 악성코드 방지. 1만명 미만 소상공인이면 내부 관리계획 생략 가능. 비밀번호를 저장하지 않으므로 제7조① 일방향 암호화 의무 없음 (C9)
 13. 보호책임자: 소상공인이면 대표자(운영자)가 자동 책임자, 처리방침에 성명·연락처. 해당 여부는 사용자에게 질문 (C10-2)
 14. 만 14세 미만 정책: 연령을 받지 않으면 법정대리인 동의 확인 불가 → "만 14세 이상만 가입" 확인란 [안] 등을 사이클에서 결정 (C8-1 제22조의2, C8-3 제17조의2)
@@ -75,7 +75,7 @@
 - developers.naver.com 사이트 자체는 도구에서 열지 못해 네이버 공식 GitHub(`naver/naver-openapi-guide`)로 확인. 사이트 최신본과 차이는 사용자가 브라우저로 1회 확인 권장
 - 네이버 refresh_token 유효기간 수치 → 호출 시험 또는 네이버 문의
 - 네이버·카카오 PKCE(`code_challenge`) 지원 → 프로토타입으로 시험
-- 카카오 비즈 앱 전환 조건(사업자등록번호 필수 여부, 개인·비영리 가능 여부) → 카카오디벨로퍼스 앱 관리 화면에서 확인
+- (2026-10-03 해결) 카카오 비즈 앱 전환 조건: 사업자등록번호 없이 "개인 개발자 비즈 앱" 전환 가능. 남은 것은 그 앱에서 이메일 필수 동의가 되는지 → 전환 뒤 동의항목 화면에서 확인
 - 시군구 코드의 개인정보 해당성에 대한 PIPC 명시 해석 → 해석례 PDF 원문 또는 PIPC 문의
 - 비영리 1인 운영이 「소상공인기본법」상 소상공인인지 → 사용자에게 사업자 형태 질문
 - NIST 800-63B Rev.4 AAL별 절 번호(값은 일치)

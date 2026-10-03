@@ -27,8 +27,8 @@
 
 | 파일 | 무엇 | 원본 | 지금과 다른 점 |
 |---|---|---|---|
-| [2026-10-01-05-member-alerts.html](2026-10-01-05-member-alerts.html) | 왜 회원인가, 저장하는 것, "내 도서관" 정의, 필터 스위치 하나 추천, 알림 세 조각 | `docs/research/member-and-alerts/outline.md` | 모듈이 `member` 하나가 아니라 `auth` + `member` 둘로 정해짐(ADR-0036). 사이클은 로그인·계정(05) → 내 도서관(06) → 알림(07) |
-| [2026-10-01-06-signup-security.html](2026-10-01-06-signup-security.html) | 회원가입 보안·개인정보: 로그인 연결, 세션 쿠키, 동의·처리방침, 탈퇴, 검수, 서버 관리 | `docs/research/member-and-alerts/signup-security.md` | 탈퇴는 "한 번 더 본인 확인" 뒤 진행으로 정함. 네이버 쪽 연결끊기 알림도 받기로 함. 세션은 DB, 로그인 유지 30일 (`docs/cycles/05-login-account/spec.md`) |
+| [2026-10-01-05-member-alerts.html](2026-10-01-05-member-alerts.html) | 왜 회원인가, 저장하는 것, "내 도서관" 정의, 필터 스위치 하나 추천, 알림 세 조각 | `docs/research/member-and-alerts/outline.md` | 2026-10-03에 카카오 이메일 설명을 고침. 모듈이 `member` 하나가 아니라 `auth` + `member` 둘로 정해짐(ADR-0036). 사이클은 로그인·계정(05) → 내 도서관(06) → 알림(07) |
+| [2026-10-01-06-signup-security.html](2026-10-01-06-signup-security.html) | 회원가입 보안·개인정보: 로그인 연결, 세션 쿠키, 동의·처리방침, 탈퇴, 검수, 서버 관리 | `docs/research/member-and-alerts/signup-security.md` | 탈퇴는 "한 번 더 본인 확인" 뒤 진행으로 정함. 네이버 쪽 연결끊기 알림도 받기로 함. 세션은 DB, 로그인 유지 30일 (`docs/cycles/05-login-account/spec.md`). 2026-10-03에 카카오 이메일 설명을 고침(개인도 "개인 개발자 비즈 앱" 전환 가능) |
 | [2026-10-01-07-member-integration-plan.html](2026-10-01-07-member-integration-plan.html) | 회원을 넣는 구조: `auth` + `member` 구성도, 결정 세 가지, 사이클마다 들어가는 것 | `docs/research/member-and-alerts/integration-plan.md`, ADR-0036, ADR-0037 | 페이지의 "05a / 05b / 06"은 사이클 05 / 06 / 07 |
 | [2026-10-01-08-cycle05-research-and-flow.html](2026-10-01-08-cycle05-research-and-flow.html) | 사이클 05 조사 다섯 가지 결과와 화면 흐름 그림(S1·S4·S5~S9) | `docs/cycles/05-login-account/research.md`, `spec.md`, `flow.md` | 카드 3의 "이 PC 브라우저에서 안을 골라 주세요"는 원격이라 대화에서 받는 것으로 바뀜. [안] 결정은 아직 대기 중 |
 

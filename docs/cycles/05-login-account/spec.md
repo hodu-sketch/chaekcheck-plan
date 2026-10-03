@@ -151,6 +151,7 @@
 
 ## 비목표
 
+- 직접 회원가입(이메일·비밀번호) — 이번에 하지 않음. 나중에 로그인 수단 하나로 더할 수 있게 **로그인 수단 표를 소셜 전용으로 좁히지 않는다**(설계 조건). 사용자 2026-10-03, backlog
 - 다른 소셜 계정 연결·해제("네이버 계정에 카카오도 연결") — 표 구조만 열어 두고 기능은 나중 (사용자: "표는 둘로, 연결 기능은 나중", 2026-10-01). backlog
 - 닉네임·이름·프로필 사진 표시, "네이버로 로그인됨" 표시 — 사용자가 로그아웃 버튼만으로 충분하다고 함 (2026-10-01)
 - 이메일·전화 등 연락처 받기 — 알림 사이클에서 (`integration-plan.md` 4절)
@@ -170,7 +171,7 @@
 | 네이버 검수 제출물 | https://github.com/naver/naver-openapi-guide/blob/master/ko/login/verify/verify.md — 로그인부터 가입 완료까지 전 과정 캡처 또는 기획서. 서비스 오픈 전이면 기획서로 대체 가능. 2~3 영업일. 별도 비밀번호 요구 금지, 실제 쓰는 정보만 선택 | — | 2026-10-01 | [확정] |
 | 네이버 연동 해제·재인증 | 같은 저장소 `devguide.md` — 탈퇴 시 연동 해제, 토큰은 `/oauth2.0/revoke`로 폐기(유효한 토큰 필요), 만료 시 갱신 토큰 또는 재인증. `auth_type=reauthenticate`는 "서비스 해지 또는 탈퇴를 수행하는 경우" | 토큰이 있어야 호출 가능 → 탈퇴 전 본인 확인으로 새 토큰을 받음 | 2026-10-01 | [확정] |
 | 네이버 연결끊기 Callback | 같은 `devguide.md` — 개발자센터 > 애플리케이션 > API 설정 > 연결끊기 Callback URL. POST form, `clientId`·`encryptUniqueId`·`timestamp`·`signature`, 204 응답, 재시도 없음. 암호화 AES128/CBC/PKCS5Padding, 서명 HmacSHA256 | 세부(키 유도, IV 위치)는 요약으로 확인 → 설계 때 원문을 직접 읽음 | 2026-10-01 | [확정] 존재·형식 / [확인 필요] 암호 세부 |
-| 카카오 로그인·회원번호·토큰·동의항목·운영정책 | `signup-security.md` A2-1~A2-6 (developers.kakao.com) | 처리방침 URL 등록 필요. 이메일은 비즈 앱 전용(이번에 안 받음) | 2026-10-01 | [확정] |
+| 카카오 로그인·회원번호·토큰·동의항목·운영정책 | `signup-security.md` A2-1~A2-6 (developers.kakao.com) | 처리방침 URL 등록 필요. 이메일 동의는 비즈 앱에서 설정(개인도 "개인 개발자 비즈 앱" 전환 가능, `research.md` 7절). 이번에는 이메일을 안 받음 | 2026-10-01 | [확정] |
 | 카카오 연결 끊기 인증 방식 | https://developers.kakao.com/docs/ko/kakaologin/rest-api — `POST /v1/user/unlink`는 액세스 토큰 또는 `Authorization: KakaoAK <서비스 앱 어드민 키>` + `target_id_type=user_id`, `target_id` | 어드민 키는 서버에만 둠 | 2026-10-01 | [확정] |
 | 카카오 재인증·최소 제공 | 같은 문서 — `prompt=login`은 기존 인증 여부와 상관없이 다시 로그인. 동의항목 없이도 로그인 가능, 회원번호와 `connected_at`만 제공 | — | 2026-10-01 | [확정] |
 | 카카오 연결 해제 웹훅 | https://developers.kakao.com/docs/ko/kakaologin/callback — [앱] > [웹훅] > [연결 해제 웹훅], GET 또는 POST, `Authorization: KakaoAK <대표 어드민 키>`, `app_id`·`user_id`·`referrer_type`, 3초 내 200(사용자가 없어도 200 권장) | 재전송·시험 전송 기능은 문서에 없음 | 2026-10-01 | [확정] |
