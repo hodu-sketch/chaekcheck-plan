@@ -7,7 +7,7 @@
 수집 세션(2026-10-04)에서 정한 것들이야. 다음 사이클을 고르기 전에 읽고 반영해 줘. 모두 plan 문서에 [확정]으로 적혀 있고, 문서 색인은 docs/reference-index.md야.
 
 1. 유지보수 절차는 dev에 (ADR-0047)
-   - 정기 유지보수 절차의 원본은 dev docs/maintenance/ (README·1-libraries·2-crawl·platforms·3-import). dev가 문서는 옮겼고, 수집기 코드는 사용자가 적당한 때 수집을 멈춘 뒤 옮김(남은 도서관은 dev로 옮긴 수집기로 이어 받음)
+   - 정기 유지보수 절차의 원본은 dev docs/maintenance/ (README·1-libraries·2-crawl·platforms·3-import). dev가 문서는 옮겼고, 수집기는 계속 돌리고 배포는 지금까지 받은 것으로 먼저 함. 수집기 코드는 복사로 옮기고, 갈아타기는 나중에
    - plan에는 원칙·조사·결정만: docs/research/ebook-catalog/crawl-method.md, crawl-runbook.md(진행 상태·결정 기록·dev에 반영할 것), docs/research/maintenance/
    - dev에 보낼 요청서: docs/research/maintenance/dev-move-request.md (사용자가 직접 전달)
 
