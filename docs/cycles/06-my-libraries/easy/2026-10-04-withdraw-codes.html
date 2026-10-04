@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>탈퇴 전용 결과 코드 둘</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+tr.new td{background:var(--warn-bg)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">탈퇴 도중 멈췄을 때<br>로그인과 다른 전용 코드를 두겠습니다.</p>
+<p class="sub">앞 페이지 항목 5에서 "탈퇴 전용 코드가 있어야 할 것 같다"고 하셔서(미승인), 새로 둘 코드의 이름과 화면 문구를 제안합니다. 항목은 하나입니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>지금 있는 탈퇴 코드와 새로 둘 두 가지</h2>
+<p class="gist">지금 탈퇴 코드는 다섯 개입니다. 새로 두 개를 더해 모두 일곱 개가 됩니다. 새 두 개는 로그인용 코드와 같은 상황에 쓰이지만, 화면이 "탈퇴"를 안내할 수 있게 이름과 문구를 따로 둡니다.</p>
+<table>
+<tr><th>코드</th><th>언제</th><th>화면 문구</th></tr>
+<tr><td><code>withdraw_reauthenticated</code></td><td>재인증 성공(웹이 탈퇴 요청을 보냄)</td><td>탈퇴 처리 중</td></tr>
+<tr><td><code>withdraw_account_mismatch</code></td><td>다른 계정으로 확인함</td><td>가입한 계정으로 확인해 주세요</td></tr>
+<tr><td><code>withdraw_cancelled</code></td><td>제공자 화면에서 취소함</td><td>탈퇴를 취소했어요</td></tr>
+<tr><td><code>withdraw_provider_error</code></td><td>네이버·카카오 쪽 오류</td><td>네이버(카카오) 쪽 문제로 본인 확인을 하지 못했어요. 잠시 뒤 다시 해 주세요</td></tr>
+<tr><td><code>withdraw_login_expired</code></td><td>우리 로그인이 풀려 있음(리프레시 기록 없음)</td><td>로그인이 풀렸어요. 다시 로그인한 뒤 탈퇴해 주세요</td></tr>
+<tr class="new"><td><code>withdraw_request_expired</code> (새 이름)</td><td>재인증을 시작할 때 저장해 둔 요청이 없음. 예: 제공자 화면에서 10분 넘게 머무름</td><td>본인 확인 시간이 지났어요. 탈퇴를 다시 눌러 주세요</td></tr>
+<tr class="new"><td><code>withdraw_state_mismatch</code> (새 이름)</td><td>저장해 둔 요청은 있는데 돌아온 요청의 확인 값(<code>state</code>)이 다름</td><td>안전하지 않은 요청이라 멈췄어요. 탈퇴를 다시 눌러 주세요</td></tr>
+</table>
+<div class="item">
+<h3><span class="no">1</span>탈퇴 재인증에서 요청이 만료되었거나 확인 값이 맞지 않을 때 위 두 코드(<code>withdraw_request_expired</code>, <code>withdraw_state_mismatch</code>)를 새로 둠 <span class="an">[안]</span></h3>
+<p>예: 탈퇴하려고 카카오에서 다시 로그인하는 화면에서 15분 동안 머물다가 돌아오면, 지금은 "로그인 시간이 지났어요. 다시 해 주세요"가 나와서 로그인을 하라는 말로 읽힙니다. 새 코드를 두면 "본인 확인 시간이 지났어요. 탈퇴를 다시 눌러 주세요"가 나옵니다.</p>
+<p>바뀌는 곳: 우리 서버가 재인증 콜백에서 보내는 코드 두 곳, 화면의 문구 두 개, 설계의 결과 코드 표. 이미 만든 dev 코드를 두 줄 고치는 정도의 작은 변경이며, 사이클 06의 "사이클 05 보완"으로 인계서에 넣습니다. 이름과 문구는 제 제안이고 dev 코드나 공식 문서에서 가져온 것이 아닙니다.</p>
+<p class="alt"><b>다른 선택</b> ① 이름은 같게 두고 문구만 탈퇴에 맞게 화면이 바꿔 보여 줌(코드 하나로 두 상황을 구분하려면 요청이 탈퇴 재인증이었다는 정보를 서버가 따로 넘겨야 해서 오히려 복잡해짐). ② 위 제안을 승인하되 이름이나 문구를 바꿔서: 기타에 적어 주세요.</p>
+</div>
+</section>
+
+<p class="foot">원본: 앞 페이지 <code>2026-10-04-cycle-start-decisions.html</code> 항목 5, <code>docs/current/api.md</code> "결과 코드", dev <code>docs/plan-feedback.md</code> 8단계 결과(937행)</p>
+</main>
+</body>
+</html>
