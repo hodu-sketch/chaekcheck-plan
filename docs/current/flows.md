@@ -2,6 +2,8 @@
 
 현재 설계의 주요 흐름을 그림으로 모은 문서입니다. 변경 기록이 아닙니다.
 
+사이클 06 cycle-close (2026-10-04): 내 도서관(`mylibrary`)을 더함 — 설계됨(미구현, 사이클 06). 근거 `docs/cycles/06-my-libraries/design-delta.md`. 흐름 13~15.
+
 사이클 05 cycle-close (2026-10-04): 흐름 9~12(로그인·계정)를 더함 — 구현됨(사이클 05, 2026-10-04 retro 반영). 근거 `docs/cycles/05-login-account/design-delta.md`.
 
 마지막 반영: 사이클 04 cycle-close (2026-09-30). 흐름 1~5는 **구현됨**, 흐름 6~8은 **설계됨(미구현, 사이클 04)** 입니다. 사이클 04부터 흐름 1~2는 "도서관에서 직접 찾기"의 흐름입니다.
@@ -412,3 +414,88 @@ sequenceDiagram
 ```
 
 - 놓친 알림은 카카오 연결 대조(하루 한 번)와 1년 미로그인 계정 정리로 메웁니다.
+
+## 흐름 13: 로그인 직후 내 도서관 읽기와 지역 옮기기(S11) — 설계됨(미구현, 사이클 06)
+
+로그인 직후 웹이 저장된 지역·직접 추가 도서관을 읽고, 서버 지역이 비어 있으면 브라우저 지역을 계정에 옮길지 물은 뒤 검색 주소를 만듭니다(ADR-0049).
+
+```mermaid
+sequenceDiagram
+  participant W as web
+  participant M as mylibrary
+  participant R as region
+  participant S as 검색 API
+  W->>M: GET /api/v1/me/regions, GET /api/v1/me/libraries (동시에)
+  alt 401
+    M-->>W: 401 unauthorized
+    W->>W: 로그인 전 상태(브라우저 값)
+  else 500·연결 끊김
+    M-->>W: 실패
+    W->>W: 줄 "내 도서관을 불러오지 못했어요 · 다시 시도", 스위치 전체
+  else 200
+    M-->>W: 저장된 지역 ID, libraryIds
+    opt 서버 지역이 비었고 브라우저에 지역이 있고 이 브라우저에서 이 계정이 S11에 답한 적 없음
+      W->>W: S11 "이 브라우저에 고른 지역이 있어요. 계정에 저장할까요?"
+      W->>R: GET /api/v1/regions/resolutions (브라우저 지역)
+      W->>M: PUT /api/v1/me/regions ([계정에 저장]일 때, 해석한 지역)
+    end
+    W->>R: GET /api/v1/regions/resolutions?ids=…
+    R-->>W: ACTIVE / REPLACED / SPLIT / UNKNOWN
+    W->>W: 대체·제외 안내 (AC-9)
+    W->>S: …&residenceRegionIds&workRegionIds&scope&libraryIds
+  end
+```
+
+- S11 답(계정 번호)은 브라우저 `chaekcheck.regionImport.v1` [안 이름]에 적어 같은 브라우저·같은 계정에는 다시 묻지 않습니다. 로그인한 동안 `chaekcheck.regions.v1`은 읽지도 쓰지도 않습니다 [확정].
+
+## 흐름 14: 내 도서관 직접 추가(S10) — 설계됨(미구현, 사이클 06)
+
+누르면 화면에 먼저 추가해 보이고 바로 저장하며, 실패하면 되돌립니다. 서버 순서는 잠금 → 켜진 도서관 확인 → 이미 있으면 204 → 20곳이면 409 → INSERT입니다.
+
+```mermaid
+sequenceDiagram
+  participant W as web (S10)
+  participant M as mylibrary
+  participant A as auth
+  participant L as library
+  W->>W: 화면에 먼저 추가해 보임
+  W->>M: PUT /api/v1/me/libraries/{libraryId} (X-XSRF-TOKEN)
+  M->>A: lockIfExists(accountId) (같은 트랜잭션, 계정 줄 잠금)
+  alt 계정 없음
+    M-->>W: 401 unauthorized → 로그인 전 상태
+  else 있음
+    M->>L: findEnabledTarget(libraryId)
+    alt 없음·꺼짐
+      M-->>W: 404 library_not_found → 되돌리고 안내
+    else 이미 직접 추가돼 있음
+      M-->>W: 204 (그대로)
+    else 없고 이미 20곳
+      M-->>W: 409 library_limit_reached → 되돌리고 "직접 추가는 20곳까지예요"
+    else 정상
+      M->>M: INSERT … ON CONFLICT DO NOTHING
+      M-->>W: 204
+    end
+  end
+  Note over W,M: 403 csrf_invalid면 새 토큰을 받아 한 번 다시(사이클 05). 500·연결 끊김이면 되돌리고 "저장하지 못했어요. 잠시 뒤 다시 해 주세요"
+```
+
+## 흐름 15: 저장과 탈퇴가 겹칠 때 — 설계됨(미구현, 사이클 06)
+
+저장이 계정 줄을 먼저 잠그면 탈퇴가 기다렸다가 지우고, 커밋 뒤 `AccountDeleted`를 받은 `mylibrary` listener가 두 표를 지워 지워진 계정의 자료가 남지 않습니다(ADR-0051).
+
+```mermaid
+sequenceDiagram
+  participant T1 as 저장 요청
+  participant DB as PostgreSQL
+  participant T2 as 탈퇴 (AccountDeletion)
+  participant ML as mylibrary listener
+  T1->>DB: auth.account 줄 잠금 (있음)
+  T2->>DB: DELETE auth.account (기다림)
+  T1->>DB: INSERT mylibrary.account_library, COMMIT
+  DB-->>T2: DELETE 진행, AccountDeleted 기록, COMMIT
+  T2-->>ML: AccountDeleted (커밋 뒤, 비동기)
+  ML->>DB: DELETE … WHERE account_id = ? (두 표)
+  Note over T1,DB: 탈퇴가 먼저 커밋했으면 잠금 대상이 없어 401, 줄을 만들지 않음
+```
+
+- listener가 실패한 기록은 재시작 때 다시 처리합니다(`republish-outstanding-events-on-restart: true` [확정]). 실패(`FAILED`) 기록까지 다시 처리하는지 [확인 필요: 공식 문서 확인 + 테스트].

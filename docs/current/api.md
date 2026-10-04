@@ -2,6 +2,8 @@
 
 현재 설계 전체를 적은 문서입니다. 요청·응답 예시는 사이클 01 `docs/cycles/01-ebook-availability-search/design-delta.md`와 사이클 02 `docs/cycles/02-library-expansion/design-delta.md`에 있습니다.
 
+사이클 06 cycle-close (2026-10-04): 내 도서관(`mylibrary`)을 더함 — 설계됨(미구현, 사이클 06). 근거 `docs/cycles/06-my-libraries/design-delta.md`. 내 도서관 API, `GET /api/v1/libraries`, 검색 API 네 곳의 `libraryIds`, `chosen`·`CHOSEN`, 오류 코드 `library_limit_reached`, 결과 코드 `signup_success`·`withdraw_request_expired`·`withdraw_state_mismatch`.
+
 사이클 05 cycle-close (2026-10-04): 로그인·계정 API를 더함 — 구현됨(사이클 05, 2026-10-04 retro 반영). 근거 `docs/cycles/05-login-account/design-delta.md`.
 
 마지막 반영: 사이클 04 회고 (2026-10-01). 모두 dev 컨트롤러 코드(커밋 `c6028c9`)와 대조했습니다(구현됨). 책 검색·소장 스트림의 요청·응답 예시는 `docs/cycles/04-and-search/design-delta.md`, 개발 중 바뀐 것은 같은 폴더 `retro.md`. 사이클 03 예시는 `docs/cycles/03-search-conditions/design-delta.md`.
@@ -11,19 +13,20 @@
 - 성공 응답은 감싸지 않고 결과를 그대로 돌려줍니다. 필드 이름은 camelCase.
 - 오류는 RFC 9457 Problem Details (`application/problem+json`) + 확장 멤버 `code`(snake_case), 필요하면 `errors`.
 - `type`이 `about:blank`이면 응답에서 생략됩니다(Spring Framework 7 동작, RFC 9457상 같은 뜻). 422의 `title`은 "Unprocessable Content"입니다.
-- 검색·조회 API(아래 첫 표)는 모두 인증 없는 GET입니다. 로그인·계정 API(`/api/v1/auth/**`, `/api/v1/me`)는 따로 표에 있습니다(구현됨(사이클 05, 2026-10-04 retro 반영)). 스트림은 `fetch`로 읽고, 검증 오류는 스트림을 열기 전에 ProblemDetail로 돌려줍니다. 스트림 컨트롤러에는 `produces`를 걸지 않습니다.
+- 검색·조회 API(아래 첫 표)는 모두 인증 없는 GET입니다. 로그인·계정 API(`/api/v1/auth/**`, `/api/v1/me`)는 따로 표에 있습니다(구현됨(사이클 05, 2026-10-04 retro 반영)). 내 도서관 API(`/api/v1/me/regions`, `/api/v1/me/libraries/**`)도 따로 표에 있습니다(설계됨(미구현, 사이클 06)). 스트림은 `fetch`로 읽고, 검증 오류는 스트림을 열기 전에 ProblemDetail로 돌려줍니다. 스트림 컨트롤러에는 `produces`를 걸지 않습니다.
 - 응답 압축 설정은 없습니다.
 
 | 메서드 | 경로 | 모듈 | 설명 |
 |---|---|---|---|
 | GET | `/api/v1/regions` | `region` | 사용 중인 시도·시군구 트리 |
 | GET | `/api/v1/regions/resolutions?ids=` | `region` | 저장된 지역 ID를 `ACTIVE / REPLACED / SPLIT / UNKNOWN`으로 해석 (최대 20개) |
-| GET | `/api/v1/ebook-searches/stream?{title\|author\|publisher}=&residenceRegionIds=&workRegionIds=&filter=&scope=&visit=` | `availability` | 조회 계획 + 첫 묶음 (SSE, ADR-0014). 이벤트: `targets`(전체 계획, 순서대로) → `library-requested` / `library-result` / `library-failed` … → `batch-done` → `row-verdict` … → `done`. `filter=all\|available`(없으면 all). `scope=all\|joinable`(없으면 all): `joinable`이면 가입이 확정된 도서관(`OPEN`/`ELIGIBLE`)만 계획에 남김 (C2-U-10). 추가 문구(`extraConditionText`, 예: 책이음)는 참고 글일 뿐 판정·범위에 영향 없음 (C3-U-2). `visit=any\|none`(없으면 any): `none`이면 방문 가입 도서관(`visitRequired`)을 계획에서 빼서 요청하지 않음 (C3-U-1, ADR-0027). `any`일 때 계획 순서는 ADR-0027(가입 가능한 방문 가입 도서관은 방문 없는 가입 가능 도서관 모두 뒤). 지역 ID는 쉼표 구분, 필드당 최대 20개 |
+| GET | `/api/v1/libraries?residenceRegionIds=&workRegionIds=` | `library` | 켜진 서비스 도서관 전체 + 지역별 가입 표시. 로그인 없음, 회원을 모름(ADR-0049). 화면은 해석한 지역 ID만 보냄. 지역 ID 쉼표 구분, 칸마다 최대 20. 200 `{"libraries":[{id, name, eligibility, matchedBy, visitRequired, cautioned, eligibilitySummary}]}`, id 순서, 페이지 없음. 오류 400 `validation_error`, 422 `invalid_region`. 지역 규칙이 안 맞는 줄의 `eligibility`는 `UNKNOWN`이지만 뜻이 기존("지역을 보내지 않음")과 달라짐 — dev가 응답 설명에 적음 [안]. 칸 이름 `matchedBy`·`cautioned` [안]. 응답 크기(278곳) [확인 필요: dev 측정]. 예시는 `docs/cycles/06-my-libraries/design-delta.md` "API". 설계됨(미구현, 사이클 06) |
+| GET | `/api/v1/ebook-searches/stream?{title\|author\|publisher}=&residenceRegionIds=&workRegionIds=&filter=&scope=&visit=&libraryIds=` | `availability` | 조회 계획 + 첫 묶음 (SSE, ADR-0014). 이벤트: `targets`(전체 계획, 순서대로) → `library-requested` / `library-result` / `library-failed` … → `batch-done` → `row-verdict` … → `done`. `filter=all\|available`(없으면 all). `scope=all\|joinable`(없으면 all): `joinable`이면 가입이 확정된 도서관(`OPEN`/`ELIGIBLE`)만 계획에 남김 (C2-U-10). 추가 문구(`extraConditionText`, 예: 책이음)는 참고 글일 뿐 판정·범위에 영향 없음 (C3-U-2). `visit=any\|none`(없으면 any): `none`이면 방문 가입 도서관(`visitRequired`)을 계획에서 빼서 요청하지 않음 (C3-U-1, ADR-0027). `any`일 때 계획 순서는 ADR-0027(가입 가능한 방문 가입 도서관은 방문 없는 가입 가능 도서관 모두 뒤). 지역 ID는 쉼표 구분, 필드당 최대 20개. `libraryIds`(직접 추가 도서관, 아래 "직접 추가 도서관 `libraryIds`") — 설계됨(미구현, 사이클 06) |
 | GET | `/api/v1/ebook-searches/batches/stream?{title\|author\|publisher}=&filter=&batchNo=&candidates=libraryId:page,…` | `availability` | 다음 묶음 (SSE). 브라우저가 계획에서 고른 후보(최대 K=50 [안])만 조회. 이벤트는 위에서 `targets`를 뺀 것. `batchNo`는 2 이상, 쪽 번호 최대 5자리. `scope`·`visit`는 받지 않음(후보가 이미 계획에서 나옴) |
 | GET | `/api/v1/availability/libraries/{libraryId}/ebooks?{title\|author\|publisher}=&page=` | `availability` | 도서관 하나의 한 페이지 (도서관별 더 보기). 판정이 나중에 정해지는 줄은 판정을 읽은 뒤(최대 30초) 응답. `page`가 없으면 1 |
-| GET | `/api/v1/books?title=&author=&publisher=&exact=&roles=&sort=&residenceRegionIds=&workRegionIds=&scope=&visit=&page=&pageSize=` | `catalog` | 수집 목록 책 검색 (도서관 요청 없음). 채운 칸끼리 AND, 칸 안은 띄어쓰기로 나눈 단어 AND(정리값 비교), `exact`(title,author,publisher), `roles`(translator,illustrator,editor), `sort`(default\|newest\|oldest). `pageSize` 1~20(기본 20), `page` 1 이상. 검증 순서 조건 칸 → `exact`·`roles`·`sort` → `scope`·`visit` → `page`·`pageSize` → 지역. `errors[].code`: `required`, `duplicate`, `invalid_format`, 지역 `too_many`, 칸 길이는 `invalid_query`. 채우지 않은 칸의 `exact`와 저자 칸 없는 `roles`는 무시(오류 아님, dev 결정). 응답: 페이지 객체 + `collectedFrom`·`collectedTo`(결과 전체의 책을 가진 계획 도서관 기준, 한국 날짜). 계획 도서관이 없는 책은 뺌. 검색어의 `%`·`_`는 이스케이프. 구현됨 |
-| GET | `/api/v1/books/{bookId}` | `catalog` | 책 하나(S3): 대표 서지, `holdingLibraryCount`(범위·방문 반영), `libraries[]{libraryId, collectedAt(+09:00)}`. 없는 책·숫자가 아닌 id 404 `book_not_found`. 구현됨 |
-| GET | `/api/v1/book-availabilities/stream?bookIds=&residenceRegionIds=&workRegionIds=&filter=&scope=&visit=` | `availability` | 책을 가진 계획 도서관의 상세 페이지를 읽는 소장 단위 스트림. `bookIds` 최대 20 [안]. 검증 순서 `bookIds` → `filter` → `scope` → `visit` → 지역, id 목록 오류 `required`/`invalid_format`/`duplicate`/`too_many`. 이벤트 `targets`(`libraries[]`는 계획 전체가 아니라 **소장이 있는 계획 도서관만**(dev 결정), `holdings[]{holdingId, bookId, libraryId}`는 `bookIds` 순서·한 책 안은 계획 순서) → `holding-requested` / `holding-result`(`item`은 페이지 줄과 같은 모양, `rank` 0, `titleKey` `book:<bookId>`, `cached`는 3분 캐시) / `holding-failed` → `batch-done` → `done`. `row-verdict` 없음. 교보 구독형은 요청 없이 `SUBSCRIPTION`. 호스트가 다른 `detail_url`은 요청 없이 `holding-failed` `upstream_error`. 없는 소장·꺼진 도서관은 `library_not_found`. 캐시 키 `(libraryId, detailUrl)`. 구현됨 |
+| GET | `/api/v1/books?title=&author=&publisher=&exact=&roles=&sort=&residenceRegionIds=&workRegionIds=&scope=&visit=&libraryIds=&page=&pageSize=` | `catalog` | 수집 목록 책 검색 (도서관 요청 없음). 채운 칸끼리 AND, 칸 안은 띄어쓰기로 나눈 단어 AND(정리값 비교), `exact`(title,author,publisher), `roles`(translator,illustrator,editor), `sort`(default\|newest\|oldest). `pageSize` 1~20(기본 20), `page` 1 이상. 검증 순서 조건 칸 → `exact`·`roles`·`sort` → `scope`·`visit` → `page`·`pageSize` → 지역. `errors[].code`: `required`, `duplicate`, `invalid_format`, 지역 `too_many`, 칸 길이는 `invalid_query`. 채우지 않은 칸의 `exact`와 저자 칸 없는 `roles`는 무시(오류 아님, dev 결정). 응답: 페이지 객체 + `collectedFrom`·`collectedTo`(결과 전체의 책을 가진 계획 도서관 기준, 한국 날짜). 계획 도서관이 없는 책은 뺌. 검색어의 `%`·`_`는 이스케이프. 구현됨. 사이클 06: `libraryIds`를 받고(검증은 `scope`·`visit` 다음, 지역 앞), 정렬 첫 키가 `joinTier` `CHOSEN`(항목 `joinTier: "CHOSEN"`) — 설계됨(미구현, 사이클 06) |
+| GET | `/api/v1/books/{bookId}?…&libraryIds=` | `catalog` | 책 하나(S3): 대표 서지, `holdingLibraryCount`(범위·방문 반영), `libraries[]{libraryId, collectedAt(+09:00)}`. 없는 책·숫자가 아닌 id 404 `book_not_found`. 구현됨. `libraryIds`는 설계됨(미구현, 사이클 06) |
+| GET | `/api/v1/book-availabilities/stream?bookIds=&residenceRegionIds=&workRegionIds=&filter=&scope=&visit=&libraryIds=` | `availability` | 책을 가진 계획 도서관의 상세 페이지를 읽는 소장 단위 스트림. `bookIds` 최대 20 [안]. 검증 순서 `bookIds` → `filter` → `scope` → `visit` → 지역, id 목록 오류 `required`/`invalid_format`/`duplicate`/`too_many`. 이벤트 `targets`(`libraries[]`는 계획 전체가 아니라 **소장이 있는 계획 도서관만**(dev 결정), `holdings[]{holdingId, bookId, libraryId}`는 `bookIds` 순서·한 책 안은 계획 순서) → `holding-requested` / `holding-result`(`item`은 페이지 줄과 같은 모양, `rank` 0, `titleKey` `book:<bookId>`, `cached`는 3분 캐시) / `holding-failed` → `batch-done` → `done`. `row-verdict` 없음. 교보 구독형은 요청 없이 `SUBSCRIPTION`. 호스트가 다른 `detail_url`은 요청 없이 `holding-failed` `upstream_error`. 없는 소장·꺼진 도서관은 `library_not_found`. 캐시 키 `(libraryId, detailUrl)`. 구현됨. `libraryIds`(검증은 `visit` 다음, 지역 앞)와 `targets.libraries[].chosen`은 설계됨(미구현, 사이클 06) |
 | GET | `/api/v1/book-availabilities/batches/stream?filter=&batchNo=&candidates=holdingId,…` | `availability` | 다음 묶음 (K=50 [안]). 구현됨 |
 | POST | 조회 서비스 `/v1/fetches` (내부) | 조회 서비스 | URL 한 개를 GET으로 가져와 `{outcome, status, contentType, location, body(base64), startedAt, endedAt}`. `outcome`: `RESPONDED \| TIMEOUT \| CONNECT_FAILED \| ERROR`. 조회 서버 자신이 정상이면 항상 200. 401 토큰 없음·틀림(헤더 `X-Fetch-Token` [안, 임시]), 400 잘못된 URL·사설 주소, 503 과부하·종료 중 (ADR-0015) |
 
@@ -43,8 +46,23 @@
 - 빈 값은 없는 것으로 셉니다: `?title=&author=김달`은 저자 검색입니다 (dev 결정). `detail`은 다른 `validation_error`와 같은 "Request validation failed"입니다.
 | 값 1자, 51자 이상 | 400 `invalid_query` |
 
-- 검증 순서: 첫 묶음은 조건 → `filter` → `scope` → `visit` → 지역, 다음 묶음은 조건 → `filter` → `batchNo` → `candidates`, 도서관별 더 보기는 조건 → `page` → 도서관. 첫 오류 하나만 돌려줍니다.
+- 검증 순서: 첫 묶음은 조건 → `filter` → `scope` → `visit` → `libraryIds`(설계됨(미구현, 사이클 06)) → 지역, 다음 묶음은 조건 → `filter` → `batchNo` → `candidates`, 도서관별 더 보기는 조건 → `page` → 도서관. 첫 오류 하나만 돌려줍니다.
 - 웹 주소도 같은 이름을 씁니다: `/search?author=김달`. 조건이 둘 이상인 주소는 title → author → publisher 순서로 하나만 씁니다 [확정].
+
+## 직접 추가 도서관 `libraryIds` (ADR-0037, ADR-0050) — 설계됨(미구현, 사이클 06)
+
+웹이 로그인 뒤 `GET /api/v1/me/libraries`로 받은 직접 추가 도서관 번호를 검색 API에 넘깁니다. 검색 모듈은 회원을 모릅니다(ADR-0037. 그 ADR의 `member`는 `mylibrary`로 읽음).
+
+| 규칙 | 내용 | 상태 태그 |
+|---|---|---|
+| 받는 API | `GET /api/v1/books`, `GET /api/v1/books/{bookId}`, `GET /api/v1/ebook-searches/stream`, `GET /api/v1/book-availabilities/stream`. 다음 묶음 두 API와 도서관별 더 보기는 그대로(계획에서 나온 후보만 받음) | [안] |
+| 형식 | 쉼표 구분 양의 정수, 최대 20 [확정] (사용자, 2026-10-04), 중복 합침 [안]. 오류는 400 `validation_error`, `errors[].field: libraryIds`, `code` `invalid_format`/`too_many` [안] (지역 ID 규칙과 같게) | [확정] 상한 / [안] 나머지 |
+| 검증 순서 | 조건 → `filter` → `scope` → `visit` → `libraryIds` → 지역. 첫 오류 하나만 | [안] |
+| 넣기 | 켜진 도서관은 자격과 상관없이 계획에 넣음(지역 규칙이 안 맞아 빠지던 도서관도). 꺼졌거나 없는 번호는 오류 없이 무시 | [확정] (spec R3, AC-10) |
+| 예외 | `chosen`인 도서관은 `scope=joinable`(`joinable() \|\| chosen`)과 `visit=none`(방문 가입이어도 남김)에서 빠지지 않음 | [확정] (spec R5, 사용자 제안 2026-10-04) |
+| 순서 | `chosen` 묶음이 맨 앞(묶음 안은 기존 `IN_GROUP` 규칙), 그 뒤는 ADR-0027 순서. `scope=all`(스위치 "전체")이어도 맨 앞. `priorityGroup`은 원래 값 유지 | [확정] (사용자 승인, 2026-10-04) |
+| `/api/v1/books` | `joinTier`에 값 `CHOSEN`이 첫 정렬 키 | [확정] 규칙, [안] 이름 |
+| 표시 | `chosen`이면 가입 자격 배지와 가입 주의 문구(`joinCaution`) 대신 "직접 추가" 표시 하나. `chosen`인데 지역 규칙이 안 맞는 도서관의 `eligibility`는 `UNKNOWN`(화면에 보이지 않음) | [확정] 표시 (사용자, 2026-10-04), [안] 내부 값 |
 
 ## 묶음 실행 규칙 (요약, 자세한 것은 사이클 02 design-delta)
 
@@ -56,7 +74,7 @@
 
 ## `targets` 이벤트
 
-`title` / `author` / `publisher` 중 요청과 같은 칸 하나(값은 검색어, 나머지 둘은 JSON에서 빠짐), `filter`, `scope`, `visit`, `regionFilterApplied`, `libraries[]`. 사이클 02의 `query` 칸은 없습니다 (ADR-0025). 도서관 항목: `id`, `name`, `libraryType`, `platformType`, `priorityGroup`, `deferred`, `eligibility`, `eligibilitySummary`, `extraConditionText`, `visitRequired`, `joinMethod`, `joinUrl`, `joinCaution`, `joinNotice`, `homepageUrl`.
+`title` / `author` / `publisher` 중 요청과 같은 칸 하나(값은 검색어, 나머지 둘은 JSON에서 빠짐), `filter`, `scope`, `visit`, `regionFilterApplied`, `libraries[]`. 사이클 02의 `query` 칸은 없습니다 (ADR-0025). 도서관 항목: `id`, `name`, `libraryType`, `platformType`, `priorityGroup`, `deferred`, `eligibility`, `eligibilitySummary`, `extraConditionText`, `visitRequired`, `joinMethod`, `joinUrl`, `joinCaution`, `joinNotice`, `homepageUrl`. 사이클 06: `chosen`(boolean, 직접 추가 도서관이면 true) [안 이름] — 설계됨(미구현, 사이클 06).
 
 - 크기: 278곳 156,368바이트(gzip 했다면 16,271) (dev 측정, 2026-09-29)
 
@@ -136,6 +154,7 @@
 | 코드 | 어디서 | 화면 문구 |
 |---|---|---|
 | `login_success` | 콜백 | 없음(보던 주소로) |
+| `signup_success` | 첫 가입을 마친 직후에만(다시 로그인할 때는 아님). 서버 결과 코드로 둘지 웹 상태로 둘지 [확인 필요: dev 확인]. 설계됨(미구현, 사이클 06) [확정] 이름 (사용자 승인, 2026-10-04) | 가입했어요 (화면 위 안내 줄 한 줄) |
 | `login_cancelled` | 콜백 `error=access_denied` | 로그인을 취소했어요 |
 | `login_provider_error` | 콜백: 제공자 `error`(취소 말고), 토큰 교환·프로필 실패. 제공자 이름을 `&provider=naver` 또는 `kakao`로 함께 줌(경로의 registrationId에서 정함) | 네이버(카카오) 쪽 문제로 로그인하지 못했어요. 잠시 뒤 다시 해 주세요 |
 | `login_expired` | 저장된 인가 요청이 없음 | 로그인 시간이 지났어요. 다시 해 주세요 |
@@ -145,30 +164,51 @@
 | `withdraw_cancelled` | 재인증 콜백 `access_denied` | 탈퇴를 취소했어요 |
 | `withdraw_provider_error` | 재인증 콜백. `&provider=`를 함께 줌 | 네이버(카카오) 쪽 문제로 본인 확인을 하지 못했어요. 잠시 뒤 다시 해 주세요 |
 | `withdraw_login_expired` | 재인증 콜백: 리프레시 줄 없음 / DELETE 401 뒤 갱신 실패 | 로그인이 풀렸어요. 다시 로그인한 뒤 탈퇴해 주세요 |
-| `withdraw_request_expired` | 재인증 콜백: 저장된 인가 요청이 없음. **사이클 06 보완으로 추가 예정(dev는 아직 `login_expired`를 씀)** [확정] (사용자 승인, 2026-10-04) | 본인 확인 시간이 지났어요. 탈퇴를 다시 눌러 주세요 |
-| `withdraw_state_mismatch` | 재인증 콜백: 저장된 요청은 있는데 `state`가 다름. 위와 같이 추가 예정 [확정] (사용자 승인, 2026-10-04) | 안전하지 않은 요청이라 멈췄어요. 탈퇴를 다시 눌러 주세요 |
+| `withdraw_request_expired` | 재인증 콜백: 저장된 인가 요청이 없음. **사이클 06 보완으로 추가: 설계됨(미구현, 사이클 06), dev는 아직 `login_expired`를 씀** [확정] (사용자 승인, 2026-10-04) | 본인 확인 시간이 지났어요. 탈퇴를 다시 눌러 주세요 |
+| `withdraw_state_mismatch` | 재인증 콜백: 저장된 요청은 있는데 `state`가 다름. 위와 같이 사이클 06 보완: 설계됨(미구현, 사이클 06), dev는 아직 `login_state_mismatch`를 씀 [확정] (사용자 승인, 2026-10-04) | 안전하지 않은 요청이라 멈췄어요. 탈퇴를 다시 눌러 주세요 |
 | (API) `reauthentication_expired` 403 | `DELETE /api/v1/me` | 본인 확인 시간이 지났어요. 탈퇴를 다시 눌러 주세요 |
 | (API) `internal_error` 500 | `DELETE /api/v1/me` | chaekcheck 서버 문제로 탈퇴하지 못했어요. 잠시 뒤 다시 해 주세요 |
 | (웹) 네트워크 | `fetch` 예외 | 인터넷 연결을 확인하고 다시 해 주세요 |
 
 - 문구의 원본은 `spec.md` "상태별 동작"과 `flow.md` S1·S7입니다. `provider` 값은 `naver`, `kakao` 둘만 받고 그 밖의 값은 웹이 무시합니다.
 - `login_expired`와 `login_state_mismatch`는 인가 요청 저장소를 감싸서 구분합니다: 세션에 저장된 요청이 없으면 expired, 있는데 `state`가 다르면 mismatch [확인 필요: Spring Security 소스에서 기본 동작 확인].
+- `withdraw_request_expired`·`withdraw_state_mismatch`·`signup_success`의 문구 원본은 `docs/cycles/06-my-libraries/spec.md`(AC-18)와 `scope.md`입니다.
 - 탈퇴가 멈춘 문구 일곱(`flow.md` S7)과의 대응: 다른 계정 `withdraw_account_mismatch`, 5분 초과 `reauthentication_expired`(403), 취소 `withdraw_cancelled`, 제공자 오류 `withdraw_provider_error`, 우리 서버 오류 `internal_error`(500), 로그인이 풀림 `withdraw_login_expired`, 인터넷 끊김은 웹이 `fetch` 예외로 판단.
+
+## 내 도서관 (`mylibrary`) — 설계됨(미구현, 사이클 06)
+
+- 근거: ADR-0048, ADR-0049, ADR-0051. 요청·응답 예시는 `docs/cycles/06-my-libraries/design-delta.md` "API".
+- `/api/v1/me/**`라서 액세스 쿠키(`Path=/api/v1/me`)와 요청마다의 계정 확인이 이미 적용되고, 변경 메서드는 `X-XSRF-TOKEN`이 필요합니다(ADR-0044). 로그인이 꺼져 있으면 404(ADR-0046). 로그인 정보 `GET /api/v1/me`와 따로입니다 [확정] (사이클 06 spec R8-1).
+- 웹은 로그인 직후 `GET /api/v1/me/regions`와 `GET /api/v1/me/libraries`를 동시에 부릅니다(흐름 13).
+
+| 메서드 | 경로 | 설명 | 요청 | 응답 | 오류 |
+|---|---|---|---|---|---|
+| GET | `/api/v1/me/regions` | 저장된 지역(폐지된 ID도 그대로) | — | 200 `{"residenceRegionIds":[1114],"workRegionIds":[1101]}` | 401 `unauthorized`, 500 `internal_error` |
+| PUT | `/api/v1/me/regions` | 거주·직장 지역을 통째로 바꿈. 화면은 `/regions/resolutions`로 해석한 값만 보냄 | `{"residenceRegionIds":[1114],"workRegionIds":[]}` 두 칸 필수(빈 배열 가능) [확정], 칸마다 최대 20 [확정], 순서 유지 [확정], 중복 합침 [안] | 200 저장한 값 | 400 `validation_error`(`required`/`invalid_format`/`too_many`), 422 `invalid_region`(`abolished`/`not_found`/`not_sigungu`, 사용 중인 시군구만 받음 [안]), 401, 403 `csrf_invalid`, 500 |
+| GET | `/api/v1/me/libraries` | 직접 추가 도서관 번호(꺼진 것 포함), 순서 `added_at, library_id` | — | 200 `{"libraryIds":[12,207],"max":20}` | 401, 500 |
+| PUT | `/api/v1/me/libraries/{libraryId}` | 하나 추가. 순서: 계정 줄 잠금(없으면 401) → 켜진 도서관인지(아니면 404) → **이미 있으면 204** → 없고 20곳이면 409 → `INSERT … ON CONFLICT DO NOTHING` [확정] (사용자 승인, 2026-10-04, 마무리 검토). 자동 목록에 있는 도서관도 받음 | — | 204 | 404 `library_not_found`(없음·꺼짐·숫자 아님), 409 `library_limit_reached` [안 이름], 401, 403, 500 |
+| DELETE | `/api/v1/me/libraries/{libraryId}` | 하나 빼기(없어도 204) | — | 204 | 401, 403, 500 |
+
+- 직접 추가 상한 20곳, 꺼진 도서관도 지울 때까지 20곳에 셈 [확정] (사용자, 2026-10-04).
+- 계정 줄 잠금은 `auth`의 `AccountPresence.lockIfExists`(같은 트랜잭션)로 합니다. 탈퇴가 먼저 커밋했으면 401이고 줄을 만들지 않습니다(ADR-0051, 흐름 15).
+- 409 예: `{"title":"Conflict","status":409,"detail":"At most 20 libraries can be added","code":"library_limit_reached"}`
+- 웹: 403 `csrf_invalid`면 새 토큰을 받아 한 번 다시(사이클 05). 409·404·500·연결 끊김이면 화면에 먼저 보인 추가를 되돌리고 안내(흐름 14).
 
 ## 오류 코드
 
 | code | HTTP | 어디서 |
 |---|---|---|
-| `validation_error` | 400 | 지역 해석 API, 스트림의 지역 파라미터(숫자 아님, 20개 초과), `filter`·`scope` 값 오류, 다음 묶음의 `candidates`·`batchNo`, 세 API의 검색 조건 파라미터(없음·둘 이상·중복), 스트림의 `visit` 값 오류. `errors[].code`: `required`, `invalid_format`, `too_many`, `duplicate` |
+| `validation_error` | 400 | 지역 해석 API, 스트림의 지역 파라미터(숫자 아님, 20개 초과), `filter`·`scope` 값 오류, 다음 묶음의 `candidates`·`batchNo`, 세 API의 검색 조건 파라미터(없음·둘 이상·중복), 스트림의 `visit` 값 오류. 사이클 06(설계됨(미구현, 사이클 06)): 검색 API 네 곳의 `libraryIds`(`field: libraryIds`, `invalid_format`/`too_many`), `GET /api/v1/libraries`의 지역, `PUT /api/v1/me/regions` 본문. `errors[].code`: `required`, `invalid_format`, `too_many`, `duplicate` |
 | `invalid_query` | 400 | 스트림(시작 전), 더 보기 — 정규화 후 2글자 미만 또는 50자 초과 |
 | `invalid_page` | 400 | 더 보기 |
-| `invalid_region` | 422 | 스트림(시작 전) — `errors[].code`: `abolished`, `not_found`, `not_sigungu` |
+| `invalid_region` | 422 | 스트림(시작 전) — `errors[].code`: `abolished`, `not_found`, `not_sigungu`. 사이클 06(설계됨(미구현, 사이클 06)): `GET /api/v1/libraries`, `PUT /api/v1/me/regions`도 같은 모양 |
 | `book_not_found` | 404 | 책 하나 조회 — 없는 책, 숫자가 아닌 id |
-| `library_not_found` | 404 | 더 보기 — 없거나 꺼진 도서관. 다음 묶음에서는 그 도서관만 `library-failed` |
+| `library_not_found` | 404 | 더 보기 — 없거나 꺼진 도서관. 다음 묶음에서는 그 도서관만 `library-failed`. 사이클 06(설계됨(미구현, 사이클 06)): `PUT /api/v1/me/libraries/{libraryId}` — 없음·꺼짐·숫자가 아닌 id |
+| `library_limit_reached` | 409 | 내 도서관 직접 추가 — 이미 20곳인데 새 도서관을 더함 [안 이름]. 설계됨(미구현, 사이클 06) |
 | `upstream_error` | 502 | 더 보기, 스트림의 `library-failed` — 도서관 오류 응답, 3xx, 파싱 실패, 모든 조회 서버가 쉼 |
 | `upstream_timeout` | 504 | 더 보기, 스트림의 `library-failed` — 8초 초과, 조회 서버 읽기 시간 초과 |
-| `unauthorized` | 401 | 로그인·계정 — 로그인이 필요함, 토큰 만료·무효, 웹훅·콜백 검증 실패 |
-| `csrf_invalid` | 403 | 로그인·계정 — CSRF 토큰 없음·틀림 |
+| `unauthorized` | 401 | 로그인·계정·내 도서관 — 로그인이 필요함, 토큰 만료·무효, 계정 없음(지워짐), 웹훅·콜백 검증 실패 |
+| `csrf_invalid` | 403 | 로그인·계정·내 도서관 — CSRF 토큰 없음·틀림 |
 | `forbidden` | 403 | 로그인·계정 — CSRF가 아닌 403(지금은 나오지 않음) |
 | `reauthentication_required`, `reauthentication_expired` | 403 | 탈퇴 — 본인 확인 기록 없음 / 5분 초과 |
 | `signup_not_found` | 404 | 가입 대기 없음·만료 |

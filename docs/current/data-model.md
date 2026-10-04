@@ -2,6 +2,8 @@
 
 현재 설계 전체를 적은 문서입니다.
 
+사이클 06 cycle-close (2026-10-04): 내 도서관(`mylibrary`)을 더함 — 설계됨(미구현, 사이클 06). 근거 `docs/cycles/06-my-libraries/design-delta.md`.
+
 사이클 05 cycle-close (2026-10-04): 스키마 `auth`와 `modulith`를 더함 — 구현됨(사이클 05, 2026-10-04 retro 반영). 근거 `docs/cycles/05-login-account/design-delta.md`.
 
 마지막 반영: 사이클 04 회고 (2026-10-01). 모든 테이블을 dev Liquibase 파일과 대조했습니다(구현됨). `catalog` 스키마는 데이터 미적재(backlog "미뤄 둔 사이클 04 마무리 작업"). Liquibase에만 있는 세부: `book.isbn13` CHECK `^97[89][0-9]{10}$`, `holding.detail_url` CHECK `^https?://`, `catalog_import` 건수 CHECK `>= 0`, 인덱스 이름 `book_title_norm_bigm` 등(`catalog/001-catalog-schema.yaml`). 그 밖은 사이클 03 회고 (2026-09-30) 기준: 모든 테이블을 dev Liquibase 파일과 대조했습니다(구현됨). 사이클 03은 테이블 변경이 없고, seed `003`~`006` csv의 `visit_required`·`join_method` 값만 고쳤습니다(C3-U-1, 배포 전 규칙).
@@ -254,6 +256,51 @@ erDiagram
 
 - Liquibase: `db/changelog/auth/001-auth-schema.yaml`(CHECK, NULLS NOT DISTINCT는 `sql` changeset), `db/changelog/modulith/001-event-publication.yaml`, master에 include 두 줄. 새 파일만 더합니다 [확정].
 - JPA 매핑 참고: cascade는 DB FK에 맡기고 JPA 연관 cascade는 쓰지 않습니다. 삭제는 `account` 한 줄 삭제 쿼리로 합니다. 엔티티를 쓸지 `JdbcClient`를 쓸지는 dev가 정합니다.
+- `auth` 스키마는 사이클 06에서 바뀌지 않습니다. 동의 항목 추가(지역·직접 추가 도서관)는 문서 문구뿐이고 `document_version`은 그대로 [확정] (사이클 06 spec R7).
+
+## 스키마 `mylibrary` (소유: `mylibrary` 모듈) — 설계됨(미구현, 사이클 06)
+
+로그인한 계정의 거주·직장 지역과 직접 추가한 도서관입니다(ADR-0048, ADR-0049). 다른 모듈 ID는 번호만 두고 FK가 없습니다. 탈퇴하면 `AccountDeleted` listener가 두 표에서 그 계정 줄을 지웁니다(ADR-0051).
+
+- Liquibase: 새 파일 `db/changelog/mylibrary/001-mylibrary-schema.yaml` [안]. 기존 changeset 수정 없음. CHECK는 `sql` changeset(Liquibase OSS YAML은 `addCheckConstraint` 없음)
+
+```mermaid
+erDiagram
+  ACCOUNT_REGION {
+    bigint account_id PK
+    text kind PK
+    bigint region_id PK
+    smallint position
+    timestamptz created_at
+  }
+  ACCOUNT_LIBRARY {
+    bigint account_id PK
+    bigint library_id PK
+    timestamptz added_at
+  }
+  ACCOUNT_REGION }o..|| AUTH_ACCOUNT : "account_id (번호만, FK 없음)"
+  ACCOUNT_LIBRARY }o..|| AUTH_ACCOUNT : "account_id (번호만, FK 없음)"
+  ACCOUNT_REGION }o..|| REGION : "region_id (번호만)"
+  ACCOUNT_LIBRARY }o..|| LIBRARY : "library_id (번호만)"
+```
+
+| 테이블.컬럼 | 타입 | 제약 | 설명 | 상태 태그 |
+|---|---|---|---|---|
+| `account_region.account_id` | bigint | NOT NULL | `auth.account.id`. 모듈 경계라 FK 없음, 탈퇴는 이벤트로 지움 | [확정] (ADR-0036·0048) |
+| `account_region.kind` | text | NOT NULL, CHECK (`kind IN ('RESIDENCE','WORK')`) | 거주·직장 | [안] |
+| `account_region.region_id` | bigint | NOT NULL, CHECK (`region_id > 0`) | `region` ID(FK 없음). 저장할 때는 사용 중인 시군구만 받고(422, [안]), 나중에 폐지되면 그대로 남음(읽을 때 웹이 해석, [확정] spec R6) | [확정] 읽기 / [안] 저장 검증 |
+| `account_region.position` | smallint | NOT NULL, CHECK (`position BETWEEN 0 AND 19`) | 고른 순서 | [확정] (사용자 승인, 2026-10-04) |
+| `account_region.created_at` | timestamptz | NOT NULL DEFAULT now() | | [안] |
+| PK `(account_id, kind, region_id)` | | | 읽기·지우기는 `WHERE account_id = ?`를 PK 앞부분이 맡음. 칸마다 20곳은 앱에서 검사 | [안] |
+| `account_library.account_id` | bigint | NOT NULL | `auth.account.id`(FK 없음) | [확정] |
+| `account_library.library_id` | bigint | NOT NULL, CHECK (`library_id > 0`) | `library.library.id`(FK 없음). 꺼져도 남고 읽는 쪽이 거름 | [확정] 규칙 (spec R3) |
+| `account_library.added_at` | timestamptz | NOT NULL DEFAULT now() | 목록 순서 `added_at, library_id` | [안] |
+| PK `(account_id, library_id)` | | | 추가는 `INSERT … ON CONFLICT DO NOTHING`(멱등). 20곳은 계정 줄 잠금 뒤 `count(*)`로 검사. 꺼진 도서관도 지울 때까지 20곳에 셈 | [확정] 상한·셈 (사용자, 2026-10-04) |
+
+- 지역 저장은 같은 트랜잭션에서 `DELETE … WHERE account_id = ?` 뒤 INSERT. 두 칸 모두 비면 행 없음(사이클 06 AC-13)
+- 다른 인덱스 없음(질의는 모두 `account_id` 같음 조건)
+- 넣지 않는 것: 이메일·이름 등. 탈퇴하면 계정 번호도 남지 않음(ADR-0041)
+- JPA 엔티티 없이 `JdbcClient`(사이클 05 `auth`와 같은 방식) [안]
 
 ## seed
 

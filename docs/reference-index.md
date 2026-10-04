@@ -92,6 +92,7 @@
 | plan `docs/cycles/05-login-account/scope.md`, `spec.md` | 현재 사이클(로그인·계정) 범위·완료 기준, 동작 규칙·수용 기준. `spec.md` "데이터 출처"에 카카오 연결 끊기·웹훅, 네이버 재인증·검수, Spring Session·Modulith 확인 결과 |
 | plan `docs/cycles/05-login-account/research.md` | 사이클 05 조사(2026-10-01): PKCE, 네이버 제공 항목, 네이버 연결끊기 Callback 원문(암호·서명), 로그인 버튼 지침, 처리방침 작성지침·보호책임자 |
 - 사이클 05 로그인·계정 설계와 근거(2026-10-04): `docs/cycles/05-login-account/design-delta.md`, `research.md`(공식 문서 확인 1~13절), ADR-0038~0046. 쉬운 설명 모음 `docs/cycles/05-login-account/easy/README.md`
+- 사이클 06 내 도서관 설계와 근거(2026-10-04): `docs/cycles/06-my-libraries/scope.md`, `spec.md`, `flow.md`, `design-delta.md`, ADR-0048~0051(0048이 0036 대체: `member` → `mylibrary`). 쉬운 설명 모음 `docs/cycles/06-my-libraries/easy/README.md`
 - 성별·연령대를 선택 항목으로 받을 때의 법적 근거(2026-10-04): `docs/research/member-and-alerts/optional-profile-data-law.md`. backlog "추천·통계"에서 가리킴
 
 ## 6. 재작업 시 확인할 것 (한 곳에 모음)

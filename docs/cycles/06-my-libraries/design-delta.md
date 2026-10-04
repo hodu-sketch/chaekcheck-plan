@@ -57,9 +57,10 @@ sequenceDiagram
     W->>W: 줄 "내 도서관을 불러오지 못했어요 · 다시 시도", 스위치 전체
   else 200
     M-->>W: 저장된 지역 ID, libraryIds
-    opt 서버 지역이 비었고 브라우저에 지역이 있고 이 브라우저에서 이 계정이 [저장하지 않기]를 누른 적 없음
+    opt 서버 지역이 비었고 브라우저에 지역이 있고 이 브라우저에서 이 계정이 S11에 답한 적 없음
       W->>W: S11 "이 브라우저에 고른 지역이 있어요. 계정에 저장할까요?"
-      W->>M: PUT /api/v1/me/regions ([계정에 저장]일 때)
+      W->>R: GET /api/v1/regions/resolutions (브라우저 지역)
+      W->>M: PUT /api/v1/me/regions ([계정에 저장]일 때, 해석한 지역)
     end
     W->>R: GET /api/v1/regions/resolutions?ids=…
     R-->>W: ACTIVE / REPLACED / SPLIT / UNKNOWN
@@ -85,7 +86,9 @@ sequenceDiagram
     M->>L: findEnabledTarget(libraryId)
     alt 없음·꺼짐
       M-->>W: 404 library_not_found → 되돌리고 안내
-    else 이미 20곳
+    else 이미 직접 추가돼 있음
+      M-->>W: 204 (그대로)
+    else 없고 이미 20곳
       M-->>W: 409 library_limit_reached → 되돌리고 "직접 추가는 20곳까지예요"
     else 정상
       M->>M: INSERT … ON CONFLICT DO NOTHING
@@ -171,7 +174,7 @@ classDiagram
 | 순서 | `chosen` 묶음이 맨 앞(묶음 안은 지금 `IN_GROUP` 규칙), 그 뒤는 ADR-0027 순서. 스위치가 "전체"여도 같음. `priorityGroup`은 원래 값 유지 | [확정] (사용자 승인, 2026-10-04) |
 | `/api/v1/books` 정렬 | `JoinTier.CHOSEN`이 첫 키. 응답 `joinTier`에 값 `CHOSEN` | [확정] 규칙, [안] 이름 |
 | 웹 정렬 | `sortBatch`가 `chosen`을 가장 먼저 | [확정] 규칙 |
-| 배지 | `chosen`이면 가입 자격 배지·주의 문구 대신 "직접 추가" 표시 하나. `chosen`인데 지역 규칙이 안 맞는 도서관의 `eligibility` 값은 `UNKNOWN`으로 두되 화면은 보이지 않음 | [확정] 배지 규칙 (사용자 제안, 2026-10-04), [안] 내부 값 |
+| 배지 | `chosen`이면 가입 자격 배지 대신 "직접 추가" 표시 하나. 가입 주의 문구(`joinCaution`)도 숨김 [확정] (사용자 승인, 2026-10-04, 마무리 검토). `chosen`인데 지역 규칙이 안 맞는 도서관의 `eligibility` 값은 `UNKNOWN`으로 두되 화면은 보이지 않음 | [확정] 배지 규칙 (사용자 제안, 2026-10-04), [안] 내부 값 |
 | `libraryIds` 검증 | 순서: 조건 → `filter` → `scope` → `visit` → `libraryIds` → 지역. 쉼표 구분 양의 정수, 최대 20, 중복 합침. 400 `validation_error`, `errors[].field: libraryIds`, `code` `invalid_format`/`too_many` | [안] (지역 ID 규칙과 같게) |
 | 받는 API | `GET /api/v1/books`, `GET /api/v1/books/{bookId}`, `GET /api/v1/ebook-searches/stream`, `GET /api/v1/book-availabilities/stream`. 다음 묶음 두 API와 도서관별 더 보기는 그대로(계획에서 나온 후보만 받음) | [안] |
 
@@ -204,7 +207,7 @@ erDiagram
 |---|---|---|---|---|
 | `account_region.account_id` | bigint | NOT NULL | `auth.account.id`. 모듈 경계라 FK 없음, 탈퇴는 이벤트로 지움 | [확정] (ADR-0036·0048) |
 | `account_region.kind` | text | NOT NULL, CHECK (`kind IN ('RESIDENCE','WORK')`) | 거주·직장 | [안] |
-| `account_region.region_id` | bigint | NOT NULL, CHECK (`region_id > 0`) | `region` ID(FK 없음). 저장할 때는 사용 중인 시군구만 받고, 나중에 폐지되면 그대로 남음(읽을 때 웹이 해석) | [확정] 규칙 (spec R6) |
+| `account_region.region_id` | bigint | NOT NULL, CHECK (`region_id > 0`) | `region` ID(FK 없음). 저장할 때는 사용 중인 시군구만 받고(422, [안]), 나중에 폐지되면 그대로 남음(읽을 때 웹이 해석, [확정] spec R6) | [확정] 읽기 / [안] 저장 검증 |
 | `account_region.position` | smallint | NOT NULL, CHECK (`position BETWEEN 0 AND 19`) | 고른 순서 | [확정] (사용자 승인, 2026-10-04) |
 | `account_region.created_at` | timestamptz | NOT NULL DEFAULT now() | | [안] |
 | PK `(account_id, kind, region_id)` | | | 읽기·지우기는 `WHERE account_id = ?`를 PK 앞부분이 맡음. 칸마다 20곳은 앱에서 검사 | [안] |
@@ -224,11 +227,11 @@ erDiagram
 | 메서드 | 경로 | 설명 | 요청 | 응답 | 에러 |
 |---|---|---|---|---|---|
 | GET | `/api/v1/me/regions` | 저장된 지역(폐지된 ID도 그대로) | — | 200 `{"residenceRegionIds":[1114],"workRegionIds":[1101]}` | 401 `unauthorized`, 500 `internal_error` |
-| PUT | `/api/v1/me/regions` | 거주·직장 지역을 통째로 바꿈 | `{"residenceRegionIds":[1114],"workRegionIds":[]}` 두 칸 필수(빈 배열 가능), 중복 합침, 칸마다 최대 20, 순서 유지 | 200 저장한 값 | 400 `validation_error`(`required`/`invalid_format`/`too_many`), 422 `invalid_region`(`abolished`/`not_found`/`not_sigungu`), 401, 403 `csrf_invalid`, 500 |
+| PUT | `/api/v1/me/regions` | 거주·직장 지역을 통째로 바꿈. 화면은 `/regions/resolutions`로 해석한 값만 보냄 | `{"residenceRegionIds":[1114],"workRegionIds":[]}` 두 칸 필수(빈 배열 가능) [확정], 칸마다 최대 20 [확정], 순서 유지 [확정], 중복 합침 [안] | 200 저장한 값 | 400 `validation_error`(`required`/`invalid_format`/`too_many`), 422 `invalid_region`(`abolished`/`not_found`/`not_sigungu`), 401, 403 `csrf_invalid`, 500 |
 | GET | `/api/v1/me/libraries` | 직접 추가 도서관 번호(꺼진 것 포함) | — | 200 `{"libraryIds":[12,207],"max":20}` | 401, 500 |
-| PUT | `/api/v1/me/libraries/{libraryId}` | 하나 추가(이미 있으면 그대로) | — | 204 | 404 `library_not_found`(없음·꺼짐·숫자 아님), 409 `library_limit_reached` [안 이름], 401, 403, 500 |
+| PUT | `/api/v1/me/libraries/{libraryId}` | 하나 추가. 순서: 잠금 → 켜진 도서관인지 → **이미 있으면 204** → 없고 20곳이면 409 → INSERT [확정] (사용자 승인, 2026-10-04, 마무리 검토). 자동 목록에 있는 도서관도 받음 | — | 204 | 404 `library_not_found`(없음·꺼짐·숫자 아님), 409 `library_limit_reached` [안 이름], 401, 403, 500 |
 | DELETE | `/api/v1/me/libraries/{libraryId}` | 하나 빼기(없어도 204) | — | 204 | 401, 403, 500 |
-| GET | `/api/v1/libraries?residenceRegionIds=&workRegionIds=` | 켜진 서비스 도서관 전체 + 지역별 가입 표시. 로그인 없음, 회원을 모름(ADR-0049) | 지역 ID 쉼표 구분, 칸마다 최대 20 | 200 아래 예시. id 순서, 페이지 없음 | 400 `validation_error`, 422 `invalid_region` |
+| GET | `/api/v1/libraries?residenceRegionIds=&workRegionIds=` | 켜진 서비스 도서관 전체 + 지역별 가입 표시. 로그인 없음, 회원을 모름(ADR-0049). 화면은 해석한 지역 ID만 보냄. 지역 규칙이 안 맞는 줄의 `eligibility`는 `UNKNOWN`이지만 뜻이 지금("지역을 보내지 않음")과 달라짐 — dev가 응답 설명에 적음 [안] | 지역 ID 쉼표 구분, 칸마다 최대 20 | 200 아래 예시. id 순서, 페이지 없음 | 400 `validation_error`, 422 `invalid_region` |
 | GET | 기존 4곳 | `libraryIds` 한 칸 추가 | `&libraryIds=12,207` | `targets.libraries[].chosen`, `/api/v1/books` 항목 `joinTier: "CHOSEN"` | 400 `validation_error` `field: libraryIds` |
 
 예시:
@@ -261,7 +264,7 @@ erDiagram
 
 | 키 [안] | 값 | 규칙 | 상태 태그 |
 |---|---|---|---|
-| `chaekcheck.regionImport.v1` | [저장하지 않기]를 누른 계정 번호 목록 | 이 브라우저에서 이 계정에는 S11을 다시 띄우지 않음 | [확정] 동작 (사용자 승인, 2026-10-04, ADR-0049) |
+| `chaekcheck.regionImport.v1` | S11에 답한 계정 번호 목록([계정에 저장]·[저장하지 않기] 모두) | 이 브라우저에서 이 계정에는 S11을 다시 띄우지 않음. 답 없이 닫으면 적지 않음. 옮기기 전 지역을 해석해 바뀐 지역은 새 지역으로, 못 쓰는 지역은 빼고 PUT [확정] (사용자 승인, 2026-10-04, 마무리 검토) | [확정] 동작 (사용자 승인, 2026-10-04, ADR-0049) |
 | 기존 검색 설정 저장소 | "내 도서관 / 전체" 스위치 값 | 로그인 후 내 도서관이 있으면 기본 "내 도서관", 바꾼 값은 이 브라우저에서 유지 | [확정] 동작 |
 | `chaekcheck.regions.v1` | 그대로 | 로그인한 동안 읽지도 쓰지도 않음, 로그아웃하면 다시 씀 | [확정] (spec R1) |
 
@@ -275,9 +278,9 @@ erDiagram
 
 | 대상 | 내용 | 상태 태그 |
 |---|---|---|
-| 동의 문서 `PRIVACY_COLLECTION`, S6 고지 표, S9 처리방침 | 수집 항목 "거주지 지역(시군구), 직장 지역(시군구), 직접 추가한 도서관(고른 경우)", 목적 "내 지역에서 가입할 수 있는 도서관을 찾아 검색에 쓰기". 버전 그대로 | [확정] 방식 (spec R7), [안] 문구 (사용자 검토) |
+| 동의 문서 `PRIVACY_COLLECTION`, S6 고지 표, S9 처리방침 | 수집 항목 "거주지 지역(시군구), 직장 지역(시군구), 직접 추가한 도서관(고른 경우)", 목적 "내 지역에서 가입할 수 있는 도서관을 찾아 검색에 쓰기"(지역), "직접 고른 도서관을 검색 결과에서 먼저 보여 주기"(직접 추가) [확정] (사용자 승인, 2026-10-04, 마무리 검토). 버전 그대로 | [확정] 방식 (spec R7), [안] 문구 (사용자 검토) |
 | S7 탈퇴 안내 | 지워지는 것에 "저장한 지역과 내 도서관" | [확정] |
-| 이벤트 다시 처리 | `spring.modulith.events.republish-outstanding-events-on-restart: true` | [확정] (사용자 승인, ADR-0051) |
+| 이벤트 다시 처리 | `spring.modulith.events.republish-outstanding-events-on-restart: true`. 시험: listener를 일부러 실패시킨 뒤 재시작해 AC-11이 지켜지는지 | [확정] 설정 (ADR-0051) / [확인 필요] 2.1.1에서 실패 기록까지 다시 처리하는지 |
 | 사이클 05 보완 | 탈퇴 전용 코드 `withdraw_request_expired`, `withdraw_state_mismatch`(문구는 `scope.md`), 첫 가입 안내 `signup_success` | [확정] |
 
 ## 결정 기록
