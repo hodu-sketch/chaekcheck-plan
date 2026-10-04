@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>내 도서관 설계: 정할 것 열한 가지</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.mods{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;font-size:16px;margin:10px 0}
+.mod{border:2px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--card)}
+.mod.new{border-color:var(--warn);background:var(--warn-bg)}
+.mod.chg{border-color:var(--accent);background:var(--accent-bg)}
+.mod b{display:block}
+.steps{font-size:16px;margin:8px 0;padding-left:0;list-style:none}
+.steps li{border-left:4px solid var(--accent);padding:4px 10px;margin:4px 0;background:var(--code-bg);border-radius:0 8px 8px 0}
+.steps li.bad{border-color:var(--no);background:var(--no-bg)}
+.steps li.good{border-color:var(--ok);background:var(--ok-bg)}
+.seq{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start;margin:10px 0}
+.seq .ar{align-self:center;font-size:22px;color:var(--muted)}
+.scr{width:250px;max-width:100%}
+.scr .cap{font-size:14px;font-weight:700;color:var(--muted);margin:0 0 4px;min-height:42px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:11px;line-height:1.45;color:var(--text);border-radius:12px;height:230px}
+.fr.ph{border-radius:22px;height:300px}
+.hd{display:flex;align-items:center;gap:6px;padding:7px 10px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:12px}.sp{flex:1}
+.bt{display:inline-block;border-radius:5px;padding:2px 7px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.hl{outline:3px solid var(--no);outline-offset:1px;font-weight:700}
+.bd{padding:9px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:6px;padding:4px 8px;color:var(--muted)}
+.line{margin-top:6px;padding:4px 8px;border-radius:6px;background:var(--ok-bg)}
+.tg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;margin-top:6px}
+.tg span{padding:2px 8px}.tg .on{background:var(--accent);color:var(--card)}
+.tg.hl{outline:3px solid var(--no);outline-offset:2px}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:10px;right:10px;top:50%;transform:translateY(-50%);background:var(--card);border-radius:10px;padding:10px;box-shadow:var(--shadow-lg)}
+.ph .md{top:auto;bottom:0;transform:none;left:0;right:0;border-radius:14px 14px 0 0}
+.tag{position:absolute;right:8px;bottom:8px;font-size:11px;font-weight:700;padding:2px 6px;border-radius:6px;background:var(--ok-bg);color:var(--ok)}
+.tag.no{background:var(--no-bg);color:var(--no)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">내 도서관을 서버에서 어떻게 만들지<br>열한 가지를 정해 주세요.</p>
+<p class="sub">설계 제안 <code>architect-proposal.md</code>를 쉬운 말로 풀었습니다. 앞의 일곱 가지는 만드는 방법(설계)이고, 뒤의 네 가지는 설계하다 나온 작은 동작 규칙입니다. 지금 코드는 dev 프로젝트에서 읽기만 해서 확인했습니다(2026-10-04).</p>
+
+<section class="card">
+<h2><span class="num">1</span>무엇이 새로 생기고 바뀌나</h2>
+<p class="gist">새 모듈 하나(내 도서관 저장)와, 이미 있는 모듈 넷에 작은 변경이 생깁니다. 검색을 맡은 모듈은 여전히 회원을 모릅니다(화면이 "내 도서관 번호"를 넘겨 줌, 이미 정한 것).</p>
+<div class="mods">
+<div class="mod new"><b>내 도서관 모듈 (새)</b>지역과 직접 추가한 도서관을 저장. 탈퇴 소식을 받으면 지움</div>
+<div class="mod chg"><b>로그인 모듈 (조금 바뀜)</b>"지금 로그인한 계정 번호"와 "계정이 아직 있는지"를 다른 모듈에 알려 줌</div>
+<div class="mod chg"><b>도서관 목록 모듈 (조금 바뀜)</b>지역별 가입 가능 표시가 붙은 도서관 목록을 새로 공개. 검색 계획에 직접 추가 도서관을 넣음</div>
+<div class="mod chg"><b>책 검색·대출 조회 모듈 (조금 바뀜)</b>검색 요청에 "직접 추가 도서관 번호" 칸 하나를 더 받음</div>
+<div class="mod"><b>지역 모듈 (그대로)</b>저장할 때 쓸 수 있는 지역인지 확인하는 데 씀</div>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>만드는 방법</h2>
+<p class="gist">각 항목은 제안대로 만들면 무엇이 일어나는지, 다른 선택은 무엇을 치르는지 적었습니다. 모두 배포 전이라 나중에 바꾸는 비용은 작습니다.</p>
+<div class="item">
+<h3><span class="no">1</span>새 모듈 이름은 <code>mylibrary</code>(화면 이름 "내 도서관", 주소 <code>/my-libraries</code>와 같은 말) <span class="an">[안]</span></h3>
+<p>도서관과 사용자를 잇는 일만 맡는다는 뜻이 이름에 드러나서, 나중에 관심 책 같은 다른 회원 자료가 이 모듈에 들어오기 어렵습니다. 저장 표는 <code>mylibrary.account_region</code>(계정의 지역), <code>mylibrary.account_library</code>(계정이 직접 추가한 도서관) 둘입니다. 계정 모듈과 나눈 결정(ADR-0036)에 "둘째 모듈 이름이 <code>member</code>에서 <code>mylibrary</code>로 바뀜"을 덧붙입니다.</p>
+<p class="alt"><b>다른 선택</b> ① <code>patron</code>(도서관 이용자): 사람에 관한 자료가 모두 들어올 자리처럼 보여 "매핑 전용"과 어긋나기 쉽습니다. ② <code>member</code> 그대로: 문서를 덜 고치지만, 사용자가 이 이름 대신 매핑 전용을 고르셨습니다.</p>
+</div>
+<div class="item">
+<h3><span class="no">2</span>내 도서관 화면의 거주 자동·직장 자동·누구나 가입·이름 검색은 도서관 모듈이 공개하는 목록 하나(<code>GET /api/v1/libraries</code>)로 만듦 <span class="an">[안]</span></h3>
+<p>화면이 고른 지역을 보내면, 서비스 도서관 전체(지금 278곳)가 줄마다 "누구나 가입인지, 거주로 되는지, 직장으로 되는지" 표시가 붙어서 옵니다. 화면은 이 한 목록으로 여섯 구역, 맨 위 "누구나 가입" 줄, 꺼진 도서관 안내, 이름 검색(화면 안에서 거름)을 모두 만듭니다. 가입 가능 판정은 지금처럼 도서관 모듈 한 곳에만 있고, 바뀐 지역의 해석도 지금처럼 화면이 합니다(명세에서 정함). 로그인이 필요 없고 회원을 모르는 목록입니다.</p>
+<p>감수하는 점: 278곳을 한 번에 내려받습니다. 크기는 아직 재지 않았습니다(dev가 잼). 도서관이 수천 곳이 되면 서버에서 이름으로 거르는 방식으로 바꿔야 합니다.</p>
+<p class="alt"><b>다른 선택</b> ① 내 도서관 모듈이 서버에서 다 계산해 줌: 화면 요청은 하나지만 바뀐 지역 해석이 서버와 화면 두 곳에 생기고, "매핑 전용" 모듈이 자격 판정을 다루게 됩니다. 이름 검색은 따로 만들어야 합니다. ② 도서관 모듈이 세 목록(거주·직장·누구나)으로 나눠 줌: 응답은 작지만 직접 추가 줄의 이름과 이름 검색에 API가 하나 더 필요합니다.</p>
+</div>
+<div class="item">
+<h3><span class="no">3</span>저장 API는 지역은 통째로, 직접 추가 도서관은 하나씩 (<code>/api/v1/me/regions</code>, <code>/api/v1/me/libraries/{도서관 번호}</code>) <span class="an">[안]</span></h3>
+<p>예: 내 도서관 화면에서 [추가]를 누르면 그 도서관 하나만 저장 요청이 갑니다. 다른 탭이나 폰에서 동시에 고쳐도 서로 덮어쓰지 않습니다. 21번째면 "20곳까지예요", 꺼진 도서관이면 "쓸 수 없는 도서관이에요"를 정확히 알려 줍니다. 같은 요청을 두 번 보내도 결과가 같습니다. 주소를 <code>/api/v1/me/</code> 아래에 두면 사이클 05에서 만든 로그인 확인·계정 확인·위조 요청 방지(CSRF)가 그대로 적용되어 로그인 모듈을 고치지 않아도 됩니다. 로그인 정보(<code>/api/v1/me</code>)와는 따로입니다(명세에서 정함).</p>
+<p class="alt"><b>다른 선택</b> ① 직접 추가 목록도 통째로 보냄: 단순하지만 다른 탭에서 바꾼 것을 덮어씁니다. ② 지역과 도서관을 한 묶음으로: 요청은 하나지만 지역만 바꿔도 도서관 목록을 같이 보내야 해서 덮어쓰기 위험이 가장 큽니다.</p>
+</div>
+<div class="item">
+<h3><span class="no">4</span>검색 결과에서 직접 추가한 도서관을 앞에 둘 때, 도서관마다 "직접 추가" 표시 하나를 더하고 원래 무리(내 시군구, 누구나 가입 등)는 그대로 둠 <span class="an">[안]</span></h3>
+<p>예: 직접 추가한 마포구립 도서관은 맨 앞에 오면서도 배지는 지금처럼 "내 시군구"로 보입니다. 책 목록 검색(서버가 순서를 정함), 대출 현황 스트림, 책 화면 모두 같은 규칙을 씁니다. 꺼졌거나 없는 도서관 번호는 오류 없이 무시합니다.</p>
+<p class="alt"><b>다른 선택</b> 직접 추가한 도서관의 무리를 "직접 추가"라는 새 무리로 바꿈: 칸이 늘지 않지만 그 도서관이 원래 어느 무리였는지(내 시군구 등)를 잃고 화면 코드와 시험을 더 고쳐야 합니다. 2026-09-30에 방문 가입 순서를 정할 때(ADR-0027)도 같은 이유로 새 무리 값을 고르지 않았습니다.</p>
+</div>
+<div class="item">
+<h3><span class="no">5</span>저장과 탈퇴가 거의 동시에 일어나도 지워진 계정의 자료가 남지 않게, 저장할 때 계정 줄을 잠깐 잠금 <span class="an">[안]</span></h3>
+<p>지금도 <code>/api/v1/me/</code> 아래 요청은 계정이 있는지 매번 확인합니다(dev 코드 확인). 남는 틈은 하나입니다.</p>
+<ul class="steps">
+<li class="bad">잠그지 않으면: 탭 A가 도서관 추가 → 계정 있음 확인 → 그 사이 탭 B에서 탈퇴 완료 + "탈퇴했으니 지워라" 처리 끝 → 탭 A의 저장이 들어감 → 지워진 계정의 줄이 영영 남음</li>
+<li class="good">잠그면: 탭 A가 계정 줄을 잠그고 저장 → 탭 B의 탈퇴는 그동안 기다렸다가 진행 → "지워라" 처리가 탭 A가 넣은 줄까지 지움. 탈퇴가 먼저 끝났으면 탭 A는 "로그인이 풀렸어요"를 받고 아무것도 저장하지 않음</li>
+</ul>
+<p>같은 잠금 덕분에 두 탭에서 동시에 21번째를 넣어도 20곳 상한이 정확히 지켜집니다. 근거: PostgreSQL 공식 문서 13.3 Row-Level Locks(https://www.postgresql.org/docs/current/explicit-locking.html, 2026-10-04 확인 — 설계 에이전트가 확인했고 이 세션에서 다시 열지는 않음). 감수하는 점: 로그인 모듈이 "계정 줄 잠그기" 기능 하나를 공개하고, 두 모듈이 한 저장 단위를 함께 씁니다. 나중에 서비스로 나누면 아래 ②로 바꿉니다.</p>
+<p class="alt"><b>다른 선택</b> ① 지금 확인만 씀: 바꿀 것이 없지만 위의 틈이 남습니다(같은 사람이 거의 동시에 저장·탈퇴할 때만). ② 하루 한 번 대조해서 지움: 모듈을 나눠도 그대로 쓰지만 최대 하루 동안 줄이 남아 "줄이 생기지 않는다"(AC-12)에 엄밀히 맞지 않습니다.</p>
+</div>
+<div class="item">
+<h3><span class="no">6</span>"탈퇴했으니 지워라" 처리가 실패해 남으면, 서버를 다시 켤 때 자동으로 다시 처리 <span class="an">[안]</span></h3>
+<p>탈퇴 소식은 저장소에 기록해 두고 처리합니다(사이클 05에서 만듦). 처리가 실패하면 기록이 남는데, 지금은 다시 처리하는 설정이 없습니다. 설정 한 줄(<code>republish-outstanding-events-on-restart</code>)로 서버를 다시 켤 때 남은 기록을 다시 처리합니다. 지우는 일은 두 번 해도 결과가 같아 안전합니다. 근거: Spring Modulith 공식 문서(https://docs.spring.io/spring-modulith/reference/events.html, 2026-10-04 확인 — 설계 에이전트). 이 버전에서 "실패" 상태 기록까지 다시 처리하는지는 문서에 분명하지 않아 dev가 시험합니다.</p>
+<p class="alt"><b>다른 선택</b> 정해진 주기(예: 몇 분마다)로 남은 기록을 다시 처리하는 작업: 다시 켜지 않아도 회복되지만, 작업을 둘 모듈과 주기를 정해야 합니다. 서버를 여러 대로 늘릴 때 다시 볼 일입니다.</p>
+</div>
+<div class="item">
+<h3><span class="no">7</span>지역 옮기기 창에서 한 번 [저장하지 않기]를 누르면 그 PC(그 폰)에서는 다시 뜨지 않음. 스위치를 "전체"로 바꾸면 그 PC(그 폰)에서만 계속 "전체" <span class="an">[안]</span></h3>
+<p>창이 다시 뜨지 않게 하려면, 화면이 "이 사람은 [저장하지 않기]를 이미 눌렀다"는 것을 어딘가에 적어 두어야 합니다. 제안은 그 한 줄 메모를 <b>그 PC(그 폰)의 브라우저 안</b>에 적어 두는 것입니다(로그인 상태나 설정을 브라우저가 기억해 두는 것과 같은 방식). 서버에는 아무것도 보내지 않습니다. 스위치를 "전체"로 바꾼 것도 같은 식으로 그 브라우저 안에 적어 둡니다. 아래 그림이 실제로 보이는 모습입니다.</p>
+<p>함께 정하는 작은 것: 첫 가입 직후 "가입했어요" 안내를 띄우는 신호의 이름은 <code>signup_success</code>로 합니다(로그인 성공 신호 <code>login_success</code>와 맞춤).</p>
+<p class="alt"><b>다른 선택</b> 그 메모를 서버(계정)에 적어 둠: 다른 PC·폰에서도 창이 다시 뜨지 않고 스위치도 모든 기기에서 같아지지만, 서버에 저장하는 것이 늘어납니다.</p>
+</div>
+<div class="item">
+<h3>질문: 7번 제목과 설명을 실제 화면 예시로</h3>
+<p><b>7번은 "화면이 기억해야 하는 작은 것 두 가지를 서버가 아니라 지금 쓰는 브라우저(PC의 크롬, 폰의 사파리 등)에 적어 둔다"는 뜻입니다.</b> 화면에 보이는 것으로 풀면 아래 두 장면입니다.</p>
+<p><b>장면 1. "이 지역을 계정에 저장할까요?" 창 (집 PC)</b></p>
+<div class="seq">
+<div class="scr"><p class="cap">① 로그인 전, 지역을 골라 둠</p><div class="fr">
+<div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">로그인</span></div>
+<div class="bd"><div class="sb">책 제목을 입력하세요</div><div class="line"><b>내 지역</b> · 거주 서울 마포구 · 변경</div><div class="tg"><span>전체 도서관</span><span class="on">가입 가능한 곳</span></div></div>
+</div></div>
+<span class="ar">→</span>
+<div class="scr"><p class="cap">② 처음 로그인하면 창이 뜸 → [저장하지 않기]</p><div class="fr">
+<div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">로그아웃</span></div>
+<div class="bd"><div class="sb">책 제목을 입력하세요</div></div>
+<div class="ov"></div>
+<div class="md"><b>이 브라우저에 고른 지역이 있어요. 계정에 저장할까요?</b><p style="margin:4px 0">거주 서울 마포구</p><span class="bt pri">계정에 저장</span> <span class="bt hl">저장하지 않기</span></div>
+</div></div>
+<span class="ar">→</span>
+<div class="scr"><p class="cap">③ 다음 날 같은 PC에서 다시 로그인</p><div class="fr">
+<div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">로그아웃</span></div>
+<div class="bd"><div class="sb">책 제목을 입력하세요</div><div class="line"><b>내 도서관이 비어 있어요</b> · 관리</div><div class="tg"><span class="on">전체 도서관</span><span>내 도서관</span></div></div>
+<span class="tag">창이 다시 뜨지 않음</span>
+</div></div>
+</div>
+<p>③에서 창이 뜨지 않는 것은 ②의 답을 이 PC의 브라우저가 기억하기 때문입니다. 다른 PC에서 지역을 골라 두고 로그인하면 그 PC에서는 한 번 뜹니다.</p>
+
+<p><b>장면 2. "전체 도서관 | 내 도서관" 스위치 (폰과 PC)</b></p>
+<div class="seq">
+<div class="scr"><p class="cap">① 폰: 로그인하면 "내 도서관"이 켜진 채 시작</p><div class="fr ph">
+<div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">로그아웃</span></div>
+<div class="bd"><div class="sb">책 제목</div><div class="line"><b>내 도서관</b> · 거주 마포구 · 관리</div><div class="tg"><span>전체</span><span class="on">내 도서관</span></div></div>
+</div></div>
+<span class="ar">→</span>
+<div class="scr"><p class="cap">② 폰: "전체"로 바꿈</p><div class="fr ph">
+<div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">로그아웃</span></div>
+<div class="bd"><div class="sb">책 제목</div><div class="line"><b>내 도서관</b> · 거주 마포구 · 관리</div><div class="tg hl"><span class="on">전체</span><span>내 도서관</span></div></div>
+</div></div>
+<span class="ar">→</span>
+<div class="scr"><p class="cap">③ 폰: 새로고침·다음 날에도 "전체" 그대로</p><div class="fr ph">
+<div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">로그아웃</span></div>
+<div class="bd"><div class="sb">책 제목</div><div class="line"><b>내 도서관</b> · 거주 마포구 · 관리</div><div class="tg"><span class="on">전체</span><span>내 도서관</span></div></div>
+<span class="tag">폰이 기억함</span>
+</div></div>
+<span class="ar">→</span>
+<div class="scr"><p class="cap">④ 같은 날 PC를 열면 "내 도서관"으로 시작</p><div class="fr">
+<div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">로그아웃</span></div>
+<div class="bd"><div class="sb">책 제목을 입력하세요</div><div class="line"><b>내 도서관</b> · 거주 서울 마포구 · 관리</div><div class="tg"><span>전체 도서관</span><span class="on">내 도서관</span></div></div>
+<span class="tag no">폰에서 바꾼 것을 모름</span>
+</div></div>
+</div>
+<p>둘 다 서버에 저장하지 않으므로 저장하는 개인정보가 늘지 않습니다. 이대로 좋으시면 7번을 다시 눌러 승인해 주세요. "다른 기기에서도 같게"를 원하시면 미승인이나 기타에 적어 주세요(그러면 서버에 저장하는 쪽으로 바꿉니다).</p>
+</div>
+<div class="item">
+<h3>9·10번 반영: 직접 추가한 도서관은 자격 규칙의 예외</h3>
+<p>말씀하신 대로 명세에 적었습니다. 직접 추가한 도서관은 "이미 가입해서 넣은 곳"으로 보고, 검색 결과와 내 도서관 화면에서 가입 자격 배지 없이 "직접 추가" 표시 하나만 보입니다. "방문 없이 가입"을 켜도 빼지 않습니다. 그래서 10번에서 말한 "가입 자격 확인 필요" 배지는 쓰지 않습니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>설계하다 나온 작은 동작 규칙</h2>
+<p class="gist">명세에 없던 경우가 넷 나왔습니다. 화면에 보이는 동작이라 직접 정해 주세요.</p>
+<div class="item">
+<h3><span class="no">8</span>로그인하고 스위치가 "전체 도서관"일 때도 직접 추가한 도서관을 결과 맨 앞에 둠 <span class="an">[안]</span></h3>
+<p>명세에서 "직접 추가한 도서관은 가입 가능한 도서관보다 앞"으로 정했는데, 스위치가 "전체"일 때도 그런지는 정하지 않았습니다. 제안은 스위치와 상관없이 앞에 두는 것입니다. 예: "전체"로 찾아도 내가 넣은 서울도서관의 결과가 먼저 보입니다.</p>
+<p class="alt"><b>다른 선택</b> "전체"일 때는 직접 추가 표시를 쓰지 않음: "전체"의 결과가 로그인 전과 완전히 같아집니다.</p>
+</div>
+<div class="item">
+<h3><span class="no">9</span>"방문 없이 가입"을 켜면, 직접 추가했더라도 방문해야 가입하는 도서관은 뺌 <span class="an">[안]</span></h3>
+<p>사용자가 직접 고른 거르기("방문 없이 가입")를 따르는 것이 자연스럽다고 봅니다. 예: 직접 추가한 도서관이 방문 가입이면, "방문 없이 가입"을 켰을 때 결과에 나오지 않습니다.</p>
+<p class="alt"><b>다른 선택</b> 직접 추가한 도서관은 "방문 없이 가입"과 상관없이 늘 남김: 내가 이미 가입한 도서관일 수 있어서 남기는 것도 말이 됩니다.</p>
+</div>
+<div class="item">
+<h3><span class="no">10</span>내 지역으로는 가입 자격이 맞지 않는데 직접 추가한 도서관은 "가입 자격 확인 필요" 배지로 보임 <span class="an">[안]</span></h3>
+<p>예: 거주가 서울인데 부산시민만 가입할 수 있는 부산 도서관을 직접 추가하면, 지금 있는 배지 "가입 자격 확인 필요"를 붙입니다(이미 가입한 사람일 수도 있으므로). 새 배지 "자격 없음"은 만들지 않고 나중 후보로 둡니다.</p>
+<p class="alt"><b>다른 선택</b> 새 배지 "내 지역으로는 가입할 수 없어요"를 만듦: 더 정확하지만 화면 문구와 판정 값이 하나 늘어납니다.</p>
+</div>
+<div class="item">
+<h3><span class="no">11</span>꺼진 도서관도 지울 때까지 20곳에 세고, 거주·직장 지역은 고른 순서대로 저장해 보임 <span class="an">[안]</span></h3>
+<p>꺼진 도서관(사이트가 바뀌어 잠시 쓰지 않는 곳)이 직접 추가 목록에 남아 있으면 내 도서관 화면에 "지금은 쓸 수 없는 도서관이에요"와 [빼기]가 보이고, 빼기 전까지는 20곳에 셉니다. 지역은 지금 브라우저가 고른 순서대로 저장하는 것과 같게 서버도 순서를 지킵니다.</p>
+<p class="alt"><b>다른 선택</b> ① 꺼진 도서관은 20곳에 세지 않음: 다시 켜지면 21곳이 될 수 있습니다. ② 지역 순서를 저장하지 않고 번호 순으로 보임: 저장 칸이 하나 줄지만 고른 순서와 다르게 보일 수 있습니다.</p>
+</div>
+</section>
+
+<p class="foot">원본: <code>docs/cycles/06-my-libraries/architect-proposal.md</code>(결정 1~7과 확인 필요). 결정 5(이름 검색 API)는 2번을 승인하면 따로 정할 것이 없어 항목에서 뺐습니다. 근거 문서: <code>spec.md</code>, <code>flow.md</code>, ADR-0027·0036·0037·0038·0041·0042·0044.</p>
+</main>
+</body>
+</html>

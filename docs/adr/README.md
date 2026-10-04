@@ -39,7 +39,7 @@
 | [ADR-0033](0033-web-url-multiple-conditions.md) | 웹 주소에 여러 검색 조건을 담음 (ADR-0025의 웹 주소 규칙 변경) | Accepted | 2026-09-30 | 04 |
 | [ADR-0034](0034-store-ebook-catalog.md) | 전자책 목록(사실 정보)을 서비스 DB에 저장함 | Accepted | 2026-09-30 | 04 |
 | [ADR-0035](0035-grouping-step4-and-code-spaces.md) | 같은 책 묶기 ④(정리한 전체 제목·저자·출판사)와 책 번호 체계 공유 범위 | Accepted | 2026-09-30 | 04 (2026-10-01 늦게 기록) |
-| [ADR-0036](0036-auth-and-member-modules.md) | 계정(`auth`)과 회원 자료(`member`)를 다른 모듈로 둠 | Accepted | 2026-10-01 | 05 |
+| [ADR-0036](0036-auth-and-member-modules.md) | 계정(`auth`)과 회원 자료(`member`)를 다른 모듈로 둠 | Superseded by 0048 | 2026-10-01 | 05 |
 | [ADR-0037](0037-search-unaware-of-member-library-ids.md) | 검색 모듈은 회원을 모르고, 웹이 "내 도서관"을 파라미터로 넘김 | Accepted | 2026-10-01 | 05 (구현은 06) |
 | [ADR-0038](0038-jwt-login-state.md) | 로그인 유지는 JWT (짧은 액세스 토큰 + DB의 리프레시 토큰) | Accepted | 2026-10-04 | 05 |
 | [ADR-0039](0039-login-method-not-social-only.md) | 로그인 수단 표를 소셜 전용으로 만들지 않고, 제공자 번호는 프로필 API로 받음 | Accepted | 2026-10-04 | 05 |
@@ -51,3 +51,7 @@
 | [ADR-0045](0045-result-code-in-url.md) | 로그인·탈퇴 결과는 주소 뒤의 코드로 화면에 알리고, 돌아갈 주소는 화면이 기억함 | Accepted | 2026-10-04 | 05 |
 | [ADR-0046](0046-auth-feature-toggle.md) | 로그인 기능은 서버 설정으로 켜고 끔 (저장소는 나누지 않음) | Accepted | 2026-10-04 | 05 |
 | [ADR-0047](0047-maintenance-procedures-in-dev.md) | 정기 유지보수 절차는 dev `docs/maintenance/` 한 곳에, 수집기도 dev `scripts/crawl/`로 (plan은 원칙·조사·결정) | Accepted | 2026-10-04 | 사이클 밖 |
+| [ADR-0048](0048-mylibrary-mapping-module.md) | 둘째 회원 모듈은 "내 도서관" 전용 `mylibrary` (0036 대체) | Accepted | 2026-10-04 | 06 |
+| [ADR-0049](0049-my-library-list-and-save-api.md) | 내 도서관 화면은 도서관 공개 목록 하나로, 저장은 지역 통째로·도서관 하나씩 (`/api/v1/me/` 아래) | Accepted | 2026-10-04 | 06 |
+| [ADR-0050](0050-chosen-libraries-first-and-exempt.md) | 직접 추가한 도서관은 검색에서 맨 앞, 자격 규칙의 예외 | Accepted | 2026-10-04 | 06 |
+| [ADR-0051](0051-account-lock-and-republish.md) | 저장과 탈퇴가 겹쳐도 지워진 계정의 자료가 남지 않게 (계정 줄 잠금, 재시작 때 다시 처리) | Accepted | 2026-10-04 | 06 |

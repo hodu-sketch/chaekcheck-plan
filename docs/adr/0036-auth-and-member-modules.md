@@ -1,6 +1,6 @@
 # ADR-0036: 계정(`auth`)과 회원 자료(`member`)를 다른 모듈로 둠
 
-Status: Accepted
+Status: Superseded by 0048
 Date: 2026-10-01
 Cycle: 05-login-account
 Supersedes: 없음

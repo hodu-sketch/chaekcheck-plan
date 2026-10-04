@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>내 도서관 설계 한눈에</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.mods{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;font-size:16px;margin:10px 0}
+.mod{border:2px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--card)}
+.mod.new{border-color:var(--warn);background:var(--warn-bg)}
+.mod.chg{border-color:var(--accent);background:var(--accent-bg)}
+.mod b{display:block}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">내 도서관 설계를 한 장으로 정리했습니다.<br>새로 정할 것은 두 가지뿐입니다.</p>
+<p class="sub">설계 문서 <code>design-delta.md</code>는 지금까지 고르신 것(명세 7, 화면 10, 설계 11, 결정 기록 4)을 모은 것입니다. 이 페이지는 그 문서를 쉬운 말로 다시 보여 줍니다. 그림이 그려진 원문은 대화에 보낸 <code>design-delta-original.html</code>에 있습니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>무엇을 만드나</h2>
+<div class="mods">
+<div class="mod new"><b>mylibrary (새)</b>표 둘: 계정의 지역(거주·직장, 고른 순서), 계정이 직접 추가한 도서관(최대 20). 탈퇴 소식을 받으면 둘 다 지움</div>
+<div class="mod chg"><b>auth (조금)</b>다른 모듈이 "지금 계정 번호"를 받게 함. 저장할 때 계정 줄 잠금 제공</div>
+<div class="mod chg"><b>library (조금)</b>공개 목록 <code>GET /api/v1/libraries</code>. 검색 계획에 직접 추가 도서관을 맨 앞으로</div>
+<div class="mod chg"><b>catalog · availability (조금)</b>검색 요청에 <code>libraryIds</code> 한 칸, 결과에 "직접 추가" 표시</div>
+</div>
+<table>
+<tr><th>화면에서</th><th>서버에서</th></tr>
+<tr><td>로그인 직후 검색 화면이 내 지역·내 도서관을 불러옴</td><td><code>GET /api/v1/me/regions</code>, <code>GET /api/v1/me/libraries</code></td></tr>
+<tr><td>지역 고르기 창에서 [저장]</td><td><code>PUT /api/v1/me/regions</code> 본문에 거주 칸·직장 칸</td></tr>
+<tr><td>내 도서관 화면에서 [추가]·[빼기]</td><td><code>PUT</code>·<code>DELETE /api/v1/me/libraries/{번호}</code>. 21번째면 "20곳까지예요"</td></tr>
+<tr><td>내 도서관 화면의 여섯 구역과 이름 검색</td><td><code>GET /api/v1/libraries?residenceRegionIds=…&amp;workRegionIds=…</code> 하나로 그림</td></tr>
+<tr><td>"내 도서관" 스위치로 검색</td><td>기존 검색 API에 <code>libraryIds</code>를 붙여 보냄. 직접 추가 도서관이 맨 앞, 배지 대신 "직접 추가"</td></tr>
+<tr><td>탈퇴</td><td>저장한 지역·도서관이 함께 지워짐. 동시에 저장하던 것도 남지 않음</td></tr>
+</table>
+<p class="alt">외부 사이트를 새로 부르는 일은 없습니다. 동의 문서는 문구만 고치고 버전은 그대로입니다(명세에서 정함). 사이클 05 보완(탈퇴 전용 코드 둘, "가입했어요" 안내)도 함께 넣습니다.</p>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>남은 두 가지</h2>
+<p class="gist">세부 이름(클래스, 오류 코드 이름 등)은 동작에 영향이 없어 dev가 바꿀 수 있게 두려 합니다. 그리고 이 문서대로 사이클을 마무리하는 단계로 넘어갈지 정해 주세요.</p>
+<div class="item">
+<h3><span class="no">1</span>아래 세부 이름과 작은 규칙은 이 문서의 제안대로 쓰되, dev가 코드에 맞춰 바꾸면 알려 주기만 하면 됨 <span class="an">[안]</span></h3>
+<table>
+<tr><th>무엇</th><th>제안</th></tr>
+<tr><td>계정 줄 잠금 기능 이름</td><td><code>AccountPresence.lockIfExists</code></td></tr>
+<tr><td>20곳 초과 오류 코드</td><td><code>library_limit_reached</code> (409)</td></tr>
+<tr><td>공개 목록의 칸 이름</td><td><code>matchedBy</code>(거주·직장 중 맞은 쪽), <code>cautioned</code>(주의 문구 있음)</td></tr>
+<tr><td>정렬 값 이름</td><td><code>JoinTier.CHOSEN</code>, 표시 칸 <code>chosen</code></td></tr>
+<tr><td><code>libraryIds</code> 검사</td><td>쉼표로 구분한 양의 정수, 최대 20, 중복은 합침. 틀리면 400 <code>validation_error</code> (지역 칸과 같은 규칙)</td></tr>
+<tr><td>브라우저 저장 키</td><td><code>chaekcheck.regionImport.v1</code></td></tr>
+<tr><td>표 이름·파일</td><td><code>mylibrary.account_region</code>, <code>mylibrary.account_library</code>, <code>db/changelog/mylibrary/001-mylibrary-schema.yaml</code></td></tr>
+</table>
+</div>
+<div class="item">
+<h3><span class="no">2</span>이 설계 문서대로 사이클 06을 마무리하는 단계(검토, 현재 설계 문서 고치기, dev 인계서)로 넘어감 <span class="an">[안]</span></h3>
+<p>다음 단계에서는 검토 에이전트가 빠진 것과 범위 밖을 찾고, <code>docs/current/</code>를 이번 설계로 고치고, dev에 넘길 인계서를 씁니다. 인계서도 캔버스로 보여 드립니다.</p>
+<p class="alt">dev가 확인할 것(설계를 막지 않음): 공개 목록 크기, 재시작 때 실패 기록도 다시 처리하는지, <code>signup_success</code>를 어디에 둘지, 켜고 끄기 표시를 옮겨도 모듈 시험이 통과하는지.</p>
+</div>
+</section>
+
+<p class="foot">원본: <code>docs/cycles/06-my-libraries/design-delta.md</code>. 결정 기록: ADR-0048, 0049, 0050, 0051.</p>
+</main>
+</body>
+</html>
