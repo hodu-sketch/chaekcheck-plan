@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>설계 1·2·3·6번의 답</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">먼저 보내신 넷(1·2·3·6)의 답입니다.<br>3번과 6번은 말씀대로 정했고, 1번과 2번을 다시 여쭙니다.</p>
+<p class="sub">4번과 5번은 승인으로 적었습니다. 7~12번은 앞 페이지에서 계속 골라 주세요(2026-10-04). 출처는 <code>research.md</code> 13절에 있습니다.</p>
+
+<section class="card">
+<h2><span class="num">2</span>여러 기기에서 로그인했을 때는 어떻게 되나</h2>
+<div class="gist">걱정하신 문제는 생기지 않습니다. 기기(브라우저)마다 리프레시 토큰이 따로라서 서로 영향을 주지 않습니다.</div>
+<figure><svg viewBox="0 0 900 250" role="img" aria-label="기기마다 리프레시 토큰이 따로"><g font-family="Noto Sans KR, sans-serif" font-size="15" fill="var(--text)" text-anchor="middle">
+<rect x="20" y="20" width="250" height="150" rx="12" fill="var(--card)" stroke="var(--accent)" stroke-width="2"/><text x="145" y="46" font-weight="700">집 PC 크롬</text>
+<rect x="40" y="62" width="60" height="34" rx="6" fill="var(--accent-bg)"/><text x="70" y="84" font-size="13">탭 1</text><rect x="115" y="62" width="60" height="34" rx="6" fill="var(--accent-bg)"/><text x="145" y="84" font-size="13">탭 2</text><rect x="190" y="62" width="60" height="34" rx="6" fill="var(--accent-bg)"/><text x="220" y="84" font-size="13">탭 3</text>
+<text x="145" y="124" font-size="13">세 탭이 쿠키 하나를 같이 씀</text><text x="145" y="146" font-size="13" fill="var(--warn)">→ 여기서만 순서를 정함 (제안 2)</text>
+<rect x="325" y="20" width="250" height="150" rx="12" fill="var(--card)" stroke="var(--accent)" stroke-width="2"/><text x="450" y="46" font-weight="700">폰 사파리</text><text x="450" y="100" font-size="13">자기 쿠키를 따로 가짐</text>
+<rect x="630" y="20" width="250" height="150" rx="12" fill="var(--card)" stroke="var(--accent)" stroke-width="2"/><text x="755" y="46" font-weight="700">회사 PC 엣지</text><text x="755" y="100" font-size="13">자기 쿠키를 따로 가짐</text>
+<g stroke="var(--muted)" stroke-width="2"><line x1="145" y1="170" x2="145" y2="200"/><line x1="450" y1="170" x2="450" y2="200"/><line x1="755" y1="170" x2="755" y2="200"/></g>
+<rect x="45" y="200" width="200" height="36" rx="8" fill="var(--code-bg)"/><text x="145" y="224" font-size="13">DB 줄 101</text>
+<rect x="350" y="200" width="200" height="36" rx="8" fill="var(--code-bg)"/><text x="450" y="224" font-size="13">DB 줄 102</text>
+<rect x="655" y="200" width="200" height="36" rx="8" fill="var(--code-bg)"/><text x="755" y="224" font-size="13">DB 줄 103</text>
+</g></svg><figcaption>집 PC에서 토큰을 새로 받아도 바뀌는 것은 DB의 101번 줄뿐입니다. 폰(102)과 회사 PC(103)는 그대로입니다.</figcaption></figure>
+<div class="item">
+<p>"이미 쓴 토큰이 또 오면 그 로그인을 끊는다"는 규칙은 <b>한 줄 안에서만</b> 적용됩니다. 폰이 내미는 토큰은 102번 줄의 것이라 101번 줄과 비교되지 않습니다. 여러 기기에서 동시에 로그인하는 것은 9번 명세 결정대로 그대로 됩니다.</p>
+<p>문제가 생길 수 있는 곳은 <b>같은 브라우저의 여러 탭</b>뿐입니다. 탭들은 쿠키 하나를 함께 쓰기 때문에, 동시에 갱신하면 한 탭만 새 토큰을 받고 나머지는 옛 토큰을 내밀게 됩니다. 제안 2는 이 탭들 사이에서만 순서를 정하는 것입니다. 같은 PC의 크롬과 엣지도 서로 다른 브라우저라 줄이 따로입니다.</p>
+</div>
+<div class="item">
+<h3><span class="no">2</span>같은 브라우저의 탭끼리는 화면이 한 번에 한 탭만 갱신하게 함 <span class="an">[안]</span></h3>
+<p>처음 제안 그대로입니다. 기기가 여럿인 경우는 따로 처리할 것이 없습니다.</p>
+<p class="alt"><b>다른 선택</b>: 서버가 바로 앞 토큰을 몇 초 동안 받아 줌(규칙에 예외가 생김).</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">1</span>서명 방식 둘의 장단점</h2>
+<div class="gist">차이는 "토큰을 확인하는 쪽이 토큰을 만들 수도 있느냐"입니다. 확인하는 곳이 우리 서버 하나뿐인 지금은 그 차이가 드러나지 않습니다.</div>
+<div class="item">
+<table>
+<tr><th></th><th>가. 비밀 키 하나 (HS256, 추천)</th><th>나. 키 한 쌍 (ES256·RS256)</th></tr>
+<tr><td>키</td><td>하나. 서명과 확인에 같은 키</td><td>둘. 서명용(비밀)과 확인용(공개해도 됨)</td></tr>
+<tr><td>확인하는 쪽이 가진 것으로 토큰을 만들 수 있나</td><td>있음. 그래서 확인하는 곳이 늘면 비밀을 나눠 가져야 함</td><td>없음. 확인용 키로는 만들 수 없음</td></tr>
+<tr><td>키가 새면</td><td>누구든 아무 계정의 토큰을 만들 수 있음</td><td>서명용 키가 새면 같음. 확인용 키는 새도 괜찮음</td></tr>
+<tr><td>키를 만드는 법</td><td>무작위 32바이트 이상. 사람이 지은 비밀번호를 쓰면 안 됨</td><td>키 쌍을 만들어 파일이나 환경 변수로 보관. 형식을 다루는 일이 늘어남</td></tr>
+<tr><td>토큰 크기 (서명 부분)</td><td>32바이트</td><td>ES256 64바이트, RS256 256바이트</td></tr>
+<tr><td>서명·확인 속도</td><td>가장 빠름</td><td>더 느림 (이 서비스 규모에서는 체감 차이 없음)</td></tr>
+<tr><td>잘 맞는 경우</td><td>만드는 곳과 확인하는 곳이 같은 서버</td><td>다른 서버나 다른 회사가 우리 토큰을 확인해야 할 때</td></tr>
+<tr><td>나중에 바꾸는 비용</td><td colspan="2">어느 쪽에서 어느 쪽으로든 작음. 액세스 토큰이 15분짜리라 바꾼 뒤 15분 안에 모두 새 방식으로 넘어감. 리프레시 토큰은 서명과 상관없는 DB 값</td></tr>
+</table>
+<p><b>"가"에서 지킬 것 둘</b>: 키는 무작위 값으로 만듭니다(표준이 사람이 외울 수 있는 비밀번호를 키로 쓰지 말라고 함). 서버는 정한 방식 하나만 받습니다(토큰에 적힌 방식을 그대로 믿으면 생기는 공격이 알려져 있음. Spring의 확인 부품은 방식을 하나로 고정해 씀).</p>
+<span class="src">RFC 7518 3.2절(HS256 키는 256비트 이상), RFC 8725 2.1·2.2·3.1·3.5절(방식 바꿔치기, 약한 키, 방식 고정, "Human-memorizable passwords MUST NOT be directly used as the key"). https://www.rfc-editor.org/rfc/rfc8725.txt (2026-10-04). 속도는 일반적인 성질로 적었고 직접 재지 않았습니다.</span>
+</div>
+<div class="item">
+<h3><span class="no">1</span>비밀 키 하나로 서명하는 방식(HS256, 표의 "가"), 키는 무작위 값을 서버 환경 변수에 <span class="an">[안]</span></h3>
+<p>처음 제안 그대로입니다. 서버가 여러 대가 되어도 같은 서비스의 서버들이라 같은 키를 환경 변수로 주면 됩니다. "나"가 필요해지는 때는 <b>다른 서비스</b>가 우리 토큰을 확인하게 될 때입니다.</p>
+<p class="alt"><b>다른 선택</b>: "나"(ES256). 지금 얻는 것은 없고 키 관리가 늘어납니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>로그인 도중의 임시 값: 지금은 서버 메모리에 두고, 서버가 여러 대가 되면 Redis로 바꿀 수 있게</h2>
+<div class="gist">말씀하신 대로 정했습니다. 지금은 서버 메모리에 두고, 서버가 여러 대가 되면 설정만 바꿔 Redis에 두게 합니다. 코드는 두 경우에 같습니다.</div>
+<figure><svg viewBox="0 0 900 230" role="img" aria-label="한 대일 때와 여러 대일 때 임시 값을 두는 곳"><g font-family="Noto Sans KR, sans-serif" font-size="15" fill="var(--text)" text-anchor="middle">
+<text x="215" y="24" font-weight="700">지금: 서버 한 대</text><text x="680" y="24" font-weight="700">나중: 서버 여러 대 (설정만 바꿈)</text>
+<rect x="90" y="44" width="250" height="150" rx="12" fill="var(--card)" stroke="var(--accent)" stroke-width="2"/><text x="215" y="72" font-weight="700">우리 서버</text>
+<rect x="120" y="92" width="190" height="80" rx="8" fill="var(--warn-bg)"/><text x="215" y="124" font-size="13">임시 값 (10분)</text><text x="215" y="148" font-size="13">서버 메모리 안</text>
+<rect x="490" y="44" width="150" height="60" rx="12" fill="var(--card)" stroke="var(--accent)" stroke-width="2"/><text x="565" y="80">서버 1</text>
+<rect x="490" y="134" width="150" height="60" rx="12" fill="var(--card)" stroke="var(--accent)" stroke-width="2"/><text x="565" y="170">서버 2</text>
+<rect x="720" y="74" width="160" height="90" rx="12" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="2"/><text x="800" y="108" font-weight="700">Redis</text><text x="800" y="132" font-size="13">임시 값 (10분)</text>
+<g stroke="var(--muted)" stroke-width="2"><line x1="640" y1="74" x2="720" y2="104"/><line x1="640" y1="164" x2="720" y2="134"/></g>
+<text x="450" y="220" font-size="13" fill="var(--muted)">두 경우 모두 코드는 같은 창구(HttpSession)에 값을 넣고 꺼냅니다. 어디에 저장되는지만 설정으로 바뀝니다.</text>
+</g></svg><figcaption>임시 값은 로그인 도중의 확인 값, 가입 동의 전의 회원번호, 탈퇴 본인 확인 기록입니다. 모두 10분 안에 사라집니다.</figcaption></figure>
+<div class="item">
+<h3>어떻게 선택형이 되나</h3>
+<p>임시 값을 Spring의 세션 창구(<code>HttpSession</code>)에만 넣고 꺼내도록 만듭니다. Spring Session이라는 공식 부품을 더하고 설정을 켜면, 같은 창구가 서버 메모리 대신 Redis에 저장합니다. 공식 문서도 이때 <code>HttpSession</code>을 쓰는 코드는 고칠 필요가 없다고 합니다. 그래서 "한 대: 메모리 / 여러 대: Redis"를 설정으로 고를 수 있습니다.</p>
+<p><b>이번 사이클에서 만드는 것은 메모리 쪽뿐입니다.</b> Redis는 넣지 않습니다. 인계서에는 "임시 값은 세션 창구로만 다루고, 서버 한 대에서만 통하는 방식(전역 변수 등)으로 들고 있지 않는다"를 제약으로 적습니다.</p>
+<p class="alt"><b>확인이 남은 것</b>: 4번에서 승인하신 "10분 뒤 연결 끊기"는 임시 값이 사라지는 순간을 서버가 알아채야 합니다. Redis로 바꿨을 때 이 알림을 받으려면 Spring Session의 설정이 하나 더 필요하다고 문서에 나옵니다. 전환할 때 확인할 것으로 적어 둡니다.</p>
+<p>검색 자료처럼 지금 메모리에 두는 다른 것들도 같은 식으로 고를 수 있게 하자는 말씀은 로그인 범위 밖이라 backlog에 한 줄로 적었습니다.</p>
+<span class="src">Spring Session: Redis로 HttpSession을 대신함, 애플리케이션 코드 변경 불필요. https://docs.spring.io/spring-session/reference/configuration/redis.html (2026-10-04, 요약으로 읽음)</span>
+</div>
+<div class="item">
+<h3>이런 값을 Redis에 올려도 안전한가</h3>
+<p>조건을 지키면 안전합니다. Redis 공식 문서는 Redis를 "믿을 수 있는 환경 안에서, 믿을 수 있는 프로그램만 접속하는 것"으로 설계했다고 적습니다. 그래서 안전은 Redis를 어떻게 두느냐에 달려 있습니다.</p>
+<table>
+<tr><th>지킬 것</th><th>이유 (Redis 공식 문서)</th></tr>
+<tr><td>인터넷에서 Redis에 직접 닿지 못하게 함 (방화벽, 우리 서버만 접속)</td><td>포트가 밖에 열려 있으면 명령 하나로 자료 전체가 지워질 수 있다고 경고함</td></tr>
+<tr><td>접속 비밀번호(사용자별 권한, ACL)를 둠</td><td>방화벽이 뚫려도 한 겹 더 막기 위함. 비밀번호는 길게</td></tr>
+<tr><td>서버와 Redis 사이를 암호화(TLS)</td><td>비밀번호를 포함한 모든 명령이 기본으로는 암호화 없이 오감. 같은 기기 안이 아니면 TLS를 켬</td></tr>
+<tr><td>값마다 수명을 둠 (10분)</td><td>사라져야 할 값이 남지 않게 함. Spring Session이 자동으로 붙임</td></tr>
+</table>
+<p>우리가 올릴 값 가운데 가장 조심할 것은 <b>네이버가 준 접근 토큰</b>입니다. 탈퇴나 가입 취소 때 연결을 끊으려고 몇 분 들고 있는 값입니다. 이 값은 서버 메모리에 있을 때와 Redis에 있을 때 위험이 같은 종류입니다. 저장소에 닿을 수 있는 사람이 읽을 수 있습니다. 그래서 위 넷을 지키는 것이 조건입니다. Redis가 저장한 값을 스스로 암호화하는지는 이 문서에서 확인하지 못했습니다 <span class="an2">[확인 못 함]</span>.</p>
+<p>로그인 유지(JWT와 리프레시 토큰)는 Redis와 상관없습니다. 리프레시 토큰은 DB에 지문으로만 있습니다.</p>
+<span class="src">Redis security: "Redis is designed to be accessed by trusted clients inside trusted environments", protected mode, ACL, TLS. https://redis.io/docs/latest/operate/oss_and_stack/management/security/ (2026-10-04)</span>
+</div>
+<div class="item"><h3>값을 암호화해서 Redis나 메모리에 두면 더 안전한가</h3><p><b>Redis에 둘 때는 더 안전해집니다. 서버 메모리에 둘 때는 달라지는 것이 거의 없습니다.</b> 차이는 "암호를 푸는 열쇠가 값과 다른 곳에 있느냐"에서 나옵니다.</p><table><tr><th>값을 두는 곳</th><th>열쇠가 있는 곳</th><th>암호화로 막는 것</th><th>못 막는 것</th></tr><tr><td>Redis (서버가 여러 대일 때)</td><td>우리 서버의 환경 변수. Redis와 다른 곳</td><td>Redis에 누가 접속하거나, Redis의 저장 파일·백업이 새거나, 서버와 Redis 사이 통신을 엿보는 것. 읽어도 뜻 모를 글자만 보임</td><td>우리 서버 자체가 뚫린 경우 (열쇠도 함께 넘어감)</td></tr><tr><td>서버 메모리 (지금)</td><td>같은 서버의 같은 프로그램 안</td><td>거의 없음. 값을 읽을 수 있는 사람은 열쇠도 읽을 수 있음</td><td>—</td></tr></table><p>그래서 이렇게 적어 둡니다. <b>지금(서버 메모리)은 암호화하지 않습니다.</b> 얻는 것이 없기 때문입니다. <b>나중에 Redis로 바꿀 때는 민감한 값(네이버가 준 접근 토큰)을 암호화해서 넣습니다.</b> 방식은 AES-GCM이고 열쇠는 서버 환경 변수에 둡니다. 앞의 조건 넷(인터넷에서 못 닿게, 접속 비밀번호, 통신 암호화, 값 수명 10분)에 한 겹을 더하는 것입니다. Redis를 넣는 일 자체가 이번 사이클 밖이므로 이 내용은 backlog의 "서버 여러 대 대비" 줄에 함께 적었습니다.</p><p>가장 좋은 보호는 저장하지 않는 것입니다. 그래서 이 값들은 10분 뒤 사라지고, 가입이나 탈퇴가 끝나면 그 자리에서 지웁니다.</p><span class="src">OWASP Cryptographic Storage Cheat Sheet: "The best way to protect sensitive information is to not store it in the first place", 열쇠는 암호화한 자료와 다른 곳에 둘 것, AES(가능하면 256비트)와 GCM 같은 인증 방식 사용. https://cheatsheetseries.owasp.org/cheatsheets/Cryptographic_Storage_Cheat_Sheet.html (2026-10-04). 표의 "막는 것"은 이 원칙을 우리 구성에 대어 본 것입니다.</span></div>
+</section>
+
+<section class="card">
+<h2><span class="num">6</span>주소 뒤에 결과 코드를 붙여도 안전한가</h2>
+<div class="gist">안전합니다. 코드는 "어떤 문구를 보여 줄지"만 정하고, 로그인 여부나 탈퇴는 코드를 믿고 정하지 않기 때문입니다. "안전하면 이렇게 해줘"라고 하셔서 이대로 정했습니다.</div>
+<div class="item">
+<table>
+<tr><th>누가 가짜 주소를 만들어 보내면</th><th>일어나는 일</th></tr>
+<tr><td><code>…?result=login_success</code></td><td>아무 일도 없음. 로그인 여부는 쿠키와 서버가 정함. 코드로는 로그인되지 않음</td></tr>
+<tr><td><code>…?result=login_cancelled</code></td><td>"로그인을 취소했어요" 한 줄이 보임. 그뿐</td></tr>
+<tr><td><code>…?result=withdraw_reauthenticated</code></td><td>화면이 탈퇴를 요청하지만, 서버에 그 사람의 본인 확인 기록(5분)이 없으면 거절함. 탈퇴되지 않음</td></tr>
+<tr><td><code>…?result=&lt;이상한 글자&gt;</code></td><td>목록에 없는 코드는 무시함. 코드 글자를 화면에 그대로 찍지 않으므로 화면에 나쁜 코드를 심을 수 없음</td></tr>
+</table>
+<p><b>지킬 규칙 넷</b> (인계서 제약에 넣습니다)</p>
+<p>① 주소에는 정해진 코드만 넣고, 토큰·회원번호 같은 값은 넣지 않습니다. 주소는 브라우저 기록과 서버 기록에 남기 때문입니다. ② 화면은 목록에 있는 코드만 정해진 문구로 바꿔 보여 줍니다. ③ 서버는 코드가 아니라 쿠키와 자기 기록으로만 판단합니다. ④ "보던 화면으로 돌아가기"는 우리 사이트 안의 주소(<code>/</code>로 시작)만 받아들입니다.</p>
+<span class="src">OWASP: 민감한 정보를 주소(query string)에 넣지 말 것, 검증하지 않은 주소로 이동시키지 말 것. 코드에는 민감한 정보가 없고 이동할 주소는 서버가 받지 않으므로 둘 다 해당하지 않음. 이 판단은 설계 안과 위 규칙에 따른 것이고, 구현 뒤 dev 테스트로 확인합니다.</span>
+</div>
+</section>
+
+<p class="foot">원문: <code>docs/cycles/05-login-account/architect-proposal.md</code> 결정 1·2·3·8. 정해진 것은 그 문서의 "검토 결과" 절에 적었습니다.</p>
+</main>
+</body>
+</html>

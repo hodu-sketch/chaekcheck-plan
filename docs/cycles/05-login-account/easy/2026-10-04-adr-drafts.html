@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>결정 기록(ADR) 초안 여섯</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+ul{margin:6px 0;padding-left:22px}li{margin:4px 0}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">설계 결정이 모두 정해졌습니다.<br>결정 기록(ADR) 초안 여섯을 확인해 주세요.</p>
+<p class="sub">ADR은 "무엇을 왜 정했는지"를 나중에 찾아볼 수 있게 남기는 문서입니다(2026-10-04). 새로 정할 것은 없고, 오늘까지 정하신 것을 여섯 묶음으로 적었습니다. <b>"이유" 칸에는 하신 말만 그대로 넣었습니다.</b> 승인만 하시고 이유를 말씀하지 않은 것은 "[이유 미확인]"으로 적혀 있습니다. 틀리게 옮긴 말이나 더 적고 싶은 이유가 있으면 그 ADR의 글 상자에 적어 주세요.</p>
+<section class="card">
+<h2><span class="num">1</span>ADR-0038: 로그인 유지는 JWT (짧은 액세스 토큰 + DB의 리프레시 토큰)</h2>
+<div class="gist">액세스 토큰은 계정 번호와 만료 시각만 담은 JWT(HS256, 15분). 리프레시 토큰은 무작위 값으로 DB에 SHA-256 해시로 저장하고 쓸 때마다 교체하며, 이미 쓴 값이 다시 오면 그 로그인을 끊는다. 로그인한 때부터 30일이면 만료(미사용 기한은 따로 없음). 두 토큰은 <code>Secure</code>·<code>HttpOnly</code>·<code>SameSite=Lax</code> 쿠키. 로그인이 필요한 API는 요청마다 그 계정이 아직 있는지만 확인한다. 여러 탭의 동시 갱신은 웹이 Web Locks로 한 번에 한 탭만 하게 한다.</div>
+<div class="item"><h3>왜 정해야 했나</h3><p>로그인한 상태를 유지하는 방법을 정해야 했다. 2026-10-01에는 세션을 DB에 두는 방식(Spring Session JDBC)으로 정했으나, 사용자가 서버가 여러 대가 될 때 늘어나는 것을 줄이고 싶어 했고 나중에 폰 앱도 같은 로그인으로 쓰려 한다.</p></div>
+<div class="item"><h3>이유로 적을 말 (하신 말 그대로)</h3><ul><li>"가능하면 jwt로 했으면 좋겠어 세션을 쓰더라도 나중에 확장될 멀티 서버 환경에서 redis등이 필요해지는데 음 가능하면 줄이고 싶어" (2026-10-03)</li><li>"jwt로 가려고 해" (2026-10-03)</li><li>서명 방식: "우리 서비스만 토큰을 확인하면 되니까 '가'로 가자" (2026-10-04)</li><li>계정 확인: "'나'로 하되 이렇다는 걸 명시하고" (2026-10-04)</li><li>30일 하나로, <code>SameSite=Lax</code>, 탭 갱신 방식: 승인만 함 [이유 미확인]</li></ul></div>
+<div class="item"><h3>고르지 않은 안</h3><table><tr><th>안</th><th>그 안의 좋은 점</th><th>고르지 않은 이유로 적을 말</th></tr><tr><td>세션을 DB에 (Spring Session JDBC)</td><td>요청마다 DB를 읽음. 로그아웃이 바로 끊김. 만들 것이 적음</td><td>위 사용자 발언(2026-10-03)</td></tr><tr><td>요청마다 로그인 기록(리프레시 토큰 줄)까지 확인</td><td>로그아웃한 토큰도 바로 끊김</td><td>"리프레시 토큰을 db에 두면 세션이랑 다를 바가 없어 보여서" (2026-10-04)</td></tr><tr><td>키 한 쌍으로 서명 (ES256·RS256)</td><td>다른 서비스가 토큰을 확인할 때 필요</td><td>"우리 서비스만 토큰을 확인하면 되니까" (2026-10-04)</td></tr><tr><td>서버가 바로 앞 리프레시 토큰을 몇 초 받아 줌</td><td>갱신 응답이 유실돼도 로그아웃되지 않음</td><td>[이유 미확인] (화면 쪽에서 막는 안을 승인)</td></tr></table></div>
+<div class="item"><h3>결과</h3><ul><li>좋아지는 점: 15분 동안은 DB를 읽지 않고, 서버가 여러 대여도 Redis 없이 로그인이 유지됨. 폰 앱이 같은 토큰을 헤더로 쓸 수 있음</li><li>감수하는 점: 로그아웃 전에 누가 미리 빼낸 액세스 토큰은 만료까지 최대 15분(시계 오차 포함 약 16분) 통과함. OWASP ASVS 5.0 7.4.1에 그만큼 못 미침. 갱신 응답이 유실되면 그 브라우저는 다음 갱신 때 로그아웃됨</li><li>되돌리는 비용: 서명 방식·키는 15분이면 바뀜. 세션 방식으로 돌아가려면 발급·갱신 부분을 다시 만들어야 함. 나중에 분리할 때 다른 서비스가 토큰을 확인하게 되면 키 한 쌍 방식으로 바꿈</li></ul></div>
+<div class="item"><h3><span class="no">1</span>이 내용으로 ADR-0038를 저장 <span class="an">[안]</span></h3><p>승인하시면 <code>docs/adr/0038-jwt-login-state.md</code>로 저장하고 상태를 "Accepted"로 적습니다. 이유 칸을 고치거나 채우고 싶으시면 글 상자에 적어 주세요. 적으신 말을 그대로 넣습니다.</p></div>
+</section>
+<section class="card">
+<h2><span class="num">2</span>ADR-0039: 로그인 수단 표를 소셜 전용으로 만들지 않고, 제공자 번호는 프로필 API로 받음</h2>
+<div class="gist">계정 표(<code>auth.account</code>)와 로그인 수단 표(<code>auth.login_method</code>)를 나누고, 로그인 수단 표의 칸을 <code>method</code>(NAVER, KAKAO, 나중에 PASSWORD)와 <code>subject</code>(그 수단 안의 식별자)로 짓는다. 두 제공자 모두 OAuth 2.0 + 프로필 API로 식별자를 받는다. 이메일·이름·제공자 토큰은 저장하지 않는다.</div>
+<div class="item"><h3>왜 정해야 했나</h3><p>이번 사이클은 네이버·카카오 로그인만 만든다. 사용자는 나중에 이메일·비밀번호 가입을 더할 수 있게 해 두기를 원했다. 또 제공자에게서 회원번호를 받는 길이 둘(프로필 API, OIDC 신분 토큰)인데, 네이버는 두 길의 번호가 같은지 문서에 없다.</p></div>
+<div class="item"><h3>이유로 적을 말 (하신 말 그대로)</h3><ul><li>"사이클 05 설계에서 로그인 수단 표를 '소셜 전용'으로 좁게 만들지 않는 것 이거 꼭 지키고" (2026-10-03)</li><li>표를 둘로: "표는 둘로, 연결 기능은 나중" (2026-10-01)</li><li>프로필 API: 승인만 함 [이유 미확인]</li></ul></div>
+<div class="item"><h3>고르지 않은 안</h3><table><tr><th>안</th><th>그 안의 좋은 점</th><th>고르지 않은 이유로 적을 말</th></tr><tr><td><code>provider</code>·<code>provider_user_id</code> 같은 소셜 전용 칸 이름</td><td>지금은 더 직관적</td><td>위 사용자 발언(2026-10-03)</td></tr><tr><td>OIDC 신분 토큰의 <code>sub</code> 사용</td><td>카카오는 다시 로그인한 시각을 받을 수 있음</td><td>[이유 미확인] (네이버 <code>sub</code>가 프로필 <code>id</code>와 같은지 확인 못 함)</td></tr></table></div>
+<div class="item"><h3>결과</h3><ul><li>좋아지는 점: 직접 가입을 더할 때 값 하나와 비밀번호 표 하나만 더하면 됨. 저장하는 식별자가 공식 문서로 확인된 값</li><li>감수하는 점: 탈퇴 재인증이 실제로 일어났는지는 제공자에 보낸 요청(<code>prompt=login</code>, <code>auth_type=reauthenticate</code>)을 믿는 수준</li><li>되돌리는 비용: OIDC로 바꾸려면 네이버 <code>sub</code>와 <code>id</code>가 같은지 먼저 확인. 다르면 기존 계정과 연결이 끊김</li></ul></div>
+<div class="item"><h3>네이버·카카오에서 사용자 이름을 받아 올 수 있나, 나중에 아이디·별명을 더할 수 있나</h3><p><b>받아 올 수 있습니다. 이번 사이클에는 받지 않기로 하셨을 뿐이고, 나중에 받거나 우리 쪽 별명을 더하는 데 이 표 구조가 걸림돌이 되지 않습니다.</b></p><table><tr><th>정보</th><th>네이버</th><th>카카오</th></tr><tr><td>별명(닉네임)</td><td>받을 수 있음. 앱 등록 화면에서 제공 정보로 고름</td><td>받을 수 있음. 기본 제공 항목이라 따로 권한이 필요 없음</td></tr><tr><td>프로필 사진</td><td>받을 수 있음</td><td>받을 수 있음. 기본 제공</td></tr><tr><td>이메일</td><td>받을 수 있음</td><td>비즈 앱이어야 함 (개인 개발자 비즈 앱 전환으로 가능)</td></tr><tr><td>이름(실명)</td><td>받을 수 있음</td><td>"동의 단계 설정 권한"을 따로 받아야 함. 카카오의 심사가 있는 항목</td></tr><tr><td>성별, 연령대, 생일, 전화번호</td><td>받을 수 있는 항목에 있음</td><td>이름과 같음. 권한을 따로 받아야 함</td></tr></table><p>어느 것이든 받으려면 사용자가 로그인할 때 그 항목 제공에 동의해야 하고, 우리 가입 동의 화면의 "수집 항목"과 개인정보 처리방침에도 적어야 합니다. 네이버는 검수에서 "받은 정보를 실제로 쓰는지"를 봅니다.</p><p><b>나중에 아이디나 별명을 더하는 방법은 둘입니다.</b></p><p>① 우리 서비스 안에서 사용자가 직접 정하는 별명: 계정 표(<code>auth.account</code>)에 칸을 하나 더하거나 프로필 표를 붙입니다. 네이버·카카오에서 아무것도 더 받지 않아도 됩니다. 이미 가입한 사람은 별명이 비어 있는 상태로 시작해 나중에 정하면 됩니다.<br>② 네이버·카카오의 별명을 받아 처음 값으로 씀: 제공 항목을 더하고 동의 화면과 처리방침을 고칩니다. 이미 가입한 사람에게는 다음 로그인 때 제공자가 추가 동의를 묻습니다.</p><p>로그인용 아이디(직접 가입의 이메일·비밀번호)는 이 ADR의 표 구조가 대비해 둔 것입니다. 로그인 수단 표에 종류를 하나 더하면 됩니다. 이미 소셜로 가입한 사람이 아이디·비밀번호를 추가로 붙이는 것도 같은 표에 한 줄을 더하는 일입니다. 어느 것도 이번 사이클 범위는 아닙니다.</p><span class="src">네이버 프로필 API 응답 항목(id, nickname, name, email, gender, age, birthday, profile_image, birthyear, mobile): research.md 2절 · 카카오 개인정보 동의항목의 필요 권한(닉네임·프로필 사진 "기본 제공", 이메일 "비즈 앱, 테스트 앱", 이름·성별·연령대·생일·전화번호 "동의 단계 설정 권한, 테스트 앱"): https://developers.kakao.com/docs/ko/kakaologin/utilize (2026-10-04, 요약 도구로 읽음). 네이버 항목별 조건(실명 등에 별도 조건이 있는지)은 확인하지 못했습니다.</span></div>
+<div class="item"><h3><span class="no">2</span>이 내용으로 ADR-0039를 저장 <span class="an">[안]</span></h3><p>승인하시면 <code>docs/adr/0039-login-method-not-social-only.md</code>로 저장하고 상태를 "Accepted"로 적습니다. 이유 칸을 고치거나 채우고 싶으시면 글 상자에 적어 주세요. 적으신 말을 그대로 넣습니다.</p></div>
+</section>
+<section class="card">
+<h2><span class="num">3</span>ADR-0040: 로그인 도중의 임시 값은 HttpSession에 두고, 서버 수에 따라 저장소를 설정으로 고름</h2>
+<div class="gist">임시 값은 <code>HttpSession</code>으로만 다룬다(수명 10분). 이번 사이클은 서버 메모리 구현만 만든다. 서버가 여러 대가 되면 Spring Session(Redis)을 설정으로 켜서 같은 코드가 Redis에 저장하게 한다. 동의 화면을 그냥 떠난 사람은 임시 값이 만료될 때 제공자 연결을 끊는다. 로그인 유지(JWT)는 이 세션과 무관하다.</div>
+<div class="item"><h3>왜 정해야 했나</h3><p>로그인 도중에는 몇 분 동안 들고 있어야 하는 값이 있다: 제공자에 보낸 확인 값(<code>state</code>), 가입 동의 전의 제공자 번호, 탈퇴 재인증 증명과 네이버 접근 토큰. "가입 전에는 DB에 아무것도 저장하지 않는다"는 결정 때문에 DB에는 둘 수 없다.</p></div>
+<div class="item"><h3>이유로 적을 말 (하신 말 그대로)</h3><ul><li>"일단 (가)로 가되 여러 백엔드 서버가 동시에 존재하더라도 잘 되도록 redis가 차후 도입되었을 때를 대비해서 설계되었으면 해" (2026-10-04)</li><li>"선택으로 멀티서버/원 서버 환경에서 각각 돌아가도록 했으면 해" (2026-10-04)</li></ul></div>
+<div class="item"><h3>고르지 않은 안</h3><table><tr><th>안</th><th>그 안의 좋은 점</th><th>고르지 않은 이유로 적을 말</th></tr><tr><td>암호화한 쿠키에 둠</td><td>서버가 상태를 갖지 않아 여러 대에서 그대로 동작</td><td>[이유 미확인] (서버 메모리 안을 고르고 Redis 대비를 조건으로 둠)</td></tr><tr><td>DB 표에 수명을 두고 저장</td><td>여러 대에서 동작</td><td>"가입 전에는 DB에 아무것도 없음" 결정과 충돌</td></tr></table></div>
+<div class="item"><h3>결과</h3><ul><li>좋아지는 점: Spring 기본 기능 그대로라 만들 것이 적음. 버려진 가입 대기의 제공자 연결을 끊을 수 있음</li><li>감수하는 점: 서버를 다시 켜면 그 순간 로그인하던 사람은 처음부터 다시 함. 여러 대가 되면 Redis(또는 같은 서버로 보내는 설정)가 필요함</li><li>되돌리는 비용: 몇 분짜리 값이라 옮길 자료가 없음. Redis로 바꿀 때 민감한 값(네이버 접근 토큰)은 암호화해 넣고, 세션 만료 알림 설정을 확인해야 함</li></ul></div>
+<div class="item"><h3><span class="no">3</span>이 내용으로 ADR-0040를 저장 <span class="an">[안]</span></h3><p>승인하시면 <code>docs/adr/0040-login-temp-state-in-http-session.md</code>로 저장하고 상태를 "Accepted"로 적습니다. 이유 칸을 고치거나 채우고 싶으시면 글 상자에 적어 주세요. 적으신 말을 그대로 넣습니다.</p></div>
+</section>
+<section class="card">
+<h2><span class="num">4</span>ADR-0041: 계정 삭제는 AccountDeleted 이벤트로 알리고, 발행 저장소의 완료 기록은 지움</h2>
+<div class="gist"><code>AccountDeleted(accountId)</code>를 계정 삭제와 같은 트랜잭션에서 발행하고 JDBC 발행 저장소에 기록한다. 저장소 표(<code>event_publication</code>)는 어느 모듈에도 속하지 않는 별도 스키마에 Liquibase로 만든다. 이번 사이클에는 <code>auth</code> 안에 받는 쪽을 하나 둔다(서버 로그에 한 줄). 완료된 기록은 바로 지운다(<code>completion-mode: delete</code>).</div>
+<div class="item"><h3>왜 정해야 했나</h3><p>계정이 지워지면 다른 모듈(사이클 06의 <code>member</code>)이 자기 자료를 지워야 한다. 모듈끼리 직접 부르지 않기로 했으므로(ADR-0036) 이벤트로 알린다. 알림 직후 서버가 꺼지면 받는 쪽의 일이 사라질 수 있다. Spring Modulith 발행 저장소는 받는 쪽마다 기록을 만들기 때문에, 받는 쪽이 없는 이번 사이클에는 기록이 생기지 않는다.</p></div>
+<div class="item"><h3>이유로 적을 말 (하신 말 그대로)</h3><ul><li>"공통 + 웹훅 + 이벤트·저장소" (2026-10-01)</li><li>"db에 기록하고 delete 로그 파일은 좀 불안정해서.. 근데 로그 파일도 안전하게 할 수 있으면 나쁘지 않은데 흠 재기동이런거 생각하면" (2026-10-04)</li></ul></div>
+<div class="item"><h3>고르지 않은 안</h3><table><tr><th>안</th><th>그 안의 좋은 점</th><th>고르지 않은 이유로 적을 말</th></tr><tr><td>받는 쪽을 두지 않고 AC-15를 발행 확인만으로 바꿈</td><td>하는 일 없는 코드가 없음</td><td>[이유 미확인] (받는 쪽을 두는 안을 승인)</td></tr><tr><td>완료 기록을 남기고 따로 정리</td><td>나중에 표에서 이력을 볼 수 있음</td><td>"db에 기록하고 delete" (2026-10-04)</td></tr><tr><td>표를 구간으로 나눠 오래된 구간을 버림 (partition, drop)</td><td>큰 표에서 지우는 비용이 작음</td><td>[이유 미확인] (사용자가 물었고, 탈퇴 때만 한 줄 생기는 표에는 과하다는 답을 본 뒤 삭제 방식을 승인)</td></tr></table></div>
+<div class="item"><h3>결과</h3><ul><li>좋아지는 점: 받는 쪽이 실패하거나 서버가 꺼져도 기록이 남아 다시 처리할 수 있음. 지워진 계정 번호가 DB에 남지 않음</li><li>감수하는 점: 완료된 뒤에는 표에서 이력을 볼 수 없어 AC-15를 테스트로 확인함. 이번 사이클의 받는 쪽은 로그 한 줄만 남김</li><li>되돌리는 비용: 완료 기록을 남기려면 설정 한 줄. 나중에 분리할 때 이 이벤트는 서비스 사이의 메시지가 됨</li></ul></div>
+<div class="item"><h3><span class="no">4</span>이 내용으로 ADR-0041를 저장 <span class="an">[안]</span></h3><p>승인하시면 <code>docs/adr/0041-account-deleted-event-registry.md</code>로 저장하고 상태를 "Accepted"로 적습니다. 이유 칸을 고치거나 채우고 싶으시면 글 상자에 적어 주세요. 적으신 말을 그대로 넣습니다.</p></div>
+</section>
+<section class="card">
+<h2><span class="num">5</span>ADR-0042: 화면 파일은 앞단 웹 서버가 내려 주고 API와 같은 주소를 쓰며, 인증 주소는 /api/v1/auth 아래에 모음</h2>
+<div class="gist">운영에서는 앞단 웹 서버가 화면 파일을 내려 주고 <code>/api</code> 요청을 Spring으로 넘긴다(같은 출처). 보안 헤더는 화면 파일에 웹 서버가, API 응답에 Spring Security가 붙인다. dev는 웹 서버 설정 예시 파일을 저장소에 둔다. 인증 흐름의 주소는 모두 <code>/api/v1/auth/**</code>에 두고, 액세스 토큰 쿠키는 <code>Path=/api/v1/me</code>, 리프레시 토큰 쿠키는 <code>Path=/api/v1/auth</code>로 좁힌다.</div>
+<div class="item"><h3>왜 정해야 했나</h3><p>운영에서 화면 파일(React 빌드)을 누가 내려 줄지 정해진 적이 없었고, 화면 쪽 보안 헤더를 붙일 곳이 없었다. 토큰 쿠키(<code>SameSite=Lax</code>, <code>Domain</code> 없음)와 CSRF 토큰은 화면과 API가 같은 주소일 때 추가 설정 없이 동작한다.</p></div>
+<div class="item"><h3>이유로 적을 말 (하신 말 그대로)</h3><ul><li>"이것도 지금에서 하는 게 맞다고 보는데 화면에서 보안적인 구성" (2026-10-04)</li><li>"운영에서 spring이 파일 화면을 내려주고 싶지는 않아 react를 쓰는 의미가 없어지잖아" (2026-10-04)</li><li>주소와 쿠키 경로: 승인만 함 [이유 미확인]</li></ul></div>
+<div class="item"><h3>고르지 않은 안</h3><table><tr><th>안</th><th>그 안의 좋은 점</th><th>고르지 않은 이유로 적을 말</th></tr><tr><td>Spring이 화면 파일도 내려 줌</td><td>헤더를 한 곳에서 관리</td><td>위 사용자 발언(2026-10-04)</td></tr><tr><td>화면을 다른 주소의 정적 호스팅·CDN에 올림</td><td>화면 파일이 우리 서버를 거치지 않음</td><td>[이유 미확인] (같은 주소 안을 승인. 쿠키·CSRF 설계를 다시 열어야 함)</td></tr><tr><td>Spring 기본 주소(<code>/oauth2/…</code>, <code>/login/…</code>, <code>/logout</code>)와 <code>Path=/</code> 쿠키</td><td>설정이 적음</td><td>[이유 미확인] (주소를 모으는 안을 승인)</td></tr></table></div>
+<div class="item"><h3>결과</h3><ul><li>좋아지는 점: 검색 같은 공개 API에는 토큰이 가지 않아 토큰 문제로 검색이 막히지 않음. 개발 환경(Vite가 <code>/api</code>만 넘김)과 같은 모양</li><li>감수하는 점: <code>__Host-</code> 쿠키 접두어를 쓸 수 없음(<code>Path=/</code>가 필요). 범위 문서의 주소 둘이 바뀜(<code>POST /logout</code> → <code>POST /api/v1/auth/logout</code>, <code>POST /api/v1/me/consents</code> → <code>POST /api/v1/auth/signup</code>). 헤더 설정이 두 곳</li><li>되돌리는 비용: 주소를 바꾸면 제공자 콘솔의 돌아올 주소를 다시 등록. CDN은 같은 주소 앞에 붙일 수 있어 설계가 바뀌지 않음</li></ul></div>
+<div class="item"><h3><span class="no">5</span>이 내용으로 ADR-0042를 저장 <span class="an">[안]</span></h3><p>승인하시면 <code>docs/adr/0042-same-origin-web-server-and-auth-paths.md</code>로 저장하고 상태를 "Accepted"로 적습니다. 이유 칸을 고치거나 채우고 싶으시면 글 상자에 적어 주세요. 적으신 말을 그대로 넣습니다.</p></div>
+</section>
+<section class="card">
+<h2><span class="num">6</span>ADR-0043: 중요한 기능에만 다시 본인 확인을 받고, 탈퇴는 제공자 재인증 전용 등록으로 처리</h2>
+<div class="gist">다시 본인 확인을 받는 기준은 셋이다: 되돌릴 수 없는 일, 로그인 수단을 바꾸는 일, 연락처를 바꾸는 일. 이번 사이클에서는 탈퇴가 해당한다. 탈퇴는 두 제공자 모두 재인증(네이버 <code>auth_type=reauthenticate</code>, 카카오 <code>prompt=login</code>)을 거치고 5분 안에만 진행된다. 재인증은 전용 등록(<code>naver-reauth</code>, <code>kakao-reauth</code>)과 전용 돌아올 주소로 구분한다. 제공자 콘솔이 돌아올 주소를 둘 이상 받지 않으면 그 제공자는 등록 하나에 목적 표시를 붙이는 방식으로 바꾼다.</div>
+<div class="item"><h3>왜 정해야 했나</h3><p>JWT 방식에서는 로그아웃한 액세스 토큰이 최대 15분 남는다(ADR-0038). 이 틈으로 중요한 일이 일어나지 않게 할 장치가 필요했고, 탈퇴 때 네이버 연결을 끊으려면 새 네이버 토큰이 있어야 한다.</p></div>
+<div class="item"><h3>이유로 적을 말 (하신 말 그대로)</h3><ul><li>"로그인이 필요한 기능 중 중요한 부분들을 사용자 인증을 받는 식으로 가는게 어떨까" (2026-10-04)</li><li>"응 그 기준으로 확정해줘" (2026-10-04)</li><li>탈퇴 재인증: 네이버·카카오 둘 다 (2026-10-01), 5분과 전용 등록은 승인만 함 [이유 미확인]</li></ul></div>
+<div class="item"><h3>고르지 않은 안</h3><table><tr><th>안</th><th>그 안의 좋은 점</th><th>고르지 않은 이유로 적을 말</th></tr><tr><td>카카오는 확인 창만, 네이버만 재인증</td><td>카카오 사용자의 탈퇴가 한 단계 짧음</td><td>[이유 미확인] (둘 다 재인증을 승인)</td></tr><tr><td>네이버 갱신 토큰을 저장해 두고 확인 창만</td><td>둘 다 재인증 없이 탈퇴</td><td>[이유 미확인] (제공자 토큰을 저장하지 않는 결정과 충돌)</td></tr><tr><td>등록 하나 + 요청에 목적 표시</td><td>콘솔에 등록할 주소가 늘지 않음</td><td>[이유 미확인] (전용 등록을 승인)</td></tr></table></div>
+<div class="item"><h3>결과</h3><ul><li>좋아지는 점: 훔친 액세스 토큰으로는 탈퇴 같은 중요한 일을 할 수 없음. 나중 사이클(연락처 등록, 다른 소셜 계정 연결)이 같은 기준을 따름</li><li>감수하는 점: 탈퇴에 한 단계가 더 있음. 제공자 콘솔에 돌아올 주소를 하나씩 더 등록</li><li>되돌리는 비용: 기준을 바꾸면 해당 기능의 흐름만 고침</li></ul></div>
+<div class="item"><h3><span class="no">6</span>이 내용으로 ADR-0043를 저장 <span class="an">[안]</span></h3><p>승인하시면 <code>docs/adr/0043-reauthentication-for-sensitive-actions.md</code>로 저장하고 상태를 "Accepted"로 적습니다. 이유 칸을 고치거나 채우고 싶으시면 글 상자에 적어 주세요. 적으신 말을 그대로 넣습니다.</p></div>
+</section>
+<p class="foot">초안은 아직 <code>docs/adr/</code>에 저장하지 않았습니다. 승인하신 것만 저장합니다. 결정의 근거 자료는 <code>docs/cycles/05-login-account/research.md</code>와 <code>architect-proposal.md</code>에 있습니다.</p>
+</main>
+</body>
+</html>

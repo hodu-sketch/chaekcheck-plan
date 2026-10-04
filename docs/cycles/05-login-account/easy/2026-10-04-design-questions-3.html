@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>여러 탭의 토큰 갱신</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">서명 방식은 비밀 키 하나(HS256)로 확정했습니다.<br>탭 질문의 답을 드립니다.</p>
+<p class="sub">설계 검토 세 번째 답입니다(2026-10-04). 서명 방식은 "우리 서비스만 토큰을 확인하면 되니까"라고 하신 이유와 함께 적었습니다. 이 페이지에서 고르실 것은 하나입니다.</p>
+
+<section class="card">
+<h2><span class="num">2</span>한 탭이 토큰을 갱신하는 동안 다른 탭들의 요청은 어떻게 되나</h2>
+<div class="gist">다른 탭들은 갱신 요청을 보내지 않고 잠깐 기다립니다. 차례가 오면 새 쿠키로 원래 하려던 요청만 다시 보냅니다.</div>
+<figure><svg viewBox="0 0 900 330" role="img" aria-label="세 탭이 동시에 토큰 만료를 만났을 때 시간 순서"><g font-family="Noto Sans KR, sans-serif" font-size="14" fill="var(--text)">
+<text x="10" y="24" font-weight="700">시간 →</text>
+<g font-weight="700"><text x="10" y="84">탭 1</text><text x="10" y="164">탭 2</text><text x="10" y="244">탭 3</text></g>
+<g stroke="var(--line)" stroke-width="2"><line x1="70" y1="80" x2="890" y2="80"/><line x1="70" y1="160" x2="890" y2="160"/><line x1="70" y1="240" x2="890" y2="240"/></g>
+<rect x="80" y="62" width="70" height="36" rx="6" fill="var(--no-bg)"/><text x="115" y="85" text-anchor="middle" fill="var(--no)">401</text>
+<rect x="160" y="62" width="150" height="36" rx="6" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="235" y="85" text-anchor="middle">차례를 잡고 갱신 요청</text>
+<rect x="320" y="62" width="150" height="36" rx="6" fill="var(--ok-bg)"/><text x="395" y="85" text-anchor="middle" fill="var(--ok)">새 쿠키 받음, 다시 요청</text>
+<rect x="80" y="142" width="70" height="36" rx="6" fill="var(--no-bg)"/><text x="115" y="165" text-anchor="middle" fill="var(--no)">401</text>
+<rect x="160" y="142" width="310" height="36" rx="6" fill="var(--code-bg)"/><text x="315" y="165" text-anchor="middle" fill="var(--muted)">기다림 (갱신 요청을 보내지 않음)</text>
+<rect x="480" y="142" width="190" height="36" rx="6" fill="var(--ok-bg)"/><text x="575" y="165" text-anchor="middle" fill="var(--ok)">원래 요청을 다시 → 성공</text>
+<rect x="80" y="222" width="70" height="36" rx="6" fill="var(--no-bg)"/><text x="115" y="245" text-anchor="middle" fill="var(--no)">401</text>
+<rect x="160" y="222" width="510" height="36" rx="6" fill="var(--code-bg)"/><text x="415" y="245" text-anchor="middle" fill="var(--muted)">기다림 (갱신 요청을 보내지 않음)</text>
+<rect x="680" y="222" width="190" height="36" rx="6" fill="var(--ok-bg)"/><text x="775" y="245" text-anchor="middle" fill="var(--ok)">원래 요청을 다시 → 성공</text>
+<text x="10" y="300" font-size="13" fill="var(--muted)">401은 "액세스 토큰이 만료됐다"는 서버의 답입니다. 기다리는 시간은 탭 1의 갱신 한 번이 끝나는 동안이라 보통 1초가 안 됩니다.</text>
+<text x="10" y="320" font-size="13" fill="var(--muted)">서버에 가는 갱신 요청은 탭 1의 것 하나뿐입니다.</text>
+</g></svg><figcaption>같은 브라우저의 탭들은 쿠키를 함께 씁니다. 탭 1이 받은 새 쿠키를 탭 2와 탭 3도 그대로 쓰게 됩니다.</figcaption></figure>
+<div class="item">
+<p><b>무엇에 대한 이야기인가</b>: 액세스 토큰은 15분마다 만료됩니다. 같은 브라우저에 chaekcheck 탭을 여러 개 열어 두면, 만료 직후 여러 탭이 동시에 "토큰을 새로 달라"고 할 수 있습니다. 리프레시 토큰은 한 번 쓰면 새 값으로 바뀌고 "이미 쓴 값이 또 오면 그 로그인을 끊는다"고 정하셨으므로, 탭들이 동시에 옛 값을 내밀면 멀쩡한 사용자가 로그아웃됩니다. 이것을 막는 방법을 고르는 중입니다.</p>
+<p><b>순서</b></p>
+<p>① 세 탭 모두 서버에서 "만료됐다"(401)는 답을 받습니다.<br>
+② 탭들이 브라우저에 "갱신 차례"를 요청합니다. 브라우저는 한 탭에만 차례를 줍니다(Web Locks라는 브라우저 기능). 탭 1이 잡았다고 하겠습니다.<br>
+③ 탭 1이 서버에 갱신을 요청하고 새 쿠키 둘을 받습니다. 원래 하려던 요청을 다시 보내고 차례를 내놓습니다.<br>
+④ 탭 2가 차례를 받습니다. 갱신부터 하지 않고 <b>원래 요청을 먼저 다시 보내 봅니다</b>. 쿠키가 이미 새것이라 성공합니다. 갱신 요청은 보내지 않고 차례를 내놓습니다.<br>
+⑤ 탭 3도 ④와 같습니다.</p>
+<p>그래서 다른 탭의 요청은 <b>버려지지 않고, 잠깐 늦게 처리됩니다</b>. 사용자에게는 보이지 않습니다. 서버는 옛 리프레시 토큰을 다시 받는 일이 없으므로 아무도 로그아웃되지 않습니다.</p>
+<p class="alt"><b>④에서 다시 보낸 요청도 실패하면</b>(탭 1의 갱신이 실패했던 경우): 그 탭이 직접 갱신을 요청합니다. 그것도 실패하면 리프레시 토큰이 만료됐거나 없는 것이므로 로그인 전 화면으로 바뀝니다.</p>
+<span class="src">MDN Web Locks API: 한 잠금은 한 번에 한 곳만 가질 수 있고, 같은 출처의 다른 탭은 그 잠금이 풀릴 때까지 기다림. 2022년 3월부터 주요 브라우저 지원. https://developer.mozilla.org/en-US/docs/Web/API/Web_Locks_API (2026-10-04). ①~⑤의 순서는 설계 안(architect-proposal.md 결정 2)의 내용입니다.</span>
+</div>
+<div class="item"><h3>"원래 요청을 먼저 다시 보낸다"는 것을 탭이 어떻게 판단하나</h3><p><b>판단하지 않습니다.</b> 탭은 "다른 탭이 갱신했는지"를 알아내지 않습니다. 차례를 받은 탭은 누구든 <b>항상</b> 원래 요청을 한 번 다시 보내고, 서버의 답을 보고 다음 행동이 정해집니다.</p><figure><svg viewBox="0 0 900 300" role="img" aria-label="차례를 받은 탭이 하는 일"><defs><marker id="f1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs><g font-family="Noto Sans KR, sans-serif" font-size="14" fill="var(--text)" text-anchor="middle">
+<rect x="20" y="110" width="150" height="56" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="2"/><text x="95" y="134">갱신 차례를</text><text x="95" y="154">받음</text>
+<rect x="230" y="110" width="170" height="56" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/><text x="315" y="134">원래 요청을</text><text x="315" y="154">한 번 다시 보냄</text>
+<rect x="480" y="30" width="190" height="56" rx="8" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/><text x="575" y="54">성공</text><text x="575" y="74" font-size="13">(다른 탭이 이미 갱신했음)</text>
+<rect x="720" y="30" width="160" height="56" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="2"/><text x="800" y="64">끝. 갱신 안 함</text>
+<rect x="480" y="190" width="190" height="56" rx="8" fill="var(--no-bg)" stroke="var(--no)" stroke-width="2"/><text x="575" y="214">또 401</text><text x="575" y="234" font-size="13">(아직 아무도 갱신 안 함)</text>
+<rect x="720" y="190" width="160" height="56" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="2"/><text x="800" y="214">갱신을 요청하고</text><text x="800" y="234">원래 요청을 다시</text>
+<g stroke="var(--muted)" stroke-width="2" fill="none" marker-end="url(#f1)"><path d="M170 138 H228"/><path d="M400 125 L478 70"/><path d="M400 152 L478 208"/><path d="M670 58 H718"/><path d="M670 218 H718"/></g>
+<text x="450" y="284" font-size="13" fill="var(--muted)">모든 탭이 이 순서를 똑같이 따릅니다. 맨 처음 차례를 받은 탭은 아래 길로, 그 뒤의 탭들은 위 길로 가게 됩니다.</text>
+</g></svg><figcaption>탭이 미리 아는 것은 없습니다. 서버가 성공이라고 답하면 끝이고, 또 만료라고 답하면 그때 갱신합니다.</figcaption></figure><p>탭이 직접 알아낼 수 없는 이유는 토큰 쿠키를 화면 코드가 읽지 못하게 해 두었기 때문입니다(<code>HttpOnly</code>). 쿠키가 새것인지는 서버에 요청을 보내 봐야만 알 수 있습니다.</p><p><b>맨 처음 탭도 똑같이 합니다.</b> 네, 맞습니다. 맨 처음 차례를 받은 탭도 원래 요청을 먼저 다시 보냅니다. 아직 아무도 갱신하지 않았으므로 서버가 또 만료라고 답하고, 그제야 갱신을 요청합니다. 탭이 하나만 열려 있을 때도 같습니다. 모든 탭이 같은 순서를 따르기 때문에 "내가 처음인지"를 알아낼 필요가 없습니다.</p><table><tr><th></th><th>맨 처음 차례를 받은 탭 (탭이 하나뿐일 때도)</th><th>그 뒤에 차례를 받은 탭</th></tr><tr><td>서버로 가는 요청</td><td>원래 요청(만료) → 다시 보냄(또 만료) → 갱신 → 다시 보냄(성공)</td><td>원래 요청(만료) → 다시 보냄(성공)</td></tr><tr><td>헛도는 요청</td><td>1개</td><td>0개</td></tr></table><p><b>이 방식의 비용</b>: 맨 처음 차례를 받은 탭은 실패할 요청을 한 번 더 보냅니다(만료 → 다시 보냄 → 또 만료 → 갱신 → 다시 보냄). 15분에 한 번, 요청 하나만큼입니다.</p><p class="alt"><b>더 줄이는 방법</b>: 갱신에 성공한 탭이 "방금 갱신했다"는 시각을 브라우저의 탭끼리 공유하는 저장 공간에 적어 두면, 다른 탭은 그 시각을 보고 갱신을 건너뛸 수 있습니다. 요청 하나를 아끼지만 지켜볼 것이 하나 늘어납니다. 토큰 자체는 그곳에 두지 않고 시각만 적습니다. 필요하면 dev가 구현할 때 고를 수 있는 수준의 차이라, 설계에서는 위의 단순한 순서를 기준으로 둡니다.</p></div>
+<div class="item"><h3>다른 유명한 서비스들도 이렇게 하나</h3><p><b>"한 번에 한 탭만 갱신"은 널리 쓰는 방식입니다.</b> 문서나 코드가 공개된 인증 서비스 셋을 확인했습니다. 여기에 서버 쪽 "몇 초 받아 줌"을 함께 쓰는 곳도 있습니다.</p><table><tr><th>서비스</th><th>화면 쪽 (탭끼리)</th><th>서버 쪽 (이미 쓴 리프레시 토큰이 또 올 때)</th></tr><tr><td>Supabase</td><td>우리 제안과 같은 브라우저 기능(Web Locks)으로 한 번에 한 탭만 갱신. 결과를 다른 탭에 알림</td><td>10초 안에 다시 오면 받아 줌(기본값). 그 밖이면 그 로그인 전체를 끊음</td></tr><tr><td>Okta</td><td>탭 하나를 골라 그 탭만 갱신 요청을 보내고 다른 탭에 알림. 이유: "모든 탭이 동시에 갱신 요청을 보내는 것을 피하려고"</td><td>이 문서에서는 확인하지 못함</td></tr><tr><td>Auth0</td><td>이번에 본 문서에서는 확인하지 못함</td><td>"몇 초 받아 줌" 설정이 있고 기본은 꺼짐(0초)</td></tr></table><p>정리하면 화면 쪽에서 순서를 정하는 것은 Supabase와 Okta가 하는 일이고, 우리 제안과 같습니다. "원래 요청을 먼저 다시 보내 본다"는 세부 순서를 이 서비스들도 쓰는지는 확인하지 못했습니다. 이 서비스들은 토큰을 화면 코드가 읽을 수 있는 곳에 두고 탭끼리 직접 알려 주는 구조라, 쿠키를 읽지 못하게 한 우리와 그 부분이 다릅니다. 네이버·카카오 같은 국내 서비스의 내부 방식은 공개 자료가 없습니다.</p><p class="alt"><b>참고가 되는 점</b>: Supabase는 화면 쪽 순서 정하기와 서버 쪽 10초 받아 줌을 둘 다 씁니다. 이유로 드는 것이 "응답이 인터넷에서 사라지는 경우"인데, 아래 제안의 약점으로 적어 둔 바로 그 경우입니다. 그 약점까지 막고 싶으시면 "화면 쪽 순서 정하기 + 서버가 10초 받아 줌"으로 정하실 수 있습니다. 그 대신 훔친 토큰도 10초 안에는 한 번 더 통합니다.</p><span class="src">Supabase Auth Sessions: "A refresh token can be used more than once within a defined reuse interval. By default this is 10 seconds", 그 밖의 재사용은 "the whole session is regarded as terminated". https://supabase.com/docs/guides/auth/sessions · Supabase auth-js 소스(GoTrueClient.ts): navigator.locks 사용. https://github.com/supabase/auth-js · Okta auth-js README: "selecting a single tab to handle the network requests to refresh the tokens and broadcasting to the other tabs", "to avoid all tabs sending refresh requests simultaneously". https://github.com/okta/okta-auth-js · Auth0 Refresh Token Rotation의 Reuse Interval. https://auth0.com/docs/secure/tokens/refresh-tokens/configure-refresh-token-rotation (모두 2026-10-04, 요약 도구로 읽음)</span></div>
+<div class="item">
+<h3><span class="no">2</span>같은 브라우저의 탭들은 화면 쪽에서 한 번에 한 탭만 토큰을 갱신하고, 나머지 탭은 기다렸다가 새 쿠키를 씀 <span class="an">[안]</span></h3>
+<p>서버의 규칙("이미 쓴 리프레시 토큰이 오면 그 로그인을 끊음")은 예외 없이 그대로 둡니다.</p>
+<p class="alt"><b>이 방식의 약점</b>: 서버는 토큰을 바꿨는데 그 응답이 인터넷에서 사라지는 드문 경우, 그 브라우저는 다음 갱신 때 로그아웃됩니다. 다시 로그인하면 됩니다.</p>
+<p class="alt"><b>다른 선택 1</b>: 위 방식에 더해 서버가 바로 앞 리프레시 토큰을 10초 동안 받아 줌(Supabase와 같은 구성). 위 약점까지 막지만, 서버 규칙에 10초짜리 예외가 생깁니다.</p><p class="alt"><b>다른 선택 2</b>: 화면 쪽 순서 정하기 없이 서버의 "몇 초 받아 줌"만 씀.</p>
+</div>
+</section>
+
+<p class="foot">원문: <code>docs/cycles/05-login-account/architect-proposal.md</code> 결정 2.</p>
+</main>
+</body>
+</html>

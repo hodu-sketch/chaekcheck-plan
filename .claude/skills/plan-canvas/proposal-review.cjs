@@ -165,6 +165,16 @@ const script = `<script>
     st.textContent = '안 ' + count + '개 · 고른 것 ' + decided.size + '개';
     send.disabled = pending === 0;
   };
+  // Choices sent earlier (baked in at build time from the canvas session's history) are shown again after every
+  // rebuild, so a reload never resets what the user already picked. Clicking a chip again changes the choice.
+  const prev = window.__pvPrev || {};
+  document.querySelectorAll('.pv-chip').forEach(chip => {
+    const d = prev[chip.dataset.proposal];
+    if (!d) return;
+    chip.classList.add(d.kind);
+    chip.title = '보낸 선택: ' + { ok: '승인', no: '미승인', etc: '기타' }[d.kind] + (d.text ? ' — ' + d.text : '') + ' (다시 눌러 바꿀 수 있음)';
+    if (d.kind !== 'etc') decided.set(chip.dataset.proposal, d.kind);
+  });
   refresh();
   if (count === 0) bar.style.display = 'none';
 
@@ -261,6 +271,25 @@ const outDir = path.join(isHtml && path.basename(srcDir) === 'easy' ? path.dirna
 fs.mkdirSync(outDir, { recursive: true });
 const base = path.basename(src, path.extname(src));
 const htmlPath = path.join(outDir, base + '.review.html');
-fs.writeFileSync(htmlPath, html);
+// Earlier choices: the canvas keeps every annotation of a session in its state file. Take the last choice per chip.
+const previousChoices = () => {
+  try {
+    const stateDir = process.env.ECC_PLAN_CANVAS_STATE_DIR || path.join(require('os').homedir(), '.claude', 'plan-canvas');
+    const state = JSON.parse(fs.readFileSync(path.join(stateDir, 'sessions.json'), 'utf8'));
+    const list = Array.isArray(state.sessions) ? state.sessions : Object.values(state.sessions || state);
+    const want = path.resolve(htmlPath).toLowerCase();
+    const session = list.find(s => s && s.file && path.resolve(s.file).toLowerCase() === want);
+    const out = {};
+    const kinds = { '승인': 'ok', '미승인': 'no', '기타': 'etc' };
+    for (const m of (session && session.chat) || []) {
+      if (m.role !== 'user' || typeof m.text !== 'string') continue;
+      const hit = m.text.match(/\[안 #(\d+)\] (승인|미승인|기타)(?::\s*([\s\S]*))?$/);
+      if (hit) out[hit[1]] = { kind: kinds[hit[2]], text: (hit[3] || '').trim().slice(0, 300) };
+    }
+    return out;
+  } catch { return {}; }
+};
+const prevChoices = previousChoices();
+fs.writeFileSync(htmlPath, html.replace('<script>', '<script>window.__pvPrev = ' + JSON.stringify(prevChoices).replace(/</g, '\\u003c') + ';</script>\n<script>'));
 fs.writeFileSync(path.join(outDir, base + '.proposals.json'), JSON.stringify({ source: src, proposals }, null, 2));
-console.log(JSON.stringify({ html: htmlPath, proposals: proposals.length }));
+console.log(JSON.stringify({ html: htmlPath, proposals: proposals.length, keptChoices: Object.keys(prevChoices).length }));

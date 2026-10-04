@@ -17,7 +17,7 @@
 - 로그인 상태 유지: JWT [확정] (사용자, 2026-10-03). 짧은 액세스 토큰 + DB에 저장하는 리프레시 토큰(쓸 때마다 교체, 30일), 둘 다 `Secure`·`HttpOnly`·`SameSite` 쿠키
 - 동의 화면(개인정보 보호법 제15조② 고지 4가지 + 이용약관·개인정보 수집·이용·만 14세 이상 확인란)과 이용약관·개인정보 처리방침 페이지(제30조), 문서 버전 기록
 - 네이버 연결끊기 Callback 수신 주소: 네이버 쪽에서 동의를 철회하면 같은 삭제 처리 뒤 204
-- `GET /api/v1/me`(계정 정보·동의 상태, 비로그인 401 `unauthorized`), `POST /api/v1/me/consents`, `POST /logout`, `DELETE /api/v1/me`(탈퇴)
+- `GET /api/v1/me`(계정 정보·동의 상태, 비로그인 401 `unauthorized`), `POST /api/v1/auth/signup`(가입 동의. 처음 적은 `POST /api/v1/me/consents`를 바꿈), `POST /api/v1/auth/logout`(처음 적은 `POST /logout`을 바꿈), `DELETE /api/v1/me`(탈퇴) [확정] (사용자 승인, 2026-10-04: 인증 주소를 `/api/v1/auth` 아래에 모음)
 - 탈퇴: 가입한 제공자로 본인 확인 → 카카오 `unlink`·네이버 연동 해제 호출 → 계정·소셜 연결·동의 기록 물리 삭제 → 리프레시 토큰 전부 삭제
 - 카카오 연결 해제 웹훅 수신 주소: 카카오 쪽에서 연결을 끊으면 같은 삭제 처리 뒤 3초 내 200
 - `AccountDeleted` 이벤트 발행 + Spring Modulith 영속 발행 저장소(Liquibase로 표 생성). 이번에는 받는 모듈이 없음. 사이클 06의 `member`가 첫 소비자

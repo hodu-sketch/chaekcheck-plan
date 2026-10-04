@@ -41,7 +41,12 @@
 | [2026-10-04-flow-decisions.html](2026-10-04-flow-decisions.html) | 화면 흐름에서 사용자가 정할 제안 14가지를 밑그림과 함께 (로그인 버튼 자리, 로그인 선택 창, 가입 동의, 설정·탈퇴, 약관) | `docs/cycles/05-login-account/flow.md` | 없음 |
 | [2026-10-04-flow-questions.html](2026-10-04-flow-questions.html) | 화면 흐름에서 질문·의견을 받은 5가지(안내 문구, /signup, 설정 창 계정 절, 탈퇴 실패 문구 일곱, 약관 주소)의 답과 다시 낸 제안 | `docs/cycles/05-login-account/flow.md` | 없음 |
 | [2026-10-04-flow-questions-2.html](2026-10-04-flow-questions-2.html) | 설정 창에는 탈퇴만(사용자 제안으로 확정), 약관 주소가 둘인 이유 | `docs/cycles/05-login-account/flow.md` | 없음 (화면 흐름 모두 정해짐) |
-| [2026-10-04-design-decisions.html](2026-10-04-design-decisions.html) | 설계에서 사용자가 정할 12가지를 그림(모듈, 표, 순서도 셋)과 함께 | `docs/cycles/05-login-account/architect-proposal.md` | 결정 대기 중 (12개) |
+| [2026-10-04-design-decisions.html](2026-10-04-design-decisions.html) | 설계에서 사용자가 정할 12가지를 그림(모듈, 표, 순서도 셋)과 함께 | `docs/cycles/05-login-account/architect-proposal.md` | 없음 (후속 페이지 셋에서 모두 정해짐) |
+| [2026-10-04-design-questions.html](2026-10-04-design-questions.html) | 설계 1(서명 방식 장단점)·2(여러 기기)·3(여러 서버와 Redis 안전)·6(주소의 결과 코드 안전)의 답 | `docs/cycles/05-login-account/architect-proposal.md` | 없음 (1 확정, 2는 다음 줄) |
+| [2026-10-04-design-questions-2.html](2026-10-04-design-questions-2.html) | 설계 7(탈퇴 본인 확인 두 방법)·8(계정 삭제 알림과 기록 표의 흐름)·10(리프레시 토큰 저장 보안)·12(화면 쪽 보안 구성을 지금 정하기)의 답 | `docs/cycles/05-login-account/architect-proposal.md` | 없음 (모두 정해짐) |
+| [2026-10-04-design-questions-3.html](2026-10-04-design-questions-3.html) | 한 탭이 토큰을 갱신하는 동안 다른 탭의 요청이 어떻게 되는지 (시간 순서 그림) | `docs/cycles/05-login-account/architect-proposal.md` 결정 2 | 없음 (승인) |
+| [2026-10-04-adr-drafts.html](2026-10-04-adr-drafts.html) | 결정 기록 초안 여섯(ADR-0038~0043): 결정, 사용자가 한 말, 고르지 않은 안, 결과 | 초안 (승인 뒤 `docs/adr/`) | 없음 (여섯 모두 승인, `docs/adr/`에 저장) |
+| [2026-10-04-profile-display.html](2026-10-04-profile-display.html) | 네이버·카카오의 별명과 프로필 사진을 받아 화면에 보일지: 바뀌는 결정, PC·태블릿·폰 밑그림, 정할 것 셋 | `docs/cycles/05-login-account/spec.md`, `flow.md` | 없음 (셋 다 미승인: backlog에 두고 염두에만 둠) |
 | [2026-10-04-screen-mockups.html](2026-10-04-screen-mockups.html) | 새로 생기거나 바뀌는 화면 11장의 밑그림을 PC·태블릿·폰으로 나눠 그림 (자리와 순서만, 실제 디자인 아님) | `docs/cycles/05-login-account/flow.md` | 밑그림 전체가 [안] |
 
 ## 읽는 순서 제안

@@ -41,3 +41,9 @@
 | [ADR-0035](0035-grouping-step4-and-code-spaces.md) | 같은 책 묶기 ④(정리한 전체 제목·저자·출판사)와 책 번호 체계 공유 범위 | Accepted | 2026-09-30 | 04 (2026-10-01 늦게 기록) |
 | [ADR-0036](0036-auth-and-member-modules.md) | 계정(`auth`)과 회원 자료(`member`)를 다른 모듈로 둠 | Accepted | 2026-10-01 | 05 |
 | [ADR-0037](0037-search-unaware-of-member-library-ids.md) | 검색 모듈은 회원을 모르고, 웹이 "내 도서관"을 파라미터로 넘김 | Accepted | 2026-10-01 | 05 (구현은 06) |
+| [ADR-0038](0038-jwt-login-state.md) | 로그인 유지는 JWT (짧은 액세스 토큰 + DB의 리프레시 토큰) | Accepted | 2026-10-04 | 05 |
+| [ADR-0039](0039-login-method-not-social-only.md) | 로그인 수단 표를 소셜 전용으로 만들지 않고, 제공자 번호는 프로필 API로 받음 | Accepted | 2026-10-04 | 05 |
+| [ADR-0040](0040-login-temp-state-in-http-session.md) | 로그인 도중의 임시 값은 `HttpSession`에 두고, 서버 수에 따라 저장소를 설정으로 고름 | Accepted | 2026-10-04 | 05 |
+| [ADR-0041](0041-account-deleted-event-registry.md) | 계정 삭제는 `AccountDeleted` 이벤트로 알리고, 발행 저장소의 완료 기록은 지움 | Accepted | 2026-10-04 | 05 |
+| [ADR-0042](0042-same-origin-web-server-and-auth-paths.md) | 화면 파일은 앞단 웹 서버가 내려 주고 API와 같은 주소, 인증 주소는 `/api/v1/auth` 아래 | Accepted | 2026-10-04 | 05 |
+| [ADR-0043](0043-reauthentication-for-sensitive-actions.md) | 중요한 기능에만 다시 본인 확인, 탈퇴는 제공자 재인증 전용 등록 | Accepted | 2026-10-04 | 05 |

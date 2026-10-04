@@ -292,3 +292,33 @@
 - GitHub가 재인증을 요구하는 작업: 계정 삭제, 이메일 변경, SSH 키 추가, 앱 권한 부여, 토큰·웹훅 관리, 복구 코드 보기 등. 저장소 보기·글쓰기 같은 일상 작업은 대상이 아님 [확정: 위 GitHub 문서].
 - 기준 [확정] (사용자: "응 그 기준으로 확정해줘", 2026-10-04): ① 되돌릴 수 없는 일 ② 로그인 수단을 바꾸는 일 ③ 연락처를 바꾸는 일에만 재인증. 그 밖의 일상 기능에는 요구하지 않음.
 - 대상 [확정] (같은 날, 기준과 함께 승인): 사이클 05 탈퇴. 나중: 다른 소셜 계정 연결·해제, 알림 받을 연락처 등록·변경, 직접 회원가입의 비밀번호·이메일 변경. 대상 아님: 지역·내 도서관 저장과 수정, 알림 켜고 끄기.
+
+## 13. 설계 검토에서 나온 질문 (2026-10-04)
+
+사용자가 캔버스에서 남긴 것: 1 "각각의 장단점에 대해서 추가로 설명해 줘", 2 "여러 기기에서 로그인한 경우가 걱정되는데 어덯게 돼?", 3 "redis를 통해서 이러 정보드를 메모리에 올리는 것이 안전한지도 좀 알려줘", 6 "이렇게 해도 보안 상 안전한거니?". 쉬운 설명: `easy/2026-10-04-design-questions.html`. 확인 날짜 2026-10-04.
+
+| 번호 | 확인한 사실 | 출처 | 태그 |
+|---|---|---|---|
+| 1 | 방식 바꿔치기: "An 'RS256' … parameter value can be changed into 'HS256' …, and some libraries would try to validate the signature using HMAC-SHA256 and using the RSA public key as the HMAC shared secret." 대책: "Libraries MUST enable the caller to specify a supported set of algorithms and MUST NOT use any other algorithms" | https://www.rfc-editor.org/rfc/rfc8725.txt 2.1, 3.1 | [확정] |
+| 1 | 약한 대칭 키: "Human-memorizable passwords MUST NOT be directly used as the key to a keyed-MAC algorithm such as 'HS256'." | 같은 문서 2.2, 3.5 | [확정] |
+| 1 | 서명 크기(HS256 32바이트, ES256 64바이트, RS256 2048비트 키면 256바이트)와 속도 비교 | 알고리즘의 일반적 성질. 직접 재지 않음 | [확인 필요] (필요하면 dev에서 측정) |
+| 3 | "Redis is designed to be accessed by trusted clients inside trusted environments." 포트를 밖에 열면 `FLUSHALL` 하나로 전체 삭제 가능. protected mode(3.2.0부터), 인증은 ACL 권장(6부터) 또는 `requirepass`, `AUTH`를 포함한 명령은 암호화 없이 전송되므로 TLS는 선택 지원 | https://redis.io/docs/latest/operate/oss_and_stack/management/security/ | [확정] |
+| 3 | Redis가 메모리·디스크의 값을 스스로 암호화하는지 | 위 문서에 없음 | [확인 필요] (Redis 도입 때 공식 문서 확인) |
+| 3 | Spring Session은 `springSessionRepositoryFilter`로 `HttpSession`을 Redis 저장으로 바꾸며 `HttpSession`을 쓰는 코드는 고칠 필요 없음. 사용자별 세션 찾기 같은 기능은 `RedisIndexedSessionRepository` 필요 | https://docs.spring.io/spring-session/reference/configuration/redis.html | [확정] (요약으로 읽음) |
+| 6 | 결과 코드를 주소에 붙이는 것의 안전 | 공식 문서의 직접 판정은 없음. 근거는 설계: 코드에 민감한 값이 없고, 서버가 코드로 판단하지 않으며, 돌아갈 주소를 서버가 받지 않음 | [안] → 사용자 조건부 확정("안전하면 이렇게 해줘"). dev 테스트로 확인 |
+
+- 2번의 답은 조사가 아니라 구조에서 나옴: 리프레시 토큰 줄이 브라우저마다 따로(명세 R4 [확정])이므로 다른 기기의 갱신은 서로 다른 줄을 바꿈.
+
+- 3번 후속 질문("암호화해서 redis나 메모리에 두는 건 안전하나?"): OWASP Cryptographic Storage Cheat Sheet — "The best way to protect sensitive information is to not store it in the first place", 열쇠는 자료와 다른 곳에, AES(256비트 권장)와 GCM/CCM. https://cheatsheetseries.owasp.org/cheatsheets/Cryptographic_Storage_Cheat_Sheet.html (2026-10-04) [확정]. 적용: 메모리 구현은 암호화하지 않음, Redis로 바꿀 때 민감한 값을 암호화(backlog).
+
+- 2번 후속 질문("보통 다른 서비스들도 이렇게 해?"), 2026-10-04, 요약 도구로 읽음:
+  - Supabase: 리프레시 토큰은 한 번만 쓰되 "reuse interval" 기본 10초 안의 재사용은 허용, 그 밖이면 세션 전체 폐기 (https://supabase.com/docs/guides/auth/sessions) [확정]. 클라이언트(auth-js `GoTrueClient.ts`)는 `navigator.locks`로 갱신을 직렬화하고 `BroadcastChannel`로 탭에 알림 (https://github.com/supabase/auth-js) [확정]
+  - Okta auth-js: "selecting a single tab to handle the network requests to refresh the tokens and broadcasting to the other tabs", 이유는 "to avoid all tabs sending refresh requests simultaneously" (https://github.com/okta/okta-auth-js README) [확정]
+  - Auth0: Reuse Interval 설정 있음, 기본 꺼짐(12절 표). auth0-spa-js의 탭 간 잠금은 FAQ에서 확인 못 함 [확인 필요]
+  - "원래 요청을 먼저 다시 보내 본다"는 순서를 다른 서비스가 쓰는지 [확인 필요] (확인할 자료 없음. 우리 구조가 HttpOnly 쿠키라 생긴 순서)
+
+- 7번 후속 질문("탈퇴용으로 따로 두면 카카오/네이버가 승인할까?"), 2026-10-04: 카카오 Redirect URI는 앱 설정에서 등록(심사 언급 없음. 문서의 "10개"는 로그아웃 리다이렉트 URI 한도) https://developers.kakao.com/docs/ko/kakaologin/prerequisite · 네이버 Callback URL은 내 애플리케이션에서 등록, 개수·용도 제한과 재인증의 별도 승인에 관한 문장 없음, 검수 항목은 서비스 내용·로그인 구현 형태·정보 사용·로고와 앱 이름 (devguide.md, verify.md). 등록 가능 개수는 두 제공자 모두 [확인 필요: 콘솔에서 직접 확인].
+
+- 8번 후속 질문("서버 기록이 뭐 로그 이런 거야? db이런데 넣으면 안 되나"), 2026-10-04: OWASP Logging Cheat Sheet — 기록 대상에 "addition or deletion of users", 기록 위치는 파일 시스템·데이터베이스(쓰기 전용 계정 권장)·원격 수집, 제외할 값은 비밀번호·세션 식별 값·접근 토큰, 보관 기간 준수. https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html [확정]. 다른 서비스의 탈퇴 기록 위치는 [확인 필요](자료 없음).
+
+- ADR-0039 초안 검토 중 질문("카카오나 네이버에서 사용자 이름 정보 가져올 수 있나? 나중에 아이디/별명 설정 이런것도 기존 소셜 로그인에 넣을 수 있으려나"), 2026-10-04: 카카오 개인정보 동의항목의 필요 권한 — 닉네임·프로필 사진 "기본 제공", 카카오계정(이메일) "비즈 앱, 테스트 앱", 이름·성별·연령대·생일·전화번호 "동의 단계 설정 권한, 테스트 앱" (https://developers.kakao.com/docs/ko/kakaologin/utilize, 요약으로 읽음) [확정]. 네이버 항목은 2절. 네이버 항목별 추가 조건은 [확인 필요].
