@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>책 + 책갈피 색 안</title>
+<style>
+  body{margin:0;padding:24px 16px 48px;background:#f7f7f4;color:#1b1a24;font-family:"Pretendard","Malgun Gothic",system-ui,sans-serif}
+  h1{font-size:20px;margin:0 0 4px;text-align:center}
+  p.lead{margin:0 0 20px;color:#6b7280;font-size:13px;text-align:center}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;max-width:960px;margin:0 auto}
+  .card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:16px;text-align:center}
+  .card b{display:block;font-size:13px;margin-bottom:6px}
+  .card small{display:block;color:#6b7280;font-size:12px;line-height:1.5;margin-top:8px}
+  .row{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:8px}
+  .dk{background:#1b1a24;border-radius:8px;padding:4px;display:flex}
+  code{font-size:11px}
+</style>
+</head>
+<body>
+<h1>책 + 책갈피 색 안</h1>
+<p class="lead">보내 주신 형태 그대로, 색만 바꿨어요.</p>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- 형태: 닫힌 책 + 오른쪽 위 책갈피. 색은 CSS 변수 -->
+    <symbol id="logo" viewBox="0 0 160 140">
+      <rect x="26" y="26" width="108" height="94" rx="16" fill="var(--book)"/>
+      <path d="M40 40H64M102 40H122" stroke="var(--line)" stroke-width="5" stroke-linecap="round" fill="none"/>
+      <path d="M74 12H100V80L87 68L74 80Z" fill="var(--mark)"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="grid">
+  <div class="card" style="--book:#7a5cf2;--mark:#ff6f61;--line:#f0ebff">
+    <b>A · 서비스 보라 + 코랄</b>
+    <svg width="160" height="140"><use href="#logo"/></svg>
+    <div class="row"><svg width="32" height="28"><use href="#logo"/></svg><div class="dk"><svg width="32" height="28"><use href="#logo"/></svg></div></div>
+    <small>책 <code>#7a5cf2</code> · 책갈피 <code>#ff6f61</code><br>dev 메인 색 그대로</small>
+  </div>
+
+  <div class="card" style="--book:#5e3fe0;--mark:#ff7f6e;--line:#d6d0ea">
+    <b>B · 진한 보라 + 밝은 코랄</b>
+    <svg width="160" height="140"><use href="#logo"/></svg>
+    <div class="row"><svg width="32" height="28"><use href="#logo"/></svg><div class="dk"><svg width="32" height="28"><use href="#logo"/></svg></div></div>
+    <small>책 <code>#5e3fe0</code> · 책갈피 <code>#ff7f6e</code><br>대비가 가장 강해요</small>
+  </div>
+
+  <div class="card" style="--book:#1b1a24;--mark:#ff6f61;--line:#5b5870">
+    <b>C · 잉크색 + 코랄</b>
+    <svg width="160" height="140"><use href="#logo"/></svg>
+    <div class="row"><svg width="32" height="28"><use href="#logo"/></svg><div class="dk" style="background:#fff"><svg width="32" height="28"><use href="#logo"/></svg></div></div>
+    <small>책 <code>#1b1a24</code> · 책갈피 <code>#ff6f61</code><br>원본과 가장 비슷한 어두운 느낌</small>
+  </div>
+
+  <div class="card" style="--book:#a68bff;--mark:#ff8a75;--line:#f0ebff">
+    <b>D · 연보라 + 연한 코랄</b>
+    <svg width="160" height="140"><use href="#logo"/></svg>
+    <div class="row"><svg width="32" height="28"><use href="#logo"/></svg><div class="dk"><svg width="32" height="28"><use href="#logo"/></svg></div></div>
+    <small>책 <code>#a68bff</code> · 책갈피 <code>#ff8a75</code><br>가볍고 부드러운 느낌</small>
+  </div>
+
+  <div class="card" style="--book:#7a5cf2;--mark:#ffd9d3;--line:#f0ebff">
+    <b>E · 서비스 보라 + 살구</b>
+    <svg width="160" height="140"><use href="#logo"/></svg>
+    <div class="row"><svg width="32" height="28"><use href="#logo"/></svg><div class="dk"><svg width="32" height="28"><use href="#logo"/></svg></div></div>
+    <small>책 <code>#7a5cf2</code> · 책갈피 <code>#ffd9d3</code><br>코랄보다 은은해요</small>
+  </div>
+
+  <div class="card" style="--book:#7a5cf2;--mark:#ffb703;--line:#f0ebff">
+    <b>F · 서비스 보라 + 노랑</b>
+    <svg width="160" height="140"><use href="#logo"/></svg>
+    <div class="row"><svg width="32" height="28"><use href="#logo"/></svg><div class="dk"><svg width="32" height="28"><use href="#logo"/></svg></div></div>
+    <small>책 <code>#7a5cf2</code> · 책갈피 <code>#ffb703</code><br>코랄이 아닌 비교용</small>
+  </div>
+</div>
+</body>
+</html>

@@ -292,4 +292,11 @@ const previousChoices = () => {
 const prevChoices = previousChoices();
 fs.writeFileSync(htmlPath, html.replace('<script>', '<script>window.__pvPrev = ' + JSON.stringify(prevChoices).replace(/</g, '\\u003c') + ';</script>\n<script>'));
 fs.writeFileSync(path.join(outDir, base + '.proposals.json'), JSON.stringify({ source: src, proposals }, null, 2));
-console.log(JSON.stringify({ html: htmlPath, proposals: proposals.length, keptChoices: Object.keys(prevChoices).length }));
+// The page script walks the text inside the element with class "doc"; without one it stops before adding the chips,
+// the theme button and the send bar (2026-10-04: three decision pages opened with plain "[안]" text and no buttons).
+const hasDoc = /class\s*=\s*["']([^"']*\s)?doc(\s[^"']*)?["']/i.test(page);
+const warning = isHtml && !hasDoc
+  ? 'no element with class "doc": chips, the 어둡게/밝게 button and the 보내기 bar will not appear. Wrap the page body in <main class="doc">.'
+  : undefined;
+if (warning) console.error('WARNING: ' + warning);
+console.log(JSON.stringify({ html: htmlPath, proposals: proposals.length, keptChoices: Object.keys(prevChoices).length, warning }));

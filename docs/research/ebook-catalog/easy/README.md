@@ -7,3 +7,4 @@
 | [2026-10-04-platform-servers.html](2026-10-04-platform-servers.html) | 플랫폼 타입별 서버 구조(공용 호스팅과 자체 설치) | `../platforms.md`, `../crawl-runbook.md` | 없음 |
 | [2026-10-04-crawl-method-now.html](2026-10-04-crawl-method-now.html) | 지금의 수집 방법: 사이트 분류, 도메인과 IP, IP별 줄, 되돌림 조건 | `../crawl-runbook.md`, `../crawl-method.md` | 없음 |
 | [2026-10-04-kyobo-rental-speed-decisions.html](2026-10-04-kyobo-rental-speed-decisions.html) | 교보 대여·혼합형 232곳 수집 속도: 이 서버만 동시 요청 올리기 | `../crawl-runbook.md` 8-2절 | 없음. 사용자 "4건으로 해줘"(canvas, 2026-10-04) → 17:03부터 동시 4건 |
+| [2026-10-04-book-id-policy-decisions.html](2026-10-04-book-id-policy-decisions.html) | 다시 가져와도 책 번호가 바뀌지 않게 하는 정책 4가지 | `../catalog-refresh.md` 5.2절 | 없음. 4개 모두 승인(3번은 "안내표 없이", 2026-10-04) |
