@@ -60,6 +60,8 @@
   - 되돌림 조건 [안]: 공용 서버의 IP 줄 하나라도 평균 응답이 12초를 넘거나(요청 30건 이상 뒤) 5번 연달아 실패하면, 그 업체의 IP 전부를 한 줄로 다시 묶음. 로그 `SPLIT OFF: <IP> (<업체>)`
   - 설정: `chaekcheck-data\queue-by-ip.txt` 파일이 있으면 `resume.cmd`가 `--queue-by-ip`로 실행. 파일을 지우면 도메인 이름 기준(이전 방식)으로 돌아감. 응답 시간은 로그 `timing <IP> (<업체>): avg …s`(줄마다 200건마다). 시험 때 쓰던 `split-ip.txt`·`--split-ip`는 없앰
   - 쉬운 설명: `easy/2026-10-04-crawl-method-now.html`(지금 수집 방법), `easy/2026-10-04-platform-servers.html`(플랫폼 타입별 서버 구조)
+> **배포용 사본** (2026-10-05 07:42 시점): `chaekcheck-data\snapshots\ebook-catalog-2026-10-05-0745.sqlite`. 내용과 쓰는 법은 `snapshot-2026-10-05.md`. 수집기는 원본 DB에서 계속 돎
+
 ## 4. dev에 반영할 것 (옮긴 뒤 plan에서 알게 된 것)
 
 사용자가 dev 세션에 전달합니다(전달용 메시지: `docs/research/maintenance/dev-message.md` 3단계). 반영되면 이 표에서 지웁니다.
