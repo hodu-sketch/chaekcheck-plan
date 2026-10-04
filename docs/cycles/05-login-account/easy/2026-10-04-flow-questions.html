@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>화면 흐름 남은 5가지</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">화면 흐름 14가지 중 9가지는 승인하셨습니다.<br>남은 5가지에 답을 드립니다.</p>
+<p class="sub">7·9·11·13·14번에 주신 질문과 의견의 답입니다(2026-10-04). 항목마다 답, 그림, 다시 낸 제안을 적었습니다. 칩을 눌러 골라 주세요. 글 상자에 적은 말은 "승인"을 눌러도 함께 갑니다.</p>
+
+<section class="card">
+<h2><span class="num">7</span>로그인 선택 창의 한 줄 안내</h2>
+<div class="gist">"처음이면 회원 가입을 먼저 진행한다 이런 식으로"라고 하셔서 문구를 바꿨습니다.</div>
+<div class="shots"><div class="shot"><p class="cap">PC·태블릿</p><div class="fr tb" style="height:400px"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">설정</span><span class="bt pri">로그인</span></div><div class="bd"><div class="sb">책 제목, 지은이 검색</div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div></div><div class="ov"></div><div class="md"><h4>로그인<span>✕</span></h4><div class="g"><span class="bt nv">N 네이버 로그인</span><span class="bt kk">● 카카오 로그인</span></div><div class="hint">처음이면 회원가입을 먼저 진행해요</div></div></div></div><div class="shot"><p class="cap">폰</p><div class="fr ph" style="height:400px"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">설정</span><span class="bt pri">로그인</span></div><div class="bd"><div class="sb">책 제목, 지은이 검색</div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div></div><div class="ov"></div><div class="md"><h4>로그인<span>✕</span></h4><div class="g"><span class="bt nv">N 네이버 로그인</span><span class="bt kk">● 카카오 로그인</span></div><div class="hint">처음이면 회원가입을 먼저 진행해요</div></div></div></div></div>
+<div class="item">
+<h3><span class="no">7</span>문구: "처음이면 회원가입을 먼저 진행해요" <span class="an">[안]</span></h3>
+<p>두 버튼 아래에 작은 글씨로 보입니다. 처음 온 사람도 같은 버튼을 누르면 되고, 그러면 회원가입부터 한다는 것을 알려 줍니다.</p>
+<p class="alt"><b>다른 선택</b>: 글 상자에 원하시는 문구를 적어 주시면 그대로 씁니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">9</span><code>/signup</code>이 그 동의 화면인가</h2>
+<div class="gist">네, 맞습니다. 처음 온 계정이 네이버·카카오에서 돌아오면 브라우저가 <code>/signup</code>에 도착하고, 그 화면이 가입 동의 화면입니다.</div>
+<figure>
+<svg viewBox="0 0 900 210" role="img" aria-label="로그인 뒤 어느 주소로 돌아오는가">
+<defs><marker id="b1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+<g font-family="Noto Sans KR, sans-serif" font-size="15" fill="var(--text)" text-anchor="middle">
+<g stroke="var(--muted)" stroke-width="2" fill="none" marker-end="url(#b1)"><path d="M190 55 H250"/><path d="M430 40 H560"/><path d="M430 70 C480 70 500 150 560 150"/><path d="M90 150 H250"/></g>
+<rect x="10" y="30" width="180" height="50" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="2"/><text x="100" y="60">"네이버 로그인" 누름</text>
+<rect x="250" y="30" width="180" height="50" rx="25" fill="var(--code-bg)" stroke="var(--line)" stroke-width="2"/><text x="340" y="60">네이버에서 로그인</text>
+<rect x="560" y="15" width="330" height="50" rx="8" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/><text x="725" y="45">가입된 계정 → 보던 화면으로 바로</text>
+<rect x="560" y="125" width="330" height="50" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/><text x="725" y="155">처음 온 계정 → /signup (가입 동의)</text>
+<text x="50" y="140" font-size="13" fill="var(--muted)" text-anchor="start">주소창에 /signup을 직접 침</text>
+<rect x="250" y="125" width="180" height="50" rx="8" fill="var(--no-bg)" stroke="var(--no)" stroke-width="2"/><text x="340" y="155">검색 화면으로 보냄</text>
+<text x="450" y="200" font-size="13" fill="var(--muted)">직접 치고 들어온 사람은 네이버·카카오에 다녀오지 않아 가입시킬 계정이 없습니다.</text>
+</g></svg>
+</figure>
+<div class="item">
+<h3><span class="no">9</span>가입 동의 화면의 주소는 <code>/signup</code>, 직접 들어오면 검색 화면으로 <span class="an">[안]</span></h3>
+<p>처음 제안 그대로입니다.</p>
+<p class="alt"><b>다른 선택</b>: 주소 이름을 바꿈(예: <code>/join</code>).</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">11</span>폰에서만 창이 아래에서 올라오는 이유, 그리고 설정 창 "계정" 절</h2>
+<div class="gist">폰에서는 아래쪽이 흔한 방식입니다. 한 손으로 쥐었을 때 엄지손가락이 화면 아래쪽에 닿기 쉽기 때문입니다.</div>
+<div class="item">
+<h3>조사한 것</h3>
+<p><b>애플 지침</b>(Human Interface Guidelines, Sheets): 이런 창이 아이폰에서는 아래에서 올라오고 아이패드에서는 가운데에 뜬다고 요약으로 읽었습니다. 원문 문장을 직접 인용하지는 못했습니다. <span class="src">https://developer.apple.com/design/human-interface-guidelines/sheets (2026-10-04)</span></p>
+<p><b>구글 지침</b>(Material Design, Bottom sheets): 페이지 내용이 열리지 않았습니다 <span class="an2">[확인 못 함]</span>.</p>
+<p>로그인 선택 창을 "PC·태블릿은 가운데, 폰은 아래"로 두는 것은 6번에서 승인하셨습니다. 밑그림에서 설정 창과 탈퇴 창도 폰에서 아래로 그린 것은 제가 넣은 것입니다. 지금 있는 설정 창이 폰에서 어떻게 뜨는지는 dev 코드를 아직 확인하지 않았습니다.</p>
+</div>
+<p class="mkt">로그인 후</p>
+<div class="shots"><div class="shot"><p class="cap">PC·태블릿</p><div class="fr tb" style="height:400px"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">설정</span><span class="bt">로그아웃</span></div><div class="bd"><div class="sb">책 제목, 지은이 검색</div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div></div><div class="ov"></div><div class="md"><h4>설정<span>✕</span></h4><div class="sec" style="border-top:none;margin-top:0;padding-top:0"><b>보기 방식</b><div class="bar m"></div></div><div class="sec"><b>직접 찾기</b><div class="bar s"></div></div><div class="sec"><b>계정</b><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><span class="bt">로그아웃</span><span class="bt dng">탈퇴</span></div></div></div></div></div><div class="shot"><p class="cap">폰</p><div class="fr ph" style="height:400px"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">설정</span><span class="bt">로그아웃</span></div><div class="bd"><div class="sb">책 제목, 지은이 검색</div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div></div><div class="ov"></div><div class="md"><h4>설정<span>✕</span></h4><div class="sec" style="border-top:none;margin-top:0;padding-top:0"><b>보기 방식</b><div class="bar m"></div></div><div class="sec"><b>직접 찾기</b><div class="bar s"></div></div><div class="sec"><b>계정</b><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><span class="bt">로그아웃</span><span class="bt dng">탈퇴</span></div></div></div></div></div></div>
+<p class="mkt">로그인 전</p>
+<div class="shots"><div class="shot"><p class="cap">PC·태블릿</p><div class="fr tb" style="height:400px"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">설정</span><span class="bt pri">로그인</span></div><div class="bd"><div class="sb">책 제목, 지은이 검색</div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div></div><div class="ov"></div><div class="md"><h4>설정<span>✕</span></h4><div class="sec" style="border-top:none;margin-top:0;padding-top:0"><b>보기 방식</b><div class="bar m"></div></div><div class="sec"><b>직접 찾기</b><div class="bar s"></div></div><div class="sec"><b>계정</b><span class="bt pri" style="display:block">로그인</span></div></div></div></div><div class="shot"><p class="cap">폰</p><div class="fr ph" style="height:400px"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">설정</span><span class="bt pri">로그인</span></div><div class="bd"><div class="sb">책 제목, 지은이 검색</div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div></div><div class="ov"></div><div class="md"><h4>설정<span>✕</span></h4><div class="sec" style="border-top:none;margin-top:0;padding-top:0"><b>보기 방식</b><div class="bar m"></div></div><div class="sec"><b>직접 찾기</b><div class="bar s"></div></div><div class="sec"><b>계정</b><span class="bt pri" style="display:block">로그인</span></div></div></div></div></div>
+<div class="item">
+<h3><span class="no">11</span>설정 창 "계정" 절: 로그인 전에는 "로그인", 로그인 후에는 "로그아웃"과 "탈퇴" <span class="an">[안]</span></h3>
+<p>탈퇴는 자주 쓰지 않으므로 설정 창 안에 둡니다. 설정 창이 폰에서 뜨는 방식은 새로 정하지 않고 <b>지금 있는 설정 창의 방식 그대로</b> 둡니다. 설계 단계에서 dev 코드를 확인해 맞춥니다.</p>
+<p class="alt"><b>다른 선택</b>: 로그인 전에는 "계정" 절을 아예 안 보임.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">13</span>탈퇴하지 못한 이유를 나눠 알리기</h2>
+<div class="gist">"서버 오류" 하나였던 것을 원인 셋으로 나눴습니다. 문구는 모두 일곱이 됩니다.</div>
+<div class="item">
+<h3><span class="no">13</span>탈퇴가 멈췄을 때 문구 일곱 <span class="an">[안]</span></h3>
+<table>
+<tr><th>무슨 일이 있었나</th><th>보여 줄 문구</th><th>로그인 상태</th></tr>
+<tr><td>다른 계정으로 다시 로그인함</td><td>"가입한 계정으로 확인해 주세요" (명세에서 승인)</td><td>그대로</td></tr>
+<tr><td>다시 로그인한 뒤 5분이 지남</td><td>"본인 확인 시간이 지났어요. 탈퇴를 다시 눌러 주세요"</td><td>그대로</td></tr>
+<tr><td>네이버·카카오 화면에서 취소함</td><td>"탈퇴를 취소했어요"</td><td>그대로</td></tr>
+<tr><td><b>인터넷이 끊겨 요청이 가지 못함</b></td><td>"인터넷 연결을 확인하고 다시 해 주세요"</td><td>그대로</td></tr>
+<tr><td><b>네이버·카카오 쪽 오류로 본인 확인을 못 함</b></td><td>"네이버(카카오) 쪽 문제로 본인 확인을 하지 못했어요. 잠시 뒤 다시 해 주세요"</td><td>그대로</td></tr>
+<tr><td><b>우리 서버가 지우는 도중 실패함</b></td><td>"chaekcheck 서버 문제로 탈퇴하지 못했어요. 잠시 뒤 다시 해 주세요"</td><td>그대로</td></tr>
+<tr><td>그 사이 로그인이 풀려 있음</td><td>"로그인이 풀렸어요. 다시 로그인한 뒤 탈퇴해 주세요"</td><td>풀림</td></tr>
+</table>
+<p>굵은 셋이 새로 나눈 것입니다. 문구는 검색 화면의 안내 줄에 보입니다. 네이버·카카오 쪽 <b>연결 끊기만</b> 실패한 경우는 명세에서 승인하신 대로 우리 쪽 삭제를 끝내고 "탈퇴했습니다"로 보이므로 이 표에 없습니다.</p>
+<p class="alt"><b>알아 두실 점</b>: 우리 서버 오류의 더 자세한 원인(DB 문제 등)은 화면에 보이지 않고 서버 기록에만 남깁니다. 내부 사정을 화면에 드러내지 않는 것이 보통의 방식입니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">14</span>약관 전문은 그 자리에서 펼쳐 보이기</h2>
+<div class="gist">"나는 펼쳐 보이는게 나은 것 같아"라고 하셔서 그렇게 정했습니다. 새 탭은 열지 않습니다. 남은 것은 약관 화면의 주소입니다.</div>
+<div class="shots"><div class="shot"><p class="cap">"전문 보기"를 누른 가입 동의 화면</p><div class="fr tb" style="height:430px"><div class="hd"><b>chaekcheck</b></div><div class="bd"><div class="pg"><h4>가입 동의</h4><div class="ck all"><i></i>모두 동의</div><div class="ck"><i></i>이용약관 동의 (필수)<a>접기 ▲</a></div><div class="box" style="margin-top:6px">제1조 (목적) …<br>제2조 (정의) …<br>제3조 …<br><span style="color:var(--accent)">약관 전문이 이 자리에 펼쳐집니다</span></div><div class="ck"><i></i>개인정보 수집·이용 동의 (필수)<a>전문 보기 ▼</a></div><div class="ck"><i></i>만 14세 이상입니다 (필수)</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px"><span class="bt">취소</span><span class="bt pri off">가입</span></div></div></div></div></div></div>
+<div class="item">
+<p>새 탭은 브라우저 위쪽에 탭이 하나 더 생기는 것이고 별도 창이 뜨는 것은 아닙니다. 다른 사이트들이 어떻게 하는지 정리한 공식 자료는 찾지 못했습니다 <span class="an2">[확인 못 함]</span>.</p>
+</div>
+<div class="item">
+<h3><span class="no">14</span>약관 화면의 주소는 <code>/terms</code>와 <code>/privacy</code> <span class="an">[안]</span></h3>
+<p>화면 아래의 "이용약관 · 개인정보 처리방침" 링크를 누르면 이 주소의 화면이 열립니다. 로그인 없이 볼 수 있습니다. 개인정보 처리방침은 누구나 볼 수 있는 주소가 있어야 하고, 카카오 앱 설정에도 이 주소를 등록합니다.</p>
+<p class="alt"><b>다른 선택</b>: 주소 이름을 바꿈.</p>
+</div>
+</section>
+
+<p class="foot">원문: <code>docs/cycles/05-login-account/flow.md</code>. 5가지가 정해지면 화면 흐름이 끝나고 설계(<code>/design-delta</code>)로 넘어갑니다.</p>
+</main>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OAuth와 Spring Security가 맡는 일</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 64px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+ul.items{list-style:none;padding:0;margin:0}
+ul.items>li{display:grid;grid-template-columns:34px 1fr;gap:14px;padding:14px 0;border-top:1px solid var(--line)}
+ul.items>li:first-child{border-top:none}
+ul.items svg{width:30px;height:30px;stroke:var(--accent);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;margin-top:4px}
+.items b{display:block}
+.src{color:var(--muted);font-size:16px}
+.tag{display:inline-block;font-size:16px;font-weight:500;border-radius:6px;padding:1px 8px;white-space:nowrap}
+.t-ok{background:var(--ok-bg);color:var(--ok)}.t-warn{background:var(--warn-bg);color:var(--warn)}.t-no{background:var(--no-bg);color:var(--no)}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:10px 0}
+th,td{text-align:left;padding:8px 10px;border-top:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:500}
+figure{margin:0 0 8px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:18px;margin-top:8px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+</style>
+</head>
+<body>
+<main>
+<p class="lead">OAuth는 "누구인지 확인받는 절차"이고,<br>Spring Security는 "우리 서버로 오는 요청을 거르는 장치"입니다.</p>
+<p class="sub">CSRF는 Spring Security가 막고, XSS는 둘 다 직접 막지 못해 화면(React)과 응답 헤더가 막습니다. 공식 문서 확인일 2026-10-03.</p>
+
+<section class="card">
+<h2><span class="num">1</span>셋이 맡는 구간이 다릅니다</h2>
+<div class="gist">OAuth는 우리 서버와 네이버·카카오 사이의 일입니다. Spring Security는 브라우저와 우리 서버 사이의 일입니다. 화면(React)은 브라우저 안의 일입니다.</div>
+<figure>
+<svg viewBox="0 0 900 260" role="img" aria-label="브라우저, 우리 서버, 네이버·카카오 사이에서 각 장치가 맡는 구간">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+<g font-family="Noto Sans KR, sans-serif" fill="var(--text)" text-anchor="middle">
+<rect x="20" y="70" width="220" height="100" rx="12" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="2"/>
+<text x="130" y="108" font-size="18" font-weight="700">브라우저</text><text x="130" y="138" font-size="15" fill="var(--muted)">화면(React)이 돌아감</text>
+<rect x="340" y="70" width="220" height="100" rx="12" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="3"/>
+<text x="450" y="108" font-size="18" font-weight="700">우리 서버</text><text x="450" y="138" font-size="15" fill="var(--muted)">Spring Security가 입구에</text>
+<rect x="660" y="70" width="220" height="100" rx="12" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/>
+<text x="770" y="108" font-size="18" font-weight="700">네이버 · 카카오</text><text x="770" y="138" font-size="15" fill="var(--muted)">누구인지 확인해 줌</text>
+<g stroke="var(--muted)" stroke-width="2" fill="none">
+<line x1="242" y1="105" x2="337" y2="105" marker-end="url(#ar)"/>
+<line x1="337" y1="135" x2="242" y2="135" marker-end="url(#ar)"/>
+<line x1="562" y1="105" x2="657" y2="105" marker-end="url(#ar)"/>
+<line x1="657" y1="135" x2="562" y2="135" marker-end="url(#ar)"/>
+</g>
+<text x="290" y="50" font-size="15" font-weight="700" fill="var(--accent)">Spring Security 구간</text>
+<text x="610" y="50" font-size="15" font-weight="700" fill="var(--ok)">OAuth 구간</text>
+<text x="130" y="205" font-size="15" fill="var(--muted)">XSS는 여기서 일어남</text>
+<text x="130" y="230" font-size="15" fill="var(--muted)">(화면에 남의 스크립트)</text>
+<text x="290" y="205" font-size="15" fill="var(--muted)">CSRF, 세션 탈취,</text>
+<text x="290" y="230" font-size="15" fill="var(--muted)">권한 없는 접근</text>
+<text x="610" y="205" font-size="15" fill="var(--muted)">로그인 가로채기,</text>
+<text x="610" y="230" font-size="15" fill="var(--muted)">가짜 돌아오기 요청</text>
+</g></svg>
+<figcaption>아래 글자는 그 구간에서 생기는 공격입니다. 세 구간 모두 "누가 보낸 요청인지, 믿어도 되는지"를 다르게 확인합니다.</figcaption>
+</figure>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>OAuth 2.0: 네이버·카카오에게 "이 사람이 누구인지" 받아 오는 절차</h2>
+<div class="gist">OAuth는 통신 규약(RFC 6749)입니다. 프로그램이 아닙니다. 우리가 비밀번호를 받지 않고도 네이버·카카오가 확인한 결과를 받아 오게 해 줍니다. 우리 서버로 오는 요청을 지키는 일은 하지 않습니다.</div>
+<table>
+<tr><th>순서</th><th>일어나는 일</th></tr>
+<tr><td>1</td><td>브라우저가 네이버·카카오 화면으로 이동합니다. 우리 서버가 무작위 값 <code>state</code>를 만들어 같이 보냅니다</td></tr>
+<tr><td>2</td><td>사용자가 그쪽에서 로그인합니다. 비밀번호는 우리 서버를 지나가지 않습니다</td></tr>
+<tr><td>3</td><td>네이버·카카오가 브라우저를 우리 주소로 돌려보내며 한 번만 쓰는 <code>code</code>와 <code>state</code>를 붙입니다</td></tr>
+<tr><td>4</td><td>우리 서버가 <code>state</code>가 1번에서 보낸 값과 같은지 확인하고, <code>code</code>와 서버만 아는 비밀값(Client Secret)을 네이버·카카오에 보내 토큰을 받습니다</td></tr>
+<tr><td>5</td><td>그 토큰으로 "이 사람의 번호"를 물어봅니다. 이 번호가 우리 계정을 찾는 열쇠입니다</td></tr>
+</table>
+<ul class="items">
+<li><svg viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg><div><b><code>state</code>가 막는 것: 가짜 돌아오기 요청</b>공격자가 자기 <code>code</code>를 붙인 주소를 피해자에게 열게 하면, 피해자가 공격자 계정으로 로그인됩니다. <code>state</code>는 "이 돌아오기가 내가 시작한 로그인에 대한 것인지"를 확인합니다. <span class="src">RFC 6749 10.12. 네이버 필수, 카카오 권장</span></div></li>
+<li><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><div><b>PKCE가 막는 것: <code>code</code> 가로채기</b>1번에서 무작위 값의 해시를 보내고, 4번에서 원래 값을 보냅니다. <code>code</code>를 훔친 사람은 원래 값을 몰라 토큰을 못 받습니다. 네이버는 OIDC 문서에 있고 카카오는 문서에 없습니다. <span class="src">RFC 7636, RFC 9700. 사이클 05 research.md 1절</span></div></li>
+<li><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg><div><b>돌아올 주소를 미리 등록: 엉뚱한 곳으로 보내기 방지</b>네이버·카카오는 앱에 등록된 주소(Callback/Redirect URI)로만 돌려보냅니다. 공격자 사이트로 <code>code</code>가 가지 않습니다. <span class="src">RFC 9700 2.1 "exact string matching"</span></div></li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>Spring Security: 우리 서버 입구에서 요청을 순서대로 검사</h2>
+<div class="gist">Spring Security는 라이브러리입니다. 요청이 컨트롤러에 닿기 전에 거치는 필터 묶음으로 동작합니다. OAuth 절차의 우리 쪽 부분(2절의 1·4·5번)도 이 안의 필터가 대신 해 줍니다.</div>
+<figure>
+<svg viewBox="0 0 900 120" role="img" aria-label="요청이 지나가는 필터 순서">
+<defs><marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+<g font-family="Noto Sans KR, sans-serif" fill="var(--text)" text-anchor="middle">
+<text x="45" y="62" font-size="16" fill="var(--muted)">요청</text>
+<line x1="72" y1="57" x2="96" y2="57" stroke="var(--muted)" stroke-width="2" marker-end="url(#ar2)"/>
+<rect x="100" y="25" width="170" height="64" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+<text x="185" y="52" font-size="16" font-weight="700">① CSRF 확인</text><text x="185" y="74" font-size="13" fill="var(--muted)">토큰이 맞는가</text>
+<line x1="272" y1="57" x2="296" y2="57" stroke="var(--muted)" stroke-width="2" marker-end="url(#ar2)"/>
+<rect x="300" y="25" width="170" height="64" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+<text x="385" y="52" font-size="16" font-weight="700">② 누구인가</text><text x="385" y="74" font-size="13" fill="var(--muted)">세션·OAuth 로그인</text>
+<line x1="472" y1="57" x2="496" y2="57" stroke="var(--muted)" stroke-width="2" marker-end="url(#ar2)"/>
+<rect x="500" y="25" width="170" height="64" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+<text x="585" y="52" font-size="16" font-weight="700">③ 해도 되는가</text><text x="585" y="74" font-size="13" fill="var(--muted)">주소별 허용 규칙</text>
+<line x1="672" y1="57" x2="696" y2="57" stroke="var(--muted)" stroke-width="2" marker-end="url(#ar2)"/>
+<rect x="700" y="25" width="180" height="64" rx="10" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/>
+<text x="790" y="52" font-size="16" font-weight="700">컨트롤러</text><text x="790" y="74" font-size="13" fill="var(--muted)">우리 코드</text>
+</g></svg>
+<figcaption>세 필터 모두 "통과 못 하면 컨트롤러에 가지 않는다"는 같은 방식입니다. 순서는 Spring Security 공식 문서의 순서입니다(CsrfFilter → 인증 필터 → AuthorizationFilter).</figcaption>
+</figure>
+<table>
+<tr><th>해 주는 일</th><th>원리</th><th>기본으로 켜져 있나</th></tr>
+<tr><td>OAuth 로그인 처리</td><td><code>state</code> 생성·확인, <code>code</code>를 토큰으로 교환, 번호 조회를 필터가 대신 함</td><td>네이버·카카오 주소를 설정에 적어야 함</td></tr>
+<tr><td>CSRF 방어</td><td>4절</td><td><span class="tag t-ok">기본</span></td></tr>
+<tr><td>세션 고정 방어</td><td>로그인에 성공하면 세션 번호를 새로 발급. 로그인 전에 심어 둔 번호는 쓸모없어짐</td><td><span class="tag t-ok">기본</span></td></tr>
+<tr><td>접근 제어</td><td>"이 주소는 로그인해야 함, 이 주소는 누구나"를 규칙으로 적으면 ③에서 걸러 401·403</td><td>규칙을 적어야 함</td></tr>
+<tr><td>보안 응답 헤더</td><td>6절</td><td><span class="tag t-warn">일부만 기본</span></td></tr>
+</table>
+<p class="src">출처: Spring Security Architecture 문서("Spring Security's Servlet support is based on Servlet Filters"), Session Management, OAuth2 Login 문서</p>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>CSRF: 다른 사이트가 내 쿠키로 요청을 보내게 하는 것</h2>
+<div class="gist">브라우저는 우리 사이트로 가는 요청에 쿠키를 자동으로 붙입니다. 그래서 다른 사이트가 사용자 모르게 "탈퇴" 같은 요청을 보내게 만들 수 있습니다. Spring Security가 "쿠키 말고 하나 더"를 요구해서 막습니다.</div>
+<ul class="items">
+<li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg><div><b>왜 가능한가</b>로그인한 사용자가 나쁜 사이트를 열면, 그 사이트가 숨긴 양식으로 우리 주소에 요청을 보냅니다. 나쁜 사이트는 우리 쿠키를 읽지는 못하지만, 브라우저가 쿠키를 붙여서 보내 줍니다. 서버는 진짜 요청과 구별할 수 없습니다. <span class="src">Spring Security CSRF 문서: "the cookies associated with your bank are still sent along with the request"</span></div></li>
+<li><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><circle cx="12" cy="12" r="9"/></svg><div><b>막는 원리: CSRF 토큰</b>서버가 무작위 값을 만들어 우리 화면만 읽을 수 있는 곳에 둡니다. 화면은 바꾸는 요청(POST·PUT·DELETE)마다 그 값을 <b>요청 헤더</b>에 넣습니다. 헤더는 브라우저가 자동으로 붙이지 않고, 다른 사이트는 그 값을 읽을 수 없습니다. 값이 없거나 틀리면 403입니다. <span class="src">같은 문서: 토큰은 "not automatically included by the browser"인 자리에 있어야 함</span></div></li>
+<li><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg><div><b>로그인 값과 CSRF 토큰은 무엇이 다른가</b>둘 다 서버가 만든 무작위 값이고, 기본 방식에서는 둘 다 같은 세션에 딸려 있습니다. <b>저장하는 곳은 차이가 아닙니다.</b> 차이는 브라우저가 그 값을 서버로 <b>돌려보내는 길</b>입니다.
+<table>
+<tr><th></th><th>로그인 값 (세션 번호 또는 JWT)</th><th>CSRF 토큰</th></tr>
+<tr><td>하는 일</td><td>"이 요청은 계정 12의 것"</td><td>"이 요청은 우리 화면이 만든 것"</td></tr>
+<tr><td>서버로 돌아가는 길</td><td>쿠키. 브라우저가 <b>자동으로</b> 붙임</td><td>헤더. 우리 화면 코드가 <b>직접</b> 넣음</td></tr>
+<tr><td>다른 사이트가 시작한 요청에</td><td>붙음</td><td>안 붙음(다른 사이트는 값을 읽지 못해 넣을 수 없음)</td></tr>
+</table>
+그래서 요청에 실려 오는 것이 이렇게 달라집니다.
+<table>
+<tr><th>요청</th><th>로그인 쿠키</th><th>헤더의 CSRF 토큰</th><th>서버의 처리</th></tr>
+<tr><td>우리 화면에서 "탈퇴"를 누름</td><td>있음</td><td>있음</td><td>처리함</td></tr>
+<tr><td>다른 사이트가 몰래 보낸 "탈퇴"</td><td>있음 (자동으로 붙음)</td><td><b>없음</b></td><td>403으로 거절</td></tr>
+</table>
+로그인 쿠키만으로는 두 요청이 똑같아 보입니다. 서버가 둘을 구별하는 유일한 차이가 둘째 칸입니다. CSRF 토큰을 쿠키로만 받는다면 그것도 자동으로 붙어 버려 구별이 사라집니다. 그래서 반드시 헤더(또는 양식 칸)로 받습니다.
+<span class="src">Spring Security CSRF 문서: 토큰은 브라우저가 자동으로 넣지 않는 요청 부분에 있어야 함. "Requiring the actual CSRF token in a cookie does not work because cookies are automatically included in the HTTP request by the browser."</span></div></li>
+<li><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg><div><b>그 토큰은 어디에 저장되나</b>Spring Security에는 저장 방식이 둘 있고, chaekcheck는 둘째를 씁니다.
+<table>
+<tr><th></th><th>기본 방식</th><th>React 화면용 방식 (<code>csrf.spa()</code>) — chaekcheck</th></tr>
+<tr><td>서버가 토큰을 두는 곳</td><td>서버의 세션 안</td><td><b>서버에는 저장하지 않음</b></td></tr>
+<tr><td>브라우저가 토큰을 갖는 곳</td><td>서버가 만든 HTML 안(숨은 입력 칸)</td><td><b>쿠키 <code>XSRF-TOKEN</code></b>. 이 쿠키는 <code>HttpOnly</code>가 아니라서 우리 화면의 스크립트가 읽을 수 있음</td></tr>
+<tr><td>요청에 싣는 자리</td><td>양식의 <code>_csrf</code> 칸 또는 헤더 <code>X-CSRF-TOKEN</code></td><td>헤더 <code>X-XSRF-TOKEN</code> (화면 코드가 쿠키 값을 읽어 넣음)</td></tr>
+<tr><td>서버가 맞는지 보는 방법</td><td>세션에 둔 값과 비교</td><td>요청에 같이 온 쿠키의 값과 헤더의 값을 비교</td></tr>
+</table>
+둘째 방식에서 요청에는 같은 값이 <b>두 군데</b>로 옵니다. 쿠키는 브라우저가 자동으로 붙이고, 헤더는 우리 화면 코드가 붙입니다. 다른 사이트는 쿠키가 자동으로 붙게 만들 수는 있어도, 우리 쿠키의 값을 <b>읽을 수는 없어서</b> 헤더를 채우지 못합니다. 그래서 두 값이 같으면 우리 화면이 보낸 요청입니다. 세션 쿠키는 <code>HttpOnly</code>로 스크립트가 못 읽게 하고, 이 쿠키만 읽을 수 있게 둡니다. 로그인·로그아웃에 성공하면 이 쿠키를 지우고 새 값을 다시 줍니다. 화면을 React로 만들고 HTML을 서버가 만들지 않으므로 기본 방식(HTML에 넣어 주기)을 쓸 수 없어 이 방식을 씁니다.
+<span class="src">Spring Security CSRF 문서: 기본은 "stores the expected CSRF token in the HttpSession". <code>CookieCsrfTokenRepository</code>는 "writes to a cookie named XSRF-TOKEN and reads it from an HTTP request header named X-XSRF-TOKEN", <code>HttpOnly</code>를 false로 두는 이유는 자바스크립트가 읽어야 해서. 로그인·로그아웃 성공 때 쿠키를 지움</span></div></li>
+<li><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 12h10"/></svg><div><b>보조: 쿠키의 <code>SameSite</code></b>다른 사이트에서 시작된 요청에는 쿠키를 붙이지 말라는 표시입니다. Spring 문서는 이것을 유일한 방어가 아니라 보조로 쓰라고 합니다.</div></li>
+<li><svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></svg><div><b>chaekcheck에서</b>검색 API는 읽기(GET)라 해당 없습니다. 대상은 로그아웃, 가입 동의, 탈퇴입니다. React 화면이라 위 표의 둘째 방식(<code>csrf.spa()</code>)을 씁니다. 토큰이 세션이 아니라 쿠키에 있으므로, 나중에 로그인 유지 방식을 바꿔도 이 방어는 그대로입니다. JWT를 쿠키에 담아도 CSRF 방어는 똑같이 필요합니다. <span class="src">Spring 문서: 무상태여도 쿠키를 쓰면 CSRF에 취약</span></div></li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="num">5</span>XSS: 우리 화면에서 남의 스크립트가 실행되는 것</h2>
+<div class="gist">XSS는 브라우저 안에서 일어납니다. OAuth도 Spring Security도 직접 막지 못합니다. 화면이 "글자를 글자로만 출력"해서 막고, 쿠키 표시와 응답 헤더가 피해를 줄입니다.</div>
+<ul class="items">
+<li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg><div><b>왜 가능한가</b>바깥에서 온 글자(검색어, 도서관 사이트에서 읽어 온 책 제목)를 화면이 HTML로 해석하면, 그 안의 <code>&lt;script&gt;</code>가 우리 사이트 권한으로 실행됩니다. 실행된 스크립트는 로그인한 사용자인 척 요청을 보낼 수 있습니다. CSRF 토큰도 읽을 수 있어서 CSRF 방어까지 뚫립니다.</div></li>
+<li><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><circle cx="12" cy="12" r="9"/></svg><div><b>1차 방어: 화면이 글자를 글자로만 출력</b><code>&lt;</code>를 <code>&amp;lt;</code>로 바꿔 출력하면 태그로 해석되지 않습니다. React는 값을 넣을 때 이 처리를 기본으로 합니다. 예외는 <code>dangerouslySetInnerHTML</code>이고, 이것을 쓰지 않는 것이 규칙입니다. <span class="src">OWASP XSS Prevention Cheat Sheet: 모든 변수를 검증하고 이스케이프. React의 <code>dangerouslySetInnerHTML</code>은 보호의 빈틈</span></div></li>
+<li><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><div><b>피해 줄이기: 쿠키의 <code>HttpOnly</code></b>스크립트가 세션 쿠키를 읽지 못하게 합니다. XSS가 나더라도 세션 번호를 밖으로 빼 가지 못합니다. 로그인 토큰을 localStorage에 두면 이 보호가 없습니다.</div></li>
+<li><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M4 9h16"/></svg><div><b>피해 줄이기: Content-Security-Policy 헤더</b>"이 페이지는 우리 주소의 스크립트만 실행"을 브라우저에 알립니다. Spring Security는 이 헤더를 기본으로 넣지 않습니다. 직접 정책을 적어야 합니다. OWASP는 이것을 1차 방어로 삼지 말라고 합니다. <span class="src">Spring Security Headers 문서: "does not add Content Security Policy by default"</span></div></li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="num">6</span>공격별로 누가 막나</h2>
+<div class="gist">한 공격을 한 장치가 다 막는 경우는 드뭅니다. 1차로 막는 곳과 피해를 줄이는 곳을 나눠 봅니다.</div>
+<p>아래 넷(로그인 가로채기, 세션 고정·탈취, 클릭재킹, 남의 자료 접근)이 어떻게 일어나는지와 원리는 따로 풀어 썼습니다: <code>2026-10-03-four-attacks.html</code>. CSRF와 XSS가 쿠키·헤더 선택과 어떻게 이어지는지는 <code>2026-10-03-cookie-or-header.html</code>.</p>
+<table>
+<tr><th>공격</th><th>무엇인가</th><th>1차로 막는 곳</th><th>피해를 줄이는 곳</th></tr>
+<tr><td>CSRF</td><td>다른 사이트가 내 쿠키로 바꾸는 요청을 보냄</td><td>Spring Security (CSRF 토큰)</td><td>쿠키 <code>SameSite</code></td></tr>
+<tr><td>XSS</td><td>우리 화면에서 남의 스크립트 실행</td><td>React (글자로만 출력)</td><td>쿠키 <code>HttpOnly</code>, CSP 헤더</td></tr>
+<tr><td>로그인 가로채기</td><td>돌아오기 요청을 위조하거나 <code>code</code>를 훔침</td><td>OAuth (<code>state</code>, PKCE, 등록된 주소)</td><td>Client Secret을 서버에만</td></tr>
+<tr><td>세션 고정·탈취</td><td>로그인 전에 번호를 심거나, 번호를 훔쳐 씀</td><td>Spring Security (로그인 때 새 번호)</td><td>쿠키 <code>Secure</code>·<code>HttpOnly</code>, HTTPS</td></tr>
+<tr><td>클릭재킹</td><td>우리 화면을 남의 사이트 안에 숨겨 놓고 누르게 함</td><td>Spring Security (<code>X-Frame-Options</code> 기본)</td><td>—</td></tr>
+<tr><td>남의 자료 접근</td><td>로그인한 사람이 다른 계정 번호로 요청</td><td><b>우리 코드</b> (로그인 토큰에 든 계정 번호만 믿음)</td><td>Spring Security 접근 제어(주소 단위)</td></tr>
+</table>
+<p>마지막 줄은 어느 라이브러리도 대신해 주지 않습니다. "내 지역 바꾸기" 같은 API가 요청에 적힌 계정 번호를 믿으면 안 되고, 세션에 든 계정 번호만 써야 합니다. <span class="src">OWASP ASVS 5.0 8.2.2</span></p>
+</section>
+
+<section class="card">
+<h2><span class="num">7</span>chaekcheck에서 직접 해야 하는 것</h2>
+<div class="gist">Spring Security를 넣는다고 다 되는 것이 아닙니다. 기본으로 되는 것, 설정을 적어야 되는 것, 우리가 만들어야 하는 것을 나눴습니다.</div>
+<table>
+<tr><th>항목</th><th>상태</th><th>할 일</th></tr>
+<tr><td>CSRF 토큰 확인, 세션 고정 방어</td><td><span class="tag t-ok">기본</span></td><td>끄지 않음. React용 <code>csrf.spa()</code>만 설정</td></tr>
+<tr><td>응답 헤더: <code>X-Content-Type-Options</code>, <code>X-Frame-Options</code>, HSTS, <code>Cache-Control</code></td><td><span class="tag t-ok">기본</span></td><td>그대로 둠</td></tr>
+<tr><td>CSP, Referrer-Policy 헤더</td><td><span class="tag t-warn">설정 필요</span></td><td>정책을 직접 적음(Spring이 기본으로 넣지 않음). 웹 화면을 어디서 서빙하는지에 따라 넣는 곳이 달라짐</td></tr>
+<tr><td>네이버·카카오 로그인, <code>state</code></td><td><span class="tag t-warn">설정 필요</span></td><td>두 제공자의 주소와 키를 설정에 적음. 네이버는 응답 모양이 달라 번호를 꺼내는 코드가 조금 필요</td></tr>
+<tr><td>쿠키 <code>Secure</code>·<code>HttpOnly</code>·<code>SameSite</code>, 주소별 접근 규칙</td><td><span class="tag t-warn">설정 필요</span></td><td>설정에 적음</td></tr>
+<tr><td>화면에서 글자를 HTML로 넣지 않기</td><td><span class="tag t-no">우리 규칙</span></td><td><code>dangerouslySetInnerHTML</code>을 쓰지 않음. 도서관 사이트에서 온 책 제목·저자는 글자로만 출력</td></tr>
+<tr><td>내 자료 API가 세션의 계정 번호만 쓰기</td><td><span class="tag t-no">우리 코드</span></td><td>요청에 든 계정 번호를 믿지 않음</td></tr>
+<tr><td>카카오 웹훅·네이버 콜백이 진짜인지 확인</td><td><span class="tag t-no">우리 코드</span></td><td>어드민 키 비교, 서명 검증. 이 두 주소는 CSRF 토큰 대상에서 빼야 함(브라우저가 아니라 제공자 서버가 보냄)</td></tr>
+</table>
+</section>
+
+<p class="foot">이 글은 요약이며 근거는 원본에 있습니다: <code>docs/cycles/05-login-account/research.md</code> 9절(출처 URL과 확인 날짜), <code>docs/research/member-and-alerts/signup-security.md</code>. 출처: Spring Security 공식 문서(Architecture, CSRF, Headers, Session Management), OWASP Cheat Sheet(CSRF, XSS Prevention), OWASP ASVS 5.0, RFC 6749·7636·9700.</p>
+</main></body></html>

@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>남은 3가지: 두 번째 답</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">6·8번은 승인, 13번은 말씀하신 대로 정했습니다.<br>남은 것은 4·11·15번입니다.</p>
+<p class="sub">두 번째 검토(2026-10-04)에서 주신 질문의 답입니다. 출처는 <code>research.md</code> 12절 "두 번째 질문"에 있습니다.</p>
+
+<section class="card">
+<h2><span class="num">13</span>먼저, 13번은 생각하신 것이 맞습니다</h2>
+<div class="gist">네이버·카카오 자체 로그인은 우리 서비스와 별개입니다. 우리가 신경 쓸 필요가 없습니다. 제가 필요 없는 선택지를 꺼내 헷갈리게 했습니다.</div>
+<div class="item">
+<p>말씀하신 그대로 정했습니다: <b>"로그아웃 하면 우리 서비스에 로그아웃하고, 탈퇴면 네이버/카카오에도 탈퇴했다고 알려주면 되지"</b>.</p>
+<table>
+<tr><th>사용자가 누른 것</th><th>우리가 하는 일</th><th>네이버·카카오 자체 로그인</th></tr>
+<tr><td>로그아웃</td><td>chaekcheck에서만 로그아웃</td><td>건드리지 않음</td></tr>
+<tr><td>탈퇴</td><td>chaekcheck 자료를 지우고, 네이버·카카오에 "이 사람과 chaekcheck의 연결을 끊어 달라"고 알림</td><td>건드리지 않음</td></tr>
+</table>
+<p>제가 물었던 이유는 카카오가 "우리 서비스에서 로그아웃할 때 카카오까지 같이 로그아웃시키는" 기능을 따로 제공하기 때문입니다. 쓰지 않아도 되는 기능이고, 쓰지 않기로 적었습니다. 다른 사이트들이 어떻게 하는지를 모아 둔 공식 자료는 없습니다. 네이버 가이드에는 그런 기능 자체가 없으므로, 네이버 로그인을 쓰는 사이트는 모두 "우리 쪽만 로그아웃"입니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>"확인 값이 다름"도 따로 알려 주기</h2>
+<div class="gist">네 경우로 나눕니다. 따로 알려 주는 것은 정하신 것으로 적었고, 문구가 제안입니다.</div>
+<div class="item">
+<h3><span class="no">4</span>이유별 문구 넷 <span class="an">[안]</span></h3>
+<table>
+<tr><th>무슨 일이 있었나</th><th>보여 줄 문구</th></tr>
+<tr><td>네이버·카카오 화면에서 취소하거나 동의를 거부함</td><td>"로그인을 취소했어요"</td></tr>
+<tr><td>네이버·카카오 쪽 오류나 응답 없음</td><td>"네이버(카카오) 쪽 문제로 로그인하지 못했어요. 잠시 뒤 다시 해 주세요"</td></tr>
+<tr><td>로그인을 시작한 기록이 없음(시간이 너무 지남)</td><td>"로그인 시간이 지났어요. 다시 해 주세요"</td></tr>
+<tr><td>확인 값이 다름(우리가 보낸 값과 돌아온 값이 다름)</td><td>"안전하지 않은 로그인 요청이라 멈췄어요. 로그인 버튼을 눌러 다시 해 주세요"</td></tr>
+</table>
+<p>넷째는 누군가 만든 가짜 로그인 주소를 눌렀을 때 생길 수 있는 경우입니다. 평소에는 거의 보이지 않습니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">11</span>리프레시 토큰을 DB에 두면 세션과 같은 것 아닌가</h2>
+<div class="gist">저장하는 것은 비슷합니다. 다른 것은 <b>DB를 얼마나 자주 읽느냐</b>입니다. 그리고 리프레시 토큰을 서버에 두는 것은 큰 서비스들도 하는 표준 방식입니다.</div>
+<figure>
+<svg viewBox="0 0 900 250" role="img" aria-label="세션과 JWT의 DB 읽기 횟수 비교">
+<g font-family="Noto Sans KR, sans-serif" fill="var(--text)" font-size="16">
+<text x="10" y="30" font-weight="700">세션: 요청마다 DB를 읽음</text>
+<line x1="10" y1="70" x2="890" y2="70" stroke="var(--line)" stroke-width="2"/>
+<g fill="var(--no)"><circle cx="40" cy="70" r="8"/><circle cx="110" cy="70" r="8"/><circle cx="170" cy="70" r="8"/><circle cx="250" cy="70" r="8"/><circle cx="300" cy="70" r="8"/><circle cx="390" cy="70" r="8"/><circle cx="450" cy="70" r="8"/><circle cx="540" cy="70" r="8"/><circle cx="610" cy="70" r="8"/><circle cx="680" cy="70" r="8"/><circle cx="760" cy="70" r="8"/><circle cx="850" cy="70" r="8"/></g>
+<text x="10" y="140" font-weight="700">JWT + 리프레시 토큰: 15분에 한 번만 읽음</text>
+<line x1="10" y1="180" x2="890" y2="180" stroke="var(--line)" stroke-width="2"/>
+<g fill="none" stroke="var(--muted)" stroke-width="2"><circle cx="40" cy="180" r="8"/><circle cx="110" cy="180" r="8"/><circle cx="170" cy="180" r="8"/><circle cx="250" cy="180" r="8"/><circle cx="390" cy="180" r="8"/><circle cx="450" cy="180" r="8"/><circle cx="540" cy="180" r="8"/><circle cx="680" cy="180" r="8"/><circle cx="760" cy="180" r="8"/><circle cx="850" cy="180" r="8"/></g>
+<g fill="var(--ok)"><circle cx="300" cy="180" r="8"/><circle cx="610" cy="180" r="8"/></g>
+<text x="300" y="212" text-anchor="middle" font-size="14" fill="var(--ok)">토큰 갱신</text><text x="610" y="212" text-anchor="middle" font-size="14" fill="var(--ok)">토큰 갱신</text>
+<text x="10" y="242" font-size="14" fill="var(--muted)">동그라미 하나가 요청 하나입니다. 색이 찬 것은 DB를 읽은 요청, 빈 것은 서명만 확인한 요청입니다.</text>
+</g></svg>
+</figure>
+<div class="item">
+<h3>큰 서비스들은 어떻게 하나</h3>
+<table>
+<tr><th>누가</th><th>확인한 것</th></tr>
+<tr><td>OAuth 표준 (RFC 6749)</td><td>리프레시 토큰은 "권한 정보를 찾아오는 데 쓰는 식별자"이고, 토큰을 내준 서버에만 보냅니다. 서버가 그 정보를 가지고 있다는 뜻입니다</td></tr>
+<tr><td>OAuth 보안 권고 (RFC 9700)</td><td>리프레시 토큰을 쓸 때마다 바꾸고, 서버가 옛 토큰과의 관계를 기억해 두었다가 옛것이 다시 오면 도난으로 봅니다. 서버에 저장하지 않으면 할 수 없는 일입니다</td></tr>
+<tr><td>Auth0</td><td>리프레시 토큰을 끊을 수 있고, 사용자·앱마다 살아 있는 리프레시 토큰을 200개로 제한합니다. 서버가 목록을 가지고 있습니다</td></tr>
+<tr><td>Spring Authorization Server</td><td>내준 액세스·리프레시 토큰을 DB에 저장하는 부품(<code>JdbcOAuth2AuthorizationService</code>)이 기본으로 들어 있습니다</td></tr>
+<tr><td>카카오·네이버·구글</td><td>리프레시 토큰을 끊는 기능(연결 끊기, 토큰 폐기)이 있습니다. 서버가 기억하고 있어야 끊을 수 있습니다</td></tr>
+</table>
+<p>각 회사가 안에서 어떤 DB를 쓰는지는 공개 문서에 없습니다 <span class="an2">[확인 못 함]</span>. 확인되는 것은 "리프레시 토큰은 서버가 기억한다"는 점까지입니다.</p>
+<p><b>정리</b>: "짧은 JWT + 서버가 기억하는 리프레시 토큰"은 표준 구성입니다. 리프레시 토큰 쪽은 세션과 닮았다는 말씀이 맞습니다. JWT의 몫은 그 사이 15분 동안 DB를 안 읽는 것입니다.</p>
+</div>
+<div class="item">
+<h3>그래서 11번을 다시 여쭙니다</h3>
+<p>지난번 제 추천("다": 요청마다 로그인 기록 확인)은 위 그림의 빈 동그라미를 전부 색칠하는 길입니다. 지적하신 대로 그러면 세션과 다를 것이 없어집니다. 추천을 바꿉니다.</p>
+<table>
+<tr><th></th><th>요청 때 DB</th><th>탈퇴 뒤 남은 토큰</th><th>로그아웃 뒤 남은 토큰</th></tr>
+<tr><td><b>가</b> 확인 안 함</td><td>안 읽음</td><td>최대 15분</td><td>최대 15분</td></tr>
+<tr><td><b>나</b> 계정이 있는지만 확인</td><td>계정 표 1번</td><td>바로 끊김</td><td>최대 15분</td></tr>
+<tr><td><b>다</b> 로그인 기록 확인</td><td>토큰 표 1번 (사실상 세션)</td><td>바로 끊김</td><td>바로 끊김</td></tr>
+</table>
+<p>"남은 토큰"은 누가 미리 훔쳐 둔 경우에만 문제가 됩니다. 로그아웃한 브라우저에서는 쿠키가 지워져 쓰이지 않습니다.</p>
+</div>
+<div class="item">
+<h3><span class="no">11</span>"나": 로그인이 필요한 요청에서 계정이 있는지만 확인 <span class="an">[안]</span></h3>
+<p>처음 제안으로 돌아갑니다. 로그인이 필요한 API(내 계정, 다음 사이클의 내 도서관)는 어차피 그 계정의 자료를 DB에서 읽습니다. 그때 계정이 없으면 거절하는 것이라 따로 드는 비용이 거의 없습니다. 탈퇴한 계정의 토큰은 바로 막힙니다. 로그아웃한 뒤 미리 훔쳐 둔 토큰이 최대 15분 쓰일 수 있다는 점은 받아들입니다. 그 시간이 길게 느껴지시면 5번의 15분을 줄이는 것으로 조절합니다.</p>
+<p class="alt"><b>알고 고르실 점</b>: OWASP ASVS 기본 등급(7.4.1)은 "로그아웃하면 그 로그인을 더 못 쓰게"를 요구합니다. "나"는 탈퇴는 채우지만 로그아웃은 15분 동안 엄밀히 채우지 못합니다. 이 차이를 문서에 적어 둡니다.</p>
+<p class="alt"><b>다른 선택</b>: 다(엄격하지만 사실상 세션), 가(가장 단순).</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">15</span>네이버와 카카오를 다르게 하면? 다른 서비스의 탈퇴는?</h2>
+<div class="gist">다르게 할 수 있습니다. 카카오는 다시 로그인하지 않아도 연결을 끊을 수 있고, 네이버는 유효한 네이버 토큰이 있어야 끊을 수 있습니다. 그 토큰을 어떻게 구하느냐가 갈림길입니다.</div>
+<div class="item">
+<h3>네이버 로그인을 쓰는 서비스의 탈퇴 (네이버 공식 가이드)</h3>
+<p>가이드가 적은 절차는 이렇습니다. 탈퇴 때 서비스가 네이버의 토큰 폐기 주소를 부릅니다. 이때 유효한 접근 토큰이 필요합니다. 접근 토큰은 1시간이면 만료되므로, 만료됐으면 <b>저장해 둔 갱신 토큰</b>으로 새로 받거나 <b>사용자에게 다시 로그인</b>을 시킵니다. 다시 로그인시키는 설정(<code>auth_type=reauthenticate</code>)의 쓰임을 가이드가 "서비스 해지 또는 탈퇴"라고 적어 두었습니다.</p>
+<p>즉 공식적으로 두 길이 있습니다. 서비스들이 둘 중 어느 쪽을 더 많이 쓰는지 알려 주는 자료는 없습니다 <span class="an2">[확인 못 함]</span>.</p>
+</div>
+<div class="item">
+<h3>고를 수 있는 길</h3>
+<table>
+<tr><th></th><th>카카오 사용자의 탈퇴</th><th>네이버 사용자의 탈퇴</th><th>알아 둘 점</th></tr>
+<tr><td><b>가</b> 둘 다 다시 로그인 (10월 1일 결정)</td><td>안내 → 다시 로그인 → 탈퇴</td><td>안내 → 다시 로그인 → 탈퇴</td><td>두 제공자가 똑같이 동작. 네이버·카카오 토큰을 저장하지 않음</td></tr>
+<tr><td><b>나</b> 다르게</td><td>안내 → "탈퇴" 확인 → 탈퇴</td><td>안내 → 다시 로그인 → 탈퇴</td><td>카카오 쪽이 한 단계 짧음. 화면 흐름과 시험할 것이 두 벌. 카카오 사용자는 열려 있는 화면에서 남이 탈퇴시킬 수 있음</td></tr>
+<tr><td><b>다</b> 둘 다 확인 창만</td><td>안내 → "탈퇴" 확인 → 탈퇴</td><td>안내 → "탈퇴" 확인 → 탈퇴</td><td>네이버 갱신 토큰을 DB에 저장해야 함("제공자 토큰은 저장하지 않는다"는 결정을 바꿈). 네이버 갱신 토큰의 수명이 가이드에 적혀 있지 않아, 만료됐으면 결국 다시 로그인</td></tr>
+</table>
+</div>
+<div class="item">
+<h3><span class="no">15</span>"가"를 유지: 둘 다 다시 로그인, 그 뒤 5분 안에만 탈퇴 <span class="an">[안]</span></h3>
+<p>두 제공자를 똑같이 다루면 화면과 시험이 한 벌이고, 네이버 토큰을 저장하지 않아도 됩니다. 다시 로그인은 네이버·카카오에 로그인돼 있어도 비밀번호를 다시 묻는 방식이라 본인 확인이 됩니다. 탈퇴는 한 사람이 평생 한 번 하는 일이라 한 단계가 더 있어도 부담이 작습니다.</p>
+<p class="alt"><b>다른 선택</b>: 나(카카오만 짧게), 다(둘 다 짧게, 네이버 토큰 저장).</p>
+</div>
+</section>
+
+<p class="foot">출처: <code>docs/cycles/05-login-account/research.md</code> 12절. 지금까지 정하신 것은 <code>spec.md</code>에 반영했습니다.</p>
+</main>
+</body>
+</html>

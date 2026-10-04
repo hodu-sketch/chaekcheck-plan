@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>쿠키냐 헤더냐: CSRF와 XSS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 64px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+ul.items{list-style:none;padding:0;margin:0}
+ul.items>li{display:grid;grid-template-columns:34px 1fr;gap:14px;padding:14px 0;border-top:1px solid var(--line)}
+ul.items>li:first-child{border-top:none}
+ul.items svg{width:30px;height:30px;stroke:var(--accent);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;margin-top:4px}
+.items b{display:block}
+.q{color:var(--muted)}
+.src{color:var(--muted);font-size:16px}
+.tag{display:inline-block;font-size:16px;font-weight:500;border-radius:6px;padding:1px 8px;white-space:nowrap}
+.t-ok{background:var(--ok-bg);color:var(--ok)}.t-warn{background:var(--warn-bg);color:var(--warn)}.t-no{background:var(--no-bg);color:var(--no)}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:10px 0}
+th,td{text-align:left;padding:8px 10px;border-top:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:500}
+figure{margin:0 0 8px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:18px;margin-top:8px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+</style>
+</head>
+<body>
+<main>
+<p class="lead">CSRF는 로그인 정보가<br>"자동으로 같이 전송되기 때문에" 생깁니다.</p>
+<p class="sub">세션이냐 JWT냐와는 상관없습니다. 로그인 정보를 쿠키에 두면 CSRF 방어가 필요하고, 헤더로 직접 보내면 CSRF는 없지만 XSS에 약해집니다. chaekcheck는 <code>HttpOnly</code> 쿠키 + CSRF 토큰으로 갑니다. 공식 문서 확인일 2026-10-03.</p>
+
+<section class="card">
+<h2><span class="num">1</span>질문과 답</h2>
+<div class="gist">사용자 질문: <span class="q">"세션으로 하면 굳이 고려할 필요가 없는 거 아니야? 세션 정보를 그냥 필요할 때 같이 전송하면 되는 거 아니야?"</span></div>
+<ul class="items">
+<li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg><div><b>"같이 전송되는 것"은 방어가 아니라 원인입니다</b>세션 번호는 쿠키에 있고, 브라우저는 우리 사이트로 가는 요청이면 누가 시작했든 쿠키를 붙입니다. 그래서 다른 사이트가 시작한 요청에도 로그인 정보가 실려 옵니다. <span class="src">OWASP CSRF Prevention Cheat Sheet: "Since browser requests automatically include all cookies including session cookies, this attack works unless proper authorization is used."</span></div></li>
+<li><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><circle cx="12" cy="12" r="9"/></svg><div><b>"필요할 때만 직접 골라서 전송"이라면 맞는 방법입니다</b>우리 화면 코드가 로그인 값을 헤더에 직접 넣어 보내면 브라우저가 자동으로 붙이지 않으므로 CSRF가 없습니다. 대신 그 값을 스크립트가 읽을 수 있는 곳에 둬야 합니다. 여기서 다른 위험(XSS)이 생깁니다. 카드 3에서 설명합니다.</div></li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>쿠키에 두면: 다른 사이트가 시작한 요청에도 붙습니다</h2>
+<div class="gist">나쁜 사이트는 우리 쿠키를 읽을 수 없습니다. 하지만 읽을 필요가 없습니다. 브라우저가 대신 붙여 주기 때문입니다.</div>
+<figure>
+<svg viewBox="0 0 900 210" role="img" aria-label="나쁜 사이트가 시작한 요청에 브라우저가 우리 쿠키를 붙여 보내는 과정">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+<g font-family="Noto Sans KR, sans-serif" fill="var(--text)" text-anchor="middle">
+<rect x="10" y="40" width="240" height="100" rx="10" fill="var(--no-bg)" stroke="var(--no)" stroke-width="2"/>
+<text x="130" y="72" font-size="16" font-weight="700">① 나쁜 사이트</text>
+<text x="130" y="98" font-size="14">숨긴 양식으로 우리 주소에</text>
+<text x="130" y="120" font-size="14">"탈퇴" 요청을 보내게 함</text>
+<line x1="252" y1="90" x2="317" y2="90" stroke="var(--muted)" stroke-width="2" marker-end="url(#ar)"/>
+<rect x="321" y="40" width="250" height="100" rx="10" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="2"/>
+<text x="446" y="72" font-size="16" font-weight="700">② 사용자의 브라우저</text>
+<text x="446" y="98" font-size="14">우리 사이트로 가는 요청이므로</text>
+<text x="446" y="120" font-size="14">로그인 쿠키를 자동으로 붙임</text>
+<line x1="573" y1="90" x2="638" y2="90" stroke="var(--muted)" stroke-width="2" marker-end="url(#ar)"/>
+<rect x="642" y="40" width="248" height="100" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+<text x="766" y="72" font-size="16" font-weight="700">③ 우리 서버</text>
+<text x="766" y="98" font-size="14">쿠키가 맞으므로</text>
+<text x="766" y="120" font-size="14">본인이 보낸 요청으로 처리</text>
+<text x="450" y="182" font-size="15" fill="var(--muted)">사용자는 나쁜 사이트를 열었을 뿐, 탈퇴를 누른 적이 없음</text>
+</g></svg>
+<figcaption>②가 핵심입니다. 요청을 시작한 곳이 어디든 쿠키는 붙습니다. 세션 번호 쿠키든 JWT 쿠키든 같습니다.</figcaption>
+</figure>
+<ul class="items">
+<li><svg viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg><div><b>막는 방법: 자동으로 안 붙는 자리에 값을 하나 더 요구</b>서버가 무작위 값(CSRF 토큰)을 주고, 우리 화면이 바꾸는 요청마다 그 값을 헤더에 넣게 합니다. 나쁜 사이트는 그 값을 읽을 수 없어 헤더를 채우지 못합니다. <span class="src">Spring Security CSRF 문서: 토큰은 브라우저가 자동으로 넣지 않는 자리(HTTP 파라미터나 헤더)에 있어야 하고, 쿠키로 요구하면 소용없음</span></div></li>
+<li><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 12h10"/></svg><div><b>보조: 쿠키의 <code>SameSite</code></b>다른 사이트에서 시작한 요청에는 쿠키를 붙이지 말라고 브라우저에 알립니다. 보조로만 쓰라고 합니다. <span class="src">OWASP CSRF Prevention Cheat Sheet: "SameSite is useful as a defense-in-depth control but it does not replace a proper CSRF defense in most deployments."</span></div></li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>헤더로 직접 보내면: CSRF는 없고, 대신 스크립트가 값을 읽을 수 있습니다</h2>
+<div class="gist">헤더는 화면 코드가 넣어야 붙습니다. 그러려면 화면 코드가 그 값을 읽을 수 있어야 하고, 그러면 화면에 끼어든 남의 스크립트도 읽을 수 있습니다.</div>
+<ul class="items">
+<li><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><circle cx="12" cy="12" r="9"/></svg><div><b>CSRF가 없는 이유</b>다른 사이트는 우리 주소로 가는 요청에 임의의 헤더를 붙일 수 없습니다. 브라우저의 같은 출처 규칙이 막습니다. 값이 헤더로만 오는 구조라면 다른 사이트가 시작한 요청에는 로그인 값이 실리지 않습니다. <span class="src">OWASP CSRF Prevention Cheat Sheet "Disallowing simple requests": 사용자 정의 헤더가 붙은 요청은 브라우저가 먼저 허락을 구함(preflight)</span></div></li>
+<li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg><div><b>대신 생기는 문제: 값을 둘 곳</b>헤더에 넣으려면 값을 화면 코드가 꺼낼 수 있는 곳에 둬야 합니다. 브라우저에서는 보통 localStorage입니다. 여기에 둔 값은 그 페이지에서 실행되는 모든 스크립트가 읽습니다. XSS가 한 번 나면 값을 통째로 가져갑니다. <span class="src">OWASP HTML5 Security Cheat Sheet: "Do not store session identifiers in local storage as the data is always accessible by JavaScript. Cookies can mitigate this risk using the httpOnly flag." "A single Cross Site Scripting can be used to steal all the data in these objects"</span></div></li>
+<li><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><div><b><code>HttpOnly</code> 쿠키는 스크립트가 못 읽습니다</b>그래서 쿠키 쪽은 XSS가 나도 값 자체를 밖으로 빼 가지 못합니다. <span class="src">OWASP Session Management Cheat Sheet: <code>HttpOnly</code>는 브라우저가 스크립트에 <code>document.cookie</code>로 쿠키를 주지 않게 함</span></div></li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>두 자리의 비교</h2>
+<div class="gist">한쪽 위험을 없애면 다른 쪽 위험이 생깁니다. 어느 쪽이 방어하기 쉬운가로 고릅니다.</div>
+<table>
+<tr><th></th><th><code>HttpOnly</code> 쿠키 (브라우저가 자동 전송)</th><th>스크립트가 읽는 곳 + 헤더로 직접 전송</th></tr>
+<tr><td>CSRF</td><td><span class="tag t-warn">방어 필요</span> CSRF 토큰으로 막음. Spring Security가 기본 제공</td><td><span class="tag t-ok">없음</span></td></tr>
+<tr><td>XSS가 났을 때 로그인 값</td><td><span class="tag t-ok">못 읽음</span></td><td><span class="tag t-no">빼 갈 수 있음</span> 공격자가 자기 컴퓨터에서 계속 씀</td></tr>
+<tr><td>XSS가 났을 때 그 밖의 피해</td><td>그 페이지가 열려 있는 동안 사용자인 척 요청을 보낼 수 있음</td><td>같음</td></tr>
+<tr><td>세션이냐 JWT냐</td><td>상관없음</td><td>상관없음</td></tr>
+</table>
+<ul class="items">
+<li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg><div><b>쿠키 쪽도 XSS에 안전한 것은 아닙니다</b><code>HttpOnly</code>는 값을 훔쳐 가는 것만 막습니다. 끼어든 스크립트는 우리 화면 안에서 요청을 보낼 수 있고, 그 요청에는 쿠키가 붙습니다. CSRF 토큰도 읽을 수 있습니다. 그래서 XSS는 화면에서 따로 막아야 합니다. <span class="src">OWASP Session Management Cheat Sheet: XSS와 CSRF가 결합되면 브라우저가 쿠키를 붙여 보냄. OWASP CSRF Prevention Cheat Sheet: "Cross-Site Scripting (XSS) can defeat all CSRF mitigation techniques!"</span></div></li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="num">5</span>chaekcheck의 선택</h2>
+<div class="gist">웹은 로그인 토큰을 <code>HttpOnly</code> 쿠키에 두고 CSRF 토큰으로 막습니다. CSRF는 프레임워크가 기본으로 막아 주고, 토큰을 통째로 빼앗기는 것은 한번 나면 되돌릴 방법이 적기 때문입니다.</div>
+<table>
+<tr><th>무엇</th><th>어떻게</th></tr>
+<tr><td>액세스 토큰, 리프레시 토큰</td><td><code>HttpOnly</code>·<code>Secure</code>·<code>SameSite=Lax</code> 쿠키. 스크립트가 못 읽음</td></tr>
+<tr><td>CSRF 토큰</td><td>쿠키 <code>XSRF-TOKEN</code>(스크립트가 읽을 수 있음) → 화면이 헤더 <code>X-XSRF-TOKEN</code>에 넣음. 대상은 로그아웃, 가입 동의, 탈퇴, 토큰 갱신</td></tr>
+<tr><td>CSRF 대상이 아닌 것</td><td>검색 등 읽기(GET) 요청. 카카오 웹훅·네이버 콜백(브라우저가 아니라 제공자 서버가 보냄. 어드민 키·서명으로 확인)</td></tr>
+<tr><td>XSS</td><td>화면에서 글자를 글자로만 출력(<code>dangerouslySetInnerHTML</code> 금지). 도서관 사이트에서 온 책 제목·저자도 글자로만</td></tr>
+<tr><td>폰 앱 (나중)</td><td>반대로 갑니다. 토큰을 기기의 보안 저장소에 두고 헤더로 보냅니다. 앱에는 다른 사이트의 스크립트가 끼어들 자리가 없고, 쿠키 자동 전송도 없어 CSRF가 없습니다</td></tr>
+</table>
+</section>
+
+<p class="foot">이 글은 요약이며 근거는 원본에 있습니다: <code>docs/cycles/05-login-account/research.md</code> 9·11절(출처 URL과 확인 날짜), <code>spec.md</code> R4. 출처: OWASP Cheat Sheet Series(Cross-Site Request Forgery Prevention, HTML5 Security, Session Management), Spring Security CSRF 문서.</p>
+</main></body></html>

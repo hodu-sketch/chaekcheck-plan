@@ -45,6 +45,6 @@ The dev project imports `docs/current/handoff.md` from its `CLAUDE.md`, so keep 
 - Review documents in the browser with the `plan-canvas` skill when `ecc-plan-canvas` is installed; otherwise review in the conversation and tell the user the canvas is unavailable.
 - Review documents with the plan-canvas skill in proposal review mode (each [안] decided 승인/미승인/기타 in the canvas, 기타 = question or suggestion; once all are decided, move to the next step without asking).
 - Whenever a document gains or changes Mermaid diagrams, show them to the user rendered (canvas, or a rendered HTML page sent with `SendUserFile`), not only as text.
-- Use AskUserQuestion for decisions during a cycle; subagents cannot ask the user, so collect answers in the main conversation.
+- Decisions, follow-up questions and ADR drafts go to the user through the canvas as a plain-language decision page (see the `plan-canvas` and `plain-page` skills: evidence from official sources, diagrams, PC/tablet/phone mock-ups for screens). Use AskUserQuestion or a list in the conversation only when the user asks for it, is on another device, or the canvas is unavailable. Subagents cannot ask the user, so collect answers in the main conversation.
 - Verify external facts (APIs, libraries, versions, data sources) against official sources and cite the URL and check date. If it cannot be verified, say so.
 - Commits: the author is the git config user (`yujeong <yujeong9104@gmail.com>`). Keep the `Co-Authored-By: Claude` line in commit messages.

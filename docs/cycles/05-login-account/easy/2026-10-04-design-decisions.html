@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>설계에서 정할 것 12가지</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">설계에서 정해 주실 것은 12가지입니다.<br>모두 제 추천이 적혀 있습니다.</p>
+<p class="sub">설계 담당 에이전트가 dev 코드와 공식 문서를 읽고 만든 안(<code>architect-proposal.md</code>)을 쉬운 말로 풀었습니다(2026-10-04). 이미 정하신 것(JWT, 로그인한 지 30일, 계정 확인, 탈퇴 재인증 등)은 다시 묻지 않습니다. 앞쪽에 전체 그림 다섯 장을 먼저 두고, 그 뒤에 고를 것을 적었습니다. 글 상자에 적은 말은 "승인"을 눌러도 함께 갑니다.</p>
+
+<section class="card"><h2><span class="num">가</span>전체 그림</h2><div class="gist">새 모듈은 <code>auth</code> 하나입니다. 기존 모듈 넷은 바뀌지 않고, <code>auth</code>와 서로 부르지도 않습니다.</div><figure><svg viewBox="0 0 900 380" role="img" aria-label="모듈 구성도"><defs><marker id="m1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+<g font-family="Noto Sans KR, sans-serif" font-size="15" fill="var(--text)" text-anchor="middle">
+<rect x="250" y="10" width="400" height="50" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="2"/><text x="450" y="41" font-weight="700">화면 (web)</text>
+<rect x="20" y="110" width="860" height="200" rx="12" fill="none" stroke="var(--line)" stroke-width="2" stroke-dasharray="6 5"/><text x="36" y="132" text-anchor="start" font-size="13" fill="var(--muted)">우리 서버 한 대</text>
+<rect x="50" y="150" width="250" height="110" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/><text x="175" y="180" font-weight="700">auth (새 모듈)</text><text x="175" y="204" font-size="13">로그인 · 가입 · 토큰</text><text x="175" y="224" font-size="13">로그아웃 · 탈퇴</text><text x="175" y="244" font-size="13">네이버·카카오 알림 받기</text>
+<rect x="380" y="150" width="220" height="110" rx="10" fill="var(--card)" stroke="var(--line)" stroke-width="2"/><text x="490" y="184" font-weight="700">기존 모듈 넷</text><text x="490" y="208" font-size="13">catalog · availability</text><text x="490" y="228" font-size="13">library · region</text><text x="490" y="248" font-size="13" fill="var(--muted)">바뀌지 않음</text>
+<rect x="680" y="150" width="170" height="110" rx="10" fill="var(--code-bg)" stroke="var(--line)" stroke-width="2"/><text x="765" y="190" font-weight="700">이벤트 기록 표</text><text x="765" y="214" font-size="13">"계정이 지워졌다"</text><text x="765" y="234" font-size="13">를 적어 두는 곳</text>
+<rect x="50" y="330" width="250" height="44" rx="22" fill="var(--code-bg)" stroke="var(--line)" stroke-width="2"/><text x="175" y="358" font-weight="700">네이버 · 카카오</text>
+<g stroke="var(--muted)" stroke-width="2" fill="none" marker-end="url(#m1)"><path d="M330 60 L200 148"/><path d="M520 60 L500 148"/><path d="M150 262 V328"/><path d="M220 328 V264"/><path d="M300 290 C460 300 640 290 700 262"/></g>
+<text x="215" y="100" font-size="13" fill="var(--muted)">로그인 · 내 계정</text><text x="590" y="100" font-size="13" fill="var(--muted)">검색 (지금과 같음)</text>
+<text x="112" y="300" font-size="13" fill="var(--muted)">로그인 확인</text><text x="268" y="300" font-size="13" fill="var(--muted)">연결 끊김 알림</text><text x="520" y="302" font-size="13" fill="var(--muted)">계정 삭제 기록</text>
+</g></svg><figcaption>화면은 로그인에 관한 것만 auth에 묻고, 검색은 지금처럼 기존 모듈에 묻습니다. auth와 기존 모듈 사이에는 화살표가 없습니다.</figcaption></figure><p class="mkt">저장하는 표 넷</p><figure><svg viewBox="0 0 900 330" role="img" aria-label="표 관계"><g font-family="Noto Sans KR, sans-serif" font-size="14" fill="var(--text)">
+<g stroke="var(--muted)" stroke-width="2" fill="none"><path d="M450 120 V150 H150 V180"/><path d="M450 120 V180"/><path d="M450 120 V150 H750 V180"/></g>
+<rect x="330" y="10" width="240" height="110" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/><text x="450" y="36" text-anchor="middle" font-weight="700">우리 계정 (account)</text><text x="350" y="62">번호</text><text x="350" y="84">만든 때</text><text x="350" y="106">마지막 로그인 때</text>
+<rect x="30" y="180" width="240" height="130" rx="10" fill="var(--card)" stroke="var(--line)" stroke-width="2"/><text x="150" y="206" text-anchor="middle" font-weight="700">로그인 수단 (login_method)</text><text x="50" y="232">종류: 네이버 / 카카오</text><text x="50" y="254">그 수단 안의 번호</text><text x="50" y="280" fill="var(--muted)" font-size="13">나중에 "비밀번호"도</text><text x="50" y="298" fill="var(--muted)" font-size="13">종류 하나로 더할 수 있음</text>
+<rect x="330" y="180" width="240" height="130" rx="10" fill="var(--card)" stroke="var(--line)" stroke-width="2"/><text x="450" y="206" text-anchor="middle" font-weight="700">동의 기록 (account_consent)</text><text x="350" y="232">무엇에 동의했나</text><text x="350" y="254">문서 버전</text><text x="350" y="276">동의한 때</text>
+<rect x="630" y="180" width="240" height="130" rx="10" fill="var(--card)" stroke="var(--line)" stroke-width="2"/><text x="750" y="206" text-anchor="middle" font-weight="700">리프레시 토큰 (refresh_token)</text><text x="650" y="232">지금 값의 지문</text><text x="650" y="254">바로 앞 값의 지문</text><text x="650" y="276">만료 시각 (로그인 + 30일)</text><text x="650" y="298" fill="var(--muted)" font-size="13">브라우저 하나에 한 줄</text>
+<text x="160" y="170" font-size="13" fill="var(--muted)">계정 하나에 1개(나중에 여럿)</text><text x="460" y="170" font-size="13" fill="var(--muted)">3개</text><text x="760" y="170" font-size="13" fill="var(--muted)">기기 수만큼</text>
+</g></svg><figcaption>계정이 지워지면 아래 세 표의 그 계정 줄도 함께 지워집니다. 이메일·이름·네이버·카카오가 준 토큰은 어느 표에도 없습니다.</figcaption></figure><p class="mkt">처음 로그인해서 가입하기까지</p><figure><svg viewBox="0 0 900 586" role="img" aria-label="처음 로그인과 가입 순서"><defs><marker id="sq" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs><g font-family="Noto Sans KR, sans-serif" font-size="14" fill="var(--text)"><line x1="90" y1="40" x2="90" y2="576" stroke="var(--line)" stroke-width="2"/><rect x="20" y="6" width="140" height="34" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.5"/><text x="90" y="28" text-anchor="middle" font-weight="700">사용자</text><line x1="330" y1="40" x2="330" y2="576" stroke="var(--line)" stroke-width="2"/><rect x="260" y="6" width="140" height="34" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.5"/><text x="330" y="28" text-anchor="middle" font-weight="700">화면</text><line x1="570" y1="40" x2="570" y2="576" stroke="var(--line)" stroke-width="2"/><rect x="500" y="6" width="140" height="34" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.5"/><text x="570" y="28" text-anchor="middle" font-weight="700">우리 서버</text><line x1="810" y1="40" x2="810" y2="576" stroke="var(--line)" stroke-width="2"/><rect x="740" y="6" width="140" height="34" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.5"/><text x="810" y="28" text-anchor="middle" font-weight="700">네이버·카카오</text><line x1="90" y1="82" x2="328" y2="82" stroke="var(--muted)" stroke-width="2"  marker-end="url(#sq)"/><text x="210" y="75" text-anchor="middle">"로그인" 누름</text><line x1="330" y1="128" x2="568" y2="128" stroke="var(--muted)" stroke-width="2"  marker-end="url(#sq)"/><text x="450" y="121" text-anchor="middle">로그인 시작</text><rect x="562" y="154" width="16" height="26" fill="var(--accent)"/><text x="586" y="172" >확인 값을 임시로 보관 (제안 3)</text><line x1="570" y1="220" x2="808" y2="220" stroke="var(--muted)" stroke-width="2"  marker-end="url(#sq)"/><text x="690" y="213" text-anchor="middle">로그인 화면으로 보냄</text><line x1="810" y1="266" x2="572" y2="266" stroke="var(--muted)" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#sq)"/><text x="690" y="259" text-anchor="middle">로그인됨 + 확인 값</text><rect x="562" y="292" width="16" height="26" fill="var(--accent)"/><text x="586" y="310" >확인 값 대조, 회원번호 받음</text><line x1="570" y1="358" x2="332" y2="358" stroke="var(--muted)" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#sq)"/><text x="450" y="351" text-anchor="middle">처음 온 계정 → /signup</text><line x1="90" y1="404" x2="328" y2="404" stroke="var(--muted)" stroke-width="2"  marker-end="url(#sq)"/><text x="210" y="397" text-anchor="middle">확인란 셋 표시, "가입"</text><line x1="330" y1="450" x2="568" y2="450" stroke="var(--muted)" stroke-width="2"  marker-end="url(#sq)"/><text x="450" y="443" text-anchor="middle">가입 요청</text><rect x="562" y="476" width="16" height="26" fill="var(--accent)"/><text x="586" y="494" >계정·동의 기록 저장, 토큰 발급</text><line x1="570" y1="542" x2="332" y2="542" stroke="var(--muted)" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#sq)"/><text x="450" y="535" text-anchor="middle">쿠키 둘 + 보던 화면으로</text></g></svg><figcaption>"가입"을 누르기 전에는 DB에 아무것도 저장하지 않습니다. 실선은 요청, 점선은 응답입니다.</figcaption></figure><p class="mkt">15분마다 토큰을 새로 받을 때</p><figure><svg viewBox="0 0 900 494" role="img" aria-label="토큰 갱신 순서"><defs><marker id="sq" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs><g font-family="Noto Sans KR, sans-serif" font-size="14" fill="var(--text)"><line x1="90" y1="40" x2="90" y2="484" stroke="var(--line)" stroke-width="2"/><rect x="20" y="6" width="140" height="34" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.5"/><text x="90" y="28" text-anchor="middle" font-weight="700">화면</text><line x1="450" y1="40" x2="450" y2="484" stroke="var(--line)" stroke-width="2"/><rect x="380" y="6" width="140" height="34" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.5"/><text x="450" y="28" text-anchor="middle" font-weight="700">우리 서버</text><line x1="810" y1="40" x2="810" y2="484" stroke="var(--line)" stroke-width="2"/><rect x="740" y="6" width="140" height="34" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.5"/><text x="810" y="28" text-anchor="middle" font-weight="700">DB</text><line x1="90" y1="82" x2="448" y2="82" stroke="var(--muted)" stroke-width="2"  marker-end="url(#sq)"/><text x="270" y="75" text-anchor="middle">내 계정 요청 (액세스 토큰 만료)</text><line x1="450" y1="128" x2="92" y2="128" stroke="var(--muted)" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#sq)"/><text x="270" y="121" text-anchor="middle">401</text><rect x="82" y="154" width="16" height="26" fill="var(--accent)"/><text x="106" y="172" >탭끼리 한 번에 하나만 갱신 (제안 2)</text><line x1="90" y1="220" x2="448" y2="220" stroke="var(--muted)" stroke-width="2"  marker-end="url(#sq)"/><text x="270" y="213" text-anchor="middle">갱신 요청 (리프레시 토큰)</text><line x1="450" y1="266" x2="808" y2="266" stroke="var(--muted)" stroke-width="2"  marker-end="url(#sq)"/><text x="630" y="259" text-anchor="middle">이 값이 지금 값인가</text><line x1="810" y1="312" x2="452" y2="312" stroke="var(--muted)" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#sq)"/><text x="630" y="305" text-anchor="middle">맞음</text><line x1="450" y1="358" x2="808" y2="358" stroke="var(--muted)" stroke-width="2"  marker-end="url(#sq)"/><text x="630" y="351" text-anchor="middle">새 값으로 바꿈 (만료 시각은 그대로)</text><line x1="450" y1="404" x2="92" y2="404" stroke="var(--muted)" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#sq)"/><text x="270" y="397" text-anchor="middle">새 쿠키 둘</text><line x1="90" y1="450" x2="448" y2="450" stroke="var(--muted)" stroke-width="2"  marker-end="url(#sq)"/><text x="270" y="443" text-anchor="middle">원래 요청을 다시 보냄</text></g></svg><figcaption>리프레시 토큰을 새 값으로 바꿔도 만료 시각은 로그인한 때 정한 30일 그대로입니다.</figcaption></figure><p class="mkt">탈퇴할 때</p><figure><svg viewBox="0 0 900 586" role="img" aria-label="탈퇴 순서"><defs><marker id="sq" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs><g font-family="Noto Sans KR, sans-serif" font-size="14" fill="var(--text)"><line x1="90" y1="40" x2="90" y2="576" stroke="var(--line)" stroke-width="2"/><rect x="20" y="6" width="140" height="34" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.5"/><text x="90" y="28" text-anchor="middle" font-weight="700">사용자</text><line x1="330" y1="40" x2="330" y2="576" stroke="var(--line)" stroke-width="2"/><rect x="260" y="6" width="140" height="34" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.5"/><text x="330" y="28" text-anchor="middle" font-weight="700">화면</text><line x1="570" y1="40" x2="570" y2="576" stroke="var(--line)" stroke-width="2"/><rect x="500" y="6" width="140" height="34" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.5"/><text x="570" y="28" text-anchor="middle" font-weight="700">우리 서버</text><line x1="810" y1="40" x2="810" y2="576" stroke="var(--line)" stroke-width="2"/><rect x="740" y="6" width="140" height="34" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.5"/><text x="810" y="28" text-anchor="middle" font-weight="700">네이버·카카오</text><line x1="90" y1="82" x2="328" y2="82" stroke="var(--muted)" stroke-width="2"  marker-end="url(#sq)"/><text x="210" y="75" text-anchor="middle">탈퇴 안내에서 "계속"</text><line x1="330" y1="128" x2="568" y2="128" stroke="var(--muted)" stroke-width="2"  marker-end="url(#sq)"/><text x="450" y="121" text-anchor="middle">본인 확인 시작</text><line x1="570" y1="174" x2="808" y2="174" stroke="var(--muted)" stroke-width="2"  marker-end="url(#sq)"/><text x="690" y="167" text-anchor="middle">다시 로그인 화면으로</text><line x1="810" y1="220" x2="572" y2="220" stroke="var(--muted)" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#sq)"/><text x="690" y="213" text-anchor="middle">다시 로그인됨</text><rect x="562" y="246" width="16" height="26" fill="var(--accent)"/><text x="586" y="264" >같은 계정인지 확인, 시각 기록</text><line x1="570" y1="312" x2="332" y2="312" stroke="var(--muted)" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#sq)"/><text x="450" y="305" text-anchor="middle">확인됨</text><line x1="330" y1="358" x2="568" y2="358" stroke="var(--muted)" stroke-width="2"  marker-end="url(#sq)"/><text x="450" y="351" text-anchor="middle">탈퇴 요청</text><rect x="562" y="384" width="16" height="26" fill="var(--accent)"/><text x="586" y="402" >확인 뒤 5분 안인가</text><line x1="570" y1="450" x2="808" y2="450" stroke="var(--muted)" stroke-width="2"  marker-end="url(#sq)"/><text x="690" y="443" text-anchor="middle">연결 끊기 (실패해도 계속)</text><rect x="562" y="476" width="16" height="26" fill="var(--accent)"/><text x="586" y="494" >계정 삭제 + "계정 삭제됨" 기록</text><line x1="570" y1="542" x2="332" y2="542" stroke="var(--muted)" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#sq)"/><text x="450" y="535" text-anchor="middle">쿠키 지움, 완료</text></g></svg><figcaption>다시 로그인한 계정이 지금 계정과 같고, 5분 안일 때만 삭제합니다.</figcaption></figure></section>
+
+<section class="card"><h2><span class="num">나</span>토큰 (2가지)</h2><div class="gist">정하신 JWT 방식을 실제로 만들 때 갈리는 두 곳입니다.</div><div class="item"><h3><span class="no">1</span>서명 방식: 비밀 키 하나로 서명하고 확인 (HS256) <span class="an">[안]</span></h3><p>JWT는 서버가 "이 토큰은 내가 만들었다"고 서명한 것입니다. 서명 방식은 둘입니다. 하나는 <b>같은 비밀 키</b>로 서명하고 확인하는 방식이고, 다른 하나는 <b>키 한 쌍</b>(서명용, 확인용)을 쓰는 방식입니다. 토큰을 만드는 곳과 확인하는 곳이 우리 서버 하나뿐이므로 비밀 키 하나면 됩니다. 키는 서버 환경 변수에만 둡니다.</p>
+<p>키를 바꿀 때는 환경 변수를 바꾸고 서버를 다시 켭니다. 옛 키로 만든 액세스 토큰은 거절되고, 화면이 알아서 새 토큰을 받습니다. 사용자는 다시 로그인하지 않습니다.</p>
+<p class="alt"><b>다른 선택</b>: 키 한 쌍(ES256). 나중에 다른 서버가 토큰을 확인하게 될 때 필요합니다. 지금은 키 관리만 늘어납니다. 나중에 바꿔도 영향은 15분입니다.</p>
+<span class="src">RFC 7518 3.2절: HS256의 키는 256비트 이상이어야 함. https://www.rfc-editor.org/rfc/rfc7518.html (2026-10-04)</span></div><div class="item"><h3><span class="no">2</span>여러 탭이 동시에 토큰을 새로 받을 때: 화면이 한 번에 한 탭만 하게 함 <span class="an">[안]</span></h3><p>탭을 셋 열어 두면 15분 뒤 세 탭이 동시에 갱신을 요청할 수 있습니다. 첫 탭이 리프레시 토큰을 새것으로 바꾸면, 나머지 두 탭은 <b>이미 쓴 옛 토큰</b>을 내밀게 됩니다. 7번에서 정하신 규칙("이미 쓴 토큰이 또 오면 그 로그인을 끊음")대로면 멀쩡한 사용자가 로그아웃됩니다.</p>
+<p>추천은 화면 쪽에서 막는 것입니다. 브라우저 기능(Web Locks)으로 탭끼리 순서를 정해, 한 탭이 갱신하는 동안 다른 탭은 기다렸다가 새 쿠키를 그대로 씁니다. 서버의 규칙은 엄격한 그대로입니다.</p>
+<p class="alt"><b>이 길의 약점</b>: 서버는 토큰을 바꿨는데 응답이 인터넷에서 사라지는 드문 경우, 그 브라우저는 다음 갱신 때 로그아웃됩니다. 다시 로그인하면 됩니다.</p>
+<p class="alt"><b>다른 선택</b>: 서버가 바로 앞 토큰을 몇 초 동안은 받아 줌. 위 약점까지 막지만, "이미 쓴 토큰이 오면 끊는다"는 규칙에 몇 초짜리 예외가 생깁니다.</p>
+<span class="src">MDN Web Locks API: 같은 출처의 다른 스크립트가 같은 잠금을 동시에 얻지 못함. 2022년 3월부터 주요 브라우저 지원. https://developer.mozilla.org/en-US/docs/Web/API/Web_Locks_API · Auth0도 "몇 초 받아 줌" 설정이 있고 기본은 꺼짐. https://auth0.com/docs/secure/tokens/refresh-tokens/configure-refresh-token-rotation (2026-10-04)</span></div></section>
+
+<section class="card"><h2><span class="num">다</span>로그인 도중 (4가지)</h2><div class="gist">로그인 버튼을 누른 뒤부터 가입이 끝나기까지 몇 분 동안의 일입니다.</div><div class="item"><h3><span class="no">3</span>로그인 도중의 임시 값: 서버 메모리에 몇 분만 둠 <span class="an">[안]</span></h3><p>로그인 도중에는 잠깐 들고 있어야 하는 값이 있습니다. 네이버·카카오에 보낸 확인 값, 가입 동의 전의 회원번호, 탈퇴 본인 확인 기록입니다. 이 값들을 둘 곳이 선택입니다.</p>
+<table><tr><th></th><th>가. 서버 메모리 (추천)</th><th>나. 암호화한 쿠키</th></tr>
+<tr><td>만들 것</td><td>Spring 기본 기능 그대로</td><td>값을 암호화해 쿠키에 넣고 읽는 코드를 직접 만듦</td></tr>
+<tr><td>서버가 여러 대가 되면</td><td>같은 사람의 요청이 같은 서버로 가게 설정하거나, 그때 "나"로 바꿔야 함</td><td>그대로 동작</td></tr>
+<tr><td>동의 화면을 그냥 떠난 사람</td><td>몇 분 뒤 서버가 알아채고 네이버·카카오 연결을 끊을 수 있음</td><td>서버가 알 수 없음</td></tr>
+<tr><td>서버를 다시 켜면</td><td>그 순간 로그인하던 사람은 "로그인 시간이 지났어요"</td><td>영향 없음</td></tr></table>
+<p><b>알고 고르실 점</b>: "여러 서버가 되어도 Redis 같은 것을 늘리고 싶지 않다"고 하신 것과 정면으로 맞는 쪽은 "나"입니다. 그래도 "가"를 추천하는 이유는 셋입니다. 지금은 서버가 한 대입니다. 몇 분짜리 값이라 나중에 "나"로 바꿔도 옮길 자료가 없습니다. Redis는 "가"에서도 필요 없습니다. 이미 로그인한 사람의 로그인 유지는 이 선택과 상관없이 JWT라서 서버 대수의 영향을 받지 않습니다.</p>
+<span class="src">Spring Security: 로그인 요청은 기본으로 HttpSession에 보관, 다른 곳에 두려면 직접 구현. https://docs.spring.io/spring-security/reference/servlet/oauth2/client/authorization-grants.html (2026-10-04)</span></div><div class="item"><h3><span class="no">4</span>동의 화면을 그냥 떠난 사람: 10분 뒤 네이버·카카오 연결을 끊음 <span class="an">[안]</span></h3><p>동의 화면에서 "취소"를 누르면 연결을 끊기로 3번에서 정하셨습니다. 창을 그냥 닫은 사람은 "취소"를 누르지 않았으므로 네이버·카카오의 "연결된 서비스"에 chaekcheck가 남습니다. 임시 값이 사라지는 10분 뒤에 서버가 그 연결을 끊습니다. 위 3번에서 "가"를 고를 때만 할 수 있습니다.</p>
+<p class="alt"><b>다른 선택</b>: 끊지 않음. 그 사람이 다시 와서 로그인하면 이어서 가입할 수 있습니다. 카카오 정책의 "가입하지 않은 사용자 정보는 24시간 안에 파기"는 우리가 아무것도 저장하지 않으므로 어느 쪽이든 지켜집니다.</p></div><div class="item"><h3><span class="no">5</span>회원번호 받는 방식: 두 제공자 모두 "로그인 뒤 내 정보 조회" <span class="an">[안]</span></h3><p>회원번호를 받는 길이 둘입니다. 로그인 뒤 "내 정보" 주소를 한 번 더 불러 받는 길과, 로그인 응답에 함께 오는 신분 토큰(OIDC)에서 꺼내는 길입니다. 카카오는 둘이 같은 번호라고 문서에 적혀 있습니다. <b>네이버는 둘이 같은 번호인지 문서에 없습니다.</b> 번호가 다르면 나중에 방식을 바꿀 때 이미 가입한 사람을 못 알아봅니다. 그래서 확인된 길(내 정보 조회)로 둘을 똑같이 처리합니다.</p>
+<p class="alt"><b>다른 선택</b>: 신분 토큰(OIDC). 카카오는 "언제 다시 로그인했는지"를 받을 수 있어 탈퇴 본인 확인이 더 단단해집니다. 네이버 번호 확인이 먼저 필요합니다.</p>
+<p class="alt"><b>알아 두실 점</b>: 추천안에서는 "정말 다시 로그인했는지"를 서버가 따로 확인할 근거가 없고, 네이버·카카오에 보낸 "다시 로그인시켜 달라"는 요청을 믿습니다.</p>
+<span class="src">카카오: ID 토큰의 sub는 회원번호. https://developers.kakao.com/docs/ko/kakaologin/rest-api · 네이버 가이드 3.5절에는 해당 문장 없음 [확인 못 함] (2026-10-04)</span></div><div class="item"><h3><span class="no">6</span>로그인 결과를 화면에 알리는 방법: 정해진 주소 뒤에 결과 코드를 붙임 <span class="an">[안]</span></h3><p>네이버·카카오에서 돌아오면 서버가 화면을 <code>/auth/complete?result=login_cancelled</code> 같은 주소로 보냅니다. 화면은 코드를 보고 정하신 문구("로그인을 취소했어요" 등)를 보여 준 뒤 주소에서 코드를 지웁니다. 코드에는 비밀이 없습니다. 실패 문구 11가지에 대응하는 코드 목록은 <code>architect-proposal.md</code> 결정 8에 있습니다.</p>
+<p>"보던 화면으로 돌아오기"는 화면이 로그인 버튼을 누를 때 지금 주소를 브라우저의 임시 저장 공간(탭을 닫으면 사라짐)에 적어 두고, 돌아와서 꺼내 이동합니다. 서버는 돌아갈 주소를 받지 않으므로, 가짜 주소로 사람을 엉뚱한 사이트에 보내는 공격이 통하지 않습니다.</p>
+<p class="alt"><b>다른 선택</b>: 결과를 쿠키로 전달(화면이 쿠키를 읽게 됨), 화면이 서버에 한 번 더 물어봄(요청이 늘어남).</p></div></section>
+
+<section class="card"><h2><span class="num">라</span>탈퇴와 계정 삭제 (2가지)</h2><div class="item"><h3><span class="no">7</span>탈퇴 본인 확인용 로그인 설정을 따로 둠 <span class="an">[안]</span></h3><p>"다시 로그인"은 보통 로그인과 같은 길을 타지만 끝난 뒤 할 일이 다릅니다. 새 로그인을 만들면 안 되고, 같은 계정인지만 확인해야 합니다. 서버 설정에 "본인 확인용"을 네이버·카카오 각각 하나씩 더 두면, 돌아온 주소만 보고도 로그인인지 본인 확인인지 알 수 있습니다. 취소하고 돌아온 경우에도 구분됩니다.</p>
+<p class="alt"><b>사용자가 하실 일이 늘어납니다</b>: 네이버·카카오 개발자 화면에 "돌아올 주소"를 하나씩 더 등록합니다(제공자마다 둘). 네이버가 주소를 여러 개 받아 주는지는 등록 화면에서 확인해야 합니다 [확인 못 함].</p>
+<p class="alt"><b>다른 선택</b>: 설정은 하나로 두고 요청에 "탈퇴용" 표시를 붙임. 등록할 주소는 늘지 않지만 코드가 복잡해집니다.</p>
+<span class="src">Spring Security: 제공자에 보낼 고정 값은 로그인 주소 설정에 붙이는 방법을 안내. https://docs.spring.io/spring-security/reference/servlet/oauth2/client/authorization-grants.html (2026-10-04)</span></div><div class="item"><h3><span class="no">8</span>"계정이 지워졌다" 기록이 남도록, 그 알림을 받는 작은 처리기를 auth 안에 하나 둠 <span class="an">[안]</span></h3><p>계정이 지워지면 "계정 삭제됨" 알림을 내고 기록 표에 남기기로 하셨습니다(다음 사이클의 내 도서관 모듈이 이 알림을 받아 자기 자료를 지웁니다). 그런데 공식 문서를 보니 <b>기록은 알림을 받는 쪽 하나마다 한 줄</b> 생깁니다. 이번 사이클에는 받는 쪽이 없어서 기록이 0줄이 되고, 수용 기준 AC-15("삭제될 때마다 기록이 생긴다")를 통과할 수 없습니다.</p>
+<p>추천은 auth 안에 받는 쪽을 하나 두는 것입니다. 하는 일은 서버 기록에 "계정 12 삭제됨" 한 줄을 남기는 것뿐입니다. 그러면 AC-15가 그대로 통과하고, 기록 표에 쓰고 완료 표시하는 길을 이번에 실제로 시험하게 됩니다.</p>
+<p>기록 표는 어느 모듈의 것도 아니므로 별도 구역(스키마 <code>modulith</code>)에 둡니다. 다음 사이클의 모듈도 같은 표를 씁니다.</p>
+<p class="alt"><b>다른 선택</b>: 받는 쪽을 두지 않고 AC-15를 "알림을 냈는지만 테스트로 확인"으로 바꿈. 하는 일 없는 코드는 없지만, 기록 표는 다음 사이클에 처음 쓰이게 됩니다.</p>
+<span class="src">Spring Modulith: "writes entries for each of them"(받는 쪽마다 기록). https://docs.spring.io/spring-modulith/reference/events.html · 받는 쪽이 0이면 0줄이라는 것은 이 문장에서 나온 추론이고 테스트로 확인 예정 (2026-10-04)</span></div></section>
+
+<section class="card"><h2><span class="num">마</span>주소와 이름 (2가지)</h2><div class="item"><h3><span class="no">9</span>로그인 관련 주소를 전부 <code>/api/v1/auth/</code> 아래에 모으고, 토큰 쿠키가 가는 주소를 좁힘 <span class="an">[안]</span></h3><p>쿠키에는 "이 주소로 갈 때만 붙여라"를 정할 수 있습니다. 액세스 토큰은 <code>/api/v1/me</code>로 갈 때만, 리프레시 토큰은 <code>/api/v1/auth</code>로 갈 때만 붙게 합니다.</p>
+<table><tr><th>요청</th><th>붙는 쿠키</th></tr>
+<tr><td>검색, 책 조회 (<code>/api/v1/books…</code>)</td><td>없음</td></tr>
+<tr><td>내 계정, 다음 사이클의 내 도서관 (<code>/api/v1/me…</code>)</td><td>액세스 토큰</td></tr>
+<tr><td>토큰 갱신, 로그아웃, 가입 (<code>/api/v1/auth…</code>)</td><td>리프레시 토큰</td></tr></table>
+<p>검색에는 토큰이 아예 가지 않으므로, 토큰이 만료되거나 잘못돼도 검색이 막힐 일이 없습니다("로그인 안 해도 검색은 그대로"를 지키는 장치입니다). 리프레시 토큰이 오가는 곳도 줄어듭니다.</p>
+<p><b>범위 문서(scope)의 주소 둘이 바뀝니다.</b></p>
+<table><tr><th></th><th>범위 문서에 적힌 것</th><th>바꾸는 것</th></tr>
+<tr><td>로그아웃</td><td><code>POST /logout</code></td><td><code>POST /api/v1/auth/logout</code></td></tr>
+<tr><td>가입 동의</td><td><code>POST /api/v1/me/consents</code></td><td><code>POST /api/v1/auth/signup</code> (동의하는 순간에는 아직 계정이 없어 "me"가 아님)</td></tr></table>
+<p class="alt"><b>사용자가 하실 일</b>: 네이버·카카오에 등록할 "돌아올 주소"가 <code>…/api/v1/auth/login/oauth2/code/naver</code> 같은 모양이 됩니다.</p>
+<p class="alt"><b>다른 선택</b>: Spring 기본 주소(<code>/oauth2/…</code>, <code>/login/…</code>, <code>/logout</code>)를 그대로 쓰고 쿠키를 모든 주소에 붙임. 설정은 적지만 검색 요청에도 토큰이 따라갑니다.</p>
+<span class="src">MDN Set-Cookie의 Path: 지정한 경로와 그 아래 경로에만 쿠키를 보냄. https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Set-Cookie (2026-10-04)</span></div><div class="item"><h3><span class="no">10</span>표와 칸의 이름, 작은 값들 <span class="an">[안]</span></h3><p>로그인 수단 표는 정하신 대로 소셜 전용 이름을 쓰지 않습니다. 칸 이름을 "제공자", "제공자 번호"가 아니라 <b>"종류"(method)와 "그 안의 식별자"(subject)</b>로 짓습니다. 나중에 이메일·비밀번호 로그인은 종류에 값 하나를 더하고 비밀번호만 담는 표를 붙이면 됩니다.</p>
+<table><tr><th>무엇</th><th>제안</th></tr>
+<tr><td>표 이름</td><td><code>auth.account</code>, <code>auth.login_method</code>, <code>auth.account_consent</code>, <code>auth.refresh_token</code></td></tr>
+<tr><td>리프레시 토큰 저장</td><td>값 그대로가 아니라 지문(SHA-256 해시)으로. DB가 새어도 그 값으로 로그인을 이어 갈 수 없음</td></tr>
+<tr><td>쿠키 이름</td><td><code>access_token</code>, <code>refresh_token</code></td></tr>
+<tr><td>임시 값 수명</td><td>10분</td></tr>
+<tr><td>만료된 리프레시 토큰 줄 정리</td><td>하루 한 번</td></tr>
+<tr><td>약관 문서 버전 표기</td><td>시행 날짜 (예: <code>2026-11-01</code>)</td></tr>
+<tr><td>네이버 "연결 끊김" 알림에 적힌 시각</td><td>지금과 5분 넘게 차이 나면 거절 (누가 옛 알림을 다시 보내 계정을 지우는 것을 막음)</td></tr></table>
+<p class="alt"><b>다른 선택</b>: 바꾸고 싶은 이름이나 값을 글 상자에 적어 주세요. 5분과 10분은 근거 문서가 있는 값이 아니라 제 제안입니다.</p></div></section>
+
+<section class="card"><h2><span class="num">바</span>이번에 넣는 것과 미루는 것 (2가지)</h2><div class="item"><h3><span class="no">11</span>dev 프로젝트에 라이브러리 넷을 더함 <span class="an">[안]</span></h3><table><tr><th>이름</th><th>하는 일</th></tr>
+<tr><td><code>spring-boot-starter-security</code></td><td>Spring Security 본체 (CSRF, 보안 헤더, 접근 규칙)</td></tr>
+<tr><td><code>spring-boot-starter-security-oauth2-client</code></td><td>네이버·카카오 로그인</td></tr>
+<tr><td><code>spring-boot-starter-security-oauth2-resource-server</code></td><td>JWT 만들기와 확인</td></tr>
+<tr><td><code>spring-modulith-starter-jdbc</code></td><td>"계정 삭제됨" 기록 표</td></tr></table>
+<p>가운데 둘의 정확한 이름은 Spring Boot 4.1 공식 목록에서 확인하지 못했습니다 [확인 못 함]. dev가 구현 때 공식 문서로 확인합니다. 넣고 나면 기존 검색 응답의 내용은 같지만 보안 헤더 몇 개가 더 붙습니다.</p></div><div class="item"><h3><span class="no">12</span>보안 헤더를 붙이는 곳과 운영 배포 구성은 이번에 정하지 않고 뒤로 미룸 <span class="an">[안]</span></h3><p>Spring Security가 붙이는 보안 헤더는 Spring이 보내는 응답에만 붙습니다. 화면 파일(React)을 운영에서 누가 내려 줄지는 아직 정해진 적이 없습니다. dev 코드에도 그 구성이 없습니다. 그래서 화면 파일 쪽 헤더(다른 사이트가 우리 화면을 틀에 넣지 못하게 하는 것 등)는 배포를 정하는 사이클에서 함께 정하고, backlog에 적어 둡니다. 이번 사이클에서는 API 응답에 Spring 기본 헤더를 붙이는 것까지 합니다.</p>
+<p class="alt"><b>다른 선택</b>: 지금 "운영에서도 Spring이 화면 파일을 내려 준다"로 정함. 헤더를 한 곳에서 관리하게 되지만 배포 방식을 이 사이클에서 정하게 됩니다.</p></div></section>
+
+<section class="card"><h2><span class="num">사</span>알려 드릴 것 (고를 것 없음)</h2><div class="gist">설계하면서 dev 코드에서 확인한 사실입니다.</div><div class="item"><p><b>설정 창은 폰에서도 ⚙ 버튼 아래로 펼쳐지는 작은 창입니다.</b> 가운데 창도, 아래에서 올라오는 창도 아닙니다. 11번 화면 결정("기존 방식 그대로")에 따라 "계정" 절은 그 작은 창 안에 들어갑니다. 앞서 보여 드린 밑그림의 설정 창 모양은 실제와 달랐습니다.</p>
+<p><b>아래에서 올라오는 창은 지금 앱에 하나도 없습니다.</b> 로그인 선택 창을 폰에서 아래에서 올라오게 하는 것(6번 화면 결정)은 새로 만드는 모양입니다. 지역 고르는 창은 폰에서 전체 화면으로 뜹니다.</p>
+<p><b>확인이 남은 것</b>은 dev가 구현하면서 시험합니다: 네이버가 PKCE를 받는지, 네이버가 취소 때 보내는 값, 네이버·카카오의 키가 같은 키인지 등. 목록은 <code>architect-proposal.md</code> 끝의 표에 있습니다.</p></div></section>
+
+<p class="foot">원문: <code>docs/cycles/05-login-account/architect-proposal.md</code> (비교한 안 전부, 표의 칸, API 목록, 출처). 12가지가 정해지면 <code>design-delta.md</code>를 쓰고, 결정은 ADR로 남깁니다.</p>
+</main>
+</body>
+</html>

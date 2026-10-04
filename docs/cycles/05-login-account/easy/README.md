@@ -31,6 +31,18 @@
 | [2026-10-01-06-signup-security.html](2026-10-01-06-signup-security.html) | 회원가입 보안·개인정보: 로그인 연결, 세션 쿠키, 동의·처리방침, 탈퇴, 검수, 서버 관리 | `docs/research/member-and-alerts/signup-security.md` | 탈퇴는 "한 번 더 본인 확인" 뒤 진행으로 정함. 네이버 쪽 연결끊기 알림도 받기로 함. 세션은 DB, 로그인 유지 30일 (`docs/cycles/05-login-account/spec.md`). 2026-10-03에 카카오 이메일 설명을 고침(개인도 "개인 개발자 비즈 앱" 전환 가능) |
 | [2026-10-01-07-member-integration-plan.html](2026-10-01-07-member-integration-plan.html) | 회원을 넣는 구조: `auth` + `member` 구성도, 결정 세 가지, 사이클마다 들어가는 것 | `docs/research/member-and-alerts/integration-plan.md`, ADR-0036, ADR-0037 | 페이지의 "05a / 05b / 06"은 사이클 05 / 06 / 07 |
 | [2026-10-01-08-cycle05-research-and-flow.html](2026-10-01-08-cycle05-research-and-flow.html) | 사이클 05 조사 다섯 가지 결과와 화면 흐름 그림(S1·S4·S5~S9) | `docs/cycles/05-login-account/research.md`, `spec.md`, `flow.md` | 카드 3의 "이 PC 브라우저에서 안을 골라 주세요"는 원격이라 대화에서 받는 것으로 바뀜. [안] 결정은 아직 대기 중 |
+| [2026-10-03-login-state-methods.html](2026-10-03-login-state-methods.html) | 로그인 상태를 유지하는 방법: 세션과 JWT의 원리, 방식 넷, 장단점, chaekcheck에 적용하면 | `docs/cycles/05-login-account/research.md` 8절 | 2026-10-03에 JWT(짧은 액세스 토큰 + DB 리프레시 토큰)로 결정. 페이지의 추천(세션으로 시작)과 다르게 정해짐. 명세 R4 참고 |
+| [2026-10-03-security-who-does-what.html](2026-10-03-security-who-does-what.html) | OAuth와 Spring Security가 각각 맡는 일, CSRF·XSS의 원리와 누가 막는지, chaekcheck에서 직접 해야 하는 것 | `docs/cycles/05-login-account/research.md` 9절 | 없음 |
+| [2026-10-03-four-attacks.html](2026-10-03-four-attacks.html) | 공격 네 가지(로그인 가로채기, 세션 고정·탈취, 클릭재킹, 남의 자료 접근)가 어떻게 일어나고 누가 어떤 원리로 막는지 | `docs/cycles/05-login-account/research.md` 9·11절 | 없음 |
+| [2026-10-03-cookie-or-header.html](2026-10-03-cookie-or-header.html) | 로그인 정보를 쿠키에 둘 때와 헤더로 보낼 때: CSRF와 XSS가 어떻게 달라지나, chaekcheck의 선택 | `docs/cycles/05-login-account/research.md` 11절 | 없음 |
+| [2026-10-03-spec-decisions.html](2026-10-03-spec-decisions.html) | 명세에서 사용자가 정할 제안 18가지를 쉬운 말과 그림으로 (승인/미승인/기타를 고르는 용도). 캔버스용 사본은 `.review/spec-decisions.review.html` | `docs/cycles/05-login-account/spec.md` | 없음 (18가지 모두 정해짐, 2026-10-04) |
+| [2026-10-04-spec-questions.html](2026-10-04-spec-questions.html) | 명세 제안 18가지 중 질문을 받은 6가지(실패 문구, 로그인 기간, SameSite=Lax, 토큰 끊는 방법, 로그아웃 범위, 탈퇴 본인 확인)의 조사 결과와 다시 낸 제안 | `docs/cycles/05-login-account/research.md` 12절 | 없음 |
+| [2026-10-04-spec-questions-2.html](2026-10-04-spec-questions-2.html) | 두 번째 질문의 답: 리프레시 토큰을 DB에 두는 것과 세션의 차이, 네이버·카카오 자체 로그인은 별개, 탈퇴를 제공자별로 다르게 할 때 | `docs/cycles/05-login-account/research.md` 12절 | 없음 (11번은 대화에서 "나"로 확정) |
+| [2026-10-04-flow-decisions.html](2026-10-04-flow-decisions.html) | 화면 흐름에서 사용자가 정할 제안 14가지를 밑그림과 함께 (로그인 버튼 자리, 로그인 선택 창, 가입 동의, 설정·탈퇴, 약관) | `docs/cycles/05-login-account/flow.md` | 없음 |
+| [2026-10-04-flow-questions.html](2026-10-04-flow-questions.html) | 화면 흐름에서 질문·의견을 받은 5가지(안내 문구, /signup, 설정 창 계정 절, 탈퇴 실패 문구 일곱, 약관 주소)의 답과 다시 낸 제안 | `docs/cycles/05-login-account/flow.md` | 없음 |
+| [2026-10-04-flow-questions-2.html](2026-10-04-flow-questions-2.html) | 설정 창에는 탈퇴만(사용자 제안으로 확정), 약관 주소가 둘인 이유 | `docs/cycles/05-login-account/flow.md` | 없음 (화면 흐름 모두 정해짐) |
+| [2026-10-04-design-decisions.html](2026-10-04-design-decisions.html) | 설계에서 사용자가 정할 12가지를 그림(모듈, 표, 순서도 셋)과 함께 | `docs/cycles/05-login-account/architect-proposal.md` | 결정 대기 중 (12개) |
+| [2026-10-04-screen-mockups.html](2026-10-04-screen-mockups.html) | 새로 생기거나 바뀌는 화면 11장의 밑그림을 PC·태블릿·폰으로 나눠 그림 (자리와 순서만, 실제 디자인 아님) | `docs/cycles/05-login-account/flow.md` | 밑그림 전체가 [안] |
 
 ## 읽는 순서 제안
 

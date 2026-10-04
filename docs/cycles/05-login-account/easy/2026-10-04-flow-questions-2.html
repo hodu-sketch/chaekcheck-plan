@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>화면 흐름 남은 1가지</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">7·9·13번은 승인, 11번은 말씀하신 대로 바꿨습니다.<br>남은 것은 14번 하나입니다.</p>
+<p class="sub">화면 흐름 세 번째 답입니다(2026-10-04).</p>
+
+<section class="card">
+<h2><span class="num">11</span>설정 창에는 "탈퇴"만 둡니다</h2>
+<div class="gist">말씀하신 대로입니다. 로그인·로그아웃은 위 오른쪽 버튼이 있으니 설정 창에 또 둘 필요가 없습니다. 그렇게 정했습니다.</div>
+<div class="shots"><div class="shot"><p class="cap">PC·태블릿</p><div class="fr tb" style="height:400px"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">설정</span><span class="bt">로그아웃</span></div><div class="bd"><div class="sb">책 제목, 지은이 검색</div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div></div><div class="ov"></div><div class="md"><h4>설정<span>✕</span></h4><div class="sec" style="border-top:none;margin-top:0;padding-top:0"><b>보기 방식</b><div class="bar m"></div></div><div class="sec"><b>직접 찾기</b><div class="bar s"></div></div><div class="sec"><b>계정</b><span class="bt dng">탈퇴</span></div></div></div></div><div class="shot"><p class="cap">폰</p><div class="fr ph" style="height:400px"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">설정</span><span class="bt">로그아웃</span></div><div class="bd"><div class="sb">책 제목, 지은이 검색</div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div></div><div class="ov"></div><div class="md"><h4>설정<span>✕</span></h4><div class="sec" style="border-top:none;margin-top:0;padding-top:0"><b>보기 방식</b><div class="bar m"></div></div><div class="sec"><b>직접 찾기</b><div class="bar s"></div></div><div class="sec"><b>계정</b><span class="bt dng">탈퇴</span></div></div></div></div></div>
+<div class="item">
+<p>로그인한 사람에게만 설정 창 맨 아래에 "계정" 절이 보이고, 그 안에 "탈퇴" 하나만 있습니다. 로그인하지 않은 사람에게는 "계정" 절이 없습니다. 이미 정한 것으로 적었으므로 고르실 것은 없습니다. 다르면 글로 남겨 주세요.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">14</span>왜 주소가 둘인가</h2>
+<div class="gist">문서가 둘이기 때문입니다. "이용약관"과 "개인정보 처리방침"은 서로 다른 문서이고, 가입할 때도 따로 동의받습니다.</div>
+<div class="item">
+<table>
+<tr><th></th><th>이용약관 <code>/terms</code></th><th>개인정보 처리방침 <code>/privacy</code></th></tr>
+<tr><td>무엇을 적나</td><td>서비스를 쓰는 규칙 (우리와 이용자의 약속)</td><td>어떤 개인정보를 왜 모으고 언제 지우는지</td></tr>
+<tr><td>누가 요구하나</td><td>법이 정한 필수 문서는 아니고 서비스가 정함</td><td>개인정보 보호법 제30조가 만들어 공개하라고 함</td></tr>
+<tr><td>따로 주소가 필요한 곳</td><td>—</td><td>카카오 앱 설정에 "개인정보 처리방침 주소"를 등록해야 함 (명세의 데이터 출처 표)</td></tr>
+</table>
+<p>처리방침은 그 문서만 가리키는 주소가 있어야 카카오에 등록할 수 있습니다. 그래서 한 화면에 둘을 이어 붙이지 않고 주소를 나눴습니다. 화면 아래 링크도 "이용약관 · 개인정보 처리방침" 두 개로 보입니다.</p>
+</div>
+<div class="item">
+<h3><span class="no">14</span>주소를 둘로: <code>/terms</code>(이용약관), <code>/privacy</code>(개인정보 처리방침) <span class="an">[안]</span></h3>
+<p>처음 제안 그대로입니다.</p>
+<p class="alt"><b>다른 선택</b>: 한 주소(<code>/policy</code> 등)에 두 문서를 위아래로 붙임. 주소는 하나로 줄지만 카카오에 등록할 처리방침 주소가 문서 중간을 가리키게 됩니다.</p>
+</div>
+</section>
+
+<p class="foot">원문: <code>docs/cycles/05-login-account/flow.md</code>. 14번이 정해지면 화면 흐름이 끝나고 설계(<code>/design-delta</code>)로 넘어갑니다.</p>
+</main>
+</body>
+</html>

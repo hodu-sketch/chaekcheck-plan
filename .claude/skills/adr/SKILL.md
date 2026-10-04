@@ -10,6 +10,7 @@ Record the decision: $ARGUMENTS
 
 1. Number: next four-digit number in `docs/adr/`. File: `docs/adr/NNNN-<english-kebab-slug>.md`.
 2. Draft the ADR from the template below and **show the draft to the user first**. Write the file only after the user approves the draft. If the user declines, discard it.
+   - Show the draft in the canvas (user, 2026-10-04): when `ecc-plan-canvas` is installed, write a plain-language decision page for the draft as the `plan-canvas` skill describes ("Plain-language decision page": what was decided, the alternatives with their costs, the evidence with sources, and a diagram of what the decision changes), with the decision itself as one `[안]` chip, and review it there. 승인 = the draft is approved and may be written. If the canvas is unavailable or the user is on another device, show the draft in the conversation instead.
 3. New ADRs start as `Status: Proposed`. Change to `Status: Accepted` only after the user confirms the decision itself.
 4. Add a row to the index `docs/adr/README.md`, and update the row whenever the status changes.
 5. Link the ADR from the current cycle's `design-delta.md` 결정 기록 section.

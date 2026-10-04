@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>지금의 수집 방법</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;--box:#fbfaf8}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:960px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.82em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 18px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.tw{overflow-x:auto;margin:10px 0}
+table{border-collapse:collapse;width:100%;font-size:17px;line-height:1.55}
+th,td{border-bottom:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{font-weight:700;color:var(--muted);font-size:15px;white-space:nowrap}
+td.n{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+tr.grp td{background:var(--code-bg);font-weight:700;font-size:16px}
+.ok{color:var(--ok);font-weight:700}.hot{color:var(--no);font-weight:700}
+.rows{list-style:none;padding:0;margin:8px 0}
+.rows li{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--line)}
+.rows li:first-child{border-top:none}
+.rows svg{flex:none;width:30px;height:30px;stroke:var(--accent);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;margin-top:3px}
+.rows b{display:block}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+svg text{font-family:"Noto Sans KR",system-ui,sans-serif;fill:var(--text)}
+svg .m{fill:var(--muted)}
+svg .bx{fill:var(--box);stroke:var(--line);stroke-width:2}
+svg .sv{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2.5}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+@media (max-width:600px){body{font-size:18px}.lead{font-size:24px}.card{padding:22px 16px}table{font-size:15px}}
+</style>
+</head>
+<body>
+<main>
+<p class="lead">사이트 화면 종류에 맞는 방법으로<br>책 전체 목록을 받습니다.<br>요청은 IP 하나에 한 줄로 세워 보냅니다.</p>
+<p class="sub">한 줄에는 한 번에 1건, 요청 사이 1초 이상. 줄끼리는 동시에 진행합니다. 2026-10-04 10:27부터 이 방식으로 받고 있습니다.</p>
+
+<!-- 1 -->
+<section class="card">
+<h2><span class="num">1</span>수집은 다섯 단계로 진행됩니다</h2>
+<div class="gist">수집기 <code>crawl_catalog.py</code>가 DB에 등록된 도서관을 하나씩 꺼내, 화면 종류를 보고, IP별 줄에 넣고, 쪽 단위로 받아 DB에 저장합니다.</div>
+<figure>
+<svg viewBox="0 0 920 150" role="img" aria-label="수집 단계">
+<defs><marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="ah"/></marker></defs>
+<rect x="5" y="30" width="160" height="80" rx="10" class="bx"/><text x="85" y="64" font-size="18" text-anchor="middle" font-weight="700">① 도서관</text><text x="85" y="91" font-size="15" text-anchor="middle" class="m">주소·화면 종류</text>
+<rect x="194" y="30" width="160" height="80" rx="10" class="bx"/><text x="274" y="64" font-size="18" text-anchor="middle" font-weight="700">② 받는 방법</text><text x="274" y="91" font-size="15" text-anchor="middle" class="m">화면 종류별</text>
+<rect x="383" y="30" width="160" height="80" rx="10" class="sv"/><text x="463" y="64" font-size="18" text-anchor="middle" font-weight="700">③ IP 조회</text><text x="463" y="91" font-size="15" text-anchor="middle" class="m">같은 IP는 한 줄</text>
+<rect x="572" y="30" width="160" height="80" rx="10" class="bx"/><text x="652" y="64" font-size="18" text-anchor="middle" font-weight="700">④ 쪽마다 받기</text><text x="652" y="91" font-size="15" text-anchor="middle" class="m">1건씩, 1초 간격</text>
+<rect x="761" y="30" width="154" height="80" rx="10" class="bx"/><text x="838" y="64" font-size="18" text-anchor="middle" font-weight="700">⑤ DB 저장</text><text x="838" y="91" font-size="15" text-anchor="middle" class="m">수집 날짜 함께</text>
+<path d="M165,70 L190,70" class="ar" marker-end="url(#a1)"/><path d="M354,70 L379,70" class="ar" marker-end="url(#a1)"/><path d="M543,70 L568,70" class="ar" marker-end="url(#a1)"/><path d="M732,70 L757,70" class="ar" marker-end="url(#a1)"/>
+</svg>
+<figcaption>③이 오늘 바뀐 단계입니다. 전에는 주소 이름으로 줄을 나눴고, 지금은 IP로 나눕니다.</figcaption>
+</figure>
+<p>DB는 <code>chaekcheck-data\ebook-catalog.sqlite</code>입니다. 수집기는 사이트 화면 종류마다 이름을 붙여 둡니다. 이 이름을 <b>플랫폼 타입</b>이라고 부릅니다(2번 카드).</p>
+</section>
+
+<!-- 2 -->
+<section class="card">
+<h2><span class="num">2</span>사이트는 화면 종류 8가지로 나눕니다</h2>
+<div class="gist">같은 업체라도 화면이 다르면 다른 플랫폼 타입입니다. 플랫폼 타입마다 책 전체 목록을 꺼내는 주소와 한 쪽 권수가 다릅니다.</div>
+<div class="tw"><table>
+<thead><tr><th>플랫폼 타입</th><th>주소에서 알아보는 법</th><th>전체 목록 받는 방법</th><th>한 쪽</th></tr></thead>
+<tbody>
+<tr class="grp"><td colspan="4">교보</td></tr>
+<tr><td><code>KYOBO_V1</code></td><td><code>/elibrary-front/</code>가 있음</td><td>검색어를 공백 한 칸으로 검색</td><td class="n">500권</td></tr>
+<tr><td><code>KYOBO_SUBSCRIPTION_V1</code></td><td><code>*.dkyobobook.co.kr</code></td><td>분야 목록에서 "전체"</td><td class="n">80권</td></tr>
+<tr class="grp"><td colspan="4">YES24</td></tr>
+<tr><td><code>YES24_V1</code></td><td>옛 화면 (한글 EUC-KR)</td><td>검색어 비운 검색</td><td class="n">50권</td></tr>
+<tr><td><code>YES24_V2</code>·<code>V3</code></td><td><code>/search/?src_key=</code></td><td>검색어 비운 검색 + 오디오북 목록</td><td class="n hot">10권</td></tr>
+<tr class="grp"><td colspan="4">북큐브·알라딘·기타</td></tr>
+<tr><td><code>BOOKCUBE_FX</code></td><td><code>/FxLibrary</code> (다산도 같음)</td><td>사이트의 XML 목록</td><td class="n">100권</td></tr>
+<tr><td><code>ALADIN_V1</code></td><td><code>sub/sub.htm?nav_code=</code></td><td>전자책 메뉴의 목록</td><td class="n">100권</td></tr>
+<tr><td><code>ELIB_PORTAL_V1</code></td><td><code>/elib/module/elib/</code> (시·도 통합 포털)</td><td>"새로 들어온 책" 목록</td><td class="n">100권</td></tr>
+<tr><td><code>GANGNAM_V1</code></td><td><code>ebook.gangnam.go.kr</code></td><td>분야 목록</td><td class="n">20권</td></tr>
+</tbody></table></div>
+<p>모든 플랫폼 타입에서 책마다 제목·저자·출판사·출간일·상세 화면 주소를 받습니다. 오디오북인지도 표시합니다. 소개글은 받지 않습니다.</p>
+</section>
+
+<!-- 3 -->
+<section class="card">
+<h2><span class="num">3</span>도메인과 IP는 하나씩 짝지어지지 않습니다</h2>
+<div class="gist">요청은 도메인 주소로 보냅니다. 그 도메인이 실제로 가는 곳은 IP입니다. 여러 도메인이 IP 하나로 가기도 하고, 한 업체가 IP 여러 개를 쓰기도 합니다.</div>
+<figure>
+<svg viewBox="0 0 920 360" role="img" aria-label="도메인과 IP의 관계">
+<defs><marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="ah"/></marker></defs>
+<text x="20" y="28" font-size="16" class="m">도메인 (요청 주소)</text><text x="640" y="28" font-size="16" class="m">IP (실제로 가는 곳)</text>
+<rect x="20" y="44" width="360" height="44" rx="8" class="bx"/><text x="36" y="73" font-size="17">www.ghlib.go.kr:446 (고흥)</text>
+<rect x="640" y="44" width="260" height="44" rx="8" class="sv"/><text x="656" y="73" font-size="17">고흥 IP 1개</text>
+<path d="M380,66 L636,66" class="ar" marker-end="url(#a3)"/>
+<text x="400" y="56" font-size="15" class="m">가 · 도메인 1 → IP 1</text>
+<rect x="20" y="120" width="360" height="44" rx="8" class="bx"/><text x="36" y="149" font-size="17">seogu.yes24library.com</text>
+<rect x="20" y="172" width="360" height="44" rx="8" class="bx"/><text x="36" y="201" font-size="17">hsg.yes24library.com</text>
+<rect x="640" y="146" width="260" height="44" rx="8" class="sv"/><text x="656" y="175" font-size="17">211.63.172.21</text>
+<path d="M380,142 L636,162" class="ar" marker-end="url(#a3)"/><path d="M380,194 L636,174" class="ar" marker-end="url(#a3)"/>
+<text x="400" y="132" font-size="15" class="m">나 · 같은 업체 도메인 여럿 → IP 1</text>
+<rect x="20" y="250" width="360" height="44" rx="8" class="bx"/><text x="36" y="279" font-size="17">*.aladinebook.co.kr 10곳</text>
+<rect x="20" y="302" width="360" height="44" rx="8" class="bx"/><text x="36" y="331" font-size="17">ebook.yego.or.kr 등 3곳</text>
+<rect x="640" y="276" width="260" height="44" rx="8" class="sv"/><text x="656" y="305" font-size="17">115.68.102.12</text>
+<path d="M380,272 L636,292" class="ar" marker-end="url(#a3)"/><path d="M380,324 L636,304" class="ar" marker-end="url(#a3)"/>
+<text x="400" y="242" font-size="15" class="m">다 · 이름이 전혀 다른 도메인 → IP 1</text>
+</svg>
+<figcaption>세 경우 모두 오른쪽 IP 하나가 한 줄입니다. 그 IP로 가는 요청은 도메인 이름과 상관없이 하나씩 차례로 보냅니다.</figcaption>
+</figure>
+<ul class="rows">
+<li><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="6" rx="1"/><rect x="3" y="14" width="18" height="6" rx="1"/></svg><div><b>전에는: 주소 이름으로 줄 세움</b><code>*.yes24library.com</code> 약 400곳을 한 줄로 받았습니다. 그래서 YES24의 IP 11개 중 한 번에 하나만 일했습니다. 반대로 "다" 같은 경우는 도메인이 달라서 같은 IP에 동시에 4건이 가고 있었습니다.</div></li>
+<li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg><div><b>지금은: IP로 줄 세움</b>수집기가 요청 전에 도메인의 IP를 조회합니다. 같은 IP면 같은 줄입니다. 요청 주소는 그대로 도메인이라, 사이트가 보는 요청 모양은 전과 같습니다.</div></li>
+</ul>
+</section>
+
+<!-- 4 -->
+<section class="card">
+<h2><span class="num">4</span>업체 공용 서버는 IP별로 이렇게 나뉘어 있습니다</h2>
+<div class="gist">YES24 11줄, 북큐브 2줄, 알라딘 2줄이 동시에 돕니다. 교보 공용 서버는 이미 다 받았습니다.</div>
+<div class="tw"><table>
+<thead><tr><th>업체</th><th>IP</th><th>남은 도서관</th></tr></thead>
+<tbody>
+<tr class="grp"><td colspan="3">YES24 <code>*.yes24library.com</code> — 모두 211.63.172.x 대역</td></tr>
+<tr><td></td><td>.23 · .33 · .22 · .30 · .21 · .12</td><td class="n">61 · 55 · 43 · 41 · 41 · 40</td></tr>
+<tr><td></td><td>.26 · .31 · .16 · .13 · .15</td><td class="n">33 · 23 · 21 · 19 · 5</td></tr>
+<tr class="grp"><td colspan="3">북큐브 <code>*.bookcube.biz</code> (다산 <code>*.dasangng.co.kr</code>도 같은 IP)</td></tr>
+<tr><td></td><td>101.202.40.101</td><td class="n">115</td></tr>
+<tr><td></td><td>101.202.40.100</td><td class="n">52</td></tr>
+<tr class="grp"><td colspan="3">알라딘 <code>*.aladinebook.co.kr</code></td></tr>
+<tr><td></td><td>115.68.102.12 (다른 도메인 3곳 포함)</td><td class="n">12</td></tr>
+<tr><td></td><td>115.68.17.209</td><td class="n">5</td></tr>
+<tr class="grp"><td colspan="3">교보 <code>*.dkyobobook.co.kr</code></td></tr>
+<tr><td></td><td>—</td><td class="n ok">0 (끝남)</td></tr>
+</tbody></table></div>
+<p style="font-size:17px;color:var(--muted)">남은 도서관 수는 2026-10-04 10:21 기준입니다. 도서관 자체 서버도 IP마다 한 줄이고, 지금 공용 서버 밖에서 남은 곳은 20곳이 안 됩니다.</p>
+</section>
+
+<!-- 5 -->
+<section class="card">
+<h2><span class="num">5</span>업체 서버가 느려지면 다시 한 줄로 합칩니다</h2>
+<div class="gist">한 업체의 IP 줄 중 하나라도 응답이 많이 느려지거나 계속 실패하면, 수집기가 그 업체의 IP를 모두 한 줄로 다시 묶습니다.</div>
+<ul class="rows">
+<li><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg><div><b>느려질 때: 평균 응답 12초 초과</b>요청 30건 이상을 받은 뒤 평균을 봅니다. YES24 공용 줄은 오늘 아침 2.6초였습니다. 12초는 시험 시작 때 잡은 값이라 바꿀 수 있습니다.</div></li>
+<li><svg viewBox="0 0 24 24"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg><div><b>실패할 때: 5번 연달아 실패</b>연결이 끊기거나 서버 오류가 5번 이어지면 묶습니다. 차단은 느려지지 않고 바로 끊기는 식으로 올 수 있어서 둔 조건입니다.</div></li>
+<li><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg><div><b>묶이면</b>그 업체로는 다시 동시에 1건만 갑니다. 로그에 <code>SPLIT OFF</code>가 남습니다. 수집은 멈추지 않고 느리게 이어집니다.</div></li>
+</ul>
+<p>IP를 나눌 때 생기는 위험이 있습니다. YES24 IP 11개는 같은 대역에 있습니다. 그 앞에 차단 장치가 하나 있다면 우리 요청이 전보다 최대 11배 많아 보입니다.</p>
+</section>
+
+<!-- 6 -->
+<section class="card">
+<h2><span class="num">6</span>멈추거나 깨진 쪽이 있어도 이어서 받습니다</h2>
+<div class="gist">받은 쪽은 DB에 기록해 두고, 다시 시작하면 그다음 쪽부터 받습니다. 사이트 문제로 못 받는 쪽이나 줄은 건너뛰고 기록합니다.</div>
+<ul class="rows">
+<li><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 3-6.2"/><path d="M4 4v5h5"/></svg><div><b>PC가 꺼지거나 수집기를 다시 시작할 때</b><code>resume.cmd</code>를 실행하면 끝난 도서관은 넘어가고, 받던 도서관은 마지막으로 저장한 쪽 다음부터 받습니다. 오늘도 이 방법으로 네 번 다시 시작했습니다.</div></li>
+<li><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h4"/></svg><div><b>어떤 쪽만 계속 오류가 날 때</b>그 쪽을 건너뛰고 끝까지 받은 뒤 다시 읽습니다. 그래도 안 되면 정렬을 바꿔 다시 읽어 채웁니다. 예: YES24 아산 131쪽은 제목순에서만 오류가 나서 출판일순으로 채웠습니다.</div></li>
+<li><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg><div><b>사이트에 책 정보가 빠진 줄</b>그 줄만 건너뛰고 몇 줄인지 셉니다. 오늘 북큐브 3곳(백석·안산·경북보건)에 제목이 없는 책이 있어 도서관 전체가 저장되지 않던 문제를 이렇게 고쳤습니다. 안산 <code>F0002074</code>는 목록과 상세 화면 모두 제목이 비어 있었습니다.</div></li>
+<li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M6 6l12 12"/></svg><div><b>사이트가 스크립트 요청을 막을 때</b>우회하지 않고 받지 않음으로 표시합니다. 국회도서관과 김천시립도서관이 그렇습니다.</div></li>
+</ul>
+</section>
+
+<p class="foot">이 글은 요약이며 근거는 <code>docs/research/ebook-catalog/crawl-runbook.md</code>, <code>platforms.md</code>, <code>crawl-method.md</code>와 수집기 <code>chaekcheck-data/scripts/crawl_catalog.py</code>에 있습니다.</p>
+</main>
+</body>
+</html>

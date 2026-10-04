@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>공격 네 가지와 막는 원리</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 64px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+h3{font-size:21px;margin:24px 0 8px}
+ul.items{list-style:none;padding:0;margin:0}
+ul.items>li{display:grid;grid-template-columns:34px 1fr;gap:14px;padding:14px 0;border-top:1px solid var(--line)}
+ul.items>li:first-child{border-top:none}
+ul.items svg{width:30px;height:30px;stroke:var(--accent);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;margin-top:4px}
+.items b{display:block}
+ol.steps{margin:6px 0 0;padding-left:24px}
+.src{color:var(--muted);font-size:16px}
+.tag{display:inline-block;font-size:16px;font-weight:500;border-radius:6px;padding:1px 8px;white-space:nowrap}
+.t-ok{background:var(--ok-bg);color:var(--ok)}.t-warn{background:var(--warn-bg);color:var(--warn)}.t-no{background:var(--no-bg);color:var(--no)}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:10px 0}
+th,td{text-align:left;padding:8px 10px;border-top:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:500}
+figure{margin:0 0 8px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:18px;margin-top:8px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+</style>
+</head>
+<body>
+<main>
+<p class="lead">네 공격 모두 서버가<br>"요청을 보낸 사람"을 잘못 믿게 만듭니다.</p>
+<p class="sub">로그인 가로채기, 세션 고정·탈취, 클릭재킹, 남의 자료 접근. 각각 어떻게 일어나고 누가 어떤 원리로 막는지 적었습니다. 막는 방법은 모두 "믿기 전에 하나를 더 확인한다"입니다. 공식 문서 확인일 2026-10-03. chaekcheck 적용은 로그인 유지를 JWT로 정한 것(2026-10-03) 기준입니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>로그인 가로채기: 소셜 로그인 절차 중간에 끼어드는 것</h2>
+<div class="gist">소셜 로그인은 네이버·카카오가 브라우저를 우리 주소로 돌려보내며 한 번만 쓰는 <code>code</code>를 주소에 붙여 주는 절차입니다. 이 "돌아오기"를 위조하거나, 오가는 <code>code</code>를 훔치는 공격이 둘 있습니다.</div>
+
+<h3>가. 가짜 돌아오기 요청 (로그인 CSRF)</h3>
+<figure>
+<svg viewBox="0 0 900 200" role="img" aria-label="공격자가 자기 code가 붙은 돌아오기 주소를 피해자에게 열게 하는 과정">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+<g font-family="Noto Sans KR, sans-serif" fill="var(--text)" text-anchor="middle">
+<rect x="10" y="40" width="250" height="100" rx="10" fill="var(--no-bg)" stroke="var(--no)" stroke-width="2"/>
+<text x="135" y="70" font-size="16" font-weight="700">① 공격자</text>
+<text x="135" y="96" font-size="14">자기 계정으로 로그인을 시작해</text>
+<text x="135" y="118" font-size="14">돌아오기 주소(code 포함)를 얻음</text>
+<line x1="262" y1="90" x2="312" y2="90" stroke="var(--muted)" stroke-width="2" marker-end="url(#ar)"/>
+<rect x="316" y="40" width="250" height="100" rx="10" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="2"/>
+<text x="441" y="70" font-size="16" font-weight="700">② 피해자의 브라우저</text>
+<text x="441" y="96" font-size="14">그 주소를 열게 됨</text>
+<text x="441" y="118" font-size="14">(링크, 숨긴 이미지 등)</text>
+<line x1="568" y1="90" x2="618" y2="90" stroke="var(--muted)" stroke-width="2" marker-end="url(#ar)"/>
+<rect x="622" y="40" width="268" height="100" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+<text x="756" y="70" font-size="16" font-weight="700">③ 우리 서버</text>
+<text x="756" y="96" font-size="14">code를 받아 로그인 처리</text>
+<text x="756" y="118" font-size="14">→ 피해자가 공격자 계정으로 로그인됨</text>
+<text x="450" y="175" font-size="15" fill="var(--muted)">피해자는 자기 계정인 줄 알고 지역·내 도서관을 넣음 → 공격자가 자기 계정에서 봄</text>
+</g></svg>
+<figcaption>공격자는 남의 계정을 뺏는 것이 아니라, 피해자를 자기 계정에 들어오게 만듭니다.</figcaption>
+</figure>
+<ul class="items">
+<li><svg viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg><div><b>막는 원리: <code>state</code></b>우리 서버가 로그인을 시작할 때 무작위 값을 만들어 그 브라우저에 묶어 두고, 네이버·카카오에 같이 보냅니다. 돌아올 때 그 값이 다시 붙어 옵니다. 서버는 "이 브라우저가 시작한 로그인의 값과 같은가"를 봅니다. 피해자의 브라우저는 로그인을 시작한 적이 없어서 값이 맞지 않고, 요청은 버려집니다. <span class="src">RFC 6749 10.12: <code>state</code>를 요청과 돌아오기 사이의 상태 유지에 쓰고 CSRF 방지에 써야 함(SHOULD). 네이버는 필수, 카카오는 권장. Spring Security가 자동으로 만들고 확인</span></div></li>
+</ul>
+
+<h3>나. <code>code</code> 훔치기</h3>
+<ul class="items">
+<li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg><div><b>어떻게 일어나나</b><code>code</code>는 주소에 붙어 브라우저를 지나갑니다. 폰에서는 나쁜 앱이 정상 앱과 같은 주소 형식을 등록해 돌아오는 <code>code</code>를 대신 받을 수 있습니다. 훔친 <code>code</code>를 네이버·카카오에 내면 토큰을 받습니다. <span class="src">RFC 7636 1절: authorization code interception attack</span></div></li>
+<li><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><circle cx="12" cy="12" r="9"/></svg><div><b>막는 원리 넷</b>
+<ol class="steps">
+<li><code>code</code>는 한 번만 쓸 수 있고 금방 만료됩니다(최대 10분 권고).</li>
+<li><code>code</code>를 토큰으로 바꿀 때 Client Secret이 필요합니다. 이 값은 우리 서버에만 있고 브라우저에 내려가지 않습니다.</li>
+<li>돌아갈 주소는 앱에 등록한 것과 글자 그대로 같아야 합니다. 공격자 주소로는 <code>code</code>가 가지 않습니다.</li>
+<li>PKCE: 로그인을 시작할 때 무작위 값의 해시를 보내고, 토큰으로 바꿀 때 원래 값을 냅니다. <code>code</code>만 훔친 사람은 원래 값을 몰라 실패합니다.</li>
+</ol>
+<span class="src">RFC 6749 10.5(만료·1회 사용), RFC 9700 2.1(주소 정확 일치), RFC 7636 4절(code_verifier 43~128자, S256)</span></div></li>
+<li><svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></svg><div><b>chaekcheck에서</b>웹은 1~3번으로 막습니다. Client Secret과 카카오 어드민 키는 서버 환경 변수에만 둡니다. PKCE는 네이버가 받는지 시험해 보고 켜고, 카카오는 문서에 없어 끕니다. 폰 앱을 만들 때는 PKCE가 필수라(RFC 8252) 그때 다시 봅니다.</div></li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>세션 고정·탈취: 로그인 상태를 나타내는 값을 손에 넣는 것</h2>
+<div class="gist">로그인한 뒤 브라우저가 들고 다니는 값(세션 번호나 토큰)은 "가진 사람이 곧 그 사용자"입니다. 고정은 로그인 <b>전에</b> 값을 심어 두는 것이고, 탈취는 로그인 <b>뒤에</b> 값을 훔치는 것입니다.</div>
+<h3>가. 세션 고정</h3>
+<ul class="items">
+<li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg><div><b>어떻게 일어나나</b>
+<ol class="steps">
+<li>공격자가 우리 사이트에 접속해 세션 번호 하나를 받습니다(아직 로그인 전).</li>
+<li>피해자의 브라우저가 그 번호를 쓰게 만듭니다.</li>
+<li>피해자가 그 번호로 로그인합니다. 서버가 번호를 그대로 두면, 공격자가 알고 있는 번호가 "로그인된 번호"가 됩니다.</li>
+</ol>
+<span class="src">OWASP Session Fixation: 원인은 "When authenticating a user, it doesn't assign a new session ID"</span></div></li>
+<li><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><circle cx="12" cy="12" r="9"/></svg><div><b>막는 원리: 로그인하면 값을 새로 발급</b>로그인에 성공하는 순간 예전 번호를 버리고 새 번호를 줍니다. 공격자가 심어 둔 번호는 로그인 전 것이라 쓸모없습니다. Spring Security의 기본 동작입니다. <span class="src">OWASP Session Management Cheat Sheet: 권한이 바뀌면 세션 ID를 새로 만들 것. OWASP ASVS 5.0 7.2.4. Spring Security: 기본 <code>changeSessionId</code></span></div></li>
+</ul>
+<h3>나. 세션(토큰) 탈취</h3>
+<ul class="items">
+<li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg><div><b>어떻게 일어나나</b>OWASP가 드는 경로: 예측할 수 있는 값, 통신을 엿듣기, 화면에 끼어든 스크립트(XSS), 중간에서 가로채기. <span class="src">OWASP Session Hijacking Attack</span></div></li>
+<li><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><circle cx="12" cy="12" r="9"/></svg><div><b>막는 원리: 경로마다 하나씩</b>
+<table>
+<tr><th>경로</th><th>막는 것</th><th>원리</th></tr>
+<tr><td>예측</td><td>무작위 값</td><td>128비트 이상 무작위. JWT는 서명이라 값을 지어낼 수 없음</td></tr>
+<tr><td>엿듣기·가로채기</td><td>HTTPS, 쿠키 <code>Secure</code>, HSTS 헤더</td><td>암호화된 연결로만 쿠키를 보냄. HSTS는 브라우저가 처음부터 https로 접속하게 함</td></tr>
+<tr><td>스크립트</td><td>쿠키 <code>HttpOnly</code></td><td>스크립트가 쿠키를 읽지 못함</td></tr>
+</table>
+<span class="src">OWASP Session Management Cheat Sheet(<code>Secure</code>, <code>HttpOnly</code>), ASVS 7.2.3, Spring Security Headers 문서: 기본 <code>Strict-Transport-Security: max-age=31536000 ; includeSubDomains ; preload</code></span></div></li>
+<li><svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></svg><div><b>chaekcheck에서 (JWT)</b>로그인 뒤에는 세션 번호 대신 토큰 둘을 씁니다. 같은 원리가 그대로 적용됩니다. 두 토큰 쿠키에 <code>Secure</code>·<code>HttpOnly</code>를 붙이고 HTTPS만 씁니다. 로그인할 때마다 토큰을 새로 발급하므로 고정이 성립하지 않습니다. 리프레시 토큰은 쓸 때마다 바뀌어서, 훔친 옛 값이 다시 오면 알아챌 수 있습니다. 액세스 토큰은 훔쳐도 최대 15분입니다.</div></li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>클릭재킹: 우리 화면을 남의 페이지 안에 숨겨 놓고 누르게 하는 것</h2>
+<div class="gist">공격자가 자기 페이지 안에 우리 화면을 투명한 틀(iframe)로 겹쳐 놓습니다. 사용자는 공격자 페이지의 버튼을 누른다고 생각하지만 실제로는 그 아래 우리 화면의 버튼을 누릅니다.</div>
+<figure>
+<svg viewBox="0 0 900 230" role="img" aria-label="공격자 페이지 위에 투명한 우리 화면이 겹쳐 있어 누르면 우리 버튼이 눌림">
+<g font-family="Noto Sans KR, sans-serif" fill="var(--text)" text-anchor="middle">
+<rect x="60" y="30" width="330" height="160" rx="10" fill="var(--no-bg)" stroke="var(--no)" stroke-width="2"/>
+<text x="225" y="62" font-size="16" font-weight="700">공격자 페이지 (보이는 것)</text>
+<rect x="150" y="100" width="150" height="46" rx="8" fill="var(--card)" stroke="var(--no)" stroke-width="2"/>
+<text x="225" y="129" font-size="16">경품 받기</text>
+<rect x="510" y="30" width="330" height="160" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2" stroke-dasharray="7 5"/>
+<text x="675" y="62" font-size="16" font-weight="700">우리 화면 (투명하게 겹쳐 있음)</text>
+<rect x="600" y="100" width="150" height="46" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="2"/>
+<text x="675" y="129" font-size="16">탈퇴</text>
+<text x="450" y="118" font-size="26" font-weight="700">=</text>
+<text x="450" y="218" font-size="15" fill="var(--muted)">두 버튼이 화면의 같은 자리에 있음. 누르면 위에 겹친 우리 버튼이 눌림</text>
+</g></svg>
+<figcaption>요청은 사용자의 브라우저에서, 우리 화면에서, 진짜 클릭으로 나갑니다. 그래서 CSRF 토큰도 정상으로 붙습니다. CSRF 방어로는 막히지 않습니다.</figcaption>
+</figure>
+<ul class="items">
+<li><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><circle cx="12" cy="12" r="9"/></svg><div><b>막는 원리: "이 페이지를 틀 안에 넣지 마라"는 응답 헤더</b>서버가 응답에 <code>X-Frame-Options: DENY</code>를 붙이면 브라우저가 그 페이지를 어떤 틀 안에도 그리지 않습니다. 공격자 페이지에는 빈 틀만 남습니다. Spring Security가 기본으로 붙입니다. 같은 일을 하는 새 방식은 <code>Content-Security-Policy</code>의 <code>frame-ancestors</code>입니다. <span class="src">Spring Security Headers 문서: "By default, Spring Security disables rendering pages within an iframe … X-Frame-Options: DENY". OWASP Clickjacking Defense Cheat Sheet: <code>DENY</code>는 어떤 도메인도 틀에 넣지 못함</span></div></li>
+<li><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 12h10"/></svg><div><b>보조: 쿠키의 <code>SameSite</code></b>다른 사이트의 틀 안에서 우리 화면이 열릴 때 로그인 쿠키가 붙지 않게 합니다. 로그인 안 된 화면만 보이므로 "탈퇴" 같은 버튼이 없습니다. <span class="src">OWASP Clickjacking Defense Cheat Sheet</span></div></li>
+<li><svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></svg><div><b>chaekcheck에서</b>대상은 탈퇴, 로그아웃, 가입 동의 화면입니다. 주의할 점이 하나 있습니다. Spring Security의 헤더는 <b>Spring이 보내는 응답</b>에만 붙습니다. React 화면 파일을 다른 서버(예: 웹 서버)가 내려 주면 그 서버에도 같은 헤더를 설정해야 합니다. 화면 파일을 어디서 내려 줄지는 아직 정하지 않았습니다 <span class="tag t-warn">확인 필요: 배포 구성</span></div></li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>남의 자료 접근: 로그인한 사람이 번호만 바꿔 남의 것을 보는 것</h2>
+<div class="gist">공격자도 정상으로 로그인한 사용자입니다. 요청 속의 번호를 자기 것에서 남의 것으로 바꿨을 때 서버가 그대로 내주면 성립합니다. 영어로 IDOR 또는 BOLA라고 부릅니다.</div>
+<ul class="items">
+<li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg><div><b>어떻게 일어나나</b>자기 정보 주소가 <code>/users/123</code>인 사용자가 주소를 <code>/users/124</code>로 바꿉니다. 서버가 "로그인했는가"만 보고 "124가 이 사람 것인가"를 보지 않으면 남의 정보가 나옵니다. 요청 본문에 든 번호도 마찬가지입니다. <span class="src">OWASP IDOR Prevention Cheat Sheet의 예</span></div></li>
+<li><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><circle cx="12" cy="12" r="9"/></svg><div><b>막는 원리: "누구 것을 다룰지"를 요청에서 받지 않음</b>서버는 로그인 정보(우리는 토큰에 든 계정 번호)에서 "지금 누구인가"를 알고, 그 사람의 자료만 찾습니다. 요청에 적힌 계정 번호는 믿지 않습니다. 번호를 추측하기 어렵게 만드는 것(긴 무작위 번호)은 보조일 뿐 대신할 수 없습니다. <span class="src">OWASP IDOR Prevention Cheat Sheet: 현재 사용자를 세션 정보에서 정하고, 객체마다 접근 검사. OWASP ASVS 5.0 8.2.2(자료 단위 접근 제한), 8.3.1(신뢰할 수 있는 서버 쪽에서 강제, 화면의 스크립트에 맡기지 않음)</span></div></li>
+<li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></svg><div><b>라이브러리가 대신 못 하는 이유</b>Spring Security는 "이 주소는 로그인한 사람만"까지는 규칙으로 걸러 줍니다. 하지만 "이 자료가 그 사람 것인가"는 우리 표의 구조를 알아야 판단할 수 있습니다. 그래서 우리 코드가 합니다.</div></li>
+<li><svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></svg><div><b>chaekcheck에서</b>내 자료 주소를 <code>/api/v1/me</code>, <code>/api/v1/me/regions</code>처럼 <b>번호가 없는 모양</b>으로 정했습니다. 바꿀 번호 자체가 주소에 없습니다. 서버는 토큰의 계정 번호로만 찾습니다. 사이클 06의 지역·내 도서관도 같은 규칙입니다. 이 규칙을 인계서의 제약에 넣습니다.</div></li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="num">5</span>한눈에: 무엇을 더 확인해서 막나</h2>
+<div class="gist">네 공격 모두 서버가 하나를 더 확인하면 막힙니다. 확인하는 것이 서로 다릅니다.</div>
+<table>
+<tr><th>공격</th><th>서버가 속는 점</th><th>더 확인하는 것</th><th>누가</th></tr>
+<tr><td>가짜 돌아오기</td><td>이 브라우저가 시작한 로그인인 줄 앎</td><td><code>state</code>가 이 브라우저의 것인가</td><td>Spring Security (OAuth 규약)</td></tr>
+<tr><td><code>code</code> 훔치기</td><td><code>code</code>를 낸 쪽이 우리 서버인 줄 앎</td><td>Client Secret, 등록된 주소, PKCE</td><td>네이버·카카오와 Spring Security</td></tr>
+<tr><td>세션 고정</td><td>로그인 전 번호를 계속 씀</td><td>로그인하면 새 값 발급</td><td>Spring Security 기본 / 우리 토큰 발급</td></tr>
+<tr><td>세션·토큰 탈취</td><td>값을 가진 사람이 본인인 줄 앎</td><td>값이 새지 않게: HTTPS, <code>Secure</code>, <code>HttpOnly</code></td><td>설정</td></tr>
+<tr><td>클릭재킹</td><td>사용자가 알고 누른 줄 앎</td><td>우리 화면이 남의 틀 안에 있지 않은가</td><td>브라우저 (서버가 헤더로 지시)</td></tr>
+<tr><td>남의 자료 접근</td><td>번호의 주인이 요청한 줄 앎</td><td>토큰의 계정과 자료의 주인이 같은가</td><td><b>우리 코드</b></td></tr>
+</table>
+</section>
+
+<p class="foot">이 글은 요약이며 근거는 원본에 있습니다: <code>docs/cycles/05-login-account/research.md</code> 9·11절(출처 URL과 확인 날짜). 출처: RFC 6749·7636·8252·9700, OWASP(Session Fixation, Session Hijacking Attack, Session Management·Clickjacking Defense·IDOR Prevention Cheat Sheet, ASVS 5.0 V7·V8), Spring Security Headers 문서.</p>
+</main></body></html>

@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>화면 흐름에서 정할 것 14가지</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">화면 흐름에서 정해 주실 것은 14가지입니다.<br>모두 제 제안이 적혀 있습니다.</p>
+<p class="sub">사이클 05(로그인·계정)의 화면 제안을 쉬운 말과 그림으로 풀었습니다. 규칙은 명세에서 이미 정하셨고, 여기서는 "어디에 무엇이 보이나"만 정합니다. 묶음마다 PC·태블릿·폰 밑그림을 먼저 보이고 그 아래에 제안을 적었습니다. 그림은 자리와 순서를 보여 주는 밑그림이고 실제 디자인이 아닙니다. 캔버스에서는 칩으로, 다른 기기에서는 "3 미승인: 이유"처럼 번호로 답해 주세요.</p>
+
+<section class="card">
+<h2><span class="num">가</span>전체 길</h2>
+<div class="gist">새로 생기는 화면은 넷입니다: 로그인 선택 창, 가입 동의, 탈퇴 안내, 약관·처리방침. 검색 화면과 설정 창은 조금 바뀝니다.</div>
+<figure>
+<svg viewBox="0 0 900 330" role="img" aria-label="로그인과 탈퇴의 화면 흐름">
+<defs><marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+<g font-family="Noto Sans KR, sans-serif" font-size="15" fill="var(--text)" text-anchor="middle">
+<g stroke="var(--muted)" stroke-width="2" fill="none" marker-end="url(#a1)">
+<path d="M150 55 H205"/><path d="M355 55 H410"/><path d="M560 40 H730"/><path d="M485 80 V130"/><path d="M560 160 H730 V85"/>
+<path d="M150 255 H205"/><path d="M355 255 H410"/><path d="M560 255 H615"/><path d="M765 255 H800"/>
+</g>
+<rect x="10" y="30" width="140" height="50" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="2"/><text x="80" y="60">검색 화면</text>
+<rect x="205" y="30" width="150" height="50" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/><text x="280" y="60">로그인 선택 창</text>
+<rect x="410" y="30" width="150" height="50" rx="25" fill="var(--code-bg)" stroke="var(--line)" stroke-width="2"/><text x="485" y="60">네이버·카카오</text>
+<rect x="410" y="130" width="150" height="50" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/><text x="485" y="160">가입 동의</text>
+<rect x="730" y="30" width="160" height="50" rx="8" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/><text x="810" y="60">검색 (로그인됨)</text>
+<text x="645" y="32" font-size="13" fill="var(--muted)">가입된 계정</text><text x="530" y="112" font-size="13" fill="var(--muted)">처음 온 계정</text><text x="660" y="152" font-size="13" fill="var(--muted)">"가입"</text>
+<text x="20" y="215" text-anchor="start" font-size="14" fill="var(--muted)">탈퇴할 때</text>
+<rect x="10" y="230" width="140" height="50" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="2"/><text x="80" y="260">설정 창 "계정"</text>
+<rect x="205" y="230" width="150" height="50" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/><text x="280" y="260">탈퇴 안내</text>
+<rect x="410" y="230" width="150" height="50" rx="25" fill="var(--code-bg)" stroke="var(--line)" stroke-width="2"/><text x="485" y="252">네이버·카카오</text><text x="485" y="270" font-size="13">다시 로그인</text>
+<rect x="615" y="230" width="150" height="50" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="2"/><text x="690" y="260">탈퇴 처리 중</text>
+<rect x="800" y="230" width="90" height="50" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="2"/><text x="845" y="260">검색</text>
+<text x="450" y="315" font-size="13" fill="var(--muted)">둥근 상자는 우리 화면이 아니라 네이버·카카오의 화면입니다. 파란 바탕이 새로 생기는 화면입니다.</text>
+</g></svg>
+</figure>
+</section>
+
+<section class="card">
+<h2><span class="num">나</span>검색 화면 위쪽 (5가지)</h2>
+<figure>
+<svg viewBox="0 0 900 150" role="img" aria-label="검색 화면 위쪽의 로그인 버튼 자리">
+<g font-family="Noto Sans KR, sans-serif" font-size="15" fill="var(--text)">
+<rect x="10" y="10" width="880" height="60" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="2"/>
+<text x="30" y="46" font-weight="700">chaekcheck</text>
+<rect x="690" y="24" width="70" height="32" rx="6" fill="var(--code-bg)"/><text x="725" y="45" text-anchor="middle">설정</text>
+<rect x="772" y="24" width="100" height="32" rx="6" fill="var(--accent)"/><text x="822" y="45" text-anchor="middle" fill="var(--card)">로그인</text>
+<rect x="10" y="84" width="880" height="44" rx="8" fill="var(--warn-bg)"/><text x="30" y="112">로그인을 취소했어요</text><text x="860" y="112" text-anchor="end">✕</text>
+</g></svg>
+<figcaption>위 오른쪽에 버튼 하나가 생깁니다. 로그인하면 같은 자리가 "로그아웃"으로 바뀝니다. 아래 줄은 알릴 일이 있을 때만 보이는 안내 줄입니다.</figcaption>
+</figure>
+<div class="mk"><p class="mkt">그림 1. 검색 화면, 로그인 전</p><p class="note">위 오른쪽 설정 버튼 옆에 "로그인"이 생깁니다. 화면 아래에 약관 링크가 있습니다. (제안 1)</p><div class="shots"><div class="shot"><p class="cap">PC</p><div class="fr pc"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">설정</span><span class="bt pri">로그인</span></div><div class="bd"><div class="sb">책 제목, 지은이 검색</div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div></div><div class="ft">이용약관 · 개인정보 처리방침</div></div></div></div><div class="shots"><div class="shot"><p class="cap">태블릿</p><div class="fr tb"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">설정</span><span class="bt pri">로그인</span></div><div class="bd"><div class="sb">책 제목, 지은이 검색</div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div></div><div class="ft">이용약관 · 개인정보 처리방침</div></div></div><div class="shot"><p class="cap">폰</p><div class="fr ph"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">설정</span><span class="bt pri">로그인</span></div><div class="bd"><div class="sb">책 제목, 지은이 검색</div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div></div><div class="ft">이용약관 · 개인정보 처리방침</div></div></div></div></div>
+<div class="mk"><p class="mkt">그림 2. 검색 화면, 로그인 여부 확인 중</p><p class="note">화면이 열린 직후 아주 짧은 동안입니다. 버튼 자리를 비워 두어 깜빡임을 막습니다. (제안 4)</p><div class="shots"><div class="shot"><p class="cap">PC</p><div class="fr pc"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">설정</span><span class="bt" style="visibility:hidden">로그아웃</span></div><div class="bd"><div class="sb">책 제목, 지은이 검색</div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div></div><div class="ft">이용약관 · 개인정보 처리방침</div></div></div></div><div class="shots"><div class="shot"><p class="cap">태블릿</p><div class="fr tb"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">설정</span><span class="bt" style="visibility:hidden">로그아웃</span></div><div class="bd"><div class="sb">책 제목, 지은이 검색</div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div></div><div class="ft">이용약관 · 개인정보 처리방침</div></div></div><div class="shot"><p class="cap">폰</p><div class="fr ph"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">설정</span><span class="bt" style="visibility:hidden">로그아웃</span></div><div class="bd"><div class="sb">책 제목, 지은이 검색</div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div></div><div class="ft">이용약관 · 개인정보 처리방침</div></div></div></div></div>
+<div class="mk"><p class="mkt">그림 4. 로그인에 실패해 돌아온 검색 화면</p><p class="note">위쪽 안내 줄에 이유를 보이고 ✕로 닫습니다. 문구는 경우에 따라 넷입니다. (제안 2)</p><div class="shots"><div class="shot"><p class="cap">PC</p><div class="fr pc"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">설정</span><span class="bt pri">로그인</span></div><div class="nt"><span>로그인을 취소했어요</span><span class="sp"></span><span>✕</span></div><div class="bd"><div class="sb">책 제목, 지은이 검색</div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div></div><div class="ft">이용약관 · 개인정보 처리방침</div></div></div></div><div class="shots"><div class="shot"><p class="cap">태블릿</p><div class="fr tb"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">설정</span><span class="bt pri">로그인</span></div><div class="nt"><span>로그인을 취소했어요</span><span class="sp"></span><span>✕</span></div><div class="bd"><div class="sb">책 제목, 지은이 검색</div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div></div><div class="ft">이용약관 · 개인정보 처리방침</div></div></div><div class="shot"><p class="cap">폰</p><div class="fr ph"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">설정</span><span class="bt pri">로그인</span></div><div class="nt"><span>로그인을 취소했어요</span><span class="sp"></span><span>✕</span></div><div class="bd"><div class="sb">책 제목, 지은이 검색</div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div></div><div class="ft">이용약관 · 개인정보 처리방침</div></div></div></div></div>
+<div class="mk"><p class="mkt">그림 6. 검색 화면, 로그인 후</p><p class="note">같은 자리가 "로그아웃"으로 바뀝니다. 이름이나 "네이버로 로그인됨"은 보이지 않습니다. 누르면 확인 창 없이 바로 로그아웃됩니다. (제안 3)</p><div class="shots"><div class="shot"><p class="cap">PC</p><div class="fr pc"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">설정</span><span class="bt">로그아웃</span></div><div class="bd"><div class="sb">책 제목, 지은이 검색</div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div></div><div class="ft">이용약관 · 개인정보 처리방침</div></div></div></div><div class="shots"><div class="shot"><p class="cap">태블릿</p><div class="fr tb"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">설정</span><span class="bt">로그아웃</span></div><div class="bd"><div class="sb">책 제목, 지은이 검색</div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div></div><div class="ft">이용약관 · 개인정보 처리방침</div></div></div><div class="shot"><p class="cap">폰</p><div class="fr ph"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">설정</span><span class="bt">로그아웃</span></div><div class="bd"><div class="sb">책 제목, 지은이 검색</div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div></div><div class="ft">이용약관 · 개인정보 처리방침</div></div></div></div></div>
+<div class="item">
+<h3><span class="no">1</span>"로그인" 버튼은 위 오른쪽, 설정 버튼 옆 <span class="an">[안]</span></h3>
+<p>검색 화면과 책 화면 둘 다 같은 자리에 둡니다. 폰에서도 같은 자리에 글자 버튼 그대로 둡니다. 약관·처리방침 화면에는 이 버튼을 두지 않습니다.</p>
+<p class="alt"><b>다른 선택</b>: 설정 창 안에만 두기(화면은 깔끔하지만 로그인이 있는지 찾기 어려움).</p>
+</div>
+<div class="item">
+<h3><span class="no">2</span>알릴 일은 화면 위 안내 줄 한 줄로 <span class="an">[안]</span></h3>
+<p>로그인 실패 이유 넷과 "탈퇴했습니다"를 이 줄에 보여 줍니다. 한 번 보이고, ✕로 닫을 수 있습니다. 검색은 그대로 쓸 수 있습니다.</p>
+<p class="alt"><b>다른 선택</b>: 가운데 뜨는 알림 창(반드시 "확인"을 눌러야 해서 번거로움).</p>
+</div>
+<div class="item">
+<h3><span class="no">3</span>"로그아웃"은 누르면 바로, 확인 창 없이 <span class="an">[안]</span></h3>
+<p>잘못 눌러도 다시 로그인하면 되고 잃는 것이 없으므로 "정말 로그아웃할까요?"를 묻지 않습니다.</p>
+<p class="alt"><b>다른 선택</b>: 확인 창을 한 번 띄움.</p>
+</div>
+<div class="item">
+<h3><span class="no">4</span>로그인 여부를 확인하는 짧은 동안은 버튼 자리를 비워 둠 <span class="an">[안]</span></h3>
+<p>화면이 열리면 서버에 "로그인돼 있나"를 한 번 묻습니다. 답이 오기 전에 "로그인"을 먼저 보여 주면, 로그인한 사람에게 "로그인"이 잠깐 보였다가 "로그아웃"으로 바뀌는 깜빡임이 생깁니다. 그래서 답이 올 때까지 그 자리를 비워 둡니다.</p>
+<p class="alt"><b>다른 선택</b>: "로그인"을 먼저 보이고 바꿈(깜빡임이 생김).</p>
+</div>
+<div class="item">
+<h3><span class="no">5</span>30일이 지나 로그인이 풀릴 때는 안내 없이 "로그인" 버튼으로 <span class="an">[안]</span></h3>
+<p>로그인이 풀려도 검색은 그대로 되므로, 따로 알리지 않고 버튼만 "로그인"으로 돌아갑니다.</p>
+<p class="alt"><b>다른 선택</b>: 안내 줄에 "로그인이 풀렸어요. 다시 로그인해 주세요"를 보임. 다음 사이클에 내 도서관 기능이 생기면 왜 내 도서관이 안 보이는지 알 수 있어 이쪽이 친절합니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">다</span>로그인 선택 창 (2가지)</h2>
+<figure>
+<svg viewBox="0 0 900 230" role="img" aria-label="로그인 선택 창">
+<g font-family="Noto Sans KR, sans-serif" font-size="15" fill="var(--text)" text-anchor="middle">
+<rect x="10" y="10" width="880" height="210" rx="8" fill="var(--code-bg)"/>
+<rect x="290" y="25" width="320" height="180" rx="12" fill="var(--card)" stroke="var(--line)" stroke-width="2"/>
+<text x="450" y="55" font-weight="700">로그인</text><text x="590" y="52" text-anchor="end">✕</text>
+<rect x="320" y="70" width="260" height="38" rx="6" fill="#03C75A"/><text x="450" y="94" fill="#fff">네이버 로그인</text>
+<rect x="320" y="116" width="260" height="38" rx="6" fill="#FEE500"/><text x="450" y="140" fill="#191919">카카오 로그인</text>
+<text x="450" y="184" font-size="13" fill="var(--muted)">처음이면 가입 동의 화면이 나와요</text>
+</g></svg>
+<figcaption>버튼 색과 로고는 네이버·카카오의 지침을 따릅니다(이미 정해진 것). 그림의 녹색은 대략의 색이고 정확한 값은 구현 때 확인합니다.</figcaption>
+</figure>
+<div class="mk"><p class="mkt">그림 3. 로그인 선택 창</p><p class="note">PC와 태블릿은 가운데 뜨는 작은 창, 폰은 아래에서 올라오는 창입니다. (제안 6, 7)</p><div class="shots"><div class="shot"><p class="cap">PC</p><div class="fr pc"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">설정</span><span class="bt pri">로그인</span></div><div class="bd"><div class="sb">책 제목, 지은이 검색</div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div></div><div class="ft">이용약관 · 개인정보 처리방침</div><div class="ov"></div><div class="md"><h4>로그인<span>✕</span></h4><div class="g"><span class="bt nv">N 네이버 로그인</span><span class="bt kk">● 카카오 로그인</span></div><div class="hint">처음이면 가입 동의 화면이 나와요</div></div></div></div></div><div class="shots"><div class="shot"><p class="cap">태블릿</p><div class="fr tb"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">설정</span><span class="bt pri">로그인</span></div><div class="bd"><div class="sb">책 제목, 지은이 검색</div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div></div><div class="ft">이용약관 · 개인정보 처리방침</div><div class="ov"></div><div class="md"><h4>로그인<span>✕</span></h4><div class="g"><span class="bt nv">N 네이버 로그인</span><span class="bt kk">● 카카오 로그인</span></div><div class="hint">처음이면 가입 동의 화면이 나와요</div></div></div></div><div class="shot"><p class="cap">폰</p><div class="fr ph"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">설정</span><span class="bt pri">로그인</span></div><div class="bd"><div class="sb">책 제목, 지은이 검색</div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div></div><div class="ft">이용약관 · 개인정보 처리방침</div><div class="ov"></div><div class="md"><h4>로그인<span>✕</span></h4><div class="g"><span class="bt nv">N 네이버 로그인</span><span class="bt kk">● 카카오 로그인</span></div><div class="hint">처음이면 가입 동의 화면이 나와요</div></div></div></div></div></div>
+<div class="item">
+<h3><span class="no">6</span>검색 화면 위에 뜨는 작은 창으로 <span class="an">[안]</span></h3>
+<p>따로 주소가 있는 화면이 아니라, 보던 화면 위에 뜨는 창입니다. 닫으면 보던 화면 그대로입니다. 폰에서는 화면 아래에서 올라오는 창으로 보입니다.</p>
+<p class="alt"><b>다른 선택</b>: <code>/login</code>이라는 별도 화면. 주소로 바로 올 수 있지만 보던 검색 화면을 떠납니다.</p>
+</div>
+<div class="item">
+<h3><span class="no">7</span>창 아래에 한 줄: "처음이면 가입 동의 화면이 나와요" <span class="an">[안]</span></h3>
+<p>"회원가입" 버튼이 따로 없으므로, 처음 온 사람도 같은 버튼을 누르면 된다는 것을 알려 줍니다.</p>
+<p class="alt"><b>다른 선택</b>: 문구를 바꾸거나 넣지 않음.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">라</span>가입 동의 화면 (3가지)</h2>
+<figure>
+<svg viewBox="0 0 900 300" role="img" aria-label="가입 동의 화면">
+<g font-family="Noto Sans KR, sans-serif" font-size="15" fill="var(--text)">
+<rect x="250" y="10" width="400" height="280" rx="12" fill="var(--card)" stroke="var(--line)" stroke-width="2"/>
+<text x="275" y="42" font-weight="700">가입 동의</text>
+<rect x="275" y="56" width="350" height="50" rx="6" fill="var(--code-bg)"/><text x="290" y="78" font-size="13">수집 목적 · 항목 · 보유 기간 ·</text><text x="290" y="96" font-size="13">거부할 권리 (법이 정한 고지 표)</text>
+<rect x="275" y="120" width="16" height="16" rx="3" fill="none" stroke="var(--accent)" stroke-width="2"/><text x="300" y="134" font-weight="700">모두 동의</text>
+<line x1="275" y1="146" x2="625" y2="146" stroke="var(--line)"/>
+<rect x="275" y="158" width="16" height="16" rx="3" fill="none" stroke="var(--muted)" stroke-width="2"/><text x="300" y="172">이용약관 동의 (필수)</text><text x="625" y="172" text-anchor="end" font-size="13" fill="var(--accent)">전문 보기</text>
+<rect x="275" y="186" width="16" height="16" rx="3" fill="none" stroke="var(--muted)" stroke-width="2"/><text x="300" y="200">개인정보 수집·이용 동의 (필수)</text><text x="625" y="200" text-anchor="end" font-size="13" fill="var(--accent)">전문 보기</text>
+<rect x="275" y="214" width="16" height="16" rx="3" fill="none" stroke="var(--muted)" stroke-width="2"/><text x="300" y="228">만 14세 이상입니다 (필수)</text>
+<rect x="275" y="246" width="170" height="32" rx="6" fill="var(--code-bg)"/><text x="360" y="267" text-anchor="middle">취소</text>
+<rect x="455" y="246" width="170" height="32" rx="6" fill="var(--accent)"/><text x="540" y="267" text-anchor="middle" fill="var(--card)">가입</text>
+</g></svg>
+<figcaption>확인란 셋과 고지 표는 명세에서 정해진 것입니다. 여기서 정하는 것은 "모두 동의", 주소, 시간이 지났을 때입니다.</figcaption>
+</figure>
+<div class="mk"><p class="mkt">그림 5. 가입 동의 화면 (처음 온 계정)</p><p class="note">가운데 한 단으로 좁게 둡니다. 셋 다 표시해야 "가입"이 눌립니다. 그림은 아직 표시하지 않아 "가입"이 흐린 상태입니다. (제안 8, 9, 10)</p><div class="shots"><div class="shot"><p class="cap">PC</p><div class="fr pc"><div class="hd"><b>chaekcheck</b></div><div class="bd"><div class="pg"><h4>가입 동의</h4><div class="box">수집 목적: 계정 식별 · 항목: 네이버/카카오 회원번호 · 보유 기간: 탈퇴 때까지 · 동의하지 않을 수 있으며 그 경우 가입되지 않습니다</div><div class="ck all"><i></i>모두 동의</div><div class="ck"><i></i>이용약관 동의 (필수)<a>전문 보기</a></div><div class="ck"><i></i>개인정보 수집·이용 동의 (필수)<a>전문 보기</a></div><div class="ck"><i></i>만 14세 이상입니다 (필수)</div><div class="two" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px"><span class="bt">취소</span><span class="bt pri off">가입</span></div></div></div><div class="ft">이용약관 · 개인정보 처리방침</div></div></div></div><div class="shots"><div class="shot"><p class="cap">태블릿</p><div class="fr tb"><div class="hd"><b>chaekcheck</b></div><div class="bd"><div class="pg"><h4>가입 동의</h4><div class="box">수집 목적: 계정 식별 · 항목: 네이버/카카오 회원번호 · 보유 기간: 탈퇴 때까지 · 동의하지 않을 수 있으며 그 경우 가입되지 않습니다</div><div class="ck all"><i></i>모두 동의</div><div class="ck"><i></i>이용약관 동의 (필수)<a>전문 보기</a></div><div class="ck"><i></i>개인정보 수집·이용 동의 (필수)<a>전문 보기</a></div><div class="ck"><i></i>만 14세 이상입니다 (필수)</div><div class="two" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px"><span class="bt">취소</span><span class="bt pri off">가입</span></div></div></div><div class="ft">이용약관 · 개인정보 처리방침</div></div></div><div class="shot"><p class="cap">폰</p><div class="fr ph"><div class="hd"><b>chaekcheck</b></div><div class="bd"><div class="pg"><h4>가입 동의</h4><div class="box">수집 목적: 계정 식별 · 항목: 네이버/카카오 회원번호 · 보유 기간: 탈퇴 때까지 · 동의하지 않을 수 있으며 그 경우 가입되지 않습니다</div><div class="ck all"><i></i>모두 동의</div><div class="ck"><i></i>이용약관 동의 (필수)<a>전문 보기</a></div><div class="ck"><i></i>개인정보 수집·이용 동의 (필수)<a>전문 보기</a></div><div class="ck"><i></i>만 14세 이상입니다 (필수)</div><div class="two" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px"><span class="bt">취소</span><span class="bt pri off">가입</span></div></div></div><div class="ft">이용약관 · 개인정보 처리방침</div></div></div></div></div>
+<div class="item">
+<h3><span class="no">8</span>"모두 동의" 확인란을 맨 위에 둠 <span class="an">[안]</span></h3>
+<p>셋 다 필수이므로 한 번에 표시할 수 있게 합니다. 누르면 아래 셋이 모두 표시됩니다.</p>
+<p class="alt"><b>다른 선택</b>: 두지 않음. 하나씩 읽고 누르게 되어 더 신중하지만 세 번 눌러야 합니다.</p>
+</div>
+<div class="item">
+<h3><span class="no">9</span>주소는 <code>/signup</code>, 네이버·카카오에서 돌아온 직후에만 열림 <span class="an">[안]</span></h3>
+<p>누가 주소창에 <code>/signup</code>을 직접 쳐서 들어오면 가입할 정보가 없으므로 검색 화면으로 보냅니다.</p>
+<p class="alt"><b>다른 선택</b>: 주소 이름을 바꿈(예: <code>/join</code>).</p>
+</div>
+<div class="item">
+<h3><span class="no">10</span>동의 화면을 오래 열어 두면 "처음부터 다시 로그인해 주세요" <span class="an">[안]</span></h3>
+<p>가입 전에는 아무것도 저장하지 않고 몇 분짜리 임시 값만 들고 있기로 하셨습니다. 그 시간이 지난 뒤 "가입"을 누르면 가입할 정보가 사라진 상태입니다. 이때 "시간이 지났어요. 처음부터 다시 로그인해 주세요"를 보이고 검색 화면으로 갑니다. 임시 값을 몇 분으로 할지는 설계에서 정합니다.</p>
+<p class="alt"><b>다른 선택</b>: 문구를 바꿈.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">마</span>설정 창과 탈퇴 (3가지)</h2>
+<div class="mk"><p class="mkt">그림 7. 설정 창 "계정" 절, 로그인 후</p><p class="note">기존 설정 창 맨 아래에 "계정" 절이 생기고 "로그아웃"과 "탈퇴"가 있습니다. 로그인 전에는 이 자리에 "로그인" 버튼 하나만 있습니다. (제안 11)</p><div class="shots"><div class="shot"><p class="cap">PC</p><div class="fr pc"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">설정</span><span class="bt">로그아웃</span></div><div class="bd"><div class="sb">책 제목, 지은이 검색</div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div></div><div class="ft">이용약관 · 개인정보 처리방침</div><div class="ov"></div><div class="md"><h4>설정<span>✕</span></h4><div class="sec" style="border-top:none;margin-top:0;padding-top:0"><b>보기 방식</b><div class="bar m"></div></div><div class="sec"><b>직접 찾기</b><div class="bar s"></div></div><div class="sec"><b>계정</b><div class="g" style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><span class="bt">로그아웃</span><span class="bt dng">탈퇴</span></div></div></div></div></div></div><div class="shots"><div class="shot"><p class="cap">태블릿</p><div class="fr tb"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">설정</span><span class="bt">로그아웃</span></div><div class="bd"><div class="sb">책 제목, 지은이 검색</div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div></div><div class="ft">이용약관 · 개인정보 처리방침</div><div class="ov"></div><div class="md"><h4>설정<span>✕</span></h4><div class="sec" style="border-top:none;margin-top:0;padding-top:0"><b>보기 방식</b><div class="bar m"></div></div><div class="sec"><b>직접 찾기</b><div class="bar s"></div></div><div class="sec"><b>계정</b><div class="g" style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><span class="bt">로그아웃</span><span class="bt dng">탈퇴</span></div></div></div></div></div><div class="shot"><p class="cap">폰</p><div class="fr ph"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">설정</span><span class="bt">로그아웃</span></div><div class="bd"><div class="sb">책 제목, 지은이 검색</div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div></div><div class="ft">이용약관 · 개인정보 처리방침</div><div class="ov"></div><div class="md"><h4>설정<span>✕</span></h4><div class="sec" style="border-top:none;margin-top:0;padding-top:0"><b>보기 방식</b><div class="bar m"></div></div><div class="sec"><b>직접 찾기</b><div class="bar s"></div></div><div class="sec"><b>계정</b><div class="g" style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><span class="bt">로그아웃</span><span class="bt dng">탈퇴</span></div></div></div></div></div></div></div>
+<div class="mk"><p class="mkt">그림 8. 탈퇴 안내 창</p><p class="note">"계속"을 누르면 네이버·카카오의 다시 로그인 화면으로 갑니다. (제안 12)</p><div class="shots"><div class="shot"><p class="cap">PC</p><div class="fr pc"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">설정</span><span class="bt">로그아웃</span></div><div class="bd"><div class="sb">책 제목, 지은이 검색</div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div></div><div class="ft">이용약관 · 개인정보 처리방침</div><div class="ov"></div><div class="md"><h4>탈퇴</h4><p>아래 자료가 지워집니다.</p><div class="box">계정, 동의 기록</div><p><b>되돌릴 수 없어요.</b></p><p>가입한 계정으로 한 번 더 로그인해 확인합니다.</p><div class="two"><span class="bt">그만두기</span><span class="bt dng">계속</span></div></div></div></div></div><div class="shots"><div class="shot"><p class="cap">태블릿</p><div class="fr tb"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">설정</span><span class="bt">로그아웃</span></div><div class="bd"><div class="sb">책 제목, 지은이 검색</div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div></div><div class="ft">이용약관 · 개인정보 처리방침</div><div class="ov"></div><div class="md"><h4>탈퇴</h4><p>아래 자료가 지워집니다.</p><div class="box">계정, 동의 기록</div><p><b>되돌릴 수 없어요.</b></p><p>가입한 계정으로 한 번 더 로그인해 확인합니다.</p><div class="two"><span class="bt">그만두기</span><span class="bt dng">계속</span></div></div></div></div><div class="shot"><p class="cap">폰</p><div class="fr ph"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">설정</span><span class="bt">로그아웃</span></div><div class="bd"><div class="sb">책 제목, 지은이 검색</div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div></div><div class="ft">이용약관 · 개인정보 처리방침</div><div class="ov"></div><div class="md"><h4>탈퇴</h4><p>아래 자료가 지워집니다.</p><div class="box">계정, 동의 기록</div><p><b>되돌릴 수 없어요.</b></p><p>가입한 계정으로 한 번 더 로그인해 확인합니다.</p><div class="two"><span class="bt">그만두기</span><span class="bt dng">계속</span></div></div></div></div></div></div>
+<div class="mk"><p class="mkt">그림 9. 탈퇴 처리 중</p><p class="note">네이버·카카오에서 돌아온 직후 잠깐 보입니다. (제안 12)</p><div class="shots"><div class="shot"><p class="cap">PC</p><div class="fr pc"><div class="hd"><b>chaekcheck</b></div><div class="bd" style="text-align:center;padding-top:120px"><div style="font-size:14px;font-weight:700">탈퇴 처리 중…</div><div class="hint">잠시만 기다려 주세요</div></div></div></div></div><div class="shots"><div class="shot"><p class="cap">태블릿</p><div class="fr tb"><div class="hd"><b>chaekcheck</b></div><div class="bd" style="text-align:center;padding-top:120px"><div style="font-size:14px;font-weight:700">탈퇴 처리 중…</div><div class="hint">잠시만 기다려 주세요</div></div></div></div><div class="shot"><p class="cap">폰</p><div class="fr ph"><div class="hd"><b>chaekcheck</b></div><div class="bd" style="text-align:center;padding-top:120px"><div style="font-size:14px;font-weight:700">탈퇴 처리 중…</div><div class="hint">잠시만 기다려 주세요</div></div></div></div></div></div>
+<div class="mk"><p class="mkt">그림 10. 탈퇴한 뒤의 검색 화면</p><p class="note">로그인 전 상태로 돌아오고 안내 줄에 "탈퇴했습니다"가 보입니다. 탈퇴가 멈춘 경우에도 같은 줄에 이유를 보입니다. (제안 13)</p><div class="shots"><div class="shot"><p class="cap">PC</p><div class="fr pc"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">설정</span><span class="bt pri">로그인</span></div><div class="nt"><span>탈퇴했습니다</span><span class="sp"></span><span>✕</span></div><div class="bd"><div class="sb">책 제목, 지은이 검색</div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div></div><div class="ft">이용약관 · 개인정보 처리방침</div></div></div></div><div class="shots"><div class="shot"><p class="cap">태블릿</p><div class="fr tb"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">설정</span><span class="bt pri">로그인</span></div><div class="nt"><span>탈퇴했습니다</span><span class="sp"></span><span>✕</span></div><div class="bd"><div class="sb">책 제목, 지은이 검색</div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div></div><div class="ft">이용약관 · 개인정보 처리방침</div></div></div><div class="shot"><p class="cap">폰</p><div class="fr ph"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">설정</span><span class="bt pri">로그인</span></div><div class="nt"><span>탈퇴했습니다</span><span class="sp"></span><span>✕</span></div><div class="bd"><div class="sb">책 제목, 지은이 검색</div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div><div class="row"><div class="bar m"></div><div class="bar s"></div></div></div><div class="ft">이용약관 · 개인정보 처리방침</div></div></div></div></div>
+<div class="item">
+<h3><span class="no">11</span>설정 창에 "계정" 절: 로그인 전에는 "로그인", 로그인 후에는 "로그아웃"과 "탈퇴" <span class="an">[안]</span></h3>
+<p>탈퇴는 자주 쓰지 않으므로 검색 화면이 아니라 설정 창 안에 둡니다. 로그아웃은 위쪽 버튼과 설정 창 두 곳에 있게 됩니다.</p>
+<p class="alt"><b>다른 선택</b>: 로그인 전에는 "계정" 절을 아예 안 보임.</p>
+</div>
+<div class="item">
+<h3><span class="no">12</span>탈퇴 안내는 설정 창 위에 뜨는 확인 창, 돌아온 뒤에는 "탈퇴 처리 중"을 잠깐 보임 <span class="an">[안]</span></h3>
+<p>확인 창에는 지워지는 것, "되돌릴 수 없어요", "가입한 계정으로 한 번 더 로그인해 확인합니다"와 "계속"·"그만두기" 버튼이 있습니다. 네이버·카카오에서 다시 로그인하고 돌아오면 "탈퇴 처리 중"을 잠깐 보인 뒤 검색 화면으로 가서 "탈퇴했습니다"를 보여 줍니다.</p>
+<p class="alt"><b>다른 선택</b>: 탈퇴 안내를 별도 화면(<code>/withdraw</code>)으로.</p>
+</div>
+<div class="item">
+<h3><span class="no">13</span>탈퇴가 멈췄을 때 문구 다섯 <span class="an">[안]</span></h3>
+<table>
+<tr><th>무슨 일이 있었나</th><th>보여 줄 문구</th></tr>
+<tr><td>다른 계정으로 다시 로그인함</td><td>"가입한 계정으로 확인해 주세요" (명세에서 승인하신 것)</td></tr>
+<tr><td>다시 로그인한 뒤 5분이 지남</td><td>"본인 확인 시간이 지났어요. 탈퇴를 다시 눌러 주세요"</td></tr>
+<tr><td>네이버·카카오 화면에서 취소함</td><td>"탈퇴를 취소했어요"</td></tr>
+<tr><td>서버 오류로 처리하지 못함</td><td>"탈퇴하지 못했어요. 잠시 뒤 다시 해 주세요"</td></tr>
+<tr><td>그 사이 로그인이 풀려 있음</td><td>"로그인이 풀렸어요. 다시 로그인한 뒤 탈퇴해 주세요"</td></tr>
+</table>
+<p>어느 경우에도 탈퇴되지 않습니다. 앞의 넷은 로그인 상태가 그대로입니다. 문구는 검색 화면의 안내 줄에 보입니다. 네이버·카카오에 다녀오면 탈퇴 안내 창은 닫혀 있기 때문입니다. 아래 둘은 확정된 명세와 다시 대조하다 빠진 것을 찾아 더했습니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">바</span>약관·처리방침 (1가지)</h2>
+<div class="mk"><p class="mkt">그림 11. 이용약관 · 개인정보 처리방침 화면</p><p class="note">로그인 없이 열립니다. 로그인 버튼은 두지 않습니다. (제안 1, 14)</p><div class="shots"><div class="shot"><p class="cap">PC</p><div class="fr pc"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">검색으로</span></div><div class="bd"><div class="doc2"><h4>이용약관</h4><div class="hint" style="text-align:left;margin:0 0 10px">버전 1 · 시행일 2026-00-00</div><div class="bar m"></div><div class="bar"></div><div class="bar m"></div><div class="bar s"></div><div class="bar"></div><div class="bar m"></div><div class="bar"></div><div class="bar s"></div></div></div><div class="ft">이용약관 · 개인정보 처리방침</div></div></div></div><div class="shots"><div class="shot"><p class="cap">태블릿</p><div class="fr tb"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">검색으로</span></div><div class="bd"><div class="doc2"><h4>이용약관</h4><div class="hint" style="text-align:left;margin:0 0 10px">버전 1 · 시행일 2026-00-00</div><div class="bar m"></div><div class="bar"></div><div class="bar m"></div><div class="bar s"></div><div class="bar"></div><div class="bar m"></div><div class="bar"></div><div class="bar s"></div></div></div><div class="ft">이용약관 · 개인정보 처리방침</div></div></div><div class="shot"><p class="cap">폰</p><div class="fr ph"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt">검색으로</span></div><div class="bd"><div class="doc2"><h4>이용약관</h4><div class="hint" style="text-align:left;margin:0 0 10px">버전 1 · 시행일 2026-00-00</div><div class="bar m"></div><div class="bar"></div><div class="bar m"></div><div class="bar s"></div><div class="bar"></div><div class="bar m"></div><div class="bar"></div><div class="bar s"></div></div></div><div class="ft">이용약관 · 개인정보 처리방침</div></div></div></div></div>
+<div class="item">
+<h3><span class="no">14</span>주소는 <code>/terms</code>와 <code>/privacy</code>, 동의 화면의 "전문 보기"는 새 탭으로 <span class="an">[안]</span></h3>
+<p>동의 화면에서 "전문 보기"를 같은 탭에서 열면 동의 화면이 닫혀 가입을 처음부터 다시 해야 합니다. 그래서 새 탭으로 엽니다. 화면 아래의 링크는 같은 탭에서 엽니다.</p>
+<p class="alt"><b>다른 선택</b>: 동의 화면 안에서 펼쳐 보이기(탭이 늘지 않지만 화면이 길어짐).</p>
+</div>
+</section>
+
+<p class="foot">원문: <code>docs/cycles/05-login-account/flow.md</code>. 화면 아래의 약관 링크와 로그인 실패 문구 넷은 명세 검토에서 이미 정하셨습니다.</p>
+</main>
+</body>
+</html>

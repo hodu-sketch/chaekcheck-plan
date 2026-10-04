@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>로그인 상태를 유지하는 방법</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 64px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+ul.items{list-style:none;padding:0;margin:0}
+ul.items>li{display:grid;grid-template-columns:34px 1fr;gap:14px;padding:14px 0;border-top:1px solid var(--line)}
+ul.items>li:first-child{border-top:none}
+ul.items svg{width:30px;height:30px;stroke:var(--accent);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;margin-top:4px}
+.items b{display:block}
+.src{color:var(--muted);font-size:16px}
+.tag{display:inline-block;font-size:16px;font-weight:500;border-radius:6px;padding:1px 8px;white-space:nowrap}
+.t-ok{background:var(--ok-bg);color:var(--ok)}.t-warn{background:var(--warn-bg);color:var(--warn)}.t-no{background:var(--no-bg);color:var(--no)}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:10px 0}
+th,td{text-align:left;padding:8px 10px;border-top:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:500}
+figure{margin:0 0 8px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:18px;margin-top:8px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+</style>
+</head>
+<body>
+<main>
+<p class="lead">로그인 기록을 서버가 갖느냐,<br>브라우저가 든 토큰에 담느냐의 차이입니다.</p>
+<p class="sub"><b>결정(2026-10-03): 사용자가 "라. 짧은 JWT + DB에 두는 리프레시 토큰"을 골랐습니다.</b> 아래는 고르기 전에 쓴 비교입니다. 어느 방식도 Redis가 꼭 필요하지는 않습니다. chaekcheck에 맞는 것은 "DB에 두는 세션"과 "짧은 JWT + DB에 두는 리프레시 토큰" 둘이고, 고르는 기준은 나중에 만들 폰 앱과 지금 만들 양입니다. 공식 문서 확인일 2026-10-03.</p>
+
+<section class="card">
+<h2><span class="num">1</span>원리는 두 가지뿐입니다</h2>
+<div class="gist">로그인에 성공한 뒤, 다음 요청이 "같은 사람"임을 서버가 어떻게 아는가의 문제입니다. HTTP 요청은 서로 이어져 있지 않아서, 브라우저가 요청마다 무언가를 같이 보내야 합니다.</div>
+<figure>
+<svg viewBox="0 0 900 250" role="img" aria-label="세션은 번호만 보내고 서버가 기록을 찾음. JWT는 내용이 든 토큰을 보내고 서버는 서명만 확인">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+<g font-family="Noto Sans KR, sans-serif" fill="var(--text)" text-anchor="middle">
+<text x="225" y="24" font-size="19" font-weight="700">세션: 서버가 기록을 가짐</text>
+<rect x="20" y="70" width="170" height="90" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+<text x="105" y="103" font-size="16" font-weight="700">브라우저</text><text x="105" y="130" font-size="14" fill="var(--muted)">쿠키에 세션 번호만</text>
+<rect x="240" y="70" width="190" height="90" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+<text x="335" y="103" font-size="16" font-weight="700">서버</text><text x="335" y="130" font-size="14" fill="var(--muted)">번호로 기록을 찾음</text>
+<line x1="192" y1="115" x2="237" y2="115" stroke="var(--muted)" stroke-width="2" marker-end="url(#ar)"/>
+<text x="215" y="58" font-size="14" fill="var(--muted)">번호만 보냄</text>
+<text x="225" y="195" font-size="15" fill="var(--muted)">서버에 "이 번호는 계정 12, 30일 뒤 만료"가 적혀 있음</text>
+<text x="225" y="220" font-size="15" fill="var(--muted)">그 기록을 지우면 로그인이 바로 끊김</text>
+<line x1="450" y1="10" x2="450" y2="235" stroke="var(--line)" stroke-width="2"/>
+<text x="675" y="24" font-size="19" font-weight="700">JWT: 토큰에 내용을 담음</text>
+<rect x="470" y="70" width="190" height="90" rx="10" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/>
+<text x="565" y="103" font-size="16" font-weight="700">브라우저</text><text x="565" y="130" font-size="14" fill="var(--muted)">계정 12 · 만료 시각 · 서명</text>
+<rect x="710" y="70" width="170" height="90" rx="10" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/>
+<text x="795" y="103" font-size="16" font-weight="700">서버</text><text x="795" y="130" font-size="14" fill="var(--muted)">서명과 만료만 확인</text>
+<line x1="662" y1="115" x2="707" y2="115" stroke="var(--muted)" stroke-width="2" marker-end="url(#ar)"/>
+<text x="685" y="58" font-size="14" fill="var(--muted)">토큰 전체를 보냄</text>
+<text x="675" y="195" font-size="15" fill="var(--muted)">서버에는 기록이 없음. 토큰에 적힌 내용이 곧 로그인 정보</text>
+<text x="675" y="220" font-size="15" fill="var(--muted)">토큰은 만료 시각까지 유효 (서버가 지울 것이 없음)</text>
+</g></svg>
+<figcaption>두 방식 모두 요청마다 브라우저가 값을 보냅니다. 다른 점은 로그인 정보가 서버에 있느냐, 보내는 값 안에 있느냐입니다.</figcaption>
+</figure>
+<ul class="items">
+<li><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg><div><b>세션</b>서버가 무작위 번호(세션 ID)를 만들어 쿠키로 주고, 그 번호에 딸린 로그인 기록을 서버 쪽 저장소에 둡니다. 번호 자체에는 아무 뜻이 없어야 합니다. <span class="src">OWASP Session Management Cheat Sheet: "The session ID content (or value) must be meaningless", 로그인 기록은 "session objects or a session management database or repository"에 둠</span></div></li>
+<li><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 10h6M7 14h10"/></svg><div><b>JWT(JSON Web Token)</b>"누구인지, 언제 만료되는지"를 적은 글에 서버가 서명을 붙인 문자열입니다. 서버는 서명이 자기 것인지와 만료 시각만 확인합니다. 내용은 암호화된 것이 아니라서 누구나 읽을 수 있고, 서명 때문에 고칠 수만 없습니다. <span class="src">RFC 7519: "a compact, URL-safe means of representing claims", 4.1.4 "exp ... MUST NOT be accepted" 뒤에는 받지 않음, 11.1 서명 없이는 신뢰 불가</span></div></li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>실제로 쓰는 방식은 넷입니다</h2>
+<div class="gist">위 두 원리를 어디에 저장하고 어떻게 섞느냐에 따라 넷으로 나뉩니다. "즉시 끊기"가 되는지와 "서버가 여러 대일 때"가 갈리는 지점입니다.</div>
+<table>
+<tr><th>방식</th><th>로그인 정보가 있는 곳</th><th>요청마다 하는 일</th><th>서버 여러 대</th><th>즉시 끊기</th></tr>
+<tr><td><b>가. 메모리 세션</b></td><td>서버 프로세스의 메모리</td><td>메모리에서 찾음</td><td><span class="tag t-no">안 됨</span> 서버마다 따로</td><td><span class="tag t-ok">됨</span></td></tr>
+<tr><td><b>나. 저장소 세션</b> (DB 또는 Redis)</td><td>모든 서버가 같이 보는 저장소</td><td>저장소를 한 번 읽음</td><td><span class="tag t-ok">됨</span></td><td><span class="tag t-ok">됨</span></td></tr>
+<tr><td><b>다. JWT 하나</b> (만료가 긴 토큰)</td><td>브라우저의 토큰</td><td>서명 확인만</td><td><span class="tag t-ok">됨</span></td><td><span class="tag t-no">안 됨</span></td></tr>
+<tr><td><b>라. 짧은 JWT + 리프레시 토큰</b></td><td>짧은 토큰(예: 15분)은 브라우저, 긴 리프레시 토큰은 DB</td><td>서명 확인만. 15분마다 한 번 DB를 읽어 새 토큰을 받음</td><td><span class="tag t-ok">됨</span></td><td><span class="tag t-warn">최대 15분 늦음</span></td></tr>
+</table>
+<p><b>"라"가 움직이는 방식</b>: 요청에는 15분짜리 JWT를 씁니다. 만료되면 브라우저가 30일짜리 리프레시 토큰을 보내 새 JWT를 받습니다. 리프레시 토큰은 무작위 값이고 DB에 저장하며, 쓸 때마다 새것으로 바꿉니다. 로그아웃·탈퇴 때 DB의 그 줄을 지우면 새 JWT를 못 받으므로 15분 안에 끊깁니다. JWT 하나(다)의 "끊을 수 없다"를 줄이려고 세션의 원리를 리프레시 토큰에만 쓴 것입니다. <span class="src">RFC 9700: 리프레시 토큰은 교체(rotation)하거나 보낸 쪽에 묶을 것</span></p>
+<p>"서버가 여러 대면 Redis가 필요하다"는 말은 <b>가</b>에서 <b>나</b>로 옮길 때 나오는 이야기입니다. <b>나</b>의 저장소는 Redis일 수도 있고 지금 쓰는 PostgreSQL일 수도 있습니다. Spring Session은 둘 다 지원합니다. <span class="src">Spring Session 4.1.1 문서: JDBC, Redis 설정. Spring Security 문서: "Clustered sessions with Spring Session"</span></p>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>세션의 장단점</h2>
+<div class="gist">서버가 기록을 쥐고 있어서 통제가 쉽습니다. 대신 요청마다 그 기록을 읽습니다.</div>
+<ul class="items">
+<li><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><circle cx="12" cy="12" r="9"/></svg><div><b>좋은 점: 끊기와 바꾸기가 즉시</b>기록을 지우면 그 순간 로그아웃입니다. 탈퇴하면 그 계정의 기록을 모두 지우면 됩니다. 만료 기간을 바꾸거나 "모든 기기에서 로그아웃"을 만드는 것도 서버에서 끝납니다.</div></li>
+<li><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><circle cx="12" cy="12" r="9"/></svg><div><b>좋은 점: 만들 것이 적음</b>Spring Security가 로그인 정보를 세션에 넣는 것이 기본 동작이고, 로그인 때 세션 번호를 새로 발급하는 보호도 기본입니다. <span class="src">Spring Security Session Management 문서</span></div></li>
+<li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg><div><b>나쁜 점: 요청마다 저장소를 읽음</b>로그인한 사용자의 요청마다 세션 표를 한 번 읽습니다. 저장소가 느려지거나 멈추면 로그인한 사용자 전체가 영향을 받습니다.</div></li>
+<li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg><div><b>나쁜 점: 저장소가 읽히면 세션도 샘</b>Spring Session은 세션 번호를 표(<code>SPRING_SESSION</code>)에 그대로 저장합니다. DB를 읽을 수 있는 사람은 살아 있는 세션 번호로 접속할 수 있습니다. Redis에 둘 때도 번호가 키 이름에 그대로 들어갑니다. <span class="src">Spring Session 스키마 파일, Redis 설정 문서</span></div></li>
+<li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg><div><b>나쁜 점: 폰 앱에는 따로 길이 필요</b>쿠키 세션은 브라우저에 맞춘 방식입니다. 앱은 보통 토큰을 헤더로 보내므로, 나중에 앱을 만들면 토큰 발급 경로를 더해야 합니다.</div></li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>JWT의 장단점</h2>
+<div class="gist">서버가 아무것도 읽지 않고 확인할 수 있습니다. 대신 한번 내준 토큰은 서버가 거둬들일 수 없습니다.</div>
+<ul class="items">
+<li><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><circle cx="12" cy="12" r="9"/></svg><div><b>좋은 점: 요청마다 저장소를 안 읽음</b>서명과 만료 시각만 확인합니다. 서버가 몇 대든 같은 키만 갖고 있으면 됩니다. <span class="src">Spring Security Resource Server 문서: 서명, <code>exp</code>·<code>nbf</code>·<code>iss</code> 검증</span></div></li>
+<li><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><circle cx="12" cy="12" r="9"/></svg><div><b>좋은 점: 웹과 앱이 같은 방식</b>토큰은 쿠키로도, 헤더로도 보낼 수 있습니다. 폰 앱이 생겨도 같은 토큰을 씁니다.</div></li>
+<li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg><div><b>나쁜 점: 즉시 끊기가 그대로는 안 됨</b>로그아웃하거나 탈퇴해도 이미 내준 토큰은 만료 시각까지 서명이 맞습니다. 끊으려면 서버에 기록을 다시 둬야 합니다. ASVS는 방법 셋을 듭니다: 끊은 토큰 목록을 두기, 사용자별로 "이 시각 이전 토큰은 거절"을 두기, 사용자별 서명 키를 바꾸기. 셋 다 요청마다 무언가를 읽게 되어 "안 읽는다"는 장점이 줄어듭니다. <span class="src">OWASP ASVS 5.0 7.4.1, 7.4.2(계정 삭제 시 모든 세션 종료). OWASP JWT Cheat Sheet: 세션에 JWT를 쓰면 무효화 방법이 필요하고, 일반 세션을 고려하라고 함</span></div></li>
+<li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg><div><b>나쁜 점: 흐름을 직접 조립해야 함</b>Spring Security에는 JWT를 검증하는 기능과 서명해 만드는 부품(<code>NimbusJwtEncoder</code>)이 둘 다 있습니다. 없는 것은 "로그인이 끝나면 내주고 만료되면 갱신하는" 흐름입니다. 직접 만드는 것: 로그인 성공 때 쿠키로 내주기, 쿠키에서 읽어 검증하기, 리프레시 토큰 표와 갱신 API, 웹의 자동 갱신, 로그인 도중의 임시 값(<code>state</code>)을 둘 곳. 양은 코드 몇백 줄과 표 하나 정도로 크지 않습니다. 부담은 양보다 리프레시 토큰 교체처럼 틀리기 쉬운 보안 코드를 우리가 책임진다는 점입니다. (2026-10-03 정정: 처음에는 "발급 기능이 없다, 만들 것이 많다"고 적었는데 과장이었습니다.) <span class="src">Spring Security API 문서: <code>NimbusJwtEncoder</code>(5.6부터). Resource Server 문서: 토큰은 기본으로 <code>Authorization</code> 헤더에서 읽음. OAuth2 Client 문서: 로그인 요청은 기본으로 <code>HttpSession</code>에 보관</span></div></li>
+<li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg><div><b>나쁜 점: 내용이 보임</b>토큰에 적은 것은 누구나 읽을 수 있습니다. 계정 번호와 만료 시각 말고는 넣지 않아야 합니다. 서명 키가 새면 누구든 아무 계정의 토큰을 만들 수 있습니다.</div></li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="num">5</span>표에 없는 방식 둘</h2>
+<div class="gist">카드 2의 넷 말고 이름이 따로 있는 방식이 둘 더 있습니다. 새 원리는 아닙니다. 하나는 세션과, 하나는 JWT와 원리가 같고, 값을 실어 보내는 자리만 다릅니다.</div>
+<ul class="items">
+<li><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><div><b>뜻 없는 토큰을 헤더로 (opaque token)</b>"opaque"는 받은 쪽이 안을 들여다볼 수 없다는 뜻입니다. 서버가 무작위 문자열을 만들어 주고, 그 문자열이 어느 계정의 것이고 언제 만료되는지를 <b>서버 쪽 표에 적어 둡니다.</b> 프로그램은 요청마다 이 문자열을 헤더에 넣어 보내고(<code>Authorization: Bearer 문자열</code>), 서버는 표에서 찾아 누구인지 압니다. 표의 줄을 지우면 그 토큰은 바로 못 씁니다.
+<table>
+<tr><th></th><th>세션 쿠키 (나)</th><th>뜻 없는 토큰</th><th>JWT</th></tr>
+<tr><td>값 안에 내용이 있나</td><td>없음 (번호)</td><td>없음 (무작위 문자열)</td><td>있음 (계정 번호, 만료, 서명)</td></tr>
+<tr><td>서버가 요청마다 저장소를 읽나</td><td>읽음</td><td>읽음</td><td>안 읽음</td></tr>
+<tr><td>즉시 끊기</td><td>됨</td><td>됨</td><td>안 됨</td></tr>
+<tr><td>어떻게 보내나</td><td>쿠키. 브라우저가 자동으로 붙임</td><td>헤더. 프로그램이 직접 붙임</td><td>쿠키 또는 헤더</td></tr>
+<tr><td>CSRF 방어가 필요한가</td><td>필요</td><td>헤더로만 보내면 필요 없음(자동으로 안 붙으므로)</td><td>쿠키로 보내면 필요</td></tr>
+</table>
+즉 세션과 원리가 같고, 값을 실어 보내는 자리만 쿠키에서 헤더로 바뀐 것입니다. 헤더는 자동으로 붙지 않아서 값을 프로그램이 보관해야 합니다. 폰 앱은 기기의 보안 저장소에 둘 수 있어 이 방식이 잘 맞습니다. 웹 화면은 스크립트가 읽을 수 있는 곳에 둬야 해서 XSS에 약해지므로 쿠키가 낫습니다.
+<br><br><b>이미 쓰고 있는 예</b>: 카카오·네이버가 우리에게 주는 액세스 토큰이 이것입니다. 우리는 그 문자열의 뜻을 모르고, 헤더에 넣어 그쪽 서버에 보내면 그쪽이 자기 저장소에서 찾아 답합니다.
+<br><br><b>chaekcheck에서는</b>: 세션 방식(나)으로 가면 폰 앱은 이 방법으로 붙입니다(사용자 결정, 2026-10-03). 폰 앱을 만들 때 JWT가 꼭 필요한 것은 아닙니다. 세션을 DB에 두는 방식(나)에서, 앱에는 같은 세션 번호를 헤더로 주고받게 할 수 있습니다. Spring Session에 이 기능이 있습니다(세션 번호를 쿠키 대신 <code>X-Auth-Token</code> 헤더로). 그러면 웹과 앱이 같은 세션 표를 쓰고, 탈퇴 때 즉시 끊기는 것도 같습니다.
+<span class="src">RFC 6750 1.2(가진 사람이 쓸 수 있는 토큰), 2.1(<code>Authorization: Bearer</code>), 5.3(TLS 필수). OWASP ASVS 5.0 7.2.2·7.2.3: "reference token", 128비트 이상 무작위. Spring Session REST 가이드: <code>HeaderHttpSessionIdResolver.xAuthToken()</code></span></div></li>
+<li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></svg><div><b>쿠키에 세션 내용을 통째로 넣기</b>서버에 기록을 두지 않고, 로그인 정보를 서명(또는 암호화)해 쿠키에 넣는 방식입니다. 원리는 JWT 하나(다)와 같아서 즉시 끊기가 안 되는 점도 같습니다. Spring Security의 기본 구성에는 없습니다.</div></li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="num">6</span>chaekcheck에 적용하면</h2>
+<div class="gist">"가"는 서버 재시작 때 전원 로그아웃이라 이미 뺐고, "다"는 탈퇴 때 끊을 수 없어 쓸 수 없습니다. 남는 것은 "나(DB 세션)"와 "라(짧은 JWT + 리프레시)"입니다.</div>
+<table>
+<tr><th>이 서비스의 요구</th><th>나. 세션을 DB에 (10월 1일 결정)</th><th>라. 짧은 JWT + 리프레시 토큰</th></tr>
+<tr><td>탈퇴·연결 끊기 때 모든 로그인을 끊음 (명세 R6·R7)</td><td>세션 줄을 지움. 즉시</td><td>리프레시 줄을 지움. 남은 JWT는 최대 15분. 계정이 이미 지워졌으므로 계정 자료를 읽는 API는 바로 실패함</td></tr>
+<tr><td>30일 유지, 서버를 다시 켜도 유지</td><td>됨</td><td>됨</td></tr>
+<tr><td>서버가 여러 대가 돼도 Redis 없이</td><td>됨 (PostgreSQL 공유)</td><td>됨</td></tr>
+<tr><td>로그인한 요청마다 DB 읽기</td><td>한 번 읽음. 로그인이 필요한 요청은 내 계정 조회, 지역·도서관 저장 정도. 검색은 로그인과 무관</td><td>안 읽음. 15분에 한 번</td></tr>
+<tr><td>DB에 생기는 표</td><td>세션 표 2개 (Spring Session 제공)</td><td>리프레시 토큰 표 1개 (직접 설계)</td></tr>
+<tr><td>이번 사이클에 만들 양</td><td>의존성 1개와 설정</td><td>코드 몇백 줄과 표 하나: 쿠키로 내주기·읽기, 리프레시 표와 갱신 API, 웹의 자동 갱신, 로그인 도중 임시 값 둘 곳. 할 만한 양</td></tr>
+<tr><td>나중 Expo 앱</td><td>앱용 토큰 경로를 그때 따로 만듦</td><td>같은 토큰을 그대로 씀</td></tr>
+<tr><td>브라우저에 두는 곳</td><td><code>HttpOnly</code> 쿠키</td><td><code>HttpOnly</code> 쿠키 (스크립트가 못 읽게). 쿠키를 쓰므로 CSRF 방어는 둘 다 필요</td></tr>
+</table>
+</section>
+
+<section class="card">
+<h2><span class="num">7</span>정리: 무엇을 기준으로 고르나</h2>
+<div class="gist">Redis를 피하는 것은 두 방식 모두 됩니다. 실제 기준은 "지금 만들 양"과 "폰 앱을 얼마나 가까이 보느냐"입니다.</div>
+<table>
+<tr><th>이것이 더 중요하면</th><th>고를 것</th><th>이유</th></tr>
+<tr><td>이번 사이클을 작게, 탈퇴 즉시 끊기를 확실히</td><td>나. 세션을 DB에</td><td>Spring이 주는 것을 그대로 씀. 직접 만드는 보안 코드가 가장 적음</td></tr>
+<tr><td>폰 앱을 곧 만들 것이고 웹과 한 방식으로</td><td>라. 짧은 JWT + 리프레시</td><td>앱과 웹이 같은 토큰. 대신 토큰 관리 코드를 직접 만들고 지킴</td></tr>
+<tr><td>지금은 작게, 앱은 그때 가서</td><td>나로 시작 → 앱 때 헤더로 세션 번호를 주고받는 길을 추가</td><td>계정·동의·탈퇴와 세션 표를 그대로 씀. 앱에는 같은 세션 번호를 헤더로 보냄(카드 5의 "뜻 없는 토큰"). JWT를 새로 만들지 않아도 됨</td></tr>
+</table>
+<p>제 추천은 셋째 줄입니다. 로그인한 사용자의 요청이 적은 서비스라 요청마다 DB를 읽는 부담이 작고, 혼자 운영하는 서비스에서 직접 만든 토큰·키 관리 코드는 계속 지켜야 할 대상이 됩니다. 폰 앱이 다음 몇 사이클 안에 있다면 처음부터 "라"로 가는 편이 두 번 일하지 않습니다.</p>
+</section>
+
+<p class="foot">이 글은 요약이며 근거는 원본에 있습니다: <code>docs/cycles/05-login-account/research.md</code> 8절(출처 URL과 확인 날짜), <code>spec.md</code> R4. 출처: OWASP Session Management Cheat Sheet, OWASP JSON Web Token Cheat Sheet, OWASP ASVS 5.0 V7, RFC 7519, RFC 9700, Spring Security·Spring Session 공식 문서.</p>
+</main></body></html>

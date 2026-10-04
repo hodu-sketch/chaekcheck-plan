@@ -18,15 +18,37 @@ The user asked (2026-10-01) that every `[안]` be decided one by one in the canv
 
 1. Build the review page: `node .claude/skills/plan-canvas/proposal-review.cjs <doc.md>`. It writes `<dir>/.review/<name>.review.html` (git-ignored) and `<name>.proposals.json` (chip number → source line and context).
 2. Open and await the **.html** page, not the .md: `ecc-plan-canvas open <dir>/.review/<name>.review.html`, then `await` in the background.
-3. In the page each `[안]` is a numbered chip (💡 안 #N). Clicking it offers exactly three buttons: 승인 / 미승인 / 기타 (user's choice 2026-10-01: no separate 제안 button, because a suggestion can be written in 기타). Choices are queued and sent with the 보내기 button. They arrive as annotations `"[안 #N] 승인"`, `"[안 #N] 미승인: <reason>"`, `"[안 #N] 기타: <free text>"` with `anchor.snippet` = the item's text. `[확정]` and `[확인 필요]` are shown as badges.
+3. In the page each `[안]` is a numbered chip (💡 안 #N). Clicking it shows a text box and exactly three buttons: 승인 / 미승인 / 기타 (user's choice 2026-10-01: no separate 제안 button, because a suggestion can be written in 기타). Text typed in the box is sent with whichever button is pressed, 승인 included (user, 2026-10-04: a note written next to an approval must not be dropped). Choices are queued and sent with the 보내기 button. They arrive as annotations `"[안 #N] 승인"`, `"[안 #N] 승인: <note>"`, `"[안 #N] 미승인: <reason>"`, `"[안 #N] 기타: <free text>"` with `anchor.snippet` = the item's text. `[확정]` and `[확인 필요]` are shown as badges.
 4. Apply decisions to the .md (map #N with the JSON or the snippet; if several decisions for the same #N arrive, the last one wins):
-   - 승인 → change that `[안]` to `[확정]` with `(사용자 승인, YYYY-MM-DD)`.
+   - 승인 → change that `[안]` to `[확정]` with `(사용자 승인, YYYY-MM-DD)`. If a note came with it (`승인: <note>`), read the note before applying: a condition or change goes into the document in the user's words, a question gets answered, and if the note contradicts the approval ask which one is meant.
    - 미승인 → remove or replace the proposal as the user's reason says. If a replacement is needed and the reason does not give it, ask in the canvas; the replacement comes back as a new `[안]` to decide.
    - 기타 → free text: a question or the user's own suggestion. Answer a question in the canvas with `--reply` (the chip stays undecided). For a suggestion, replace the proposal with it and tag it `[확정]` with `(사용자 제안, YYYY-MM-DD)`, quoting the user's words; if it is not concrete enough to write down, or conflicts with another decision or rule, reply in the canvas and put the worked-out version back as a new `[안]` to decide.
    Also update the same value in other cycle documents (`spec.md`, `flow.md`, `scope.md`) where it appears.
 5. Re-run the script after each edit (the canvas live-reloads the .html), reply in the canvas with what changed, and keep awaiting.
 6. 승인 and 미승인 count as decisions, and so does a 기타 suggestion once applied; a 기타 question does not. When no `[안]` is left in the document (all decided) or the user sends Approve, end the canvas session and **continue to the skill's next step without asking** (e.g. after `/screen-flow` start `/design-delta`). Record decisions that need an ADR with `/adr` first.
 7. Chat messages and freeform annotations in the canvas are handled as before.
+
+## Plain-language decision page (user, 2026-10-04)
+
+The user decides from a page written for a reader who is not a developer, not from the raw document. For every review in this project (spec, flow, architect proposal, design-delta, handoff, ADR draft):
+
+1. Write a decision page `<cycle>/easy/YYYY-MM-DD-<name>-decisions.html` and add a row to `<cycle>/easy/README.md`. Start from the head (style block) of an existing page in that folder so the look and the CSS variables stay the same. Write it with the project skill `plain-page` (`.claude/skills/plain-page/SKILL.md`): its writing rules, evidence rules and picture rules apply to every page; the points below are the minimum.
+   - One numbered item per `[안]`, in the document's order, grouped under a few headings. Each item: what happens if the proposal is taken (a concrete example), 다른 선택 with what each costs, and which one is recommended. Mark the item with the literal text `[안]` once, so it becomes a chip.
+   - Short sentences, everyday Korean words. Explain a technical term the first time it appears, or avoid it. Say plainly when a proposal changes something the user decided earlier.
+   - Evidence: when a proposal rests on an external fact (a standard, a provider's API, a library's behaviour, what other services do), look it up in the official source and give the source name, URL and check date; record the detail in the cycle's `research.md` and point to its section. What could not be verified is written as "확인 못 함", never guessed.
+   - Pictures: draw whatever makes the proposal easier to see, as inline SVG or HTML/CSS (no script: pages sent with `SendUserFile` do not run scripts, so Mermaid is pre-rendered or hand-drawn).
+     - spec: flowchart of the rule, timeline for time values, comparison table for alternatives
+     - flow: screen-to-screen diagram, and **a mock-up of every new or changed screen as it would look in the service, separately for PC, tablet and phone**, placed next to the proposals it illustrates. Mock-ups show position and order, not visual design; say so on the page. Base existing screens on the dev project's current screens.
+     - design-delta / ADR: module relation diagram, table relation (class) diagram, sequence diagram of the main request
+2. Build the canvas copy with `node .claude/skills/plan-canvas/proposal-review.cjs <page.html>` (writes `<cycle>/.review/<name>.review.html`), open it, and `await` in the background with the longest timeout. Also send the static page with `SendUserFile` so it can be read on another device.
+3. Decisions come back numbered by the page's chips (#N = the N-th `[안]` on the page); map them to the source document by the item title in `anchor.snippet`. Apply them to the source document (`spec.md`, `flow.md`, ...) as in step 4 above. For a question (기타), research it, answer on a follow-up page containing only the open items, and ask again.
+4. The source document stays the record. The decision page is a view of it: when the two disagree, fix the page.
+   - Theme: review pages open light. The canvas does not pass its own light/dark setting to the page inside it (the page is sandboxed), so the review script puts a 어둡게/밝게 button at the top right of the page; the user presses it when the canvas is set to dark. Pages must use the CSS variables listed in `plain-page` so the button can recolour them.
+5. **Everything the user has to decide or confirm goes through the canvas** (user, 2026-10-04: "내가 일부러 클로드 코드 내의 선택 창에서 하고 싶다는 말 없으면 다 canvas로 해줘"). This includes, besides the first review of a document:
+   - follow-up rounds: answers to 기타 questions, re-worded proposals after 미승인, and the "남은 N가지" list of what is still open. Do not write these out as a list in the conversation and ask there; put them on a follow-up page (only the open items, each with its answer, picture and chip) and open it.
+   - single decisions that come up mid-work (a choice between alternatives, a wording to confirm, a go-ahead for a change to skills or rules).
+   - ADR drafts (see the `adr` skill).
+   In the conversation write only a short note: what was applied, how many items are open, and that the page is open in the canvas. Use `AskUserQuestion` or a numbered list in the conversation only when the user asks for it, says they are on another device (the canvas is a local address), or `ecc-plan-canvas` is unavailable; say which of these applies.
 
 
 # Plan Canvas
