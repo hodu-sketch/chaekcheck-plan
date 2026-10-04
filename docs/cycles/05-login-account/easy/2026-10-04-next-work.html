@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>다음 여섯 작업: 할 일과 나란히 하기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">10월&nbsp;6일 새벽까지 여섯 작업을 하려면<br>plan 세션이 할 일과, 나란히 할 수 있는 일을 정리했습니다.</p>
+<p class="sub">결론부터 말씀드리면 <b>일부는 나란히 할 수 있습니다.</b> 배포 준비 조사는 지금 바로 따로 시작할 수 있고, plan은 dev가 앞 사이클을 만드는 동안 다음 사이클 문서를 쓸 수 있습니다. 다만 dev 두 곳이 같은 검색 화면 파일을 동시에 고치는 것은 권하지 않습니다. 고르실 것은 다섯 개입니다. 이 페이지는 설계가 아니라 일하는 순서에 대한 제안입니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>지금 어디까지 와 있나</h2>
+<div class="gist">dev는 사이클 05(로그인) 17단계 가운데 16단계까지 마쳤습니다. 남은 것은 실제 네이버·카카오로 하는 확인입니다.</div>
+<div class="item"><table>
+<tr><th>무엇</th><th>상태</th><th>근거</th></tr>
+<tr><td>사이클 05 로그인</td><td>16단계(운영 웹 서버 설정 예시)까지 끝남. 17단계(실제 제공자로 확인)가 남음</td><td>chaekcheck-dev <code>docs/plan-feedback.md</code> "16단계 결과", 커밋 <code>96e55e3</code> (2026-10-04 확인)</td></tr>
+<tr><td>카카오만 켜기</td><td>이미 만들어짐</td><td>chaekcheck-dev 커밋 <code>2cb93db</code>, <code>d599d8e</code></td></tr>
+<tr><td>거주·직장 지역 고르기</td><td>화면이 이미 있음. 고른 값은 브라우저에만 저장됨</td><td>chaekcheck-dev <code>web/src/features/region/RegionModal.tsx</code></td></tr>
+<tr><td>회원 쪽 저장(<code>member</code> 모듈)</td><td>아직 없음</td><td>chaekcheck-dev <code>backend/.../chaekcheck/</code>에 <code>auth</code>, <code>availability</code>, <code>catalog</code>, <code>library</code>, <code>region</code>만 있음</td></tr>
+<tr><td>배포</td><td>웹 서버 설정 예시만 있음. 올릴 곳(호스팅)은 정해지지 않음</td><td>chaekcheck-dev <code>deploy/nginx/</code>, plan <code>docs/backlog.md</code> "운영에 올리기"</td></tr>
+</table></div>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>여섯 작업마다 plan이 할 일</h2>
+<div class="gist">절반은 이미 조사나 제안이 있어서, 새로 조사할 것보다 사용자께 여쭤서 정할 것이 많습니다.</div>
+<div class="item"><table>
+<tr><th>작업</th><th>이미 있는 것</th><th>plan이 할 일</th></tr>
+<tr><td>① 책 묶기 알려주기</td><td>같은 책을 하나로 묶는 규칙은 사이클 04에서 만들어짐(<code>docs/research/ebook-catalog/same-book-isbn.md</code>)</td><td>이 말의 뜻을 먼저 확인(아래 4번 카드). 그 뒤 화면과 문구를 정함</td></tr>
+<tr><td>② 책검색, 직장/지역 UI</td><td>검색 화면과 지역 고르기 창이 있음</td><td>무엇을 바꾸고 싶으신지 여쭤보고, 지금 화면을 보고 바뀐 화면을 PC·태블릿·폰으로 그려 정함</td></tr>
+<tr><td>③ 직장별 도서관 매핑</td><td>가입 자격 규칙에 "직장"이 이미 있고(ADR-0004), 검색이 직장 지역을 받음</td><td>뜻을 먼저 확인(아래 4번 카드). 직장 지역 기준이면 새로 만들 것은 "저장"뿐</td></tr>
+<tr><td>④ 내 도서관</td><td>밑그림과 제안이 있음(<code>docs/research/member-and-alerts/outline.md</code> 2절, <code>integration-plan.md</code> 3.2절). 모듈 둘로 나누기와 검색 연결 방식은 이미 정하심</td><td>남은 질문 넷을 여쭘: 자동으로 들어온 도서관을 뺄 수 있게 할지 / 로그인 뒤 기본 필터 / 직접 추가한 도서관의 정렬 위치와 개수 상한 / <code>/api/v1/me</code>에 합쳐 줄지. 그 뒤 설계와 인계서</td></tr>
+<tr><td>⑤ 정렬, UI 이상한 것 수정</td><td>정렬 후보 목록이 있음(<code>docs/backlog.md</code> "검색·조회" 첫 항목). "이상한 것"의 목록은 없음</td><td>이상한 곳의 목록을 받아 적고(화면 캡처면 충분), 정렬은 후보 가운데 이번에 넣을 것만 고르시게 함</td></tr>
+<tr><td>⑥ 배포(카카오 로그인만)</td><td>카카오만 켜는 설정, 웹 서버 설정 예시</td><td>공식 문서로 조사: 올릴 곳 후보와 값, 검색에 쓰는 PostgreSQL 확장 <code>pg_bigm</code>을 허용하는지, 책 68만 권을 운영 DB로 옮기는 방법. 그리고 공개 전에 채울 것 목록(아래 6번 카드)</td></tr>
+</table>
+<span class="src">남은 질문 넷: <code>integration-plan.md</code> 6절 "05b". <code>pg_bigm</code>이 서버 설정을 요구한다는 것: chaekcheck-dev <code>docs/plan-feedback.md</code> "새로 알게 된 제약" (2026-10-04 확인)</span></div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>나란히 할 수 있는 것과 없는 것</h2>
+<div class="gist">세 갈래로 나누면, 배포 조사는 처음부터 따로 가고, plan과 dev는 한 사이클씩 엇갈려 쉬지 않고 갑니다.</div>
+<div class="item">
+<div style="display:flex;gap:10px;align-items:stretch;margin:8px 0;flex-wrap:wrap"><div style="flex:0 0 150px;font-weight:700;padding:10px 0">plan (이 세션)</div><div style="flex:1 1 420px;display:flex;gap:6px;flex-wrap:wrap"><div style="flex:1 1 150px;border:1px solid var(--line);background:var(--accent-bg);border-radius:8px;padding:8px 10px;font-size:16px">사이클 06 문서<br>(회원: ②의 지역 UI, ③, ④)</div><div style="flex:1 1 150px;border:1px solid var(--line);background:var(--accent-bg);border-radius:8px;padding:8px 10px;font-size:16px">사이클 07 문서<br>(검색 화면: ①, ②의 책검색, ⑤)</div><div style="flex:1 1 150px;border:1px solid var(--line);background:var(--accent-bg);border-radius:8px;padding:8px 10px;font-size:16px">배포 결정 받기, 공개 전 점검</div></div></div>
+<div style="display:flex;gap:10px;align-items:stretch;margin:8px 0;flex-wrap:wrap"><div style="flex:0 0 150px;font-weight:700;padding:10px 0">dev</div><div style="flex:1 1 420px;display:flex;gap:6px;flex-wrap:wrap"><div style="flex:1 1 150px;border:1px solid var(--line);background:var(--ok-bg);border-radius:8px;padding:8px 10px;font-size:16px">사이클 05 마무리<br>(17단계)</div><div style="flex:1 1 150px;border:1px solid var(--line);background:var(--ok-bg);border-radius:8px;padding:8px 10px;font-size:16px">사이클 06 구현</div><div style="flex:1 1 150px;border:1px solid var(--line);background:var(--ok-bg);border-radius:8px;padding:8px 10px;font-size:16px">사이클 07 구현</div><div style="flex:1 1 150px;border:1px solid var(--line);background:var(--ok-bg);border-radius:8px;padding:8px 10px;font-size:16px">배포</div></div></div>
+<div style="display:flex;gap:10px;align-items:stretch;margin:8px 0;flex-wrap:wrap"><div style="flex:0 0 150px;font-weight:700;padding:10px 0">배포 조사 (따로)</div><div style="flex:1 1 420px;display:flex;gap:6px;flex-wrap:wrap"><div style="flex:1 1 150px;border:1px solid var(--line);background:var(--warn-bg);border-radius:8px;padding:8px 10px;font-size:16px">올릴 곳·DB 확장·데이터 옮기기 조사<br>(처음부터 시작)</div><div style="flex:1 1 150px;border:1px solid var(--line);background:var(--warn-bg);border-radius:8px;padding:8px 10px;font-size:16px">사용자가 고른 뒤 계정·도메인 준비</div></div></div>
+<p class="cap">같은 줄은 순서대로, 다른 줄은 같은 때에 진행합니다. 칸의 너비는 걸리는 시간이 아닙니다.</p>
+<table>
+<tr><th>나란히 해도 되는 것</th><th>이유</th></tr>
+<tr><td>배포 조사와 기능 문서</td><td>서로 다른 것을 다룸. CLAUDE.md가 사이클 밖 조사를 <code>docs/research/</code>에 두도록 허용함</td></tr>
+<tr><td>dev가 06을 만드는 동안 plan이 07 문서를 씀</td><td>07은 검색 화면, 06은 회원 저장이라 정할 내용이 겹치지 않음</td></tr>
+<tr><td>서버 쪽 06과 07</td><td>06은 새 <code>member</code> 모듈, 07은 <code>catalog</code> 모듈. 모듈끼리 서로의 안쪽을 건드리지 않는 것이 이 프로젝트의 규칙(ADR-0001)</td></tr>
+</table>
+<table>
+<tr><th>나란히 하면 안 되는 것</th><th>이유</th></tr>
+<tr><td>dev 두 곳이 06과 07을 동시에 구현</td><td>둘 다 검색 화면 파일(<code>SearchPage.tsx</code>)을 고침. 06은 "내 도서관만" 스위치, 07은 정렬과 화면 수정. 합칠 때 충돌함</td></tr>
+<tr><td>인계서 둘을 한꺼번에 넘김</td><td>dev가 읽는 <code>docs/current/handoff.md</code>는 "지금 인계서 하나만" 두는 파일(CLAUDE.md)</td></tr>
+<tr><td>④ 내 도서관을 ③보다 먼저</td><td>내 도서관은 "지역으로 자동 + 직접 추가"를 합친 목록이라 지역 저장이 먼저 있어야 함(<code>outline.md</code> 2.2)</td></tr>
+</table></div>
+<div class="item"><h3><span class="no">1</span>세 갈래로 나누고, plan과 dev를 한 사이클씩 엇갈려 진행 <span class="an">[안]</span></h3>
+<p>사이클 06은 회원(지역·직장 저장, 직장 매핑, 내 도서관), 사이클 07은 검색 화면(책 묶기 알려주기, 책검색 화면, 정렬, 이상한 곳 수정)으로 묶습니다. 배포 조사는 사이클 밖에서 지금 시작합니다. 06 인계서를 넘기면 dev를 기다리지 않고 바로 07 문서를 씁니다. 07 인계서가 먼저 끝나면 사이클 폴더에만 두었다가, dev가 06을 마치면 <code>docs/current/handoff.md</code>로 옮깁니다.</p>
+<p><b>지금 규칙에서 달라지는 것</b>: CLAUDE.md는 "앞 사이클이 실제로 만들어진 것을 본 뒤 다음 사이클을 시작"하게 되어 있습니다. 이 안에서는 07을 시작할 때 06이 아직 만들어지지 않았으므로, 06 되돌아보기는 dev가 끝낸 뒤로 미룹니다. 06을 만들다 설계가 달라지면 07 문서를 고쳐야 할 수 있습니다.</p>
+<p class="alt"><b>다른 선택</b>: 지금처럼 한 사이클씩 차례로(안전하지만 dev가 만드는 동안 plan이 기다림). 여섯 작업을 사이클 하나로(문서 한 벌이지만 인계서가 커지고 하나가 막히면 전부 늦어짐). 06과 07을 dev 두 곳에서 동시에(가장 빠를 수 있지만 검색 화면 파일 충돌을 손으로 풀어야 함).</p></div>
+<div class="item"><h3><span class="no">2</span>사이클마다 캔버스 결정을 두 번으로 줄임: "규칙과 화면" 한 번, "설계" 한 번 <span class="an">[안]</span></h3>
+<p>사이클 05에서는 명세, 화면, 설계, 결정 기록, 검토, 인계서를 따로따로 결정하셨습니다(결정 60개 남짓). 이번에는 명세와 화면을 한 페이지에서, 설계와 결정 기록을 한 페이지에서 받습니다. 문서 자체(spec, flow, design-delta, handoff)와 마지막 검토는 그대로 만듭니다. 결정 기록(ADR)은 모듈이나 표가 새로 생기는 결정에만 씁니다.</p>
+<p class="alt"><b>다른 선택</b>: 지금처럼 단계마다 따로(꼼꼼하지만 사용자께서 캔버스를 여는 횟수가 두 배 이상). 감수하는 점: 한 페이지가 길어지고, 화면을 보다가 규칙을 바꾸면 같은 페이지 안에서 다시 고쳐야 합니다.</p></div>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>뜻을 확인해야 하는 두 가지</h2>
+<div class="gist">두 작업은 적어 주신 말만으로 범위가 갈립니다. 제가 이해한 뜻을 적었으니, 다르면 기타에 적어 주세요.</div>
+<div class="item"><h3><span class="no">3</span>"책 묶기 알려주기"는 검색 결과와 책 화면에서 "여러 도서관의 책을 한 책으로 묶어 보여 준다"는 것을 화면에 알려 주는 일로 이해함 <span class="an">[안]</span></h3>
+<p>예: 책 화면에 "제목·지은이·출판사가 같은 책을 하나로 묶었어요" 같은 안내와, 묶인 판(종이책 ISBN이 다른 판 등)을 볼 수 있는 자리를 둡니다. 문구와 자리는 사이클에서 그려 정합니다. 묶는 규칙 자체는 바꾸지 않습니다.</p>
+<p class="alt"><b>다른 뜻일 수 있는 것</b>: 묶는 규칙을 고치는 일(같은 책인데 따로 나오거나 다른 책이 묶이는 것을 고침). 수집 세션이 정한 "책 번호 유지"를 넣는 일. 어느 쪽인지 확인 못 함.</p></div>
+<div class="item"><h3><span class="no">4</span>"직장별 도서관 매핑"은 직장이 있는 시·군·구를 저장하면 그 지역 재직자가 가입할 수 있는 도서관이 내 도서관에 자동으로 들어오는 일로 이해함 <span class="an">[안]</span></h3>
+<p>예: 직장을 "서울 중구"로 저장하면, 서울 재직자가 가입할 수 있는 도서관이 내 도서관에 들어옵니다. 판정은 지금 검색이 쓰는 것을 그대로 씁니다. 새로 만드는 것은 로그인한 사람의 지역을 서버에 저장하는 것입니다.</p>
+<p class="alt"><b>다른 뜻일 수 있는 것</b>: 회사·대학이 직원에게 주는 전자도서관(소속 자격)을 넣는 일. 이쪽은 기관 목록과 가입 자격 조사, 서비스에 없는 기관 2,506곳을 넣는 일이 먼저 필요해서(<code>docs/backlog.md</code> "웹러브 북스 기관을 서비스 도서관으로 넣기") 10월&nbsp;6일 안에는 어렵다고 봅니다.</p></div>
+</section>
+
+<section class="card">
+<h2><span class="num">5</span>수집 세션이 정한 "책 번호 유지"를 언제 넣나</h2>
+<div class="gist">내 도서관이 도서관만 저장하면, 책 번호 유지는 배포 뒤로 미뤄도 됩니다.</div>
+<div class="item"><p>정해진 것은 "책 번호 유지는 회원이 <b>책을</b> 저장하는 기능보다 먼저"입니다. 내 도서관 밑그림이 저장하는 것은 지역과 도서관 번호뿐이고, 책을 저장하는 것은 알림(관심 책)입니다.</p>
+<span class="src"><code>docs/research/ebook-catalog/catalog-refresh.md</code> 5.2절 4번, <code>outline.md</code> 2.1 "저장하는 것", <code>integration-plan.md</code> 5절 "06 알림: 관심 책"</span></div>
+<div class="item"><h3><span class="no">5</span>이번 여섯 작업에서는 책을 저장하지 않고, 책 번호 유지는 배포 뒤 알림 사이클 앞에 넣음 <span class="an">[안]</span></h3>
+<p>내 도서관은 도서관만 저장합니다. 감수하는 점: 배포한 뒤 책 목록을 다시 가져오면 책 번호가 바뀔 수 있어서, 누군가 공유해 둔 책 주소(<code>/books/번호</code>)가 "책을 찾을 수 없어요"로 나올 수 있습니다.</p>
+<p class="alt"><b>다른 선택</b>: 책 번호 유지를 배포 전에 넣음(공유한 주소가 유지되지만 작업이 하나 늘어 10월&nbsp;6일이 더 빠듯해짐).</p></div>
+</section>
+
+<section class="card">
+<h2><span class="num">6</span>배포 전에 사용자께서 정하거나 하셔야 하는 것</h2>
+<div class="gist">제가 조사해 드릴 수 있지만 결정과 가입은 사용자만 할 수 있습니다. 배포 갈래가 가장 먼저 막힐 수 있는 곳입니다.</div>
+<div class="item"><table>
+<tr><th>무엇</th><th>왜 필요한가</th><th>상태</th></tr>
+<tr><td>올릴 곳(호스팅) 고르기와 가입·결제</td><td>서버와 DB가 있어야 공개됨</td><td>미정. 조사 뒤 캔버스로 여쭘</td></tr>
+<tr><td>도메인</td><td>카카오 리다이렉트 URI와 연결 해제 웹훅에 공개 주소가 필요</td><td><code>chaekcheck.co.kr</code> 확보 여부 [확인 필요]</td></tr>
+<tr><td>카카오 콘솔에 공개 주소 등록</td><td>리다이렉트 URI 두 줄, 연결 해제 웹훅, 개인정보 처리방침 주소</td><td>도메인이 생긴 뒤</td></tr>
+<tr><td>이용약관·개인정보 처리방침 글</td><td>가입 동의 화면이 이 글을 보여 줌</td><td>화면은 만들어짐. 글 내용 확정은 남음</td></tr>
+<tr><td>키를 운영 서버에 넣기</td><td>JWT 키, 카카오 키. 저는 값을 보지 않음</td><td>배포 때 사용자가 직접</td></tr>
+<tr><td>법 관련 전문가 확인</td><td>도서관 사이트에서 책 목록을 모으는 것에 대한 저작권법 제93조·부정경쟁방지법 확인</td><td>backlog에 "전문가 확인"으로 남아 있음. 공개 전에 할지 사용자 판단</td></tr>
+</table>
+<span class="src"><code>docs/backlog.md</code> "운영에 올리기", "운영·인프라", <code>docs/cycles/05-login-account/handoff-update.md</code> 4절</span></div>
+</section>
+
+<p class="foot">이 페이지가 근거로 삼은 문서: <code>docs/backlog.md</code>, <code>docs/research/member-and-alerts/outline.md</code>, <code>integration-plan.md</code>, <code>docs/research/ebook-catalog/catalog-refresh.md</code>, CLAUDE.md, chaekcheck-dev의 <code>docs/plan-feedback.md</code>와 코드(읽기만 함, 2026-10-04). 걸리는 시간은 근거가 없어 적지 않았습니다.</p>
+</main>
+</body>
+</html>

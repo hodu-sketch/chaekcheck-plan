@@ -55,6 +55,7 @@
 | [2026-10-04-handoff.html](2026-10-04-handoff.html) | dev에 넘길 인계서를 풀어 쓴 것: 17단계, 사용자가 할 일, 찾은 어긋남, 넘기기 전에 정할 것 7가지 | `docs/cycles/05-login-account/handoff.md` | 없음 (일곱 모두 승인, 인계서를 넘김) |
 | [2026-10-04-provider-setup.html](2026-10-04-provider-setup.html) | 네이버·카카오 로그인을 위해 사용자가 할 일(앱 등록 순서, 돌아올 주소, 키 다루기)과 도메인이 필요해지는 때 | `docs/cycles/05-login-account/handoff.md`, `research.md` 2·7·12절 | 없음 |
 | [2026-10-04-naver-later.html](2026-10-04-naver-later.html) | "카카오만 먼저, 네이버는 나중에"의 세 가지 길(제공자별 설정 / 카카오만 만듦 / 그대로)과 네이버 화면에 더 채울 것 | 사용자 의견 (2026-10-04), `handoff.md` | 결정됨: 제공자별 설정 승인 (2026-10-04) |
+| [2026-10-04-next-work.html](2026-10-04-next-work.html) | 10월 6일 새벽까지 할 여섯 작업: plan이 할 일, 나란히 할 수 있는 것, 뜻을 확인할 것, 배포 전에 사용자가 할 것 | `docs/backlog.md` "다음 사이클 후보", `outline.md`, `integration-plan.md` | 다섯 제안 모두 하지 않음 (사용자, 2026-10-04: "일단 이건 됐다", "안 한다는 뜻이야"). 이유 [이유 미확인] |
 | [2026-10-04-screen-mockups.html](2026-10-04-screen-mockups.html) | 새로 생기거나 바뀌는 화면 11장의 밑그림을 PC·태블릿·폰으로 나눠 그림 (자리와 순서만, 실제 디자인 아님) | `docs/cycles/05-login-account/flow.md` | 밑그림 전체가 [안] |
 
 ## 읽는 순서 제안
