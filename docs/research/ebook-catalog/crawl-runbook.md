@@ -73,6 +73,8 @@
 | 2026-10-04 | `2-crawl.md` 2-1절 | 서버(줄)별 동시 요청 수 `--host-slots KEY=N,…`, 설정 파일 `host-slots.txt`(`resume.cmd`가 읽음). 그 줄은 N개 목록으로 나눠 받고 요청 시작 사이 1초 이상. 평균 응답 14초 초과나 5번 연달아 실패면 1건으로(`SLOTS OFF`). 첫 사용: 교보 대여·혼합형 103.182.126.192 = 4 (사용자, 2026-10-04) |
 | 2026-10-04 | `2-crawl.md` 6절 표 | YES24 `AUDIO` 첫 쪽이 오류(500)나 다른 화면(`div.total em missing`)이면 도서관 전체가 실패하던 것 → 오디오북 목록만 건너뛰고 전자책 목록은 받음, 로그 `AUDIO list unreadable, skipped`, `crawl_run.error`에 `AUDIO-list-unreadable` (칠보중학교 `chilbo.yes24library.com`, 국제뇌교육종합대학원대학교 `ube.yes24library.com`) |
 | 2026-10-04 | `2-crawl.md` 4절 표 | 끝까지 깨지는 쪽을 다른 정렬로 다시 읽어 채우기를 북큐브(`sort=2` 출판일순)·알라딘(`order_list=1` 출판일순)에도 적용 (전에는 YES24만). 대원대·성균관대(북큐브), 아주자동차대(알라딘)가 사이트 오류 쪽 때문에 `MISMATCH`였음 |
+| 2026-10-04 | `2-crawl.md` 4절 표 (알려진 빈틈) | 수집기를 다시 켜기 전에 건너뛴 쪽(사이트 오류)은 다시 켠 뒤 기억하지 못해 다시 읽지 않음 → 그 쪽 책이 빠짐(천상중학교 1,181/1,201). 그 도서관은 "전체 성공 없음"으로 남아 다음 재시작 때 처음부터 다시 받음. 고칠 방법 [안]: 건너뛴 쪽 목록을 `crawl_run`에 저장 |
+| 2026-10-04 | `1-libraries.md` 새 절 | 도서관 목록 두 이름 [확정] (사용자, 2026-10-04): **등록 도서관**(서비스 DB, dev seed, 278곳) / **후보 도서관**(수집 DB 번호 100001~, 웹러브 북스에서 찾음, 2,738곳). "후보 도서관 찾기" 절차(`probe_kyobo_institutions.py`·`probe_yes24.py`·`probe_aladin.py`·`probe_other_platforms.py` → `import-probe`/`import-bookcube`, plan `crawl-runbook.md` 8-1절)와 "구독 규칙·마감 확인" 절차(`probe_kyobo_limits.py`: 교보 구독형 사이트 `/popup/popupMain.json`·`/main/firstBoardBlbrSrmb.json`·`/board/listBoard.json`을 로그인 없이 3초 간격으로 읽음, 팝업 본문은 그림이라 내려받아 읽음, plan `docs/research/library-limits/research.md` 3-1절) |
 | 2026-10-04 | `platforms.md` 8절 알라딘 | `goods_id`는 숫자만이 아님: 공급사에 따라 `BOOKRAILN0809003`처럼 영문+숫자 (한국해양대 2쪽부터) |
 
 ## 8. 순위 4: 웹러브 북스 나머지 기관 (2026-10-03 시작)

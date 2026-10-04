@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>수집 작업 나누기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">수집 일을 셋으로 나누고,<br>섞여 있던 도서관 정보 도구를<br>"도서관 정보" 쪽으로 옮깁니다.</p>
+<p class="sub">정할 것은 다섯 가지입니다. 원본은 <code>docs/research/maintenance/collection-areas.md</code>입니다.</p>
+
+<section class="card"><h2><span class="num">1</span>지금 무엇이 섞여 있나</h2>
+<div class="gist">"어느 도서관이 있나"를 찾는 일과 "구독형이 마감됐나"를 보는 일이, 책 목록 수집기 폴더(<code>chaekcheck-data</code>, git 밖)에 함께 들어 있습니다.</div>
+<figure><svg viewBox="0 0 900 290" role="img" aria-label="수집 일 셋과 지금 위치">
+<rect x="20" y="20" width="270" height="250" rx="12" fill="var(--card)" stroke="var(--line)" stroke-width="2"/>
+<text x="36" y="50" font-size="18" font-weight="700" fill="var(--text)">① 도서관 정보</text>
+<text x="36" y="80" font-size="15" fill="var(--muted)">어느 도서관이 있나, 화면 종류,</text>
+<text x="36" y="102" font-size="15" fill="var(--muted)">가입 자격, 구독 규칙, 마감</text>
+<rect x="36" y="120" width="238" height="44" rx="8" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/>
+<text x="48" y="148" font-size="14" fill="var(--text)">dev scripts/library (있음)</text>
+<rect x="36" y="174" width="238" height="80" rx="8" fill="var(--no-bg)" stroke="var(--no)" stroke-width="2" stroke-dasharray="6 5"/>
+<text x="48" y="200" font-size="14" fill="var(--text)">웹러브 북스 기관 찾기,</text>
+<text x="48" y="222" font-size="14" fill="var(--text)">구독형 마감 확인</text>
+<text x="48" y="244" font-size="13" fill="var(--muted)">→ 지금 ② 폴더에 있음</text>
+<rect x="315" y="20" width="270" height="250" rx="12" fill="var(--card)" stroke="var(--line)" stroke-width="2"/>
+<text x="331" y="50" font-size="18" font-weight="700" fill="var(--text)">② 도서관-책</text>
+<text x="331" y="80" font-size="15" fill="var(--muted)">도서관마다 어떤 책이 있나</text>
+<rect x="331" y="120" width="238" height="44" rx="8" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="2"/>
+<text x="343" y="148" font-size="14" fill="var(--text)">chaekcheck-data (git 밖)</text>
+<text x="331" y="190" font-size="13" fill="var(--muted)">수집이 끝나면 dev</text>
+<text x="331" y="210" font-size="13" fill="var(--muted)">scripts/crawl로 (ADR-0047)</text>
+<rect x="610" y="20" width="270" height="250" rx="12" fill="var(--card)" stroke="var(--line)" stroke-width="2"/>
+<text x="626" y="50" font-size="18" font-weight="700" fill="var(--text)">③ 가져오기</text>
+<text x="626" y="80" font-size="15" fill="var(--muted)">수집 DB → 서비스 DB</text>
+<rect x="626" y="120" width="238" height="44" rx="8" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/>
+<text x="638" y="148" font-size="14" fill="var(--text)">dev catalog-import (있음)</text>
+</svg><figcaption>빨간 점선 칸이 섞여 있는 것입니다. ①의 일인데 ②의 폴더에 있습니다.</figcaption></figure>
+<p>그 결과 도서관 목록도 둘이 됐습니다. 서비스 도서관 278곳(dev seed)과, 웹러브 북스에서 찾아 수집 DB에만 있는 기관 2,738곳(번호 100001~)입니다. 두 번째 목록은 다 받아도 서비스 검색에 나오지 않습니다.</p>
+</section>
+
+<section class="card"><h2><span class="num">2</span>정할 것</h2>
+<div class="gist">나눔, 옮길 곳, 이름, 문서 정리, 알릴 것입니다.</div>
+
+<div class="item"><h3><span class="no">1</span>수집 일을 셋으로 나눔: ① 도서관 정보, ② 도서관-책, ③ 가져오기 <span class="an">[안]</span></h3>
+<p>dev <code>docs/maintenance/</code>의 <code>1-libraries.md</code>, <code>2-crawl.md</code>, <code>3-import.md</code>와 같은 나눔입니다. 구독 규칙과 마감 확인은 책이 아니라 도서관에 대한 정보라 ①에 넣습니다.</p>
+<p class="alt"><b>다른 선택</b>: 마감 확인을 ④로 따로 둠(일이 하나 늘고, 구독 규칙과 따로 놀게 됨).</p></div>
+
+<div class="item"><h3><span class="no">2</span>웹러브 북스 기관 찾기와 마감 확인 스크립트는 dev <code>scripts/library/</code>로 옮김 <span class="an">[안]</span></h3>
+<p>책 수집기를 dev로 옮길 때(전체 수집이 끝난 뒤) 함께 옮깁니다. 절차는 dev <code>1-libraries.md</code>에 "수집 전용 기관 찾기", "구독 규칙·마감 확인" 절로 넣습니다. 조사 기록과 결정은 plan에 남습니다(<code>library-limits/research.md</code>, <code>crawl-runbook.md</code> 8절).</p>
+<p class="alt"><b>다른 선택</b>: 책 수집기와 함께 <code>scripts/crawl/</code>로(코드가 한곳이지만 ①·② 구분이 흐려짐).</p></div>
+
+<div class="item"><h3><span class="no">3</span>도서관 목록 둘을 "서비스 도서관"과 "수집 전용 기관"으로 부름 <span class="an">[안]</span></h3>
+<p>문서마다 이 두 이름을 씁니다. "수집 전용 기관"을 서비스로 넣는 일은 backlog의 다음 사이클 후보 그대로입니다.</p>
+<p class="alt"><b>다른 선택</b>: 지금처럼 "웹러브 북스 기관"(출처 이름이라 나중에 다른 출처가 생기면 맞지 않음).</p></div>
+
+<div class="item"><h3><span class="no">4</span>plan 문서와 링크를 이 나눔에 맞춰 고침 <span class="an">[안]</span></h3>
+<p>plan <code>reference-index.md</code>의 절을 ①②③에 맞춥니다. <code>periodic-tasks.md</code>, <code>crawl-runbook.md</code>, <code>library-limits/research.md</code>, <code>catalog-refresh.md</code> 머리말에 dev 위치를 링크합니다. 오늘 바뀐 상태(흐름 6·7 구현, 첫 가져오기, 교보 대여·혼합 수집 등)로 낡은 표시를 고칩니다. dev 문서는 plan이 쓸 수 없으니 요청서로 넘깁니다.</p>
+<p class="alt"><b>다른 선택</b>: dev가 옮기기를 마친 뒤 한 번에(그동안 문서끼리 어긋남).</p></div>
+
+<div class="item"><h3><span class="no">5</span>알릴 것은 둘: dev 요청서 하나와 다음 plan 세션용 메시지 하나 <span class="an">[안]</span></h3>
+<p><b>dev</b>: ADR-0047 요청서에 "C. 도서관 정보 도구 옮기기"와 "오늘 바뀐 수집기 기능 목록"(IP 줄 세우기, 서버별 동시 요청 수, 이어 받기, 알라딘·북큐브 고친 것 등)을 더하고, 붙여 넣을 메시지를 새로 만듭니다. <b>plan</b>: 오늘 정한 것(책 번호 유지, 구독형 한도, 수집 나눔, 교보 대여·혼합 수집, 도서관-책 매핑이 중요하다는 원칙)을 한 장으로 묶은 메시지를 만듭니다. 사용자가 각 세션에 붙여 넣습니다.</p>
+<p class="alt"><b>다른 선택</b>: 주제마다 메시지를 따로(책 번호 유지 메시지는 이미 있음. 붙여 넣을 것이 많아짐).</p></div>
+</section>
+
+<p class="foot">원본: <code>docs/research/maintenance/collection-areas.md</code>, ADR-0047, dev <code>docs/maintenance/README.md</code>.</p>
+</main>
+</body>
+</html>

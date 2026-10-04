@@ -2,7 +2,7 @@
 
 작성 2026-10-01, 고침 2026-10-04(정기 작업 문서, 3-1절 가져오기·검색). 사이클과 상관없이 계속 쓰는 문서들을 주제별로 모았습니다. 사이클 문서(`docs/cycles/NN-*/`)는 그 사이클의 기록이고, 여기 적힌 것은 "지금 어떻게 하는가"를 아는 데 필요한 문서입니다. 문서를 새로 만들거나 원본이 바뀌면 이 색인을 고칩니다.
 
-원칙 [확정] (사용자, 2026-10-01, dev C2-U-7 답): **절차의 원본은 dev `docs/library-maintenance.md`**, **조사 기록과 근거 수치는 plan**. 둘이 어긋나면 dev 절차가 최신입니다. 정기 유지보수 절차(도서관 목록 확인, 책 목록 수집, 가져오기)와 수집기 코드는 dev `docs/maintenance/`·`scripts/crawl/`로 모읍니다 (ADR-0047, 2026-10-04). 옮기기 전까지는 아래 표의 위치가 맞고, 요청서는 `docs/research/maintenance/dev-move-request.md`
+원칙 [확정] (사용자, 2026-10-01, dev C2-U-7 답): **절차의 원본은 dev `docs/library-maintenance.md`**, **조사 기록과 근거 수치는 plan**. 둘이 어긋나면 dev 절차가 최신입니다. 정기 유지보수 절차(도서관 목록 확인, 책 목록 수집, 가져오기)와 수집기 코드는 dev `docs/maintenance/`·`scripts/crawl/`로 모읍니다 (ADR-0047, 2026-10-04). **문서(A)는 2026-10-04 dev가 옮김**: 절차는 dev `docs/maintenance/` (`README.md` 순서, `1-libraries.md`, `2-crawl.md`, `platforms.md`, `3-import.md`). 수집기 코드(B)와 도서관 정보 도구(C)는 전체 수집이 끝난 뒤. 요청서 `docs/research/maintenance/dev-move-request.md`
 
 ## 0. 늘 먼저 보는 것
 
@@ -14,10 +14,13 @@
 | `docs/adr/README.md` | 결정 목록 (ADR-0001~0046, 2026-10-04) |
 | dev `docs/plan-feedback.md` | dev가 개발 중 바꾼 것·측정·질문. 사이클별 절(`# 사이클 04`는 702행~). **다음 회고의 입력** |
 | dev `CLAUDE.md` | 스택·모듈 규칙 (plan에서 다시 적지 않음) |
-| `docs/research/maintenance/periodic-tasks.md` | **정기 유지보수 작업 [안]** (2026-10-04): ① 서비스 도서관 목록 확인 → ② 책 목록 수집 → ③ 서비스 DB로 가져오기 → ④ (자동) 검색·대출 조회. 단계마다 주기 [안], 절차 원본 위치, 실행 명령, 확인할 숫자. 웹러브 북스 기관을 서비스로 옮기는 순서(5절) |
+| `docs/research/maintenance/collection-areas.md` | 수집 일 나눔(① 도서관 정보 ② 도서관-책 ③ 가져오기)과 섞인 도구 옮기기 [확정] (2026-10-04) |
+| `docs/research/maintenance/periodic-tasks.md` | **정기 유지보수 작업 초안 (원본은 dev `docs/maintenance/README.md`)** (2026-10-04): ① 서비스 도서관 목록 확인 → ② 책 목록 수집 → ③ 서비스 DB로 가져오기 → ④ (자동) 검색·대출 조회. 단계마다 주기 [안], 절차 원본 위치, 실행 명령, 확인할 숫자. 웹러브 북스 기관을 서비스로 옮기는 순서(5절) |
 | `docs/cycles/NN-<slug>/easy/README.md` (지금은 `docs/cycles/05-login-account/easy/`) | 쉬운 설명 페이지(HTML) 모음과 목록. 사이클별로 둠. 사용자가 상황을 빠르게 파악할 때 봄. 요약이므로 값의 원본은 각 문서 |
 
-## 1. 도서관 목록 수집 (어디서 목록을 얻고, 살아 있는지 확인하고, 넣고 끄는가)
+수집 일은 셋으로 나눕니다 [확정] (사용자, 2026-10-04, `docs/research/maintenance/collection-areas.md`): **① 도서관 정보**(아래 1·2절, 구독 규칙·마감 포함) / **② 도서관-책**(3절) / **③ 가져오기**(3-1절, 정리·묶기 4절). 도서관 목록은 둘: **등록 도서관**(서비스 DB, 278곳, 검색에 나옴) / **후보 도서관**(수집 DB 번호 100001~, 2,738곳, 아직 검색에 안 나옴) [확정] (사용자, 2026-10-04).
+
+## 1. ① 도서관 정보: 목록 수집 (어디서 목록을 얻고, 살아 있는지 확인하고, 넣고 끄는가)
 
 | 문서 | 무엇 | 상태 |
 |---|---|---|
@@ -28,7 +31,7 @@
 | plan `docs/cycles/02-library-expansion/research.md` | 조사 결과·근거(1·8·10절), 새 주소 못 찾은 약 20곳(12절), robots.txt 방침(9절) | 기록용 |
 | plan `docs/cycles/02-library-expansion/data/kyobo-institutions.tsv` | 교보 기관 목록 원자료 | 재조사 때 비교 |
 
-## 2. 도서관 분류 (화면 종류, 가입 자격, 지역, 조회 순서)
+## 2. ① 도서관 정보: 분류·한도 (화면 종류, 가입 자격, 지역, 조회 순서, 구독 규칙·마감)
 
 | 문서 | 무엇 | 상태 |
 |---|---|---|
@@ -40,20 +43,23 @@
 | plan `docs/current/data-model.md` `library` 절, seed 절 | 칼럼 뜻, 지역 ID 규칙(시도 2자리·시군구 4자리), 통합 시·도 12 | 최신 |
 | plan `docs/cycles/04-and-search/design-delta.md` 282행 부근 | 책 검색 기본 순서 `joinTier`(내 시군구 → 내 시도 → 누구나 → 방문 가입만 → 확인 필요) | 확정 |
 | plan `docs/cycles/02-library-expansion/eligibility.md`, `eligibility-by-library.md` | 2026-09-28 검색 요약 단계 기록. 머리말에 "최신은 dev tsv" 안내(2026-10-01) | 기록용 |
+| plan `docs/research/library-limits/research.md` (+ `easy/`) | 구독형 도서관의 한도(월 예산·연 예산·1인 월 권수), 도서관별 현황(2026-10-04: 강동구립·서구 통합 마감), 알리는 방법 결정, YES24 크레마클럽·북큐브·부커스 구독형 | 2026-10-04 |
+| `chaekcheck-data/scripts/probe_kyobo_limits.py`, 결과 `other-platforms/kyobo-limits-2026-10-04.tsv` | 교보 구독형 사이트 팝업·공지 제목 확인(로그인 없이). dev `scripts/library/`로 옮길 예정(요청서 C) | git 밖 |
 
-## 3. 책 수집 (전자책 목록을 도서관 사이트에서 모으기)
+## 3. ② 도서관-책 수집 (전자책 목록을 도서관 사이트에서 모으기)
 
 | 문서 | 무엇 | 상태 |
 |---|---|---|
 | plan `docs/research/ebook-catalog/crawl-method.md` | 원칙(호스트 1건·1초, 2026-10-04부터 호스트 = IP, UA), 종류(전체/신간), 절차, 날짜 3층, 저장 항목 [확정], 실행 도구(8절) | 수집 세션이 관리 |
-| plan `docs/research/ebook-catalog/crawl-runbook.md` | **입구 문서 (먼저 읽음)**: 읽는 순서(0절), 지금 상태(1절), 이어 받기·상태 보기(3절), 수집기 규칙 요약(4절), 명령 모음(5절), 받지 않는 도서관(5-1절 `crawl_skip`), 문제별 대처(6절), 새 사이트·플랫폼 붙이는 순서(7절), 상세 URL·오디오북 표시(9·10절) | 수집 세션이 관리, 2026-10-04 (IP 기준 줄 세우기, 북큐브 제목 없는 줄 처리) |
+| dev `docs/maintenance/2-crawl.md`, `platforms.md` | **절차 원본 (2026-10-04 dev로 옮김)**: 실행, 이어 받기, 명령, 병렬·IP 줄, 받지 않는 도서관, 문제별 대처, 새 사이트 붙이기, 플랫폼별 방법 | 최신 |
+| plan `docs/research/ebook-catalog/crawl-runbook.md` | **진행 상태와 결정 기록**(1·2·3·8절), dev에 반영할 것(4절). 예전 내용: 읽는 순서(0절), 지금 상태(1절), 이어 받기·상태 보기(3절), 수집기 규칙 요약(4절), 명령 모음(5절), 받지 않는 도서관(5-1절 `crawl_skip`), 문제별 대처(6절), 새 사이트·플랫폼 붙이는 순서(7절), 상세 URL·오디오북 표시(9·10절) | 수집 세션이 관리, 2026-10-04 (IP 기준 줄 세우기, 북큐브 제목 없는 줄 처리) |
 | plan `docs/research/ebook-catalog/easy/` | 쉬운 설명: `2026-10-04-platform-servers.html`(플랫폼 타입별 서버 구조), `2026-10-04-crawl-method-now.html`(지금 수집 방법: 사이트 분류, 도메인과 IP) | 2026-10-04 |
 | plan `docs/research/ebook-catalog/platforms.md` | **플랫폼별 크롤링 방법**: 검색·전체 목록 URL, 한 쪽 크기, 줄 선택자, 상세 URL, 오디오북 구분, 사이트별 예외(교보·교보 구독형·YES24·통합 포털·강남구·북큐브·알라딘) | 수집 세션이 관리, 2026-10-01 |
 | plan `docs/research/ebook-catalog/research.md` | 수집 조사(범위, 법적 검토 3절, 항목 4·5절) | 기록 |
 | `chaekcheck-data/README.md`, `scripts/crawl_catalog.py`, `ebook-catalog.sqlite` | 수집기 코드와 수집 DB(두 저장소 밖) | [확인 필요: 이 색인에서 내용 확인 안 함] |
 | dev `catalog/internal/importer/CollectedCatalog.java` | 가져올 때 제외 규칙(오디오북·동영상북, 서비스에 없는 도서관, 빠진 책, http 아닌 주소, 호스트 불일치, 제목 없음) | 구현 |
 
-## 3-1. 받은 책 목록으로 책 찾기 (서비스 DB로 가져오기, 서비스 검색·대출 조회)
+## 3-1. ③ 가져오기와 서비스 검색 (받은 책 목록을 서비스 DB로, 서비스 검색·대출 조회)
 
 | 문서 | 무엇 | 상태 |
 |---|---|---|

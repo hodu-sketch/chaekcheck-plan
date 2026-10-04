@@ -6,7 +6,7 @@
 - 수집 원칙(호출 간격·저장 범위·날짜 기록)은 `crawl-method.md`, 조사 배경은 `research.md`에 있습니다. 화면 종류 값과 판별은 dev `docs/library-maintenance.md` 1-3·4-6, ADR-0016·ADR-0023. 문서 색인: `docs/reference-index.md` 3절 (2026-10-01)
 - 실행 도구: `C:\Users\yujun\Documents\Claude\Projects\chaekcheck-data\scripts\crawl_catalog.py`(전체 목록 수집), `probe_other_platforms.py`(북큐브·알라딘 후보 1회 확인).
 
-> **dev로 옮길 예정** (ADR-0047, 2026-10-04): 이 문서 전체를 dev `docs/maintenance/platforms.md`로 옮깁니다. 요청서 `docs/research/maintenance/dev-move-request.md`. 옮긴 뒤에는 dev 쪽이 원본입니다.
+> **절차 원본은 dev입니다** (ADR-0047, 2026-10-04 dev가 옮김): 이 문서 전체 → dev `docs/maintenance/platforms.md` (`C:\Users\yujun\Documents\Claude\Projects\chaekcheck-dev\docs\maintenance\`). 이 문서는 옮길 때의 사본입니다. 2026-10-04 이후 알라딘 `goods_id` 영문 섞임 등은 dev 쪽에만 더해질 수 있으니 dev를 보세요. 옮긴 뒤 plan에서 새로 알게 된 것은 `docs/research/ebook-catalog/crawl-runbook.md` 4절 "dev에 반영할 것"에 모아 사용자가 dev에 전달합니다.
 
 ## 0. 공통 규칙
 
