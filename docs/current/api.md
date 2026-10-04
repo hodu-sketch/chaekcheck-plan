@@ -100,6 +100,7 @@
 ## 로그인·계정 (`auth`) — 설계됨(미구현, 사이클 05)
 
 - 설정 `chaekcheck.auth.enabled`가 꺼져 있으면 이 절의 주소는 없습니다(404, ADR-0046).
+- 제공자 설정(`chaekcheck.auth.providers` [안])에서 뺀 제공자의 로그인 시작·돌아올 주소도 없습니다(404, ADR-0046 덧붙임).
 - 쿠키: 액세스 토큰 `access_token`(`Path=/api/v1/me`), 리프레시 토큰 `refresh_token`(`Path=/api/v1/auth`), 둘 다 `Secure`·`HttpOnly`·`SameSite=Lax`. 로그인 도중의 세션 쿠키는 `Path=/api/v1`, 10분. CSRF는 `XSRF-TOKEN` 쿠키 → `X-XSRF-TOKEN` 헤더.
 
 

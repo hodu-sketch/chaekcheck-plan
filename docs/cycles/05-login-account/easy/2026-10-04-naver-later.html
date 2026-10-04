@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>카카오 먼저, 네이버는 나중에</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">"카카오만 먼저 되게 하고 네이버는 나중에"에 대해<br>세 가지 길을 정리했습니다.</p>
+<p class="sub">2026-10-04에 주신 의견입니다. 먼저 바로잡을 것이 있습니다. 네이버도 지금 됩니다. 다만 "멤버관리"에 등록한 아이디만 됩니다. 그래서 만들고 시험하는 데에는 문제가 없고, 갈리는 것은 <b>서비스를 공개하는 날 네이버 버튼을 보여 줄 수 있느냐</b>입니다. 고르실 것은 하나입니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>지금 네이버 화면에 더 채울 것</h2>
+<div class="gist">없습니다. 등록은 끝났고, 남은 칸은 지금 비워 두어도 됩니다.</div>
+<div class="item"><table>
+<tr><th>칸</th><th>지금</th><th>언제 채우나</th></tr>
+<tr><td>멤버관리 (왼쪽 메뉴)</td><td><b>시험할 네이버 아이디가 들어 있는지 확인</b></td><td>지금. 이것 하나만 해 주세요</td></tr>
+<tr><td>로고 이미지</td><td>비워 둠</td><td>검수 신청 전. 검수 중에는 바꿀 수 없음</td></tr>
+<tr><td>연결 끊기 Callback URL</td><td>비워 둠</td><td>공개 주소가 생긴 뒤</td></tr>
+<tr><td>개인정보 국외이전 정보</td><td>비워 둠</td><td>호스팅을 해외 회사로 정했을 때만</td></tr>
+<tr><td>네이버 로그인 플러스</td><td>OFF 그대로</td><td>쓰지 않음. 우리 가입 동의 화면을 씀</td></tr>
+<tr><td>카테고리 "기타"</td><td>그대로 두어도 됨</td><td>바꾸고 싶으시면 검수 신청 전에</td></tr>
+</table></div>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>네이버와 카카오의 차이</h2>
+<div class="gist">카카오는 검수가 없어 공개하는 날 바로 누구나 됩니다. 네이버는 검수를 통과해야 누구나 됩니다.</div>
+<div class="item"><table>
+<tr><th></th><th>카카오</th><th>네이버</th></tr>
+<tr><td>만들고 시험하는 동안</td><td>아무 계정이나 됨</td><td>멤버관리에 등록한 아이디만 됨</td></tr>
+<tr><td>공개한 뒤 누구나 로그인</td><td>바로 됨</td><td>검수 승인 뒤에 됨</td></tr>
+<tr><td>검수에 내는 것</td><td>없음</td><td>로그인부터 가입까지의 화면 캡처, 또는 서비스를 열기 전이면 기획서. 2~3 영업일</td></tr>
+</table>
+<p>검수를 통과하지 않은 채 공개하면, 네이버 버튼을 누른 일반 사용자는 로그인하지 못합니다. 그래서 공개하는 날 네이버 버튼을 보여 주려면 그 전에 검수가 끝나 있어야 합니다.</p>
+<span class="src">네이버 API 설정 화면: "애플리케이션이 '개발 중' 상태이면 [멤버관리] 탭에서 등록한 아이디만 네이버 로그인을 이용할 수 있습니다. … 검수가 승인되면 모든 아이디로" (사용자가 붙여 준 화면 글, 2026-10-04). 검수 제출물과 기간: research.md 데이터 출처(네이버 검수 가이드, 2026-10-01 확인)</span></div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>세 가지 길</h2>
+<div class="gist">네이버를 만들지 않는 것과, 만들어 두고 버튼만 감추는 것은 다릅니다.</div>
+<div class="shots"><div class="shot"><p class="cap">네이버 버튼을 감춘 로그인 창</p><div class="fr ph" style="height:300px"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt pri">로그인</span></div><div class="bd"><div class="sb">책 제목, 지은이 검색</div></div><div class="ov"></div><div class="md"><h4>로그인<span>✕</span></h4><div class="g"><span class="bt kk">● 카카오 로그인</span></div><div class="hint">처음이면 회원가입을 먼저 진행해요</div></div></div></div><div class="shot"><p class="cap">둘 다 보이는 로그인 창</p><div class="fr ph" style="height:300px"><div class="hd"><b>chaekcheck</b><span class="sp"></span><span class="bt pri">로그인</span></div><div class="bd"><div class="sb">책 제목, 지은이 검색</div></div><div class="ov"></div><div class="md"><h4>로그인<span>✕</span></h4><div class="g"><span class="bt nv">N 네이버 로그인</span><span class="bt kk">● 카카오 로그인</span></div><div class="hint">처음이면 회원가입을 먼저 진행해요</div></div></div></div></div>
+<div class="item"><table>
+<tr><th></th><th>가. 둘 다 만들고, 제공자마다 켜고 끄는 설정을 둠 (추천)</th><th>나. 카카오만 만들고 네이버는 다음에</th><th>다. 지금 설계 그대로</th></tr>
+<tr><td>dev가 만드는 것</td><td>네이버·카카오 둘 다. 설정으로 로그인 창에 보일 제공자를 고름</td><td>카카오만. 네이버 쪽 코드(로그인, 탈퇴 본인 확인, 연결 끊김 알림의 암호 확인)는 만들지 않음</td><td>둘 다. 항상 둘 다 보임</td></tr>
+<tr><td>공개하는 날</td><td>네이버 검수가 안 끝났으면 카카오만 켜서 공개. 검수가 끝나면 설정만 바꿔 네이버를 켬</td><td>카카오만</td><td>네이버 검수가 끝날 때까지 공개를 미루거나, 눌러도 안 되는 버튼을 둔 채 공개</td></tr>
+<tr><td>네이버를 여는 데 드는 일</td><td>설정 한 줄</td><td>사이클을 하나 더 돌려 만들고 시험함</td><td>없음</td></tr>
+<tr><td>네이버 검수</td><td>화면 캡처로 신청할 수 있음(멤버 아이디로 실제 화면을 찍음)</td><td>기획서로 신청하거나, 나중에 만든 뒤 신청</td><td>화면 캡처로 신청</td></tr>
+<tr><td>이번에 드는 일</td><td>설계대로 + 설정 하나</td><td>가장 적음</td><td>설계대로</td></tr>
+</table>
+<p>"나"가 이번 일을 가장 줄입니다. 다만 네이버 쪽은 이미 설계와 조사가 끝나 있고(연결 끊김 알림의 암호 세부까지), 앱 등록도 마쳤습니다. 지금 함께 만들면 같은 구조 안에서 한 번에 시험할 수 있고, 나중에 따로 만들면 탈퇴와 정리 작업을 다시 건드려야 합니다.</p></div>
+<div class="item"><h3><span class="no">1</span>"가": 네이버와 카카오를 둘 다 만들고, 로그인 창에 보일 제공자를 설정으로 고름 <span class="an">[확정]</span></h3>
+<p>오늘 정하신 "로그인 기능 전체를 켜고 끄는 설정"(ADR-0046)에 제공자별 설정을 하나 더합니다. 예를 들어 카카오만 켜 두면 로그인 창에 카카오 버튼만 보이고, 네이버 쪽 주소는 동작하지 않습니다. 공개하는 날에는 카카오만 켜고, 네이버 검수가 끝나면 네이버를 켭니다.</p>
+<p>인계서는 이미 dev에 넘겼으므로, 승인하시면 인계서에 이 항목을 더하고 수용 기준을 하나 더합니다("제공자 설정에서 뺀 제공자는 로그인 창에 보이지 않고 그 주소는 동작하지 않는다").</p>
+<p class="alt"><b>다른 선택</b>: "나"(카카오만 만듦. 인계서에서 네이버 부분을 빼고 backlog로 옮김), "다"(바꾸지 않음). 고르시려면 미승인이나 기타에 "나" 또는 "다"라고 적어 주세요.</p></div>
+</section>
+
+<p class="foot">관련 문서: <code>docs/cycles/05-login-account/handoff.md</code>, <code>design-delta.md</code> "로그인 기능 켜고 끄기", ADR-0046.</p>
+</main>
+</body>
+</html>
