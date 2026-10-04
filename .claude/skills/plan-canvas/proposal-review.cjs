@@ -208,6 +208,9 @@ const script = `<script>
   pop.querySelector('.no').addEventListener('click', () => { if (ta.value.trim()) return decide('no', ta.value.trim()); ta.dataset.kind = 'no'; ta.placeholder = '미승인 이유나 바꿀 내용(선택) 적고 Enter'; ta.focus(); });
   pop.querySelector('.etc').addEventListener('click', () => { if (ta.value.trim()) return decide('etc', ta.value.trim()); ta.dataset.kind = 'etc'; ta.placeholder = '질문이나 제안을 적고 Enter'; ta.focus(); });
   ta.addEventListener('keydown', e => {
+    // Korean input: Enter while a syllable is still being composed must not send, or the note is cut short
+    // (2026-10-04: "승인하되 최대" arrived without the rest).
+    if (e.isComposing || e.keyCode === 229) return;
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       if ((ta.dataset.kind || 'etc') === 'etc' && !ta.value.trim()) return;

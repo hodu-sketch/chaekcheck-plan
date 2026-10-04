@@ -4,3 +4,6 @@
 |---|---|---|---|
 | [2026-10-04-cycle-start-decisions.html](2026-10-04-cycle-start-decisions.html) | 사이클 06 시작: 앞으로의 큰 단계, 06 범위, 사이클 05에서 dev가 넘긴 결정, 실제 화면 확인 | dev `docs/plan-feedback.md` 사이클 05 절, `docs/research/member-and-alerts/` | 없음. 9개 중 8개 승인, 항목 5는 미승인 → 후속 페이지(2026-10-04) |
 | [2026-10-04-withdraw-codes.html](2026-10-04-withdraw-codes.html) | 탈퇴 전용 결과 코드 둘 (앞 페이지 항목 5 미승인의 후속) | `docs/current/api.md` 결과 코드 | 없음. 1개 승인(2026-10-04) |
+| [2026-10-04-spec-decisions.html](2026-10-04-spec-decisions.html) | 명세: 선택 동의, 브라우저 지역 옮기기, 직접 추가 위치·상한, 자동 도서관 제외, 기본 스위치, API 분리, 바뀐 지역 | `../spec.md` | 없음. 7개 모두 정해짐(2026-10-04) |
+| [2026-10-04-flow-decisions.html](2026-10-04-flow-decisions.html) | 화면: 내 도서관 줄, 스위치 글자, 불러오기 중 검색, S10 내 도서관 화면(주소·구성·추가 방법·즉시 저장), S11 지역 옮기기 창. PC·태블릿·폰 그림 | `../flow.md` | 없음. 6개 승인, 4·5번 미승인 → 후속 페이지 |
+| [2026-10-04-flow-decisions-2.html](2026-10-04-flow-decisions-2.html) | 화면 후속: 들어가는 곳 하나, 내 도서관 화면 여섯 구역과 누구나 가입·겹치는 도서관 | `../flow.md` S10 | 없음. 2개 승인(1번은 메인 화면 그림 뒤 승인) |
