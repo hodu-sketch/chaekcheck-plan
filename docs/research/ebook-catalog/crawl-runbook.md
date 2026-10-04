@@ -75,6 +75,7 @@
 | 2026-10-04 | `2-crawl.md` 4절 표 | 끝까지 깨지는 쪽을 다른 정렬로 다시 읽어 채우기를 북큐브(`sort=2` 출판일순)·알라딘(`order_list=1` 출판일순)에도 적용 (전에는 YES24만). 대원대·성균관대(북큐브), 아주자동차대(알라딘)가 사이트 오류 쪽 때문에 `MISMATCH`였음 |
 | 2026-10-04 | `2-crawl.md` 4절 표 (알려진 빈틈) | 수집기를 다시 켜기 전에 건너뛴 쪽(사이트 오류)은 다시 켠 뒤 기억하지 못해 다시 읽지 않음 → 그 쪽 책이 빠짐(천상중학교 1,181/1,201). 그 도서관은 "전체 성공 없음"으로 남아 다음 재시작 때 처음부터 다시 받음. 고칠 방법 [안]: 건너뛴 쪽 목록을 `crawl_run`에 저장 |
 | 2026-10-04 | `1-libraries.md` 새 절 | 도서관 목록 두 이름 [확정] (사용자, 2026-10-04): **등록 도서관**(서비스 DB, dev seed, 278곳) / **후보 도서관**(수집 DB 번호 100001~, 웹러브 북스에서 찾음, 2,738곳). "후보 도서관 찾기" 절차(`probe_kyobo_institutions.py`·`probe_yes24.py`·`probe_aladin.py`·`probe_other_platforms.py` → `import-probe`/`import-bookcube`, plan `crawl-runbook.md` 8-1절)와 "구독 규칙·마감 확인" 절차(`probe_kyobo_limits.py`: 교보 구독형 사이트 `/popup/popupMain.json`·`/main/firstBoardBlbrSrmb.json`·`/board/listBoard.json`을 로그인 없이 3초 간격으로 읽음, 팝업 본문은 그림이라 내려받아 읽음, plan `docs/research/library-limits/research.md` 3-1절) |
+| 2026-10-05 | `1-libraries.md` 후보 도서관 찾기 | 후보 도서관을 넣을 때 등록 도서관과 같은 사이트를 거르기: 주소 문자열만 보지 말고 http/https·포트를 무시한 호스트로 비교하고, 같은 호스트면 책 목록(item_key)이 겹치는지까지 봄. 2026-10-05 대조에서 같은 사이트 99곳이 후보로 들어와 있었음(`collection-areas.md` 2-2절), `crawl_skip`으로 표시함 [확정] (사용자: "이렇게 하고 다른 plan세션에게 알려주게 텍스트좀", 2026-10-05) |
 | 2026-10-04 | `platforms.md` 8절 알라딘 | `goods_id`는 숫자만이 아님: 공급사에 따라 `BOOKRAILN0809003`처럼 영문+숫자 (한국해양대 2쪽부터) |
 
 ## 8. 순위 4: 웹러브 북스 나머지 기관 (2026-10-03 시작)
