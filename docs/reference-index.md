@@ -44,6 +44,7 @@
 | plan `docs/cycles/04-and-search/design-delta.md` 282행 부근 | 책 검색 기본 순서 `joinTier`(내 시군구 → 내 시도 → 누구나 → 방문 가입만 → 확인 필요) | 확정 |
 | plan `docs/cycles/02-library-expansion/eligibility.md`, `eligibility-by-library.md` | 2026-09-28 검색 요약 단계 기록. 머리말에 "최신은 dev tsv" 안내(2026-10-01) | 기록용 |
 | plan `docs/research/library-limits/research.md` (+ `easy/`) | 구독형 도서관의 한도(월 예산·연 예산·1인 월 권수), 도서관별 현황(2026-10-04: 강동구립·서구 통합 마감), 알리는 방법 결정, YES24 크레마클럽·북큐브·부커스 구독형 | 2026-10-04 |
+| plan `docs/research/maintenance/library-logos.md`, `chaekcheck-data/logos/` (`logos.tsv`) | 도서관 로고 수집: 위치(교보 `headerLogo.json`, 그 밖 머리말 그림), 도서관 번호 매핑, 업체 기본 로고, 이용 조건 [확인 필요] | 2026-10-05 |
 | `chaekcheck-data/scripts/probe_kyobo_limits.py`, 결과 `other-platforms/kyobo-limits-2026-10-04.tsv` | 교보 구독형 사이트 팝업·공지 제목 확인(로그인 없이). dev `scripts/library/`로 옮길 예정(요청서 C) | git 밖 |
 
 ## 3. ② 도서관-책 수집 (전자책 목록을 도서관 사이트에서 모으기)
