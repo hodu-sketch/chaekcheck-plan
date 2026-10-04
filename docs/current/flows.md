@@ -2,6 +2,8 @@
 
 현재 설계의 주요 흐름을 그림으로 모은 문서입니다. 변경 기록이 아닙니다.
 
+사이클 05 cycle-close (2026-10-04): 흐름 9~12(로그인·계정)를 더함 — 설계됨(미구현, 사이클 05). 근거 `docs/cycles/05-login-account/design-delta.md`.
+
 마지막 반영: 사이클 04 cycle-close (2026-09-30). 흐름 1~5는 **구현됨**, 흐름 6~8은 **설계됨(미구현, 사이클 04)** 입니다. 사이클 04부터 흐름 1~2는 "도서관에서 직접 찾기"의 흐름입니다.
 
 - 근거: `docs/cycles/02-library-expansion/design-delta.md` "구조 그림", `retro.md`, ADR-0011, ADR-0014, ADR-0015, ADR-0019, ADR-0020
@@ -256,3 +258,157 @@ sequenceDiagram
   I->>P: catalog_import 기록
   I-->>O: 건수 요약, 종료
 ```
+
+## 흐름 9: 첫 로그인과 동의, 다시 로그인 — 설계됨(미구현, 사이클 05)
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor U as 사용자
+  participant W as web
+  participant A as auth
+  participant P as 제공자
+  U->>W: 로그인 버튼 클릭
+  W->>W: 지금 주소를 sessionStorage에 저장
+  W->>A: GET /api/v1/auth/oauth2/authorization/kakao
+  A->>A: 임시 세션에 인가 요청(state) 저장
+  A-->>U: 302 제공자 인가 화면
+  U->>P: 로그인과 동의
+  alt 취소 또는 제공자 오류
+    P-->>A: GET 콜백 error=access_denied 등
+    A-->>W: 302 /auth/complete?result=login_cancelled
+  else 정상
+    P-->>A: GET 콜백 code, state
+    alt 저장된 요청 없음 또는 state 다름
+      A-->>W: 302 /auth/complete?result=login_expired 또는 login_state_mismatch
+    else state 일치
+      A->>P: 토큰 교환, 프로필 조회
+      A->>A: login_method(KAKAO, id) 찾기
+      Note over A: 있음 (이미 가입, R3) → last_login_at 갱신, refresh_token 줄 생성(expires_at=지금+30일), 쿠키 둘 발급, 302 /auth/complete?result=login_success. 가입 때와 같은 발급 코드를 씀
+      Note over A: 없음 (처음 온 계정) → 아래로
+      A->>A: 임시 세션에 가입 대기 저장 (DB 쓰기 없음)
+      A-->>W: 302 /signup
+      W->>A: GET /api/v1/auth/signup
+      A-->>W: 200 provider, 동의할 문서 버전
+      U->>W: 확인란 셋 표시 후 가입
+      W->>A: POST /api/v1/auth/signup (CSRF)
+      alt 버전 불일치
+        A-->>W: 409 document_version_mismatch
+      else 가입 대기 만료
+        A-->>W: 404 signup_not_found
+      else 정상
+        A->>A: 한 트랜잭션 account, login_method, account_consent x3, refresh_token
+        A-->>W: 201 + Set-Cookie access_token, refresh_token
+        W->>W: sessionStorage 주소로 이동
+      end
+    end
+  end
+  opt 동의 화면에서 취소
+    W->>A: DELETE /api/v1/auth/signup (CSRF)
+    A->>P: Kakao unlink(어드민 키) 또는 Naver revoke(대기 중 토큰)
+    A-->>W: 204 (연결 끊기 실패도 204, 기록만)
+  end
+```
+
+## 흐름 10: 토큰 갱신과 교체 — 설계됨(미구현, 사이클 05)
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant W as web (탭)
+  participant A as auth
+  participant D as DB auth.refresh_token
+  W->>A: GET /api/v1/me (access 쿠키 만료로 없음)
+  A-->>W: 401 unauthorized
+  W->>W: navigator.locks.request auth-refresh
+  W->>A: GET /api/v1/me 다시 (다른 탭이 이미 갱신했는지)
+  alt 이미 갱신됨
+    A-->>W: 200
+  else 아직 401
+    W->>A: POST /api/v1/auth/refresh (refresh 쿠키, CSRF)
+    A->>D: token_hash 또는 previous_token_hash로 줄 찾기 FOR UPDATE
+    alt 줄 있음, expires_at 남음
+      A->>D: previous=old, token=new, rotated_at=now (expires_at 그대로)
+      A-->>W: 204 + Set-Cookie 둘
+      W->>A: 원래 요청 다시
+    else previous_token_hash와 같음 (재사용)
+      A->>D: 그 줄 삭제 (그 로그인 끝)
+      A-->>W: 401 unauthorized
+    else 없음 또는 만료
+      A-->>W: 401 unauthorized, 쿠키 지움
+      W->>W: 로그인 전 상태로
+    end
+  end
+```
+
+- 여러 탭이 동시에 갱신하지 않게 웹이 Web Locks로 한 번에 한 탭만 갱신합니다(ADR-0038).
+
+## 흐름 11: 탈퇴 (재인증) — 설계됨(미구현, 사이클 05)
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor U as 사용자
+  participant W as web
+  participant A as auth
+  participant P as 제공자
+  participant R as event_publication
+  U->>W: S7 계속
+  W->>A: GET /api/v1/auth/oauth2/authorization/naver-reauth
+  A-->>U: 302 auth_type=reauthenticate (카카오는 prompt=login)
+  U->>P: 다시 로그인
+  P-->>A: GET /api/v1/auth/login/oauth2/code/naver-reauth
+  alt 취소 또는 제공자 오류
+    A-->>W: 302 /auth/complete?result=withdraw_cancelled 또는 withdraw_provider_error
+  else 정상
+    A->>P: 토큰 교환, 프로필
+    A->>A: refresh 쿠키로 현재 계정 찾기
+    alt 리프레시 줄 없음 또는 만료
+      A-->>W: 302 result=withdraw_login_expired
+    else 돌아온 계정이 현재 계정과 다름
+      A-->>W: 302 result=withdraw_account_mismatch
+    else 같은 계정
+      A->>A: 재인증 증명 저장 (accountId, verifiedAt, Naver 토큰)
+      A-->>W: 302 result=withdraw_reauthenticated
+      W->>A: DELETE /api/v1/me (access 쿠키, CSRF)
+      alt 증명 없음 또는 5분 지남
+        A-->>W: 403 reauthentication_required 또는 reauthentication_expired
+      else 유효
+        A->>P: Kakao unlink 또는 Naver revoke
+        Note over A,P: 한 번만 요청. 실패해도 다시 요청하지 않고 다음으로, 서버 로그만
+        A->>A: 트랜잭션 account 삭제 (cascade) + AccountDeleted 발행
+        A->>R: listener 하나당 기록 1줄 (처리 끝나면 지워짐)
+        A-->>W: 204 + 쿠키 두 개 만료
+        W->>W: S1 + 탈퇴했습니다
+      end
+    end
+  end
+```
+
+## 흐름 12: 제공자 쪽에서 연결을 끊음 — 설계됨(미구현, 사이클 05)
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant K as 카카오
+  participant N as 네이버
+  participant A as auth
+  participant R as event_publication
+  K->>A: POST /api/v1/auth/webhooks/kakao-unlink (Authorization KakaoAK 키, app_id, user_id)
+  alt 키 또는 app_id 다름
+    A-->>K: 401 unauthorized, 삭제 없음
+  else 확인됨
+    A->>A: login_method(KAKAO, user_id) 삭제, 남은 수단 없으면 account 삭제 + AccountDeleted
+    A->>R: 기록
+    A-->>K: 200 (없는 사용자여도 200, 3초 안)
+  end
+  N->>A: POST /api/v1/auth/webhooks/naver-unlink (form clientId, encryptUniqueId, timestamp, signature)
+  alt clientId 다름, 서명 틀림, timestamp가 허용 범위 밖
+    A-->>N: 401 unauthorized, 삭제 없음
+  else 확인됨
+    A->>A: encryptUniqueId 복호화 후 같은 삭제 처리
+    A-->>N: 204 본문 없음
+  end
+```
+
+- 놓친 알림은 카카오 연결 대조(하루 한 번)와 1년 미로그인 계정 정리로 메웁니다.

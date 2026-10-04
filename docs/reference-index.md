@@ -73,6 +73,7 @@
 | plan `docs/research/member-and-alerts/integration-plan.md` | 회원·알림을 프로젝트에 넣는 구조: 모듈(`auth`+`member`), 검색 연결(웹이 `libraryIds`), 세션, 표, API, 사이클 자르기 05·06·07 (사용자 결정 2026-10-01) |
 | plan `docs/cycles/05-login-account/scope.md`, `spec.md` | 현재 사이클(로그인·계정) 범위·완료 기준, 동작 규칙·수용 기준. `spec.md` "데이터 출처"에 카카오 연결 끊기·웹훅, 네이버 재인증·검수, Spring Session·Modulith 확인 결과 |
 | plan `docs/cycles/05-login-account/research.md` | 사이클 05 조사(2026-10-01): PKCE, 네이버 제공 항목, 네이버 연결끊기 Callback 원문(암호·서명), 로그인 버튼 지침, 처리방침 작성지침·보호책임자 |
+- 사이클 05 로그인·계정 설계와 근거(2026-10-04): `docs/cycles/05-login-account/design-delta.md`, `research.md`(공식 문서 확인 1~13절), ADR-0038~0046. 쉬운 설명 모음 `docs/cycles/05-login-account/easy/README.md`
 
 ## 6. 재작업 시 확인할 것 (한 곳에 모음)
 

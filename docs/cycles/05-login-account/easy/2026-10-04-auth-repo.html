@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>로그인 코드를 다른 저장소에</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">로그인·인증 코드를 다른 저장소에 두고<br>설정으로 켜고 끌 수 있게 하는 것을 정리했습니다.</p>
+<p class="sub">캔버스에 남기신 요청입니다(2026-10-04): "이 로그인/인증 기능은 또다른 저장소에 저장하고 싶어 이렇게 하도록 dev에게 알려주게 해", "application파일에 넣든 뭐든 선택해서 할 수 있게", "만들어 달라는 게 아니라 만들도록 dev에게 시켜줘". dev에게 넘기는 인계서에 넣겠습니다. 그 전에 제가 이해한 것이 맞는지, 그리고 지금까지 정하신 것과 부딪치는 곳이 없는지 확인합니다. 고르실 것은 넷입니다(넷째는 2026-10-04에 주신 질문 뒤에 더한 결정 기록).</p>
+
+<section class="card">
+<h2><span class="num">!</span>저장소 분리는 취소했습니다 (2026-10-04)</h2>
+<div class="gist">"아니다 취소해줘 너 설명 들으니까 저장소 분리 안 하는 것이 나은 것 같아"라고 하셔서, 저장소는 나누지 않는 것으로 되돌렸습니다.</div>
+<div class="item"><table><tr><th>항목</th><th>지금 상태</th></tr><tr><td>1번 (auth 코드를 새 저장소에)</td><td>취소. <code>auth</code>는 지금 저장소 안의 모듈로 둠</td></tr><tr><td>2번 (가져오는 방식과 조건)</td><td>취소. 필요 없어짐</td></tr><tr><td>3번 (설정으로 로그인 기능을 켜고 끔)</td><td><b>그대로 두었습니다.</b> 저장소와 상관없이 쓸모가 있습니다(키가 준비되기 전이나 네이버 검수 전에 꺼 둔 채로 배포). 이것도 빼시려면 3번 칩을 미승인으로 바꿔 주세요</td></tr><tr><td>4번 (ADR-0046)</td><td>내용을 "설정으로 켜고 끔"만 남기도록 줄였습니다. 저장하지 않으시려면 미승인으로</td></tr></table><p>설계 문서와 수용 기준에서도 저장소에 관한 부분을 뺐습니다. 비밀 값(키)을 저장소에 넣지 않는다는 규칙은 그대로입니다. 아래 내용은 기록으로 남겨 둔 것이고, 1·2번에 관한 부분은 더는 유효하지 않습니다.</p></div>
+</section>
+
+<section class="card">
+<h2><span class="num">가</span>제가 이해한 모양</h2>
+<div class="gist">코드를 두는 저장소는 둘, 실행되는 서버 프로그램은 지금처럼 하나입니다.</div>
+<figure><svg viewBox="0 0 900 280" role="img" aria-label="저장소 둘과 실행되는 프로그램 하나"><defs><marker id="r1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+<g font-family="Noto Sans KR, sans-serif" font-size="15" fill="var(--text)" text-anchor="middle">
+<text x="215" y="24" font-weight="700">GitHub 저장소 (코드를 두는 곳)</text><text x="705" y="24" font-weight="700">실행되는 프로그램</text>
+<rect x="20" y="40" width="390" height="100" rx="10" fill="var(--card)" stroke="var(--line)" stroke-width="2"/><text x="215" y="68" font-weight="700">chaekcheck-dev (지금 있는 저장소)</text><text x="215" y="94" font-size="13">검색 모듈 넷, 화면(React), 로그인 화면 코드</text><text x="215" y="116" font-size="13">설정 파일: 로그인 기능을 켤지 끌지</text>
+<rect x="20" y="160" width="390" height="100" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/><text x="215" y="188" font-weight="700">새 저장소 (로그인·인증)</text><text x="215" y="214" font-size="13">auth 모듈의 서버 코드와 테스트</text><text x="215" y="236" font-size="13">auth 표를 만드는 DB 변경 파일</text>
+<rect x="520" y="90" width="360" height="120" rx="10" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/><text x="700" y="122" font-weight="700">서버 프로그램 하나</text><text x="700" y="150" font-size="13">검색 모듈 넷 + auth 모듈</text><text x="700" y="174" font-size="13">(설정이 꺼져 있으면 auth 없이 검색만)</text>
+<g stroke="var(--muted)" stroke-width="2" fill="none" marker-end="url(#r1)"><path d="M410 90 L518 130"/><path d="M410 210 L518 170"/></g>
+<text x="462" y="96" font-size="13" fill="var(--muted)">빌드</text><text x="462" y="216" font-size="13" fill="var(--muted)">가져와서 빌드</text>
+</g></svg><figcaption>저장소를 나누는 것과 서버를 나누는 것은 다른 일입니다. 이 그림은 저장소만 나눕니다.</figcaption></figure>
+<div class="item">
+<p>이렇게 이해한 이유는 오늘까지 정하신 것들이 "서버 프로그램 하나"를 전제로 하기 때문입니다. 토큰 쿠키와 확인용 토큰은 화면과 API가 같은 주소일 때 동작하고(ADR-0042), <code>auth</code>는 같은 프로그램 안의 모듈로 정하셨습니다(ADR-0036). 저장소만 나누면 이 결정들은 그대로입니다.</p>
+<p class="alt"><b>다르게 뜻하신 것이라면</b>: 로그인 서버를 따로 띄우는 것(프로그램 둘)을 뜻하셨다면 1번을 미승인하고 적어 주세요. 그 경우 쿠키와 주소에 관한 결정 몇 가지를 다시 봐야 합니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">나</span>정해 주실 것 (3가지)</h2>
+<div class="gist">저장소를 나누는 범위, 가져오는 방식, 켜고 끄는 방식입니다.</div>
+
+<div class="item"><h3><span class="no">1</span><code>auth</code> 모듈의 서버 코드를 새 저장소에 두고, 지금 저장소의 서버가 그것을 가져와 한 프로그램으로 실행함 <span class="an">[안]</span></h3><p>새 저장소에 두는 것: <code>auth</code> 모듈의 서버 코드, 그 테스트, <code>auth</code> 표를 만드는 DB 변경 파일. 지금 저장소에 남는 것: 검색 모듈 넷, 화면 코드 전체(로그인 버튼과 가입 동의 화면 포함), 실행 설정.</p>
+<p>화면 코드를 지금 저장소에 두는 이유는 로그인 버튼이 검색 화면 위에 있고 화면이 하나의 앱이기 때문입니다.</p>
+<p class="alt"><b>알아 두실 점</b>: "<code>auth</code>가 다른 모듈에 의존하지 않고 다른 모듈도 <code>auth</code>에 의존하지 않는다"(수용 기준 AC-18)는 그대로 지킵니다. 저장소가 나뉘면 이 경계가 오히려 더 분명해집니다. 대신 두 저장소의 버전을 맞추는 일이 생깁니다.</p>
+<p class="alt"><b>새 저장소의 이름과 공개 여부</b>는 글 상자에 적어 주세요(예: <code>chaekcheck-auth</code>, 비공개). 적지 않으시면 이름은 dev가 제안하고 사용자가 정하는 것으로 인계서에 적습니다. <b>왜 나누려 하시는지</b>도 적어 주시면 결정 기록(ADR)의 이유 칸에 그대로 넣습니다. 적지 않으시면 "[이유 미확인]"으로 남깁니다.</p>
+<p class="alt"><b>다른 선택 1</b>: 저장소는 하나로 두고 <code>auth</code>를 별도 폴더(빌드 단위)로만 나눔. 버전 맞추기가 없지만 코드가 같은 저장소에 있습니다.<br><b>다른 선택 2</b>: 로그인 서버를 따로 띄움(프로그램 둘).</p></div>
+
+<div class="item"><h3><span class="no">2</span>가져오는 방식은 dev가 제안하고, 조건 셋을 인계서에 적음 <span class="an">[안]</span></h3><p>다른 저장소의 코드를 가져와 함께 빌드하는 방법은 여럿입니다(저장소 안에 저장소를 끼워 넣기, 빌드 도구의 "함께 빌드" 기능, 패키지 저장소에 올리고 버전으로 받기). 어느 것이 맞는지는 dev 저장소의 빌드 구성을 보고 정하는 것이 낫습니다. 기획 쪽에서는 방법을 못 박지 않고 조건만 겁니다.</p>
+<table><tr><th>조건</th><th>이유</th></tr>
+<tr><td>한 번의 빌드 명령으로 두 저장소의 코드가 함께 빌드되고 테스트됨</td><td>모듈 경계 테스트(<code>ModularityTests</code>)가 <code>auth</code>까지 포함해 돌아야 함</td></tr>
+<tr><td><code>auth</code>의 DB 변경 파일이 본 프로그램의 DB 변경 순서에 끼워져 실행됨</td><td>표를 만드는 순서가 어긋나면 서버가 켜지지 않음</td></tr>
+<tr><td>방법을 고르면 사용자에게 설명하고 승인받은 뒤 진행. 비밀 값(키, 시크릿)은 어느 저장소에도 넣지 않음</td><td>저장소 구성은 되돌리기 번거로운 결정</td></tr></table>
+<p class="alt"><b>다른 선택</b>: 방법을 지금 정해 주심(글 상자에 적어 주세요).</p></div>
+
+<div class="item"><h3><span class="no">3</span>서버 설정 파일의 값 하나로 로그인 기능을 켜고 끔. 꺼져 있으면 로그인 없는 지금의 검색 서비스 그대로 <span class="an">[안]</span></h3><p>"application 파일에 넣든 뭐든 선택해서 할 수 있게"를 이렇게 이해했습니다. 서버 설정(<code>application.yml</code>이나 환경 변수)에 값 하나를 두고(이름 제안: <code>chaekcheck.auth.enabled</code>), 이 값으로 로그인 기능 전체를 켜고 끕니다.</p>
+<table><tr><th></th><th>켜져 있을 때</th><th>꺼져 있을 때</th></tr>
+<tr><td>서버</td><td>로그인·가입·탈퇴 주소가 동작</td><td>그 주소들이 없음(404). 보안 설정도 끼어들지 않아 지금과 같은 응답</td></tr>
+<tr><td>화면</td><td>"로그인" 버튼이 보임</td><td>"로그인" 버튼, 설정 창의 "계정" 절, 가입 동의 화면이 보이지 않음</td></tr>
+<tr><td>DB</td><td><code>auth</code> 표를 씀</td><td><code>auth</code> 표를 쓰지 않음(표를 만들지 말지는 dev가 제안)</td></tr>
+<tr><td>네이버·카카오 키</td><td>있어야 서버가 켜짐</td><td>없어도 서버가 켜짐</td></tr></table>
+<p>화면이 켜져 있는지 아는 방법은 dev가 제안합니다(예: 서버에 한 번 물어봄). 키가 준비되기 전이나 네이버 검수 전에는 꺼 둔 채로 배포할 수 있습니다.</p>
+<p class="alt"><b>기본값</b>: 꺼짐을 제안합니다. 설정을 빠뜨렸을 때 키 없이 서버가 켜지지 않는 일을 막습니다. 켜짐이 좋으시면 적어 주세요.</p>
+<p class="alt"><b>다르게 뜻하신 것이라면</b>: "선택"이 켜고 끄는 것이 아니라 "어느 저장소의 코드를 쓸지 고른다"는 뜻이었다면 적어 주세요.</p></div>
+<div class="item"><h3>인증 코드까지 공개하면 위험한가</h3><p><b>코드를 공개하는 것 자체가 위험하지는 않습니다. 위험한 것은 비밀 값(키)이 공개되는 것입니다.</b> 그래도 따로 두시려는 뜻은 그대로 반영했습니다.</p><table><tr><th>공개되면</th><th>위험한가</th><th>우리 설계</th></tr><tr><td>JWT 서명 키, 네이버·카카오 시크릿, 카카오 어드민 키</td><td><b>위험함.</b> 누구든 아무 계정으로 로그인하거나 계정을 지울 수 있음</td><td>어느 저장소에도 넣지 않고 서버 환경 변수로만 둠(인계서 제약)</td></tr><tr><td>인증 코드(어떻게 로그인을 처리하는지)</td><td>그 자체로는 아님. 안전한 설계는 방법이 알려져도 뚫리지 않아야 함. Spring Security, 여러 오픈소스 서비스가 인증 코드를 공개함</td><td>따로 두기로 하심. 실수로 생긴 약점을 남이 찾기 어렵게 하는 보조 효과는 있음</td></tr></table><p><b>따로 두면서 생기는 것 둘</b></p><p>① 공개 저장소만 받은 사람도 빌드하고 실행할 수 있어야 합니다. 그래서 조건을 하나 더했습니다: "새 저장소 없이도 빌드·실행되고, 그때는 로그인 없는 검색 서비스로 동작한다". 3번에서 승인하신 "꺼져 있으면 지금의 검색 서비스 그대로"와 같은 동작입니다.</p><p>② 코드를 감춰도 구조가 드러나는 곳이 둘 남습니다. 화면 쪽 로그인 코드(공개 저장소에 있음)와 <b>이 기획 저장소의 설계 문서</b>입니다. 기획 저장소(<code>chaekcheck-plan</code>)는 지금 <b>비공개</b>로 되어 있는 것을 확인했습니다(2026-10-04). 이 저장소를 나중에 공개하시면 표 구조, 주소, 토큰 방식이 모두 읽히게 됩니다. 설계가 공개되는 것도 위 표의 둘째 줄과 같은 종류라 그 자체로 위험하지는 않지만, 코드를 감추려는 뜻과 맞추려면 비공개로 두시는 편이 일관됩니다.</p><span class="src">"방법이 알려져도 안전해야 한다"는 것은 보안 설계의 오래된 원칙(케르크호프스의 원칙)이고, OWASP도 감추는 것에만 기대지 말라고 합니다. 이번에 원문을 다시 열어 인용하지는 않았습니다.</span></div>
+<div class="item"><h3><span class="no">4</span>"설정으로 로그인 기능을 켜고 끔"을 ADR-0046으로 저장 <span class="an">[안]</span></h3><p>저장소 분리를 취소하셨으므로 결정 기록에는 켜고 끄는 설정만 남깁니다. 저장소를 나누려다 취소한 것은 "고르지 않은 안"으로 적습니다.</p><table><tr><th>칸</th><th>적을 내용</th></tr><tr><td>결정</td><td>서버 설정 값 하나(기본 꺼짐)로 로그인 기능 전체를 켜고 끔. 꺼져 있으면 사이클 04와 같은 검색 서비스. <code>auth</code>는 지금 저장소 안의 모듈. 비밀 값은 저장소에 넣지 않음</td></tr><tr><td>이유 (하신 말 그대로)</td><td>"application파일에 넣든 뭐든 선택해서 할 수 있게" / 저장소 분리 취소: "아니다 취소해줘 너 설명 들으니까 저장소 분리 안 하는 것이 나은 것 같아"</td></tr><tr><td>고르지 않은 안</td><td><code>auth</code> 서버 코드를 별도 저장소에 둠(위 취소 말씀이 이유) / 켜고 끄는 설정을 두지 않음</td></tr><tr><td>감수하는 점</td><td>켜짐·꺼짐 두 경우를 모두 테스트해야 함. 저장소를 공개하면 인증 코드도 공개됨(비밀 값은 저장소에 없음)</td></tr></table></div>
+</section>
+
+<section class="card">
+<h2><span class="num">다</span>정해지면 하는 일</h2>
+<div class="gist">dev에게 시키는 것이므로 인계서에 들어갑니다. 기획 쪽에서 코드를 만들지 않습니다.</div>
+<div class="item"><table>
+<tr><th>어디에</th><th>무엇을 적나</th></tr>
+<tr><td>결정 기록 (ADR-0046 초안)</td><td>저장소를 나누는 것과 켜고 끄는 설정. 이유 칸에는 하신 말만</td></tr>
+<tr><td>설계 문서 (<code>design-delta.md</code>)</td><td>저장소 둘의 경계, 가져오는 조건 셋, 설정 값과 꺼졌을 때의 동작</td></tr>
+<tr><td>인계서</td><td>dev가 먼저 가져오는 방식을 제안하고 승인받을 것, 그다음 구현</td></tr>
+<tr><td>수용 기준</td><td>"설정을 끄면 사이클 04와 같은 응답이고 로그인 주소가 없다"를 하나 더함</td></tr>
+</table></div>
+</section>
+
+<p class="foot">관련 결정: ADR-0036(auth 모듈), ADR-0042(같은 주소), ADR-0044(보안 설정은 auth가 가짐). 원문: <code>docs/cycles/05-login-account/design-delta.md</code>.</p>
+</main>
+</body>
+</html>

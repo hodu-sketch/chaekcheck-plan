@@ -47,6 +47,10 @@
 | [2026-10-04-design-questions-3.html](2026-10-04-design-questions-3.html) | 한 탭이 토큰을 갱신하는 동안 다른 탭의 요청이 어떻게 되는지 (시간 순서 그림) | `docs/cycles/05-login-account/architect-proposal.md` 결정 2 | 없음 (승인) |
 | [2026-10-04-adr-drafts.html](2026-10-04-adr-drafts.html) | 결정 기록 초안 여섯(ADR-0038~0043): 결정, 사용자가 한 말, 고르지 않은 안, 결과 | 초안 (승인 뒤 `docs/adr/`) | 없음 (여섯 모두 승인, `docs/adr/`에 저장) |
 | [2026-10-04-profile-display.html](2026-10-04-profile-display.html) | 네이버·카카오의 별명과 프로필 사진을 받아 화면에 보일지: 바뀌는 결정, PC·태블릿·폰 밑그림, 정할 것 셋 | `docs/cycles/05-login-account/spec.md`, `flow.md` | 없음 (셋 다 미승인: backlog에 두고 염두에만 둠) |
+| [2026-10-04-design-delta.html](2026-10-04-design-delta.html) | 설계 문서를 풀어 쓴 것: 만드는 것, 저장하는 표, 순서 넷, 새 주소, 문구와 결과 코드, 운영 모양, 받아들인 한계, 하실 일 | `docs/cycles/05-login-account/design-delta.md` | 없음 (승인) |
+| [design-delta-original.html](design-delta-original.html) | 설계 문서 원문 그대로 + Mermaid 그림 일곱을 미리 그려 넣은 것 (스크립트 없이 열림) | `docs/cycles/05-login-account/design-delta.md` | 없음 (원문이 바뀌면 다시 만듦) |
+| [2026-10-04-review-decisions.html](2026-10-04-review-decisions.html) | 사이클을 닫기 전 검토 결과: 고친 것 16가지와 정할 것 8가지(화면 동작 둘, 서버 값 넷, 기록 둘) | `docs/cycles/05-login-account/design-delta.md` | 없음 (9가지 모두 정해짐) |
+| [2026-10-04-auth-repo.html](2026-10-04-auth-repo.html) | 로그인·인증 코드를 다른 GitHub 저장소에 두고 설정으로 켜고 끄는 것: 이해한 모양, 정할 것 셋, dev에게 넘길 내용 | 사용자 요청 (2026-10-04), `design-delta.md` | 없음 (저장소 분리는 취소, 켜고 끄는 설정만 ADR-0046으로) |
 | [2026-10-04-screen-mockups.html](2026-10-04-screen-mockups.html) | 새로 생기거나 바뀌는 화면 11장의 밑그림을 PC·태블릿·폰으로 나눠 그림 (자리와 순서만, 실제 디자인 아님) | `docs/cycles/05-login-account/flow.md` | 밑그림 전체가 [안] |
 
 ## 읽는 순서 제안

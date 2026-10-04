@@ -81,3 +81,16 @@
 - 루트 `ApiExceptionHandler`: 401 `unauthorized`(403 `forbidden`은 쓸 일이 있으면)
 - 새 의존성(사용자 승인 필요): `spring-boot-starter-security`, `spring-boot-starter-oauth2-client`, Spring Modulith events JDBC 저장소, (선택) Spring Session JDBC
 - 바뀌지 않는 것: `region`, `library`, `catalog`, `availability`, `fetch-service/`, 기존 API
+
+## 설계 단계에서 바뀐 것 (2026-10-04)
+
+이 문서의 위쪽 문장 가운데 설계 단계의 사용자 결정으로 바뀐 것입니다. 지금의 내용은 `design-delta.md`가 기준입니다.
+
+| 위에 적힌 것 | 바뀐 것 | 근거 |
+|---|---|---|
+| 표: `account`, `account_consent` / "provider + provider_user_id" | `auth.account`, `auth.login_method(method, subject)`, `auth.account_consent`, `auth.refresh_token` | ADR-0038, ADR-0039 |
+| 이벤트 발행 저장소 표를 스키마 `auth`에 | 별도 스키마 `modulith`, 완료 기록은 삭제 | ADR-0041 |
+| 의존성 `spring-boot-starter-oauth2-client`, (선택) Spring Session JDBC | `spring-boot-starter-security`, `-security-oauth2-client`, `-security-oauth2-resource-server`, `spring-modulith-starter-jdbc`. Spring Session JDBC는 쓰지 않음 | `architect-proposal.md` 검토 결과 11, ADR-0038 |
+| 401을 루트 `ApiExceptionHandler`에서 처리 | 보안 필터 단계의 401/403은 `auth`의 `AuthenticationEntryPoint`·`AccessDeniedHandler`가 ProblemDetail로 직접 씀 | `design-delta.md` 모듈 표 |
+| 완료 기준의 "(세션 만료 전까지)" | 로그인한 때부터 30일(JWT + 리프레시 토큰) | ADR-0038 |
+| (포함에 없던 것) | 운영 웹 서버 설정 예시와 화면 쪽 보안 헤더, 서버 여러 대 대비(임시 값을 `HttpSession`으로만) | 사용자 승인: ADR-0042("이것도 지금에서 하는 게 맞다고 보는데 화면에서 보안적인 구성"), ADR-0040 |
