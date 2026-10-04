@@ -327,3 +327,22 @@
 
 - 사이클 닫기 검토 5번(제공자 호출 대기 시간), 2026-10-04: Spring Boot는 `spring.http.clients.connect-timeout`·`read-timeout`으로 전역 설정 가능, 문서 예시는 2s·1s, 기본값은 이 페이지에 없음 (https://docs.spring.io/spring-boot/reference/io/rest-client.html) [확정]. AWS SDK 모범 사례는 대기 시간을 정해 빨리 실패하게 하라고 권하나 숫자는 없음 (https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/best-practices.html) [확정]. 권장 숫자를 주는 공식 문서는 찾지 못함 [확인 필요: dev가 호출해 보고 조정].
 - 같은 검토 9번(네이버), 2026-10-04: 네이버 가이드에 토큰 없이 연결 상태를 확인하는 방법과 연결된 사용자 목록 조회는 없음. "네이버에서는 실패 요청에 대해서 재시도를 수행하지 않습니다" [확정]. 다른 사이트의 관행은 [확인 필요](공식 자료 없음).
+
+- 개발 중 돌아올 주소로 localhost를 쓸 수 있는지(사용자 질문 "아직 서비스를 배포하지 않았는데 배포해서 도메인을 받아야 하나?", 2026-10-04): 카카오는 데브톡에 `http://localhost:8080` 등으로 Redirect URI를 등록해 쓰는 사례가 있음 (https://devtalk.kakao.com/t/redirect-uri/122948 , https://devtalk.kakao.com/t/redirect-uri/87357) [확정: 사례]. 네이버 가이드에는 localhost에 관한 문장이 없음. 제3자 예제는 `http://localhost:8000`으로 등록 (https://github.com/ryulstory/django-allauth-providers-ko) [확인 필요: 사용자가 등록 화면에서 확인].
+
+## 14. 카카오 앱 등록에서 확인한 것 (2026-10-04)
+
+사용자가 로그인한 카카오 디벨로퍼스 콘솔에서 앱을 만들며 확인함(앱 이름·회사명 chaekcheck, 카테고리 도서/참고자료, 앱 ID 1597057).
+
+| 항목 | 확인한 사실 | 태그 |
+|---|---|---|
+| 돌아올 주소(리다이렉트 URI)를 둘 이상 받는지 | 두 줄 모두 저장됨. 등록 위치는 [앱] > [플랫폼 키] > REST API 키 수정 화면의 "카카오 로그인 리다이렉트 URI"(카카오 로그인 설정 화면이 아님). `http://localhost:5173/...` 주소도 받음 | [확정] (콘솔에서 저장 후 다시 열어 확인) |
+| 등록한 값 | `http://localhost:5173/api/v1/auth/login/oauth2/code/kakao`, `.../kakao-reauth`. 주소와 포트는 개발 환경의 화면 주소 기준으로 넣은 것이고, dev가 정한 값과 다르면 고침 | [안] (dev가 확정) |
+| 어드민 키가 하나인지 | "Default Admin Key" 하나, "대표"로 표시. 웹훅의 대표 어드민 키와 unlink의 어드민 키가 같은 키 | [확정] (콘솔) |
+| 클라이언트 시크릿 | 카카오 로그인용이 기본으로 켜져 있음(ON) | [확정] (콘솔) |
+| 카카오 로그인 사용 설정 | ON으로 바꿈. 켠 뒤 "웹훅을 설정해야 한다"는 안내가 보임 | [확정] |
+| 호출 허용 IP 주소 | REST API 키와 어드민 키에 각각 설정. "키 유출과 같은 보안 사고에 대비해" 등록된 IP의 요청만 허용, 최대 10개, CIDR·Subnet Mask 권장(개별 IPv4도 가능), 미등록 IP는 `-401` (https://developers.kakao.com/docs/ko/app-setting/app) | [확정] |
+| 호출 허용 IP를 비워 두면 모든 IP가 허용되는지, localhost·사설 IP 입력 | 문서에 문장 없음 | [확인 필요] (dev의 첫 로그인 시험에서 확인) |
+
+- 사용자 질문과 답(2026-10-04): "아직 로컬호스트에서만 할건데 호출 허용 IP 주소 뭐라고 하면 돼?" → 개발 중에는 비워 둠. 카카오가 보는 것은 요청을 보낸 쪽의 공인 IP라 `127.0.0.1`은 의미가 없음. 운영 서버의 고정 IP가 생기면 그때 등록(특히 어드민 키).
+- 네이버 개발자센터는 내장 브라우저에서 열리지 않아(안전 제한) 사용자가 직접 등록함. 확인할 것: 제공 정보를 고르지 않았을 때의 화면, Callback URL 두 줄, localhost 허용.

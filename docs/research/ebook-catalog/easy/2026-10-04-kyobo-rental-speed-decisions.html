@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>교보 대여형 수집 속도</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+</style>
+</head>
+<body>
+<main>
+<p class="lead">교보 대여·혼합형 232곳은<br>지금 규칙대로면 약 50일 걸립니다.<br>이 서버만 동시 요청을 올릴지 정해 주세요.</p>
+<p class="sub">2026-10-04 16:44에 받기 시작했습니다. 정할 것은 맨 아래 한 가지입니다.</p>
+
+<section class="card"><h2><span class="num">1</span>왜 오래 걸리나</h2>
+<div class="gist">232곳이 모두 교보 서버 IP 한 대(103.182.126.192)에 있고, 한 곳이 15만~25만 권이라 받을 쪽이 약 52만 쪽입니다. 그런데 한 번에 1건씩만 보내는 규칙이라 줄이 하나뿐입니다.</div>
+<table><tr><th>항목</th><th>값</th><th>근거</th></tr>
+<tr><td>받을 책 줄 수</td><td>약 4,183만 줄</td><td>웹러브 북스 목록에서 찾은 교보 기관 사이트를 한 번씩 열어 센 값 (2026-10-03)</td></tr>
+<tr><td>한 쪽에 받는 권수</td><td>80권 (사이트가 20·40·60·80만 받음)</td><td>2026-10-03 시험: 1이나 99를 넣으면 서버 오류</td></tr>
+<tr><td>받을 쪽 수</td><td>약 52만 쪽</td><td>4,183만 ÷ 80</td></tr>
+<tr><td>한 쪽에 걸리는 시간</td><td>약 8초 (응답 약 7초 + 쉬는 1초)</td><td>16:44~16:48 신한카드 전자책도서관 31쪽을 받은 시간</td></tr>
+<tr><td>IP를 나눠 받을 수 있나</td><td>못 함. 232곳 모두 같은 IP</td><td>DNS 조회 (2026-10-04). 교보 서버 IP는 모두 4개인데 대여·혼합형은 전부 103.182.126.192</td></tr></table>
+<figure><svg viewBox="0 0 900 230" role="img" aria-label="동시 요청 수별 걸리는 날">
+<text x="20" y="28" font-size="16" fill="var(--muted)">동시 요청 수별로 다 받는 데 걸리는 날 (응답이 지금처럼 7초일 때)</text>
+<text x="20" y="72" font-size="17" fill="var(--text)">1건 (지금)</text><rect x="170" y="52" width="600" height="30" rx="4" fill="var(--no)"/><text x="780" y="74" font-size="17" fill="var(--text)">약 50일</text>
+<text x="20" y="122" font-size="17" fill="var(--text)">2건</text><rect x="170" y="102" width="300" height="30" rx="4" fill="var(--warn)"/><text x="480" y="124" font-size="17" fill="var(--text)">약 25일</text>
+<text x="20" y="172" font-size="17" fill="var(--text)">4건</text><rect x="170" y="152" width="150" height="30" rx="4" fill="var(--warn)"/><text x="330" y="174" font-size="17" fill="var(--text)">약 12일</text>
+<text x="20" y="222" font-size="17" fill="var(--text)">8건</text><rect x="170" y="202" width="75" height="30" rx="4" fill="var(--ok)"/><text x="255" y="224" font-size="17" fill="var(--text)">약 6일</text>
+</svg><figcaption>동시 요청을 늘리면 그만큼 빨라지지만, 교보 서버 한 대가 받는 부담도 그만큼 늘어납니다. 서버가 느려지면 줄어드는 폭도 작아집니다.</figcaption></figure>
+</section>
+
+<section class="card"><h2><span class="num">2</span>고려할 점</h2>
+<div class="gist">이 IP에는 교보 기관 사이트 약 1,435곳이 함께 있습니다. 직원·학생이 실제로 쓰는 서버라, 우리 요청이 늘면 그 사람들의 화면도 느려질 수 있습니다.</div>
+<table><tr><th>점</th><th>내용</th></tr>
+<tr><td>지금 규칙</td><td>한 서버에 한 번에 1건, 요청 사이 1초 이상 [확정] (사이클 01 spec 5.6). 바꾸려면 사용자 결정. 앞서 YES24 공용 서버의 동시 요청 올리기는 "지금처럼 1건"으로 정하셨고(2026-10-04), 대신 IP별로 나누었습니다</td></tr>
+<tr><td>응답이 이미 느림</td><td>80권 한 쪽에 약 7초. 서버가 큰 목록을 만드는 데 시간이 드는 것으로 보입니다. 동시 요청을 늘리면 응답이 더 느려질 수 있습니다(확인 못 함)</td></tr>
+<tr><td>막히면</td><td>이 IP 한 대에 대여·혼합형 232곳이 모두 있습니다. 막히면 232곳 전부 못 받고, 우회하지 않는 원칙대로 그대로 멈춥니다</td></tr>
+<tr><td>되돌림 장치</td><td>올리기로 하면, 평균 응답이 지금의 두 배(약 14초)를 넘거나 5번 연달아 실패할 때 자동으로 1건으로 돌아가게 만듭니다(YES24 IP 나누기 때와 같은 방식)</td></tr></table>
+</section>
+
+<section class="card"><h2><span class="num">3</span>정할 것</h2>
+<div class="gist">교보 서버 103.182.126.192에만 동시 요청 수를 올릴지 정합니다. 다른 서버는 지금처럼 1건·1초입니다.</div>
+<div class="item"><h3><span class="no">1</span>교보 대여·혼합형 서버(103.182.126.192)만 동시 4건, 각 요청 시작 사이 1초 이상, 느려지면 자동으로 1건 <span class="an">[안]</span></h3>
+<p>약 12일에 끝납니다(응답이 지금처럼 7초일 때). 하루에 받는 쪽이 약 1만 1천 쪽에서 약 4만 3천 쪽으로 늘어납니다. 응답이 평균 14초를 넘거나 5번 연달아 실패하면 수집기가 이 서버만 1건으로 되돌리고 로그에 남깁니다. 수집기에 "서버별 동시 요청 수"를 따로 줄 수 있게 고쳐야 합니다(지금은 모든 서버에 같은 값만 줄 수 있음).</p>
+<p class="alt"><b>다른 선택</b>: 지금처럼 1건(약 50일, 부담 없음) / 2건(약 25일) / 8건(약 6일, 부담과 막힐 위험이 가장 큼). 기타 칸에 숫자를 적어 주셔도 됩니다.</p>
+<p class="alt"><b>추천 이유(Claude)</b>: 50일은 너무 길고, 8건은 이미 응답이 7초인 서버에 부담이 큽니다. 4건이면 두 주 안에 끝나고, 느려지면 자동으로 물러납니다.</p></div>
+<div class="item"><h3>질문: 1초 간격이 아니라 4건을 같은 순간에 나란히 보내면?</h3>
+<p><b>받는 속도는 같습니다. 그래서 시작 시점을 1초씩 띄우는 쪽을 추천합니다.</b> 이 서버는 답하는 데 약 7초가 걸리므로, 4건이 각자 7~8초마다 한 쪽씩 받습니다. 1초씩 띄우면 처음 4건만 0·1·2·3초에 출발하고, 그 뒤로는 어느 방식이든 8초에 약 4쪽입니다.</p>
+<figure><svg viewBox="0 0 900 220" role="img" aria-label="1초 간격과 한꺼번에 비교">
+<text x="20" y="26" font-size="17" font-weight="700" fill="var(--text)">1초씩 띄워 시작 (추천)</text>
+<rect x="20" y="40" width="300" height="22" rx="4" fill="var(--accent)"/><text x="330" y="57" font-size="15" fill="var(--muted)">요청 1: 0초 출발 → 7초 도착</text>
+<rect x="60" y="68" width="300" height="22" rx="4" fill="var(--accent)"/><text x="370" y="85" font-size="15" fill="var(--muted)">요청 2: 1초 출발</text>
+<rect x="100" y="96" width="300" height="22" rx="4" fill="var(--accent)"/><text x="410" y="113" font-size="15" fill="var(--muted)">요청 3: 2초 출발</text>
+<rect x="140" y="124" width="300" height="22" rx="4" fill="var(--accent)"/><text x="450" y="141" font-size="15" fill="var(--muted)">요청 4: 3초 출발</text>
+<text x="20" y="180" font-size="17" font-weight="700" fill="var(--text)">한꺼번에</text>
+<rect x="20" y="192" width="300" height="22" rx="4" fill="var(--warn)"/><text x="330" y="209" font-size="15" fill="var(--muted)">요청 4개가 0초에 함께 출발, 7초에 함께 도착</text>
+</svg><figcaption>두 방식 모두 8초에 약 4쪽입니다. 띄워 보내면 서버에 들어가는 요청이 고르게 나뉘고, 한꺼번에 보내면 같은 순간에 몰립니다.</figcaption></figure>
+<p class="note">사용자 질문(2026-10-04, 대화): "동시 4건인데 음 1초 간격이라고 했자나 1초 중에서도 나란히 4건은?"</p></div>
+</section>
+
+<p class="foot">원본: <code>docs/research/ebook-catalog/crawl-runbook.md</code> 8-2절, 수집 로그 <code>chaekcheck-data/logs/crawl-2026-10-04_1642.log</code>, 교보 기관 확인 결과 <code>chaekcheck-data/other-platforms/kyobo-institutions-probe-2026-10-03.tsv</code>.</p>
+</main>
+</body>
+</html>

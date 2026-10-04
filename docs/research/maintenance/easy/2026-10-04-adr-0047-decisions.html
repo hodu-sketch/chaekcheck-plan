@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>유지보수 절차 한곳에</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+</style>
+</head>
+<body>
+<main>
+<p class="lead">주기적으로 하는 세 작업의 절차를<br>dev의 운영 안내서 한 곳에 모읍니다.</p>
+<p class="sub">이 페이지는 결정 기록 초안(ADR-0047)을 풀어 쓴 것입니다. 맨 아래 한 가지만 고르시면 됩니다. 원본은 대화에 링크한 ADR 초안입니다.</p>
+
+<section class="card"><h2><span class="num">1</span>지금은 세 곳에 흩어져 있습니다</h2>
+<div class="gist">세 작업 모두 dev 코드를 실행하는데, 절차는 dev 안내서, plan 연구 문서, dev 회고 문서에 나뉘어 있습니다. 수집기 코드는 어느 저장소에도 없습니다.</div>
+<figure><svg viewBox="0 0 900 300" role="img" aria-label="지금 절차가 있는 곳">
+<rect x="10" y="20" width="270" height="250" rx="12" fill="var(--card)" stroke="var(--line)" stroke-width="2"/>
+<text x="26" y="52" font-size="19" font-weight="700" fill="var(--text)">dev 저장소</text>
+<rect x="26" y="70" width="238" height="60" rx="8" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/>
+<text x="40" y="96" font-size="16" fill="var(--text)">① 도서관 목록 확인</text><text x="40" y="118" font-size="14" fill="var(--muted)">library-maintenance.md</text>
+<rect x="26" y="146" width="238" height="60" rx="8" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="2"/>
+<text x="40" y="172" font-size="16" fill="var(--text)">③ 서비스 DB로 가져오기</text><text x="40" y="194" font-size="14" fill="var(--muted)">plan-feedback.md (회고용)</text>
+<text x="26" y="240" font-size="14" fill="var(--muted)">실행 코드: Check*Sites.java,</text><text x="26" y="260" font-size="14" fill="var(--muted)">check_code_spaces.py, 가져오기</text>
+<rect x="310" y="20" width="270" height="250" rx="12" fill="var(--card)" stroke="var(--line)" stroke-width="2"/>
+<text x="326" y="52" font-size="19" font-weight="700" fill="var(--text)">plan 저장소</text>
+<rect x="326" y="70" width="238" height="60" rx="8" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="2"/>
+<text x="340" y="96" font-size="16" fill="var(--text)">② 책 목록 수집</text><text x="340" y="118" font-size="14" fill="var(--muted)">crawl-runbook.md</text>
+<text x="326" y="166" font-size="14" fill="var(--muted)">조사 기록·근거 수치·결정</text>
+<rect x="610" y="20" width="280" height="250" rx="12" fill="var(--card)" stroke="var(--no)" stroke-width="2" stroke-dasharray="7 6"/>
+<text x="626" y="52" font-size="19" font-weight="700" fill="var(--text)">git 밖 chaekcheck-data</text>
+<rect x="626" y="70" width="248" height="60" rx="8" fill="var(--no-bg)" stroke="var(--no)" stroke-width="2"/>
+<text x="640" y="96" font-size="16" fill="var(--text)">② 수집기 코드</text><text x="640" y="118" font-size="14" fill="var(--muted)">scripts/crawl_catalog.py</text>
+<text x="626" y="166" font-size="14" fill="var(--muted)">수집 DB, 로그, 인증키</text>
+</svg><figcaption>노란 칸 둘은 "절차는 dev에" 원칙(2026-10-01)에서 벗어난 곳이고, 빨간 칸은 고쳐도 기록이 남지 않는 곳입니다.</figcaption></figure>
+<p>이 때문에 생긴 일: plan의 <code>flows.md</code>는 책 검색 화면이 dev에 만들어진 뒤에도 "미구현"으로 남아 있었습니다. 첫 실제 가져오기(2026-10-03)도 plan 문서에는 "아직 안 함"으로 적혀 있었습니다.</p>
+</section>
+
+<section class="card"><h2><span class="num">2</span>바뀐 뒤: dev <code>docs/maintenance/</code> 한 곳</h2>
+<div class="gist">운영할 때는 dev의 <code>docs/maintenance/README.md</code> 한 장에서 시작합니다. plan에는 왜 그렇게 하는지만 남습니다.</div>
+<table><tr><th>dev에 생기는 것</th><th>내용</th><th>지금 있는 곳</th></tr>
+<tr><td><code>docs/maintenance/README.md</code></td><td>① → ② → ③ 순서, 주기, 체크리스트 한 장</td><td>plan <code>docs/research/maintenance/periodic-tasks.md</code> (초안)</td></tr>
+<tr><td><code>1-libraries.md</code></td><td>도서관 목록 확인</td><td>dev <code>library-maintenance.md</code></td></tr>
+<tr><td><code>2-crawl.md</code></td><td>책 목록 수집: 실행, 이어 받기, 문제별 대처</td><td>plan <code>crawl-runbook.md</code>의 실행 부분</td></tr>
+<tr><td><code>3-import.md</code></td><td>서비스 DB로 가져오기: 명령, 먼저 세기, 확인할 숫자</td><td>dev <code>plan-feedback.md</code> "가져오기 실행 방법"</td></tr>
+<tr><td><code>scripts/crawl/</code></td><td>수집기 코드</td><td>git 밖 <code>chaekcheck-data/scripts</code></td></tr></table>
+<p>수집 DB(<code>ebook-catalog.sqlite</code>), 로그, 국립중앙도서관 인증키는 지금처럼 git 밖 <code>chaekcheck-data</code>에 둡니다.</p>
+<div class="item"><h3>질문: plan에 있는 수집 문서를 전부 dev로 옮기나요?</h3>
+<p><b>아닙니다. 돌리는 방법(실행 절차)과 수집기 코드만 옮기고, 원칙·조사·결정은 plan에 남깁니다.</b> 두 쪽은 서로 링크합니다.</p>
+<table><tr><th>plan 문서</th><th>옮기나</th><th>이유</th></tr>
+<tr><td><code>crawl-runbook.md</code></td><td>실행 부분만 dev <code>2-crawl.md</code>로 (이어 받기, 명령, 병렬·IP 줄 설정법, 받지 않는 도서관 표시법, 문제별 대처, 새 사이트 붙이는 순서). 진행 상태 표와 결정 기록은 plan에 남김</td><td>수집기를 돌리는 사람이 코드 옆에서 볼 내용</td></tr>
+<tr><td><code>platforms.md</code></td><td>dev로 (제안, plan에 두어도 됨)</td><td>플랫폼 타입별 목록 주소·쪽 크기·읽는 위치. 사이트가 바뀌면 코드와 함께 고침</td></tr>
+<tr><td><code>crawl-method.md</code></td><td>plan에 남김</td><td>한 서버 1건·1초, 수집 범위, 저장 항목 등 사용자가 정한 원칙</td></tr>
+<tr><td><code>research.md</code></td><td>plan에 남김</td><td>직접 수집하는 이유, 법적 검토 등 조사 기록</td></tr>
+<tr><td><code>catalog-refresh.md</code>, <code>same-book-isbn.md</code>, <code>search-and-normalization.md</code></td><td>plan에 남김</td><td>앞으로 정할 것과 정리 규칙의 근거. 규칙의 코드는 이미 dev에 있음</td></tr>
+<tr><td><code>periodic-tasks.md</code></td><td>내용은 dev <code>README.md</code>로, plan 파일은 안내만</td><td>dev 운영 안내서의 초안</td></tr></table>
+<p class="note">사용자 질문(2026-10-04, 대화): "그러면 수집하는 방법에 대한 문서들 지금 plan에 있는거 dev로 옮기자고?"</p></div>
+</section>
+
+<section class="card"><h2><span class="num">3</span>다른 선택과 비용</h2>
+<div class="gist">dev에 모으는 안을 추천합니다. 실행하는 코드 옆에 절차가 있어야 코드가 바뀔 때 절차도 같이 고쳐지기 때문입니다.</div>
+<table><tr><th>안</th><th>좋은 점</th><th>드는 비용</th></tr>
+<tr><td><b>dev에 운영 안내서 + 수집기도 dev로 (추천)</b></td><td>절차와 코드가 한곳. 2026-10-01 원칙과 맞음. 수집기 수정이 커밋으로 남음</td><td>한 번 옮겨야 함. plan은 dev에 쓸 수 없어 요청서로 넘김. Python 수집기가 Java 저장소에 들어가 실행 환경(<code>bs4</code>, <code>lxml</code>)을 적어야 함</td></tr>
+<tr><td>plan에 운영 안내서</td><td>plan 세션에서 바로 고칠 수 있음</td><td>plan은 dev 코드 변화를 바로 알지 못함. 2026-10-01 원칙을 뒤집어야 함</td></tr>
+<tr><td>지금처럼 흩어 두고 색인으로 연결</td><td>할 일 없음</td><td>상태 표시가 계속 어긋남. 매번 <code>reference-index.md</code>부터 찾아야 함</td></tr></table>
+</section>
+
+<section class="card"><h2><span class="num">4</span>정할 것</h2>
+<div class="gist">아래 초안대로 ADR-0047을 쓰고, dev에 넘길 요청서를 만듭니다.</div>
+<div class="item"><h3><span class="no">1</span>ADR-0047 초안대로 씀: 정기 유지보수 절차는 dev <code>docs/maintenance/</code>에, 수집기는 dev <code>scripts/crawl/</code>로 <span class="an">[안]</span></h3>
+<p>승인하시면 이렇게 됩니다.</p>
+<p>1) <code>docs/adr/0047-maintenance-procedures-in-dev.md</code>를 씁니다. 사이클 칸은 "사이클 밖 (2026-10-04, 사이클 05 개발 중)"입니다. 끝난 사이클 05 문서와 인계서는 건드리지 않습니다. dev는 plan의 <code>docs/current/handoff.md</code>만 읽으므로 지금 개발에 끼어들지 않습니다.</p>
+<p>2) 요청서 <code>docs/research/maintenance/dev-move-request.md</code>를 만듭니다. 사용자가 사이클 05 개발과 겹치지 않을 때 dev 세션에 그대로 전달합니다(사용자 선택, 2026-10-04: "ADR 추가 + 요청서를 내가 dev에 전달").</p>
+<p>3) 수집기는 지금 진행 중인 수집이 끝난 뒤(10월 6일 0시 무렵 예상) 옮깁니다. 옮긴 뒤 plan의 <code>crawl-runbook.md</code>·<code>periodic-tasks.md</code> 머리말에 "절차 원본은 dev <code>docs/maintenance/</code>"를 적고 실행 절차는 지웁니다.</p>
+<p>이유: 사용자 "근데 지금 주기적으로 필요한 작업들이 dev랑 plan에 흩어진 게 좀 그런데...". 형태는 Claude 제안 → 승인("이렇게 하도록 해줘"). 다른 두 안을 고르지 않은 이유는 [이유 미확인]으로 적습니다.</p>
+<p class="alt"><b>다른 선택</b>: 3번 카드의 두 안. 또는 ADR 없이 <code>backlog.md</code>에 한 줄만 남기고 다음 사이클 시작 때 정함(기록이 늦어짐).</p></div>
+</section>
+
+<p class="foot">원본: ADR-0047 초안(대화), <code>docs/research/maintenance/periodic-tasks.md</code>, <code>docs/reference-index.md</code>, dev <code>docs/plan-feedback.md</code> "가져오기 실행 방법".</p>
+</main>
+</body>
+</html>

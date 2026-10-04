@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>chaekcheck 큰 그림</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">검색하는 부분은 만들어져 있고,<br>회원 쪽은 설계가 끝나 만들기 직전입니다.</p>
+<p class="sub">chaekcheck 전체의 큰 그림입니다(2026-10-04 기준). 지금까지 한 것, 지금 하는 것, 미뤄 두신 것, 아직 손대지 않은 것을 한 장에 모았습니다. 근거는 <code>docs/backlog.md</code>와 <code>docs/current/</code>입니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>서비스가 하는 일</h2>
+<div class="gist">책을 검색하면, 내가 가입할 수 있는 전자도서관 가운데 지금 빌릴 수 있는 곳을 찾아 줍니다.</div>
+<figure><svg viewBox="0 0 900 250" role="img" aria-label="서비스가 일하는 큰 흐름"><defs><marker id="bp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs><g font-family="Noto Sans KR, sans-serif" font-size="14" fill="var(--text)" text-anchor="middle">
+<rect x="10" y="70" width="150" height="70" rx="10" fill="var(--card)" stroke="var(--accent)" stroke-width="2"/><text x="85" y="100" font-weight="700">사용자</text><text x="85" y="122" font-size="13">제목·저자로 검색</text>
+<rect x="220" y="20" width="200" height="70" rx="10" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="2"/><text x="320" y="50" font-weight="700">미리 모은 책 목록</text><text x="320" y="72" font-size="13">어느 도서관이 가졌나</text>
+<rect x="220" y="120" width="200" height="70" rx="10" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/><text x="320" y="150" font-weight="700">도서관 목록과 가입 자격</text><text x="320" y="172" font-size="13">내 지역에서 가입되나</text>
+<rect x="480" y="70" width="190" height="70" rx="10" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/><text x="575" y="100" font-weight="700">도서관 사이트에</text><text x="575" y="122" font-size="13">지금 빌릴 수 있나 물어봄</text>
+<rect x="730" y="70" width="160" height="70" rx="10" fill="var(--card)" stroke="var(--accent)" stroke-width="2"/><text x="810" y="100" font-weight="700">결과 화면</text><text x="810" y="122" font-size="13">빌릴 수 있는 곳부터</text>
+<g stroke="var(--muted)" stroke-width="2" fill="none" marker-end="url(#bp)"><path d="M160 95 L218 62"/><path d="M160 115 L218 148"/><path d="M420 60 L478 92"/><path d="M420 150 L478 120"/><path d="M670 105 H728"/></g>
+<rect x="220" y="205" width="200" height="34" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/><text x="320" y="227">로그인·계정 (05)</text>
+<rect x="440" y="205" width="200" height="34" rx="8" fill="var(--card)" stroke="var(--muted)" stroke-width="2" stroke-dasharray="5 4"/><text x="540" y="227">내 도서관 (06)</text>
+<rect x="660" y="205" width="200" height="34" rx="8" fill="var(--card)" stroke="var(--muted)" stroke-width="2" stroke-dasharray="5 4"/><text x="760" y="227">빌릴 수 있게 되면 알림 (07)</text>
+</g></svg><figcaption>위 줄이 지금 돌아가는 검색입니다. 아래 줄 셋이 회원 쪽이고, 05가 설계를 마친 상태입니다.</figcaption></figure>
+<div class="item"><p>검색은 로그인 없이 됩니다. 회원 기능은 그 위에 얹는 것입니다. 로그인하면 내 지역과 내 도서관을 저장해 두고(06), 원하는 책을 빌릴 수 있게 되면 알려 줍니다(07).</p></div>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>어디까지 왔나</h2>
+<div class="gist">사이클 일곱 가운데 넷은 만들었고, 다섯째는 설계를 마쳤습니다.</div>
+<figure><svg viewBox="0 0 900 300" role="img" aria-label="사이클 01부터 07까지의 순서와 상태"><g font-family="Noto Sans KR, sans-serif" font-size="14" fill="var(--text)" text-anchor="middle">
+<line x1="60" y1="70" x2="840" y2="70" stroke="var(--line)" stroke-width="4"/>
+<circle cx="60" cy="70" r="24" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="3" /><text x="60" y="76" font-weight="700" font-size="16">01</text><text x="60" y="118">전자책 대출</text><text x="60" y="138">가능 여부 검색</text><circle cx="190" cy="70" r="24" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="3" /><text x="190" y="76" font-weight="700" font-size="16">02</text><text x="190" y="118">전국 도서관</text><text x="190" y="138">으로 넓힘</text><circle cx="320" cy="70" r="24" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="3" /><text x="320" y="76" font-weight="700" font-size="16">03</text><text x="320" y="118">저자·출판사</text><text x="320" y="138">검색</text><circle cx="450" cy="70" r="24" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="3" /><text x="450" y="76" font-weight="700" font-size="16">04</text><text x="450" y="118">여러 조건 검색</text><text x="450" y="138">+ 책 목록</text><circle cx="580" cy="70" r="24" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="3" /><text x="580" y="76" font-weight="700" font-size="16">05</text><text x="580" y="118">로그인·계정</text><text x="580" y="138"></text><circle cx="710" cy="70" r="24" fill="var(--card)" stroke="var(--muted)" stroke-width="3" stroke-dasharray="5 4"/><text x="710" y="76" font-weight="700" font-size="16">06</text><text x="710" y="118">내 도서관</text><text x="710" y="138"></text><circle cx="840" cy="70" r="24" fill="var(--card)" stroke="var(--muted)" stroke-width="3" stroke-dasharray="5 4"/><text x="840" y="76" font-weight="700" font-size="16">07</text><text x="840" y="118">알림</text><text x="840" y="138"></text>
+<rect x="20" y="170" width="16" height="16" rx="8" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/><text x="46" y="183" text-anchor="start">만들어져 돌아감</text>
+<rect x="200" y="170" width="16" height="16" rx="8" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="2"/><text x="226" y="183" text-anchor="start">코드는 끝남, 마무리 작업을 미룸</text>
+<rect x="490" y="170" width="16" height="16" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/><text x="516" y="183" text-anchor="start">설계 끝남, 만들기 전 (지금)</text>
+<rect x="730" y="170" width="16" height="16" rx="8" fill="var(--card)" stroke="var(--muted)" stroke-width="2" stroke-dasharray="4 3"/><text x="756" y="183" text-anchor="start">아직 시작 전</text>
+<text x="450" y="240" fill="var(--muted)" font-size="13">사이클 하나는 "기획 → 설계 → dev에 넘김 → 만든 것을 확인"으로 한 바퀴입니다.</text>
+<text x="450" y="262" fill="var(--muted)" font-size="13">05는 설계까지 끝났고, dev에 넘길 인계서를 쓰는 중입니다.</text>
+</g></svg></figure>
+<div class="item"><table>
+<tr><th>사이클</th><th>내용</th><th>상태</th></tr>
+<tr><td>01</td><td>책 제목으로 검색해 전자도서관의 대출 가능 여부를 보여 줌 (시범 도서관)</td><td>만들어져 돌아감</td></tr>
+<tr><td>02</td><td>전국의 교보·YES24 전자도서관으로 넓힘. 도서관 목록과 가입 자격 정리</td><td>만들어져 돌아감</td></tr>
+<tr><td>03</td><td>저자·출판사로 검색</td><td>만들어져 돌아감</td></tr>
+<tr><td>04</td><td>제목·저자·출판사를 함께 넣는 검색. 이를 위해 전자책 목록을 미리 모아 DB에 둠</td><td>코드는 끝남. 실제 수집과 확인을 미룸 (아래 4번)</td></tr>
+<tr><td>05</td><td>네이버·카카오 로그인, 가입 동의, 로그아웃, 탈퇴</td><td>설계 끝남. 인계서를 쓰는 중</td></tr>
+<tr><td>06</td><td>내 지역(거주지·직장)과 내 도서관 저장, 검색과 연결</td><td>시작 전. 큰 틀만 정함</td></tr>
+<tr><td>07</td><td>원하는 책을 빌릴 수 있게 되면 알림</td><td>시작 전. 큰 틀만 정함</td></tr>
+</table></div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>지금 하는 것: 사이클 05</h2>
+<div class="gist">오늘 명세, 화면, 설계, 결정 기록 아홉(ADR-0038~0046)이 모두 정해졌습니다. 남은 것은 dev에 넘기는 일입니다.</div>
+<div class="item"><table>
+<tr><th>남은 일</th><th>누가</th></tr>
+<tr><td>인계서 확인 (쓰는 중. 나오면 캔버스로 보여 드림)</td><td>사용자</td></tr>
+<tr><td>네이버·카카오 앱 등록. 돌아올 주소를 두 줄씩 넣어 보기. 네이버 제공 항목 화면 확인</td><td>사용자</td></tr>
+<tr><td>dev 프로젝트에서 만들기. 로그인 기능은 설정으로 켜고 끌 수 있고 기본은 꺼짐</td><td>dev</td></tr>
+<tr><td>이용약관과 개인정보 처리방침 문구 검토, 웹훅 주소 등록</td><td>사용자 (배포 전)</td></tr>
+<tr><td>만든 것을 기획과 대조 (다음 사이클을 시작할 때)</td><td>기획</td></tr>
+</table></div>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>미뤄 두신 작업</h2>
+<div class="gist">"큰 틀을 먼저 잡고 디테일은 나중에"라고 하셔서 미룬 것들입니다. 다섯 묶음입니다.</div>
+<div class="item"><h3>가. 사이클 04 마무리</h3><p>"다 수집할 거는 며칠 걸릴 거라고 하니까 이건 좀 미뤄둬"라고 하신 것입니다.</p><table>
+<tr><th>작업</th><th>설명</th></tr>
+<tr><td>전자책 목록 전체 수집</td><td>약 172만 권 규모. 며칠 걸림</td></tr>
+<tr><td>수집한 목록을 서비스 DB에 넣기</td><td>코드는 있음. 실행을 안 함</td></tr>
+<tr><td>검색 응답 시간 재기</td><td>목록이 들어가야 잴 수 있음</td></tr>
+<tr><td>수용 기준 14개 확인</td><td>위 셋이 끝나야 가능</td></tr>
+</table><p class="alt">이것이 끝나기 전에는 "여러 조건 검색"이 실제 자료 없이 코드만 있는 상태입니다. 미룬 것 가운데 가장 먼저 돌아와야 할 묶음입니다.</p></div>
+<div class="item"><h3>나. 책 목록과 검색</h3><table>
+<tr><th>작업</th><th>설명</th></tr>
+<tr><td>책 목록을 주기적으로 새로 고치기</td><td>지금은 한 번 가져오는 것만 있음. 별도 사이클로 하기로 정함</td></tr>
+<tr><td>검색 결과 정렬 옵션</td><td>제목순, 보유 도서관 많은 순 등</td></tr>
+<tr><td>검색 품질</td><td>오타 보정, "행동하는"으로 "행동" 찾기, 옮긴이·감수 검색</td></tr>
+<tr><td>표지와 책 소개 보이기</td><td></td></tr>
+</table></div>
+<div class="item"><h3>다. 도서관 넓히기</h3><table>
+<tr><th>작업</th><th>설명</th></tr>
+<tr><td>목록에만 있고 서비스에 없는 기관</td><td>대학·기업·학교 전자도서관, 북큐브·알라딘 플랫폼</td></tr>
+<tr><td>읽지 못하는 화면 7종</td><td>경남교육청, 전남도서관, 서울도서관, 강남구 등 자체 화면</td></tr>
+<tr><td>도서관 정보 다시 조사하기</td><td>주소·가입 자격이 바뀌므로 주기적으로. 자격 확인이 필요한 45곳 포함</td></tr>
+<tr><td>소속으로 가입하는 도서관</td><td>대학·회사 전자도서관은 지역이 아니라 소속이 자격</td></tr>
+</table></div>
+<div class="item"><h3>라. 회원 쪽에서 미룬 것</h3><table>
+<tr><th>작업</th><th>언제 미뤘나</th></tr>
+<tr><td>별명과 프로필 사진을 화면에 보이기</td><td>오늘. "염두에만 둔다"고 하심</td></tr>
+<tr><td>한 계정에 네이버와 카카오를 함께 연결</td><td>10월 1일. 표 구조만 열어 둠</td></tr>
+<tr><td>이메일·비밀번호로 직접 가입</td><td>10월 3일. 표 구조가 막지 않게 해 둠</td></tr>
+<tr><td>폰 앱 로그인</td><td>앱을 만들 때. 같은 토큰을 쓰도록 해 둠</td></tr>
+<tr><td>약관이 바뀌면 다시 동의받기, 만 14세 미만 가입, 모든 기기에서 로그아웃</td><td>10월 1일</td></tr>
+</table></div>
+<div class="item"><h3>마. 운영에 올리기</h3><table>
+<tr><th>작업</th><th>설명</th></tr>
+<tr><td>어디에 올릴지 정하기</td><td>호스팅, 도메인(chaekcheck.co.kr 확보 여부 미확인), 웹 서버 제품</td></tr>
+<tr><td>DB 준비</td><td>검색에 쓰는 확장 기능을 호스팅이 허용하는지, 모은 책 목록을 운영 DB로 옮기는 방법</td></tr>
+<tr><td>법률 확인</td><td>목록을 반복해 모으는 것에 대한 저작권법·부정경쟁방지법 전문가 확인</td></tr>
+<tr><td>서버가 여러 대일 때</td><td>메모리에 두는 것들을 Redis로 옮길 수 있게. 로그인 쪽은 오늘 대비해 둠</td></tr>
+<tr><td>지키는 장치</td><td>한 사람이 검색을 몰아 보내는 것 막기, 운영자용 관리 화면</td></tr>
+</table></div>
+</section>
+
+<section class="card">
+<h2><span class="num">5</span>아직 손대지 않은 큰 기능</h2>
+<div class="gist">처음 메모에 있던 것 가운데 어느 사이클에도 들어가지 않은 것입니다.</div>
+<div class="item"><table>
+<tr><th>기능</th><th>내용</th><th>알아 둘 점</th></tr>
+<tr><td>실물 도서관</td><td>종이책의 대출·예약 가능 여부, 가까운 도서관 먼저</td><td>공공 자료(도서관 정보나루)가 있으나 전날 기준</td></tr>
+<tr><td>구독 서비스 비교</td><td>밀리의서재·SAM 등 비용 비교, 할인 행사 알림</td><td></td></tr>
+<tr><td>구매 연결</td><td>전자책·종이책 판매처로 연결</td><td></td></tr>
+<tr><td>추천과 통계</td><td>베스트셀러, 관심 도서 추천, 인기 도서 통계</td><td></td></tr>
+<tr><td>내 서재</td><td>메모의 글씨를 다 읽지 못해 내용이 불확실함</td><td>내 도서관(06)과 다른 것인지 확인이 필요함</td></tr>
+</table></div>
+</section>
+
+<section class="card">
+<h2><span class="num">6</span>앞으로의 순서</h2>
+<div class="gist">정하신 순서는 "회원(05, 06) → 알림(07)"입니다. 미룬 것을 언제 끼울지는 정해져 있지 않습니다.</div>
+<div class="item"><table>
+<tr><th>순서</th><th>할 일</th><th>정해진 정도</th></tr>
+<tr><td>1</td><td>사이클 05를 dev에 넘기고 만들기</td><td>정해짐</td></tr>
+<tr><td>2</td><td>사이클 06: 내 지역과 내 도서관</td><td>순서와 큰 틀만 정해짐</td></tr>
+<tr><td>3</td><td>사이클 07: 알림</td><td>순서와 큰 틀만 정해짐</td></tr>
+<tr><td>?</td><td>사이클 04 마무리(전체 수집과 확인)</td><td>언제 할지 정해지지 않음</td></tr>
+<tr><td>?</td><td>운영에 올리기</td><td>언제 할지 정해지지 않음</td></tr>
+</table>
+<p class="alt"><b>제 생각</b>: 알림(07)은 "책을 빌릴 수 있게 됐는지"를 알아야 하므로 책 목록이 실제로 들어 있어야 의미가 있습니다. 그래서 사이클 04 마무리는 늦어도 07 전에 돌아오는 것이 좋습니다. 수집에 며칠이 걸리니 05를 dev가 만드는 동안 따로 돌려 두는 방법도 있습니다. 순서는 정하실 일이라 제안으로만 적습니다.</p></div>
+</section>
+
+<p class="foot">이 글은 요약이며 근거는 원본에 있습니다: <code>docs/backlog.md</code>(미룬 것과 아이디어 전체), <code>docs/current/module-map.md</code>(지금 설계), <code>docs/cycles/</code>(사이클별 문서), <code>docs/research/member-and-alerts/</code>(회원·알림의 큰 틀).</p>
+</main>
+</body>
+</html>

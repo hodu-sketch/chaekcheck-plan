@@ -1,8 +1,8 @@
 # 참고 문서 색인 — 다음에 개발·설계·관리할 때 볼 문서
 
-작성 2026-10-01. 사이클과 상관없이 계속 쓰는 문서들을 주제별로 모았습니다. 사이클 문서(`docs/cycles/NN-*/`)는 그 사이클의 기록이고, 여기 적힌 것은 "지금 어떻게 하는가"를 아는 데 필요한 문서입니다. 문서를 새로 만들거나 원본이 바뀌면 이 색인을 고칩니다.
+작성 2026-10-01, 고침 2026-10-04(정기 작업 문서, 3-1절 가져오기·검색). 사이클과 상관없이 계속 쓰는 문서들을 주제별로 모았습니다. 사이클 문서(`docs/cycles/NN-*/`)는 그 사이클의 기록이고, 여기 적힌 것은 "지금 어떻게 하는가"를 아는 데 필요한 문서입니다. 문서를 새로 만들거나 원본이 바뀌면 이 색인을 고칩니다.
 
-원칙 [확정] (사용자, 2026-10-01, dev C2-U-7 답): **절차의 원본은 dev `docs/library-maintenance.md`**, **조사 기록과 근거 수치는 plan**. 둘이 어긋나면 dev 절차가 최신입니다.
+원칙 [확정] (사용자, 2026-10-01, dev C2-U-7 답): **절차의 원본은 dev `docs/library-maintenance.md`**, **조사 기록과 근거 수치는 plan**. 둘이 어긋나면 dev 절차가 최신입니다. 정기 유지보수 절차(도서관 목록 확인, 책 목록 수집, 가져오기)와 수집기 코드는 dev `docs/maintenance/`·`scripts/crawl/`로 모읍니다 (ADR-0047, 2026-10-04). 옮기기 전까지는 아래 표의 위치가 맞고, 요청서는 `docs/research/maintenance/dev-move-request.md`
 
 ## 0. 늘 먼저 보는 것
 
@@ -11,9 +11,10 @@
 | `CLAUDE.md` (plan) | 사이클 진행 방식, 현재 사이클 |
 | `docs/backlog.md` | 아직 사이클에 안 들어간 것, 다음 순서(맨 위 "2026-10-01 정리"), 미룬 것 |
 | `docs/current/` (`module-map.md`, `data-model.md`, `api.md`, `flows.md`, `handoff.md`) | 지금 설계 전체. `handoff.md`는 현재 인계서(사이클 04) |
-| `docs/adr/README.md` | 결정 목록 (ADR-0001~0034) |
+| `docs/adr/README.md` | 결정 목록 (ADR-0001~0046, 2026-10-04) |
 | dev `docs/plan-feedback.md` | dev가 개발 중 바꾼 것·측정·질문. 사이클별 절(`# 사이클 04`는 702행~). **다음 회고의 입력** |
 | dev `CLAUDE.md` | 스택·모듈 규칙 (plan에서 다시 적지 않음) |
+| `docs/research/maintenance/periodic-tasks.md` | **정기 유지보수 작업 [안]** (2026-10-04): ① 서비스 도서관 목록 확인 → ② 책 목록 수집 → ③ 서비스 DB로 가져오기 → ④ (자동) 검색·대출 조회. 단계마다 주기 [안], 절차 원본 위치, 실행 명령, 확인할 숫자. 웹러브 북스 기관을 서비스로 옮기는 순서(5절) |
 | `docs/cycles/NN-<slug>/easy/README.md` (지금은 `docs/cycles/05-login-account/easy/`) | 쉬운 설명 페이지(HTML) 모음과 목록. 사이클별로 둠. 사용자가 상황을 빠르게 파악할 때 봄. 요약이므로 값의 원본은 각 문서 |
 
 ## 1. 도서관 목록 수집 (어디서 목록을 얻고, 살아 있는지 확인하고, 넣고 끄는가)
@@ -44,12 +45,23 @@
 
 | 문서 | 무엇 | 상태 |
 |---|---|---|
-| plan `docs/research/ebook-catalog/crawl-method.md` | 원칙(호스트 1건·1초, UA), 종류(전체/신간), 절차, 날짜 3층, 저장 항목 [확정], 실행 도구(8절) | 수집 세션이 관리 |
-| plan `docs/research/ebook-catalog/crawl-runbook.md` | **입구 문서 (먼저 읽음)**: 읽는 순서(0절), 지금 상태(1절), 이어 받기·상태 보기(3절), 수집기 규칙 요약(4절), 명령 모음(5절), 받지 않는 도서관(5-1절 `crawl_skip`), 문제별 대처(6절), 새 사이트·플랫폼 붙이는 순서(7절), 상세 URL·오디오북 표시(9·10절) | 수집 세션이 관리, 2026-10-01 |
+| plan `docs/research/ebook-catalog/crawl-method.md` | 원칙(호스트 1건·1초, 2026-10-04부터 호스트 = IP, UA), 종류(전체/신간), 절차, 날짜 3층, 저장 항목 [확정], 실행 도구(8절) | 수집 세션이 관리 |
+| plan `docs/research/ebook-catalog/crawl-runbook.md` | **입구 문서 (먼저 읽음)**: 읽는 순서(0절), 지금 상태(1절), 이어 받기·상태 보기(3절), 수집기 규칙 요약(4절), 명령 모음(5절), 받지 않는 도서관(5-1절 `crawl_skip`), 문제별 대처(6절), 새 사이트·플랫폼 붙이는 순서(7절), 상세 URL·오디오북 표시(9·10절) | 수집 세션이 관리, 2026-10-04 (IP 기준 줄 세우기, 북큐브 제목 없는 줄 처리) |
+| plan `docs/research/ebook-catalog/easy/` | 쉬운 설명: `2026-10-04-platform-servers.html`(플랫폼 타입별 서버 구조), `2026-10-04-crawl-method-now.html`(지금 수집 방법: 사이트 분류, 도메인과 IP) | 2026-10-04 |
 | plan `docs/research/ebook-catalog/platforms.md` | **플랫폼별 크롤링 방법**: 검색·전체 목록 URL, 한 쪽 크기, 줄 선택자, 상세 URL, 오디오북 구분, 사이트별 예외(교보·교보 구독형·YES24·통합 포털·강남구·북큐브·알라딘) | 수집 세션이 관리, 2026-10-01 |
 | plan `docs/research/ebook-catalog/research.md` | 수집 조사(범위, 법적 검토 3절, 항목 4·5절) | 기록 |
 | `chaekcheck-data/README.md`, `scripts/crawl_catalog.py`, `ebook-catalog.sqlite` | 수집기 코드와 수집 DB(두 저장소 밖) | [확인 필요: 이 색인에서 내용 확인 안 함] |
 | dev `catalog/internal/importer/CollectedCatalog.java` | 가져올 때 제외 규칙(오디오북·동영상북, 서비스에 없는 도서관, 빠진 책, http 아닌 주소, 호스트 불일치, 제목 없음) | 구현 |
+
+## 3-1. 받은 책 목록으로 책 찾기 (서비스 DB로 가져오기, 서비스 검색·대출 조회)
+
+| 문서 | 무엇 | 상태 |
+|---|---|---|
+| dev `docs/plan-feedback.md` `# 사이클 04` "가져오기 실행 방법"(806행 부근), "실제 가져오기 결과"(789행 부근) | **가져오기 절차 원본**: `./gradlew bootRun` 프로필 `catalog-import`, dry run 옵션. 첫 실제 적재 2026-10-03 18:05 (책 680,689, 소장 4,954,360) | 최신 |
+| plan `docs/current/flows.md` 흐름 8 | 가져오기 흐름 그림 (서비스 도서관만, 정리, 묶기 ①~④, COPY) | 구현됨 |
+| plan `docs/current/flows.md` 흐름 6·7 | 서비스에서 책 검색(`GET /books`)과 도서관 상세 페이지 실시간 대출 조회(`/book-availabilities/stream`) | 구현됨 (dev 사이클 04) |
+| plan `docs/cycles/04-and-search/` `spec.md`, `design-delta.md` | 검색 순서, API 세부 | 기록 |
+| plan `docs/research/maintenance/periodic-tasks.md` 3·4절 | 가져오기 순서 [안]과 확인할 숫자, 다시 가져올 때 책 번호가 바뀌는 문제 | [안] 2026-10-04 |
 
 ## 4. 책 분류·정리·묶기 (정리 규칙, ISBN, 같은 책, 저자, 자료 종류)
 
@@ -99,7 +111,7 @@
 
 - 받지 않는 도서관 4곳(국회 44, 전북교육청 135, 군포 261, 김천 269)과 문제별 대처: `crawl-runbook.md` 5-1·6절, `catalog-refresh.md` 변경 기록
 - 전체 성공 기록 없는 도서관 12곳(어느 곳인지 목록 없음): `catalog-refresh.md` 4절
-- 큰 교보 구독형 16곳(2~3일)·북큐브 134곳 수집 상태, 순위 4 명령 없음: `crawl-runbook.md` 2절
+- 수집 순위 ①~④ 진행 상태(④ 웹러브 북스 기관은 2026-10-03 시작, 교보 대여·혼합형 243곳 제외): `crawl-runbook.md` 1·2·8절
 - YES24·포털 77곳 재수집 완료 여부와 `verify_detail_urls.py` 재실행: `crawl-runbook.md`
 - 제목에 "오디오북"인데 전자책 표시 452~476줄(`kind_check_needed`): `platforms.md`, `crawl-runbook.md`
 - robots.txt 정책·UA 연락처 [확인 필요], 법적 위험 전문가 확인: `crawl-method.md`, `research.md` 3절
@@ -110,10 +122,14 @@
 - `same-book-isbn.md` 5.3절 표 그대로: 번호 체계 비율, ④ 출판일 2년 차이 11,019권, `48090…`·확인 숫자 불일치 코드, 국가서지 제목 다른 5%·없는 23%, 모호 키 5,303, ② 실효, YES24 재수집 뒤 수치, 국가서지 파일 갱신, ISBN 서지정보 API는 쓰지 않음(2026-10-03 결정, 묶기 문제가 많아지면 다시 검토)
 - 저자: 단체 이름 79,649줄, 영문 "성, 이름" 1,607줄, 저자 빈 줄 746, ` - ` 제목 91,693줄: `search-and-normalization.md` 4.1·4.2
 - 출판사 별칭 목록 비어 있음, 1950년 이전 날짜, 도서관마다 출간일 다른 13%: `search-and-normalization.md` 4.3·4.4·5절
-- 실제 가져오기 미실행, 응답 시간 미측정, AC-1~14 미확인: `backlog.md` "미뤄 둔 사이클 04 마무리 작업", dev `plan-feedback.md` "측정 (아직)"
+- 첫 실제 가져오기는 2026-10-03에 함(dev `plan-feedback.md`). 응답 시간 `EXPLAIN` 미측정, AC-1~14 미확인: `backlog.md` "미뤄 둔 사이클 04 마무리 작업", dev `plan-feedback.md` "측정 (아직)"
 - pg_bigm `shared_preload_libraries` 운영 허용 여부: `search-and-normalization.md` 3.2.1
 
 ## 7. dev 문서에 알릴 것 (plan에서 못 고침 → 다음 인계서·회고에 넣음)
+
+- **ADR-0047 옮기기 요청**: `docs/research/maintenance/dev-move-request.md` 전체. 사용자가 dev 세션에 직접 전달(인계서에 넣지 않음). 아래 두 항목(가져오기 실행 방법, `library-maintenance.md` 표 깨짐)도 이 요청서에 들어 있음
+
+- 가져오기 실행 방법이 dev `plan-feedback.md`(회고용 문서)에만 있음. 절차 원본 원칙에 따라 dev `library-maintenance.md`에 "수집 목록 가져오기" 절로 옮기기를 요청. 함께 확인: 안내 "수집 세션이 쉴 때"와 실제(읽기 전용이라 2026-10-03에 수집 중 실행)가 다름 (2026-10-04, `docs/research/maintenance/periodic-tasks.md` 6절)
 
 - dev `docs/library-maintenance.md` 41~42행 표가 깨져 3절 도구 표의 `CheckYes24Sites.java` 행이 유실됨. 4-10 표(275행)에 `YES24_V3` 누락. 절 번호 순서(4-9/4-11, 13/14절) 정리 필요. (2026-10-01 문서 점검에서 발견)
 - C2-U-7(절차 원본을 어느 쪽으로 할지)에 대한 답 [확정] (사용자, 2026-10-01): "절차 원본 = dev `library-maintenance.md`, 조사 기록 = plan". 다음 인계서의 "개발 시작 전 확인"에 넣어 dev에 전달

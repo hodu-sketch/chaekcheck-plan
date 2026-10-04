@@ -28,11 +28,16 @@
 
 ### 미뤄 둔 사이클 04 마무리 작업 (2026-10-01, 사용자: "다 수집할 거는 며칠 걸릴 거라고 하니까 이건 좀 미뤄둬")
 
-- 전자책 목록 전체 수집(웹러브 북스 수준, 며칠 소요)과 그 뒤에 이어지는 실제 가져오기 실행, 검색 응답 시간 측정(인계서 6단계), AC-1~AC-14 확인표(14단계). 코드는 dev에 커밋됨(`c6028c9`, 2026-09-30). 다시 시작할 때 볼 것: dev `docs/plan-feedback.md` `# 사이클 04` 절 "측정 (아직: 실제 가져오기 뒤)"와 "가져오기 실행 방법", plan `docs/current/handoff.md` 14단계
+- 2026-10-04 확인: 첫 실제 가져오기는 2026-10-03 18:05에 dev가 함(서비스 도서관 275곳, 책 680,689권, 소장 4,954,360줄, dev `plan-feedback.md` "실제 가져오기 결과"). 웹러브 북스 수준 전체 수집은 진행 중(`docs/research/ebook-catalog/crawl-runbook.md` 8절)이지만 서비스 도서관이 아닌 곳이라 가져오기와 무관함. 남은 것: 검색 응답 시간 `EXPLAIN` 측정, AC-1~AC-14 확인표 (dev `plan-feedback.md` "측정 (아직: 실제 가져오기 뒤)")
+- (2026-10-01 원래 항목) 전자책 목록 전체 수집(웹러브 북스 수준, 며칠 소요)과 그 뒤에 이어지는 실제 가져오기 실행, 검색 응답 시간 측정(인계서 6단계), AC-1~AC-14 확인표(14단계). 코드는 dev에 커밋됨(`c6028c9`, 2026-09-30). 다시 시작할 때 볼 것: dev `docs/plan-feedback.md` `# 사이클 04` 절 "측정 (아직: 실제 가져오기 뒤)"와 "가져오기 실행 방법", plan `docs/current/handoff.md` 14단계
 - 사이클 04 회고(`/cycle-start`)와 `docs/current/` 전체 대조도 그때 함. 사이클 04 결정 4가지(자료 종류 확대, 묶기 ④, 번호 체계, 저자 나누기)는 2026-10-01에 `same-book-isbn.md` 5절, `search-and-normalization.md` 4.1·4.6, `data-model.md`, `flows.md` 흐름 8, `catalog-refresh.md`에 반영함. 문서 목록은 `docs/reference-index.md`
 - 다음 인계서에 넣을 dev 문서 수정 요청: `docs/reference-index.md` 7절 (dev `library-maintenance.md` 표 깨짐·`YES24_V3` 누락·절 번호)
 
 ## 다음 사이클 후보
+
+- **웹러브 북스 기관을 서비스 도서관으로 넣기** — 수집 DB에만 있는 기관 2,506곳(번호 100001~)은 서비스 `library`에 없어 가져오기에서 빠짐. 필요한 것: 넣을 범위 고르기, 가입 자격 조사, dev seed 추가, 북큐브·알라딘 adapter(없음). 순서 [안]은 `docs/research/maintenance/periodic-tasks.md` 5절 (2026-10-04, 사용자 요청 "이거 다 해줘"에서 정리)
+- **정기 유지보수 절차·수집기를 dev로 옮기기** — ADR-0047 [확정] (2026-10-04). 요청서 `docs/research/maintenance/dev-move-request.md`를 사용자가 dev 세션에 전달. 수집기는 전체 수집이 끝난 뒤. dev가 옮기면 plan 문서 머리말 정리(요청서 D)
+- **정기 유지보수 주기 정하기** — 도서관 목록 확인·책 목록 수집·가져오기를 잇는 순서 [안]: `docs/research/maintenance/periodic-tasks.md`. 주기 갱신 사이클(`catalog-refresh.md`)에서 정함 (2026-10-04)
 
 - **사이클 04 후보: 수집한 책 목록으로 검색하고, 고른 책을 가진 도서관에만 실시간 조회** [안] → 사이클 04 ("고르는 단계 없음"으로 바뀜, `docs/cycles/04-and-search/scope.md`) — 제목·저자·출판사 여러 칸 AND, 완전 일치, 출판일 정렬, 같은 코드·교보식 ISBN으로 묶기, 책 선택 → 상세 페이지로 대출·예약 수. "책 선택 후 조회"를 따로 떼기에는 너무 작다는 사용자 의견으로 한 사이클로 합침 (사용자: "05: 책 선택 → 가진 도서관만 상세 페이지로 실시간 조회 이거 좀 너무너무 작아보이긴 하거든?", 2026-09-30). 근거 자료 `docs/research/ebook-catalog/`
 - **별도 사이클 후보: 도서정보·소장 주기 갱신 (batch)** [확정: 별도 사이클] — 도서관 × 도서 소장, 도서 서지·ISBN, 정리·묶기 재계산을 주기적으로 (사용자, 2026-09-30). 계속 쓰는 참고 문서 `docs/research/ebook-catalog/catalog-refresh.md`

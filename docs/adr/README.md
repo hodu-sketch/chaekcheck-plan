@@ -50,3 +50,4 @@
 | [ADR-0044](0044-auth-owns-security-filter-chain.md) | 앱 전체의 보안 설정은 `auth` 모듈이 가지고, 보호하는 주소는 `/api/v1/me` 아래뿐 | Accepted | 2026-10-04 | 05 |
 | [ADR-0045](0045-result-code-in-url.md) | 로그인·탈퇴 결과는 주소 뒤의 코드로 화면에 알리고, 돌아갈 주소는 화면이 기억함 | Accepted | 2026-10-04 | 05 |
 | [ADR-0046](0046-auth-feature-toggle.md) | 로그인 기능은 서버 설정으로 켜고 끔 (저장소는 나누지 않음) | Accepted | 2026-10-04 | 05 |
+| [ADR-0047](0047-maintenance-procedures-in-dev.md) | 정기 유지보수 절차는 dev `docs/maintenance/` 한 곳에, 수집기도 dev `scripts/crawl/`로 (plan은 원칙·조사·결정) | Accepted | 2026-10-04 | 사이클 밖 |

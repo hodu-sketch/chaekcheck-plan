@@ -51,6 +51,9 @@
 | [design-delta-original.html](design-delta-original.html) | 설계 문서 원문 그대로 + Mermaid 그림 일곱을 미리 그려 넣은 것 (스크립트 없이 열림) | `docs/cycles/05-login-account/design-delta.md` | 없음 (원문이 바뀌면 다시 만듦) |
 | [2026-10-04-review-decisions.html](2026-10-04-review-decisions.html) | 사이클을 닫기 전 검토 결과: 고친 것 16가지와 정할 것 8가지(화면 동작 둘, 서버 값 넷, 기록 둘) | `docs/cycles/05-login-account/design-delta.md` | 없음 (9가지 모두 정해짐) |
 | [2026-10-04-auth-repo.html](2026-10-04-auth-repo.html) | 로그인·인증 코드를 다른 GitHub 저장소에 두고 설정으로 켜고 끄는 것: 이해한 모양, 정할 것 셋, dev에게 넘길 내용 | 사용자 요청 (2026-10-04), `design-delta.md` | 없음 (저장소 분리는 취소, 켜고 끄는 설정만 ADR-0046으로) |
+| [2026-10-04-big-picture.html](2026-10-04-big-picture.html) | 서비스 전체의 큰 그림: 사이클 01~07의 상태, 미뤄 둔 작업 다섯 묶음, 아직 손대지 않은 기능, 앞으로의 순서 | `docs/backlog.md`, `docs/current/` | 없음 |
+| [2026-10-04-handoff.html](2026-10-04-handoff.html) | dev에 넘길 인계서를 풀어 쓴 것: 17단계, 사용자가 할 일, 찾은 어긋남, 넘기기 전에 정할 것 7가지 | `docs/cycles/05-login-account/handoff.md` | 없음 (일곱 모두 승인, 인계서를 넘김) |
+| [2026-10-04-provider-setup.html](2026-10-04-provider-setup.html) | 네이버·카카오 로그인을 위해 사용자가 할 일(앱 등록 순서, 돌아올 주소, 키 다루기)과 도메인이 필요해지는 때 | `docs/cycles/05-login-account/handoff.md`, `research.md` 2·7·12절 | 없음 |
 | [2026-10-04-screen-mockups.html](2026-10-04-screen-mockups.html) | 새로 생기거나 바뀌는 화면 11장의 밑그림을 PC·태블릿·폰으로 나눠 그림 (자리와 순서만, 실제 디자인 아님) | `docs/cycles/05-login-account/flow.md` | 밑그림 전체가 [안] |
 
 ## 읽는 순서 제안
