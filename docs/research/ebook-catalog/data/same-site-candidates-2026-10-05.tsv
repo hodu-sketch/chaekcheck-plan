@@ -1,0 +1,100 @@
+candidate_id	candidate_name	candidate_platform	candidate_url	registered_id	registered_name	registered_platform	registered_url	why
+100011	경산시립도서관	BOOKCUBE_FX	http://elib.gbgs.go.kr:8080/FxLibrary	265	경산시립도서관	YES24_V2	http://elib.gbgs.go.kr	same host, other platform (BOOKCUBE_FX vs YES24_V2) / holdings mostly same; overlap check 2026-10-05
+100019	광양시립도서관	BOOKCUBE_FX	http://ebook.gwangyang.go.kr:9080/FxLibrary	41	광양시립도서관	KYOBO_V1	https://ebook.gwangyang.go.kr:444	same host, other platform (BOOKCUBE_FX vs KYOBO_V1) / holdings mostly same; overlap check 2026-10-05
+100066	부천시립도서관 전자도서관	BOOKCUBE_FX	https://ebook.bcl.go.kr:8084/FxLibrary	73	부천시립도서관	KYOBO_V1	https://ebook.bcl.go.kr:444	same host, other platform (BOOKCUBE_FX vs KYOBO_V1) / holdings mostly same; overlap check 2026-10-05
+100080	안동시립도서관 전자도서관	BOOKCUBE_FX	http://ebook.andong.go.kr:8080/FxLibrary	192	안동시립도서관	KYOBO_V1	https://ebook.andong.go.kr	same host, other platform (BOOKCUBE_FX vs KYOBO_V1) / holdings mostly same; overlap check 2026-10-05
+100119	청주시립도서관	BOOKCUBE_FX	http://cjelib.cheongju.go.kr:9090/FxLibrary	150	청주시립도서관	KYOBO_V1	https://cjelib.cheongju.go.kr	same host, other platform (BOOKCUBE_FX vs KYOBO_V1) / holdings mostly same; overlap check 2026-10-05
+100124	통영시립도서관	BOOKCUBE_FX	https://elib.gyeongnam.go.kr:8001/FxLibrary_ty	152	통영시립도서관	KYOBO_V1	https://elib.gyeongnam.go.kr:8123	same host, other platform (BOOKCUBE_FX vs KYOBO_V1) / holdings mostly same; overlap check 2026-10-05
+100128	한밭도서관	BOOKCUBE_FX	https://ebook.u-library.kr:448/FxLibrary	157	한밭도서관	KYOBO_V1	https://ebook.u-library.kr	same host, other platform (BOOKCUBE_FX vs KYOBO_V1) / holdings mostly same; overlap check 2026-10-05
+100627	나주시립도서관	KYOBO_V1	http://ebooks.ss21.kr:8005	52	나주시립도서관	KYOBO_V1	https://ebooks.ss21.kr:449	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100641	익산시립도서관	KYOBO_V1	http://www.ss21.kr:8010	120	익산시립도서관	KYOBO_V1	https://www.ss21.kr:453	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100648	제주서부방음도서관	KYOBO_V1	http://ebooks.ss21.kr:8011	138	제주서부방음도서관	KYOBO_V1	https://ebooks.ss21.kr:455	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100675	강진군립도서관	KYOBO_V1	http://www.gjlib.go.kr:88	18	강진군립도서관	KYOBO_V1	https://www.gjlib.go.kr:446	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100677	경상남도교육청 통합전자도서관	KYOBO_V1	http://ebook.gne.go.kr:9029	29	경상남도교육청 통합전자도서관	KYOBO_V1	https://ebook.gne.go.kr:9049	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100679	계룡도서관	KYOBO_V1	http://e-lib.gyeryong.go.kr:8003	31	계룡도서관	KYOBO_V1	https://e-lib.gyeryong.go.kr	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100680	고창군 도서관	KYOBO_V1	http://ebook.gochang.go.kr:88	36	고창군 도서관	KYOBO_V1	https://ebook.gochang.go.kr:446	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100682	광명시중앙도서관	KYOBO_V1	http://210.117.242.66:8091	39	광명시중앙도서관	KYOBO_V1	https://210.117.242.66:444	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100683	곡성교육문화회관	KYOBO_V1	http://ebook.jne.go.kr:8301	182	곡성교육문화회관	KYOBO_V1	https://ebook.jne.go.kr:8401	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100684	광양시립도서관	KYOBO_V1	http://ebook.gwangyang.go.kr:88	41	광양시립도서관	KYOBO_V1	https://ebook.gwangyang.go.kr:444	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100685	경기과천교육도서관	KYOBO_V1	http://elib.goe.go.kr:8104	20	경기과천교육도서관	KYOBO_V1	https://elib.goe.go.kr:8204	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100687	광진구립도서관	KYOBO_V1	http://ebook.gwangjinlib.seoul.kr:8090	42	광진구립도서관	KYOBO_V1	https://ebook.gwangjinlib.seoul.kr:446	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100688	광주시립도서관(경기)	KYOBO_V1	http://lib.gjcity.go.kr:8081	5	광주시립도서관(경기) 전자도서관	KYOBO_V1	https://lib.gjcity.go.kr:444	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100689	구리시립도서관	KYOBO_V1	http://ebook.gurilib.go.kr:8091	187	구리시립도서관	KYOBO_V1	https://ebook.gurilib.go.kr:446	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100690	경북도서관	KYOBO_V1	http://www.gb.go.kr:8085	28	경북도서관	KYOBO_V1	https://www.gb.go.kr:8088	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100691	고성도서관	KYOBO_V1	http://ebook.gne.go.kr:9021	33	고성도서관	KYOBO_V1	https://ebook.gne.go.kr:9041	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100692	군포시중앙도서관	KYOBO_V1	http://ebook.gunpolib.go.kr:8091	46	군포시중앙도서관	KYOBO_V1	https://ebook.gunpolib.go.kr:444	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100693	금천구립도서관	KYOBO_V1	http://elib.geumcheonlib.seoul.kr:8091	48	금천구립도서관	KYOBO_V1	https://elib.geumcheonlib.seoul.kr:446	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100694	금정도서관	KYOBO_V1	http://ebook.geumjeong.go.kr:88	47	금정도서관	KYOBO_V1	https://ebook.geumjeong.go.kr:444	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100695	김제시립도서관	KYOBO_V1	http://ebook-gjl.gimje.go.kr:88	49	김제시립도서관	KYOBO_V1	https://ebook-gjl.gimje.go.kr:444	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100696	광양공공도서관	KYOBO_V1	http://ebook.jne.go.kr:8302	184	광양공공도서관	KYOBO_V1	https://ebook.jne.go.kr:8402	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100697	당진시립도서관	KYOBO_V1	http://lib.dangjin.go.kr:8080	189	당진시립도서관	KYOBO_V1	https://lib.dangjin.go.kr:444	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100699	군산시립도서관	KYOBO_V1	http://ebook.gunsan.go.kr:8001	45	군산시립도서관	KYOBO_V1	https://ebook.gunsan.go.kr:446	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100702	레인보우영동도서관	KYOBO_V1	http://ebook.rainbowlib.go.kr:8091	190	레인보우영동도서관	KYOBO_V1	https://ebook.rainbowlib.go.kr	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100703	김해도서관	KYOBO_V1	http://ebook.gne.go.kr:9022	51	김해도서관	KYOBO_V1	https://ebook.gne.go.kr:9042	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100704	목포시통합도서관	KYOBO_V1	http://ebook.mokpolib.or.kr:88	65	목포시통합도서관	KYOBO_V1	https://ebook.mokpolib.or.kr:444	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100706	부산 북구 구립도서관	KYOBO_V1	http://ebook.bsbukgu.go.kr:8091	70	부산 북구 구립도서관	KYOBO_V1	https://ebook.bsbukgu.go.kr:8092	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100707	부산광역시립시민도서관	KYOBO_V1	http://contents.siminlib.go.kr:8094	71	부산광역시립시민도서관	KYOBO_V1	https://contents.siminlib.go.kr:8093	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100708	부산남구도서관	KYOBO_V1	http://ebook.bsnamgu.go.kr:88	6	부산남구도서관 전자도서관	KYOBO_V1	https://ebook.bsnamgu.go.kr:444	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100709	광양평생교육관	KYOBO_V1	http://ebook.jne.go.kr:8303	185	광양평생교육관	KYOBO_V1	https://ebook.jne.go.kr:8403	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100710	부천시립도서관	KYOBO_V1	http://ebook.bcl.go.kr:8080	73	부천시립도서관	KYOBO_V1	https://ebook.bcl.go.kr:444	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100712	부평구립도서관	KYOBO_V1	http://ebook.bppl.or.kr:8090	74	부평구립도서관	KYOBO_V1	https://ebook.bppl.or.kr	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100713	경기도교육청전자도서관	KYOBO_V1	http://elib.goe.go.kr:8101	21	경기도교육청전자도서관	KYOBO_V1	https://elib.goe.go.kr:8201	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100715	서산어린이도서관	KYOBO_V1	http://ebclib.seosan.go.kr:8082	78	서산어린이도서관	KYOBO_V1	https://ebclib.seosan.go.kr	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100716	상록도서관	KYOBO_V1	http://ebooks.seogu.gwangju.kr:88	75	상록도서관	KYOBO_V1	https://ebooks.seogu.gwangju.kr:444	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100717	서산시립도서관	KYOBO_V1	http://eblib.seosan.go.kr:8070	77	서산시립도서관	KYOBO_V1	https://eblib.seosan.go.kr	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100718	부산대표도서관	KYOBO_V1	http://ebook.busan.go.kr:8093	4	부산대표도서관 전자도서관	KYOBO_V1	https://ebook.busan.go.kr:8094	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100719	석남어린이도서관	KYOBO_V1	http://ebook.issl.go.kr:8080	80	석남어린이도서관	KYOBO_V1	https://ebook.issl.go.kr	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100720	마산도서관(교육청산하)	KYOBO_V1	http://ebook.gne.go.kr:9023	64	마산도서관(교육청산하)	KYOBO_V1	https://ebook.gne.go.kr:9043	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100721	성동구립도서관	KYOBO_V1	http://ebook.sdlib.or.kr:8091	83	성동구립도서관	KYOBO_V1	https://ebook.sdlib.or.kr:444	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100724	송파구 통합도서관	KYOBO_V1	http://ebook.splib.or.kr:8090	85	송파구 통합도서관	KYOBO_V1	https://ebook.splib.or.kr:446	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100725	수영도서관	KYOBO_V1	http://ebook.suyeong.go.kr:88	86	수영도서관	KYOBO_V1	https://ebook.suyeong.go.kr:444	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100727	안산시도서관(소장형)	KYOBO_V1	http://ebook.ansan.go.kr:8099	91	안산시도서관(소장형)	KYOBO_V1	https://ebook.ansan.go.kr:446	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100728	나주공공도서관	KYOBO_V1	http://ebook.jne.go.kr:8310	188	나주공공도서관	KYOBO_V1	https://ebook.jne.go.kr:8410	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100729	아산시립도서관	KYOBO_V1	http://elib.asan.go.kr:8090	90	아산시립도서관	KYOBO_V1	https://elib.asan.go.kr	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100730	안양시립석수도서관	KYOBO_V1	http://elib.anyang.go.kr:8091	193	안양시립석수도서관	KYOBO_V1	https://elib.anyang.go.kr:8092	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100731	양주시립도서관	KYOBO_V1	http://ebook.yangju.go.kr:8089	94	양주시립도서관	KYOBO_V1	https://ebook.yangju.go.kr:444	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100732	여의샛강마을도서관	KYOBO_V1	http://ebook.ydplib.or.kr:9940	96	여의샛강마을도서관	KYOBO_V1	https://ebook.ydplib.or.kr:446	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100733	부산남지도서관	KYOBO_V1	http://ebook.gne.go.kr:9028	72	부산남지도서관	KYOBO_V1	https://ebook.gne.go.kr:9048	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100734	여수시립도서관	KYOBO_V1	http://yslibeb.yeosu.go.kr:88	95	여수시립도서관	KYOBO_V1	https://yslibeb.yeosu.go.kr	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100735	연수구립도서관	KYOBO_V1	http://ebook.yspubliclib.go.kr:8092	97	연수구립도서관	KYOBO_V1	https://ebook.yspubliclib.go.kr:446	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100736	예산군립도서관	KYOBO_V1	http://www.ysplib.go.kr:9444	104	예산군립도서관	KYOBO_V1	https://www.ysplib.go.kr:9445	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100737	영광군립도서관	KYOBO_V1	http://www.yggunlib.go.kr:88	100	영광군립도서관	KYOBO_V1	https://www.yggunlib.go.kr:446	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100738	경기도립중앙도서관 평택분관	KYOBO_V1	http://elib.goe.go.kr:8103	22	경기도립중앙도서관 평택분관	KYOBO_V1	https://elib.goe.go.kr:8203	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100739	영도도서관	KYOBO_V1	http://ebook.yeongdo.go.kr:88	101	영도도서관	KYOBO_V1	https://ebook.yeongdo.go.kr:444	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100740	경기도서관	KYOBO_V1	http://ebookdrm.library.kr:8091	23	경기도서관	KYOBO_V1	https://ebookdrm.library.kr	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100742	목포공공도서관	KYOBO_V1	http://ebook.jne.go.kr:8309	191	목포공공도서관	KYOBO_V1	https://ebook.jne.go.kr:8409	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100743	순천시립도서관	KYOBO_V1	http://libebook.suncheon.go.kr:88	88	순천시립도서관	KYOBO_V1	https://libebook.suncheon.go.kr:444	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100744	음성군립도서관	KYOBO_V1	http://e-lib.eumseong.go.kr:8091	116	음성군립도서관	KYOBO_V1	https://e-lib.eumseong.go.kr	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100745	의왕시중앙도서관	KYOBO_V1	http://cyber.uwlib.or.kr:81	117	의왕시중앙도서관	KYOBO_V1	https://cyber.uwlib.or.kr	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100746	울산도서관	KYOBO_V1	http://elibrary.ulsan.go.kr:8091	111	울산도서관	KYOBO_V1	https://elibrary.ulsan.go.kr:8093	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100748	이천시립도서관	KYOBO_V1	http://elib.icheonlib.go.kr:8080	119	이천시립도서관	KYOBO_V1	https://elib.icheonlib.go.kr:446	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100749	인천송림도서관	KYOBO_V1	http://ebook.jemulpo.go.kr:8091	126	인천송림도서관	KYOBO_V1	https://ebook.jemulpo.go.kr	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100750	전남광주통합특별시교육청 광주통합도서관	KYOBO_V1	http://libebook.gen.go.kr:88	133	전남광주통합특별시교육청 광주통합도서관	KYOBO_V1	https://libebook.gen.go.kr	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100752	전남광주통합특별시광주도서관	KYOBO_V1	http://gjebook.jeonnam-gwangju.go.kr:88	132	전남광주통합특별시광주도서관	KYOBO_V1	https://gjebook.jeonnam-gwangju.go.kr:444	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100754	정읍시립도서관	KYOBO_V1	http://ebook.jeongeup.go.kr:88	137	정읍시립도서관	KYOBO_V1	https://ebook.jeongeup.go.kr:444	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100756	중구구립도서관	KYOBO_V1	http://ebook.junggulib.or.kr:8080	142	중구구립도서관	KYOBO_V1	https://ebook.junggulib.or.kr	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100757	진천군립도서관	KYOBO_V1	http://ebook.jincheon.go.kr:8090	200	진천군립도서관	KYOBO_V1	https://ebook.jincheon.go.kr:446	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100758	천안시중앙도서관	KYOBO_V1	http://elib.cheonan.go.kr:8091	149	천안시중앙도서관	KYOBO_V1	https://elib.cheonan.go.kr:446	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100759	영광공공도서관	KYOBO_V1	http://ebook.jne.go.kr:8311	195	영광공공도서관	KYOBO_V1	https://ebook.jne.go.kr:8411	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100760	청주시립도서관	KYOBO_V1	http://cjelib.cheongju.go.kr:8080	150	청주시립도서관	KYOBO_V1	https://cjelib.cheongju.go.kr	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100762	충남도서관	KYOBO_V1	http://elibrary.chungnam.go.kr:8091	164	충남도서관	KYOBO_V1	https://elibrary.chungnam.go.kr:446	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100763	중랑구립정보도서관	KYOBO_V1	http://ebook.jungnanglib.seoul.kr:8080	143	중랑구립정보도서관	KYOBO_V1	https://ebook.jungnanglib.seoul.kr	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100765	제주우당도서관	KYOBO_V1	http://libebook.jejusi.go.kr:8083	139	제주우당도서관	KYOBO_V1	https://libebook.jejusi.go.kr:442	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100766	진영도서관 VL	KYOBO_V1	http://ebook.gne.go.kr:9025	145	진영도서관 VL	KYOBO_V1	https://ebook.gne.go.kr:9045	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100767	충북중앙도서관	KYOBO_V1	http://e-lib.cbe.go.kr:8092	151	충북중앙도서관	KYOBO_V1	https://e-lib.cbe.go.kr:444	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100768	충주시립도서관	KYOBO_V1	http://e-lib.chungju.go.kr:8090	202	충주시립도서관	KYOBO_V1	https://e-lib.chungju.go.kr	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100769	포항시립도서관	KYOBO_V1	http://lebook.pohang.go.kr:8085	155	포항시립도서관	KYOBO_V1	https://lebook.pohang.go.kr:8087	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100776	장성공공도서관	KYOBO_V1	http://ebook.jne.go.kr:8308	196	장성공공도서관	KYOBO_V1	https://ebook.jne.go.kr:8408	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100777	경기성남교육도서관	KYOBO_V1	http://elib.goe.go.kr:8105	24	경기성남교육도서관	KYOBO_V1	https://elib.goe.go.kr:8205	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100778	창녕도서관	KYOBO_V1	http://ebook.gne.go.kr:9026	146	창녕도서관	KYOBO_V1	https://ebook.gne.go.kr:9046	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100780	경기의정부교육도서관	KYOBO_V1	http://elib.goe.go.kr:8107	25	경기의정부교육도서관	KYOBO_V1	https://elib.goe.go.kr:8207	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100781	창원도서관	KYOBO_V1	http://ebook.gne.go.kr:9027	147	창원도서관	KYOBO_V1	https://ebook.gne.go.kr:9047	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100783	전남광주통합특별시교육청 전남도서관	KYOBO_V1	http://ebook.jne.go.kr:8300	197	전남광주통합특별시교육청 전남도서관	KYOBO_V1	https://ebook.jne.go.kr:8400	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100785	경기중앙교육도서관	KYOBO_V1	http://elib.goe.go.kr:8102	26	경기중앙교육도서관	KYOBO_V1	https://elib.goe.go.kr:8202	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100786	전라남도학생교육문화회관	KYOBO_V1	http://ebook.jne.go.kr:8307	198	전라남도학생교육문화회관	KYOBO_V1	https://ebook.jne.go.kr:8407	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100789	진도공공도서관	KYOBO_V1	http://ebook.jne.go.kr:8306	199	진도공공도서관	KYOBO_V1	https://ebook.jne.go.kr:8406	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100791	경기화성교육도서관	KYOBO_V1	http://elib.goe.go.kr:8106	27	경기화성교육도서관	KYOBO_V1	https://elib.goe.go.kr:8206	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100793	해남공공도서관	KYOBO_V1	http://ebook.jne.go.kr:8304	204	해남공공도서관	KYOBO_V1	https://ebook.jne.go.kr:8404	same host, same platform / holdings mostly same; overlap check 2026-10-05
+100795	화순도서관	KYOBO_V1	http://ebook.jne.go.kr:8305	205	화순도서관	KYOBO_V1	https://ebook.jne.go.kr:8405	same host, same platform / holdings mostly same; overlap check 2026-10-05
+102575	대구학생전자도서관(대여)	KYOBO_SUBSCRIPTION_V1	https://dgelib-r.dkyobobook.co.kr	59	(수집 DB에 없음)		https://dgelib-r.dkyobobook.co.kr	same address; overlap check 2026-10-05
+102576	전남광주통합특별시 서구 통합도서관(구독)	KYOBO_SUBSCRIPTION_V1	https://seogulib.dkyobobook.co.kr	131	(수집 DB에 없음)		https://seogulib.dkyobobook.co.kr	same address; overlap check 2026-10-05
