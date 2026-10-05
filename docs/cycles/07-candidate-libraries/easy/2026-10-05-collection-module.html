@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>collection 모듈이 맡을 일</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+svg{max-width:100%;height:auto;display:block}
+.mock{border:2px dashed var(--line);border-radius:12px;padding:14px;margin:10px 0;font-size:17px}
+.row{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;background:var(--card);flex-wrap:wrap}
+.tag{font-size:14px;border-radius:6px;padding:0 6px;background:var(--code-bg);color:var(--muted)}
+.okt{color:var(--ok);font-weight:500}.mut{color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead"><code>collection</code> 모듈이 맡을 일을<br>다시 정해 주세요.</p>
+<p class="sub">질문: "나는 새로 수집된 것을 DB에 추가할 때 용으로도 collection 했는데 뭔가 다르게 된 건가? 왜 카탈로그가 나와?" — 제가 "따로 모듈로 가고 나중에 수집 연결 모듈이 고치라고 해"를 "지금은 짝 표만, 가져오기는 나중에 옮김"으로 좁게 읽었습니다. 말씀하신 뜻대로 가져오기도 <code>collection</code>이 맡도록 다시 제안합니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>왜 "카탈로그(catalog)"가 나왔나</h2>
+<div class="gist"><code>catalog</code>는 서비스의 "책 목록" 모듈입니다. 책·사람·소장 표를 가지고 책 검색을 합니다. 지금 가져오기 코드(사이클 04)가 이 모듈 안에 있어서 설계에 나왔습니다.</div>
+<table>
+<tr><th>모듈</th><th>지금 맡은 일</th></tr>
+<tr><td><code>library</code> 도서관</td><td>도서관 목록, 가입 규칙, 검색 대상 도서관 고르기</td></tr>
+<tr><td><code>catalog</code> 책 목록</td><td>책·사람·소장 표, 책 검색. <b>그리고 지금은 가져오기(수집 DB 읽기 → 정리 → 같은 책 묶기 → 표 채우기)도</b></td></tr>
+<tr><td><code>availability</code> 대출 조회</td><td>도서관 사이트에서 대출 수 읽기</td></tr>
+<tr><td><code>collection</code> (새)</td><td>지금 설계: 짝 표 하나뿐</td></tr>
+</table>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>가져오기를 <code>collection</code>으로 옮기는 방법</h2>
+<svg viewBox="0 0 860 200" role="img" aria-label="가져오기 나눔">
+<rect x="10" y="40" width="160" height="110" rx="12" fill="var(--accent-bg)" stroke="var(--accent)"/>
+<text x="24" y="72" font-size="16" font-weight="700" fill="var(--text)">수집 DB 사본</text>
+<text x="24" y="98" font-size="14" fill="var(--text)">도서관·책 줄</text>
+<rect x="230" y="20" width="290" height="150" rx="12" fill="var(--warn-bg)" stroke="var(--warn)"/>
+<text x="246" y="50" font-size="17" font-weight="700" fill="var(--text)">collection (수집 연결)</text>
+<text x="246" y="78" font-size="14" fill="var(--text)">짝 표: 수집 번호 → 서비스 번호</text>
+<text x="246" y="102" font-size="14" fill="var(--text)">사본 읽기(나눠 읽기), 빼는 줄 거르기</text>
+<text x="246" y="126" font-size="14" fill="var(--text)">언제·무엇을 가져왔나 기록</text>
+<text x="246" y="150" font-size="14" fill="var(--text)">(나중에) 갱신: 새로 수집된 것만</text>
+<rect x="580" y="20" width="270" height="150" rx="12" fill="var(--ok-bg)" stroke="var(--ok)"/>
+<text x="596" y="50" font-size="17" font-weight="700" fill="var(--text)">catalog (책 목록)</text>
+<text x="596" y="78" font-size="14" fill="var(--text)">받은 줄을 정리·같은 책 묶기</text>
+<text x="596" y="102" font-size="14" fill="var(--text)">책·소장 표 채우기</text>
+<text x="596" y="126" font-size="14" fill="var(--text)">책 검색</text>
+<line x1="170" y1="95" x2="230" y2="95" stroke="var(--muted)" stroke-width="2"/><polygon points="224,90 232,95 224,100" fill="var(--muted)"/>
+<line x1="520" y1="95" x2="580" y2="95" stroke="var(--muted)" stroke-width="2"/><polygon points="574,90 582,95 574,100" fill="var(--muted)"/>
+<text x="528" y="85" font-size="13" fill="var(--muted)">줄 넘김</text>
+</svg>
+<p class="cap">추천안(가): 수집 쪽 일은 <code>collection</code>, 책을 알아보고 묶는 일은 <code>catalog</code>.</p>
+<div class="item">
+<h3><span class="no">1</span>(가) <code>collection</code>이 "수집 DB 읽기 → 서비스 번호로 바꾸기 → 빼는 줄 거르기 → 가져오기 기록"을 맡고,<br>거른 줄을 <code>catalog</code>의 공개 기능 하나("이 줄들로 책 표를 다시 채워")에 넘깁니다. 정리·같은 책 묶기·표 쓰기는 <code>catalog</code>에 남습니다 [안]</h3>
+<p>예: 배포 전 가져오기를 실행하면 <code>collection</code>이 사본을 묶음씩 읽어 "수집 100245번 → 서비스 281번"으로 바꾸고, 오디오북·소리 파일 줄을 빼고, 남은 줄을 <code>catalog</code>에 넘깁니다. <code>catalog</code>는 제목·저자를 정리하고 같은 책을 묶어 표를 채웁니다. 나중에 "새로 수집된 것만 더하기(갱신)"를 만들 때도 <code>collection</code>에서 고칩니다.</p>
+<p>좋은 점: 수집과 서비스가 코드에서도 갈립니다. 같은 책 묶기 규칙은 책 목록과 함께 있어 검색 쪽과 어긋나지 않습니다. 감수할 점: 지금 가져오기 코드를 두 모듈로 나누는 일이 생기고, <code>catalog</code>에 "대량 쓰기" 공개 기능이 새로 생깁니다.</p>
+<p class="alt"><b>다른 선택</b> (나) 정리·같은 책 묶기까지 모두 <code>collection</code>으로: <code>catalog</code>는 표와 검색만. 수집 쪽이 한 곳에 모이지만, 같은 책 묶기 규칙이 검색 모듈과 떨어지고 <code>collection</code>이 책 표 모양을 알아야 합니다. (다) 처음 설계대로 짝 표만 <code>collection</code>, 가져오기는 <code>catalog</code>에 두고 갱신 사이클에서 옮김.</p>
+<p class="rec">추천: (가).</p>
+</div>
+<div class="item">
+<h3><span class="no">2</span>이렇게 바꾸면 결정 기록 ADR-0052(새 모듈 <code>collection</code>)에 "가져오기도 맡음"을 덧붙이는 새 결정 기록을 하나 더 씁니다 [안]</h3>
+<p>이미 Accepted인 기록은 고치지 않는 규칙이라, 범위를 넓히는 기록을 새로 씁니다(번호는 0060).</p>
+<p class="alt"><b>다른 선택</b> ADR-0052를 새 기록으로 대체(Superseded).</p>
+</div>
+</section>
+
+<p class="foot">원본: <code>docs/cycles/07-candidate-libraries/design-delta.md</code>, ADR-0052. 앞 페이지 "설계 한눈에"의 11개 항목은 그대로 열려 있고, 이 결정에 맞춰 고칩니다.</p>
+</main>
+</body>
+</html>

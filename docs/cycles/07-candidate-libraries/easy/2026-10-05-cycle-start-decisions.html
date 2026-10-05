@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 07 시작: 후보 도서관 넣기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+svg{max-width:100%;height:auto;display:block}
+.mock{border:2px dashed var(--line);border-radius:12px;padding:14px;margin:10px 0;font-size:17px}
+.row{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;background:var(--card);flex-wrap:wrap}
+.tag{font-size:14px;border-radius:6px;padding:0 6px;background:var(--code-bg);color:var(--muted)}
+.okt{color:var(--ok);font-weight:500}.mut{color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">사이클 07 "후보 도서관 넣기"의<br>범위를 정해 주세요.</p>
+<p class="sub">먼저 지난 사이클 06이 어떻게 만들어졌는지 짧게 보여 드리고, 그다음 이번 사이클에 넣을 것과 뺄 것을 항목마다 제안합니다. 항목마다 승인 · 미승인 · 기타 중 하나를 고르시면 됩니다. 수집 숫자는 2026-10-05에 수집 DB를 읽기만 해서 센 값입니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>지난 사이클 06 (내 도서관)은<br>다 만들어졌습니다</h2>
+<div class="gist">dev가 계획한 14단계를 모두 마쳤고, 완료 기준 18개가 모두 통과했습니다. 바뀐 것은 모두 사용자가 화면을 보면서 요청한 것입니다.</div>
+<table>
+<tr><th>바뀐 것</th><th>처음 계획</th><th>지금</th></tr>
+<tr><td>내 도서관 화면 구역</td><td>여섯 구역</td><td>세 구역(지역 선택 안에 거주·직장과 각 "지역으로 자동 N곳", 직접 추가, 직접 추가한 도서관)</td></tr>
+<tr><td>가입 정보 보기</td><td>폰에서만 버튼, 직접 추가 도서관은 숨김</td><td>모든 화면 폭에서 도서관 이름을 누르면 작은 창. 직접 추가 도서관도 같은 정보</td></tr>
+<tr><td>결과 거르기 처음 값</td><td>"전체"</td><td>"지금 빌릴 수 있는 책만", 왼쪽</td></tr>
+<tr><td>결과 위 "○월 ○일 기준 수집 목록" 줄</td><td>있음</td><td>없앰. 정렬은 결과 판 탭 줄 오른쪽 + "?" 설명</td></tr>
+<tr><td>안내 줄("가입했어요" 등)</td><td>닫을 때까지</td><td>다른 페이지로 가면 사라짐</td></tr>
+<tr><td>화면 모양</td><td>—</td><td>토스증권 참고(회색 바탕, 흰 카드, 글자 크기 6단계, 나눔바른고딕)</td></tr>
+</table>
+<p class="cap">이 표의 사용자 말 원문과 나머지 작은 차이는 회고 문서에 적었습니다.</p>
+<div class="item">
+<h3><span class="no">1</span>회고 문서와 지금 설계 문서를<br>만들어진 코드에 맞춰 고칩니다 [안]</h3>
+<p>사이클 06 회고(<code>retro.md</code>)를 위 내용으로 썼고, 지금 설계 문서(<code>docs/current/</code>)의 "설계됨(아직 안 만듦)" 표시를 "만들어짐"으로 바꾸고 위 차이를 넣습니다. 바뀐 것은 모두 사용자가 이미 dev 세션에서 정한 것이라 따로 결정 기록(ADR)은 만들지 않습니다.</p>
+<p class="alt"><b>다른 선택</b> 화면 모양 변경(토스증권 참고)을 결정 기록 하나로 남김. 다음 화면 설계 때 찾기 쉬워지지만, 문서가 하나 늘어납니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>이번 사이클이 하는 일:<br>세 덩어리</h2>
+<div class="gist">후보 도서관과 그 책을 서비스에 넣고(A), 늘어난 양에 맞게 DB와 검색을 다듬고(D), 도서관 수집과 책 수집을 두 갈래로 다시 정리합니다(B).</div>
+<svg viewBox="0 0 860 300" role="img" aria-label="두 갈래 수집에서 서비스까지">
+<rect x="10" y="20" width="250" height="110" rx="12" fill="var(--accent-bg)" stroke="var(--accent)"/>
+<text x="26" y="52" font-size="19" font-weight="700" fill="var(--text)">① 도서관 수집 (B)</text>
+<text x="26" y="80" font-size="16" fill="var(--text)">어느 전자도서관이 있나</text>
+<text x="26" y="104" font-size="16" fill="var(--text)">구독형이면 마감 여부도</text>
+<rect x="10" y="170" width="250" height="110" rx="12" fill="var(--accent-bg)" stroke="var(--accent)"/>
+<text x="26" y="202" font-size="19" font-weight="700" fill="var(--text)">② 도서관의 책 수집 (B)</text>
+<text x="26" y="230" font-size="16" fill="var(--text)">도서관마다 어떤 책이 있나</text>
+<text x="26" y="254" font-size="16" fill="var(--text)">지금 다른 세션이 받는 중</text>
+<line x1="260" y1="75" x2="330" y2="140" stroke="var(--muted)" stroke-width="2"/>
+<line x1="260" y1="225" x2="330" y2="160" stroke="var(--muted)" stroke-width="2"/>
+<rect x="330" y="105" width="200" height="90" rx="12" fill="var(--warn-bg)" stroke="var(--warn)"/>
+<text x="346" y="140" font-size="19" font-weight="700" fill="var(--text)">③ 가져오기 (A)</text>
+<text x="346" y="168" font-size="16" fill="var(--text)">모든 도서관의 책</text>
+<line x1="530" y1="150" x2="600" y2="150" stroke="var(--muted)" stroke-width="2"/>
+<polygon points="600,144 612,150 600,156" fill="var(--muted)"/>
+<rect x="612" y="80" width="238" height="140" rx="12" fill="var(--ok-bg)" stroke="var(--ok)"/>
+<text x="628" y="114" font-size="19" font-weight="700" fill="var(--text)">서비스 (D)</text>
+<text x="628" y="142" font-size="16" fill="var(--text)">DB 형식 다듬기</text>
+<text x="628" y="166" font-size="16" fill="var(--text)">책 검색 빠르게</text>
+<text x="628" y="190" font-size="16" fill="var(--text)">도서관 이름 찾기</text>
+</svg>
+<p class="cap">수집은 두 갈래(①②), 그 결과를 서비스로 옮기는 가져오기(③), 서비스 쪽 다듬기로 나뉩니다. 괄호 안 글자는 아래 항목의 덩어리 이름입니다.</p>
+<div class="item">
+<h3><span class="no">2</span>목표: 후보 도서관도 이름으로 찾고 그 책도 검색되게,<br>DB·검색은 늘어난 양에 맞게, 수집은 두 갈래로 [안]</h3>
+<p>한 문장: "후보 도서관과 그 책을 서비스 DB에 넣어 후보 도서관도 이름으로 찾고 그 책도 검색되게 하되, 늘어난 양에 맞게 DB 형식과 검색 방법을 최적화하고, 도서관 수집과 책 수집을 두 갈래로 깔끔하게 다시 정리한다." 사용자가 이번 대화에서 말한 세 가지를 그대로 묶은 것입니다.</p>
+<p class="alt"><b>다른 선택</b> 수집 재구성(B)을 다음 사이클로 미룸. 사이클이 작아지지만, 후보 도서관을 넣으면서 도서관 목록이 하나로 바뀌는 지금이 정리하기 좋은 때를 놓칩니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>A. 후보 도서관 넣기</h2>
+<div class="gist">후보 도서관 2,738곳 중 등록 도서관과 같은 사이트 99곳을 빼면 2,639곳입니다. 이 중 전체 수집이 한 번이라도 끝난 곳은 지금 2,249곳입니다.</div>
+<table>
+<tr><th>화면 종류</th><th>후보</th><th>같은 사이트로 뺌</th><th>수집 끝난 곳</th><th>대출 상태 읽는 코드</th></tr>
+<tr><td>교보 일반</td><td>357</td><td>90</td><td>266</td><td class="okt">있음</td></tr>
+<tr><td>교보 구독형 화면(소장·혼합·대여)</td><td>1,414</td><td>2</td><td>1,189</td><td class="okt">있음</td></tr>
+<tr><td>YES24</td><td>484</td><td>0</td><td>477</td><td class="okt">있음</td></tr>
+<tr><td>북큐브</td><td>458</td><td>7</td><td>292</td><td>없음</td></tr>
+<tr><td>알라딘</td><td>25</td><td>0</td><td>25</td><td>없음</td></tr>
+</table>
+<p class="cap">교보 대여·혼합 232곳은 아직 받는 중입니다(수집 세션 예상 약 12일). 이미 정한 것: 가입 조건이 없는 도서관은 내 도서관에 넣은 사람에게만 검색에 나오고, 그때만 그 사이트로 요청을 보냅니다 (사용자, 2026-10-04).</p>
+
+<div class="item">
+<h3><span class="no">3</span>가져올 때 수집이 한 번이라도 끝난 후보 도서관만 넣고,<br>나머지는 다음 가져오기 때 들어오게 합니다 [안]</h3>
+<p>예: 오늘 가져오면 2,249곳이 들어갑니다. 대여·혼합 232곳은 다 받은 뒤 다시 가져올 때 들어옵니다. 책이 하나도 없는 도서관이 내 도서관 목록에 보이는 일이 없습니다.</p>
+<p class="alt"><b>다른 선택</b> ① 2,639곳을 모두 넣고 책은 받은 만큼만: 고를 수 있는 도서관은 많지만 직접 추가해도 책이 안 나오는 곳이 생깁니다. ② 교보·YES24만 먼저: 대출 상태가 모두 보이지만 북큐브·알라딘 317곳이 빠집니다.</p>
+</div>
+
+<div class="item">
+<h3><span class="no">4</span>북큐브·알라딘 도서관은 대출 상태 없이<br>"목록에 있음"과 [도서관에서 보기]만 보입니다 [안]</h3>
+<div class="mock">
+<div class="mut" style="font-size:15px">결과 줄 예시 (위치와 순서만 보이는 그림이며, 실제 모양은 dev 화면을 따릅니다)</div>
+<div class="row"><span>○○대학교 전자도서관 <span class="tag">직접 추가</span></span><span class="okt">대출 가능 2 / 보유 3 · 도서관에서 보기</span></div>
+<div class="row"><span>△△대학교 전자도서관(북큐브) <span class="tag">직접 추가</span></span><span class="mut">목록에 있음 · 도서관에서 보기</span></div>
+</div>
+<p>북큐브·알라딘 사이트의 대출 상태를 읽는 코드는 지금 없습니다. 그래서 그 도서관은 우리가 받은 책 목록에 있다는 것만 보여 주고, 실제 대출은 링크로 그 사이트에서 확인합니다. 사이트로 실시간 요청을 보내지 않습니다.</p>
+<p class="alt"><b>다른 선택</b> ① 읽는 코드를 이번에 만듦: 사이트를 시험해 보고 코드를 짜야 해서 10월&nbsp;6일 새벽 배포에는 어렵습니다. ② 이번에는 북큐브·알라딘을 아예 넣지 않음.</p>
+<p class="rec">추천: 이 제안. 코드는 다음에 따로 만듭니다.</p>
+</div>
+
+<div class="item">
+<h3><span class="no">5</span>서비스로 가져오는 책을 등록 도서관만에서<br>모든 도서관으로 넓힙니다 [안]</h3>
+<p class="chg">사이클 04에서 정한 "등록 도서관 책만 가져옴"([확정])을 바꾸는 결정이라 결정 기록(ADR)을 새로 남깁니다.</p>
+<p>소장 줄이 지금 약 495만에서 약 1,900만으로 늘어납니다(후보 몫 약 1,412만 + 등록 몫 약 499만, 2026-10-04 밤 기준). dev가 실제로 넣기 전에 시험 실행(dry run)으로 크기와 시간을 먼저 잽니다. 지난번에는 쓰는 데 2분 27초였고, 그동안 책 검색이 약 2분 30초 기다렸습니다.</p>
+<p class="alt"><b>다른 선택</b> 후보 도서관의 책은 따로 표에 넣음. 등록 도서관 검색은 지금 그대로 빠르지만, 검색이 두 표를 봐야 해서 더 복잡합니다.</p>
+</div>
+
+<div class="item">
+<h3><span class="no">6</span>후보 도서관의 수집 DB 번호(100001부터)를<br>서비스 도서관 번호로 그대로 씁니다 [안]</h3>
+<p>예: 수집 DB에서 100245번인 도서관은 서비스에서도 100245번입니다. 가져오기가 두 DB의 도서관을 번호로 짝짓기 때문에, 번호가 같으면 짝 맞추는 표가 필요 없습니다. 등록 도서관은 지금처럼 1~280번입니다.</p>
+<p class="alt"><b>다른 선택</b> 서비스에서 새 번호를 주고 짝 맞추는 표를 둠. 번호가 촘촘해지지만 표 하나와 맞추는 일이 늘어납니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>D. 데이터 형식 파악 → DB와 검색 다듬기</h2>
+<div class="gist">사용자 말: "그 데이터 형식을 파악해서 db형식을 최적화해서 검색 방법을 최적화해서 후보 도서관도 검색할 수 있고 후보 도서관의 책도 검색이 되게 하는거야" (2026-10-05)</div>
+<div class="item">
+<h3><span class="no">7</span>수집한 값의 모양을 화면 종류별로 먼저 재고,<br>그 결과로 DB 형식과 검색 방법을 정합니다 [안]</h3>
+<p>순서는 셋입니다.</p>
+<table>
+<tr><th>단계</th><th>하는 일</th><th>누가</th></tr>
+<tr><td>재기</td><td>수집 DB의 칸(책 26칸, 도서관 10칸)마다 비어 있는 비율, 길이, 책 코드 모양, 자료 종류 값, 상세 주소 모양을 화면 종류별로 셈</td><td>plan이 수집 DB를 읽기만 해서 셈 (수집은 멈추지 않음)</td></tr>
+<tr><td>DB 형식</td><td>소장 약 1,900만 줄에 맞게 책·사람·소장 표와 찾기용 색인(인덱스)을 다시 봄</td><td>설계(plan) → 구현(dev)</td></tr>
+<tr><td>검색 방법</td><td>책 검색이 늘어난 양에서도 빠르게, 후보 도서관을 이름으로 찾기</td><td>설계(plan) → 구현·측정(dev)</td></tr>
+</table>
+<p>응답 시간 목표 같은 숫자는 다음 단계(명세)에서 정합니다.</p>
+<p class="alt"><b>다른 선택</b> 먼저 그대로 넣어 보고 느린 곳만 고침. 빠르지만, 형식을 바꿀 기회가 배포 뒤로 밀립니다.</p>
+</div>
+<div class="item">
+<h3><span class="no">8</span>내 도서관 화면에서 후보 도서관을 찾는 방법은<br>재 본 뒤 설계에서 정합니다 [안]</h3>
+<p>지금은 도서관 278곳 목록을 통째로 받아(약 48KB, 압축하면 약 4KB) 화면에서 이름으로 거릅니다. 약 2,500곳이 되면 약 10배가 됩니다. 두 방법 중 하나를 설계에서 고릅니다.</p>
+<table>
+<tr><th>방법</th><th>좋은 점</th><th>감수할 점</th></tr>
+<tr><td>지금처럼 통째로</td><td>바꿀 코드가 거의 없음</td><td>화면을 열 때 받는 양이 늘어남(압축 약 40KB 예상, 확인 못 함)</td></tr>
+<tr><td>서버에서 이름으로 찾기</td><td>글자를 칠 때 맞는 것만 받음</td><td>새 검색 주소와 화면 변경</td></tr>
+</table>
+<p class="alt"><b>다른 선택</b> 지금 바로 "서버에서 이름으로 찾기"로 정함. ADR-0049가 "도서관이 수천 곳이 되면 바꿔야 함"이라고 미리 적어 둔 길입니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">5</span>B. 수집 방법 재구성: 두 갈래</h2>
+<div class="gist">사용자 말: "도서관 수집하는거랑(수집하면서 구독형은 마감 여부 확인하는 거랑) 도서관의 책 수집하는 거 그 두가지야" (2026-10-05)</div>
+<div class="item">
+<h3><span class="no">9</span>두 갈래마다 "무엇을 받아 무엇을 내놓나"와 원칙을<br>한 장씩으로 정리하고, 도서관 목록 원본을 하나로 합니다 [안]</h3>
+<table>
+<tr><th>갈래</th><th>받는 것</th><th>내놓는 것</th></tr>
+<tr><td>① 도서관 수집</td><td>교보 공식 목록, 웹러브 북스 기관 목록, 공공 목록</td><td>도서관 목록(이름, 주소, 화면 종류, 켜짐) + 같은 사이트 거르기 + 구독형 마감 여부</td></tr>
+<tr><td>② 도서관의 책 수집</td><td>① 의 도서관 목록</td><td>도서관마다 책 목록(수집 DB)</td></tr>
+</table>
+<p>지금은 등록 도서관 목록이 dev의 설정 파일(CSV)에, 후보 도서관 목록이 수집 DB에만 있어 목록이 둘입니다. 후보 도서관이 서비스에 들어가면 서비스의 도서관 표 하나를 원본으로 두는 방향입니다. plan 문서는 지금 여섯 장(<code>crawl-method.md</code>, <code>crawl-runbook.md</code>, <code>platforms.md</code>, <code>periodic-tasks.md</code>, <code>collection-areas.md</code>, <code>catalog-refresh.md</code>)에 흩어져 있어, 두 갈래 한 장씩과 진행 기록으로 다시 엮습니다. dev 쪽 절차·코드 정리는 인계서로 요청합니다.</p>
+<p class="alt"><b>다른 선택</b> plan 문서만 정리하고 도서관 목록 원본은 지금처럼 둘. 작지만, 후보 도서관을 넣을 때마다 두 곳을 맞춰야 합니다.</p>
+</div>
+<div class="item">
+<h3><span class="no">10</span>돌고 있는 수집기는 멈추지 않고,<br>코드 갈아타기와 구조 정리는 수집이 한 바퀴 끝난 뒤에 합니다 [안]</h3>
+<p>지금 수집은 다른 세션에서 옛 복사본(<code>chaekcheck-data</code>)으로 계속 돕니다. "멈추지 않음"은 이미 정한 것입니다(사용자, 2026-10-04). 이번에는 두 갈래의 규칙과 문서를 정하고, 코드를 실제로 나누고 갈아타는 일은 책 번호 유지·주기 갱신 사이클(다시 가져오기를 다루는 사이클)에서 합니다.</p>
+<p class="alt"><b>다른 선택</b> 이번에 dev 복사본으로 갈아타고 코드도 나눔. 수집을 잠시 멈춰야 하고 오늘 밤 일정에 들어가기 어렵습니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">6</span>C. 사이클 06에서 넘어온 작은 것,<br>뺄 것, 일정</h2>
+<div class="item">
+<h3><span class="no">11</span>배포 전 작은 수정 둘은 이번에 넣고,<br>글꼴 줄이기는 배포 뒤로 미룹니다 [안]</h3>
+<table>
+<tr><th>할 것</th><th>제안</th></tr>
+<tr><td>이용약관·처리방침 화면에서 이전 화면으로 돌아가는 길이 없음 (사용자: "이거 나중에 plan이 하도록 적어만둬")</td><td>이번에 넣음. 자세한 모양은 화면 단계에서</td></tr>
+<tr><td>브라우저 탭 제목 "책첵 · 전자도서관 대출 가능 여부"가 새 머리말 "전자도서관 대출 가능 확인"과 다름</td><td>이번에 "책첵 · 전자도서관 대출 가능 확인"으로 맞춤</td></tr>
+<tr><td>글꼴 파일이 약 3MB(나눔바른고딕 보통 1.45MB + 굵게 1.55MB)</td><td>배포 뒤 첫 화면 무게를 재고 정함 → backlog</td></tr>
+</table>
+</div>
+<div class="item">
+<h3><span class="no">12</span>이번 사이클에서 빼는 것 [안]</h3>
+<table>
+<tr><th>뺄 것</th><th>왜</th></tr>
+<tr><td>후보 도서관의 가입 자격 조사</td><td>가입 조건이 없으면 내 도서관에서만 보이므로 지금 필요 없음</td></tr>
+<tr><td>북큐브·알라딘 대출 상태 읽는 코드</td><td>4번 항목</td></tr>
+<tr><td>구독형 한도 알리기</td><td>책 번호 유지 다음 후보. 이번에는 마감 여부 확인을 ① 도서관 수집 갈래에 두는 정리까지만</td></tr>
+<tr><td>책 번호 유지, 책 묶기 기준, 수집기 갈아타기</td><td>다시 가져오기를 다루는 사이클에서</td></tr>
+<tr><td>소속 기관(대학·회사) 자격, 매일 신간 수집</td><td>각각 따로 조사가 필요</td></tr>
+</table>
+</div>
+<div class="item">
+<h3><span class="no">13</span>일정: 10월 6일 새벽 배포에 맞추려면<br>A·D를 먼저 넘기고 B 문서 정리는 그 뒤에 이어 합니다 [안]</h3>
+<p>이 사이클은 지금까지 중 큽니다. 순서 제안: 명세·화면·설계를 A·D 중심으로 짧게 끝내 dev에 먼저 넘기고(dev가 가져오기 시험·구현), 그동안 plan은 B의 두 갈래 문서를 정리해 같은 사이클 인계서에 덧붙입니다. dev 쪽 수집 절차·코드 정리 요청은 배포에 영향을 주지 않습니다.</p>
+<p class="alt"><b>다른 선택</b> ① 배포 목표 시각을 미룸. ② 배포를 지금 상태(등록 도서관만)로 먼저 하고 후보 도서관은 배포 뒤에. 이것은 "배포 전에 넣고 싶어"(사용자, 2026-10-04)를 바꾸는 선택입니다.</p>
+</div>
+<div class="item">
+<h3><span class="no">14</span>사이클 폴더 이름은 <code>07-candidate-libraries</code>로 합니다 [안]</h3>
+<p>영어 이름 규칙에 맞춘 임시 이름입니다. 다른 이름을 원하시면 기타에 적어 주세요.</p>
+</div>
+</section>
+
+<p class="foot">원본: <code>docs/cycles/07-candidate-libraries/scope.md</code>, <code>docs/cycles/06-my-libraries/retro.md</code>, dev <code>docs/plan-feedback.md</code>(1166~1567행), <code>docs/research/maintenance/collection-areas.md</code> 2-1·2-2절, <code>docs/research/ebook-catalog/crawl-runbook.md</code>, 수집 DB <code>chaekcheck-data/ebook-catalog.sqlite</code>(2026-10-05 읽기 전용 조회)</p>
+</main>
+</body>
+</html>

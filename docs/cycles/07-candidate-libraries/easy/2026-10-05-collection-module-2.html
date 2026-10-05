@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>collection이 가져오기 전부</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+svg{max-width:100%;height:auto;display:block}
+.mock{border:2px dashed var(--line);border-radius:12px;padding:14px;margin:10px 0;font-size:17px}
+.row{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;background:var(--card);flex-wrap:wrap}
+.tag{font-size:14px;border-radius:6px;padding:0 6px;background:var(--code-bg);color:var(--muted)}
+.okt{color:var(--ok);font-weight:500}.mut{color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">가져오기 전부(읽기 → 정리 → 같은 책 묶기 → 표 채우기)를<br><code>collection</code>이 하도록 바꿉니다.</p>
+<p class="sub">말씀: "가져오기(수집 DB 읽기 → 정리 → 같은 책 묶기 → 표 채우기)도 나는 이걸 컬렉션이 하는게 맞다고 보는데......" 앞 페이지의 (나)안입니다. 모듈 규칙에 맞추려면 두 가지를 같이 정해야 해서, 구체적으로 만든 안을 다시 올립니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>나눈 모습</h2>
+<svg viewBox="0 0 860 230" role="img" aria-label="collection이 가져오기 전부">
+<rect x="10" y="60" width="150" height="100" rx="12" fill="var(--accent-bg)" stroke="var(--accent)"/>
+<text x="24" y="92" font-size="16" font-weight="700" fill="var(--text)">수집 DB 사본</text>
+<rect x="210" y="10" width="340" height="210" rx="12" fill="var(--warn-bg)" stroke="var(--warn)"/>
+<text x="226" y="40" font-size="17" font-weight="700" fill="var(--text)">collection (수집 연결) — 가져오기 전부</text>
+<text x="226" y="70" font-size="14" fill="var(--text)">① 짝 표로 서비스 번호 바꾸기</text>
+<text x="226" y="94" font-size="14" fill="var(--text)">② 나눠 읽기, 빼는 줄 거르기</text>
+<text x="226" y="118" font-size="14" fill="var(--text)">③ 제목·저자·출판사·날짜 정리</text>
+<text x="226" y="142" font-size="14" fill="var(--text)">④ 같은 책 묶기, 대표값, 가진 도서관 번호</text>
+<text x="226" y="166" font-size="14" fill="var(--text)">⑤ 다 만든 책·소장을 책 목록에 넘김</text>
+<text x="226" y="190" font-size="14" fill="var(--text)">⑥ 가져오기 기록, (나중에) 갱신</text>
+<rect x="600" y="40" width="250" height="150" rx="12" fill="var(--ok-bg)" stroke="var(--ok)"/>
+<text x="616" y="70" font-size="17" font-weight="700" fill="var(--text)">catalog (책 목록)</text>
+<text x="616" y="98" font-size="14" fill="var(--text)">책·사람·소장 표를 가짐</text>
+<text x="616" y="122" font-size="14" fill="var(--text)">받은 것으로 표를 통째로 바꿈</text>
+<text x="616" y="146" font-size="14" fill="var(--text)">책 검색</text>
+<text x="616" y="170" font-size="14" fill="var(--text)">글자 정리 규칙을 공개</text>
+<line x1="160" y1="110" x2="210" y2="110" stroke="var(--muted)" stroke-width="2"/><polygon points="204,105 212,110 204,115" fill="var(--muted)"/>
+<line x1="550" y1="115" x2="600" y2="115" stroke="var(--muted)" stroke-width="2"/><polygon points="594,110 602,115 594,120" fill="var(--muted)"/>
+</svg>
+<p class="cap"><code>collection</code>이 가져오기 일을 모두 하고, <code>catalog</code>는 자기 표에 쓰는 일과 검색만 합니다.</p>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>모듈 규칙 때문에 같이 정할 두 가지</h2>
+<div class="gist">dev의 모듈 규칙은 "다른 모듈의 표에 직접 쓰지 않는다", "모듈끼리 서로를 부르는 고리를 만들지 않는다"입니다.</div>
+<table>
+<tr><th>문제</th><th>푸는 방법</th></tr>
+<tr><td>책 표는 <code>catalog</code> 것이라 <code>collection</code>이 직접 쓸 수 없음</td><td><code>catalog</code>가 공개 기능 하나 "이 책·사람·소장으로 표를 통째로 바꿔"를 내주고, <code>collection</code>이 다 만든 것을 넘김. 실제 쓰기(비우고 채우기, 정리 작업)는 <code>catalog</code> 안에서</td></tr>
+<tr><td>검색어도 책 제목과 같은 규칙으로 정리해야 맞게 찾음. 정리 규칙을 <code>collection</code>으로 옮기면 검색이 <code>collection</code>을 불러야 하고, <code>collection</code>은 <code>catalog</code>를 부르므로 서로 부르는 고리가 생김</td><td>글자 정리 규칙(제목·저자·출판사 정리)은 <code>catalog</code>에 두고 공개해, <code>collection</code>이 그것을 씀. 같은 책 묶기·대표값·날짜 규칙·가진 도서관 번호 계산은 <code>collection</code>으로 옮김</td></tr>
+</table>
+<div class="item">
+<h3><span class="no">1</span><code>collection</code>이 가져오기 전부(①~⑥)를 맡고, <code>catalog</code>는 책 표·검색과 글자 정리 규칙을 그대로 가지고<br>"표 통째로 바꾸기" 공개 기능을 내준다 (글자 정리 규칙은 catalog에 두고 collection이 빌려 씀) [안]</h3>
+<p>예: 가져오기를 실행하면 <code>collection</code>이 사본을 나눠 읽고, 번호를 바꾸고, 빼는 줄을 거르고, <code>catalog</code>의 정리 규칙으로 제목을 정리하고, 같은 책을 묶어 "책 68만 권·소장 2,100만 줄"을 만든 뒤 <code>catalog</code>에 넘깁니다. <code>catalog</code>는 받은 것으로 표를 통째로 바꾸고 정리 작업(<code>VACUUM</code>)을 합니다. 나중에 갱신 기능은 <code>collection</code>에서 만듭니다.</p>
+<p>바뀌는 것: 지금 <code>catalog</code> 안의 가져오기 코드(사본 읽기, 묶기, 대표값, 날짜)를 <code>collection</code>으로 옮김. 모듈 방향: <code>collection → catalog → library</code>, <code>collection → library</code>.</p>
+<p class="alt"><b>다른 선택</b> 글자 정리 규칙도 <code>collection</code>으로 옮기고 검색은 정리 규칙 사본을 따로 가짐. 고리는 없지만 같은 규칙이 두 곳에 생겨 어긋날 수 있습니다.</p>
+</div>
+<div class="item" style="background:var(--ok-bg);border-radius:10px;padding:14px 16px;margin:8px 0">
+<h3>답: "글자 정리 규칙, 지금 카탈로그가 뭘 어떻게 하고 있어?"</h3>
+<p><b>제목·저자·출판사 글자를 "비교하기 좋은 모양"으로 바꾸는 작은 규칙 묶음입니다. 가져올 때와 검색할 때 똑같이 씁니다.</b> dev 코드 <code>catalog/internal/normalize/CatalogText.java</code>, <code>Contributors.java</code>(읽기만 해서 확인, 2026-10-05).</p>
+<table>
+<tr><th>규칙</th><th>하는 일</th><th>예</th></tr>
+<tr><td>기본 정리</td><td>전각·반각 같은 모양 차이를 하나로(NFKC), 영문 소문자로, 띄어쓰기 없앰</td><td>"해리 포터 Ⅰ" → "해리포터i"</td></tr>
+<tr><td>본제목</td><td>앞의 시리즈 표시(〈…〉, [ … ])와 " : ", " - " 뒤 부제를 뗌</td><td>"[밀리언셀러] 아몬드 : 손원평 장편소설" → "아몬드"</td></tr>
+<tr><td>출판사</td><td>"(주)", "주식회사" 같은 말과 점·쉼표·띄어쓰기를 뗌</td><td>"(주)민음사" → "민음사"</td></tr>
+<tr><td>저자 나누기</td><td>"지은이 / 옮긴이" 원문을 사람과 역할로 나눔</td><td>"손원평 지음 / 홍길동 옮김" → 손원평(저자), 홍길동(옮긴이)</td></tr>
+</table>
+<p><b>쓰는 곳 둘</b></p>
+<ul>
+<li>가져올 때: 도서관마다 다르게 적힌 제목을 이 규칙으로 바꾼 뒤, 같은 것끼리 같은 책으로 묶음(묶기 ④)</li>
+<li>검색할 때: 이용자가 친 "해리 포터"도 같은 규칙으로 "해리포터"로 바꿔 찾음 → 띄어쓰기가 달라도 찾아짐</li>
+</ul>
+<p><b>그래서 제안한 것:</b> 이 규칙이 둘로 갈라지면(가져오기용·검색용) 한쪽만 고쳤을 때 "책은 있는데 검색에 안 걸림"이 생깁니다. 그래서 규칙 자체는 검색과 함께 <code>catalog</code>에 한 벌만 두고, <code>collection</code>이 가져올 때 그것을 불러 씁니다. 묶는 기준(무엇을 같은 책으로 볼지), 대표 제목 고르기, 날짜 규칙처럼 가져오기에서만 쓰는 것은 <code>collection</code>으로 옮깁니다.</p>
+</div>
+<div class="item" style="background:var(--ok-bg);border-radius:10px;padding:14px 16px;margin:8px 0">
+<h3>답: "글자 정리 규칙은 검색용인데 왜 컬렉션에 둬?"</h3>
+<p><b>컬렉션에 두지 않습니다. 말씀대로 검색 쪽(<code>catalog</code>)에 그대로 둡니다.</b> 제 설명이 헷갈리게 쓰였습니다.</p>
+<table>
+<tr><th></th><th>어디에 두나</th><th>누가 쓰나</th></tr>
+<tr><td>글자 정리 규칙 (띄어쓰기 없애기, 본제목 떼기, 출판사 다듬기, 저자 나누기)</td><td><b><code>catalog</code></b> (지금 그대로)</td><td><code>catalog</code> 검색 + <code>collection</code>이 가져올 때 <b>빌려 씀</b></td></tr>
+<tr><td>가져오기 일 (사본 읽기, 번호 바꾸기, 거르기, 같은 책 묶기, 대표 제목 고르기, 날짜 규칙, 가진 도서관 번호)</td><td><b><code>collection</code></b> (옮김)</td><td><code>collection</code></td></tr>
+<tr><td>책 표 채우기, 책 검색</td><td><code>catalog</code></td><td><code>catalog</code></td></tr>
+</table>
+<p>왜 빌려 써야 하나: 같은 책 묶기는 "도서관마다 다르게 적힌 제목을 같은 모양으로 바꾼 뒤 비교"하는 일이라, 그 "같은 모양으로 바꾸기"가 검색 규칙과 똑같아야 합니다. 그래야 묶인 책이 검색에서도 같은 이름으로 찾아집니다. 그래서 규칙은 검색 쪽에 한 벌만 두고, 가져오기가 그것을 부릅니다(규칙을 복사해 두지 않음).</p>
+<p>만약 <code>collection</code>이 검색 규칙을 전혀 쓰지 않게 하려면, 같은 책 묶기도 <code>catalog</code>에 남겨야 합니다(앞 페이지의 (가)안: <code>collection</code>은 읽기·번호·거르기·기록만). 1번을 승인하시면 위 표대로, (가)안이 낫다고 보시면 기타에 "(가)"라고 적어 주세요.</p>
+</div>
+<div class="item" style="background:var(--ok-bg);border-radius:10px;padding:14px 16px;margin:8px 0">
+<h3>답: "같은 책을 묶을 때 그 규칙을 왜 써? 검색용인데"</h3>
+<p><b>같은 책인지 알려면 도서관마다 다르게 적힌 제목을 맞춰 봐야 하는데, 그 "맞춰 보기 전 다듬기"가 지금 검색 규칙과 같은 일이라서 같이 쓰고 있습니다.</b></p>
+<table>
+<tr><th>도서관</th><th>사이트에 적힌 제목</th><th>다듬은 뒤</th></tr>
+<tr><td>강서구</td><td>해리 포터와 마법사의 돌 1</td><td>해리포터와마법사의돌1</td></tr>
+<tr><td>고흥군</td><td>해리포터와 마법사의 돌 1</td><td>해리포터와마법사의돌1</td></tr>
+<tr><td>○○대학교</td><td>[베스트] 해리 포터와 마법사의 돌 1 : 개정판</td><td>본제목 해리포터와마법사의돌1</td></tr>
+</table>
+<p>다듬지 않으면 세 줄이 서로 다른 책 셋으로 들어가, 검색 결과에 같은 책이 세 번 나옵니다. 다듬으면 한 책으로 묶여 "도서관 3곳"으로 한 번 나옵니다. 즉 이 규칙은 "검색 전용"이 아니라 "제목 비교용"이고, 검색과 묶기 둘 다 비교를 하기 때문에 같이 씁니다.</p>
+<p><b>고를 수 있는 것</b></p>
+<table>
+<tr><th></th><th>1번 승인: 규칙 한 벌, 컬렉션이 빌려 씀</th><th>컬렉션이 묶기용 규칙을 따로 가짐</th></tr>
+<tr><td>좋은 점</td><td>묶기와 검색이 늘 같은 방식으로 제목을 봄</td><td>컬렉션이 검색 모듈을 전혀 부르지 않음(모듈이 깔끔히 갈림)</td></tr>
+<tr><td>감수할 점</td><td>컬렉션이 catalog의 공개 규칙 하나를 부름</td><td>같은 규칙이 두 곳에 생겨, 한쪽만 고치면 "묶였는데 검색에 따로 걸림" 같은 어긋남이 생길 수 있음</td></tr>
+</table>
+<p>따로 갖는 쪽을 원하시면 1번에 기타로 "묶기 규칙 따로"라고 적어 주세요.</p>
+</div>
+<div class="item">
+<h3><span class="no">2</span>결정 기록 ADR-0060 "가져오기는 <code>collection</code>이 맡는다(ADR-0052 범위 넓힘, ADR-0031 '정리 코드 한 벌' 위치 바꿈)"을 씁니다 [안]</h3>
+<p>이유 칸에는 "나는 이걸 컬렉션이 하는게 맞다고 보는데"를 적습니다. ADR-0031(가져오기를 백엔드 <code>catalog</code>에)은 "가져오기 위치" 부분이 이 기록으로 바뀝니다.</p>
+<p class="alt"><b>다른 선택</b> ADR-0052를 새 기록으로 대체(Superseded).</p>
+</div>
+</section>
+
+<p class="foot">원본: <code>docs/cycles/07-candidate-libraries/design-delta.md</code>, ADR-0031, ADR-0052, dev <code>CLAUDE.md</code>(모듈 규칙). 앞 페이지(<code>2026-10-05-collection-module.html</code>)의 (가)안은 채택하지 않음.</p>
+</main>
+</body>
+</html>

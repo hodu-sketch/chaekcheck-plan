@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>제목 다듬기 규칙 자리</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+svg{max-width:100%;height:auto;display:block}
+.mock{border:2px dashed var(--line);border-radius:12px;padding:14px;margin:10px 0;font-size:17px}
+.row{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;background:var(--card);flex-wrap:wrap}
+.tag{font-size:14px;border-radius:6px;padding:0 6px;background:var(--code-bg);color:var(--muted)}
+.okt{color:var(--ok);font-weight:500}.mut{color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">제목 다듬기 규칙을 어디에 둘지,<br>세 가지 중 골라 주세요.</p>
+<p class="sub">질문: "그러면 규칙을 컬렉션이 가지는 것도 고려해야 하는 거 아닌가?" — 네, 고려할 수 있습니다. 다만 검색(<code>catalog</code>)도 이 규칙을 써야 하므로, 모듈끼리 서로 부르는 고리가 생기지 않게 놓을 자리를 골라야 합니다. 정해진 것: 가져오기 일(읽기·번호·거르기·같은 책 묶기·대표값·기록)은 <code>collection</code>, 책 표와 검색은 <code>catalog</code>.</p>
+
+<section class="card">
+<h2><span class="num">1</span>세 가지 자리</h2>
+<svg viewBox="0 0 860 300" role="img" aria-label="규칙 자리 세 가지">
+<text x="20" y="28" font-size="16" font-weight="700" fill="var(--text)">(가) catalog에 두고 collection이 빌려 씀</text>
+<rect x="20" y="40" width="170" height="44" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="34" y="68" font-size="14" fill="var(--text)">collection</text>
+<rect x="250" y="40" width="230" height="44" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="264" y="68" font-size="14" fill="var(--text)">catalog (규칙 + 표 + 검색)</text>
+<line x1="190" y1="62" x2="250" y2="62" stroke="var(--muted)" stroke-width="2"/><polygon points="244,57 252,62 244,67" fill="var(--muted)"/>
+<text x="20" y="128" font-size="16" font-weight="700" fill="var(--text)">(나) collection에 두고 catalog 검색이 빌려 씀</text>
+<rect x="20" y="140" width="230" height="44" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="34" y="168" font-size="14" fill="var(--text)">collection (규칙 + 가져오기)</text>
+<rect x="320" y="140" width="170" height="44" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="334" y="168" font-size="14" fill="var(--text)">catalog (표 + 검색)</text>
+<line x1="320" y1="162" x2="250" y2="162" stroke="var(--muted)" stroke-width="2"/><polygon points="256,157 248,162 256,167" fill="var(--muted)"/>
+<text x="510" y="160" font-size="13" fill="var(--no)">collection이 catalog에 책을 넘기려면</text>
+<text x="510" y="178" font-size="13" fill="var(--no)">반대 방향 호출도 필요 → 고리</text>
+<text x="20" y="228" font-size="16" font-weight="700" fill="var(--text)">(다) 작은 공용 모듈 "제목 다듬기"에 두고 둘 다 빌려 씀</text>
+<rect x="20" y="240" width="170" height="44" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="34" y="268" font-size="14" fill="var(--text)">collection</text>
+<rect x="320" y="240" width="170" height="44" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="334" y="268" font-size="14" fill="var(--text)">catalog</text>
+<rect x="620" y="240" width="220" height="44" rx="8" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="634" y="268" font-size="14" fill="var(--text)">제목 다듬기 (규칙만)</text>
+<line x1="190" y1="262" x2="320" y2="262" stroke="var(--muted)" stroke-width="2"/><polygon points="314,257 322,262 314,267" fill="var(--muted)"/>
+<line x1="490" y1="262" x2="620" y2="262" stroke="var(--muted)" stroke-width="2"/><polygon points="614,257 622,262 614,267" fill="var(--muted)"/>
+<path d="M105 284 C 105 298, 730 298, 730 284" fill="none" stroke="var(--muted)" stroke-width="2"/>
+</svg>
+<p class="cap">화살표는 "부른다". (나)는 collection이 다 만든 책을 catalog에 넘겨야 하므로 catalog → collection과 collection → catalog가 둘 다 생겨 고리가 됩니다.</p>
+<table>
+<tr><th></th><th>(가) catalog에 둠</th><th>(나) collection에 둠</th><th>(다) 공용 모듈</th></tr>
+<tr><td>뜻</td><td>규칙은 "검색 쪽 것"</td><td>규칙은 "수집 쪽 것"</td><td>규칙은 어느 한쪽 것이 아님</td></tr>
+<tr><td>고리</td><td>없음</td><td><b>생김</b>. 피하려면 catalog가 collection에 "책 만들어 줘"를 부르고 자기가 쓰는 식으로 뒤집어야 해서, "가져오기는 collection이 한다"가 흐려짐</td><td>없음</td></tr>
+<tr><td>바뀌는 것</td><td>가장 적음</td><td>많음</td><td>규칙 파일 넷을 새 모듈로 옮김, 모듈 하나 늚</td></tr>
+<tr><td>규칙 한 벌</td><td>예</td><td>예</td><td>예</td></tr>
+</table>
+<div class="item">
+<h3><span class="no">1</span>(다) 작은 공용 모듈 "제목 다듬기"(이름 예: <code>textnorm</code>)에 규칙만 두고,<br><code>collection</code>(묶기)과 <code>catalog</code>(검색)가 둘 다 빌려 씁니다 [안]</h3>
+<p>규칙이 "검색 것도 수집 것도 아닌 공용"이라는 뜻이 코드에 그대로 드러나고, 고리도 없습니다. 옮기는 것은 지금 <code>catalog/internal/normalize</code>의 제목·저자·출판사 다듬기 파일들입니다.</p>
+<p class="alt"><b>다른 선택</b> (가) catalog에 두고 collection이 빌려 씀: 바뀌는 것이 가장 적음. (나) collection에 둠: 고리를 피하려면 가져오기 흐름을 뒤집어야 해서 추천하지 않음.</p>
+</div>
+<div class="item">
+<h3><span class="no">2</span>결정 기록 ADR-0060 "가져오기는 <code>collection</code>이 맡고, 제목 다듬기 규칙은 1번에서 고른 자리에 한 벌만 둔다"를 씁니다 [안]</h3>
+<p>ADR-0052(collection 모듈)의 범위를 넓히고, ADR-0031(가져오기를 catalog에)의 위치 부분을 바꿉니다.</p>
+<p class="alt"><b>다른 선택</b> ADR-0052를 새 기록으로 대체.</p>
+</div>
+</section>
+
+<p class="foot">원본: 앞 페이지 <code>2026-10-05-collection-module-2.html</code>(답 세 개), dev <code>catalog/internal/normalize/</code>(읽기만), ADR-0031·0052</p>
+</main>
+</body>
+</html>

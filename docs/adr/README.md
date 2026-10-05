@@ -55,3 +55,12 @@
 | [ADR-0049](0049-my-library-list-and-save-api.md) | 내 도서관 화면은 도서관 공개 목록 하나로, 저장은 지역 통째로·도서관 하나씩 (`/api/v1/me/` 아래) | Accepted | 2026-10-04 | 06 |
 | [ADR-0050](0050-chosen-libraries-first-and-exempt.md) | 직접 추가한 도서관은 검색에서 맨 앞, 자격 규칙의 예외 | Accepted | 2026-10-04 | 06 |
 | [ADR-0051](0051-account-lock-and-republish.md) | 저장과 탈퇴가 겹쳐도 지워진 계정의 자료가 남지 않게 (계정 줄 잠금, 재시작 때 다시 처리) | Accepted | 2026-10-04 | 06 |
+| [ADR-0052](0052-candidate-libraries-collection-link.md) | 후보 도서관은 서비스 새 번호로, 수집 DB 번호와의 짝은 새 모듈 `collection` (seed로 넣음) | Accepted | 2026-10-05 | 07 |
+| [ADR-0053](0053-unsurveyed-libraries-only-when-chosen.md) | 가입 조사 상태 넷(조사함/원문 없음/소속 구성원용/종류 모름), 조사하지 않은 도서관은 직접 추가했을 때만 검색에 (ADR-0013·0050 보완) | Accepted | 2026-10-05 | 07 |
+| [ADR-0054](0054-import-all-service-libraries.md) | 가져오기는 모든 서비스 도서관의 책을, 나눠 읽어서 (사이클 04 범위 변경) | Accepted | 2026-10-05 | 07 |
+| [ADR-0055](0055-book-library-ids-precomputed.md) | 책마다 가진 도서관 번호 목록을 가져올 때 미리 계산 | Accepted | 2026-10-05 | 07 |
+| [ADR-0056](0056-bookcube-aladin-adapters.md) | 북큐브·알라딘은 책 상세로 읽고, 북큐브 대여형·교보 소장형은 따로 판정 | Accepted | 2026-10-05 | 07 |
+| [ADR-0057](0057-direct-add-before-login.md) | 로그인하지 않아도 직접 추가(브라우저 저장), 로그인 때 한 번에 옮기는 새 요청 (ADR-0049 보완) | Accepted | 2026-10-05 | 07 |
+| [ADR-0058](0058-library-list-whole-with-compression.md) | 내 도서관 화면의 도서관 찾기는 목록 통째로 + 응답 압축 (ADR-0049 전환 조건 정리) | Accepted | 2026-10-05 | 07 |
+| [ADR-0059](0059-library-logos.md) | 도서관 로고는 자체 로고가 있는 공공도서관만, 미리 줄인 파일, 누르면 메인 페이지, 없으면 빈 상자, DB 값으로 바로 내림, 서비스 안내 화면에 고지 | Accepted | 2026-10-05 | 07 |
+| [ADR-0060](0060-collection-owns-catalog-import.md) | 가져오기는 `collection`이 맡고(ADR-0052 넓힘, ADR-0031 위치 바꿈), 제목 다듬기 규칙은 `catalog`에 한 벌만 두고 빌려 씀 | Accepted | 2026-10-05 | 07 |

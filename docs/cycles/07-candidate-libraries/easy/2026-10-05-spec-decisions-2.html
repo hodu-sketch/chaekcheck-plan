@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 07 명세 후속</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+svg{max-width:100%;height:auto;display:block}
+.mock{border:2px dashed var(--line);border-radius:12px;padding:14px;margin:10px 0;font-size:17px}
+.row{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;background:var(--card);flex-wrap:wrap}
+.tag{font-size:14px;border-radius:6px;padding:0 6px;background:var(--code-bg);color:var(--muted)}
+.okt{color:var(--ok);font-weight:500}.mut{color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">명세에서 남은 두 가지를<br>정해 주세요.</p>
+<p class="sub">앞 페이지 17개 중 15개가 정해졌습니다(승인 14, "주소는 지금처럼 통째로" 1). 남은 것은 로그인하지 않은 사람의 직접 추가(다시 제안)와, 가져오는 동안 검색이 기다리는 문제(질문에 대한 답)입니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>로그인하지 않아도<br>도서관을 직접 넣기</h2>
+<div class="gist">사용자 말: "로그인 하지 않더라도 직접 넣었으면 하는데... 훔.." 그래서 처음 제안("로그인하지 않으면 후보 도서관이 안 보임")을 바꿔, 로그인 없이도 직접 넣을 수 있게 다시 제안합니다.</div>
+<table>
+<tr><th>상황</th><th>직접 넣은 도서관은 어디에 저장되나</th><th>검색에 쓰이나</th></tr>
+<tr><td>로그인 안 함</td><td>이 브라우저 (지역과 같은 곳)</td><td>예. 화면이 검색할 때 도서관 번호를 같이 보냄</td></tr>
+<tr><td>로그인함</td><td>계정(서버). 지금 사이클 06과 같음</td><td>예</td></tr>
+<tr><td>로그인 직후, 계정에 직접 넣은 도서관이 없고 이 브라우저에는 있음</td><td>"이 브라우저의 도서관도 계정에 저장할까요?"를 한 번 물음. 지역 옮기기 창과 같은 창에 함께</td><td>답에 따라</td></tr>
+</table>
+<div class="mock">
+<div class="mut" style="font-size:15px">로그인 직후 옮기기 창 (위치와 순서만 보이는 그림)</div>
+<div class="row" style="display:block"><b>이 브라우저에 저장된 것을 계정에 저장할까요?</b><br>거주 서울 마포구 · 직장 서울 중구<br>직접 넣은 도서관 3곳: 강동대학교 (북큐브), ○○대학교 (알라딘), …<br><span class="okt">[계정에 저장]</span> <span class="mut">[저장하지 않기]</span></div>
+</div>
+<div class="item">
+<h3><span class="no">1</span>로그인하지 않아도 내 도서관 화면에서 도서관을 직접 넣을 수 있고(이 브라우저에 저장, 20곳까지),<br>로그인하면 지역과 함께 계정으로 옮길지 한 번 묻습니다 [안]</h3>
+<p>예: 로그인하지 않은 사람이 "강동대학교 (북큐브)"를 넣으면, 그 도서관의 책이 이 브라우저의 검색에 나옵니다. 다른 기기에서는 보이지 않습니다. 나중에 로그인하면 옮길지 묻고, 옮기면 어느 기기에서나 보입니다.</p>
+<p>서버 쪽은 거의 바뀌지 않습니다. 검색은 이미 "화면이 도서관 번호를 넘기는" 방식이라(사이클 06 결정, ADR-0037), 로그인하지 않은 화면도 같은 값을 넘기면 됩니다. 일은 주로 화면 쪽입니다: 로그인 전 내 도서관 화면, 브라우저 저장, 옮기기 창.</p>
+<p class="chg">사이클 06에서 정한 "직접 추가는 로그인한 사람이 서버에 저장"을 넓히는 결정입니다.</p>
+<p class="alt"><b>다른 선택</b> ① 로그인하지 않아도 넣을 수 있지만, 로그인할 때 옮기지 않음: 더 단순하지만 로그인한 뒤 넣은 도서관이 사라져 보입니다(로그아웃하면 다시 보임). ② 처음 제안대로 로그인한 사람만: 일이 가장 적지만 로그인하지 않은 사람은 후보 도서관을 쓸 수 없습니다.</p>
+<p class="rec">추천: 이 제안. 지역도 같은 방식(로그인 전 브라우저, 로그인 뒤 옮기기)이라 사용자가 한 가지 규칙만 알면 됩니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>"가져오는 동안 왜 기다리나?"에 대한 답</h2>
+<div class="gist">질문하신 대로 배포 전에는 문제가 없습니다. 쓰는 사람이 없기 때문입니다. 기다림이 문제가 되는 것은 서비스를 운영하면서 다시 가져올 때뿐입니다.</div>
+<p>왜 기다리나: 가져오기는 책 표를 비우고 다시 채웁니다. 채우는 동안(지난번 약 2분 30초) 표가 잠겨, 그때 들어온 책 검색은 다 채워질 때까지 기다립니다. 배포 전 한 번은 이용자가 없어 상관없습니다. 운영 중 다시 가져올 때 기다리지 않게 하는 방법(새 표에 넣고 한 번에 바꾸기)은 갱신 기능 사이클에서 정합니다.</p>
+<div class="item">
+<h3><span class="no">2</span>가져오는 동안의 기다림은 배포 전이라 문제 없음으로 두고,<br>운영 중 다시 가져오기는 갱신 기능 사이클에서 정합니다 [안]</h3>
+<p>이번 사이클에서는 기다림을 없애는 일을 하지 않습니다.</p>
+<p class="alt"><b>다른 선택</b> 이번에 "새 표에 넣고 한 번에 바꾸기"를 만듦. 배포 뒤 첫 갱신 때 바로 쓸 수 있지만 일이 늘어납니다.</p>
+</div>
+</section>
+
+<p class="foot">원본: <code>docs/cycles/07-candidate-libraries/spec.md</code> R3-6, R7-5. 앞 페이지: <code>2026-10-05-spec-decisions.html</code> 4·13번</p>
+</main>
+</body>
+</html>
