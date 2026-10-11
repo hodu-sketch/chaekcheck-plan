@@ -2,7 +2,9 @@
 
 현재 설계 전체를 적은 문서입니다.
 
-사이클 09 cycle-close (2026-10-11): `library.library` 이름은 기관 이름만(UNIQUE `library_name_key` 지움), 새 칸 `vendor`·`order_no`, 통합 포털 말고 모두 `lending_model`을 채움, CHECK 셋과 UNIQUE `library_classification_key (name, vendor, lending_model, order_no)`, 이름·분류 changeset `library/014-library-classification.yaml` [안 번호], seed 생성 스크립트의 겹침 규칙(순번) — 구현됨 (사이클 09). 근거 `docs/cycles/09-library-naming/design-delta.md` "데이터"·"dev 스크립트와 문서", spec R1~R4, ADR-0071·0076.
+사이클 09 cycle-close (2026-10-11): `library.library` 이름은 기관 이름만(UNIQUE `library_name_key` 지움), 새 칸 `vendor`·`order_no`, 통합 포털 말고 모두 `lending_model`을 채움, CHECK 셋과 UNIQUE `library_classification_key (name, vendor, lending_model, order_no)`, 이름·분류 changeset `library/014-library-classification.yaml` [확정], seed 생성 스크립트의 겹침 규칙(순번) — 구현됨 (사이클 09). 근거 `docs/cycles/09-library-naming/design-delta.md` "데이터"·"dev 스크립트와 문서", spec R1~R4, ADR-0071·0076.
+사이클 09 회고 (2026-10-12): dev 보고(`plan-feedback.md` "# 사이클 09", AC-1~9 통과)와 dev Liquibase `library/014-library-classification.yaml`로 대조해 사이클 09 변경을 구현됨으로 바꿈. Modulith `components.puml`(2026-10-12) 대조 결과 모듈 관계 그대로. 달라진 점·확정된 값: changeSet 하나 `library-014-classification-2026-10-11`, 이름 UPDATE 289줄(`splitStatements: false`), 대출 방식은 화면 종류 규칙 + 번호, 014 뒤 셈(업체·대출 방식), 북큐브 구독 339·380·386·705, `name_overrides.tsv` 295줄, seed 스크립트 `--changes-only`·다섯째 인자·종료 코드 3. 근거 `docs/cycles/09-library-naming/retro.md`.
+사이클 10 cycle-close (2026-10-12): 새 스키마 `popular`(`fetch_run`, `ranking_month`, `ranking_category`, `ranking_entry`, `cover`) — 설계됨(미구현, 사이클 10). 다른 모듈 표는 바뀌지 않음(`catalog.book`은 `isbn13` 값으로만 맞춤). 근거 `docs/cycles/10-popular-books/design-delta.md` "데이터", ADR-0073~0075·0077.
 사이클 08 cycle-close (2026-10-11): `catalog` 가져오기를 새 표(`catalog_next`)에 쓰고 바꿔 끼우기, 소장 번호 잇기, `collection.catalog_import` 칸 추가, `collection.national_bibliography_record`·`national_bibliography_source`, `library.library.mobile_site_differs`, 도서관 이름 고침 changeset, `library`·`region` `updated_at` 트리거, 교보 대여·혼합 11곳 seed에서 뺌, 정리 규칙을 바꿀 때의 순서 — 구현됨 (사이클 08). 근거 `docs/cycles/08-polish-swap-memory/design-delta.md` "데이터"·"정리 규칙을 바꿀 때"·"이름 고치기", ADR-0065~0070. 이름·숫자는 따로 적지 않으면 [안].
 사이클 08 회고 (2026-10-11): dev Liquibase(`collection/003`·`004`, `library/011`~`013`, `region/003`)와 dev `plan-feedback.md` "# 사이클 08"로 대조함. 달라진 점: 국가서지 원문은 ISBN마다 한 줄, `step_seconds` 키가 늘어남, 가져오기 기록에 `status`·`failure_reason`·`failure_detail`, 넓은 줄은 임시 표와 `catalog_next`에 두 번 씀, 파일 번호가 설계 [안]과 다름, 이름 고침은 `library/013`. 가져오기 힙(AC-12), 국가서지 원문 재사용 시간(AC-15), 색인 단계 중단(AC-9 둘째 경우)은 측정 중 [확인 필요]. 근거 `docs/cycles/08-polish-swap-memory/retro.md`.
 
@@ -40,9 +42,11 @@ erDiagram
   COLLECTION_LINK }o..|| LIBRARY : "library_id (번호만, 다른 모듈, 사이클 07)"
   BOOK ||--o{ HOLDING : "book_id"
   HOLDING }o..|| LIBRARY : "library_id (번호만)"
+  RANKING_ENTRY }o..o| BOOK : "isbn13 값으로만 (FK 없음, 사이클 10)"
 ```
 
 - `COLLECTION_LINK`는 사이클 07에 더한 표입니다(구현됨 (사이클 07)). `BOOK`·`HOLDING`의 자세한 관계는 아래 `catalog` 그림.
+- `RANKING_ENTRY`(스키마 `popular`)는 사이클 10에 더할 표입니다 — 설계됨(미구현, 사이클 10). 자세한 것은 아래 `popular` 절.
 
 ## 스키마 `region` (소유: `region` 모듈) — 구현됨
 
@@ -98,15 +102,15 @@ erDiagram
 | deferred | boolean | NOT NULL DEFAULT false | 판정 없는 포털 후순위 (경북·전북) |
 | enabled | boolean | NOT NULL DEFAULT true | 사용 여부. 운영자가 SQL로 변경. 사이클 07에 135·2194·2198을 끔(`library/010`) |
 | join_survey | text | NOT NULL DEFAULT 'SURVEYED', CONSTRAINT `library_join_survey_check` CHECK IN ('SURVEYED','NOT_FOUND','MEMBERS_ONLY','NOT_SURVEYED') | 가입 조사 상태(Java enum `JoinSurvey`). `MEMBERS_ONLY`·`NOT_SURVEYED`는 직접 추가일 때만 계획에, API 등급 `UNSURVEYED`. 후보: `MEMBERS_ONLY` 2,252, `SURVEYED` 90, `NOT_SURVEYED` 35, `NOT_FOUND` 17 (dev 1단계 셈). 구현됨 (사이클 07). 태그: [확정] (ADR-0053), 값 이름 [확정] (dev 구현 확인, 2026-10-05) |
-| lending_model | text | NULL, CONSTRAINT `library_lending_model_check` CHECK IN ('OWNED','SUBSCRIPTION','MIXED','RENTAL') | 교보 구독형 화면 기관의 소장·구독·혼합·대여(Java enum `LendingModel`). NULL이면 지금 규칙(화면 종류로 판정). 값 출처: 수집 세션 `kyobo-institutions-probe-2026-10-03.tsv` `library_model`(값이 소장·혼합·대여 셋뿐이라 `SUBSCRIPTION`을 받은 곳은 없음). 쓰는 곳: 소장 스트림에서 `OWNED`면 상세 쪽을 읽음(목록 판정은 줄마다 숫자 유무로, 이 값을 보지 않음). 구현됨 (사이클 07). 태그: [확정] (사용자 승인, 2026-10-05, 설계 검토). **사이클 09 — 구현됨 (사이클 09)**: 통합 포털(`vendor = 'PORTAL'`) 말고 모든 도서관에 값을 둠, 새 CHECK `library_lending_model_required_check ((vendor = 'PORTAL') = (lending_model IS NULL))` [확정] (사용자 승인, 2026-10-11). `vendor`가 NULL(실물 도서관)이면 식이 NULL이라 통과. 채우는 규칙은 아래 "도서관 이름과 분류". 검색·소장 판정 동작은 바뀌지 않음(대출 방식으로 갈리는 곳은 교보 구독형 && `!= OWNED` 하나이고, 교보 구독형에 `OWNED`를 새로 넣는 곳은 없음) [확정] (dev 코드 확인, `docs/cycles/09-library-naming/research.md` 2절). 화면 표시(업체 · 대출 방식)와 겹침 확인에도 씀 |
-| vendor | text | NULL 허용, CONSTRAINT `library_vendor_check` CHECK IN ('KYOBO','YES24','BOOKCUBE','ALADIN','PORTAL','IN_HOUSE'), CONSTRAINT `library_vendor_required_check` (`library_type <> 'EBOOK' OR vendor IS NOT NULL`) — 지금 `library_type`은 EBOOK뿐이라 늘 필수, 실물 도서관 사이클에서 다시 봄 | 업체(Java enum `Vendor`). 사이클 09 — 구현됨 (사이클 09). 도서관 수집이 정한 사실로 보고 seed 생성 스크립트가 씀, DB는 허용 값만 확인 [확정] (ADR-0071; DB가 화면 종류에서 계산하는 안은 미승인, 사용자: "역할 분리"). 지금은 화면 종류 대응표로 정함: `KYOBO_V1`·`KYOBO_SUBSCRIPTION_V1` → `KYOBO`, `YES24_V1~V3` → `YES24`, `BOOKCUBE_FX` → `BOOKCUBE`, `ALADIN_V1` → `ALADIN`, `ELIB_PORTAL_V1` → `PORTAL`, `GANGNAM_V1` → `IN_HOUSE` [확정] (spec R2). 교보 일반과 교보 구독형은 같은 `KYOBO`. 태그: 칸·값 [확정] (사용자 승인, 2026-10-11, `docs/cycles/09-library-naming/easy/2026-10-11-design-delta-review.html`), 필수 CHECK [확정] (사용자 승인, 2026-10-11, `easy/2026-10-11-review-decisions.html`) |
-| order_no | integer | NOT NULL DEFAULT 1, CONSTRAINT `library_order_no_check` CHECK (`order_no >= 1`) | 같은 (이름, 업체, 대출 방식) 묶음 안의 순번. 보통 1, 같은 묶음이 또 들어오면 seed 생성 스크립트가 서비스 번호 순으로 2, 3을 붙이고 목록으로 보여 줌. 사이트 이름을 확인하면 이름을 고치고 1로 되돌림 (spec R4-4). 지금은 모두 1. 사이클 09 — 구현됨 (사이클 09). 태그: [확정] (사용자 승인, 2026-10-11) |
+| lending_model | text | NULL, CONSTRAINT `library_lending_model_check` CHECK IN ('OWNED','SUBSCRIPTION','MIXED','RENTAL') | 교보 구독형 화면 기관의 소장·구독·혼합·대여(Java enum `LendingModel`). NULL이면 지금 규칙(화면 종류로 판정). 값 출처: 수집 세션 `kyobo-institutions-probe-2026-10-03.tsv` `library_model`(값이 소장·혼합·대여 셋뿐이라 `SUBSCRIPTION`을 받은 곳은 없음). 쓰는 곳: 소장 스트림에서 `OWNED`면 상세 쪽을 읽음(목록 판정은 줄마다 숫자 유무로, 이 값을 보지 않음). 구현됨 (사이클 07). 태그: [확정] (사용자 승인, 2026-10-05, 설계 검토). **사이클 09 — 구현됨 (사이클 09)**: 통합 포털(`vendor = 'PORTAL'`) 말고 모든 도서관에 값을 둠, 새 CHECK `library_lending_model_required_check ((vendor = 'PORTAL') = (lending_model IS NULL))` [확정] (사용자 승인, 2026-10-11). `vendor`가 NULL(실물 도서관)이면 식이 NULL이라 통과. 채우는 규칙은 아래 "도서관 이름과 분류". 검색·소장 판정 동작은 바뀌지 않음(대출 방식으로 갈리는 곳은 교보 구독형 && `!= OWNED` 하나이고, 교보 구독형에 `OWNED`를 새로 넣는 곳은 없음) [확정] (dev 코드 확인, `docs/cycles/09-library-naming/research.md` 2절). 화면 표시(업체 · 대출 방식)와 겹침 확인에도 씀. 014 적용 뒤(2,663줄): `OWNED` 2,634, `SUBSCRIPTION` 11, `RENTAL` 9, `MIXED` 2, NULL 7(통합 포털) — 포털 말고 NULL 0 [확정] (dev 측정, 2026-10-12, `docs/cycles/09-library-naming/retro.md`) |
+| vendor | text | NULL 허용, CONSTRAINT `library_vendor_check` CHECK IN ('KYOBO','YES24','BOOKCUBE','ALADIN','PORTAL','IN_HOUSE'), CONSTRAINT `library_vendor_required_check` (`library_type <> 'EBOOK' OR vendor IS NOT NULL`) — 지금 `library_type`은 EBOOK뿐이라 늘 필수, 실물 도서관 사이클에서 다시 봄 | 업체(Java enum `Vendor`). 사이클 09 — 구현됨 (사이클 09). 도서관 수집이 정한 사실로 보고 seed 생성 스크립트가 씀, DB는 허용 값만 확인 [확정] (ADR-0071; DB가 화면 종류에서 계산하는 안은 미승인, 사용자: "역할 분리"). 지금은 화면 종류 대응표로 정함: `KYOBO_V1`·`KYOBO_SUBSCRIPTION_V1` → `KYOBO`, `YES24_V1~V3` → `YES24`, `BOOKCUBE_FX` → `BOOKCUBE`, `ALADIN_V1` → `ALADIN`, `ELIB_PORTAL_V1` → `PORTAL`, `GANGNAM_V1` → `IN_HOUSE` [확정] (spec R2). 교보 일반과 교보 구독형은 같은 `KYOBO`. 태그: 칸·값 [확정] (사용자 승인, 2026-10-11, `docs/cycles/09-library-naming/easy/2026-10-11-design-delta-review.html`), 필수 CHECK [확정] (사용자 승인, 2026-10-11, `easy/2026-10-11-review-decisions.html`). 014 적용 뒤: `KYOBO` 1,642, `YES24` 547, `BOOKCUBE` 441, `ALADIN` 25, `PORTAL` 7, `IN_HOUSE` 1, NULL 0 [확정] (dev 측정, 2026-10-12). 대응표와 다른 업체 0곳 |
+| order_no | integer | NOT NULL DEFAULT 1, CONSTRAINT `library_order_no_check` CHECK (`order_no >= 1`) | 같은 (이름, 업체, 대출 방식) 묶음 안의 순번. 보통 1, 같은 묶음이 또 들어오면 seed 생성 스크립트가 서비스 번호 순으로 2, 3을 붙이고 목록으로 보여 줌. 사이트 이름을 확인하면 이름을 고치고 1로 되돌림 (spec R4-4). 지금은 모두 1 (014 적용 뒤 순번 2 이상 0곳 [확정], dev 측정 2026-10-12). 사이클 09 — 구현됨 (사이클 09). 태그: [확정] (사용자 승인, 2026-10-11) |
 | logo_file | text | NULL | 로고 파일 이름(웹 정적 파일 `/library-logos/{logo_file}`), NULL = 없음(화면에 아무것도 그리지 않음). 198곳. 구현됨 (사이클 07). 태그: [확정] (ADR-0059, dev 구현 확인, 2026-10-05) |
 | logo_visible | boolean | NOT NULL DEFAULT true | 운영자가 끄면 로고를 바로 숨김(`logoUrl` null). 구현됨 (사이클 07). 태그: [확정] 방법 (spec R9-7), 이름 [확정] (dev 구현 확인, 2026-10-05) |
 | mobile_site_differs | boolean | NOT NULL DEFAULT false | 폰에서 사이트가 다르게 보임(API `mobileSiteDiffers`, 웹 YES24 폰 안내). 13곳 true (dev `library-site-issues.md` 10-1; 224, 230, 260, 2586, 238, 2190, 2277, 229, 2164, 2533, 2195, 2222, 1824 — 1824는 교보), `library/012-library-mobile-site-differs.yaml`. 구현됨 (사이클 08). 태그: [확정] (사용자 승인, 2026-10-10), 이름 [확정] (dev 구현 확인, 2026-10-11). 근거: ADR 없음, 사용자 결정 (사이클 08 scope 3, 2026-10-05; 칸으로 둠 2026-10-10) |
 | created_at / updated_at | timestamptz | NOT NULL DEFAULT now() | 사이클 08 (구현됨 (사이클 08)): `updated_at`은 `BEFORE UPDATE FOR EACH ROW` 트리거로 고칠 때마다 DB가 적음(값이 그대로여도 바뀜), 함수 `library.set_updated_at()`, 트리거 `library_set_updated_at` (`library/011-updated-at-trigger.sql`) [확정] (dev 구현 확인, 2026-10-11). [확정] (사용자 승인, 2026-10-10; ADR-0068) |
 
-- CHECK 이름: `library_library_type_check`, `library_platform_type_check`, `library_ebook_site_check`(`library_type <> 'EBOOK' OR (platform_type IS NOT NULL AND base_url IS NOT NULL)`), `library_holdings_count_check`, `library_holdings_counted_check`. UNIQUE `library_name_key`, `library_base_url_key`. 사이클 07: `library_join_method_check`, `library_join_survey_check`, `library_lending_model_check` 추가 [확정] (dev 구현 확인, 2026-10-05) — 구현됨 (사이클 07). 사이클 09 — 구현됨 (사이클 09): UNIQUE `library_name_key`를 지우고 `library_vendor_check`, `library_vendor_required_check`, `library_lending_model_required_check`, `library_order_no_check`, UNIQUE `library_classification_key` 추가 (아래 "도서관 이름과 분류")
+- CHECK 이름: `library_library_type_check`, `library_platform_type_check`, `library_ebook_site_check`(`library_type <> 'EBOOK' OR (platform_type IS NOT NULL AND base_url IS NOT NULL)`), `library_holdings_count_check`, `library_holdings_counted_check`. UNIQUE `library_base_url_key`, `library_classification_key`(사이클 09; 사이클 08까지 있던 `library_name_key`는 014에서 지움). 사이클 07: `library_join_method_check`, `library_join_survey_check`, `library_lending_model_check` 추가 [확정] (dev 구현 확인, 2026-10-05) — 구현됨 (사이클 07). 사이클 09 — 구현됨 (사이클 09): UNIQUE `library_name_key`를 지우고 `library_vendor_check`, `library_vendor_required_check`, `library_lending_model_required_check`, `library_order_no_check`, UNIQUE `library_classification_key` 추가 (아래 "도서관 이름과 분류")
 - 운영 기관으로 묶는 테이블은 없습니다 (backlog, 실물 도서관 사이클에서 검토)
 - 이름 고침 (구현됨 (사이클 08), 사이클 08 design-delta "이름 고치기"): 이름 이력은 DB 표가 아니라 dev `scripts/library/name_overrides.tsv` 목록에 둠 [확정] (dev 구현 확인, 2026-10-11). 칸 `library_id`, `old_name`, `new_name`, `changed_on`, `source_url`, `checked_on` [확정] (사용자: "나. 이름 고침 목록에 옛 이름·새 이름·바뀐 날·출처를 함께 적음 … 이걸로 해줘", 2026-10-11). seed 생성 스크립트(`build_candidate_seed.py`)가 이 목록을 읽어 다음 seed에서도 새 이름을 유지(목록의 옛 이름이 seed 이름과 다르거나 겹침이 생기면 멈춤). 이미 적용된 seed 파일은 고치지 않고 changeset `library/013-library-name-overrides.yaml`에서 번호 + 옛 이름 조건으로 UPDATE(`WHERE l.id = v.id AND l.name = v.old_name`) [확정] (dev 구현 확인, 2026-10-11). `library.name` UNIQUE 위반 확인(사이클 09부터는 (이름, 업체, 대출 방식, 순번) 겹침 확인 — 구현됨 (사이클 09))
   - 고친 8곳 [확정] (사용자: "모두 바꿔줘", 2026-10-11; 공식 출처는 dev `library-maintenance.md` 4-12): 434 경상대학교 → 경상국립대학교 (북큐브), 456 국립안동대학교 → 국립경국대학교 (북큐브), 2264 서라벌대학교 → 신경주대학교, 2563 대검 도서관 → 공소청 도서관, 2611 강서공업고등학교 → 서울디지털콘텐츠고등학교, 2161 한국형사정책연구원 → 한국형사·법무정책연구원, 1079 농수산물유통공사 → 한국농수산식품유통공사, 1016 국가평가교육진흥원 → 국가평생교육진흥원
@@ -122,11 +126,11 @@ ADR-0071(이름에는 기관 이름만, 업체·대출 방식은 분류로), ADR
 
 - 겹치면 안 되는 것: UNIQUE NULLS NOT DISTINCT `library_classification_key (name, vendor, lending_model, order_no)`. 비어 있는 대출 방식(통합 포털)끼리도 같은 값으로 보고, 꺼진 도서관도 셈. 이름 UNIQUE를 대신함 [확정] (ADR-0071, 사용자 승인 2026-10-11, spec R4-1·2). `UNIQUE NULLS NOT DISTINCT`는 YAML이 지원하지 않아 raw `sql`
 - 다른 기관이 겹치면 정식 이름으로 나누고, 같은 사이트는 받지 않음으로 표시. 순번이 붙은 곳은 사이트 이름을 확인해 고치고 순번을 1로 되돌림 [확정] (ADR-0071)
-- Liquibase: 새 파일 `library/014-library-classification.yaml` [안 번호·이름] (dev가 개발 시작 때 마지막 번호 확인). 이미 적용된 changeset·seed는 고치지 않음 [확정] (ADR-0076). 칸·제약은 raw `sql`. changeset 안 순서 [확정] (사용자 승인, 2026-10-11):
+- Liquibase: 새 파일 `library/014-library-classification.yaml`, changeSet 하나 `library-014-classification-2026-10-11` [확정] (dev 구현 확인, 2026-10-12, `014-library-classification.yaml:15`). 이미 적용된 changeset·seed는 고치지 않음 [확정] (ADR-0076). 칸·제약은 raw `sql`. 이름 UPDATE 문장만 `splitStatements: false`(1149 옛 이름 "메리츠(증권&amp;amp;캐피탈)"에 세미콜론이 있어 Liquibase가 문장을 나누므로) [확정] (사용자 승인, 2026-10-12, `docs/cycles/09-library-naming/easy/2026-10-12-retro-decisions.html` #3). 다음 이름 고침 changeset도 문자열에 세미콜론이 있으면 같음. 운영 `db`에 적용함(dev, 2026-10-12). changeset 안 순서 [확정] (사용자 승인, 2026-10-11; 구현도 같은 순서, 허용 값 CHECK `library_vendor_check`는 칸 추가와 함께, 나머지 CHECK 셋은 `order_no` 다음 한 문장으로 — 받아들임 [확정] (사용자 승인, 2026-10-12, retro-decisions #3)):
   1. `ALTER TABLE library.library DROP CONSTRAINT library_name_key`
   2. 이름 UPDATE: `(id, old_name, new_name)` VALUES, `WHERE l.id = v.id AND l.name = v.old_name` (013과 같은 꼴). 목록은 dev `scripts/library/name_overrides.tsv`에서 만듦
   3. `ADD COLUMN vendor text`, 화면 종류 대응표로 UPDATE
-  4. `lending_model` UPDATE (아래 표, `WHERE lending_model IS NULL`인 줄만)
+  4. `lending_model` UPDATE (아래 표, `WHERE lending_model IS NULL`인 줄만). 구현은 번호 VALUES 1,458줄 대신 **화면 종류 규칙 + 번호**: 번호는 북큐브 339·380·386·705와 교보 구독형 59·131·140·275~278만, 나머지는 화면 종류 규칙. 2단계 스크립트 출력(1,458줄)과 결과가 같음을 따로 띄운 DB에서 확인 [확정] (사용자 승인, 2026-10-12, retro-decisions #3)
   5. `ADD COLUMN order_no integer NOT NULL DEFAULT 1`
   6. CHECK 셋(`library_vendor_check`·`library_vendor_required_check`, `library_lending_model_required_check`, `library_order_no_check`) 추가
   7. UNIQUE `library_classification_key` 추가 (마지막에 둬서 도중 상태에서 위반이 나지 않게). 겹치는 줄이 남으면 unique 위반으로 배포가 멈춤
@@ -140,22 +144,22 @@ ADR-0071(이름에는 기관 이름만, 업체·대출 방식은 분류로), ADR
 | 977 "국립경국대학교" | 1 | spec R1-9 |
 | 895, 1002, 769·2257, 428, 429 (흡수된 학교) | 6 | spec R1-10, dev가 공식 출처로 다시 확인 |
 
-- 위 표의 합(293)은 겹침을 빼지 않은 수라 실제 줄 수는 그보다 적음 [확인 필요: dev가 `name_overrides.tsv`로 셈]. 괄호 떼기는 `name_overrides.tsv`의 `changed_on`에 `label-removed` [확정], 사이트 제목·공식 출처로 고친 곳은 그 출처
+- 위 표의 합(293)은 겹침을 빼지 않은 수이고, 실제 이름 UPDATE는 289줄 [확정] (사용자: 이름 바꿀 289줄 목록을 보고 "승인, 커밋", 2026-10-11; `014-library-classification.yaml:26-314`). 괄호 셈 뗄 277 / 남길 45 / 애매 2가 plan과 같음 [확정] (dev, 2026-10-12). `name_overrides.tsv`는 최종 295줄(이번에 287줄 더함). 014 `old_name`은 013까지 적용한 로컬 `db`를 내보내 `--changes-only <db-state.tsv>`에 넣어 만듦 [확정] (dev 구현 확인, 2026-10-12). 공식 이름 10곳(학교 6곳, 977, 943, 64 등)은 spec 이름과 같음 [확정]. 괄호 떼기는 `name_overrides.tsv`의 `changed_on`에 `label-removed` [확정], 사이트 제목·공식 출처로 고친 곳은 그 출처
 - 대출 방식 채우기 (spec R3, 값이 비어 있는 줄만)
 
 | 도서관 | 값 | 태그 |
 |---|---|---|
 | `KYOBO_V1`, `YES24_V1~V3`, `ALADIN_V1`, `GANGNAM_V1` | `OWNED` (화면에 보유·대출·예약 권수가 보임) | [확정] |
-| `BOOKCUBE_FX` 중 목록 XML 전체 권수(`totalVolume`)가 0이고 책이 있는 곳: 339·380·386·705 | `SUBSCRIPTION` | 규칙 [확정], 번호 [확인 필요: dev가 `bookcube-volume-2026-10-11.tsv` + `collection_link`로 다시 맞춤] |
+| `BOOKCUBE_FX` 중 목록 XML 전체 권수(`totalVolume`)가 0이고 책이 있는 곳: 339·380·386·705 | `SUBSCRIPTION` | 규칙 [확정], 번호 339·380·386·705 [확정] (dev가 `bookcube-volume-2026-10-11.tsv` + `collection_link`로 다시 맞춤, 2026-10-12) |
 | 나머지 `BOOKCUBE_FX` (응답 없음·책 0종 5곳 포함, 다음 수집 때 다시 봄) | `OWNED` | [확정] |
 | `KYOBO_SUBSCRIPTION_V1` 중 비어 있는 등록 도서관 59, 131, 140, 275, 276, 277, 278 | `SUBSCRIPTION` (지금도 구독으로 동작, 동작 그대로) | [확정] |
 | `KYOBO_SUBSCRIPTION_V1` 중 값이 있는 곳 | 그대로 (수집 세션 probe) | [확정] (사이클 07) |
 | `ELIB_PORTAL_V1` (7곳) | NULL 그대로 | [확정] |
 
-- 적용 뒤 확인: 겹침 0(UNIQUE가 걸리면 됨), `order_no`가 모두 1, `vendor` NULL 0, 포털 말고 `lending_model` NULL 0
+- 적용 뒤 확인: 겹침 0(UNIQUE가 걸리면 됨), `order_no`가 모두 1, `vendor` NULL 0, 포털 말고 `lending_model` NULL 0 — 모두 통과 (dev 014 적용 결과 2,663줄, 2026-10-12). 남은 기관 이름 속 괄호 45줄은 0단계 "남길 줄"과 같은 번호·이름(1149만 이스케이프를 고침, AC-2)
 - R1~R3을 적용해도 겹치던 곳은 이 규칙으로 풀림: 부산광역시 전자도서관 338/339(339가 구독), 양산 93/943(이름), 제주한라도서관 140/1109(140이 구독), 부여대왕초등학교 1575/1576(1575를 "완주동상초등학교"로) [확정] (spec R4-3)
 - 도서관 번호는 바뀌지 않으므로 내 도서관(브라우저·로그인 계정)에 넣은 도서관은 그대로 남음 [확정] (dev 코드 확인, spec R1-6)
-- 수집 DB(`chaekcheck-data`)의 이름도 같은 이름으로 바꿈(서비스 번호 ↔ 수집 번호는 `collection_link`) [확정] (사용자: "이렇게 가자", 2026-10-11), 방법·때 [확인 필요: 수집 세션]
+- 수집 DB(`chaekcheck-data`)의 이름도 같은 이름으로 바꿈(서비스 번호 ↔ 수집 번호는 `collection_link`) [확정] (사용자: "이렇게 가자", 2026-10-11). 방법·때: 지금 한 번에, 수집 세션이 수집기가 쉬는 때 수집 번호와 옛 이름이 맞을 때만 UPDATE [확정] (사용자 승인, 2026-10-12, `docs/cycles/09-library-naming/easy/2026-10-12-retro-decisions.html` #2). 넘길 목록 dev `data/cycle09/collection-rename-list.tsv`(git 밖, 서비스 번호·수집 번호·최종 이름 289줄, 그중 237줄은 수집 번호가 서비스 번호와 다름 → `collection_link`가 반드시 필요). 실제로 바꿨는지 [확인 필요: 수집 세션]
 
 ### `library.eligibility_rule` — 자격 규칙 (ADR-0004 구조, ADR-0013으로 뜻 변경)
 
@@ -491,6 +495,98 @@ erDiagram
 - 넣지 않는 것: 이메일·이름 등. 탈퇴하면 계정 번호도 남지 않음(ADR-0041)
 - JPA 엔티티 없이 `JdbcClient`(사이클 05 `auth`와 같은 방식, `mylibrary/internal/MyLibraryStore`) [확정] (dev 구현 확인, 2026-10-05)
 
+## 스키마 `popular` (소유: `popular` 모듈) — 설계됨(미구현, 사이클 10)
+
+출판유통통합전산망에서 매달 받은 인기 도서 순위·분류 판매 부수·표지와 받기 기록입니다(ADR-0072·0073·0075·0077). 스키마 이름 `popular` [확정] (설계 #12). 다른 모듈과 FK·조인이 없고, `catalog`와는 `isbn13` 값으로만 맞춥니다(볼 때 `BookLookup.byIsbn13`, ADR-0074). JPA 엔티티 없이 JdbcClient. 근거 `docs/cycles/10-popular-books/design-delta.md` "데이터".
+
+```mermaid
+erDiagram
+  FETCH_RUN {
+    bigint id PK "identity"
+    date target_month "NOT NULL, 1일"
+    text trigger "STARTUP | SCHEDULED"
+    timestamptz started_at "NOT NULL"
+    timestamptz finished_at "NOT NULL"
+    text status "SUCCEEDED | FAILED"
+    text failure_reason "FAILED일 때만"
+    text failure_detail "NULL"
+    int request_count ">= 0"
+    int book_count ">= 0"
+    int missing_isbn_count ">= 0"
+    int cover_fetched_count ">= 0"
+    int cover_failed_count ">= 0"
+  }
+  RANKING_MONTH {
+    date target_month PK "1일"
+    bigint fetch_run_id FK "NOT NULL"
+    timestamptz fetched_at "NOT NULL"
+  }
+  RANKING_CATEGORY {
+    date target_month PK,FK
+    text category_code PK "ALL 또는 사이트 ID"
+    bigint sales_copies "NULL(ALL), >= 0"
+    smallint display_order "0..16"
+  }
+  RANKING_ENTRY {
+    date target_month PK,FK
+    text category_code PK,FK
+    smallint rank PK "1..50"
+    text isbn13 "NULL"
+    text title "NOT NULL"
+    text thema "NULL"
+    text cover_path "NULL"
+  }
+  COVER {
+    bigint id PK "identity"
+    text source_path UK "작은 그림 경로"
+    text content_type "NOT NULL"
+    bytea image "NOT NULL"
+    int byte_size ">= 0"
+    timestamptz fetched_at "NOT NULL"
+  }
+  FETCH_RUN ||--o| RANKING_MONTH : "저장한 받기"
+  RANKING_MONTH ||--|{ RANKING_CATEGORY : "ON DELETE CASCADE"
+  RANKING_CATEGORY ||--|{ RANKING_ENTRY : "ON DELETE CASCADE"
+  RANKING_ENTRY }o..o| COVER : "cover_path = source_path (FK 없음)"
+```
+
+| 테이블.컬럼 | 타입 | 제약 | 설명 | 상태 태그 |
+|---|---|---|---|---|
+| `fetch_run.id` | bigint | PK, identity | 받기 기록 번호 | [확정] (설계 #3·#12) |
+| `fetch_run.target_month` | date | NOT NULL, CHECK 1일 | 대상 달 | [확정] |
+| `fetch_run.trigger` | text | CHECK `STARTUP`·`SCHEDULED` | 켜질 때 / 예약 | [확정] |
+| `fetch_run.started_at`·`finished_at` | timestamptz | NOT NULL | | [확정] |
+| `fetch_run.status` | text | CHECK `SUCCEEDED`·`FAILED` | | [확정] |
+| `fetch_run.failure_reason` | text | `FAILED`일 때만 NOT NULL, CHECK `session_failed`·`request_rejected`·`format_changed`·`too_few_books`·`network_error` | | [확정] (설계 #12) |
+| `fetch_run.failure_detail` | text | NULL | 어느 분류·응답 코드 등 | [확정] |
+| `fetch_run.request_count`·`book_count`·`missing_isbn_count` | int | NOT NULL DEFAULT 0, `>= 0` | 요청 수(AC-12), 저장한 책 수, ISBN 빈·틀린 책 수 | [확정] (설계 #10·#11) |
+| `fetch_run.cover_fetched_count`·`cover_failed_count` | int | NOT NULL DEFAULT 0, `>= 0` | 새로 받은 표지 수, 실패 수 | [확정] (사용자 승인, 2026-10-11, design-delta 확인) |
+| 색인 `fetch_run (target_month, started_at)` | | | 판단 규칙 | [확정] |
+| `ranking_month.target_month` | date | PK | | [확정] |
+| `ranking_month.fetch_run_id` | bigint | FK `fetch_run(id)`, NOT NULL | 저장한 받기 | [확정] |
+| `ranking_month.fetched_at` | timestamptz | NOT NULL | 출처 줄 "받은 날" | [확정] |
+| `ranking_category (target_month, category_code)` | date, text | PK, FK `ranking_month` ON DELETE CASCADE | `ALL` 또는 20자리 사이트 ID | [확정] |
+| `ranking_category.sales_copies` | bigint | `ALL`이면 NULL, 아니면 `>= 0` | 판매 부수 | [확정] |
+| `ranking_category.display_order` | smallint | 0..16, UNIQUE `(target_month, display_order)` | 계산한 순서 | [확정] |
+| `ranking_entry (target_month, category_code, rank)` | | PK, FK `ranking_category` ON DELETE CASCADE, `rank` 1..50 | | [확정] |
+| `ranking_entry.isbn13` | text | NULL, CHECK `^97[89][0-9]{10}$` | 비었거나 틀리면 NULL → 흐림 | [확정] (설계 #10) |
+| `ranking_entry.title` | text | NOT NULL | | [확정] |
+| `ranking_entry.thema` | text | NULL | 공식 세부분류 | [확정] |
+| `ranking_entry.cover_path` | text | NULL, `/`로 시작 | 작은 그림 경로(`s_<id>.jpg`) | [확정] (설계 후속 #1) |
+| `cover.id` | bigint | PK, identity | 화면 주소에 씀 | [확정] (사용자 승인, 2026-10-11, design-delta 확인) |
+| `cover.source_path` | text | NOT NULL, UNIQUE | 같은 경로는 다시 받지 않음 | [확정] (설계 후속 #1) |
+| `cover.content_type` | text | NOT NULL | 받은 응답 그대로(예 `image/jpeg`) | [확정] (사용자 승인, 2026-10-11, design-delta 확인) |
+| `cover.image` | bytea | NOT NULL | 작은 그림 약 51KB(시험 1건) | [확정] (DB 저장) |
+| `cover.byte_size` | int | NOT NULL, `>= 0` | | [확정] (사용자 승인, 2026-10-11, design-delta 확인) |
+| `cover.fetched_at` | timestamptz | NOT NULL | | [확정] (사용자 승인, 2026-10-11, design-delta 확인) |
+
+- 분류: 한 달에 17줄(`ALL` + 16분류). 만화·어린이·청소년·기타·의학·스포츠는 받지 않음 [확정] (ADR-0077). `display_order`는 `ALL` 0, 나머지 16개는 판매 부수 큰 순(같으면 사이트 ID 순)으로 1~16, 받을 때 계산 [확정] (spec R2-2). 분류 사이트 ID·줄인 이름은 표가 아니라 코드 상수 enum `PopularCategory` [확정] (설계 #4)
+- 받기 기록 쓰는 순서 [확정] (사용자 승인, 2026-10-12, 인계 전 결정 #1): 성공이면 받기 기록(`SUCCEEDED`, `finished_at` = 순위 저장 시각)을 순위(달·분류·책)와 **같은 트랜잭션**에서 넣고(그 달을 지우고 `ranking_month`·`ranking_category`·`ranking_entry`를 넣음), 표지 받기가 끝나면 그 줄의 `cover_fetched_count`·`cover_failed_count`만 UPDATE. 실패면 순위 없이 `FAILED` 줄만 넣음. 표지 받는 중에 서버가 꺼져도 순위와 성공 기록은 남고 표지 수는 0
+- 보관·지우기: 순위 표(`ranking_*`)는 지우지 않음 [확정] (spec R1-5). 받기 성공 뒤 최근 두 달 `ranking_entry.cover_path`에 없는 `cover` 줄을 지움 [확정] (설계 후속 #2, ADR-0075)
+- 크기: 한 달 분류 17줄 + 책 850줄, 표지 최대 850장 × 51KB ≈ 43MB(겹치는 책은 더 적음), 두 달 ≈ 90MB 안쪽(계산값, ADR-0077)
+- 저자 칸 없음 [확정] (spec 입력과 출력)
+- Liquibase: 새 changelog `db/changelog/popular/001-popular-schema.yaml`(예시, 경로는 dev가 정함 [확정] (사용자 승인, 2026-10-11, design-delta 확인)), 기존 changeset 수정 없음. CHECK는 맨 위 규칙대로 changeset 안 `sql`. `updated_at` 칸이 없어 트리거 없음(ADR-0068 대상 아님)
+
 ## seed
 
 - 켜진 도서관 278곳 (2026-09-29, dev 보고). 중단된 2곳(id 59, 131)은 `enabled=false`. 방문 가입 86곳, 그중 누구나 가입 16곳 (2026-09-30, dev 보고: `visit=none`이면 계획 192곳)
@@ -501,10 +597,10 @@ erDiagram
   - `006`: 새 주소를 찾은 9곳 (id 272–280)
   - 사이클 07 `library/008`: 후보 도서관 2,394곳 (id 281~2674), `library/009`: 로고 198곳, `library/010`: 135·2194·2198 끔 — 구현됨 (사이클 07). seed 도서관 2,674곳, `GET /api/v1/libraries` 측정 때 켜진 곳 2,672곳(그 뒤 `library/010`으로 3곳을 더 끔)
   - 사이클 08 (구현됨 (사이클 08)): 교보 대여·혼합 11곳(id 2664~2674)을 `library/008-library-candidates.csv`에서 지움(배포 전 규칙으로 기존 seed를 고치고 로컬 DB 초기화, `build_candidate_seed.py` 규칙 `kyobo_rental_mixed`, diff는 두 CSV의 22줄). 번호는 다시 쓰지 않음. 그 도서관을 직접 추가한 계정·브라우저의 번호는 꺼진 도서관처럼 건너뜀(사이클 06 규칙) [확정] (ADR-0067). 소장 −2,669,217, 책 −2,320 (사이클 07 2회차 대비, dev 측정). `library/011-updated-at-trigger.sql`: 트리거, `library/012-library-mobile-site-differs.yaml`: `mobile_site_differs` 13곳, `library/013-library-name-overrides.yaml`: 이름 고침 8곳 UPDATE [확정] (dev 구현 확인, 2026-10-11)
-  - 사이클 09 — 구현됨 (사이클 09): `library/014-library-classification.yaml` [안 번호·이름]: 이름 UNIQUE 지움, 이름 UPDATE(괄호 떼기 등, 위 "도서관 이름과 분류"), `vendor`·`order_no` 칸, `lending_model` 채움, CHECK 셋, UNIQUE `library_classification_key`
+  - 사이클 09 — 구현됨 (사이클 09): `library/014-library-classification.yaml` [확정] (changeSet 하나 `library-014-classification-2026-10-11`, dev 구현 확인, 2026-10-12): 이름 UNIQUE 지움, 이름 UPDATE(괄호 떼기 등, 위 "도서관 이름과 분류"), `vendor`·`order_no` 칸, `lending_model` 채움, CHECK 셋, UNIQUE `library_classification_key`
 - 사이클 07 후보 도서관 seed 규칙 [확정] (ADR-0052, ADR-0053, `architect-proposal.md` D3) — 구현됨 (사이클 07). 스크립트 dev `scripts/library/build_candidate_seed.py`(테스트 `test_build_candidate_seed.py`, 같은 입력이면 같은 출력)
   - 후보: 수집 번호 ≥ 100001, `crawl_skip` 없음, `last_full_success_at` 있음. 교보 대여·혼합(교보 구독형 플랫폼 서버의 대여·혼합 기관)은 넣지 않음 [확정] (ADR-0067, 사이클 08 seed 규칙, 구현됨 (사이클 08)). 체험용·운영 중단 4곳(삼각산 북라이브, 대구동구안심 북큐브, 순창 북라이브, 양평 북큐브) 제외 (사용자, 2026-10-05). 시험용 6곳은 넣지 않음 (사용자 승인, 2026-10-05, 설계 검토). 등록 도서관과 책 번호 목록이 같고 상세 주소가 포트만 다른 8곳 제외, 같은 기관의 다른 북큐브 사이트 6곳은 넣음 [확정] (사용자 결정 "① 8곳만 빼기", 2026-10-05). 스크립트는 읽어 본 쌍을 `SAME_HOST_KEPT`에 두고 새로 걸리는 같은 호스트 쌍이 있으면 종료 코드 2로 멈춤
-  - 새 번호: 지금 최대(280) 다음부터("마지막 번호 다음", 두 번 돌려도 같고 새 후보 1곳만 다음 번호를 받는지 테스트로 확인) [확정] (dev 구현 확인, 2026-10-05). 이름이 겹치면 `이름 (북큐브|교보|YES24|알라딘)`, 그래도 겹치면 `이름 (라벨, 호스트)` (사이클 08까지). 사이클 09부터 — 구현됨 (사이클 09) [확정] (ADR-0071, 설계 결정 3번): 이름에 라벨을 붙이지 않음(`LABELS`·`name_candidates()`를 지움). `vendor`는 수집이 따로 적은 값이 있으면 그 값, 없으면 화면 종류 대응표(`VENDORS`, 한 곳) [확정] (수집이 따로 적는 자리는 [확인 필요: 수집 세션]); `lending_model`은 교보 probe, 북큐브 전체 권수 결과, 포털 NULL, 나머지 `OWNED`; 이름 고침 목록을 등록 도서관(번호 280 이하)에도 메모리 속 이름에 적용; 겹침 열쇠는 (이름, 업체, 대출 방식, 순번)이고 같은 (이름, 업체, 대출 방식) 묶음은 서비스 번호 순으로 `order_no`(`assign_order_no()`), 2 이상은 목록 출력. 처음 정한 이름은 다음 seed에서 바꾸지 않음. 예외: 공식 개명·틀린 이름은 이름 고침 목록에 있을 때만 고치고 번호는 유지 [확정] (사용자 승인, 2026-10-05; 사이클 08 scope 4) — 위 `library` 절 "이름 고침", 구현됨 (사이클 08). seed를 다시 만드는 방식(첫 배포 전·직전·뒤)도 그 절
+  - 새 번호: 지금 최대(280) 다음부터("마지막 번호 다음", 두 번 돌려도 같고 새 후보 1곳만 다음 번호를 받는지 테스트로 확인) [확정] (dev 구현 확인, 2026-10-05). 이름이 겹치면 `이름 (북큐브|교보|YES24|알라딘)`, 그래도 겹치면 `이름 (라벨, 호스트)` (사이클 08까지). 사이클 09부터 — 구현됨 (사이클 09) [확정] (ADR-0071, 설계 결정 3번): 이름에 라벨을 붙이지 않음(`LABELS`·`name_candidates()`를 지움). `vendor`는 수집이 따로 적은 값이 있으면 그 값, 없으면 화면 종류 대응표(`VENDORS`, 한 곳) [확정] (수집이 따로 적는 자리는 [확인 필요: 수집 세션]); `lending_model`은 교보 probe, 북큐브 전체 권수 결과, 포털 NULL, 나머지 `OWNED`; 이름 고침 목록을 등록 도서관(번호 280 이하)에도 메모리 속 이름에 적용; 겹침 열쇠는 (이름, 업체, 대출 방식, 순번)이고 같은 (이름, 업체, 대출 방식) 묶음은 서비스 번호 순으로 `order_no`(`assign_order_no()`), 2 이상은 목록 출력하고 종료 코드 3(사람이 사이트 이름 확인) [확정] (dev 구현 확인, 2026-10-12). 사이클 09 구현의 실행 방법 [확정] (dev 구현 확인, 2026-10-12): 다섯째 위치 인자 `<bookcube-volume.tsv>`(dev `scripts/library/bookcube-volume-2026-10-11.tsv`, 북큐브 전체 권수), 옵션 `--changes-only <db-state.tsv>`(seed CSV 셋을 바꾸지 않고 바뀔 줄 목록만 냄, 옛 이름은 DB 상태 파일에서 읽음). 이번 사이클은 `--changes-only`로만 돌림, `vendor`·`order_no`는 아직 seed 칸이 아님(첫 배포 직전 seed 정리 때) [확정] (seed 고치는 방식, 사이클 08). 수집이 업체를 따로 적는 자리는 스크립트에 빈 자리 `COLLECTION_VENDORS = {}`와 `TODO(확인 필요)`만 (`build_candidate_seed.py:96-98`) [확인 필요: 수집 세션]. 처음 정한 이름은 다음 seed에서 바꾸지 않음. 예외: 공식 개명·틀린 이름은 이름 고침 목록에 있을 때만 고치고 번호는 유지 [확정] (사용자 승인, 2026-10-05; 사이클 08 scope 4) — 위 `library` 절 "이름 고침", 구현됨 (사이클 08). seed를 다시 만드는 방식(첫 배포 전·직전·뒤)도 그 절
   - `homepage_url = base_url`, `holdings_count = NULL`, `enabled = true`. `base_url`은 리다이렉트를 따라간 https 최종 주소(248곳, `scripts/library/CheckFinalOrigins.java` → `final-origins.tsv`) [확정] (사용자 요청, 2026-10-05)
   - `lending_model`(후보): OWNED 1,182, MIXED 8, RENTAL 3, NULL 1,201. 등록 도서관 16곳: OWNED 5, MIXED 2, RENTAL 9 (dev 1단계 셈). 사이클 09에서 통합 포털 말고 NULL을 모두 채움(위 "도서관 이름과 분류") — 구현됨 (사이클 09)
   - 가입: 조사된 후보 공공도서관(`public-join-2026-10-05.tsv`)은 `SURVEYED` + 가입 규칙 줄 + `join_method`·`visit_required`·`join_caution`·`extra_condition_text`(책이음 9곳). 원문 못 찾은 곳은 `NOT_FOUND` + 규칙 없음. 종류 표(`candidate-kinds-2026-10-05.tsv`)의 초·중·고·대학·회사·정부·공공기관·단체·아파트는 `MEMBERS_ONLY`, 모름은 `NOT_SURVEYED`, 둘 다 `join_method = NULL`
@@ -544,11 +640,22 @@ erDiagram
 
 ## 확인 필요 (사이클 09)
 
+회고(2026-10-12)에서 dev 확인으로 끝난 줄(changeset 번호 014, 이름 UPDATE 289줄, 북큐브 구독 번호, 공식 이름, `eligibility_rules.py` — 첫 배포 직전 seed 정리 때 고침 [확정] (사용자 승인, 2026-10-12, retro-decisions #4))은 지움. 수집 세션 줄만 남김.
+
 | 항목 | 방법 |
 |---|---|
-| changeset 번호 `library/014` | dev가 개발 시작 때 마지막 번호 확인 |
-| 이름 UPDATE 실제 줄 수(겹침 뺀 수) | dev가 `name_overrides.tsv`로 셈 |
-| 북큐브 구독 서비스 번호 339·380·386·705 | dev가 북큐브 결과 파일 + `collection_link`로 대조 |
-| 흡수된 학교 6곳(R1-10)·977·943·64의 공식 이름 | dev가 공식 출처로 다시 확인, 다르면 사용자에게 |
-| 수집 DB 이름을 바꾸는 방법·때, 수집이 업체를 따로 적는 자리 | 수집 세션 |
-| `eligibility_rules.py`의 이름 열쇠를 다시 돌리는지 | dev |
+| 수집 DB 이름 289줄 바꾸기(지금 한 번에로 정함 [확정], 실제 적용), 수집이 업체를 따로 적는 자리(안: 수집 DB에 업체 칸 하나, 대응표와 다른 사이트만 [안]) | 수집 세션 (메모 `docs/research/maintenance/collection-rename-message-2026-10-12.md`) |
+
+## 확인 필요 (사이클 10) — 설계됨(미구현, 사이클 10)
+
+`docs/cycles/10-popular-books/design-delta.md` "확인 필요"에서 아직 열린 줄.
+
+| 항목 | 방법 |
+|---|---|
+| 연결 5초·읽기 10초를 측정 뒤 조정(값은 승인됨) | API 호출 시험 (개발 때) |
+| 작은 표지(`s_`)가 3×3에 충분한지 | 프로토타입 |
+| 캐시 새로 고칠 때 ISBN 최대 850개 찾는 시간, 공용 캐시 메모리 | 프로토타입 (`EXPLAIN ANALYZE`, 측정) |
+| 서비스 DB ISBN 일치율(수집 DB 27.8%와 비슷한지, AC-6 기대값) | 프로토타입 |
+| 지난달 값이 들어온 뒤 고쳐지는지(3일 받기) | API 호출 시험 (11-03, 11-10) |
+| 사이클 08 웹과 `AppLayout` 변경 순서 | dev 회고 때 |
+| 표 크기(한 달 표지 최대 약 43MB, 두 달 약 90MB 안쪽)는 계산값 | 운영 측정 |

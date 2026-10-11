@@ -21,3 +21,4 @@
 | [2026-10-12-how-fetch-works.html](2026-10-12-how-fetch-works.html) | 인기 도서를 언제·어떻게 받아 무엇을 저장하고 화면이 어떻게 읽는지 (설명) | `../design-delta.md` | 설명 |
 | [2026-10-12-handoff-review.html](2026-10-12-handoff-review.html) | 사이클 10 인계서 한 장 요약(단계·제약·여쭐 일), 가운데 창 첫 묶음, 넘기기 | `../handoff.md` | 없음 (1은 "앞의 3곳만" + API 옵션, 2 승인) |
 | [2026-10-12-cover-copyright.html](2026-10-12-cover-copyright.html) | 책 표지 저작권 조사 정리(법·판례·지금 설계 위치), 내려 달라는 요청 받는 곳, 작은 그림만 | `../../../research/popular-books/cover-copyright.md` | 없음 (2개 승인) |
+| [2026-10-12-design-overview.html](2026-10-12-design-overview.html) | 설계 한눈에: 모듈 구성도, DB 표 관계(ER)·도메인 모델, 받기·화면·가운데 창 흐름도, 응답 예시, 코드 자리·구현 단계, ADR (설명) | `../design-delta.md`, `../handoff.md` | 설명 |

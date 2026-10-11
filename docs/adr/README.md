@@ -80,3 +80,4 @@
 | [ADR-0074](0074-popular-isbn-lookup-shared-cache.md) | 순위 책과 우리 책은 볼 때 ISBN으로 맞추고 책 정보는 공용 캐시(10분) | Accepted | 2026-10-11 | 10 |
 | [ADR-0075](0075-popular-cover-prefetch-proxy.md) | 표지는 매달 미리 받아 우리 서버가 넘겨줌, 최근 두 달 보관 | Accepted | 2026-10-11 | 10 |
 | [ADR-0076](0076-library-classification-api-and-rename.md) | 도서관 분류 값(vendor·lendingModel·orderNo)은 API로 보내고 화면이 글자를 만듦, 이름은 번호로 고치는 changeset(014), 이름 찾기는 화면에서 (ADR-0071을 이어서) | Accepted | 2026-10-11 | 09 |
+| [ADR-0077](0077-popular-drop-sparse-categories.md) | 인기 도서는 전자책이 거의 없는 다섯 분류(만화·어린이·청소년·기타·의학·스포츠)를 받지 않음, ADR-0072 범위·0074·0075 숫자 바로잡음 | Accepted | 2026-10-11 | 10 |

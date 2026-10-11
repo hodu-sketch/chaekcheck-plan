@@ -3,7 +3,7 @@
 - 승인: [확정] (사용자 승인, 2026-10-12, `docs/cycles/10-popular-books/easy/2026-10-12-handoff-review.html` #2 "넘김", #1은 "앞의 3곳만 확인"으로)
 - **시작 조건** [확정] (사용자 승인, 2026-10-12, `docs/cycles/10-popular-books/easy/2026-10-12-sequential-decision.html`)
   - 사이클 09 dev가 끝나고 **커밋된 뒤에** 시작합니다(사용자 보고: dev 871fbd4, 2026-10-12). 작업 폴더도 같고 로컬 DB·포트도 같으며, worktree는 따로 만들지 않습니다.
-  - plan은 이 인계서를 `docs/current/handoff.md`에 바꿔 넣을 때 `docs/current/`(module-map·data-model·api·flows)에 `popular`를 함께 합칩니다. 개발 기준은 아래 `design-delta.md`입니다.
+  - plan이 이 인계서를 `docs/current/handoff.md`에 바꿔 넣으며 `docs/current/`(module-map·data-model·api·flows)에 `popular`를 "설계됨(미구현, 사이클 10)"으로 합쳤습니다(2026-10-12). 개발 기준은 아래 `design-delta.md`입니다.
 
 ## 요약
 

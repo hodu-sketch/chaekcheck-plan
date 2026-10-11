@@ -2,7 +2,9 @@
 
 현재 설계의 주요 흐름을 그림으로 모은 문서입니다. 변경 기록이 아닙니다.
 
-사이클 09 cycle-close (2026-10-11): 흐름 23(도서관 이름과 분류: 이름·분류 changeset, 화면에 분류 보이기, 새 후보 도서관을 넣을 때)을 더하고 "화면 공통"에 분류 표시를 적음 — 설계됨(미구현, 사이클 09). 근거 `docs/cycles/09-library-naming/design-delta.md` "주요 흐름", flow.md, ADR-0071·0076.
+사이클 09 cycle-close (2026-10-11): 흐름 23(도서관 이름과 분류: 이름·분류 changeset, 화면에 분류 보이기, 새 후보 도서관을 넣을 때)을 더하고 "화면 공통"에 분류 표시를 적음 — 구현됨 (사이클 09). 근거 `docs/cycles/09-library-naming/design-delta.md` "주요 흐름", flow.md, ADR-0071·0076.
+사이클 09 회고 (2026-10-12): dev 보고(`plan-feedback.md` "# 사이클 09", AC-1~9 통과)와 대조해 흐름 23과 화면 공통의 사이클 09 부분을 구현됨으로 바꿈(그림 모양은 그대로). Modulith `components.puml`(2026-10-12) 대조 결과 모듈 관계 그대로. 달라진 점: `library/014-library-classification.yaml` [확정] changeSet 하나, 이름 UPDATE만 `splitStatements: false`, 대출 방식은 규칙 + 번호, 같은 이름 여러 줄의 업체 순서는 한글 가나다순(교보 → 북큐브 → 알라딘 → 자체 → 통합 포털 → YES24). 근거 `docs/cycles/09-library-naming/retro.md`.
+사이클 10 cycle-close (2026-10-12): 흐름 24(인기 도서 매달 받기, 실패 포함)와 받기 상태, 흐름 25(인기 도서 화면 S13 열기), 흐름 26(가운데 창 S14 열기, `holdingLimit=3`)을 더하고 "화면 공통"에 사이클 10을 적음 — 설계됨(미구현, 사이클 10). 근거 `docs/cycles/10-popular-books/design-delta.md` "구조 그림", flow.md, ADR-0072~0075·0077.
 사이클 08 cycle-close (2026-10-11): 흐름 20(가져오기: 새 표에 쓰고 바꿔 끼우기), 21(검색 계획과 책 화면 소장 읽기), 22(막혔을 때 429·503)를 더하고, 흐름 6·16과 "화면 공통"에 바뀌는 점을 적음 — 구현됨 (사이클 08). 근거 `docs/cycles/08-polish-swap-memory/design-delta.md` "주요 흐름"(흐름 A~C), ADR-0065~0070.
 사이클 08 회고 (2026-10-11): dev 보고(`plan-feedback.md` "# 사이클 08")와 대조해 흐름 20~22와 화면 공통을 구현됨으로 바꾸고 달라진 점(넓은 줄 두 번 쓰기, 실패 기록 칸, S2 그대로·돌아가기는 S8·S9·S10만, "정렬 없음 ⓘ"은 검색 줄, 이름 찾기 가운뎃점 무시)과 측정값을 적음. 흐름 21 그림의 "지금은 …" 두 곳을 "사이클 07까지는 …"으로 고침. 가져오기 힙(AC-12)·색인 단계 중단(AC-9 둘째)·국가서지 재사용 시간(AC-15)은 측정 중 [확인 필요]. 근거 `docs/cycles/08-polish-swap-memory/retro.md`.
 
@@ -720,7 +722,7 @@ sequenceDiagram
 
 - 문구 전체와 태그는 `api.md` "요청 수·응답 크기 제한"·오류 코드 표. `Retry-After: 5` [확정] (사용자 승인, 2026-10-11). 웹은 상태 코드만 보고 결과 목록 위에 안내 줄 하나, 다시 버튼 없음, 첫 요청이 막히면 결과 자리에 같은 문구 (dev 7단계). 실제 429·503 화면은 띄워 보지 않고 Vitest로 확인 (AC-3)
 
-## 흐름 23: 도서관 이름과 분류 — 설계됨(미구현, 사이클 09)
+## 흐름 23: 도서관 이름과 분류 — 구현됨 (사이클 09)
 
 ADR-0071(이름에는 기관 이름만, 업체·대출 방식은 분류로), ADR-0076(분류 값은 API로 보내고 화면이 글자를 만듦, 이름은 번호로 고치는 changeset, 이름 찾기는 화면에서). 표·제약은 `data-model.md` "도서관 이름과 분류", 화면은 `module-map.md` "사이클 09 웹".
 
@@ -742,7 +744,7 @@ sequenceDiagram
   end
 ```
 
-- 파일 번호 `library/014` [안 번호]. 순서 [확정] (사용자 승인, 2026-10-11). 이미 적용된 seed·changeset은 고치지 않음 [확정] (ADR-0076)
+- 파일 `library/014-library-classification.yaml`, changeSet 하나 `library-014-classification-2026-10-11` [확정] (dev 구현 확인, 2026-10-12). 순서 [확정] (사용자 승인, 2026-10-11, 구현도 같은 순서). 이름 UPDATE 문장만 `splitStatements: false`(옛 이름 속 세미콜론), 대출 방식 UPDATE는 화면 종류 규칙 + 번호(북큐브 339·380·386·705, 교보 구독형 59·131·140·275~278) [확정] (사용자 승인, 2026-10-12, `docs/cycles/09-library-naming/easy/2026-10-12-retro-decisions.html` #3). 적용 결과 2,663줄, 겹침 없이 통과. 이미 적용된 seed·changeset은 고치지 않음 [확정] (ADR-0076)
 
 ### 23-2. 화면에 분류를 보이기
 
@@ -783,7 +785,127 @@ sequenceDiagram
   end
 ```
 
-- 배포 뒤에는 seed 파일을 다시 쓰지 않고 바뀐 것만 changeset으로 냄 [확정] (seed 고치는 방식, `data-model.md` "이름 고침"). 수집이 업체를 따로 적는 자리 [확인 필요: 수집 세션]
+- 배포 뒤에는 seed 파일을 다시 쓰지 않고 바뀐 것만 changeset으로 냄 [확정] (seed 고치는 방식, `data-model.md` "이름 고침"). 사이클 09 구현은 `--changes-only <db-state.tsv>`로 목록만 냈고, 순번 2 이상이 나오면 종료 코드 3 [확정] (dev 구현 확인, 2026-10-12). 수집이 업체를 따로 적는 자리 [확인 필요: 수집 세션] (스크립트에는 빈 자리 `COLLECTION_VENDORS = {}`)
+
+## 흐름 24: 인기 도서 매달 받기 (실패 포함) — 설계됨(미구현, 사이클 10)
+
+ADR-0072(출처: 출판유통통합전산망 공개 통계 화면), ADR-0073(`popular` 모듈), ADR-0075(표지 미리 받기·최근 두 달 보관), ADR-0077(16분류). 표는 `data-model.md` 스키마 `popular`, 판단 규칙은 `module-map.md` "`popular` 도메인 모델".
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant T as 예약(매일 05:00 KST) / 서버 시작
+  participant J as popular 받기 실행기(단일 스레드)
+  participant DB as popular 스키마
+  participant K as kpipa
+  participant C as 공용 캐시
+  T->>J: shouldFetch(today)?
+  J->>DB: 저장된 달, 대상 달 받기 기록
+  alt 받지 않음
+    J-->>T: 건너뜀
+  else 받음
+    J->>K: GET 순위 화면 → JSESSIONID + m_sCsrf
+    loop 17개 분류(전체 + 16), 2초 간격
+      J->>K: POST /adiStatsCtgSaleRank/search
+    end
+    J->>K: GET 판매량 화면 → 토큰
+    loop 16개 분류, 2초 간격
+      J->>K: POST /adiStatsCtgSaleCnt/search
+    end
+    alt 검증 통과 (각 50권, 부수 16건)
+      J->>DB: 한 트랜잭션: fetch_run SUCCEEDED(끝난 시각 = 지금) 넣고, 그 달 지우고 month·category·entry 넣기
+      loop 새 표지만, 2초 간격
+        J->>K: GET /files/isbn/…/s_{id}.jpg
+        J->>DB: cover 넣기 (실패는 건너뜀)
+      end
+      J->>DB: 최근 두 달에 안 쓰인 cover 지우기
+      J->>DB: 그 fetch_run의 cover_fetched_count·cover_failed_count만 UPDATE
+      J->>C: 바로 새로 고침
+    else 거절·형식 바뀜·50권 미만·네트워크
+      J->>DB: fetch_run FAILED(reason, detail)
+      J-->>J: log.error, 앞 달 그대로, 다음 날 05:00 다시
+    end
+  end
+```
+
+- 판단 `shouldFetch(today)` (Asia/Seoul, 서버 켜질 때 `ApplicationReadyEvent`와 매일 05:00): ① 저장된 달 없으면 받음 ② 대상 = 지난달 ③ 그 달이 다음 달 3일 00:00 뒤에 저장됐으면 안 받음 ④ 3일 이후 그 달 실패가 2번이면 안 받음 ⑤ 오늘이 3일 이후면 받음 [확정] (설계 #7~#9, spec R1-2·R1-3·R1-6)
+- 받기 기록 쓰는 순서: 성공이면 `fetch_run` `SUCCEEDED`를 순위와 같은 트랜잭션에서 넣고 표지 수는 나중에 UPDATE, 실패면 `FAILED` 줄만 [확정] (사용자 승인, 2026-10-12, 인계 전 결정 #1). 표지 받는 중에 서버가 꺼져도 순위와 성공 기록은 남음
+- 요청: 세션 GET 1~2 + 순위 POST 17 + 판매 부수 POST 16, 한 번에 35건 이하(AC-12), 2초 이상 간격, User-Agent `chaekcheck (+<서비스 주소>)` [확정]. 순위 화면 토큰이 판매량 화면에도 통함(세션 GET 한 번이면 34건) (조사 2026-10-11)
+- 표지: 새 경로만, 2초 간격, 첫 달 최대 850건(약 28분), 실패한 표지만 건너뜀(그달 순위는 성공) [확정] (ADR-0075·0077)
+- 실패 이유 `failure_reason`: `session_failed`·`request_rejected`·`format_changed`·`too_few_books`·`network_error` [확정] (설계 #12)
+- 게시 허락은 답을 기다리지 않고 배포 [확정] (사용자, 2026-10-12). 답이 오면 출처 문구·표지 사용을 그 답에 맞춤
+
+### 받기 상태 (대상 달 하나)
+
+```mermaid
+stateDiagram-v2
+  state "비어있음" as Empty
+  state "저장됨" as Saved
+  state "실패1" as Fail1
+  state "실패2" as Fail2
+  [*] --> Empty: 그 달 3일 전
+  Empty --> Saved: 3일 받기 성공
+  Empty --> Fail1: 3일 받기 실패
+  Fail1 --> Saved: 4일 성공
+  Fail1 --> Fail2: 4일 실패
+  Fail2 --> [*]: 그달은 앞 달 그대로 (기록·로그)
+  Saved --> [*]
+```
+
+- 순위가 하나도 없을 때는 이 규칙과 별개로 켜질 때 받고, 실패하면 받을 때까지 매일 05:00에 다시 받는다 [확정]. 첫 배포가 1~2일이면 받은 뒤 3일에 한 번 더 받아 바꾼다 [확정]
+- 그림은 design-delta "받기 상태"와 같고 상태 이름만 영문 id + 한글 표시로 적음
+
+## 흐름 25: 인기 도서 화면 열기 (S13) — 설계됨(미구현, 사이클 10)
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant W as web S13
+  participant P as popular API
+  participant L as library
+  participant C as 공용 캐시
+  W->>P: GET /api/v1/popular-books?residenceRegionIds&workRegionIds&scope&visit&libraryIds
+  P->>P: 파라미터 검증 (400 validation_error)
+  P->>L: planSearch → 계획 도서관 (422 invalid_region)
+  P->>C: 최근 달 순위 + ISBN별 (bookId, libraryIds)
+  alt 저장된 달 없음
+    P-->>W: 200 month=null, categories=[] → "아직 인기 도서를 준비하고 있어요"
+  else 있음
+    P->>P: available = libraryIds ∩ 계획 ≠ ∅ (요청마다, 캐시 안 함)
+    P-->>W: 200 분류 17개 × 50권 {rank, title, coverUrl, bookId, available}
+  end
+  W->>P: GET covers/{coverId} (브라우저가 오래 저장)
+  Note over W: 그림이 안 열리면 제목 글자, available=false면 흐림
+```
+
+- 계획 파라미터는 웹이 브라우저에 저장한 검색 기준으로 만듦(`BookPage`와 같은 방식, AC-7). 검색 기준을 바꾸면 있음/흐림이 바뀜
+- 공용 캐시는 10분마다, 새 달 저장 직후 바로 새로 고침. 이용자별 겹침 계산은 캐시하지 않음 [확정] (ADR-0074)
+- 표지 응답 `Cache-Control: public, max-age=2592000, immutable`(30일), 없으면 404 `cover_not_found` → 제목 글자 [확정] (`api.md` "인기 도서")
+- 흐린 책(`available=false`)을 누르면 S15 신청 안내, 있는 책은 S14(흐름 26) [확정] (R6-1, R6-9)
+- 오류(요청 실패)면 "인기 도서를 불러오지 못했어요. 잠시 뒤에 다시 해 주세요." [확정] (flow S13)
+
+## 흐름 26: 가운데 창 열기 (S14, 앞의 3곳만 확인) — 설계됨(미구현, 사이클 10)
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant W as web S14
+  participant C as catalog
+  participant A as availability
+  W->>C: GET /api/v1/books/{bookId}?(같은 계획)
+  alt 404 book_not_found
+    C-->>W: 창 안에 "책을 찾을 수 없어요"
+  else 200
+    C-->>W: 제목·지은이·출판사(우리 값)
+    W->>A: SSE book-availabilities/stream (holdingLimit=3: 계획 순서 앞 3곳만)
+    A-->>W: 도서관별 결과 / 실패
+    W->>W: 그 3곳을 대출 가능·구독형 → 대출 중(예약 적은 순) → 실패 순으로
+  end
+```
+
+- 새 API 없이 지금 API를 씀. `holdingLimit` [안 이름] 동작은 [확정] (사용자: "가. 앞의 3곳만 확인 이걸로 해줘 api좀 손봐줘", 2026-10-12, `docs/cycles/10-popular-books/easy/2026-10-12-handoff-review.html` #1). 없으면 대출 현황 스트림은 지금과 같음 (`api.md`)
+- 표지는 격자에서 누른 그 `coverUrl`(없으면 제목 글자). 그 밖의 오류·끊김은 S3과 같은 오류 문구 [확정] (사용자 승인, 2026-10-12, 인계 전 결정 #4). 줄 모양·상태 글은 S3 줄과 같음(사이클 09 분류 표시 포함)
+- [책 검색 >>] → S3 `/books/{bookId}`, 뒤로 가기 → S13 보던 분류·쪽·스크롤 자리 [확정] (flow). 도서관 줄 → 그 도서관 사이트 책 페이지 새 창
 
 ## 화면 공통: 안내 줄과 검색 결과 머리 — 구현됨 (사이클 06 마무리, 2026-10-05)
 
@@ -799,4 +921,5 @@ sequenceDiagram
 - 동시 검색이 다 차거나(503 `server_busy`) IP별 한도를 넘으면(429 `too_many_requests`) 화면은 따로 안내 줄: 429 "검색을 너무 자주 했어요. 1분쯤 뒤에 다시 해 주세요.", 503 "지금 찾는 사람이 많아요. 잠시 뒤에 다시 해 주세요." 받은 결과는 남김 [확정] (사이클 08 spec R2) — 구현됨 (사이클 08), 흐름 22. (사이클 07까지: 두 경우 모두 일반 문구 "검색하지 못했어요. 잠시 뒤 다시 시도해 주세요.")
 - 사이클 08 (구현됨 (사이클 08)): `mobileSiteDiffers`인 도서관은 폭 640px 이하에서 결과 카드 이름 아래(바로 보기·직접 찾기·책 화면 줄)·가입 정보 창 "도서관 첫 화면"·"전자도서관에서 가입 안내 보기" 링크 옆에 YES24 폰 안내 [확정] 자리, 문구 "폰에서는 사이트가 다른 화면을 보여요. PC에서 열어 주세요" [확정] (사용자: 인계서 안 그대로, dev 세션 2026-10-11). 빠진 책은 "책을 찾을 수 없어요" 아래 "도서관 목록을 새로 받으면서 빠진 책일 수 있어요. 다시 검색해 주세요.", 빠진 소장은 책 화면 그 도서관 줄에 "이 도서관 목록에서 빠졌어요" [확정] (ADR-0070). 브라우저 `chaekcheck.searchSettings.v1`에서 정렬·완전 일치·역할을 쓰지 않고 남아 있으면 읽을 때 지움 [확정] (spec R1)
 - 사이클 08 (구현됨 (사이클 08)): 폰 설정 창은 바텀 시트 유지 [확정] (사용자 승인, 2026-10-11, `docs/cycles/08-polish-swap-memory/easy/2026-10-11-final-decisions.html`) (되돌림 `PHONE_SETTINGS_SHEET = false`). 폰 직접 찾기의 흐린 "정렬 없음 ⓘ"은 **검색 줄 끝**("N곳" 옆) — 처음 둔 결과 위 도구줄이 폰에서 숨겨져 옮김 (dev 12단계), 설계 자리("검색줄 둘째 줄 오른쪽 끝")와 같음. 돌아가기("← 돌아가기")와 ⓘ는 **S8·S9·S10만**, **S2(지역 고르기 창)는 바꾸지 않음** [확정] (사용자: "A. 그대로", dev 세션 2026-10-11; S2는 [저장]을 눌러야 저장되어 "즉시 저장" 안내가 맞지 않음). S10 ⓘ 문구 "고르는 즉시 이 브라우저에 저장돼요"(로그인 전)/"고르는 즉시 계정에 저장돼요"(로그인 뒤) [확정] (사용자, dev 세션 2026-10-11). S10 이름 찾기는 공백과 함께 가운뎃점(·)도 무시 [확정] (사용자 승인, 2026-10-11). 글꼴은 줄인 파일("Chaekcheck Barun")을 먼저 쓰고 드문 음절이 있을 때만 원래 나눔바른고딕을 받음
-- 사이클 09 — 설계됨(미구현, 사이클 09) (ADR-0071·0076, 흐름 23): 도서관 이름은 기관 이름만 보이고, 결과 카드(S1·S3)는 모든 폭에서 이름 다음 줄에 "교보 · 소장", S10 세 목록은 "이름 · 업체 · 대출 방식"(폰은 이름 아래 줄), 순번 2 이상이면 "· N번째 사이트". 요약 줄·지역 가져오기 창·직접 찾기 결과 이름 나열·가입 정보 창은 이름만. 분류 값이 없으면 이름만 [확정]. 교보 구독형 중 대여 9곳 가운데 8곳은 이름의 "(구독)"이 빠지고 분류가 "대여"로 보임 [확정] (spec R3)
+- 사이클 09 — 구현됨 (사이클 09) (ADR-0071·0076, 흐름 23): 도서관 이름은 기관 이름만 보이고, 결과 카드(S1·S3)는 모든 폭에서 이름 다음 줄에 "교보 · 소장", S10 세 목록은 "이름 · 업체 · 대출 방식"(폰은 이름 아래 줄), 순번 2 이상이면 "· N번째 사이트". 요약 줄·지역 가져오기 창·직접 찾기 결과 이름 나열·가입 정보 창은 이름만. 분류 값이 없으면 이름만 [확정]. 교보 구독형 중 대여 9곳 가운데 8곳은 이름의 "(구독)"이 빠지고 분류가 "대여"로 보임 [확정] (spec R3). S10 이름 찾기에서 같은 이름 여러 줄은 업체 글자 한글 가나다순(교보 → 북큐브 → 알라딘 → 자체 → 통합 포털 → YES24), 같은 이름·같은 업체는 순번 순 [확정] (사용자 승인, 2026-10-12, `docs/cycles/09-library-naming/easy/2026-10-12-retro-decisions.html` #1)
+- 사이클 10 — 설계됨(미구현, 사이클 10) (흐름 24~26, `module-map.md` "사이클 10 웹"): 머리에 "인기 도서" 링크(로고 오른쪽·로그인 왼쪽, S8·S9 제외), 로고 옆 설명 글 "전자도서관 대출 가능 확인"은 모든 폭에서 지움 [확정]. 폰에서 아래에서 올라오는 창 넷(S13c 분류 목록, S13i 도움말, S14 가운데 창, S15 신청 안내)은 손잡이 끌어내리기·ⓧ·바깥으로 닫히고 사이클 08 검색 설정 바텀 시트와 같은 부품 [확정] (사용자, 2026-10-11) [안 — 부품 나누기는 dev가 정함]. 표지는 작은 그림만, 큰 그림·확대 보기 없음, S12 `/about`에 표지 게시 중단 요청 안내(연락처는 배포 때) [확정] (handoff C10)
