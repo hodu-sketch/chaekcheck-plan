@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>업체 칸 누가 채우나</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+.pill{display:inline-block;border:1px solid var(--line);border-radius:8px;padding:4px 10px;background:var(--bg);margin:2px 0}
+.tag{color:var(--muted);font-size:.85em}
+.mocks{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start;margin:12px 0}
+.dev{border:2px dashed var(--line);border-radius:12px;padding:10px;font-size:15px;line-height:1.5;background:var(--bg)}
+.dev .lbl{font-size:13px;color:var(--muted);margin-bottom:6px}
+.dev.pc{flex:1 1 520px;max-width:600px}.dev.tab{flex:1 1 360px;max-width:420px}.dev.ph{flex:0 1 230px;width:230px}
+.rcard{display:grid;grid-template-columns:1.4fr 1fr .8fr;gap:8px;border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--card);margin:6px 0}
+.dev.ph .rcard{grid-template-columns:1fr}
+.rcard .t{font-weight:700}.rcard .m{color:var(--muted);font-size:13px}
+.lname{color:var(--accent);text-decoration:underline}
+.cls{color:var(--muted);font-size:13px}
+.lrow{display:flex;justify-content:space-between;align-items:center;gap:8px;border:1px solid var(--line);border-radius:8px;padding:6px 8px;background:var(--card);margin:4px 0}
+.btn{border:1px solid var(--line);border-radius:6px;padding:0 8px;font-size:13px;white-space:nowrap}
+.inp{border:1px solid var(--line);border-radius:6px;padding:4px 8px;background:var(--card);margin:4px 0}
+.logo{display:inline-block;width:14px;height:14px;border-radius:3px;background:var(--line);vertical-align:-2px;margin-right:4px}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">업체 칸을 누가 채우나<br>역할을 나눠 다시 골라 주세요.</p>
+<p class="sub">앞 페이지 1번(업체는 DB가 화면 종류에서 계산)에 "보통 칸에 수집 스크립트가 값을 쓰는 게 나은 것 같은데, 역할 분리를 잘 따져봐야 할 것 같아"라고 하셨습니다. 따져 본 결과 추천을 바꿉니다. 그리고 "나중에 새로운 도서관 유형이나 대출 방법이 생겨도 유동적이어야 해"라는 메모도 함께 봤습니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>지금 누가 무엇을 정하나</h2>
+<p class="gist">도서관에 대한 사실(화면 종류, 대출 방식)은 도서관 수집이 사이트를 열어 알아내고, seed 생성 스크립트가 서비스 DB로 옮깁니다. DB는 저장하고 확인만 합니다.</p>
+<svg viewBox="0 0 860 210" role="img" aria-label="역할">
+<rect x="10" y="20" width="250" height="150" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+<text x="24" y="48" font-size="17" font-weight="700" fill="var(--text)">도서관 수집 (확인 단계)</text>
+<text x="24" y="78" font-size="15" fill="var(--text)">사이트를 열어 알아냄:</text>
+<text x="24" y="102" font-size="15" fill="var(--text)">화면 종류, 권수,</text>
+<text x="24" y="126" font-size="15" fill="var(--text)">대출 방식</text>
+<text x="24" y="152" font-size="15" fill="var(--warn)" font-weight="700">+ 업체 (가 안)</text>
+<path d="M260 95 H300" stroke="var(--muted)" stroke-width="2"/><path d="M292 89 l8 6 -8 6" fill="none" stroke="var(--muted)" stroke-width="2"/>
+<rect x="302" y="45" width="200" height="100" rx="10" fill="var(--card)" stroke="var(--accent)" stroke-width="2"/>
+<text x="316" y="73" font-size="17" font-weight="700" fill="var(--text)">seed 생성 스크립트</text>
+<text x="316" y="101" font-size="15" fill="var(--text)">수집 결과를</text>
+<text x="316" y="125" font-size="15" fill="var(--text)">서비스 seed로 옮김</text>
+<path d="M502 95 H542" stroke="var(--muted)" stroke-width="2"/><path d="M534 89 l8 6 -8 6" fill="none" stroke="var(--muted)" stroke-width="2"/>
+<rect x="544" y="20" width="306" height="150" rx="10" fill="var(--card)" stroke="var(--accent)" stroke-width="2"/>
+<text x="558" y="48" font-size="17" font-weight="700" fill="var(--text)">서비스 DB</text>
+<text x="558" y="78" font-size="15" fill="var(--text)">저장, 허용 값·겹침 확인</text>
+<text x="558" y="112" font-size="15" fill="var(--muted)">서버는 화면 종류로</text>
+<text x="558" y="136" font-size="15" fill="var(--muted)">사이트 읽는 법을 고름</text>
+</svg>
+<p class="cap">근거: <code>docs/research/collection/1-libraries.md</code>(도서관 수집의 확인 단계가 화면 종류·권수·교보 대출 방식을 정함). 주황 글씨가 이번에 고를 것입니다.</p>
+<p>"화면 종류"는 서버가 사이트를 <b>어떻게 읽을지</b> 고르는 기술 값입니다(예: YES24는 화면이 세 가지라 V1·V2·V3). "업체"는 <b>누가 운영하나</b>라는 사실입니다. 지금은 화면 종류만 알면 업체가 정해지지만, 둘은 뜻이 다릅니다.</p>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>두 안</h2>
+<p class="gist">업체도 대출 방식처럼 도서관 수집이 알아낸 사실로 두는 안(가)을 추천합니다. 새 업체나 새 화면이 생겨도 DB 계산식을 고치지 않아도 됩니다.</p>
+<table>
+<tr><th>나중에 생기는 일</th><th>(가) 수집이 정해 보통 칸에 씀</th><th>(나) DB가 화면 종류에서 계산</th></tr>
+<tr><td>같은 업체가 새 화면을 냄 (예: YES24_V4)</td><td>수집이 업체 YES24로 적음. DB는 그대로</td><td>DB 계산식에 한 줄 더하는 변경 파일</td></tr>
+<tr><td>한 화면 종류를 다른 업체도 씀</td><td>수집이 사이트마다 다르게 적음</td><td>계산식으로는 나눌 수 없음. 칸을 바꿔야 함</td></tr>
+<tr><td>새 업체</td><td>허용 값에 하나 더함(변경 파일 한 줄)</td><td>계산식과 화면 종류를 함께 고침</td></tr>
+<tr><td>화면 종류와 업체가 어긋날 위험</td><td>있음 → seed 생성 스크립트 테스트로 막음</td><td>없음</td></tr>
+</table>
+
+<div class="item">
+<h3>(가) 업체는 도서관 수집이 정하고, seed 생성 스크립트가 보통 칸에 씀. DB는 허용 값만 확인 <span class="an">[안]</span></h3>
+<p>지금 있는 2,663곳은 이번 변경 파일이 화면 종류 대응표(교보 일반·교보 구독형 → 교보 등)로 한 번 채웁니다. 앞으로 새 도서관은 seed 생성 스크립트가 같은 대응표로 채우고, 사이트가 대응표와 다르면(다른 업체가 같은 화면을 씀 등) 도서관 수집이 따로 적은 값을 씁니다. DB는 업체 값이 6개(<code>KYOBO</code> 등) 중 하나인지만 확인합니다.</p>
+<p>함께 바뀌는 것:</p>
+<ul>
+<li>대응표는 seed 생성 스크립트 한 곳에만 둡니다. DB에는 계산식이 없습니다.</li>
+<li>앞 페이지에서 승인하신 "통합 포털만 대출 방식을 비울 수 있음" 규칙은 "화면 종류가 통합 포털"이 아니라 "업체가 통합 포털"을 보게 맞춥니다.</li>
+<li>spec R2 "업체는 화면 종류에서 정한다"는 "지금은 화면 종류 대응표로 정하고, 사이트가 다르면 도서관 수집이 따로 적는다"로 고칩니다.</li>
+<li>seed 생성 스크립트 테스트에 "대응표와 다른 업체는 수집이 적은 곳뿐"을 더합니다.</li>
+</ul>
+<p class="rec">추천: (가). 사용자 말씀대로 역할이 나뉘고(사실은 수집, 확인은 DB), 메모하신 "유동적"에 더 맞습니다. 처음 추천(나)에서 바꾼 이유는 이 두 가지입니다.</p>
+</div>
+
+<div class="item">
+<h3>(나) 업체는 DB가 화면 종류에서 계산 (처음 제안) <span class="an">[안]</span></h3>
+<p>화면 종류와 업체가 절대 어긋나지 않습니다. 대신 새 업체·새 화면마다 DB 계산식을 고치는 변경 파일이 필요하고, 한 화면 종류를 두 업체가 쓰면 칸 방식을 바꿔야 합니다.</p>
+</div>
+<p class="alt">둘 중 하나만 승인하고 다른 하나는 미승인으로 보내 주세요.</p>
+</section>
+
+<p class="foot">원본: <code>docs/cycles/09-library-naming/architect-proposal.md</code> 결정 1, <code>spec.md</code> R2, <code>docs/research/collection/1-libraries.md</code>. 앞 페이지 <code>2026-10-11-design-decisions.html</code> 1번 질문에 대한 다시 낸 제안. 작성 2026-10-11.</p>
+</main>
+</body>
+</html>

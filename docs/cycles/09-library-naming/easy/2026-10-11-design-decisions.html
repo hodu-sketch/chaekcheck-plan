@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 09 설계 대안</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+.pill{display:inline-block;border:1px solid var(--line);border-radius:8px;padding:4px 10px;background:var(--bg);margin:2px 0}
+.tag{color:var(--muted);font-size:.85em}
+.mocks{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start;margin:12px 0}
+.dev{border:2px dashed var(--line);border-radius:12px;padding:10px;font-size:15px;line-height:1.5;background:var(--bg)}
+.dev .lbl{font-size:13px;color:var(--muted);margin-bottom:6px}
+.dev.pc{flex:1 1 520px;max-width:600px}.dev.tab{flex:1 1 360px;max-width:420px}.dev.ph{flex:0 1 230px;width:230px}
+.rcard{display:grid;grid-template-columns:1.4fr 1fr .8fr;gap:8px;border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--card);margin:6px 0}
+.dev.ph .rcard{grid-template-columns:1fr}
+.rcard .t{font-weight:700}.rcard .m{color:var(--muted);font-size:13px}
+.lname{color:var(--accent);text-decoration:underline}
+.cls{color:var(--muted);font-size:13px}
+.lrow{display:flex;justify-content:space-between;align-items:center;gap:8px;border:1px solid var(--line);border-radius:8px;padding:6px 8px;background:var(--card);margin:4px 0}
+.btn{border:1px solid var(--line);border-radius:6px;padding:0 8px;font-size:13px;white-space:nowrap}
+.inp{border:1px solid var(--line);border-radius:6px;padding:4px 8px;background:var(--card);margin:4px 0}
+.logo{display:inline-block;width:14px;height:14px;border-radius:3px;background:var(--line);vertical-align:-2px;margin-right:4px}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">정하신 규칙을 DB·서버·화면에서<br>어떻게 만들지 골라 주세요.</p>
+<p class="sub">설계 제안 에이전트(architect)가 dev 코드(2026-10-11)를 읽고 낸 대안입니다. 고르실 것은 9개이고, 고르신 것은 사이클 08 회고 뒤 설계 문서(<code>design-delta.md</code>)에 그대로 옮깁니다. 회고에서 사이클 08이 다르게 만든 것이 나오면 그 부분만 다시 여쭙니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>무엇이 바뀌는지 한 장으로</h2>
+<p class="gist">도서관 표에 칸 둘(업체, 순번)이 생기고, 겹침 확인이 "이름" 하나에서 "이름·업체·대출 방식·순번" 넷으로 바뀝니다. 서버는 이 값을 화면에 보내고, 화면이 "교보 · 소장" 글자를 만듭니다.</p>
+<svg viewBox="0 0 860 300" role="img" aria-label="바뀌는 곳">
+<rect x="10" y="20" width="300" height="250" rx="10" fill="var(--card)" stroke="var(--accent)" stroke-width="2"/>
+<text x="24" y="48" font-size="18" font-weight="700" fill="var(--text)">도서관 표 (DB)</text>
+<text x="24" y="80" font-size="16" fill="var(--text)">이름 — 괄호를 뗌</text>
+<text x="24" y="108" font-size="16" fill="var(--text)">화면 종류 — 그대로</text>
+<text x="24" y="136" font-size="16" fill="var(--warn)">업체 — 새 칸</text>
+<text x="24" y="164" font-size="16" fill="var(--text)">대출 방식 — 모두 채움</text>
+<text x="24" y="192" font-size="16" fill="var(--warn)">순번 — 새 칸</text>
+<text x="24" y="232" font-size="15" fill="var(--muted)">겹침 확인: 이름·업체·</text>
+<text x="24" y="254" font-size="15" fill="var(--muted)">대출 방식·순번</text>
+<path d="M310 145 H380" stroke="var(--muted)" stroke-width="2"/><path d="M372 139 l8 6 -8 6" fill="none" stroke="var(--muted)" stroke-width="2"/>
+<rect x="382" y="95" width="210" height="100" rx="10" fill="var(--card)" stroke="var(--accent)" stroke-width="2"/>
+<text x="396" y="125" font-size="18" font-weight="700" fill="var(--text)">서버</text>
+<text x="396" y="155" font-size="15" fill="var(--text)">도서관 목록·검색에</text>
+<text x="396" y="177" font-size="15" fill="var(--text)">값 세 개를 실어 보냄</text>
+<path d="M592 145 H648" stroke="var(--muted)" stroke-width="2"/><path d="M640 139 l8 6 -8 6" fill="none" stroke="var(--muted)" stroke-width="2"/>
+<rect x="650" y="95" width="200" height="100" rx="10" fill="var(--card)" stroke="var(--accent)" stroke-width="2"/>
+<text x="664" y="125" font-size="18" font-weight="700" fill="var(--text)">화면</text>
+<text x="664" y="155" font-size="15" fill="var(--text)">"교보 · 소장" 글자,</text>
+<text x="664" y="177" font-size="15" fill="var(--text)">이름 찾기</text>
+</svg>
+<p class="cap">주황 글씨가 새로 생기는 칸입니다. 도서관 번호는 그대로라 내 도서관·로그인 계정은 영향이 없습니다.</p>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>업체와 순번을 DB에 어떻게 두나</h2>
+<p class="gist">업체는 화면 종류에서 정해지므로 DB가 직접 계산해 칸에 넣게 하고, 순번은 보통 1인 칸을 하나 둡니다.</p>
+
+<div class="item">
+<h3>업체는 DB가 화면 종류에서 계산해 넣는 칸으로 <span class="an">[안]</span></h3>
+<p>도서관 표에 "업체" 칸을 더하되, 사람이나 스크립트가 값을 쓰지 않습니다. 화면 종류가 "교보 일반"이면 DB가 알아서 "교보"를 넣습니다(PostgreSQL의 "생성 칸" 기능: 값을 미리 계산해 저장). 그래서 화면 종류와 업체가 어긋날 수 없습니다.</p>
+<p>예: 동대문구립도서관 230번은 화면 종류가 YES24라서 업체 칸에 YES24가 들어갑니다. 누군가 업체만 "교보"로 바꾸려 하면 DB가 거절합니다.</p>
+<svg viewBox="0 0 660 215" role="img"><text x="10" y="22" font-size="15" font-weight="400" fill="var(--muted)" text-anchor="start">도서관 표의 한 줄</text><rect x="10" y="32" width="70" height="34" rx="8" fill="var(--code-bg)" stroke="var(--line)" stroke-width="2"/><text x="20" y="55" font-size="15" font-weight="700" fill="var(--text)" text-anchor="start">번호</text><rect x="80" y="32" width="190" height="34" rx="8" fill="var(--code-bg)" stroke="var(--line)" stroke-width="2"/><text x="90" y="55" font-size="15" font-weight="700" fill="var(--text)" text-anchor="start">이름</text><rect x="270" y="32" width="150" height="34" rx="8" fill="var(--code-bg)" stroke="var(--line)" stroke-width="2"/><text x="280" y="55" font-size="15" font-weight="700" fill="var(--text)" text-anchor="start">화면 종류</text><rect x="420" y="32" width="120" height="34" rx="8" fill="var(--code-bg)" stroke="var(--line)" stroke-width="2"/><text x="430" y="55" font-size="15" font-weight="700" fill="var(--text)" text-anchor="start">업체</text><rect x="10" y="66" width="70" height="34" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="2"/><text x="20" y="89" font-size="15" font-weight="400" fill="var(--text)" text-anchor="start">230</text><rect x="80" y="66" width="190" height="34" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="2"/><text x="90" y="89" font-size="15" font-weight="400" fill="var(--text)" text-anchor="start">동대문구립도서관</text><rect x="270" y="66" width="150" height="34" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="2"/><text x="280" y="89" font-size="15" font-weight="400" fill="var(--text)" text-anchor="start">YES24_V2</text><rect x="420" y="66" width="120" height="34" rx="8" fill="var(--warn-bg)" stroke="var(--line)" stroke-width="2"/><text x="430" y="89" font-size="15" font-weight="400" fill="var(--text)" text-anchor="start">YES24</text><path d="M445 110 L445 140" stroke="var(--warn)" stroke-width="2" fill="none"/><path d="M441.1 131.9 L445 140 L448.9 131.9" stroke="var(--warn)" stroke-width="2" fill="none"/><path d="M445 140 L530 140" stroke="var(--warn)" stroke-width="2" fill="none"/><path d="M521.9 143.9 L530 140 L521.9 136.1" stroke="var(--warn)" stroke-width="2" fill="none"/><text x="400" y="128" font-size="14" font-weight="400" fill="var(--text)" text-anchor="start"></text><rect x="380" y="150" width="260" height="54" rx="8" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="2"/><text x="392" y="172" font-size="15" font-weight="400" fill="var(--text)" text-anchor="start">DB가 계산: YES24_V2 → YES24</text><text x="392" y="194" font-size="14" font-weight="400" fill="var(--muted)" text-anchor="start">사람·스크립트는 쓸 수 없음</text><rect x="10" y="150" width="330" height="54" rx="8" fill="var(--no-bg)" stroke="var(--no)" stroke-width="2"/><text x="22" y="172" font-size="15" font-weight="400" fill="var(--text)" text-anchor="start">업체만 "교보"로 바꾸려 하면</text><text x="22" y="194" font-size="15" font-weight="700" fill="var(--no)" text-anchor="start">DB가 거절</text></svg>
+<p class="cap">업체 칸(주황)은 화면 종류 칸에서 DB가 계산해 채웁니다. 그래서 둘이 어긋날 수 없습니다.</p>
+<p class="alt"><b>다른 선택 — 칸 없이 겹침 확인에만 계산식을 씀</b>: 표가 그대로지만, 같은 대응표가 DB·서버·스크립트 세 곳에 생기고, 겹침을 찾아볼 때마다 계산식을 다시 써야 합니다.</p>
+<p class="alt"><b>다른 선택 — 보통 칸에 스크립트가 값을 씀</b>: 나중에 같은 화면 종류를 다른 업체가 쓰게 되어도 따로 적을 수 있지만, 지금은 그런 곳이 없고 어긋날 위험이 생깁니다.</p>
+<p class="alt">알아 둘 것: 나중에 실물 도서관(화면 종류가 없는 곳)이 들어오면 업체가 비어 같은 이름끼리 겹칠 수 있습니다. 실물 도서관 사이클에서 다시 봅니다. 근거: PostgreSQL 18 공식 문서 Generated Columns, https://www.postgresql.org/docs/18/ddl-generated-columns.html (확인 2026-10-11).</p>
+<p class="rec">추천: DB가 계산해 넣는 칸.</p>
+</div>
+<div class="item" style="background:var(--accent-bg);border-radius:10px;padding:16px 18px">
+<h3>질문: 수집 스크립트가 업체를 적는 보통 칸이 낫지 않나? 역할 나누기를 따져 보면</h3>
+<p><b>따져 보니 말씀하신 쪽이 역할 나누기에 더 맞습니다. 그래서 추천을 바꿔 새 탭 페이지("업체 칸을 누가 채우나")에 다시 냈습니다.</b></p>
+<p>지금 역할은 이렇게 나뉘어 있습니다(<code>docs/research/collection/1-libraries.md</code>).</p>
+<table>
+<tr><th>누가</th><th>무엇을 정하나</th></tr>
+<tr><td>도서관 수집의 "확인" 단계</td><td>사이트를 열어 화면 종류, 권수, 교보의 대출 방식(소장·대여·혼합)을 알아냄</td></tr>
+<tr><td>seed 생성 스크립트</td><td>수집 결과를 서비스 DB에 넣을 seed로 옮김</td></tr>
+<tr><td>서비스 DB</td><td>저장하고, 허용된 값인지·겹치는지만 확인</td></tr>
+<tr><td>서버의 사이트 읽는 부분</td><td>화면 종류로 사이트를 어떻게 읽을지 고름</td></tr>
+</table>
+<p>"화면 종류"는 사이트를 <b>어떻게 읽을지</b>를 위한 값이고, "업체"는 <b>누가 운영하나</b>라는 사실입니다. 지금은 둘이 1:1이지만 뜻이 다릅니다. 대출 방식처럼 업체도 도서관 수집이 알아낸 사실로 두면, 처음 제안(DB가 화면 종류에서 계산)보다 새 업체·새 화면이 생겼을 때 덜 묶입니다. 자세한 비교와 그림은 새 페이지에 있습니다. 이 칩은 고르지 않으셔도 됩니다.</p>
+</div>
+
+<div class="item">
+<h3>순번 칸은 보통 1, 스크립트가 그때그때 셈 <span class="an">[안]</span></h3>
+<p>순번 칸은 따로 적지 않으면 1입니다. seed 생성 스크립트는 이름·업체·대출 방식이 같은 묶음 안에서 서비스 번호가 작은 곳부터 1, 2, 3을 셉니다(꺼진 도서관도 셈). 2 이상이 나오면 목록을 보여 주고, dev가 그 곳만 순번을 고칩니다. 지금은 모든 도서관이 1입니다(부여대왕초 겹침이 풀려서).</p>
+<svg viewBox="0 0 640 170" role="img"><text x="10" y="20" font-size="15" font-weight="400" fill="var(--muted)" text-anchor="start">같은 이름·업체·대출 방식 묶음</text><rect x="10" y="32" width="230" height="36" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="2"/><text x="22" y="56" font-size="15" font-weight="400" fill="var(--text)" text-anchor="start">서비스 번호 512</text><rect x="250" y="32" width="60" height="36" rx="8" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="2"/><text x="280" y="56" font-size="16" font-weight="700" fill="var(--text)" text-anchor="middle">1</text><rect x="10" y="76" width="230" height="36" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="2"/><text x="22" y="100" font-size="15" font-weight="400" fill="var(--text)" text-anchor="start">서비스 번호 1830</text><rect x="250" y="76" width="60" height="36" rx="8" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="2"/><text x="280" y="100" font-size="16" font-weight="700" fill="var(--text)" text-anchor="middle">2</text><rect x="10" y="120" width="230" height="36" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="2"/><text x="22" y="144" font-size="15" font-weight="400" fill="var(--text)" text-anchor="start">서비스 번호 2401</text><rect x="250" y="120" width="60" height="36" rx="8" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="2"/><text x="280" y="144" font-size="16" font-weight="700" fill="var(--text)" text-anchor="middle">3</text><text x="330" y="60" font-size="15" font-weight="400" fill="var(--text)" text-anchor="start">번호가 작은 곳부터</text><text x="330" y="82" font-size="15" font-weight="400" fill="var(--text)" text-anchor="start">1, 2, 3</text><text x="330" y="120" font-size="15" font-weight="400" fill="var(--muted)" text-anchor="start">화면: 2부터 "· 2번째 사이트"</text></svg>
+<p class="cap">순번은 스크립트가 셀 때마다 서비스 번호 순서로 다시 셉니다(예시 번호는 그림용). 지금은 모든 도서관이 1입니다.</p>
+<p class="alt"><b>다른 선택 — 한 번 붙은 순번은 고정하고 새로 온 곳만 다음 번호</b>: "2번째 사이트"가 바뀌지 않지만, 스크립트가 지금 순번을 기억할 파일을 따로 두거나, 이미 넣은 seed를 고쳐 DB를 다시 만들어야 합니다.</p>
+<p class="rec">추천: 그때그때 셈. 지금은 2 이상이 하나도 없어 가장 단순한 쪽으로 갑니다.</p>
+</div>
+
+<div class="item">
+<h3>묶음 가운데 도서관 이름을 고치면 뒤 순번이 당겨져도 됨 <span class="an">[안]</span></h3>
+<p>위 "그때그때 셈"을 고르면 생기는 일입니다. 예: 같은 묶음에 순번 1·2·3이 있는데 2번째 사이트의 학교 이름을 확인해 고치면, 그 곳은 묶음에서 빠져 1이 되고, 3이던 곳은 다음에 셀 때 2가 됩니다. 화면에서 "3번째 사이트"가 "2번째 사이트"로 바뀝니다.</p>
+<svg viewBox="0 0 660 190" role="img"><text x="10" y="20" font-size="15" font-weight="700" fill="var(--muted)" text-anchor="start">고치기 전</text><text x="370" y="20" font-size="15" font-weight="700" fill="var(--muted)" text-anchor="start">2번째 사이트 이름을 고친 뒤</text><rect x="10" y="32" width="200" height="36" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="2"/><text x="22" y="56" font-size="15" font-weight="400" fill="var(--text)" text-anchor="start">○○초등학교</text><rect x="220" y="32" width="50" height="36" rx="8" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="2"/><text x="245" y="56" font-size="16" font-weight="700" fill="var(--text)" text-anchor="middle">1</text><rect x="370" y="32" width="200" height="36" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="2"/><text x="382" y="56" font-size="15" font-weight="400" fill="var(--text)" text-anchor="start">○○초등학교</text><rect x="580" y="32" width="50" height="36" rx="8" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="2"/><text x="605" y="56" font-size="16" font-weight="700" fill="var(--text)" text-anchor="middle">1</text><rect x="10" y="76" width="200" height="36" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="2"/><text x="22" y="100" font-size="15" font-weight="400" fill="var(--text)" text-anchor="start">○○초등학교</text><rect x="220" y="76" width="50" height="36" rx="8" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="2"/><text x="245" y="100" font-size="16" font-weight="700" fill="var(--text)" text-anchor="middle">2</text><rect x="370" y="76" width="200" height="36" rx="8" fill="var(--ok-bg)" stroke="var(--line)" stroke-width="2"/><text x="382" y="100" font-size="15" font-weight="400" fill="var(--text)" text-anchor="start">△△초등학교</text><rect x="580" y="76" width="50" height="36" rx="8" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="2"/><text x="605" y="100" font-size="16" font-weight="700" fill="var(--text)" text-anchor="middle">1</text><rect x="10" y="120" width="200" height="36" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="2"/><text x="22" y="144" font-size="15" font-weight="400" fill="var(--text)" text-anchor="start">○○초등학교</text><rect x="220" y="120" width="50" height="36" rx="8" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="2"/><text x="245" y="144" font-size="16" font-weight="700" fill="var(--text)" text-anchor="middle">3</text><rect x="370" y="120" width="200" height="36" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="2"/><text x="382" y="144" font-size="15" font-weight="400" fill="var(--text)" text-anchor="start">○○초등학교</text><rect x="580" y="120" width="50" height="36" rx="8" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="2"/><text x="605" y="144" font-size="16" font-weight="700" fill="var(--text)" text-anchor="middle">2</text><path d="M285 82 L355 82" stroke="var(--muted)" stroke-width="2" fill="none"/><path d="M346.9 85.9 L355 82 L346.9 78.1" stroke="var(--muted)" stroke-width="2" fill="none"/><text x="640" y="180" font-size="15" font-weight="700" fill="var(--warn)" text-anchor="end">3 → 2로 당겨짐</text></svg>
+<p class="cap">가운데 사이트가 제 이름(초록)을 찾아 묶음에서 빠지면, 마지막 사이트는 다음에 셀 때 3에서 2가 됩니다.</p>
+<p class="alt"><b>다른 선택 — 당겨지지 않게</b>: 위 "순번 고정" 안을 골라야 합니다.</p>
+<p class="rec">추천: 당겨져도 됨. 순번은 이름을 확인하기 전까지 임시로 구분하는 표시이고, 도서관 번호와 내 도서관은 그대로입니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>이미 있는 이름과 대출 방식을 어떻게 바꾸나</h2>
+<p class="gist">사이클 08이 이름을 고친 방식(이미 넣은 seed는 그대로 두고, 번호로 고치는 변경 파일을 하나 더함)을 그대로 씁니다.</p>
+
+<div class="item">
+<h3>이름은 번호로 고치는 변경 파일을 하나 더하고, 목록은 사이클 08의 이름 고침 목록에 이어 적음 <span class="an">[안]</span></h3>
+<p>DB 변경 파일(Liquibase changeset) 하나에 "230번이 '동대문구립도서관(YES24)'이면 '동대문구립도서관'으로" 같은 줄을 약 285개 적습니다. 옛 이름이 그대로일 때만 바뀌므로 두 번 돌려도 같습니다. 고친 목록은 사이클 08이 만든 <code>name_overrides.tsv</code>에 이어 적어, 다음에 seed를 다시 만들어도 괄호가 다시 붙지 않게 합니다.</p>
+<p>사이클 08이 434·456에 붙인 "(북큐브)"도 이때 뗍니다. 같은 학교의 다른 사이트(745 교보, 2239 YES24)와 업체가 달라 괄호 없이도 겹치지 않습니다.</p>
+<p>변경 파일 안 순서: 이름 겹침 규칙을 지움 → 이름을 고침 → 대출 방식을 채움 → 업체·순번 칸을 더함 → 새 겹침 규칙을 검. 새 규칙을 마지막에 걸어야 바꾸는 도중에 걸리지 않습니다.</p>
+<svg viewBox="0 0 660 225" role="img"><rect x="10" y="10" width="300" height="120" rx="8" fill="var(--no-bg)" stroke="var(--no)" stroke-width="2"/><text x="22" y="36" font-size="15" font-weight="700" fill="var(--text)" text-anchor="start">다른 선택: seed 파일 직접 고침</text><text x="22" y="62" font-size="15" font-weight="400" fill="var(--text)" text-anchor="start">로컬 DB 지우고 다시 만듦</text><text x="22" y="86" font-size="15" font-weight="400" fill="var(--text)" text-anchor="start">책 목록 다시 가져오기</text><text x="22" y="110" font-size="15" font-weight="400" fill="var(--muted)" text-anchor="start">(지금 36~41분)</text><rect x="330" y="10" width="320" height="120" rx="8" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/><text x="342" y="36" font-size="15" font-weight="700" fill="var(--text)" text-anchor="start">추천: 변경 파일 하나 더함</text><text x="342" y="62" font-size="15" font-weight="400" fill="var(--text)" text-anchor="start">지금 DB 위에 그대로 적용</text><text x="342" y="86" font-size="15" font-weight="400" fill="var(--text)" text-anchor="start">옛 이름일 때만 바꿈</text><text x="342" y="110" font-size="15" font-weight="400" fill="var(--muted)" text-anchor="start">(사이클 08과 같은 방식)</text><rect x="10" y="160" width="124" height="56" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/><text x="72.0" y="182" font-size="15" font-weight="700" fill="var(--text)" text-anchor="middle">1</text><text x="72.0" y="204" font-size="13" font-weight="400" fill="var(--text)" text-anchor="middle">이름 겹침 규칙 지움</text><rect x="138" y="160" width="124" height="56" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/><text x="200.0" y="182" font-size="15" font-weight="700" fill="var(--text)" text-anchor="middle">2</text><text x="200.0" y="204" font-size="13" font-weight="400" fill="var(--text)" text-anchor="middle">이름 고침</text><rect x="266" y="160" width="124" height="56" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/><text x="328.0" y="182" font-size="15" font-weight="700" fill="var(--text)" text-anchor="middle">3</text><text x="328.0" y="204" font-size="13" font-weight="400" fill="var(--text)" text-anchor="middle">대출 방식 채움</text><rect x="394" y="160" width="124" height="56" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/><text x="456.0" y="182" font-size="15" font-weight="700" fill="var(--text)" text-anchor="middle">4</text><text x="456.0" y="204" font-size="13" font-weight="400" fill="var(--text)" text-anchor="middle">업체·순번 칸 더함</text><rect x="522" y="160" width="124" height="56" rx="8" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="2"/><text x="584.0" y="182" font-size="15" font-weight="700" fill="var(--text)" text-anchor="middle">5</text><text x="584.0" y="204" font-size="13" font-weight="400" fill="var(--text)" text-anchor="middle">새 겹침 규칙 검</text><text x="10" y="150" font-size="15" font-weight="400" fill="var(--muted)" text-anchor="start">변경 파일 안의 순서</text></svg>
+<p class="cap">위: 두 방법의 차이. 아래: 추천 방법의 변경 파일 안에서 일어나는 순서. 새 겹침 규칙(주황)을 맨 마지막에 겁니다.</p>
+<p class="alt"><b>다른 선택 — 이미 넣은 seed 파일을 직접 고침</b>: seed 파일이 그대로 정답이 되지만, 로컬 DB를 지우고 다시 만들어야 하고 책 목록도 다시 가져와야 합니다(지금 가져오기 36~41분). 사이클 08 방식과도 갈립니다.</p>
+<p class="rec">추천: 변경 파일 하나 더함. DB를 다시 만들지 않습니다.</p>
+</div>
+
+<div class="item">
+<h3>대출 방식은 정하신 규칙대로 채우고, 통합 포털만 비울 수 있게 DB가 확인 <span class="an">[안]</span></h3>
+<p>채우는 값은 앞 페이지에서 정하신 규칙 그대로입니다. 북큐브 구독 4곳의 서비스 번호는 339 부산, 380 제주꿈바당어린이, 386 진천군립, 705 한양대 에리카입니다(이름으로 찾은 번호라 dev가 다시 맞춰 봄).</p>
+<p>여기에 DB 규칙을 하나 더합니다: "통합 포털이면 대출 방식이 비어 있어야 하고, 아니면 반드시 있어야 한다." 앞으로 seed가 대출 방식을 빠뜨리면 DB가 거절합니다.</p>
+<svg viewBox="0 0 660 160" role="img"><rect x="220" y="10" width="220" height="44" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/><text x="330" y="38" font-size="16" font-weight="700" fill="var(--text)" text-anchor="middle">통합 포털인가?</text><path d="M270 54 L150 90" stroke="var(--muted)" stroke-width="2" fill="none"/><path d="M156.6 83.9 L150 90 L158.9 91.4" stroke="var(--muted)" stroke-width="2" fill="none"/><text x="180" y="74" font-size="15" font-weight="400" fill="var(--text)" text-anchor="end">예</text><path d="M390 54 L510 90" stroke="var(--muted)" stroke-width="2" fill="none"/><path d="M501.1 91.4 L510 90 L503.4 83.9" stroke="var(--muted)" stroke-width="2" fill="none"/><text x="480" y="74" font-size="15" font-weight="400" fill="var(--text)" text-anchor="start">아니요</text><rect x="20" y="92" width="260" height="58" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="2"/><text x="150" y="116" font-size="15" font-weight="400" fill="var(--text)" text-anchor="middle">대출 방식은 비어 있어야 함</text><text x="150" y="138" font-size="14" font-weight="400" fill="var(--no)" text-anchor="middle">값이 있으면 거절</text><rect x="380" y="92" width="260" height="58" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="2"/><text x="510" y="116" font-size="15" font-weight="400" fill="var(--text)" text-anchor="middle">대출 방식이 꼭 있어야 함</text><text x="510" y="138" font-size="14" font-weight="400" fill="var(--no)" text-anchor="middle">비어 있으면 거절</text></svg>
+<p class="cap">DB가 도서관을 넣거나 고칠 때마다 이 갈림길로 확인합니다. seed가 대출 방식을 빠뜨리면 그 자리에서 멈춥니다.</p>
+<p class="alt"><b>다른 선택 — DB 규칙 없이 테스트로만 지킴</b>: 규칙이 하나 덜 생기지만, 빠뜨려도 조용히 넘어가 화면에 업체만 보입니다(통합 포털처럼 보임).</p>
+<p class="rec">추천: DB가 확인.</p>
+</div>
+<div class="item" style="background:var(--accent-bg);border-radius:10px;padding:16px 18px">
+<h3>메모: 나중에 새 도서관 유형이나 대출 방법이 생겨도 유동적이어야 함</h3>
+<p><b>승인하신 규칙은 그대로 두고, 바뀔 때 드는 일을 적어 둡니다.</b></p>
+<table>
+<tr><th>나중에 생기는 일</th><th>해야 할 일</th></tr>
+<tr><td>새 대출 방법(예: 소장·구독 말고 다른 방식)</td><td>대출 방식 허용 값에 하나 더함(DB 변경 파일 한 줄), 화면 글자 하나 더함. 지금 규칙이 없어도 허용 값 목록은 이미 있어서 같은 일</td></tr>
+<tr><td>통합 포털처럼 대출 방식을 하나로 말할 수 없는 새 유형</td><td>"비어 있어도 되는 곳" 조건에 그 유형을 더함(DB 변경 파일 한 줄)</td></tr>
+<tr><td>실물 도서관(화면 종류 없음)</td><td>지금 규칙은 화면 종류가 없으면 확인하지 않아 그대로 들어감</td></tr>
+</table>
+<p>어느 경우든 DB 변경 파일 하나로 바꿀 수 있고, 이미 있는 도서관 값은 다시 쓰지 않아도 됩니다. 새 탭 페이지에서 업체 칸을 도서관 수집이 채우는 쪽으로 고르시면, 이 규칙도 "화면 종류가 통합 포털"이 아니라 "업체가 통합 포털"을 보게 맞춥니다.</p>
+</div>
+
+<div class="item">
+<h3>"진천군립도서관 대여형"은 "진천군립도서관"으로 <span class="an">[안]</span></h3>
+<p>북큐브 386번 이름에 괄호가 아닌 "대여형"이 들어 있습니다. 정하신 규칙은 "이름 끝의 괄호"만 떼므로 이 이름은 그대로 남고, 화면에 "진천군립도서관 대여형 · 북큐브 · 구독"처럼 보입니다.</p>
+<p>제안: "대여형"을 떼고 "진천군립도서관 · 북큐브 · 구독"으로 둡니다. 다른 진천군립도서관 사이트가 있더라도 업체나 대출 방식이 다르면 겹치지 않습니다(dev가 확인).</p>
+<svg viewBox="0 0 660 90" role="img"><rect x="10" y="10" width="300" height="70" rx="8" fill="var(--no-bg)" stroke="var(--no)" stroke-width="2"/><text x="22" y="36" font-size="14" font-weight="400" fill="var(--muted)" text-anchor="start">그대로 두면</text><text x="22" y="62" font-size="14" font-weight="400" fill="var(--text)" text-anchor="start">진천군립도서관 대여형 · 북큐브 · 구독</text><rect x="340" y="10" width="300" height="70" rx="8" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/><text x="352" y="36" font-size="14" font-weight="400" fill="var(--muted)" text-anchor="start">떼면 (추천)</text><text x="352" y="62" font-size="15" font-weight="400" fill="var(--text)" text-anchor="start">진천군립도서관 · 북큐브 · 구독</text></svg>
+<p class="cap">"대여형"과 분류의 "구독"이 함께 보이는 것을 피합니다.</p>
+<p class="alt"><b>다른 선택 — 그대로 둠</b>: 사이트가 쓰는 이름 그대로지만, 분류와 같은 말이 이름에도 남습니다.</p>
+<p class="rec">추천: 뗌.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>서버와 화면</h2>
+<p class="gist">서버는 값(업체·대출 방식·순번)만 보내고, 우리말 글자는 화면이 만듭니다. 지금 가입 조건 같은 다른 값도 이렇게 보냅니다.</p>
+
+<div class="item">
+<h3>서버는 값 세 개를 보내고 화면이 "교보 · 소장" 글자를 만듦 <span class="an">[안]</span></h3>
+<p>도서관 목록(<code>GET /api/v1/libraries</code>)과 검색 결과 스트림의 도서관 정보에 칸 세 개를 더합니다. 예:</p>
+<p><code>{"id":230, "name":"동대문구립도서관", "vendor":"YES24", "lendingModel":"OWNED", "orderNo":1}</code></p>
+<p>화면은 "YES24 · 소장"으로 바꿔 보이고, 순번이 2 이상이면 "· 2번째 사이트"를 붙입니다. 값이 없으면(서버와 화면 배포 순서가 어긋남) 이름만 보입니다.</p>
+<p>도서관 목록 응답이 커집니다: 지금 약 671KB(압축 뒤 61KB)에서 압축 전 약 130KB 늘어날 것으로 봅니다(추정, dev가 잼). 지금 문서의 "대출 방식은 화면에 보내지 않음" 기록이 바뀝니다.</p>
+<svg viewBox="0 0 660 150" role="img"><rect x="10" y="30" width="170" height="80" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="2"/><text x="95" y="58" font-size="16" font-weight="700" fill="var(--text)" text-anchor="middle">DB</text><text x="95" y="84" font-size="14" font-weight="400" fill="var(--text)" text-anchor="middle">vendor = YES24</text><path d="M180 70 L230 70" stroke="var(--muted)" stroke-width="2" fill="none"/><path d="M221.9 73.9 L230 70 L221.9 66.1" stroke="var(--muted)" stroke-width="2" fill="none"/><rect x="232" y="30" width="200" height="80" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="2"/><text x="332" y="58" font-size="16" font-weight="700" fill="var(--text)" text-anchor="middle">서버가 보내는 값</text><text x="332" y="84" font-size="14" font-weight="400" fill="var(--text)" text-anchor="middle">YES24 · OWNED · 1</text><path d="M432 70 L482 70" stroke="var(--muted)" stroke-width="2" fill="none"/><path d="M473.9 73.9 L482 70 L473.9 66.1" stroke="var(--muted)" stroke-width="2" fill="none"/><rect x="484" y="30" width="166" height="80" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="2"/><text x="567" y="58" font-size="16" font-weight="700" fill="var(--text)" text-anchor="middle">화면이 만든 글자</text><text x="567" y="84" font-size="15" font-weight="400" fill="var(--text)" text-anchor="middle">YES24 · 소장</text><text x="10" y="140" font-size="14" font-weight="400" fill="var(--muted)" text-anchor="start">순번 2 이상이면 화면이 "· 2번째 사이트"를 붙임. 값이 안 오면 이름만.</text></svg>
+<p class="cap">서버는 영어 값만 보내고, 우리말 글자는 화면이 바꿉니다. 글자를 고칠 때 화면만 고치면 됩니다.</p>
+<p class="alt"><b>다른 선택 — 서버가 "교보 · 소장" 글자를 만들어 보냄</b>: 화면이 단순해지지만, 화면 문구가 서버에 들어가고 "같은 이름끼리 업체 이름순" 정렬에 값이 따로 필요합니다.</p>
+<p class="alt"><b>다른 선택 — 화면 종류만 보내고 화면이 업체를 계산</b>: 대응표가 화면에도 생겨, 화면 종류가 늘 때마다 화면을 다시 배포해야 합니다.</p>
+<p class="rec">추천: 값 세 개를 보냄.</p>
+</div>
+
+<div class="item">
+<h3>직접 추가 이름 찾기는 화면(웹)에서만 바꿈 <span class="an">[안]</span></h3>
+<p>지금도 화면이 도서관 목록 전체를 받아 브라우저 안에서 찾습니다. 그래서 분류 글자도 찾게 하는 것(앞 페이지에서 정하심)은 화면 코드만 고치면 됩니다. 서버에 찾기 기능을 새로 만들지 않습니다.</p>
+<svg viewBox="0 0 660 110" role="img"><rect x="10" y="20" width="230" height="70" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="2"/><text x="125" y="48" font-size="16" font-weight="700" fill="var(--text)" text-anchor="middle">서버</text><text x="125" y="72" font-size="14" font-weight="400" fill="var(--text)" text-anchor="middle">도서관 목록 전체를 한 번</text><path d="M240 55 L300 55" stroke="var(--muted)" stroke-width="2" fill="none"/><path d="M291.9 58.9 L300 55 L291.9 51.1" stroke="var(--muted)" stroke-width="2" fill="none"/><rect x="302" y="10" width="348" height="90" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/><text x="476" y="36" font-size="16" font-weight="700" fill="var(--text)" text-anchor="middle">브라우저 안에서 찾기</text><text x="316" y="62" font-size="14" font-weight="400" fill="var(--text)" text-anchor="start">"동대문 yes24" → 낱말마다</text><text x="316" y="84" font-size="14" font-weight="400" fill="var(--text)" text-anchor="start">이름 또는 분류 글자에 있으면 맞음</text></svg>
+<p class="cap">찾기는 지금도 브라우저 안에서 합니다. 그래서 화면 코드만 고치면 되고, 서버에는 새 기능이 필요 없습니다.</p>
+<p class="rec">추천: 화면에서만.</p>
+</div>
+<div class="item" style="background:var(--accent-bg);border-radius:10px;padding:16px 18px">
+<h3>질문: 이 항목의 맥락</h3>
+<p><b>정하실 것은 "이름 찾기를 고칠 때 서버도 고치나, 화면만 고치나"입니다.</b></p>
+<p>내 도서관 화면의 "직접 도서관 추가" 칸에 "동대문"을 치면 아래에 도서관 줄이 나옵니다. 지금 이 찾기는 이렇게 됩니다.</p>
+<ol>
+<li>화면을 열 때 서버가 도서관 2,663곳 목록을 한 번에 보냄(<code>GET /api/v1/libraries</code>)</li>
+<li>글자를 칠 때마다 서버에 묻지 않고, 브라우저가 받아 둔 목록에서 이름을 찾음</li>
+</ol>
+<p>앞 페이지에서 "분류 글자도 찾게"(예: "동대문 yes24")를 정하셨습니다. 6번 제안대로 서버가 목록에 업체·대출 방식을 실어 보내면, 브라우저가 이름과 함께 그 글자도 보면 됩니다. 그래서 서버에 "도서관 찾기" 기능을 새로 만들 필요가 없습니다.</p>
+<p class="alt"><b>다른 선택 — 서버에 찾기 기능을 만듦</b>: 글자를 칠 때마다 서버에 묻습니다. 목록 전체를 받지 않아도 되지만, 지금 방식(ADR-0058에서 정한 "목록을 한 번 받아 브라우저에서 찾기")을 바꾸게 되고 서버와 화면을 둘 다 고쳐야 합니다.</p>
+</div>
+
+<div class="item">
+<h3>새 칸·값의 이름은 이대로 <span class="an">[안]</span></h3>
+<table>
+<tr><th>무엇</th><th>이름</th></tr>
+<tr><td>업체 칸 / 순번 칸</td><td><code>vendor</code> / <code>order_no</code></td></tr>
+<tr><td>업체 값</td><td><code>KYOBO</code> 교보, <code>YES24</code>, <code>BOOKCUBE</code> 북큐브, <code>ALADIN</code> 알라딘, <code>PORTAL</code> 통합 포털, <code>IN_HOUSE</code> 자체</td></tr>
+<tr><td>겹침 규칙 / 대출 방식 확인 규칙 / 순번 규칙</td><td><code>library_classification_key</code> / <code>library_lending_model_required_check</code> / <code>library_order_no_check</code></td></tr>
+<tr><td>화면에 보내는 칸</td><td><code>vendor</code>, <code>lendingModel</code>, <code>orderNo</code></td></tr>
+<tr><td>이름 고침 목록에 적는 표시</td><td><code>label-removed</code></td></tr>
+</table>
+<svg viewBox="0 0 660 110" role="img"><rect x="10" y="10" width="205" height="40" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="2"/><text x="22" y="36" font-size="14" font-weight="700" fill="var(--text)" text-anchor="start">KYOBO</text><text x="203" y="36" font-size="14" font-weight="400" fill="var(--muted)" text-anchor="end">교보</text><rect x="225" y="10" width="205" height="40" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="2"/><text x="237" y="36" font-size="14" font-weight="700" fill="var(--text)" text-anchor="start">YES24</text><text x="418" y="36" font-size="14" font-weight="400" fill="var(--muted)" text-anchor="end">YES24</text><rect x="440" y="10" width="205" height="40" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="2"/><text x="452" y="36" font-size="14" font-weight="700" fill="var(--text)" text-anchor="start">BOOKCUBE</text><text x="633" y="36" font-size="14" font-weight="400" fill="var(--muted)" text-anchor="end">북큐브</text><rect x="10" y="60" width="205" height="40" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="2"/><text x="22" y="86" font-size="14" font-weight="700" fill="var(--text)" text-anchor="start">ALADIN</text><text x="203" y="86" font-size="14" font-weight="400" fill="var(--muted)" text-anchor="end">알라딘</text><rect x="225" y="60" width="205" height="40" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="2"/><text x="237" y="86" font-size="14" font-weight="700" fill="var(--text)" text-anchor="start">PORTAL</text><text x="418" y="86" font-size="14" font-weight="400" fill="var(--muted)" text-anchor="end">통합 포털</text><rect x="440" y="60" width="205" height="40" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="2"/><text x="452" y="86" font-size="14" font-weight="700" fill="var(--text)" text-anchor="start">IN_HOUSE</text><text x="633" y="86" font-size="14" font-weight="400" fill="var(--muted)" text-anchor="end">자체</text></svg>
+<p class="cap">DB와 서버가 쓰는 업체 값(왼쪽)과 화면에 보이는 글자(오른쪽).</p>
+<p>DB 변경 파일 번호(지금 마지막이 013)는 사이클 08이 더 넣을 수 있어 회고 뒤에 정합니다.</p>
+<p class="rec">추천: 이대로.</p>
+</div>
+</section>
+
+<p class="foot">원본: <code>docs/cycles/09-library-naming/architect-proposal.md</code>(설계 제안 에이전트, dev 코드 2026-10-11 기준), <code>spec.md</code>, <code>flow.md</code>, ADR-0071. 작성 2026-10-11.</p>
+</main>
+</body>
+</html>
