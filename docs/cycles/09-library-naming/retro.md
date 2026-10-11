@@ -67,7 +67,7 @@
 | 목록 응답 크기 | 압축 전 737,300 → 874,306바이트(+18.6%), gzip 52,686 → 53,049바이트(+0.7%) [확정] (dev 측정 2026-10-12, 사용자 "응답 크기 그대로 괜찮아") |
 | 첫 `targets` 크기 | +7.5~8.2% [확정] (같은 측정) |
 | 순번 2 이상 | 0곳 [확정] (dev 2369행) |
-| 수집 DB 이름을 바꾸는 방법·때 | 남음 → plan이 정할 것 2 |
+| 수집 DB 이름을 바꾸는 방법·때 | 끝남: 수집 세션이 2026-10-12에 바꿈(아래 "수집 세션 결과") |
 | 수집이 업체를 따로 적는 자리 | 남음. 스크립트에 빈 자리 `COLLECTION_VENDORS = {}`와 `TODO(확인 필요)`만 (`build_candidate_seed.py:96-98`) → plan이 정할 것 2 |
 | `eligibility_rules.py`·`build_seed.py`를 다시 돌리는지 | 돌리지 않음, 이름 열쇠는 옛 이름 그대로 (dev 2405행) → plan이 정할 것 3 |
 
@@ -108,6 +108,15 @@
 
 - 607 원광보건대학 이름 (보류, spec R1-10) → backlog에 더함 [확정] (사용자 승인, 2026-10-12, `easy/2026-10-12-retro-decisions.html` #5)
 - 북큐브 책 0종·응답 없음 5곳의 대출 방식(지금 `OWNED`)을 다음 수집 때 다시 봄 (spec R3) → backlog에 더함 [확정] (사용자 승인, 2026-10-12, `easy/2026-10-12-retro-decisions.html` #5)
+
+## 수집 세션 결과 (2026-10-12, `docs/research/maintenance/cycle09-collection-result.md`)
+
+- 수집 DB 이름 바꾸기(plan이 정할 것 2, "지금 한 번에") — 끝: 289곳 중 바꿈 64, 이미 같음 223, 못 바꿈 2(59·131, 수집 DB에 없는 번호). 223곳이 같았던 까닭: 수집 DB 이름에는 처음부터 괄호가 없었고 `(북큐브)`·`(교보)`·`(YES24)` 라벨은 서비스 넣기 스크립트가 붙였던 것
+- 목록 밖 괄호 10곳도 뗌(같은 사이트 3, 교보 대여·혼합 제외 7, 모두 서비스에 넣지 않는 줄)
+- 방법·때: 수집기가 멈춘 동안(2026-10-06 밤부터) 한 트랜잭션, 사본은 그대로. 되돌리기 기록 `chaekcheck-data\library-naming\names-before-2026-10-12.tsv`
+- 업체 칸: 수집 DB `library.vendor` (TEXT NULL, CHECK `KYOBO`·`YES24`·`BOOKCUBE`·`ALADIN`·`PORTAL`·`IN_HOUSE`), 화면 종류 대응표와 다를 때만 채움, 지금 0줄 [확정] (사용자 승인, 2026-10-12). dev `COLLECTION_VENDORS`는 `SELECT id, vendor FROM library WHERE vendor IS NOT NULL`로 읽으면 됨 → dev 연결은 backlog (메시지 `../../research/maintenance/cycle09-collection-dev-message.md`)
+- 함께 맞춘 것: dev `SAME_SITE` 8곳을 수집 DB에도 "같은 사이트"로 표시(같은 사이트 107곳). ADR-0067 표시 확인, 수집 세션의 2026-10-07 교보 차단 결정 페이지는 ADR-0067로 갈음해 닫음
+- 다음 수집 때: 북큐브 5곳 권수 다시 받기(100045, 100048, 100256, 100391, 100440), 새 북큐브 권수 파일, 새 도서관 이름은 정식 이름만. 여주대 빠진 책 채우기(10-08 중간에 멈춤)는 수집 세션이 사용자에게 물을 예정 [확인 필요]
 
 ## docs/current에 반영할 차이
 

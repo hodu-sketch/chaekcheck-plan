@@ -644,7 +644,7 @@ erDiagram
 
 | 항목 | 방법 |
 |---|---|
-| 수집 DB 이름 289줄 바꾸기(지금 한 번에로 정함 [확정], 실제 적용), 수집이 업체를 따로 적는 자리(안: 수집 DB에 업체 칸 하나, 대응표와 다른 사이트만 [안]) | 수집 세션 (메모 `docs/research/maintenance/collection-rename-message-2026-10-12.md`) |
+| ~~수집 DB 이름 289줄 바꾸기, 수집이 업체를 따로 적는 자리~~ | 해결 (수집 세션, 2026-10-12, `docs/research/maintenance/cycle09-collection-result.md`): 수집 번호로 한 트랜잭션, 바꿈 64 · 이미 같음 223(수집 DB 이름에는 처음부터 괄호가 없었고 라벨은 서비스 넣기 스크립트가 붙였던 것) · 못 바꿈 2(59·131은 수집 DB에 없는 번호). 목록 밖 괄호 10곳(서비스에 넣지 않는 줄)도 뗌. 업체 칸: 수집 DB `library.vendor` TEXT NULL, CHECK 6개 값, 화면 종류 대응표와 다를 때만 채움(지금 0줄) [확정] (사용자 승인, 2026-10-12). dev `build_candidate_seed.py`의 `COLLECTION_VENDORS`는 `SELECT id, vendor FROM library WHERE vendor IS NOT NULL`로 읽으면 됨(다음 사본부터 칸 있음) — dev 연결은 backlog |
 
 ## 확인 필요 (사이클 10) — 설계됨(미구현, 사이클 10)
 

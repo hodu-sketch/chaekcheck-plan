@@ -229,3 +229,5 @@
 - 가져오기 세션 `maintenance_work_mem`(1GB)은 DB 컨테이너 상한보다 충분히 작아야 함(사이클 08 #3b, 상한 512MB에서 DB OOM). 운영 DB 권장 상한 1GB와 맞지 않음 → 사이클 11 설계·배포 사이클 확인 항목 (사용자 승인, 2026-10-11)
 - 607 원광보건대학 이름 다시 보기 (사이클 09 spec R1-10에서 보류, 사이클 09 회고 2026-10-12)
 - 북큐브 책 0종·응답 없음 5곳의 대출 방식(지금 `OWNED`)을 다음 수집 때 다시 봄 (사이클 09 spec R3, 회고 2026-10-12)
+- dev `build_candidate_seed.py`의 `COLLECTION_VENDORS`를 수집 DB `library.vendor`에서 읽게 바꾸기(`SELECT id, vendor FROM library WHERE vendor IS NOT NULL`, 칸이 없는 옛 사본이면 빈 값). 사이클 10과 섞지 않고 따로. 메시지 `docs/research/maintenance/cycle09-collection-dev-message.md` (사이클 09 수집 결과, 2026-10-12)
+- 다음 수집 때: 새 북큐브 도서관의 권수 파일 만들기, 새 도서관 이름은 정식 이름만 (사이클 09 수집 결과, 2026-10-12). 여주대 빠진 책 채우기(10-08 중간에 멈춤) 다시 할지는 수집 세션이 사용자에게 물음
