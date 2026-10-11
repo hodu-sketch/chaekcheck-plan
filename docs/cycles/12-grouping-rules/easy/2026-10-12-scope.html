@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 12 범위</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.gist.ok{background:var(--ok-bg)}.gist.warn{background:var(--warn-bg)}.gist.no{background:var(--no-bg)}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.tw{overflow-x:auto}
+ul.ic{list-style:none;margin:0;padding:0}
+ul.ic li{display:flex;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
+ul.ic li:first-child{border-top:none}
+ul.ic svg{flex:0 0 28px;width:28px;height:28px;margin-top:4px;stroke:var(--accent);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.s{display:block;color:var(--muted);font-size:17px}
+h4{font-size:19px;margin:18px 0 4px;color:var(--muted)}
+.tag{font-size:15px;font-weight:700;border-radius:6px;padding:1px 7px;white-space:nowrap}
+.t-ok{background:var(--ok-bg);color:var(--ok)}.t-warn{background:var(--warn-bg);color:var(--warn)}.t-no{background:var(--no-bg);color:var(--no)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">사이클 12는 "같은 책은 한 줄로,<br>판이 다른 책·다른 책은 따로"를 맞추는 일입니다.</p>
+<p class="sub">원본: <code>docs/cycles/12-grouping-rules/scope.md</code>. 방향 일곱 가지는 이미 정하셨고, 이 페이지는 무엇이 바뀌는지와 남은 질문을 보여 줍니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>검색 결과가 이렇게 바뀝니다</h2>
+<div class="gist ok">책 화면과 검색 화면의 모양은 그대로이고, 한 줄로 묶이는 책이 바뀝니다.</div>
+<div class="tw"><table>
+<tr><th>검색해 보면</th><th>지금</th><th>사이클 12 뒤</th></tr>
+<tr><td>「상법총칙 상행위」(박영사)</td><td>2014·2015·2020년 판이 한 줄</td><td>판마다 한 줄, 그 판을 가진 도서관만</td></tr>
+<tr><td>「햄릿」(저자·출판사 "기타")</td><td>다른 전자책 둘이 한 줄</td><td>따로 두 줄</td></tr>
+<tr><td>「백만장자 마인드」와 「… - 부를 끌어 당기는」</td><td>따로 두 줄</td><td>같은 책이면 한 줄</td></tr>
+<tr><td>「오개념 탈출 프로젝트 - 수학 1」과 「- 수학 2」</td><td>따로 두 줄</td><td>그대로 따로(권이 다름)</td></tr>
+</table></div>
+<p class="alt">책 주소(<code>/books/번호</code>)는 사이클 07부터 다시 가져와도 이어지게 되어 있습니다. 이번에는 판이 나뉘거나 합쳐질 때 번호가 규칙대로 가는지 처음으로 실제 데이터에서 봅니다.</p>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>시작 순서</h2>
+<div class="gist warn">plan 문서(스펙·화면·설계)는 지금부터 쓰고, dev 개발은 사이클 11 측정이 끝나 기본 묶는 방식이 정해진 뒤 시작합니다.</div>
+<ul class="ic">
+<li><div>새 규칙은 compact·sql 두 묶는 방식에 넣고, 지금 방식(current)은 지웁니다. 둘 다 측정의 결과 비교를 통과하지 못하면 current를 남깁니다(ADR-0079).</div></li>
+<li><div>사이클 11에서 아직 안 끝난 것: 세 방식 측정, 기본 방식 고르기, dev 코드 대조. 사이클 11 최종 회고 때 합니다.</div></li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>스펙 전에 조사할 것</h2>
+<ul class="ic">
+<li><div><b>"값 없음"으로 볼 글자</b>: 저자 "기타"(3.1만 권), "작자미상"(1만), "편집부"(6천), "Unknown", "." 등. 출판사 "기타"(1.8만), "편집부"(5천), "." 등. 스펙에서 여쭙니다.</div></li>
+<li><div><b>출판사 칸의 "북큐브"</b>(1.1만 권): 표본이 모두 웹소설 회차라, 출판사가 아니라 플랫폼 이름으로 보입니다.</div></li>
+<li><div><b>권 번호 모양</b>: 숫자·권·화, 상·중·하, 판·시즌을 따로 봐야 합니다.</div></li>
+<li><div><b>ISBN API 표본 100권</b>: ISBN을 모르는 책에서 판이 몇 개 나오는지 봅니다(1초에 1건 이하).</div></li>
+<li><div><b>사이클 07에서 새로 넣은 도서관 2,394곳</b>을 넣고 뺀 두 묶기 결과 비교는 규칙을 고친 뒤 dev가 합니다.</div></li>
+</ul>
+</section>
+
+<p class="foot">이 글은 요약이며 근거는 원본에 있습니다. 원본: <code>docs/cycles/12-grouping-rules/scope.md</code>, <code>docs/research/ebook-catalog/same-book-isbn.md</code> 5.4~5.6절.</p>
+</main>
+</body>
+</html>
