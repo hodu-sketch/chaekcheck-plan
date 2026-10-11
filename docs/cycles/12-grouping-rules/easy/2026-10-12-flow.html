@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 12 화면 흐름</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.gist.ok{background:var(--ok-bg)}.gist.warn{background:var(--warn-bg)}.gist.no{background:var(--no-bg)}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.tw{overflow-x:auto}
+ul.ic{list-style:none;margin:0;padding:0}
+ul.ic li{display:flex;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
+ul.ic li:first-child{border-top:none}
+ul.ic svg{flex:0 0 28px;width:28px;height:28px;margin-top:4px;stroke:var(--accent);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.s{display:block;color:var(--muted);font-size:17px}
+h4{font-size:19px;margin:18px 0 4px;color:var(--muted)}
+.tag{font-size:15px;font-weight:700;border-radius:6px;padding:1px 7px;white-space:nowrap}
+.t-ok{background:var(--ok-bg);color:var(--ok)}.t-warn{background:var(--warn-bg);color:var(--warn)}.t-no{background:var(--no-bg);color:var(--no)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">이번 사이클은 새 화면이 없습니다.<br>검색 결과에서 한 줄로 묶이는 책만 바뀝니다.</p>
+<p class="sub">원본: <code>docs/cycles/12-grouping-rules/flow.md</code>. 아래 그림은 원본의 흐름 그림을 그대로 옮긴 것입니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>화면 흐름</h2>
+<figure>
+<svg viewBox="0 0 860 330" role="img" aria-label="검색에서 책 화면까지의 흐름">
+<g font-family="Noto Sans KR, sans-serif">
+<rect x="10" y="20" width="170" height="54" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+<text x="95" y="53" text-anchor="middle" font-size="17" fill="var(--text)">S1 검색창</text>
+<path d="M182 47h40" stroke="var(--muted)" stroke-width="2"/><path d="M216 41l7 6-7 6" fill="none" stroke="var(--muted)" stroke-width="2"/>
+<rect x="225" y="20" width="200" height="54" rx="10" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="2"/>
+<text x="325" y="44" text-anchor="middle" font-size="17" font-weight="700" fill="var(--warn)">S1 결과 목록</text>
+<text x="325" y="64" text-anchor="middle" font-size="14" fill="var(--warn)">묶이는 책이 바뀜</text>
+<path d="M427 47h40" stroke="var(--muted)" stroke-width="2"/><path d="M461 41l7 6-7 6" fill="none" stroke="var(--muted)" stroke-width="2"/>
+<rect x="470" y="20" width="200" height="54" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+<text x="570" y="53" text-anchor="middle" font-size="17" fill="var(--text)">S3 책 화면</text>
+<rect x="470" y="130" width="200" height="54" rx="10" fill="var(--card)" stroke="var(--muted)" stroke-width="2"/>
+<text x="570" y="152" text-anchor="middle" font-size="15" fill="var(--text)">저장·공유해 둔</text>
+<text x="570" y="172" text-anchor="middle" font-size="15" fill="var(--text)">옛 주소</text>
+<path d="M570 128V78" stroke="var(--muted)" stroke-width="2"/><path d="M564 84l6-7 6 7" fill="none" stroke="var(--muted)" stroke-width="2"/>
+<path d="M672 40h28v-10" stroke="var(--muted)" stroke-width="2" fill="none"/>
+<rect x="690" y="0" width="160" height="56" rx="10" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/>
+<text x="770" y="23" text-anchor="middle" font-size="14" fill="var(--ok)">그 책, 또는 가장</text>
+<text x="770" y="43" text-anchor="middle" font-size="14" fill="var(--ok)">많이 겹치는 판</text>
+<path d="M672 60h28v30" stroke="var(--muted)" stroke-width="2" fill="none"/>
+<rect x="690" y="80" width="160" height="56" rx="10" fill="var(--no-bg)" stroke="var(--no)" stroke-width="2"/>
+<text x="770" y="103" text-anchor="middle" font-size="14" fill="var(--no)">사라진 번호:</text>
+<text x="770" y="123" text-anchor="middle" font-size="14" fill="var(--no)">책을 찾을 수 없어요</text>
+<rect x="10" y="240" width="170" height="54" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+<text x="95" y="273" text-anchor="middle" font-size="17" fill="var(--text)">S13 인기 도서</text>
+<path d="M182 267h40" stroke="var(--muted)" stroke-width="2"/><path d="M216 261l7 6-7 6" fill="none" stroke="var(--muted)" stroke-width="2"/>
+<rect x="225" y="240" width="200" height="54" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+<text x="325" y="273" text-anchor="middle" font-size="17" fill="var(--text)">S14 가운데 창</text>
+<path d="M427 267h80V78" stroke="var(--muted)" stroke-width="2" fill="none"/><path d="M501 84l6-7 6 7" fill="none" stroke="var(--muted)" stroke-width="2"/>
+<text x="440" y="226" font-size="14" fill="var(--muted)">책 검색 &gt;&gt;</text>
+</g>
+</svg>
+<figcaption>노란 칸(결과 목록)만 내용이 바뀝니다. 화면 모양과 이동은 지금 그대로입니다.</figcaption>
+</figure>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>정할 것</h2>
+<ul class="ic">
+<li><div><b>1. 새 화면·바뀐 화면 없음</b> (추천): 결과 목록·책 화면·인기 도서 모양 그대로.</div></li>
+<li><div><b>2. 판을 묶어 보여 주는 표시 없음</b> (추천): 판이 나뉜 줄은 지금 줄 모양(제목·저자·출판사·출판일)으로만 구별됩니다. 다른 선택: "다른 판 2개" 같은 표시를 더함 — 화면 일이 생겨 사이클이 커집니다.</div></li>
+<li><div><b>3. "규칙이 바뀌었어요" 안내 문구 없음</b> (추천): 이용자가 따로 알 필요가 없는 내부 변화라서입니다.</div></li>
+</ul>
+<p class="alt">인기 도서 가운데 창은 순위 책을 ISBN으로 우리 책에 맞추므로, 판이 나뉘면 오히려 맞는 판이 열립니다.</p>
+</section>
+
+<p class="foot">이 글은 요약이며 근거는 원본에 있습니다. 원본: <code>docs/cycles/12-grouping-rules/flow.md</code>.</p>
+</main>
+</body>
+</html>
