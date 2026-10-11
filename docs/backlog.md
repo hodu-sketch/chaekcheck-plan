@@ -244,3 +244,4 @@
 - 수집기 코드 구조 정리 (사이클 13 제외, 그 뒤): 한 파일(`crawl_catalog.py`, 1,305줄)에 섞인 ① 도서관 넣기(`import-probe`·`import-bookcube`)와 ② 책 수집, 화면 7가지 읽기를 갈래별·화면별로 나누기. 수집기를 dev로 갈아타는 일과 떼어 따로 함 [확정] (사용자: "응 백로그에 기록해줘", 2026-10-12, `docs/research/maintenance/crawler-move.md` 5절 4번)
 - → 사이클 13 (`docs/cycles/13-crawler-to-dev/scope.md`, 2026-10-12 시작): 수집기를 dev로 갈아타기 + 도서관 넣기를 `collection` 모듈이 재시작 없이 + "후보" 이름 없애기 [확정] (사용자: "이 작업 cycle 13인 걸로 하자", 2026-10-12). 결정 근거 `docs/research/maintenance/crawler-move.md` 5절
 - 인기 도서 분류 카드를 다른 카드처럼 평평하게 + 터치 판정 `(pointer: coarse)` 규칙을 dev 화면 규칙에 — 사이클 밖 dev 요청 [확정] (사용자, 2026-10-12, 사이클 10 디자인 덧붙임 결정 페이지). 메시지 `docs/research/maintenance/cycle10-design-followup-dev-message.md`
+- 웹소설 회차 책(출판사 "북큐브" 11,478권 등, 제목에 "N화")이 검색 결과를 많이 차지하는지 보기 — 메모만 (사이클 12 시작 때, 2026-10-12)
