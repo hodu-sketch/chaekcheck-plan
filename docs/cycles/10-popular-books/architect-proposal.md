@@ -1,5 +1,7 @@
 # 설계 제안: 사이클 10 인기 도서 (architect, 2026-10-11)
 
+> 분류 빼기(2026-10-11) 이전 제안이라 22개·21건·`display_order 0..21`·고정 자리·ISBN 1,050개 같은 값이 옛 값입니다. **`design-delta.md`가 우선**입니다.
+
 - `architect` 서브에이전트의 제안을 그대로 옮김. 새 이름·값은 모두 [안]. 결정은 `easy/2026-10-11-design-decisions.html`에서
 - 읽은 dev 코드(읽기만): `catalog/CatalogLoad.java`, `CatalogHoldings.java`, `catalog/internal/web/BookSearchController.java`, `collection/package-info.java`, `collection/internal/importer/CatalogImportRunner.java`, `auth/internal/cleanup/DailyAccountCleanup.java`, `auth/internal/token/RefreshTokenCleanup.java`, `availability/internal/config/CacheStatsLog.java`, `application.yml`, `build.gradle`, `catalog/001-catalog-schema.yaml`, `deploy/nginx/security-headers.conf`, `web/src/main.tsx`, `components/AppLayout.tsx`, `features/book/BookPage.tsx`
 

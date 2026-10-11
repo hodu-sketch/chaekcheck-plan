@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>인계 전 결정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+svg{max-width:100%;height:auto;display:block}
+.mock{border:2px dashed var(--line);border-radius:12px;padding:14px;margin:10px 0;font-size:17px}
+.row{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;background:var(--card);flex-wrap:wrap}
+.tag{font-size:14px;border-radius:6px;padding:0 6px;background:var(--code-bg);color:var(--muted)}
+.okt{color:var(--ok);font-weight:500}.mut{color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">사이클 10을 인계하기 전에 설계 검토에서 나온 것 가운데 정할 것 8가지입니다.</p>
+<p class="sub">설계 검토 에이전트가 문서를 읽고 고칠 곳을 짚었습니다. 옛 숫자(21분류, 1,050권), 남아 있던 "고정 자리", 상태 줄 같은 것은 이미 고쳤습니다. 여기에는 정하셔야 하는 것만 있습니다. 앞의 네 개는 설계, 뒤의 네 개는 사이클 09와 따로 병렬로 개발하는 방법입니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>설계에서 고칠 것</h2>
+<div class="gist">받기 기록을 쓰는 순서가 표 규칙과 맞지 않는 곳 하나, 분류 빼기를 기록할 ADR 하나, 검수 기준(AC) 추가, 가운데 창의 빠진 상태를 정합니다.</div>
+
+<div class="item"><h3><span class="no">1</span>받기 기록은 순위를 저장하는 같은 순간에 "성공"으로 완성하고, 표지 수 두 칸만 나중에 채움 [안]</h3>
+<svg viewBox="0 0 640 210" role="img" aria-label="받기 기록 순서"><defs><marker id="q1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs><text x="10" y="18" font-size="13" font-weight="700" fill="var(--no)">지금 설계 (저장 안 됨)</text><rect x="10" y="26" width="150" height="46" rx="8" fill="var(--no-bg)" stroke="var(--no)"/><text x="20" y="46" font-size="13" font-weight="700" fill="var(--text)">순위 저장</text><text x="20" y="64" font-size="12" fill="var(--muted)">달·분류·책</text><line x1="160" y1="49" x2="198" y2="49" stroke="var(--muted)" marker-end="url(#q1)"/><rect x="200" y="26" width="150" height="46" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="210" y="46" font-size="13" font-weight="700" fill="var(--text)">표지 받기</text><text x="210" y="64" font-size="12" fill="var(--muted)">약 28분</text><line x1="350" y1="49" x2="388" y2="49" stroke="var(--muted)" marker-end="url(#q1)"/><rect x="390" y="26" width="200" height="46" rx="8" fill="var(--no-bg)" stroke="var(--no)"/><text x="400" y="46" font-size="13" font-weight="700" fill="var(--text)">받기 기록 넣기</text><text x="400" y="64" font-size="12" fill="var(--muted)">← 달 표가 먼저 필요</text><text x="10" y="112" font-size="13" font-weight="700" fill="var(--ok)">제안</text><rect x="10" y="120" width="230" height="56" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="20" y="140" font-size="13" font-weight="700" fill="var(--text)">한 번에 저장 (05:01)</text><text x="20" y="158" font-size="12" fill="var(--muted)">받기 기록 "성공" + 달·분류·책</text><line x1="240" y1="148" x2="278" y2="148" stroke="var(--muted)" marker-end="url(#q1)"/><rect x="280" y="120" width="150" height="56" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="290" y="140" font-size="13" font-weight="700" fill="var(--text)">표지 받기</text><text x="290" y="158" font-size="12" fill="var(--muted)">05:01~05:29</text><line x1="430" y1="148" x2="468" y2="148" stroke="var(--muted)" marker-end="url(#q1)"/><rect x="470" y="120" width="160" height="56" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="480" y="140" font-size="13" font-weight="700" fill="var(--text)">표지 수 두 칸만</text><text x="480" y="158" font-size="12" fill="var(--muted)">05:29에 채움</text><text x="10" y="200" font-size="12" fill="var(--muted)">표지 받는 중에 서버가 꺼져도 순위와 "성공" 기록은 이미 저장돼 있음</text></svg>
+
+<p>문제: 지금 설계는 순위(달·분류·책)를 먼저 넣고, 표지 받기(약 28분)가 끝난 뒤에 받기 기록을 넣습니다. 그런데 "달" 표는 받기 기록 번호가 꼭 있어야 해서 이 순서로는 저장이 안 됩니다.</p>
+<p>예: 3일 05:01에 순위 17개를 다 받으면, 한 번에 받기 기록(성공, 끝난 시각 05:01)과 순위를 함께 저장합니다. 이어서 표지를 받고, 05:29에 그 기록의 "새로 받은 표지 수·실패 수"만 채웁니다. 표지 받는 중에 서버가 꺼져도 순위는 이미 저장돼 있습니다.</p>
+<p class="alt"><b>다른 선택</b> 받기 기록을 맨 먼저 "진행 중"으로 넣고 끝날 때 고치기: 진행 중 상태와 "끝난 시각 비어 있음"을 더해야 하고, 꺼졌을 때 진행 중으로 남는 줄을 치울 규칙이 필요합니다.</p>
+<p class="rec">추천: 순위와 함께 완성.</p></div>
+
+<div class="item"><h3><span class="no">2</span>ADR-0077 "인기 도서는 전자책이 거의 없는 다섯 분류를 받지 않음" 새로 씀 [안]</h3>
+<svg viewBox="0 0 640 180" role="img" aria-label="분류 22개 중 17개"><text x="10" y="18" font-size="13" font-weight="700" fill="var(--text)">22개 → 17개 (초록 남김, 빨강 뺌)</text><rect x="10" y="30" width="98" height="28" rx="6" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="18" y="49" font-size="12" fill="var(--text)">전체</text><rect x="114" y="30" width="98" height="28" rx="6" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="122" y="49" font-size="12" fill="var(--text)">소설</text><rect x="218" y="30" width="98" height="28" rx="6" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="226" y="49" font-size="12" fill="var(--text)">문학·인물</text><rect x="322" y="30" width="98" height="28" rx="6" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="330" y="49" font-size="12" fill="var(--text)">사회</text><rect x="426" y="30" width="98" height="28" rx="6" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="434" y="49" font-size="12" fill="var(--text)">언어</text><rect x="530" y="30" width="98" height="28" rx="6" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="538" y="49" font-size="12" fill="var(--text)">철학·종교</text><rect x="10" y="64" width="98" height="28" rx="6" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="18" y="83" font-size="12" fill="var(--text)">경제·경영</text><rect x="114" y="64" width="98" height="28" rx="6" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="122" y="83" font-size="12" fill="var(--text)">자기계발</text><rect x="218" y="64" width="98" height="28" rx="6" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="226" y="83" font-size="12" fill="var(--text)">예술</text><rect x="322" y="64" width="98" height="28" rx="6" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="330" y="83" font-size="12" fill="var(--text)">컴퓨터·IT</text><rect x="426" y="64" width="98" height="28" rx="6" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="434" y="83" font-size="12" fill="var(--text)">생활·취미</text><rect x="530" y="64" width="98" height="28" rx="6" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="538" y="83" font-size="12" fill="var(--text)">과학</text><rect x="10" y="98" width="98" height="28" rx="6" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="18" y="117" font-size="12" fill="var(--text)">역사</text><rect x="114" y="98" width="98" height="28" rx="6" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="122" y="117" font-size="12" fill="var(--text)">기술·공학</text><rect x="218" y="98" width="98" height="28" rx="6" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="226" y="117" font-size="12" fill="var(--text)">법</text><rect x="322" y="98" width="98" height="28" rx="6" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="330" y="117" font-size="12" fill="var(--text)">참고·정보</text><rect x="426" y="98" width="98" height="28" rx="6" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="434" y="117" font-size="12" fill="var(--text)">지리·환경</text><rect x="530" y="98" width="98" height="28" rx="6" fill="var(--no-bg)" stroke="var(--no)"/><text x="538" y="117" font-size="12" fill="var(--text)" text-decoration="line-through">만화</text><rect x="10" y="132" width="98" height="28" rx="6" fill="var(--no-bg)" stroke="var(--no)"/><text x="18" y="151" font-size="12" fill="var(--text)" text-decoration="line-through">어린이·청소년</text><rect x="114" y="132" width="98" height="28" rx="6" fill="var(--no-bg)" stroke="var(--no)"/><text x="122" y="151" font-size="12" fill="var(--text)" text-decoration="line-through">기타</text><rect x="218" y="132" width="98" height="28" rx="6" fill="var(--no-bg)" stroke="var(--no)"/><text x="226" y="151" font-size="12" fill="var(--text)" text-decoration="line-through">의학</text><rect x="322" y="132" width="98" height="28" rx="6" fill="var(--no-bg)" stroke="var(--no)"/><text x="330" y="151" font-size="12" fill="var(--text)" text-decoration="line-through">스포츠</text><text x="10" y="172" font-size="12" fill="var(--muted)">한 달 요청 45건 → 35건 이하 · 표지 첫 달 1,050장 → 최대 850장 · 저장 약 100MB → 약 90MB</text></svg>
+
+<p>예: ADR-0072에는 "21분류 + 전체를 받는다"로 남아 있습니다. 승인된 ADR은 고치지 않는 규칙이라, 새 ADR이 이를 "16분류 + 전체"로 바꾼다고 적습니다. 같은 ADR에 바뀐 숫자(한 달 요청 35건 이하, 표지 첫 달 최대 850장·약 28분, 두 달 약 90MB, ISBN 최대 850개)도 적어 ADR-0074·0075의 옛 숫자를 바로잡습니다.</p>
+<ul>
+<li>결정: 만화·어린이·청소년·기타·의학·스포츠는 받지도 보이지도 않음. "전체" 목록에는 섞여 나옴. 고정 자리 없음</li>
+<li>이유: 9월 기준 ISBN으로 맞춘 책이 0~3권. 사용자가 만화·어린이·청소년을 빼자고 제안("'만화'랑 '어린이 청소년' 카테고리는 너무 없어서 그냥 제외하는게 어떨가 하는데"), 나머지 셋은 제안 → 승인</li>
+<li>번호: 다른 세션이 0076까지 씀. 사이클 11도 ADR을 쓸 수 있어 쓰기 직전에 번호를 다시 확인</li>
+</ul>
+<p class="rec">추천: 씀(승인 = 이 초안대로 Accepted로 기록).</p></div>
+
+<div class="item"><h3><span class="no">3</span>검수 기준(AC)에 빠진 것 추가 [안]</h3>
+<svg viewBox="0 0 640 132" role="img" aria-label="추가할 검수 기준"><rect x="10" y="10" width="305" height="32" rx="6" fill="var(--card)" stroke="var(--line)"/><text x="22" y="31" font-size="13" fill="var(--ok)">☑</text><text x="42" y="31" font-size="13" fill="var(--text)">머리 링크·설명 글 없음</text><rect x="325" y="10" width="305" height="32" rx="6" fill="var(--card)" stroke="var(--line)"/><text x="337" y="31" font-size="13" fill="var(--ok)">☑</text><text x="357" y="31" font-size="13" fill="var(--text)">로그인 없이 보기</text><rect x="10" y="50" width="305" height="32" rx="6" fill="var(--card)" stroke="var(--line)"/><text x="22" y="71" font-size="13" fill="var(--ok)">☑</text><text x="42" y="71" font-size="13" fill="var(--text)">표지 저장·실패는 제목 글자·404</text><rect x="325" y="50" width="305" height="32" rx="6" fill="var(--card)" stroke="var(--line)"/><text x="337" y="71" font-size="13" fill="var(--ok)">☑</text><text x="357" y="71" font-size="13" fill="var(--text)">폰 창 닫기(끌기·ⓧ·바깥·뒤로)</text><rect x="10" y="90" width="305" height="32" rx="6" fill="var(--card)" stroke="var(--line)"/><text x="22" y="111" font-size="13" fill="var(--ok)">☑</text><text x="42" y="111" font-size="13" fill="var(--text)">밀어서 넘기기</text><rect x="325" y="90" width="305" height="32" rx="6" fill="var(--card)" stroke="var(--line)"/><text x="337" y="111" font-size="13" fill="var(--ok)">☑</text><text x="357" y="111" font-size="13" fill="var(--text)">책 화면에서 돌아오면 보던 자리</text></svg>
+
+<p>dev가 "다 됐다"를 확인하는 목록에 아래가 없어서 더합니다.</p>
+<ul>
+<li>머리에 "인기 도서" 링크가 있고(약관·개인정보 화면 제외), "전자도서관 대출 가능 확인" 설명 글이 없다</li>
+<li>로그인하지 않아도 인기 도서를 볼 수 있다</li>
+<li>순위를 받은 뒤 그달 새 표지를 받아 저장하고, 몇 장이 실패해도 순위는 성공이며 그 책은 제목 글자로 보인다. 지운 표지를 부르면 "없음"(404)</li>
+<li>폰 아래 창 네 개는 손잡이 끌어내리기·ⓧ·바깥으로 닫히고, 폰 뒤로 가기는 창만 닫는다. PC는 Esc로도 닫힌다</li>
+<li>폰·태블릿에서 3×3을 좌우로 밀면 넘어간다</li>
+<li>책 화면에 갔다가 뒤로 오면 보던 분류·쪽·스크롤 자리다</li>
+</ul>
+<p class="rec">추천: 추가.</p></div>
+
+<div class="item"><h3><span class="no">4</span>가운데 창: 책 정보를 못 불러오면 책 화면과 같은 오류 문구, 표지는 격자에서 쓰던 표지 [안]</h3>
+<svg viewBox="0 0 640 170" role="img" aria-label="가운데 창 상태"><defs><marker id="q4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs><rect x="10" y="60" width="130" height="50" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="20" y="80" font-size="13" font-weight="700" fill="var(--text)">격자 표지 누름</text><text x="20" y="98" font-size="12" fill="var(--muted)">전자책 있음</text><line x1="140" y1="85" x2="168" y2="38" stroke="var(--muted)" marker-end="url(#q4)"/><line x1="140" y1="85" x2="168" y2="86" stroke="var(--muted)" marker-end="url(#q4)"/><line x1="140" y1="85" x2="168" y2="135" stroke="var(--muted)" marker-end="url(#q4)"/><rect x="170" y="15" width="330" height="46" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="180" y="35" font-size="13" font-weight="700" fill="var(--text)">정상: 표지·제목·책 검색 >>·도서관 3줄</text><text x="180" y="53" font-size="12" fill="var(--muted)">표지는 격자와 같은 그림</text><rect x="170" y="66" width="330" height="40" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="180" y="86" font-size="13" font-weight="700" fill="var(--text)">빠진 책(404): "책을 찾을 수 없어요"</text><rect x="170" y="112" width="330" height="46" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="180" y="132" font-size="13" font-weight="700" fill="var(--text)">서버 오류·끊김: 책 화면과 같은 오류 문구</text><text x="180" y="150" font-size="12" fill="var(--muted)">이번에 정함</text></svg>
+
+<p>예: 가운데 창을 열 때 서버가 응답하지 않으면 창 안에 책 화면이 쓰는 오류 문구가 보입니다(빠진 책은 이미 정한 "책을 찾을 수 없어요"). 창의 표지는 격자에서 누른 그 표지(우리 서버가 넘겨주는 출처 표지)를 그대로 써서 두 화면의 그림이 같습니다.</p>
+<p class="alt"><b>다른 선택</b> 창 표지를 우리 전자책 표지로: 격자와 창의 그림이 다를 수 있습니다.</p>
+<p class="rec">추천: 위대로.</p></div>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>사이클 09와 병렬로 개발하는 방법</h2>
+<div class="gist">dev는 사이클 10 전용 작업 폴더(worktree)와 가지(branch)에서 개발하고, 인계서·기록·DB·포트를 09와 나눕니다. 합치는 순서는 09 먼저입니다.</div>
+<svg viewBox="0 0 640 170" role="img" aria-label="병렬 개발 흐름">
+<defs><marker id="p1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+<line x1="20" y1="40" x2="620" y2="40" stroke="var(--line)" stroke-width="4"/>
+<text x="20" y="28" font-size="13" fill="var(--muted)">main (사이클 08 커밋됨)</text>
+<circle cx="60" cy="40" r="6" fill="var(--muted)"/>
+<path d="M60,40 C100,40 100,90 140,90 L360,90" fill="none" stroke="var(--accent)" stroke-width="3"/>
+<text x="150" y="82" font-size="13" fill="var(--accent)">사이클 09 (지금 작업 폴더)</text>
+<path d="M60,40 C100,40 100,140 140,140 L500,140" fill="none" stroke="var(--warn)" stroke-width="3"/>
+<text x="150" y="132" font-size="13" fill="var(--warn)">사이클 10 (새 worktree)</text>
+<path d="M360,90 C390,90 390,40 420,40" fill="none" stroke="var(--accent)" stroke-width="3" marker-end="url(#p1)"/>
+<text x="330" y="62" font-size="12" fill="var(--text)">① 09 먼저 합침</text>
+<path d="M500,140 C540,140 540,40 580,40" fill="none" stroke="var(--warn)" stroke-width="3" marker-end="url(#p1)"/>
+<text x="470" y="112" font-size="12" fill="var(--text)">② 10을 09 위에 맞춘 뒤 합침</text>
+</svg>
+<p class="cap">dev 사이클 08은 이미 커밋돼 있어(2026-10-11 dev 기록 확인) 두 가지 모두 08 코드 위에서 시작합니다.</p>
+
+<div class="item"><h3><span class="no">5</span>인계 문서를 따로: plan은 <code>docs/cycles/10-popular-books/handoff.md</code>만, dev 기록은 <code>docs/plan-feedback-cycle10.md</code> [안]</h3>
+<svg viewBox="0 0 640 200" role="img" aria-label="인계 문서 따로"><defs><marker id="q5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs><text x="10" y="18" font-size="13" font-weight="700" fill="var(--text)">plan</text><text x="340" y="18" font-size="13" font-weight="700" fill="var(--text)">dev</text><rect x="10" y="28" width="290" height="46" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="20" y="48" font-size="13" font-weight="700" fill="var(--text)">docs/current/handoff.md</text><text x="20" y="66" font-size="12" fill="var(--muted)">사이클 09 그대로 (09 dev가 자동으로 읽음)</text><rect x="10" y="110" width="290" height="46" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="20" y="130" font-size="13" font-weight="700" fill="var(--text)">cycles/10-popular-books/handoff.md</text><text x="20" y="148" font-size="12" fill="var(--muted)">사이클 10 인계서 (새로)</text><rect x="340" y="28" width="290" height="46" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="350" y="48" font-size="13" font-weight="700" fill="var(--text)">09 작업 폴더</text><text x="350" y="66" font-size="12" fill="var(--muted)">plan-feedback.md (09 기록)</text><rect x="340" y="110" width="290" height="46" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="350" y="130" font-size="13" font-weight="700" fill="var(--text)">10 worktree</text><text x="350" y="148" font-size="12" fill="var(--muted)">plan-feedback-cycle10.md (10 기록, 새로)</text><line x1="300" y1="51" x2="338" y2="51" stroke="var(--muted)" marker-end="url(#q5)"/><line x1="300" y1="133" x2="338" y2="133" stroke="var(--muted)" marker-end="url(#q5)"/><text x="10" y="186" font-size="12" fill="var(--muted)">10 dev 세션은 "사이클 10 인계서를 따름"으로 시작. 두 쪽 파일이 서로 겹치지 않음</text></svg>
+
+<p>예: dev가 자동으로 읽는 <code>docs/current/handoff.md</code>는 사이클 09 그대로 둡니다. 사이클 10 dev 세션은 시작할 때 "사이클 10 인계서 파일을 따르고, 자동으로 불러온 09 인계서는 따르지 않음"으로 시작합니다(dev 설명서는 고치지 않음). 다른 점과 이유는 <code>plan-feedback.md</code>가 아닌 새 파일 <code>docs/plan-feedback-cycle10.md</code>에 적어 09 기록과 겹치지 않게 합니다.</p>
+<p class="alt"><b>다른 선택</b> dev 기록을 <code>plan-feedback.md</code>의 새 절로: 두 가지에서 같은 파일 끝에 덧붙여 합칠 때 겹칩니다.</p>
+<p class="rec">추천: 따로 (말씀하신 "겹치지 않게 따로").</p></div>
+
+<div class="item"><h3><span class="no">6</span>로컬 DB와 포트를 09와 나누고, 개발·시험 중에는 사이트에서 받기를 꺼 둠 [안]</h3>
+<svg viewBox="0 0 640 140" role="img" aria-label="DB와 포트 나눔"><rect x="10" y="10" width="300" height="120" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="20" y="30" font-size="13" font-weight="700" fill="var(--text)">사이클 09 작업 폴더</text><text x="22" y="56" font-size="12" fill="var(--text)">DB: 지금 로컬 DB</text><text x="22" y="76" font-size="12" fill="var(--text)">서버·웹: 지금 포트</text><text x="22" y="96" font-size="12" fill="var(--text)">도서관 표 변경(library/014)</text><rect x="330" y="10" width="300" height="120" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="340" y="30" font-size="13" font-weight="700" fill="var(--text)">사이클 10 worktree</text><text x="342" y="56" font-size="12" fill="var(--text)">DB: 다른 DB 이름(또는 컨테이너)</text><text x="342" y="76" font-size="12" fill="var(--text)">서버·웹: 다른 포트</text><text x="342" y="96" font-size="12" fill="var(--text)">popular 표 · 받기 기본 꺼짐</text><text x="342" y="116" font-size="12" fill="var(--muted)">받기 시험할 때만 켬</text></svg>
+
+<p>예: 사이클 10 작업 폴더는 다른 DB 이름(또는 다른 DB 컨테이너)과 다른 서버·웹 포트를 씁니다. 같은 DB를 쓰면 09의 도서관 표 변경과 10의 새 표가 한 DB에 섞여 서로의 시험을 흔듭니다. 출판유통통합전산망 받기는 기본으로 꺼 두고(<code>chaekcheck.popular.fetch.enabled=false</code>), 받기를 시험할 때만 켭니다. 서버를 켤 때마다 사이트를 부르지 않게 하려는 것입니다.</p>
+<p class="rec">추천: 나눔.</p></div>
+<div class="item" style="background:var(--accent-bg);border-radius:10px;padding:16px 18px;margin:8px 0">
+<h3>질문: DB와 포트는 지금 어디서 돌고 있나</h3>
+<p><b>DB는 이 PC의 WSL(Ubuntu) 안 Docker에서, 서버는 Spring Boot 8080, 화면 개발 서버는 Vite가 돌립니다.</b> dev 파일을 읽어 확인했습니다(2026-10-12).</p>
+<table>
+<tr><th>무엇</th><th>지금</th><th>근거</th></tr>
+<tr><td>개발용 DB</td><td>Docker 묶음 <code>chaekcheck</code>의 <code>db</code> 컨테이너(PostgreSQL 18 + pg_bigm), 포트 5432, DB 이름은 <code>.env</code>의 <code>DB_NAME</code>. 데이터는 볼륨 <code>db-data</code>에 남음</td><td>dev <code>compose.yaml</code> 10~43행, <code>.env.example</code></td></tr>
+<tr><td>시험용 DB</td><td>같은 묶음의 <code>db-test</code> 컨테이너, 포트 5433, 메모리에만 저장(<code>./gradlew test</code>가 씀)</td><td><code>compose.yaml</code> 45~62행</td></tr>
+<tr><td>서버(Spring Boot)</td><td>8080(따로 정하지 않아 기본값). <code>.env</code>를 읽어 <code>localhost:5432</code>의 DB에 붙음</td><td><code>application.yml</code> 6·8행, <code>vite.config.ts</code> 6행 주석</td></tr>
+<tr><td>화면 개발 서버(Vite)</td><td>포트를 따로 적지 않아 Vite 기본값(5173으로 앎, 설정 파일에는 없음). <code>/api</code> 요청을 8080으로 넘김(<code>API_PROXY_TARGET</code>로 바꿀 수 있음)</td><td><code>vite.config.ts</code> 7·12~15행</td></tr>
+</table>
+<svg viewBox="0 0 640 170" role="img" aria-label="지금 구성과 나누는 방법">
+<rect x="10" y="10" width="300" height="150" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="22" y="30" font-size="13" font-weight="700" fill="var(--text)">WSL Docker 묶음 "chaekcheck" (하나)</text>
+<rect x="22" y="42" width="276" height="50" rx="6" fill="var(--code-bg)" stroke="var(--line)"/>
+<text x="32" y="62" font-size="12" fill="var(--text)">db :5432 — DB_NAME (09가 씀)</text>
+<text x="32" y="82" font-size="12" fill="var(--warn)">+ 같은 컨테이너에 10용 DB 하나 더</text>
+<rect x="22" y="100" width="276" height="50" rx="6" fill="var(--code-bg)" stroke="var(--line)"/>
+<text x="32" y="120" font-size="12" fill="var(--text)">db-test :5433 — TEST_DB_NAME</text>
+<text x="32" y="140" font-size="12" fill="var(--warn)">+ 10용 시험 DB 이름 하나 더</text>
+<rect x="330" y="10" width="140" height="70" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="342" y="32" font-size="13" font-weight="700" fill="var(--text)">09 작업 폴더</text>
+<text x="342" y="52" font-size="12" fill="var(--text)">서버 8080</text><text x="342" y="70" font-size="12" fill="var(--text)">화면 5173</text>
+<rect x="490" y="10" width="140" height="70" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/>
+<text x="502" y="32" font-size="13" font-weight="700" fill="var(--text)">10 worktree</text>
+<text x="502" y="52" font-size="12" fill="var(--text)">서버 다른 포트</text><text x="502" y="70" font-size="12" fill="var(--text)">화면 다른 포트</text>
+<text x="330" y="110" font-size="12" fill="var(--muted)">10 worktree의 .env에서 DB 이름·시험 DB 이름,</text>
+<text x="330" y="128" font-size="12" fill="var(--muted)">서버 포트, API_PROXY_TARGET만 바꿈</text>
+</svg>
+<p>주의: Docker 묶음 이름이 <code>chaekcheck</code>로 고정돼 있어, 10 worktree에서 <code>docker compose up</code>을 하면 새 컨테이너가 아니라 <b>같은 컨테이너</b>를 씁니다. 그래서 컨테이너를 새로 만들기보다 <b>같은 컨테이너 안에 10용 DB 이름을 하나 더 두는 것</b>이 가장 간단합니다. 시험용 DB도 두 쪽이 동시에 시험을 돌리면 서로 지우므로 이름을 나눕니다. 포트 번호(예: 서버 8081, 화면 5174)는 dev가 정하게 둡니다.</p>
+<p>6번 제안은 이 방식(같은 컨테이너, DB 이름만 따로, 서버·화면 포트 따로, 받기 기본 꺼짐)을 뜻합니다.</p>
+</div>
+
+
+
+<div class="item" style="background:var(--accent-bg);border-radius:10px;padding:16px 18px;margin:8px 0">
+<h3>질문: <code>chaekcheck.popular.fetch.enabled=false</code>는 무엇이고 어느 서비스와 관련 있나</h3>
+<p><b>우리 서버(Spring Boot) 설정 파일에 새로 둘 켜고 끄는 스위치 하나입니다. "출판유통통합전산망에서 순위를 받아 올지"를 정합니다.</b></p>
+<svg viewBox="0 0 640 150" role="img" aria-label="받기 스위치">
+<defs><marker id="sw1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+<rect x="10" y="20" width="250" height="110" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="22" y="42" font-size="13" font-weight="700" fill="var(--text)">우리 서버 (Spring Boot)</text>
+<rect x="22" y="54" width="226" height="64" rx="6" fill="var(--warn-bg)" stroke="var(--warn)"/>
+<text x="32" y="74" font-size="12" font-weight="700" fill="var(--text)">popular 모듈의 받기 예약</text>
+<text x="32" y="94" font-size="12" fill="var(--text)">스위치 켜짐 → 05:00·켜질 때 받음</text>
+<text x="32" y="110" font-size="12" fill="var(--text)">스위치 꺼짐 → 받지 않음</text>
+<line x1="260" y1="86" x2="378" y2="86" stroke="var(--muted)" stroke-dasharray="5 4" marker-end="url(#sw1)"/>
+<text x="272" y="78" font-size="12" fill="var(--muted)">켜졌을 때만 요청</text>
+<rect x="380" y="56" width="250" height="60" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="392" y="80" font-size="13" font-weight="700" fill="var(--text)">출판유통통합전산망</text>
+<text x="392" y="100" font-size="12" fill="var(--muted)">bnk.kpipa.or.kr (바깥 공공 사이트)</text>
+</svg>
+<table>
+<tr><th>어디서</th><th>스위치</th><th>까닭</th></tr>
+<tr><td>운영 서버</td><td>켜짐 (기본값)</td><td>매달 3일에 순위를 받아야 함</td></tr>
+<tr><td>개발 중 내 PC (10 worktree)</td><td>꺼짐</td><td>개발하며 서버를 자주 껐다 켜는데, 순위가 비어 있으면 켤 때마다 사이트에 요청 35건 + 표지 수백 건을 보냄. 공공기관 사이트에 불필요한 요청을 막음</td></tr>
+<tr><td>자동 시험(<code>./gradlew test</code>)</td><td>꺼짐</td><td>시험이 바깥 사이트에 기대지 않게. 받기 시험은 미리 저장한 응답으로</td></tr>
+<tr><td>가져오기 프로그램(<code>collection-import</code>)</td><td>꺼짐</td><td>같은 서버 코드로 따로 뜨는 프로그램이라, 켜져 있으면 가져올 때마다 사이트를 부름</td></tr>
+</table>
+<p>이름은 지금 서비스 설정 이름 방식(<code>chaekcheck.availability.max-concurrent-searches</code> 같은 꼴)을 따른 것이고, 설계 결정 #12에서 승인하셨습니다. 받기 자체를 시험할 때만 개발자가 잠깐 켭니다.</p>
+</div>
+<div class="item"><h3><span class="no">7</span><code>docs/current/</code>(현재 설계 문서)에 인기 도서를 넣는 것은 09·10을 dev에서 다 합친 뒤에 [안]</h3>
+<svg viewBox="0 0 640 100" role="img" aria-label="현재 설계 문서 반영 시점"><line x1="20" y1="50" x2="620" y2="50" stroke="var(--line)" stroke-width="3"/><circle cx="60" cy="50" r="7" fill="var(--muted)"/><text x="20" y="30" font-size="12" fill="var(--text)">지금: 인계</text><text x="10" y="82" font-size="11" fill="var(--muted)">docs/current에 popular 없음</text><circle cx="260" cy="50" r="7" fill="var(--accent)"/><text x="230" y="30" font-size="12" fill="var(--text)">09 합침</text><circle cx="420" cy="50" r="7" fill="var(--warn)"/><text x="390" y="30" font-size="12" fill="var(--text)">10 합침</text><circle cx="580" cy="50" r="9" fill="var(--ok)"/><text x="512" y="30" font-size="12" font-weight="700" fill="var(--ok)">/cycle-start 회고</text><text x="470" y="82" font-size="11" fill="var(--muted)">docs/current에 popular 넣음</text></svg>
+
+<p>예: 지금 다른 세션이 <code>docs/current/</code>를 고치고 있어(커밋 전 변경 있음), 지금 넣으면 같은 파일을 두 세션이 고치게 됩니다. 사이클 10 인계서에는 "현재 설계 문서에는 아직 popular가 없음, 사이클 10 폴더 문서를 따름"으로 적고, 둘 다 합친 뒤 다음 <code>/cycle-start</code> 회고 때 한 번에 넣습니다.</p>
+<p class="alt"><b>다른 선택</b> 지금 넣기: 규칙대로 현재 설계가 늘 전체를 보이지만, 다른 세션과 같은 파일에서 겹칩니다.</p>
+<p class="rec">추천: 합친 뒤.</p></div>
+
+<div class="item"><h3><span class="no">8</span>순위·표지 게시 허락을 받기 전에는 배포하지 않음, 합치는 순서는 09 → 10 [안]</h3>
+<svg viewBox="0 0 640 125" role="img" aria-label="배포 조건"><defs><marker id="q8" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs><rect x="10" y="35" width="140" height="46" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="20" y="55" font-size="13" font-weight="700" fill="var(--text)">10 합침</text><text x="20" y="73" font-size="12" fill="var(--muted)">빌드·모듈 검증 통과</text><line x1="150" y1="58" x2="228" y2="58" stroke="var(--muted)" marker-end="url(#q8)"/><polygon points="300,20 370,58 300,96 230,58" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="268" y="55" font-size="12" font-weight="700" fill="var(--text)">이용 허락</text><text x="272" y="72" font-size="12" fill="var(--text)">답 왔나?</text><line x1="370" y1="58" x2="438" y2="58" stroke="var(--muted)" marker-end="url(#q8)"/><text x="390" y="50" font-size="12" fill="var(--ok)">예</text><rect x="440" y="35" width="190" height="46" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="450" y="55" font-size="13" font-weight="700" fill="var(--text)">운영에 올림</text><text x="450" y="73" font-size="12" fill="var(--muted)">출처 문구·표지 답대로</text><line x1="300" y1="96" x2="300" y2="106" stroke="var(--muted)"/><text x="200" y="120" font-size="12" fill="var(--no)">아니오 → 기다림 (인기 도서만 숨기거나 배포 미룸)</text></svg>
+
+<p>예: 개발과 합치기는 그대로 하되, 이용 문의 답(출처 문구·표지 사용)이 오기 전에는 인기 도서를 운영에 올리지 않습니다(화면 링크를 숨기거나 배포를 미룸, 방법은 배포 때). 합칠 때는 09를 먼저 main에 합치고, 10은 그 위에 맞춘 뒤(<code>AppLayout</code>, Liquibase 목록, 웹 API 파일에서 생길 수 있는 작은 겹침 정리) 전체 빌드·모듈 검증을 통과하면 합칩니다.</p>
+<p class="rec">추천: 위대로.</p></div>
+</section>
+
+<p class="foot">원본: 설계 검토 결과(design-reviewer, 2026-10-12), <code>docs/cycles/10-popular-books/</code> 문서들, dev <code>CLAUDE.md</code>(78행: <code>docs/current/handoff.md</code>를 불러옴), dev 커밋 기록(사이클 08 커밋됨). 다음 단계: 승인되면 ADR-0077을 쓰고, 인계서를 만들어 같은 방식으로 확인받습니다.</p>
+</main>
+</body>
+</html>

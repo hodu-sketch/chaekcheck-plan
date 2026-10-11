@@ -16,3 +16,8 @@
 | [2026-10-11-design-delta.html](2026-10-11-design-delta.html) | 설계 문서 한 장 요약(만드는 것, 표), 남은 작은 값 다섯: 시간 제한, 표지 칸 이름, 표지 응답 30일·404, 코드 위치는 dev, 마무리로 감 | `../design-delta.md` | 없음 (1~4 승인, 5는 인계서를 08·09 결과 뒤로) |
 | [2026-10-11-cycle08-align-decisions.html](2026-10-11-cycle08-align-decisions.html) | 사이클 08 중간 요약과 맞추기: 폰 창은 08 결정을 따름, 아래 창 닫는 방법 08과 같게, 개발 때 잴 기준 | `../scope.md` | 없음 (1은 "인기 도서는 별개"로, 2·3 승인) |
 | [2026-10-11-category-drop-decisions.html](2026-10-11-category-drop-decisions.html) | 전자책이 거의 없는 분류 빼기: 만화·어린이·청소년, 기타·의학·스포츠 (9월 분류별 있음 수) | `../spec.md` R2 | 없음 (두 개 승인, 17개로) |
+| [2026-10-12-pre-handoff-decisions.html](2026-10-12-pre-handoff-decisions.html) | 인계 전 결정 8가지: 받기 기록 순서, ADR-0077(분류 빼기), AC 추가, 가운데 창 오류·표지, 병렬 개발(인계 문서 따로, DB·포트 나눔, docs/current는 합친 뒤, 배포·합치는 순서) | 설계 검토 결과, 사이클 10 문서 | 없음 (1~5·7·8 승인, 6은 "분리 안 함"으로 다음 페이지) |
+| [2026-10-12-sequential-decision.html](2026-10-12-sequential-decision.html) | 병렬 대신 순서대로: 인계 문서·DB 나누기 필요 없음, 09가 끝나면 인계서 바꿔 넣고 현재 설계 반영 | 앞 페이지 5~8번 | 없음 (승인, 순서대로) |
+| [2026-10-12-how-fetch-works.html](2026-10-12-how-fetch-works.html) | 인기 도서를 언제·어떻게 받아 무엇을 저장하고 화면이 어떻게 읽는지 (설명) | `../design-delta.md` | 설명 |
+| [2026-10-12-handoff-review.html](2026-10-12-handoff-review.html) | 사이클 10 인계서 한 장 요약(단계·제약·여쭐 일), 가운데 창 첫 묶음, 넘기기 | `../handoff.md` | 없음 (1은 "앞의 3곳만" + API 옵션, 2 승인) |
+| [2026-10-12-cover-copyright.html](2026-10-12-cover-copyright.html) | 책 표지 저작권 조사 정리(법·판례·지금 설계 위치), 내려 달라는 요청 받는 곳, 작은 그림만 | `../../../research/popular-books/cover-copyright.md` | 없음 (2개 승인) |

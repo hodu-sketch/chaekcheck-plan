@@ -12,3 +12,4 @@
 | [design-delta-original.html](design-delta-original.html) | 설계 문서 원본(그림 6개를 미리 그림) | `../design-delta.md` | — |
 | [2026-10-11-review-decisions.html](2026-10-11-review-decisions.html) | 설계 검토 결과(고친 것), 업체 필수 규칙 이름, ADR-0076 초안 | design-reviewer 결과, `../adr-draft-0076.md` | 없음. 3개 모두 승인 (2026-10-11) |
 | [2026-10-11-handoff-decisions.html](2026-10-11-handoff-decisions.html) | 인계서: 만드는 순서, 도중에 여쭐 것, 작은 제안 5개, 넘김 | `../handoff.md` | 없음. 6개 모두 승인 (2026-10-11) |
+| [2026-10-12-retro-decisions.html](2026-10-12-retro-decisions.html) | 사이클 09 회고 결정 6가지: 군산시립 순서, 수집 DB 이름 바꾸기, dev 변경 받아들임, 옛 이름 열쇠, backlog 두 줄, 응답 크기 기준 | `../retro.md` | 없음 (6개 승인) |

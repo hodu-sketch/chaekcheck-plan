@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>순서대로 가기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+svg{max-width:100%;height:auto;display:block}
+.mock{border:2px dashed var(--line);border-radius:12px;padding:14px;margin:10px 0;font-size:17px}
+.row{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;background:var(--card);flex-wrap:wrap}
+.tag{font-size:14px;border-radius:6px;padding:0 6px;background:var(--code-bg);color:var(--muted)}
+.okt{color:var(--ok);font-weight:500}.mut{color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">사이클 09 개발이 곧 끝나니 따로 나누지 않고 순서대로 가는 방법입니다.</p>
+<p class="sub">말씀: "09dev가 곧 완료될 것 같아 분리 작업 안해도 될 것 같아". 그러면 앞 페이지의 병렬 개발용 결정(인계 문서 따로, DB·포트 나누기, 현재 설계 문서는 합친 뒤)이 필요 없어지거나 평소 방식으로 돌아갑니다. 바뀌는 것을 한 번에 정리했습니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>순서대로 가면</h2>
+<div class="gist">dev 작업 폴더 하나에서 09가 끝나고 커밋되면 10을 시작합니다. 인계서는 지금 사이클 10 폴더에 써 두고, 09가 끝나는 때 dev가 자동으로 읽는 파일로 바꿔 넣습니다.</div>
+<svg viewBox="0 0 640 170" role="img" aria-label="순서대로 진행">
+<defs><marker id="s1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+<rect x="10" y="20" width="140" height="56" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="22" y="44" font-size="13" font-weight="700" fill="var(--text)">지금</text><text x="22" y="62" font-size="12" fill="var(--muted)">10 인계서를 씀</text>
+<line x1="150" y1="48" x2="188" y2="48" stroke="var(--muted)" marker-end="url(#s1)"/>
+<rect x="190" y="20" width="140" height="56" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="202" y="44" font-size="13" font-weight="700" fill="var(--text)">09 dev 끝·커밋</text><text x="202" y="62" font-size="12" fill="var(--muted)">(곧)</text>
+<line x1="330" y1="48" x2="368" y2="48" stroke="var(--muted)" marker-end="url(#s1)"/>
+<rect x="370" y="10" width="260" height="76" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="382" y="32" font-size="13" font-weight="700" fill="var(--text)">plan에서 한 번에</text><text x="382" y="52" font-size="12" fill="var(--text)">① docs/current/handoff.md ← 10 인계서</text><text x="382" y="70" font-size="12" fill="var(--text)">② docs/current에 popular 넣기</text>
+<line x1="500" y1="86" x2="500" y2="118" stroke="var(--muted)" marker-end="url(#s1)"/>
+<rect x="370" y="120" width="260" height="44" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="382" y="140" font-size="13" font-weight="700" fill="var(--text)">10 dev 시작 (같은 작업 폴더)</text><text x="382" y="157" font-size="12" fill="var(--muted)">인계서가 자동으로 불려 옴</text>
+</svg>
+<table>
+<tr><th>앞 페이지 결정</th><th>순서대로 가면</th></tr>
+<tr><td>5. 인계 문서 따로(<code>plan-feedback-cycle10.md</code>)</td><td>필요 없음. 인계서는 평소처럼 <code>docs/current/handoff.md</code>로, dev 기록은 <code>plan-feedback.md</code>의 새 <code># 사이클 10</code> 절로. 09가 끝난 뒤라 겹치지 않음</td></tr>
+<tr><td>6. DB·포트 나누기</td><td>필요 없음. 같은 DB·포트. "개발·시험 중에는 받기 스위치 꺼 둠"만 남김(서버 켤 때마다 공공 사이트를 부르지 않게)</td></tr>
+<tr><td>7. 현재 설계 문서는 합친 뒤</td><td>09가 끝나 인계서를 바꿔 넣는 때 함께 넣음(다른 세션의 사이클 08 문서 변경이 커밋된 뒤)</td></tr>
+<tr><td>8. 게시 허락 전 배포 안 함, 09 → 10</td><td>그대로</td></tr>
+</table>
+<div class="item"><h3><span class="no">1</span>병렬 대신 순서대로: 위 표대로 바꾸고, 사이클 10 인계서는 지금 써서 09가 끝나면 바꿔 넣음 [안]</h3>
+<p>예: 오늘 인계서를 만들어 확인받고 사이클 10 폴더에 둡니다. 09 개발이 끝났다고 알려 주시면 그때 <code>docs/current/handoff.md</code>를 바꾸고 현재 설계 문서에 인기 도서를 넣어 커밋합니다. 그 뒤 dev에서 새 세션을 열면 10 인계서가 바로 보입니다.</p>
+<p class="alt"><b>다른 선택</b> 앞 페이지대로 병렬(따로 작업 폴더): 09가 곧 끝난다면 나누는 수고(DB·포트·합치기 정리)가 얻는 시간보다 큽니다.</p>
+<p class="rec">추천: 순서대로.</p></div>
+</section>
+
+<p class="foot">원본: 앞 페이지 <code>2026-10-12-pre-handoff-decisions.html</code> 5~8번, <code>docs/cycles/10-popular-books/scope.md</code> "병렬 개발과 인계".</p>
+</main>
+</body>
+</html>

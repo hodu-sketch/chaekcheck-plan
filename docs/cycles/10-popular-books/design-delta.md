@@ -31,7 +31,7 @@ flowchart TB
   web -->|"GET /api/v1/popular-books (+ 계획 파라미터)"| popular
   web -->|"GET covers/{coverId}"| popular
   web -->|"GET /api/v1/books/{bookId} (S14)"| catalog
-  web -->|"SSE book-availabilities (S14)"| availability
+  web -->|"SSE book-availabilities, holdingLimit=3 (S14)"| availability
 ```
 
 ### 주요 흐름 1: 매달 받기 (실패 포함)
@@ -58,13 +58,13 @@ sequenceDiagram
       J->>K: POST /adiStatsCtgSaleCnt/search
     end
     alt 검증 통과 (각 50권, 부수 16건)
-      J->>DB: 한 트랜잭션: 그 달 지우고 month·category·entry 넣기
+      J->>DB: 한 트랜잭션: fetch_run SUCCEEDED(끝난 시각 = 지금) 넣고, 그 달 지우고 month·category·entry 넣기
       loop 새 표지만, 2초 간격
         J->>K: GET /files/isbn/…/s_<id>.jpg
         J->>DB: cover 넣기 (실패는 건너뜀)
       end
       J->>DB: 최근 두 달에 안 쓰인 cover 지우기
-      J->>DB: fetch_run SUCCEEDED (표지 수·실패 수)
+      J->>DB: 그 fetch_run의 cover_fetched_count·cover_failed_count만 UPDATE
       J->>C: 바로 새로 고침
     else 거절·형식 바뀜·50권 미만·네트워크
       J->>DB: fetch_run FAILED(reason, detail)
@@ -109,9 +109,9 @@ sequenceDiagram
     C-->>W: 창 안에 "책을 찾을 수 없어요"
   else 200
     C-->>W: 제목·지은이·출판사(우리 값)
-    W->>A: SSE book-availabilities/stream
+    W->>A: SSE book-availabilities/stream (holdingLimit=3: 계획 순서 앞 3곳만)
     A-->>W: 도서관별 결과 / 실패
-    W->>W: 대출 가능·구독형 → 대출 중(예약 적은 순) → 실패, 3줄만
+    W->>W: 그 3곳을 대출 가능·구독형 → 대출 중(예약 적은 순) → 실패 순으로
   end
 ```
 
@@ -172,7 +172,6 @@ classDiagram
   class PopularCategory {
     siteId
     shortName
-    pinnedPosition
   }
   class Book {
     id
@@ -193,6 +192,7 @@ classDiagram
 |---|---|---|---|---|---|
 | `popular` | 신규 [확정] (ADR-0073) | 출판유통통합전산망 순위·판매 부수·표지 받기, 매일 판단 예약, 저장, 공용 캐시, 화면용 REST | Java 없음. REST `GET /api/v1/popular-books`, `GET /api/v1/popular-books/covers/{coverId}` | 없음 | `popular.fetch_run`, `ranking_month`, `ranking_category`, `ranking_entry`, `cover` |
 | `catalog` | 변경 | ISBN으로 책 찾기 공개 API 하나 더함 | `BookLookup.byIsbn13(Collection<String> isbn13s) → List<IsbnBook(String isbn13, long bookId, long[] libraryIds)>` [확정 이름] (사용자 승인, 2026-10-11, 설계 #12). 맞는 책이 없는 ISBN은 빠짐. SQL `SELECT id, isbn13, library_ids FROM catalog.book WHERE isbn13 = ANY(:isbns)`(UNIQUE `book_isbn13_key` 사용) | 없음 | 그대로 |
+| `availability` | 변경 | 소장 대출 스트림에 "계획 순서로 앞의 N곳만" 옵션 | REST `GET /api/v1/book-availabilities/stream`에 선택 파라미터 `holdingLimit` [안 이름] (1~20, 없으면 지금과 같음) [확정 동작] (사용자: "가. 앞의 3곳만 확인 이걸로 해줘 api좀 손봐줘", 2026-10-12, `easy/2026-10-12-handoff-review.html` #1) | 없음 | 그대로 |
 | `library` | 그대로 | `popular`가 `LibraryCatalog.planSearch(…, PlanOptions)`를 씀(`BookSearchController`와 같은 방식) | 그대로 | 없음 | 그대로 |
 
 - `popular` 패키지 `com.chaekcheck.popular`, 안쪽 `internal/fetch`(세션·파서), `internal/schedule`, `internal/store`(JdbcClient), `internal/cache`, `internal/web`(컨트롤러, 계획 파라미터 파서, 오류) — 예시, 안쪽 위치는 dev가 정함 [확정] (사용자 승인, 2026-10-11, design-delta 확인)
@@ -203,7 +203,7 @@ classDiagram
 - 판단 `shouldFetch(today)` (Asia/Seoul): 서버 켜질 때(`ApplicationReadyEvent`)와 매일 05:00 → ① 저장된 달 없으면 받음 ② 대상 = 지난달 ③ 그 달이 다음 달 3일 00:00 뒤에 저장됐으면 안 받음 ④ 3일 이후 그 달 실패가 2번이면 안 받음 ⑤ 오늘이 3일 이후면 받음 [확정] (설계 #7~#9, spec R1-2·R1-3·R1-6)
 - 분류 순서: "전체" 0, 나머지 16개를 판매 부수 큰 순(같으면 사이트 ID 순)으로 1~16. 받을 때 계산해 `display_order`로 저장 [확정] (spec R2-2)
 - 공용 캐시: 최근 달 순위(분류·책)와 ISBN별 `(bookId, libraryIds)` 한 벌. 10분마다, 새 달 저장 직후 바로 새로 고침. 이용자별 계산(계획과 겹치는지)은 캐시하지 않음 [확정] (ADR-0074, 설계 후속 #3)
-- 설정 [확정 이름] (설계 #12) / 값: `chaekcheck.popular.fetch.enabled`(기본 true, `collection-import` 프로필·시험 false), `cron` `"0 0 5 * * *"` [확정], `zone` `Asia/Seoul`, `request-interval` 2초 [확정 2초 이상, 값 승인], `connect-timeout` 5초, `read-timeout` 10초 [확정] (사용자 승인, 2026-10-11, design-delta 확인) (개발 때 측정 뒤 바꿀 수 있음), `base-url` `https://bnk.kpipa.or.kr` [확정], `user-agent` `chaekcheck (+<서비스 주소>)` [확정] (설계 #13, 주소는 배포 때)
+- 설정 [확정 이름] (설계 #12) / 값: `chaekcheck.popular.fetch.enabled`(기본 true, `collection-import` 프로필·시험 false), `cron` `"0 0 5 * * *"` [확정], `zone` `Asia/Seoul`, `request-interval` 2초 [확정 2초 이상, 값 승인], `connect-timeout` 5초, `read-timeout` 10초 — 값 승인 [확정] (사용자 승인, 2026-10-11, design-delta 확인), 개발 때 측정 뒤 바꿀 수 있음(시험 응답 0.2~0.3초), `base-url` `https://bnk.kpipa.or.kr` [확정], `user-agent` `chaekcheck (+<서비스 주소>)` [확정] (설계 #13, 주소는 배포 때)
 
 ## 데이터
 
@@ -290,6 +290,7 @@ erDiagram
 | `cover.byte_size` | int | NOT NULL, `>= 0` | | [확정] (사용자 승인, 2026-10-11, design-delta 확인) |
 | `cover.fetched_at` | timestamptz | NOT NULL | | [확정] (사용자 승인, 2026-10-11, design-delta 확인) |
 
+- 받기 기록 쓰는 순서 [확정] (사용자 승인, 2026-10-12, 인계 전 결정 #1): 성공이면 받기 기록(`SUCCEEDED`, `finished_at` = 순위 저장 시각)을 순위(달·분류·책)와 **같은 트랜잭션**에서 넣고, 표지 받기가 끝나면 그 줄의 `cover_fetched_count`·`cover_failed_count`만 UPDATE. 실패면 순위 없이 `FAILED` 줄만 넣음. 표지 받는 중에 서버가 꺼져도 순위와 성공 기록은 남고 표지 수는 0
 - 지우기: 받기 성공 뒤, 최근 두 달 `ranking_entry.cover_path`에 없는 `cover` 줄을 지움 [확정] (설계 후속 #2). 순위 표는 지우지 않음 [확정] (spec R1-5)
 - 크기: 한 달 분류 17줄 + 책 850줄, 표지 최대 850장 × 51KB ≈ 43MB(겹치는 책은 더 적음), 두 달 ≈ 90MB 안쪽(계산값)
 - 저자 칸 없음 [확정] (spec 입력과 출력)
@@ -329,7 +330,11 @@ erDiagram
 - `available`: `bookId`가 있고 그 책의 `libraryIds`가 계획 도서관과 겹치면 true
 - 200 (값이 없을 때): `{"month": null, "fetchedAt": null, "categories": []}` [확정] (설계 #6)
 - 두 API 모두 도서관 사이트를 부르지 않으므로 nginx `limit_req`(도서관을 부르는 API) 대상 아님. 응답 크기 약 200KB(미측정)
-- S14·S15용 새 API 없음: S14는 `GET /api/v1/books/{bookId}` + `book-availabilities/stream` 그대로
+- S14·S15용 새 API 없음. S14는 `GET /api/v1/books/{bookId}` + `book-availabilities/stream?…&holdingLimit=3`
+- `GET /api/v1/book-availabilities/stream` 변경 (`availability`) (사용자: "가. 앞의 3곳만 확인 이걸로 해줘 api좀 손봐줘", 2026-10-12, `easy/2026-10-12-handoff-review.html` #1):
+  - 새 선택 파라미터 `holdingLimit` [안 이름]: 1~20 정수. 있으면 그 책을 가진 계획 도서관 소장 가운데 **계획 순서(지금 순서 그대로) 앞의 N개만** `targets.holdings[]`에 넣고 그것만 요청함. 없으면 지금과 같음(기존 화면 영향 없음)
+  - 검증: 정수 아님·범위 밖 → 400 `validation_error`(`invalid_format`), 두 번 → `duplicate`. 검증 순서는 기존 순서 끝 [안]
+  - 다음 묶음(`…/batches/stream`)은 이 옵션과 함께 쓰지 않음 [안]
 
 ## 웹 (flow 그대로)
 
@@ -337,7 +342,7 @@ erDiagram
 - `AppLayout`: 로고 오른쪽·로그인 왼쪽에 "인기 도서" 링크(S8·S9에서는 숨김), 설명 글 "전자도서관 대출 가능 확인" 지움(모든 폭) [확정] (flow)
 - 계획: `BookPage`처럼 `useRegions`·`useLibraryScope`·`readVisit`·`loadPrefs`로 만듦(브라우저 저장 검색 기준, AC-7)
 - 표지 `<img loading="lazy">`, `onError` → 제목 글자
-- S14: `fetchBook` + `useHoldings`, 줄 컴포넌트는 S3 것. 3줄 고르는 규칙은 spec R6-3·R6-5. 첫 묶음만 쓸지 [확인 필요: dev `useHoldings`]
+- S14: 표지는 격자에서 누른 그 `coverUrl`(없으면 제목 글자), 제목·지은이·출판사는 `fetchBook`, 대출 줄은 `useHoldings`(`holdingLimit=3`), 줄 컴포넌트는 S3 것. `fetchBook`이 404면 "책을 찾을 수 없어요", 그 밖의 오류·끊김이면 S3과 같은 오류 문구를 창 안에 [확정] (사용자 승인, 2026-10-12, 인계 전 결정 #4). 3줄 고르는 규칙은 spec R6-3·R6-5. 첫 묶음만 쓸지 [확인 필요: dev `useHoldings`]
 - 넘긴 쪽·스크롤은 히스토리 상태에 두어 S3에서 뒤로 와도 남음 [확정] (flow #17)
 - 배포: CSP 바꾸지 않음(표지가 우리 주소) [확정] (ADR-0075)
 
@@ -347,25 +352,28 @@ erDiagram
 |---|---|---|---|---|
 | 출판유통통합전산망 순위·판매량 화면 | `java.net.http.HttpClient` + `CookieManager`, GET 화면 → `m_sCsrf` → POST(`X-CSRF-TOKEN`, `X-Requested-With`, `Referer`), Jsoup 1.23.2(이미 의존성)로 해석. 조회 서버(GET만)는 쓰지 않음 | 키 없음. 한 번에 35건 이하, 2초 이상 간격, 매달 1회(+재시도). User-Agent `chaekcheck (+<서비스 주소>)` | 그달 저장 안 함, `fetch_run` FAILED + `log.error`, 앞 달 그대로, 다음 날 다시 | 방식 [확정] (조사 2026-10-11), 시간 제한 [확정] (사용자 승인, 2026-10-11, design-delta 확인) |
 | 같은 사이트 표지 그림 | GET `/files/isbn/…/s_<id>.jpg`, 새 경로만 | 2초 간격, 첫 달 최대 850건(약 28분), 다음 달부터 새 책만 | 그 표지만 건너뜀(그달 순위는 성공), 화면은 제목 글자 | [확정] (ADR-0075) |
-| 게시 허락 | 이용 문의 메일 (사용자가 보냄) | | 답에 따라 출처 문구·표지 사용 고침 | [확인 필요] |
+| 게시 허락 | 답을 기다리지 않고 배포 [확정] (사용자, 2026-10-12, scope "개발 순서와 인계"). 이용 문의 메일은 보내도 됨 | | 답이 오면 출처 문구·표지 사용을 그 답에 맞춤 | [확정] |
 
 ## 결정 기록
+
+- ADR을 따로 두지 않는 것: 예약(`@EnableScheduling`, 단일 스레드 실행기)·판단 규칙, 분류 enum 코드 상수, 한 번에 17분류를 내려주는 API 하나, `popular` 스키마 + JdbcClient. 모두 지금 서비스 관례를 따르거나 이 모듈 안쪽이라 설계 결정 페이지(#3·#4·#6·#7~#9)와 이 문서로 기록함 [이유: ADR은 모듈 경계·데이터 소유·외부 출처·API 방식 같은 큰 선택만(adr 스킬 규칙)]
 
 - [ADR-0072](../../adr/0072-popular-books-source-kpipa.md) 인기 도서 출처는 출판유통통합전산망 공개 통계 화면 (Accepted)
 - [ADR-0073](../../adr/0073-popular-module.md) 새 모듈 `popular`가 받기·저장·API를 맡음 (Accepted)
 - [ADR-0074](../../adr/0074-popular-isbn-lookup-shared-cache.md) 순위 책과 우리 책은 볼 때 ISBN으로 맞추고 책 정보는 공용 캐시 (spec R3-2 처음 글을 바꿈) (Accepted)
 - [ADR-0075](../../adr/0075-popular-cover-prefetch-proxy.md) 표지는 매달 미리 받아 우리 서버가 넘겨줌, 최근 두 달 보관 (Accepted)
+- [ADR-0077](../../adr/0077-popular-drop-sparse-categories.md) 전자책이 거의 없는 다섯 분류를 받지 않음(ADR-0072 범위를 16분류로, ADR-0074·0075 숫자 바로잡음) (Accepted)
 
 ## 확인 필요
 
 | 항목 | 왜 | 확인 방법 | 막는 단계 |
 |---|---|---|---|
 | ~~순위 화면 토큰이 판매량 화면에도 통하는지~~ → 통함 (2026-10-11 시험, 조사 문서 "토큰 하나로 두 화면"). 세션 GET 한 번이면 됨(34건, AC-12 "35건 이하" 안). 두 번 열어도 무방 — dev가 정함 | 요청 수 | 끝남 | 없음 |
-| 연결 5초·읽기 10초가 맞는지 | 시간 제한 | API 호출 시험 (개발 때) | 없음 |
+| 연결 5초·읽기 10초 측정 뒤 조정(값은 승인됨) | 시간 제한 | API 호출 시험 (개발 때) | 없음 |
 | 작은 표지(`s_`)가 3×3에 충분한지 | 화질 | 프로토타입 | 없음 |
 | 캐시 새로 고칠 때 ISBN 최대 850개 찾는 시간, 공용 캐시 메모리 | 성능 | 프로토타입 (`EXPLAIN ANALYZE`, 측정) | 없음 |
 | 서비스 DB ISBN 일치율(수집 DB 27.8%와 비슷한지) | AC-6 기대값 | 프로토타입 | 없음 |
-| S14가 첫 묶음만 쓰는 것이 `useHoldings`로 되는지 | 흐름 3 | dev 확인 (인계서) | 없음 |
-| 순위·표지 게시 허락 | 공개 | 공식 문의 (사용자) | 공개(배포) |
+| ~~S14가 첫 묶음만 쓰는 것~~ → 앞의 3곳만 묻는 `holdingLimit`으로 바꿈 (사용자, 2026-10-12) | 흐름 3 | 끝남 | 없음 |
+| ~~순위·표지 게시 허락~~ → 답 없이 배포하기로 함 (사용자, 2026-10-12) | 공개 | 끝남 | 없음 |
 | 지난달 값이 들어온 뒤 고쳐지는지 | 3일 받기 | API 호출 시험 (11-03, 11-10) | 운영 |
 | 사이클 08 웹과 `AppLayout` 변경 순서 | 같은 파일 | dev 회고 때 | 없음 |
