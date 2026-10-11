@@ -74,3 +74,4 @@
 | [ADR-0068](0068-updated-at-by-db-trigger.md) | 고친 시각(updated_at)은 모듈마다 DB 트리거가 적음 | Accepted | 2026-10-11 | 08 |
 | [ADR-0069](0069-national-bibliography-raw-and-rule-change.md) | 국가서지는 원문을 남기고 매번 다듬음(판 번호 없음), 정리 규칙을 바꿀 때 상황별로 다시 가져옴 (ADR-0065 일부를 바꿈) | Accepted | 2026-10-11 | 08 |
 | [ADR-0070](0070-holding-id-carry-over-and-gone-notice.md) | 같은 소장은 옛 소장 번호를 잇고, 빠진 책·소장은 따로 알림(`holding_not_found`) (ADR-0065 일부를 바꿈) | Accepted | 2026-10-11 | 08 |
+| [ADR-0071](0071-library-name-and-classification.md) | 도서관 이름에는 기관 이름만, 업체·대출 방식은 분류로, (이름, 업체, 대출 방식, 순번) UNIQUE (ADR-0017 일부·사이클 07 seed 이름 규칙을 바꿈) | Proposed | 2026-10-11 | 09 |

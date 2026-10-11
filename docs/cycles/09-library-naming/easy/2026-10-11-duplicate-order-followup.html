@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>겹칠 때 순번</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+.pill{display:inline-block;border:1px solid var(--line);border-radius:8px;padding:4px 10px;background:var(--bg);margin:2px 0}
+.tag{color:var(--muted);font-size:.85em}
+.mocks{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start;margin:12px 0}
+.dev{border:2px dashed var(--line);border-radius:12px;padding:10px;font-size:15px;line-height:1.5;background:var(--bg)}
+.dev .lbl{font-size:13px;color:var(--muted);margin-bottom:6px}
+.dev.pc{flex:1 1 520px;max-width:600px}.dev.tab{flex:1 1 360px;max-width:420px}.dev.ph{flex:0 1 230px;width:230px}
+.rcard{display:grid;grid-template-columns:1.4fr 1fr .8fr;gap:8px;border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--card);margin:6px 0}
+.dev.ph .rcard{grid-template-columns:1fr}
+.rcard .t{font-weight:700}.rcard .m{color:var(--muted);font-size:13px}
+.lname{color:var(--accent);text-decoration:underline}
+.cls{color:var(--muted);font-size:13px}
+.lrow{display:flex;justify-content:space-between;align-items:center;gap:8px;border:1px solid var(--line);border-radius:8px;padding:6px 8px;background:var(--card);margin:4px 0}
+.btn{border:1px solid var(--line);border-radius:6px;padding:0 8px;font-size:13px;white-space:nowrap}
+.inp{border:1px solid var(--line);border-radius:6px;padding:4px 8px;background:var(--card);margin:4px 0}
+.logo{display:inline-block;width:14px;height:14px;border-radius:3px;background:var(--line);vertical-align:-2px;margin-right:4px}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">이름·업체·대출 방식이 모두 같을 때<br>순번을 붙이는 방법을 골라 주세요.</p>
+<p class="sub">앞 페이지의 "새 도서관 이름이 겹치면 seed 생성 스크립트가 멈추고 알림"을 미승인하시고 "겹치면 1, 2, 3 이렇게 순서 따로 붙이는 거 안 되나"라고 하셨습니다. 됩니다. 순번을 어디에 두느냐에 따라 두 가지 안이 있습니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>지금 겹치는 곳과 앞으로 겹칠 곳</h2>
+<p class="gist">지금 규칙을 다 적용해도 겹치는 곳은 부여대왕초등학교 두 사이트뿐입니다. 앞으로는 수집 사본이 새로 와서 후보 도서관을 더 넣을 때 생길 수 있습니다.</p>
+<table>
+<tr><th>서비스 번호</th><th>주소</th><th>이름·업체·대출 방식</th></tr>
+<tr><td>1575</td><td><code>jb-dongsang.dkyobobook.co.kr</code> (책 600종)</td><td>부여대왕초등학교 · 교보 · 소장</td></tr>
+<tr><td>1576</td><td><code>bdaewang.dkyobobook.co.kr</code> (책 1,181종)</td><td>부여대왕초등학교 · 교보 · 소장</td></tr>
+</table>
+<p>지금 seed 생성 스크립트(<code>build_candidate_seed.py</code>)는 이런 곳에 "(교보, jb-dongsang.dkyobobook.co.kr)"처럼 주소를 붙였습니다. 이 괄호는 이번에 떼기로 하셨습니다.</p>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>순번을 어디에 두나</h2>
+<p class="gist">순번을 이름과 따로 된 칸에 두면 이름은 기관 이름만 남는다는 처음 결정을 지킬 수 있습니다.</p>
+
+<div class="item">
+<h3>순번은 따로 된 칸에 두고, 화면에는 분류 뒤에 "2번째 사이트"로 보임 <span class="an">[안]</span></h3>
+<p>도서관마다 "같은 분류 안의 순번" 칸을 둡니다. 보통은 1이고, 이름·업체·대출 방식이 같은 곳이 또 들어오면 seed 생성 스크립트가 2, 3을 붙입니다. 겹침 확인은 이름·업체·대출 방식·순번 넷으로 합니다. 순번은 먼저 들어온 곳(서비스 번호가 작은 곳)이 1입니다.</p>
+<p>화면 (순번 1은 표시하지 않음):</p>
+<p><span class="pill">부여대왕초등학교 <span class="tag">· 교보 · 소장</span></span><br><span class="pill">부여대왕초등학교 <span class="tag">· 교보 · 소장 · 2번째 사이트</span></span></p>
+<p>스크립트는 순번을 붙인 곳을 목록으로 보여 줍니다. 나중에 학교 이름을 확인하면 이름을 고치고 순번을 1로 되돌립니다.</p>
+<p class="rec">추천: 이 안. 이름에 숫자가 섞이지 않고, 스크립트가 멈추지 않습니다.</p>
+</div>
+
+<div class="item">
+<h3>순번을 이름 뒤에 붙임 <span class="an">[안]</span></h3>
+<p>이름을 "부여대왕초등학교 2"처럼 바꿉니다. 새 칸이 없어 단순합니다.</p>
+<p class="alt">대신 이름에 기관 이름이 아닌 것이 다시 들어갑니다. "이름에는 기관 정식 이름만"이라는 처음 결정과 어긋나고, "2"가 학교 이름의 일부처럼 보입니다. 직접 추가 찾기에서 "부여대왕초등학교 2"로 찾아야 하는 것도 어색합니다.</p>
+</div>
+
+<p class="alt">두 안 모두 순번만으로는 이용자가 어느 사이트가 자기 학교 것인지 알 수 없습니다. 그래서 순번이 붙은 곳은 사이트 첫 화면 이름을 확인해 이름을 고치는 것을 다음 할 일로 남깁니다. 둘 중 하나만 골라 주시고, 다른 하나는 미승인으로 두시면 됩니다.</p>
+</section>
+
+<p class="foot">원본: <code>docs/cycles/09-library-naming/spec.md</code> R4-4, <code>research.md</code> 4절. 앞 페이지 <code>2026-10-11-spec-flow-decisions.html</code>의 9번 미승인에 대한 다시 낸 제안. 작성 2026-10-11.</p>
+</main>
+</body>
+</html>
