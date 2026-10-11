@@ -243,3 +243,4 @@
 - 다음 수집 때: 새 북큐브 도서관의 권수 파일 만들기, 새 도서관 이름은 정식 이름만 (사이클 09 수집 결과, 2026-10-12). 여주대 빠진 책 채우기(10-08 중간에 멈춤) 다시 할지는 수집 세션이 사용자에게 물음
 - 수집기 코드 구조 정리: 한 파일(`crawl_catalog.py`, 1,305줄)에 섞인 ① 도서관 넣기(`import-probe`·`import-bookcube`)와 ② 책 수집, 화면 7가지 읽기를 갈래별·화면별로 나누기. 수집기를 dev로 갈아타는 일과 떼어 따로 함 [확정] (사용자: "응 백로그에 기록해줘", 2026-10-12, `docs/research/maintenance/crawler-move.md` 5절 4번)
 - → 사이클 13 (초안 `docs/cycles/13-crawler-to-dev/scope.md`, 2026-10-12): 수집기를 dev로 갈아타기 + 도서관 넣기를 `collection` 모듈이 재시작 없이 + "후보" 이름 없애기 [확정] (사용자: "이 작업 cycle 13인 걸로 하자", 2026-10-12). 결정 근거 `docs/research/maintenance/crawler-move.md` 5절
+- 인기 도서 분류 카드를 다른 카드처럼 평평하게 + 터치 판정 `(pointer: coarse)` 규칙을 dev 화면 규칙에 — 사이클 밖 dev 요청 [확정] (사용자, 2026-10-12, 사이클 10 디자인 덧붙임 결정 페이지). 메시지 `docs/research/maintenance/cycle10-design-followup-dev-message.md`

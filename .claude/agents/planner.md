@@ -34,6 +34,7 @@ You write the implementation handoff that a Claude Code session in the dev proje
 - Include tests that prove the acceptance criteria, and the Spring Modulith verification test (`ApplicationModules.of(...).verify()`) whenever modules are added or changed.
 - Never invent confirmed values. Anything unverified stays marked [확인 필요].
 - Do not plan work outside the slice. Put it under "이번에 하지 않는 것".
+- If the slice adds or changes any phone screen, add a line to "완료 기준": the user checks it on their own phone (Samsung Internet) through the dev web server `web-lan-5174` (`.claude/launch.json`, same Wi-Fi) before the cycle closes. Chrome's phone emulation is not enough: it missed a field overflow and a touch check that only showed on the real phone (user decision, 2026-10-12, `docs/cycles/10-popular-books/easy/2026-10-12-design-addendum-decisions.html` #3).
 
 ## Output format (Korean, identifiers and paths in English)
 
@@ -56,7 +57,7 @@ You write the implementation handoff that a Claude Code session in the dev proje
    - 위험: 낮음/중간/높음
 
 ## 테스트
-- 단위 / 통합(모듈 테스트) / 화면 확인(Playwright, 데스크톱 먼저)
+- 단위 / 통합(모듈 테스트) / 화면 확인(Playwright, 데스크톱 먼저; 폰 화면이 바뀌면 사용자 실제 폰 확인)
 - 수용 기준과 테스트의 대응표
 
 ## 완료 기준

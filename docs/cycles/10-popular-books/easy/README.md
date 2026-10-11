@@ -24,3 +24,4 @@
 | [2026-10-12-design-overview.html](2026-10-12-design-overview.html) | 설계 한눈에: 모듈 구성도, DB 표 관계(ER)·도메인 모델, 받기·화면·가운데 창 흐름도, 응답 예시, 코드 자리·구현 단계, ADR (설명) | `../design-delta.md`, `../handoff.md` | 설명 |
 | [2026-10-12-module-split-decisions.html](2026-10-12-module-split-decisions.html) | 모으기·보여 주기 두 모듈로: 이름, 표 소유·스키마, 읽기 창구+알림, ADR-0078 | 설계 한눈에 페이지 결정 | 없음 (검토 뒤 "한 모듈로 가자", 바꾸지 않음) |
 | [2026-10-12-retro-decisions.html](2026-10-12-retro-decisions.html) | 사이클 10 회고: 계획대로·달라진 것, ADR-0080(14분류)·0081(표지 200px JPEG), 화소 상한, display_order CHECK, 사이클 11 인계서 바꿔 넣기 | `../retro.md`, ADR-0080·0081 | 없음 (5개 정함, #4는 사용자 제안: 기존 changeset을 0..14로 고침) |
+| [2026-10-12-design-addendum-decisions.html](2026-10-12-design-addendum-decisions.html) | 인기 도서 디자인 확정(시안 A) 반영 알림, 사이클 밖 수정, 정할 것 3: 둥근 카드 범위, `pointer: coarse` 규칙, 실제 폰 확인 | `../retro.md` 덧붙임, dev `plan-feedback.md` | 3 |

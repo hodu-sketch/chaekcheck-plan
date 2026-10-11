@@ -106,3 +106,10 @@ dev 코드 대조(2026-10-12, Read·Grep만, dev `git log`는 이 세션 규칙�
 - 공용 캐시 메모리: **잼** — 한 벌 약 0.4MB, 바꿔 끼우는 순간 약 0.8MB(힙 512MB에 비해 작음). 새로 고침 한 번 걸린 시간은 여전히 안 잼(로그에 시간 없음). ISBN 찾기 질의 `EXPLAIN ANALYZE` 3.45ms
 - "받기를 켠 채 다시 켜면 요청 0건": 그대로 단위 테스트(`FetchDecisionTests`)로만 확인
 
+### 덧붙임 뒤 결정 (2026-10-12, `easy/2026-10-12-design-addendum-decisions.html`)
+
+- 인기 도서 분류 카드를 다른 화면 카드와 같은 모양(평평, 그림자 없음)으로 [확정] (사용자 제안: "지금 '인기 도서 화면'의 것을 다른 카드들과 같이 해줘", #1 "인기 도서에서만 예외" 미승인). 떠 있는 [분류 ▾] 버튼까지인지는 [확인 필요: dev가 화면을 보여 줄 때]
+- "터치 판정은 `(pointer: coarse)` 하나로"를 dev 화면 규칙에 적도록 요청 [확정] (사용자 승인, #2)
+- 위 두 가지 dev 요청: `docs/research/maintenance/cycle10-design-followup-dev-message.md`
+- 폰 화면이 바뀌는 사이클의 인계서 "완료 기준"에 사용자 실제 폰(삼성 인터넷, dev `web-lan-5174`) 확인 줄을 넣음 [확정] (사용자 승인, #3). plan `.claude/agents/planner.md` 규칙에 더함
+
