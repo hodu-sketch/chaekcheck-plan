@@ -9,3 +9,4 @@
 | [2026-10-04-kyobo-rental-speed-decisions.html](2026-10-04-kyobo-rental-speed-decisions.html) | 교보 대여·혼합형 232곳 수집 속도: 이 서버만 동시 요청 올리기 | `../crawl-runbook.md` 8-2절 | 없음. 사용자 "4건으로 해줘"(canvas, 2026-10-04) → 17:03부터 동시 4건 |
 | [2026-10-04-book-id-policy-decisions.html](2026-10-04-book-id-policy-decisions.html) | 다시 가져와도 책 번호가 바뀌지 않게 하는 정책 4가지 | `../catalog-refresh.md` 5.2절 | 없음. 4개 모두 승인(3번은 "안내표 없이", 2026-10-04) |
 | [2026-10-07-kyobo-blocked-decisions.html](2026-10-07-kyobo-blocked-decisions.html) | 교보 구독형 서버가 우리 IP를 막음: 남은 교보 대여·혼합 202곳을 어떻게 할지, 앞으로 이 서버에 보내는 양 | `../crawl-runbook.md` 8-2-1절 | 이 페이지에서는 정하지 않음. 다른 plan 세션이 ADR-0067(대여·혼합 230곳 제외, 2026-10-11)로 정함 → 닫음 (2026-10-12) |
+| [2026-10-12-same-book-isbn.html](2026-10-12-same-book-isbn.html) | 같은 책 묶기 네 단계, ISBN 출처, 알려진 문제, 문서에서 낡은 곳 | `../same-book-isbn.md`, dev `docs/plan-feedback.md` 1820~1829행 | 없음. "사이클 12 전에 문서 고쳐 두기" 승인(canvas, 2026-10-12) → 원본 5절·5.1·5.3 고침 |
