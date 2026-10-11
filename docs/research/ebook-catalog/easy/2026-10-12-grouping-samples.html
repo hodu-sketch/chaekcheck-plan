@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>책 묶기 표본 조사</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.gist.ok{background:var(--ok-bg)}.gist.warn{background:var(--warn-bg)}.gist.no{background:var(--no-bg)}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.tw{overflow-x:auto}
+ul.ic{list-style:none;margin:0;padding:0}
+ul.ic li{display:flex;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
+ul.ic li:first-child{border-top:none}
+ul.ic svg{flex:0 0 28px;width:28px;height:28px;margin-top:4px;stroke:var(--accent);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.s{display:block;color:var(--muted);font-size:17px}
+h4{font-size:19px;margin:18px 0 4px;color:var(--muted)}
+.tag{font-size:15px;font-weight:700;border-radius:6px;padding:1px 7px;white-space:nowrap}
+.t-ok{background:var(--ok-bg);color:var(--ok)}.t-warn{background:var(--warn-bg);color:var(--warn)}.t-no{background:var(--no-bg);color:var(--no)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">판이 다른 책이 한 권으로 합쳐진 것이 3,079권,<br>같은 책인데 따로 남은 것으로 보이는 묶음이 수만 개입니다.</p>
+<p class="sub">사이클 12(책 묶기 기준 다시 보기 → 책 번호 유지)를 위해 지금 로컬 서비스 DB를 읽기만 해서 센 결과입니다. 책 1,615,125권, 소장 17,714,665줄 기준입니다. 사이트를 열어 확인하지는 않았습니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>판이 다른 책이 합쳐짐</h2>
+<div class="gist no">교보 번호로 계산한 종이책 ISBN이 둘 이상 들어 있는 책이 3,079권입니다. ISBN이 다르면 다른 판입니다. 네 번째 단계(제목·저자·출판사 글자가 같으면 합침)가 이 판들을 한 권으로 합쳤습니다.</div>
+<div class="tw"><table>
+<tr><th>책</th><th>합쳐진 판의 출판 연도</th></tr>
+<tr><td>「상법총칙 상행위」 이철송, 박영사</td><td>2014 · 2015 · 2020</td></tr>
+<tr><td>「성격심리학」 시그마프레스</td><td>2018 · 2025</td></tr>
+<tr><td>「똑똑한 파이썬」 황재호, 인포앤북</td><td>2021 · 2025</td></tr>
+<tr><td>「세종처럼」 박현모, 미다스북스</td><td>2008 · 2012</td></tr>
+<tr><td>「상실의 시간들」 최지월, 한겨레출판사</td><td>2014 · 2022</td></tr>
+</table></div>
+<p>무작위로 뽑은 20권이 모두 이런 모양이었습니다. 법·교재처럼 판마다 내용이 바뀌는 책도 들어 있습니다.</p>
+<p class="alt">이 숫자는 교보 번호가 있는 책 252,438권 안에서만 센 것입니다. YES24·북큐브 번호만 있는 책은 ISBN을 몰라서 셀 수 없습니다. 실제로는 더 많을 수 있습니다.</p>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>같은 책인데 따로 남음</h2>
+<div class="gist warn">본제목·저자·출판사가 같은데 다른 책으로 남은 묶음이 44,461개(146,127권)입니다. 표본 20묶음 중 약 12개는 같은 책인데 부제나 시리즈 표시 때문에 갈라진 것으로 보였습니다.</div>
+<div class="tw"><table>
+<tr><th>보기</th><th>판단</th></tr>
+<tr><td>「백만장자 마인드」 / 「백만장자 마인드 - 부를 끌어 당기는」</td><td>같은 책, 부제가 한쪽에만 있음</td></tr>
+<tr><td>「가우스가 들려주는 근삿값과 오차 이야기」 / 「[수학자77] 가우스가 들려주는 …」</td><td>같은 책, 시리즈 표시가 한쪽에만 있음</td></tr>
+<tr><td>「오키나와 셀프트래블(2018-2019)」 / 「… - 나 혼자 준비하는」</td><td>같은 책, 부제·공백 차이</td></tr>
+<tr><td>「오개념 탈출 프로젝트 - 수학 1」 / 「- 수학 2」, 「묘왕동주 1 - 상·중·하」</td><td>다른 권. 따로 있는 게 맞음</td></tr>
+<tr><td>「채봉감별곡」 / 「채봉감별곡」 (둘 다 신원문화사, 「&lt;구인환&gt; 편」)</td><td>제목까지 같은데 따로 있음. 저자가 "편"이라 네 번째 단계가 저자 없음으로 본 것으로 추정(확인 못 함)</td></tr>
+</table></div>
+<p>그래서 본제목만 보고 합치면 「수학 1」과 「수학 2」 같은 다른 권까지 합쳐집니다. 부제를 떼는 규칙을 만들 때 권 번호를 따로 봐야 합니다.</p>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>출판 연도가 크게 벌어진 책</h2>
+<div class="gist">한 책 안에서 소장 줄의 출판 연도가 2년 넘게 벌어진 책이 85,093권입니다. 이 중 3분의 1은 묶기 문제가 아니라 날짜 칸 문제입니다.</div>
+<ul class="ic">
+<li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg><div>28,881권: 같은 책 번호인데 도서관마다 연도가 다름<span class="s">같은 책을 도서관마다 다른 날짜로 적은 것입니다. 묶기와는 상관없고, 책 화면에 보이는 대표 출판일이 흔들립니다.</span></div></li>
+<li><svg viewBox="0 0 24 24"><rect x="3" y="6" width="7" height="12" rx="1"/><rect x="14" y="6" width="7" height="12" rx="1"/></svg><div>56,212권: 서로 다른 책 번호 사이에서만 연도가 다름<span class="s">카드 1처럼 개정판이 합쳐진 것과, 같은 책의 등록 연도가 다른 것이 섞여 있습니다. 예: 「부모들이 반드시 기억해야 할 쓴소리」(갤리온) 2006·2012, 아오조라 문고 책 1990·2016·2018.</span></div></li>
+</ul>
+<p class="alt">문서에 있던 "11,019권"은 9월 30일에 묶음 대표 출판일로 센 값이라 이번 셈과 기준이 다릅니다.</p>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>뜻을 몰랐던 값</h2>
+<div class="gist ok"><code>48090…</code> 번호는 ISBN이 없는 옛 책과 공유 저작물에 교보가 붙인 자체 번호로 보입니다. 지금처럼 ISBN 계산에서 빼는 것이 맞아 보입니다.</div>
+<ul class="ic">
+<li><svg viewBox="0 0 24 24"><path d="M6 4h12v16H6z"/><path d="M9 9h6M9 13h6"/></svg><div>번호 17,800개(교보), 11,496개(교보 구독형)<span class="s">출판사 상위는 한국문학도서관 5,561, 디키스토리 2,445, 구텐베르크 프로젝트 1,091, 아이들영어 864, 교보문고 812입니다. 출판 연도는 1900~2014입니다.</span></div></li>
+<li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4M12 16h.01"/></svg><div>출판사가 "기타"인 책 18,160권<span class="s">네 번째 단계는 출판사 글자가 같으면 합치므로, 실제 출판사가 다른 책이 "기타"끼리 합쳐질 수 있습니다. 실제로 그랬는지는 아직 보지 않았습니다.</span></div></li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="num">5</span>아직 못 센 것과 다음</h2>
+<div class="gist warn">사이클 07에서 새로 넣은 도서관 2,394곳의 책이 기존 도서관 책끼리 이어 붙인 경우는 지금 DB만으로 셀 수 없습니다. 그 도서관들을 빼고 묶은 결과와 비교해야 합니다.</div>
+<div class="item">
+<h3>[안] 이 조사를 사이클 12 범위의 출발점으로 씁니다</h3>
+<p>사이클 12의 <code>/cycle-start</code>에서 위 다섯 가지(판이 다른 책 합쳐짐, 부제 차이로 갈라짐, 날짜 칸, "기타" 출판사, 새 도서관이 이어 붙임)를 범위에 넣을지 고를 목록으로 내놓습니다. 어떤 것을 고칠지는 그때 정합니다.</p>
+<p class="alt">다른 선택: 범위를 정하기 전에 조사를 더 합니다(아래 항목).</p>
+</div>
+<div class="item">
+<h3>[안] 사이클 12를 시작하기 전에 표본 몇 권을 도서관 사이트에서 열어 확인합니다</h3>
+<p>카드 1·2의 표본 중 10권 안팎을 도서관 사이트에서 열어, 판이 정말 다른지와 같은 책이 맞는지 봅니다. "기타" 출판사로 합쳐진 책도 몇 권 봅니다. 결과는 원본 문서 5.4절에 덧붙입니다.</p>
+<p class="alt">다른 선택: 사이클 12의 spec 단계에서 합니다. 지금은 숫자만 두고 넘어갑니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">6</span>도서관 사이트에서 열어 본 결과</h2>
+<div class="gist no">판이 다른 책이 합쳐진 4건은 사이트에서도 모두 다른 판이었습니다. 출판사가 "기타"인 3건도 다른 책이나 다른 판이 합쳐진 것으로 보였습니다.</div>
+<p class="alt">교보 구독형은 빼고(사용자: "근데 지금 교보 구독형은 막혀 있을 걸 그건 빼주라"), 교보 8쪽·북큐브 11쪽을 2초 간격으로 한 번씩 열었습니다.</p>
+<div class="tw"><table>
+<tr><th>책</th><th>사이트에서 본 것</th><th>판단</th></tr>
+<tr><td>「똑똑한 파이썬」 2021 / 2025</td><td>소개 글에 "개정판" / "개정 3판"</td><td><span class="tag t-no">다른 판</span></td></tr>
+<tr><td>「상실의 시간들」 2014 / 2022</td><td>2022쪽에 "개정판", 파일 10.4MB / 35.6MB</td><td><span class="tag t-no">다른 판</span></td></tr>
+<tr><td>「상법총칙 상행위」 2014 / 2015</td><td>출간일·파일 크기·소개 글이 모두 다름</td><td><span class="tag t-no">다른 판</span></td></tr>
+<tr><td>「성격심리학」 2018 / 2025</td><td>파일 20.3MB / 69MB, 소개 글 다름</td><td><span class="tag t-no">다른 판</span></td></tr>
+<tr><td>「오키나와 셀프트래블(2018-2019)」 두 권</td><td>공급사만 다르고, 한쪽 소개 글 안에 다른 쪽 소개 글이 그대로 있음</td><td><span class="tag t-ok">같은 책</span></td></tr>
+<tr><td>「백만장자 마인드」 두 권</td><td>한쪽은 저자 칸이 비어 있음. 소개 글이 서로 다름</td><td><span class="tag t-warn">확실하지 않음</span></td></tr>
+<tr><td>「햄릿」 (저자 "기타", 출판사 "기타")</td><td>번호 두 개의 소개 글이 다름(줄거리 / 독자 감상문)</td><td><span class="tag t-no">다른 전자책이 합쳐짐</span></td></tr>
+<tr><td>「아낌없이 주는 나무」 (출판사 "기타")</td><td>한쪽은 한글과 원문을 함께 실은 판</td><td><span class="tag t-no">다른 판으로 보임</span></td></tr>
+<tr><td>「추억」 (출판사 "기타")</td><td>한쪽은 나도향 단독, 두 쪽은 나도향·안회남</td><td><span class="tag t-no">다른 책으로 보임</span></td></tr>
+</table></div>
+<ul class="ic">
+<li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4M12 16h.01"/></svg><div>"기타"가 문제인 이유<span class="s">네 번째 단계는 저자나 출판사가 없으면 합치지 않습니다. 그런데 "기타"는 글자가 있으니 값이 있는 것으로 봅니다. 그래서 서로 다른 책이 "기타"끼리 합쳐집니다.</span></div></li>
+<li><svg viewBox="0 0 24 24"><rect x="3" y="6" width="7" height="12" rx="1"/><rect x="14" y="6" width="7" height="12" rx="1"/></svg><div>따로 남는 이유가 부제만은 아님<span class="s">「백만장자 마인드」의 한 권은 부제 때문이 아니라 사이트의 저자 칸이 비어 있어서 따로 남았습니다.</span></div></li>
+</ul>
+</section>
+
+<p class="foot">이 글은 요약이며 근거는 원본에 있습니다. 원본: <code>docs/research/ebook-catalog/same-book-isbn.md</code> 5.4절(2026-10-12).</p>
+</main>
+</body>
+</html>
