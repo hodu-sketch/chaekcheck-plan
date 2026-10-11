@@ -82,6 +82,6 @@
 | [ADR-0076](0076-library-classification-api-and-rename.md) | 도서관 분류 값(vendor·lendingModel·orderNo)은 API로 보내고 화면이 글자를 만듦, 이름은 번호로 고치는 changeset(014), 이름 찾기는 화면에서 (ADR-0071을 이어서) | Accepted | 2026-10-11 | 09 |
 | [ADR-0077](0077-popular-drop-sparse-categories.md) | 인기 도서는 전자책이 거의 없는 다섯 분류(만화·어린이·청소년·기타·의학·스포츠)를 받지 않음, ADR-0072 범위·0074·0075 숫자 바로잡음 | Superseded by 0080 | 2026-10-11 | 10 |
 | [ADR-0078](0078-separate-import-export-apply.md) | 가져오기는 내 PC에서 하고 운영 DB에는 파일 하나(pg_dump -Fc, load_manifest)로 옮겨 비교 뒤 바꿔 끼움, 모드 in-place·export·apply·finish·discard (ADR-0065를 이어서) | Accepted | 2026-10-12 | 11 |
-| [ADR-0079](0079-grouping-modes-same-result.md) | 책 묶기는 세 방식(current·compact·sql)을 설정으로 고르고 결과가 번호까지 같아야 씀, 묶기 규칙은 그대로 | Accepted | 2026-10-12 | 11 |
+| [ADR-0079](0079-grouping-modes-same-result.md) | 책 묶기는 세 방식(current·compact·sql)을 설정으로 고르고 결과가 번호까지 같아야 씀, 묶기 규칙은 그대로. 덧붙임: 사이클 12에서 compact·sql 둘 다 남김 | Accepted | 2026-10-12 | 11 |
 | [ADR-0081](0081-popular-cover-resize-200px-jpeg.md) | 표지는 미리 받아 폭 200px JPEG로 줄여 저장하고 우리 서버가 넘겨줌, 표지 본문 상한 50MB, 경로 폴더 여럿, 1,600만 화소 상한 (ADR-0075를 대체) | Accepted | 2026-10-12 | 10 |
 | [ADR-0080](0080-popular-fourteen-categories.md) | 인기 도서는 일곱 분류(만화·어린이·청소년·기타·의학·스포츠·언어·기술·공학)를 받지 않고 "전체" + 14분류, 요청 30건·750권, display_order CHECK 0..14 (ADR-0077을 대체) | Accepted | 2026-10-12 | 10 |
