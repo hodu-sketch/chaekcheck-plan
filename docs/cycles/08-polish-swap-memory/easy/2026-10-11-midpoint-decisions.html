@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 08 중간 결정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+.pill{display:inline-block;border:1px solid var(--line);border-radius:8px;padding:4px 10px;background:var(--bg);margin:2px 0}
+.tag{color:var(--muted);font-size:.85em}
+.mocks{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start;margin:12px 0}
+.dev{border:2px dashed var(--line);border-radius:12px;padding:10px;font-size:15px;line-height:1.5;background:var(--bg)}
+.dev .lbl{font-size:13px;color:var(--muted);margin-bottom:6px}
+.dev.pc{flex:1 1 520px;max-width:600px}.dev.tab{flex:1 1 360px;max-width:420px}.dev.ph{flex:0 1 230px;width:230px}
+.rcard{display:grid;grid-template-columns:1.4fr 1fr .8fr;gap:8px;border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--card);margin:6px 0}
+.dev.ph .rcard{grid-template-columns:1fr}
+.rcard .t{font-weight:700}.rcard .m{color:var(--muted);font-size:13px}
+.lname{color:var(--accent);text-decoration:underline}
+.cls{color:var(--muted);font-size:13px}
+.lrow{display:flex;justify-content:space-between;align-items:center;gap:8px;border:1px solid var(--line);border-radius:8px;padding:6px 8px;background:var(--card);margin:4px 0}
+.btn{border:1px solid var(--line);border-radius:6px;padding:0 8px;font-size:13px;white-space:nowrap}
+.inp{border:1px solid var(--line);border-radius:6px;padding:4px 8px;background:var(--card);margin:4px 0}
+.logo{display:inline-block;width:14px;height:14px;border-radius:3px;background:var(--line);vertical-align:-2px;margin-right:4px}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">사이클 08 중간 요약으로<br>미리 정할 수 있는 6가지입니다.</p>
+<p class="sub">dev가 보낸 중간 요약(2026-10-11 22:40)의 "설계와 달라진 점" 9개와 "확인 필요"를 사이클 08 설계 문서와 맞춰 봤습니다. 회고 때 물어볼 것을 미리 정해 두면 사이클 08이 끝나자마자 사이클 09 설계로 넘어갈 수 있습니다. 원본: <code>docs/cycles/08-polish-swap-memory/dev-midpoint-2026-10-11.md</code>.</p>
+
+<section class="card">
+<h2><span class="num">1</span>정할 것이 없는 것</h2>
+<p class="gist">아래 셋은 결정이 필요 없어 칩을 두지 않았습니다.</p>
+<table>
+<tr><th>요약의 항목</th><th>왜 정할 것이 없나</th></tr>
+<tr><td>폰 직접 찾기 "정렬 없음 ⓘ"을 검색 줄(정렬 자리)에 둠</td><td>사이클 08 화면 흐름에서 정하신 자리("검색줄 둘째 줄 오른쪽 끝, 정렬 상자 자리")와 같습니다. 달라진 것이 아닙니다.</td></tr>
+<tr><td>바텀 시트 유지/되돌림</td><td>dev 세션이 직접 써 보시고 답해 달라고 한 것입니다. dev 화면에서 써 보신 뒤 그 세션에 답해 주세요.</td></tr>
+<tr><td>교보 구독형 서버 응답 없음</td><td>앞에서 본 이 집 IP 차단과 같은 상태입니다. 1016·1079·2161 사이트 제목은 10-05 값을 씁니다.</td></tr>
+</table>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>설계와 달라졌지만 결과는 같은 것</h2>
+<p class="gist">dev가 만들면서 방법을 바꿨지만 결과·화면은 같습니다. 받아들이고 회고와 현재 설계 문서(<code>docs/current/</code>)에 적자는 제안입니다.</p>
+
+<div class="item">
+<h3>결과가 같은 다섯 가지는 그대로 받아들임 <span class="an">[안]</span></h3>
+<table>
+<tr><th>달라진 것</th><th>결과</th></tr>
+<tr><td>국가서지 원문: ISBN이 여럿인 기록을 ISBN마다 한 줄로 남김</td><td>책 정리 결과 같음</td></tr>
+<tr><td>가져오기 단계별 시간 기록에 단계 이름 몇 개를 더함(<code>group</code>, <code>books_copy</code> 등)</td><td>더 자세히 잴 뿐</td></tr>
+<tr><td>넓은 줄을 임시 표와 새 표에 두 번 씀(책 번호 순 정렬 때문)</td><td>쓰기 시간이 이미 23분 30초 → 16분 50초로 줄어 바꾸지 않음</td></tr>
+<tr><td>캐시 상한은 1,000 그대로</td><td>1,000칸이 차도 10MB 안팎이라 줄일 필요 없음</td></tr>
+<tr><td>수집 DB 230곳 "받지 않음" 표시를 한 번에 함</td><td>한 곳씩 하면 1곳에 약 50초라 같은 일을 한 번에</td></tr>
+</table>
+<p class="alt"><b>다른 선택 — 하나씩 따져 봄</b>: 회고 때 dev 원문과 함께 하나씩 여쭙니다. 시간이 더 들지만 결과는 같습니다.</p>
+<p class="rec">추천: 그대로 받아들임.</p>
+</div>
+
+<div class="item">
+<h3>가져오기 기록에 "성공/실패"와 실패 이유 칸 셋이 생긴 것을 받아들임 <span class="an">[안]</span></h3>
+<p>설계에는 없던 칸입니다. 가져오기가 중간에 실패하면 가져오기 기록에 "실패", 이유(짧은 코드), 자세한 내용이 남습니다(<code>status</code>, <code>failure_reason</code>, <code>failure_detail</code>). 예: 바꿔 끼우기가 잠금을 5번 못 얻으면 "실패"와 그 이유가 남고 옛 표가 그대로 쓰입니다.</p>
+<p class="alt"><b>다른 선택 — 칸을 빼고 로그에만 남김</b>: 표가 단순하지만, 실패한 가져오기를 DB에서 찾아볼 수 없습니다.</p>
+<p class="rec">추천: 받아들임. 실패를 나중에 확인하기 쉬워집니다.</p>
+</div>
+
+<div class="item">
+<h3>직접 추가 이름 찾기가 가운뎃점(·)도 무시하는 것을 받아들임 <span class="an">[안]</span></h3>
+<p>사이클 08에서 "한국형사정책연구원"이 "한국형사·법무정책연구원"으로 바뀌었습니다. 그래서 "형사법무"로 쳐도 찾히게 dev가 가운뎃점을 무시하게 했습니다. 사이클 09에서 정하신 "분류 글자도 찾기"(교보 · 소장)와도 잘 맞습니다.</p>
+<p class="alt"><b>다른 선택 — 가운뎃점을 그대로 둠</b>: "형사·법무"처럼 점까지 쳐야 찾힙니다.</p>
+<p class="rec">추천: 받아들임.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>배포 뒤 seed를 어떻게 고치나</h2>
+<p class="gist">dev가 짚은 문제입니다. seed 파일을 다시 만들면 DB가 "이미 적용한 파일이 바뀌었다"며 시작을 멈춥니다. 사이클 09에서 이름 약 285곳을 고치므로 지금 방향을 정해 두면 좋습니다.</p>
+<p>DB 변경 도구(Liquibase)는 이미 적용한 변경의 지문(checksum)을 기억합니다. 적용한 뒤 그 변경을 고치면 지문이 달라져 오류를 냅니다(Liquibase 공식 문서 runOnChange, https://docs.liquibase.com/concepts/changelogs/attributes/runonchange.html, 확인 2026-10-11). seed CSV 파일이 바뀌어도 같다는 것은 dev 설명이고, 공식 문서에서 CSV에 대한 문장은 확인 못 함.</p>
+
+<svg viewBox="0 0 860 200" role="img" aria-label="seed 고치는 시기">
+<rect x="10" y="40" width="260" height="120" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+<text x="24" y="68" font-size="17" font-weight="700" fill="var(--text)">지금 ~ 첫 배포 전</text>
+<text x="24" y="98" font-size="15" fill="var(--text)">seed 파일은 그대로,</text>
+<text x="24" y="122" font-size="15" fill="var(--text)">번호로 고치는 변경 파일</text>
+<text x="24" y="146" font-size="14" fill="var(--muted)">(사이클 08 013, 사이클 09)</text>
+<path d="M270 100 H300" stroke="var(--muted)" stroke-width="2"/><path d="M292 94 l8 6 -8 6" fill="none" stroke="var(--muted)" stroke-width="2"/>
+<rect x="302" y="40" width="260" height="120" rx="10" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="2"/>
+<text x="316" y="68" font-size="17" font-weight="700" fill="var(--text)">첫 배포 바로 전 한 번</text>
+<text x="316" y="98" font-size="15" fill="var(--text)">seed를 새로 만들어 고친</text>
+<text x="316" y="122" font-size="15" fill="var(--text)">이름을 합치고 DB를 새로</text>
+<text x="316" y="146" font-size="14" fill="var(--muted)">(로컬 DB 다시 만듦)</text>
+<path d="M562 100 H592" stroke="var(--muted)" stroke-width="2"/><path d="M584 94 l8 6 -8 6" fill="none" stroke="var(--muted)" stroke-width="2"/>
+<rect x="594" y="40" width="256" height="120" rx="10" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/>
+<text x="608" y="68" font-size="17" font-weight="700" fill="var(--text)">배포 뒤</text>
+<text x="608" y="98" font-size="15" fill="var(--text)">seed 파일은 고정,</text>
+<text x="608" y="122" font-size="15" fill="var(--text)">바뀐 것만 새 변경 파일</text>
+<text x="608" y="146" font-size="14" fill="var(--muted)">(스크립트가 출력)</text>
+</svg>
+<p class="cap">제안하는 순서. 가운데(주황)는 배포 전이라 DB를 새로 만들어도 되는 마지막 기회입니다.</p>
+
+<div class="item">
+<h3>배포 전엔 번호로 고치는 변경 파일, 첫 배포 직전 한 번 seed 정리, 배포 뒤엔 seed 고정 <span class="an">[안]</span></h3>
+<p>배포 뒤에는 seed 생성 스크립트가 seed 파일을 다시 쓰지 않고, 바뀐 도서관(새 도서관, 이름 고침, 대출 방식)만 새 변경 파일로 출력합니다. 사이클 08과 09가 쓰는 방식을 배포 뒤에도 이어 가는 것입니다.</p>
+<p class="alt"><b>다른 선택 — seed를 "바뀌면 다시 돌기"로 바꿈</b>: seed 파일 하나가 늘 정답이 되지만, 다시 돌 때 번호로 덮어써서 운영 중에 바꾼 값(꺼진 도서관 등)을 되돌릴 수 있고, 지워진 줄은 지우지 못합니다.</p>
+<p class="alt"><b>다른 선택 — 배포 뒤에도 seed를 다시 만들고 지문 오류를 그때그때 허용</b>: 손이 덜 가지만, 운영 DB에서 무엇이 바뀌었는지 기록이 남지 않습니다.</p>
+<p class="rec">추천: 제안대로. 언제 어떤 이름이 바뀌었는지 변경 파일로 남고, 운영 DB를 다시 만들 일이 없습니다. 첫 배포 직전 정리는 backlog에 있는 "002~006 seed 옛 이름 정리"와 같이 합니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>사이클 09로 넘길 이름 하나와 배포 때 할 일</h2>
+<p class="gist">dev가 "다음 사이클에서 봄"으로 넘긴 것 중 하나는 사이클 09 이름 작업에 넣을 수 있습니다.</p>
+
+<div class="item">
+<h3>977 "경국대학교"를 "국립경국대학교"로 고쳐 사이클 09에 넣음 <span class="an">[안]</span></h3>
+<p>사이클 08이 456번(북큐브)을 "국립경국대학교"로 고쳤습니다(국립안동대학교의 새 이름). 같은 학교로 보이는 사이트가 둘 더 있습니다.</p>
+<table>
+<tr><th>번호</th><th>지금 이름</th><th>업체·대출 방식</th><th>사이클 09 뒤</th></tr>
+<tr><td>456</td><td>국립경국대학교 (북큐브)</td><td>북큐브 · 소장</td><td>국립경국대학교 · 북큐브 · 소장</td></tr>
+<tr><td>2239</td><td>국립경국대학교</td><td>YES24 · 소장</td><td>그대로</td></tr>
+<tr><td>977</td><td>경국대학교 (<code>andonguniv.dkyobobook.co.kr</code>)</td><td>교보 · 소장</td><td>국립경국대학교 · 교보 · 소장</td></tr>
+</table>
+<p>세 곳은 업체가 달라 같은 이름이어도 겹치지 않습니다. 977의 주소(andonguniv)로 보아 같은 학교로 보이지만 확인 못 함: 교보 구독형 서버가 막혀 있어 dev가 공식 출처로 다시 확인합니다(사이클 08의 이름 고침 방식).</p>
+<p class="alt"><b>다른 선택 — 그대로 둠</b>: 사이트 목록에 적힌 "경국대학교"를 씁니다. 같은 학교가 두 이름으로 보입니다.</p>
+<p class="rec">추천: 고침.</p>
+</div>
+
+<div class="item">
+<h3>메모리 값은 운영 서버에서 다시 재는 것을 배포 사이클 할 일로 남김 <span class="an">[안]</span></h3>
+<p>사이클 08이 정한 DB·서버 메모리 값(DB <code>shared_buffers</code> 64MB, 서비스 힙 512MB 등)은 이 PC(32GB) 기준입니다. dev도 운영 서버에서 다시 재야 한다고 했고, 측정 흔들림(p95 ±150ms)이 정한 기준(20%)과 비슷한 크기입니다. 배포 사이클의 할 일로 backlog에 한 줄 적습니다.</p>
+<p class="rec">추천: 남김.</p>
+</div>
+</section>
+
+<p class="foot">원본: <code>docs/cycles/08-polish-swap-memory/dev-midpoint-2026-10-11.md</code>, 사이클 08 <code>design-delta.md</code>·<code>flow.md</code>, dev <code>008-library-candidates.csv</code>(456·977·2239 줄, 2026-10-11 읽음). 작성 2026-10-11.</p>
+</main>
+</body>
+</html>

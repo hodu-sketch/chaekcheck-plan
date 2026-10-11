@@ -58,3 +58,14 @@
 - 나눔바른고딕 예약 이름: 네이버 공식 원문을 직접 못 엶. 다른 이름을 쓰므로 영향 없음
 - 메모리 값은 로컬 PC(WSL2, 32GB) 기준이라 운영 서버에서 다시 재야 함. 측정 흔들림 p95 ±150ms 정도
 - 434·456과 같은 학교의 다른 사이트(745, 2239, 977) 라벨 맞춤, 흡수된 학교의 새 이름 후보는 다음 사이클에서
+
+## 미리 정한 것 (사용자 승인, 2026-10-11, `easy/2026-10-11-midpoint-decisions.html`)
+
+- 설계와 달라진 점 1·2·4·7·9(결과가 같음)는 그대로 받아들임 → 회고 때 `docs/current/`에 기록
+- 3: 가져오기 기록 `catalog_import.status`·`failure_reason`·`failure_detail` 칸 받아들임 → 회고 때 `data-model.md`에
+- 5: S10 이름 찾기가 가운뎃점(·)도 무시 [확정]
+- 6: 폰 "정렬 없음 ⓘ" 자리는 사이클 08 `flow.md` 34행과 같음(달라진 점 아님)
+- 8: seed 고치는 방식 — 첫 배포 전까지는 번호로 고치는 changeset, 첫 배포 직전 한 번 seed를 다시 만들어 합치고 DB를 새로, 배포 뒤에는 seed 파일 고정·바뀐 것만 seed 생성 스크립트가 새 changeset으로 출력 [확정]. 근거: 적용된 changeset을 고치면 checksum 오류(https://docs.liquibase.com/concepts/changelogs/attributes/runonchange.html , 확인 2026-10-11). CSV 변경이 loadData checksum을 바꾼다는 것은 dev 설명이고 공식 문서 문장은 확인 못 함
+- 977 "경국대학교" → "국립경국대학교"를 사이클 09 이름 작업에 넣음 [확정], dev가 공식 출처로 다시 확인
+- 메모리 값은 운영 서버에서 다시 잼 → backlog(배포 사이클)
+
