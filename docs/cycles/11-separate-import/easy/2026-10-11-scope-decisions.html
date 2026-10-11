@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>가져오기 따로 하기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.card h3.t{font-size:21px;margin:26px 0 8px}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font-size:15px;line-height:1.55;margin:8px 0 6px;word-break:normal}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+pre .cm{color:var(--muted)} pre .hl{background:var(--warn-bg);color:var(--warn);font-weight:700}
+.src{color:var(--muted);font-size:15px;margin:14px 0 0}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+.fig{overflow-x:auto;margin:8px 0 4px}
+.fig svg{width:100%;min-width:640px;height:auto;display:block}
+.mine{border:1px dashed var(--warn);background:var(--warn-bg);border-radius:8px;padding:10px 14px;font-size:18px;margin:10px 0}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0}
+.pc>div{border-radius:10px;padding:12px 16px;font-size:18px}
+.pc .p{background:var(--ok-bg)} .pc .c{background:var(--no-bg)}
+.pc h4{margin:0 0 6px;font-size:18px}
+.pc ul{margin:0;padding-left:20px}
+.pc li{margin:0 0 8px}
+@media (max-width:640px){.pc{grid-template-columns:1fr} body{font-size:18px} .lead{font-size:24px}}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">사이클 11: 가져오기 따로 하기</p>
+<p class="sub">무거운 가져오기는 내 PC에서 하고, 다 만든 책 표 네 개만 운영 서버로 옮겨 바꿔 끼웁니다(dev 의견). 그러면 가져오기 41분 중 약 39분과 힙 6GB가 운영 서버에서 빠집니다. 정할 것은 맨 아래 7번 카드의 네 가지입니다. (2026-10-11)</p>
+
+<!-- 1 -->
+<section class="card">
+<h2><span class="num">1</span>지금은 PC 한 대가 가져오기와 검색을 다 합니다</h2>
+<p class="gist">지금 가져오기는 검색 서비스가 쓰는 그 DB에서, 처음부터 끝까지 한 번에 돕니다.</p>
+<p>"가져오기"는 수집해 둔 전자책 목록 사본과 국가서지 파일을 읽고, 같은 책끼리 묶어서, 서비스가 검색하는 책 표를 새로 만드는 일입니다.</p>
+<div class="fig">
+<svg viewBox="0 0 820 330" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <rect x="10" y="10" width="800" height="310" rx="16" fill="var(--bg)" stroke="var(--muted)" stroke-width="2"/>
+  <text x="30" y="44" font-size="21" font-weight="700" fill="var(--text)">지금: 한 대 (내 PC = 서비스 서버, 메모리 32GB)</text>
+  <rect x="30" y="70" width="200" height="96" rx="10" fill="var(--card)" stroke="var(--muted)"/>
+  <text x="48" y="104" font-size="17" fill="var(--text)">목록 사본</text>
+  <text x="48" y="130" font-size="17" fill="var(--text)">국가서지 파일</text>
+  <text x="48" y="156" font-size="15" fill="var(--muted)">TTL 20개 7.2GB</text>
+  <rect x="300" y="70" width="210" height="96" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+  <text x="318" y="102" font-size="18" font-weight="700" fill="var(--text)">가져오기 프로그램</text>
+  <text x="318" y="128" font-size="17" fill="var(--text)">읽기·묶기·번호 잇기</text>
+  <text x="318" y="154" font-size="17" fill="var(--accent)" font-weight="700">힙 6GB 필요</text>
+  <path d="M230 118h60" stroke="var(--muted)" stroke-width="2.5"/><path d="M282 111l10 7-10 7" fill="none" stroke="var(--muted)" stroke-width="2.5"/>
+  <rect x="300" y="200" width="490" height="104" rx="10" fill="var(--card)" stroke="var(--muted)"/>
+  <text x="318" y="228" font-size="18" font-weight="700" fill="var(--text)">DB</text>
+  <rect x="318" y="240" width="210" height="50" rx="8" fill="var(--accent-bg)" stroke="var(--accent)"/>
+  <text x="332" y="272" font-size="17" fill="var(--text)">catalog_next (새 표)</text>
+  <rect x="560" y="240" width="210" height="50" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/>
+  <text x="574" y="272" font-size="17" fill="var(--text)">catalog (지금 표)</text>
+  <path d="M405 166v66" stroke="var(--accent)" stroke-width="2.5"/><path d="M398 224l7 10 7-10" fill="none" stroke="var(--accent)" stroke-width="2.5"/>
+  <path d="M528 256h24" stroke="var(--no)" stroke-width="2.5"/><path d="M544 249l10 7-10 7" fill="none" stroke="var(--no)" stroke-width="2.5"/>
+  <text x="530" y="232" font-size="15" fill="var(--no)">바꿔 끼우기</text>
+  <rect x="580" y="70" width="210" height="96" rx="10" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/>
+  <text x="598" y="102" font-size="18" font-weight="700" fill="var(--text)">검색 서비스</text>
+  <text x="598" y="128" font-size="17" fill="var(--text)">힙 512MB</text>
+  <text x="598" y="154" font-size="16" fill="var(--muted)">catalog를 읽음</text>
+  <path d="M665 166v66" stroke="var(--ok)" stroke-width="2.5"/><path d="M658 174l7-10 7 10" fill="none" stroke="var(--ok)" stroke-width="2.5"/>
+</svg>
+</div>
+<p class="cap">가져오기 프로그램은 새 표를 준비용 자리(<code>catalog_next</code>)에 만들고, 다 되면 옛 표를 지우고 새 표를 제자리(<code>catalog</code>)로 옮깁니다. 이 마지막 순간이 "바꿔 끼우기"입니다. 그동안 검색 서비스는 옛 표를 계속 읽습니다.</p>
+<p>옮기는 표는 네 개입니다. <code>book</code>(책), <code>book_contributor</code>(지은이 등), <code>holding</code>(어느 도서관이 어떤 책을 가졌는지), <code>catalog_library_snapshot</code>(가져오기에 들어간 도서관 목록).</p>
+
+<h3 class="t">41분이 어디에 쓰이나 (가져오기 #2, 2026-10-11)</h3>
+<div class="fig">
+<svg viewBox="0 0 820 240" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <text x="30" y="34" font-size="18" fill="var(--text)" font-weight="700">전체 약 41분</text>
+  <rect x="30" y="50" width="452" height="46" fill="var(--accent)"/>
+  <rect x="482" y="50" width="219" height="46" fill="var(--accent)" opacity=".6"/>
+  <rect x="701" y="50" width="45" height="46" fill="var(--accent)" opacity=".3"/>
+  <rect x="746" y="50" width="43" height="46" fill="var(--ok)"/>
+  <rect x="789" y="44" width="3" height="58" fill="var(--no)"/>
+  <text x="46" y="80" font-size="18" fill="var(--card)">읽기·책 묶기</text>
+  <text x="496" y="80" font-size="18" fill="var(--card)">임시 표·번호</text>
+  <rect x="30" y="128" width="18" height="18" fill="var(--accent)"/><text x="56" y="143" font-size="17" fill="var(--text)">사본·국가서지 읽기, 책 묶기 · 24분 45초</text>
+  <rect x="440" y="128" width="18" height="18" fill="var(--accent)" opacity=".6"/><text x="466" y="143" font-size="17" fill="var(--text)">임시 표 쓰기, 번호 잇기 · 12분</text>
+  <rect x="30" y="164" width="18" height="18" fill="var(--accent)" opacity=".3"/><text x="56" y="179" font-size="17" fill="var(--text)">catalog_next에 쓰기 · 2분 27초</text>
+  <rect x="440" y="164" width="18" height="18" fill="var(--ok)"/><text x="466" y="179" font-size="17" fill="var(--text)">색인·통계 만들기 · 2분 22초</text>
+  <rect x="36" y="198" width="4" height="24" fill="var(--no)"/><text x="56" y="216" font-size="17" fill="var(--text)">바꿔 끼우기 · 0.33초 (검색이 기다린 시간은 이것뿐)</text>
+</svg>
+</div>
+<p class="cap">dev가 잰 단계별 시간(<code>step_seconds</code>)을 묶어 그렸습니다. 시간 대부분이 읽기와 묶기에 쓰입니다. 사이클 08 마지막 가져오기(#3c)는 국가서지를 원본 파일 대신 DB에 남겨 둔 표에서 읽어(7분 55초 → 2분 46초) 전체 약 33분, 검색이 기다린 시간 0.13초였습니다.</p>
+
+<h3 class="t">바꿔 끼우는 동안 DB 크기</h3>
+<div class="fig">
+<svg viewBox="0 0 820 220" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <text x="30" y="30" font-size="17" fill="var(--text)">시작</text>
+  <rect x="30" y="40" width="267" height="34" rx="4" fill="var(--muted)"/><text x="310" y="64" font-size="18" fill="var(--text)" font-weight="700">8.5GiB</text>
+  <text x="30" y="104" font-size="17" fill="var(--text)">가장 클 때 (색인 만들기 직전, 옛 표와 새 표가 함께 있음)</text>
+  <rect x="30" y="114" width="600" height="34" rx="4" fill="var(--no)"/><text x="642" y="138" font-size="18" fill="var(--no)" font-weight="700">19.1GiB</text>
+  <text x="30" y="178" font-size="17" fill="var(--text)">끝난 뒤 (옛 표를 지움)</text>
+  <rect x="30" y="188" width="262" height="26" rx="4" fill="var(--muted)"/><text x="304" y="208" font-size="18" fill="var(--text)" font-weight="700">8,550MB</text>
+</svg>
+</div>
+<p class="cap">바꿔 끼우기 전까지는 책 표가 두 벌이라 DB가 약 2.2배까지 커집니다.</p>
+</section>
+
+<!-- 2 -->
+<section class="card">
+<h2><span class="num">2</span>힙 6GB는 "묶음" 760만 개 때문입니다 (실제 코드)</h2>
+<p class="gist">가져오기 프로그램은 첫 읽기에서 묶음을 760만 개 만들고, 묶음마다 개수표 6개와 도서관 목록을 끝까지 메모리에 들고 있습니다.</p>
+<p>"힙"은 Java 프로그램이 데이터를 들고 있는 메모리입니다. "묶음"은 수집한 줄 가운데 같은 책 코드를 가진 줄끼리 모은 것입니다. 교보·YES24는 도서관이 달라도 코드가 같으면 한 묶음이고, 나머지 업체는 같은 도서관 안에서만 묶습니다.</p>
+
+<div class="fig">
+<svg viewBox="0 0 820 170" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <text x="30" y="30" font-size="17" fill="var(--text)">첫 읽기에서 들고 있는 묶음</text>
+  <rect x="30" y="40" width="600" height="40" rx="4" fill="var(--accent)"/><text x="642" y="67" font-size="19" fill="var(--accent)" font-weight="700">약 760만 개</text>
+  <text x="30" y="118" font-size="17" fill="var(--text)">끝에 남는 책 (묶음 여러 개가 책 한 권으로)</text>
+  <rect x="30" y="128" width="127" height="40" rx="4" fill="var(--ok)"/><text x="170" y="155" font-size="19" fill="var(--ok)" font-weight="700">161만 권</text>
+</svg>
+</div>
+
+<h3 class="t">줄 세 개가 묶음 하나가 되는 모습 (값은 설명용 예시)</h3>
+<div class="fig">
+<svg viewBox="0 0 820 400" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <text x="20" y="28" font-size="18" font-weight="700" fill="var(--text)">수집한 줄 (같은 교보 코드 K1)</text>
+  <g font-size="16" fill="var(--text)">
+    <rect x="20" y="44" width="300" height="74" rx="8" fill="var(--card)" stroke="var(--muted)"/>
+    <text x="34" y="70">도서관 A · 제목 가 · 김 · 출판사 P</text><text x="34" y="98">전자책 · 2020-05-01</text>
+    <rect x="20" y="130" width="300" height="74" rx="8" fill="var(--card)" stroke="var(--muted)"/>
+    <text x="34" y="156">도서관 B · 제목 가 · 김 · 출판사 P</text><text x="34" y="184">전자책 · 2020-05-01</text>
+    <rect x="20" y="216" width="300" height="74" rx="8" fill="var(--card)" stroke="var(--muted)"/>
+    <text x="34" y="242">도서관 C · 제목 가 · <tspan fill="var(--no)" font-weight="700">김 지음</tspan> · 출판사 P</text><text x="34" y="270">전자책 · 2020-05-01</text>
+  </g>
+  <path d="M330 167h50" stroke="var(--text)" stroke-width="3"/><path d="M372 158l12 9-12 9" fill="none" stroke="var(--text)" stroke-width="3"/>
+  <rect x="396" y="20" width="410" height="370" rx="12" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+  <text x="414" y="50" font-size="18" font-weight="700" fill="var(--text)">묶음 하나 (코드의 Unit)</text>
+  <g font-size="16" fill="var(--text)">
+    <rect x="414" y="64" width="374" height="36" rx="6" fill="var(--card)" stroke="var(--line)"/><text x="426" y="88">① 제목 개수표: 가 → 3줄</text>
+    <rect x="414" y="106" width="374" height="36" rx="6" fill="var(--card)" stroke="var(--no)"/><text x="426" y="130">② 저자 개수표: 김 → 2줄, 김 지음 → 1줄</text>
+    <rect x="414" y="148" width="374" height="36" rx="6" fill="var(--card)" stroke="var(--line)"/><text x="426" y="172">③ 출판사 개수표: P → 3줄</text>
+    <rect x="414" y="190" width="374" height="36" rx="6" fill="var(--card)" stroke="var(--line)"/><text x="426" y="214">④ 콘텐츠 종류 개수표: 전자책 → 3줄</text>
+    <rect x="414" y="232" width="374" height="36" rx="6" fill="var(--card)" stroke="var(--line)"/><text x="426" y="256">⑤ ISBN 개수표: 코드에서 계산한 값 → 3줄</text>
+    <rect x="414" y="274" width="374" height="36" rx="6" fill="var(--card)" stroke="var(--line)"/><text x="426" y="298">⑥ 출판일 개수표: 2020-05-01 → 3줄</text>
+    <rect x="414" y="324" width="374" height="50" rx="6" fill="var(--card)" stroke="var(--accent)" stroke-dasharray="5 3"/><text x="426" y="355">도서관 목록: A, B, C</text>
+  </g>
+</svg>
+</div>
+<p class="cap">줄 세 개를 그대로 들고 있지 않고, 칸마다 "어떤 값이 몇 줄"인지만 셉니다. 나중에 책을 쓸 때 칸마다 가장 많이 나온 값을 고릅니다(위 예에서 저자는 "김"). 줄을 다 들고 있지 않으려고 이렇게 했습니다(ADR-0054, 코드 주석).</p>
+
+<p class="src">dev <code>backend/src/main/java/com/chaekcheck/collection/internal/importer/BookGrouping.java</code> 59~86행 (설명에 필요 없는 줄은 뺌)</p>
+<pre><code><span class="cm">/** Rows with the same code (step ①), as counts per value. */</span>
+private static final class Unit {
+    final <span class="hl">Votes</span>&lt;String&gt; titles = new Votes&lt;&gt;();        <span class="cm">// ① 제목</span>
+    final <span class="hl">Votes</span>&lt;String&gt; authors = new Votes&lt;&gt;();       <span class="cm">// ② 저자</span>
+    final <span class="hl">Votes</span>&lt;String&gt; publishers = new Votes&lt;&gt;();    <span class="cm">// ③ 출판사</span>
+    final <span class="hl">Votes</span>&lt;String&gt; contentTypes = new Votes&lt;&gt;();  <span class="cm">// ④ 콘텐츠 종류</span>
+    final <span class="hl">Votes</span>&lt;String&gt; isbns = new Votes&lt;&gt;();         <span class="cm">// ⑤ ISBN</span>
+    final <span class="hl">Votes</span>&lt;LocalDate&gt; dates = new Votes&lt;&gt;();      <span class="cm">// ⑥ 출판일</span>
+    long[] libraries = new long[1];                   <span class="cm">// 도서관 목록</span>
+    int libraryCount;
+}</code></pre>
+<p><code>Votes</code>가 "개수표" 하나입니다. 묶음 하나에 <code>new Votes</code>가 6번, 곧 따로 된 Java 객체가 6개 생깁니다.</p>
+
+<p class="src">같은 파일 92~117행: 개수표 하나의 생김새</p>
+<pre><code>static final class Votes&lt;T&gt; {
+    private T first;              <span class="cm">// 처음 본 값</span>
+    private long firstCount;      <span class="cm">// 그 값이 몇 줄</span>
+    private Map&lt;T, Long&gt; more;    <span class="cm">// 다른 값이 나올 때만 만드는 표</span>
+
+    void add(T value) {
+        if (first == null) { first = value; firstCount = 1; }
+        else if (first.equals(value)) { firstCount++; }
+        else { <span class="cm">// 값이 둘 이상일 때만</span>
+            if (more == null) more = new HashMap&lt;&gt;(4);
+            more.merge(value, 1L, Long::sum);
+        }
+    }
+}</code></pre>
+<p>대부분의 묶음은 칸마다 값이 하나라서 <code>first</code>와 <code>firstCount</code>만 씁니다. 위 예의 저자 칸처럼 값이 둘 이상일 때만 <code>more</code> 표가 생깁니다.</p>
+
+<p class="src">같은 파일 140~168행: 줄 하나를 읽을 때마다 하는 일</p>
+<pre><code>void add(Row row, ImportReport report) {
+    int index = unitByKey.computeIfAbsent(<span class="hl">unitKey(row)</span>, ...);  <span class="cm">// 이 줄의 묶음 찾기(없으면 새로)</span>
+    Unit unit = units.get(index);
+    unit.titles.add(row.title());
+    unit.authors.add(row.authorRaw());
+    unit.publishers.add(row.publisher());
+    unit.contentTypes.add(row.contentType());
+    unit.dates.add(row.publishedOn());
+    unit.isbns.add(kyoboIsbn(row, report));
+    unit.addLibrary(row.library().serviceId());
+}
+
+private static String unitKey(Row row) {   <span class="cm">// 묶음 열쇠 = 글자</span>
+    String space = SHARED_CODE_KINDS.contains(...) ? "SHARED" : "LIB" + 도서관번호;
+    return space + SEP + row.itemKey();     <span class="cm">// 예: "SHARED" + 구분문자 + "K1"</span>
+}</code></pre>
+
+<h3 class="t">메모리에 실제로 놓이는 모양: 지금과 안 2</h3>
+<div class="fig">
+<svg viewBox="0 0 820 420" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <text x="20" y="28" font-size="19" font-weight="700" fill="var(--text)">지금: 묶음 하나</text>
+  <rect x="20" y="44" width="120" height="276" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+  <rect x="20" y="44" width="14" height="276" rx="4" fill="var(--muted)"/>
+  <text x="44" y="76" font-size="17" font-weight="700" fill="var(--text)">Unit</text>
+  <g font-size="16" fill="var(--text)">
+    <rect x="190" y="44" width="190" height="34" rx="6" fill="var(--card)" stroke="var(--accent)"/><rect x="190" y="44" width="12" height="34" fill="var(--muted)"/><text x="212" y="67">① 제목 Votes</text>
+    <rect x="190" y="86" width="190" height="34" rx="6" fill="var(--card)" stroke="var(--accent)"/><rect x="190" y="86" width="12" height="34" fill="var(--muted)"/><text x="212" y="109">② 저자 Votes</text>
+    <rect x="190" y="128" width="190" height="34" rx="6" fill="var(--card)" stroke="var(--accent)"/><rect x="190" y="128" width="12" height="34" fill="var(--muted)"/><text x="212" y="151">③ 출판사 Votes</text>
+    <rect x="190" y="170" width="190" height="34" rx="6" fill="var(--card)" stroke="var(--accent)"/><rect x="190" y="170" width="12" height="34" fill="var(--muted)"/><text x="212" y="193">④ 종류 Votes</text>
+    <rect x="190" y="212" width="190" height="34" rx="6" fill="var(--card)" stroke="var(--accent)"/><rect x="190" y="212" width="12" height="34" fill="var(--muted)"/><text x="212" y="235">⑤ ISBN Votes</text>
+    <rect x="190" y="254" width="190" height="34" rx="6" fill="var(--card)" stroke="var(--accent)"/><rect x="190" y="254" width="12" height="34" fill="var(--muted)"/><text x="212" y="277">⑥ 출판일 Votes</text>
+    <rect x="190" y="296" width="190" height="34" rx="6" fill="var(--card)" stroke="var(--line)"/><rect x="190" y="296" width="12" height="34" fill="var(--muted)"/><text x="212" y="319">도서관 목록</text>
+  </g>
+  <path d="M140 61H190M140 103H190M140 145H190M140 187H190M140 229H190M140 271H190M140 313H190" stroke="var(--accent)" stroke-width="1.5"/>
+  <rect x="20" y="352" width="360" height="40" rx="6" fill="var(--card)" stroke="var(--warn)"/><rect x="20" y="352" width="12" height="40" fill="var(--muted)"/>
+  <text x="42" y="378" font-size="16" fill="var(--text)">열쇠 글자 "SHARED·K1"</text>
+
+  <line x1="410" y1="20" x2="410" y2="400" stroke="var(--line)" stroke-width="2"/>
+
+  <text x="430" y="28" font-size="19" font-weight="700" fill="var(--text)">안 2: 묶음 하나</text>
+  <rect x="430" y="44" width="370" height="250" rx="8" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/>
+  <rect x="430" y="44" width="14" height="250" rx="4" fill="var(--muted)"/>
+  <text x="456" y="76" font-size="17" font-weight="700" fill="var(--text)">Unit (칸으로 바로 넣음)</text>
+  <g font-size="16" fill="var(--text)">
+    <text x="456" y="108">① 제목: 첫 값 + 개수</text>
+    <text x="456" y="138">② 저자: 첫 값 + 개수</text>
+    <text x="456" y="168">③ 출판사: 첫 값 + 개수</text>
+    <text x="456" y="198">④ 종류: 첫 값 + 개수</text>
+    <text x="456" y="228">⑤ ISBN: 첫 값 + 개수</text>
+    <text x="456" y="258">⑥ 출판일: 첫 값 + 개수</text>
+  </g>
+  <rect x="430" y="304" width="370" height="34" rx="6" fill="var(--card)" stroke="var(--line)"/><rect x="430" y="304" width="12" height="34" fill="var(--muted)"/>
+  <text x="452" y="327" font-size="16" fill="var(--text)">도서관 목록</text>
+  <rect x="430" y="352" width="370" height="40" rx="6" fill="var(--card)" stroke="var(--ok)"/>
+  <text x="452" y="378" font-size="16" fill="var(--text)">열쇠: 숫자(해시)</text>
+</svg>
+</div>
+<p class="cap">회색 띠는 Java가 객체마다 붙이는 머리 공간입니다. 지금은 묶음 하나에 개수표 객체가 6개 따로 있어서, 760만 × 6 = 약 4,560만 개의 개수표 객체가 생깁니다. 안 2는 "첫 값 + 개수"를 묶음 안에 칸으로 넣고, 값이 둘 이상인 드문 경우에만 따로 표를 만듭니다. 묶음을 찾는 열쇠도 글자 대신 숫자로 바꿉니다. 안 2의 모양은 dev 설명을 따라 그린 것이고, dev가 짠 코드는 아직 없습니다.</p>
+
+<h3 class="t">힙 크기별로 해 본 결과</h3>
+<div class="fig">
+<svg viewBox="0 0 820 230" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <text x="30" y="30" font-size="17" fill="var(--text)">4GB</text>
+  <rect x="30" y="40" width="280" height="34" rx="4" fill="var(--no)"/><text x="322" y="64" font-size="18" fill="var(--no)" font-weight="700">멈춤 (살아 있는 데이터만 4,066MB)</text>
+  <text x="30" y="104" font-size="17" fill="var(--text)">6GB</text>
+  <rect x="30" y="114" width="420" height="34" rx="4" fill="var(--warn)"/><text x="462" y="138" font-size="18" fill="var(--warn)" font-weight="700">끝남 (#3c), 살아 있는 데이터 최대 약 4.8GB</text>
+  <text x="30" y="178" font-size="17" fill="var(--text)">8GB (Java 기본값 = PC 32GB의 1/4)</text>
+  <rect x="30" y="188" width="560" height="34" rx="4" fill="var(--ok)"/><text x="602" y="212" font-size="18" fill="var(--ok)" font-weight="700">끝남 (#1·#2)</text>
+</svg>
+</div>
+</section>
+
+<!-- 3 -->
+<section class="card">
+<h2><span class="num">3</span>6GB를 줄이는 안 셋, 그리고 "DB에서 묶기"의 장단점</h2>
+<p class="gist">안 1·2는 같은 방식을 가볍게 만드는 것이고, 안 3은 묶는 일을 Java에서 DB로 옮기는 것입니다. 안 3은 메모리를 가장 많이 줄이지만, 결과가 한 권이라도 달라지면 책 번호가 바뀝니다.</p>
+<div class="fig">
+<svg viewBox="0 0 820 290" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <line x1="30" y1="40" x2="30" y2="282" stroke="var(--muted)"/>
+  <text x="30" y="26" font-size="17" fill="var(--text)">지금</text>
+  <rect x="30" y="36" width="600" height="32" rx="4" fill="var(--muted)"/><text x="642" y="59" font-size="18" fill="var(--text)" font-weight="700">6GB</text>
+  <text x="30" y="98" font-size="17" fill="var(--text)">안 1 · 겹치는 글자를 하나로 합쳐 들기 · <tspan fill="var(--ok)" font-weight="700">일 작음</tspan></text>
+  <rect x="30" y="108" width="360" height="32" rx="4" fill="var(--ok)"/><rect x="390" y="108" width="60" height="32" fill="var(--ok)" opacity=".35"/>
+  <text x="462" y="131" font-size="18" fill="var(--text)" font-weight="700">30~40% 줄어듦</text>
+  <text x="30" y="170" font-size="17" fill="var(--text)">안 2 · 안 1 + 개수표를 칸으로, 열쇠를 숫자로 · <tspan fill="var(--warn)" font-weight="700">일 중간</tspan></text>
+  <rect x="30" y="180" width="300" height="32" rx="4" fill="var(--warn)"/><text x="342" y="203" font-size="18" fill="var(--text)" font-weight="700">3GB 안팎</text>
+  <text x="30" y="242" font-size="17" fill="var(--text)">안 3 · 책 묶기를 Java가 아니라 DB(SQL)에서 하기 · <tspan fill="var(--no)" font-weight="700">일 큼</tspan></text>
+  <rect x="30" y="252" width="40" height="32" rx="4" fill="var(--no)"/><text x="82" y="275" font-size="18" fill="var(--text)" font-weight="700">몇백 MB</text>
+</svg>
+</div>
+<p class="cap">모두 dev 예상치입니다. 안 1의 옅은 부분은 30%와 40% 사이 폭입니다. 안 1은 겹치는 글자가 많아서 효과가 있습니다. 묶음 760만 개가 책 161만 권이 되므로, 같은 제목·저자·출판사 글자가 평균 4~5번씩 겹쳐 있습니다. dev는 다음 가져오기(#4) 때 Java의 글자 합치기 옵션(<code>-XX:+UseStringDeduplication</code>)이 얼마나 줄이는지 재기로 했습니다.</p>
+
+<h3 class="t">안 3: DB에서 묶으면 어떻게 바뀌나</h3>
+<div class="fig">
+<svg viewBox="0 0 820 250" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <text x="20" y="28" font-size="18" font-weight="700" fill="var(--text)">지금</text>
+  <rect x="20" y="40" width="160" height="50" rx="8" fill="var(--card)" stroke="var(--muted)"/><text x="36" y="71" font-size="17" fill="var(--text)">줄 읽기</text>
+  <rect x="220" y="40" width="330" height="50" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/><text x="236" y="71" font-size="17" fill="var(--text)">Java 메모리에서 묶기 (힙 6GB)</text>
+  <rect x="590" y="40" width="210" height="50" rx="8" fill="var(--card)" stroke="var(--muted)"/><text x="606" y="71" font-size="17" fill="var(--text)">책 표에 쓰기</text>
+  <path d="M180 65h32M550 65h32" stroke="var(--text)" stroke-width="2"/>
+  <text x="20" y="140" font-size="18" font-weight="700" fill="var(--text)">안 3</text>
+  <rect x="20" y="152" width="160" height="50" rx="8" fill="var(--card)" stroke="var(--muted)"/><text x="36" y="183" font-size="17" fill="var(--text)">줄 읽기</text>
+  <rect x="220" y="152" width="160" height="50" rx="8" fill="var(--card)" stroke="var(--muted)"/><text x="236" y="183" font-size="17" fill="var(--text)">임시 표에 넣기</text>
+  <rect x="420" y="152" width="380" height="50" rx="8" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/><text x="436" y="183" font-size="17" fill="var(--text)">DB가 SQL로 묶기 → 책 표 (힙 몇백 MB)</text>
+  <path d="M180 177h32M380 177h32" stroke="var(--text)" stroke-width="2"/>
+  <text x="20" y="236" font-size="16" fill="var(--muted)">DB는 쓸 메모리가 모자라면 디스크의 임시 파일을 씁니다 (PostgreSQL 문서, work_mem)</text>
+</svg>
+</div>
+<p class="cap">근거: PostgreSQL 18 문서 <code>work_mem</code> "정렬이나 해시 표 같은 작업이 임시 디스크 파일에 쓰기 전에 쓸 최대 메모리", <a href="https://www.postgresql.org/docs/18/runtime-config-resource.html">postgresql.org/docs/18/runtime-config-resource.html</a> (확인 2026-10-11).</p>
+
+<div class="pc">
+<div class="p"><h4>장점</h4><ul>
+<li><b>힙이 몇백 MB로 줄어듭니다</b>(dev 예상). 가져오기를 운영 서버에서 돌려도 서버를 작게 잡을 수 있습니다.</li>
+<li><b>책이 늘어도 메모리가 넘치지 않습니다.</b> 지금은 묶음 수만큼 힙이 늘어나서 4GB에서 멈췄습니다. DB는 메모리가 모자라면 디스크로 넘겨 계속 갑니다.</li>
+<li><b>묶은 과정을 표로 들여다볼 수 있습니다.</b> "이 두 책은 왜 한 권이 됐나"를 SQL로 바로 찾아볼 수 있습니다. <span class="alt">(Claude 판단)</span></li>
+</ul></div>
+<div class="c"><h4>단점</h4><ul>
+<li><b>결과가 한 권이라도 다르면 책 번호가 바뀝니다.</b> 책 번호는 가져올 때마다 이어 주는데(ADR-0062), 묶는 결과가 달라진 책은 번호가 새로 붙거나 사라집니다. 그래서 161만 권을 지금 방식과 한 권씩 맞대 보는 검증이 필요합니다.</li>
+<li><b>묶기 단계 네 개를 SQL로 다시 써야 합니다.</b> ① 같은 코드 ② 교보식 코드로 계산한 ISBN ③ 국가서지 ISBN ④ 같은 제목·첫 저자·출판사. 제목·출판사 정리(<code>CatalogText</code>), 저자 나누기(<code>Contributors.parse</code>), 대표 출판일 고르기(<code>PublishedDates</code>)는 Java 코드라서 SQL로 다시 쓰거나, Java가 줄마다 미리 계산해 임시 표에 넣어야 합니다.</li>
+<li><b>사슬처럼 이어 묶기가 SQL에서는 번거롭습니다.</b> A·B가 ISBN이 같고 B·C가 제목이 같으면 A·B·C가 한 권입니다. Java는 이것을 한 번에 이어 붙이지만(<code>union</code>·<code>find</code>), SQL에는 그런 명령이 하나로 없어서 더 이상 안 바뀔 때까지 여러 번 돌려야 합니다. 시간이 얼마나 걸릴지는 재 봐야 압니다. <span class="alt">(Claude 판단)</span></li>
+<li><b>동점일 때 고르는 값이 달라질 수 있습니다.</b> 지금은 가장 많이 나온 값을 고르고, 동점이면 "작은" 값을 고릅니다. Java와 DB는 글자의 크고 작음을 정하는 기준이 다를 수 있어서 맞춰야 합니다. <span class="alt">(Claude 판단)</span></li>
+<li><b>가져오는 동안 DB 디스크가 더 듭니다.</b> 줄을 임시 표에 한 번 더 넣으니까요. 크기는 재지 않았습니다.</li>
+</ul></div>
+</div>
+<p class="mine">가져오기를 내 PC(32GB)에서 하기로 하면, 안 3의 가장 큰 장점(운영 서버를 작게)이 덜 중요해집니다. 그래서 따로 하기와 함께라면 안 3은 급하지 않다고 봅니다. (Claude 판단)</p>
+</section>
+
+<!-- 4 -->
+<section class="card">
+<h2><span class="num">4</span>내 PC에서 가져오고 운영에 반영하는 순서</h2>
+<p class="gist">내 PC가 표 네 개를 다 만들어 파일로 내보내고, 운영 서버는 그 파일을 받아 넣고 바꿔 끼우기만 합니다.</p>
+<div class="fig">
+<svg viewBox="0 0 820 340" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <rect x="10" y="20" width="340" height="300" rx="14" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+  <text x="30" y="55" font-size="21" font-weight="700" fill="var(--text)">내 PC (가져오기 서버)</text>
+  <rect x="30" y="76" width="300" height="56" rx="8" fill="var(--card)" stroke="var(--accent)"/>
+  <text x="46" y="111" font-size="18" fill="var(--text)">① 사본·국가서지 읽고 가져오기</text>
+  <rect x="30" y="156" width="300" height="56" rx="8" fill="var(--card)" stroke="var(--accent)"/>
+  <text x="46" y="191" font-size="18" fill="var(--text)">② 표 네 개를 파일로 내보내기</text>
+  <path d="M180 132v18" stroke="var(--accent)" stroke-width="2.5"/><path d="M173 143l7 10 7-10" fill="none" stroke="var(--accent)" stroke-width="2.5"/>
+  <text x="46" y="250" font-size="16" fill="var(--muted)">힙 6GB, 사본·국가서지 파일은</text>
+  <text x="46" y="274" font-size="16" fill="var(--muted)">여기에만 있으면 됨</text>
+  <path d="M330 184 H462" stroke="var(--text)" stroke-width="3"/><path d="M452 175l12 9-12 9" fill="none" stroke="var(--text)" stroke-width="3"/>
+  <text x="356" y="170" font-size="16" fill="var(--muted)">파일 전송</text>
+  <rect x="470" y="20" width="340" height="300" rx="14" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/>
+  <text x="490" y="55" font-size="21" font-weight="700" fill="var(--text)">운영 서버</text>
+  <rect x="490" y="76" width="300" height="56" rx="8" fill="var(--card)" stroke="var(--ok)"/>
+  <text x="506" y="111" font-size="18" fill="var(--text)">③ 준비 자리에 파일 넣기</text>
+  <rect x="490" y="156" width="300" height="56" rx="8" fill="var(--card)" stroke="var(--ok)"/>
+  <text x="506" y="191" font-size="18" fill="var(--text)">④ 색인·통계 만들기</text>
+  <rect x="490" y="236" width="300" height="56" rx="8" fill="var(--card)" stroke="var(--ok)"/>
+  <text x="506" y="271" font-size="18" fill="var(--text)">⑤ 바꿔 끼우기</text>
+  <path d="M640 132v18M640 212v18" stroke="var(--ok)" stroke-width="2.5"/>
+  <path d="M633 143l7 10 7-10M633 223l7 10 7-10" fill="none" stroke="var(--ok)" stroke-width="2.5"/>
+</svg>
+</div>
+<p class="cap">②는 PostgreSQL의 <code>pg_dump</code> 명령으로 합니다. 표를 파일 하나로 떠내는 명령입니다. ③~⑤는 지금 가져오기의 마지막 단계와 같아서, 바꿔 끼우기 코드는 사이클 08에 만든 것을 그대로 씁니다.</p>
+
+<h3 class="t">41분이 두 곳으로 나뉩니다</h3>
+<div class="fig">
+<svg viewBox="0 0 820 300" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <text x="30" y="30" font-size="18" font-weight="700" fill="var(--accent)">내 PC</text>
+  <rect x="30" y="42" width="600" height="44" fill="var(--accent)"/>
+  <text x="46" y="71" font-size="17" fill="var(--card)">읽기 → 묶기 → 번호 잇기 → catalog_next 쓰기 · 약 39분</text>
+  <path d="M630 86 C 640 110, 645 115, 650 128" stroke="var(--text)" stroke-width="2" fill="none" stroke-dasharray="5 4"/>
+  <text x="30" y="128" font-size="18" font-weight="700" fill="var(--ok)">운영 서버</text>
+  <rect x="30" y="140" width="600" height="44" fill="var(--ok-bg)" stroke="var(--line)"/>
+  <text x="46" y="169" font-size="17" fill="var(--muted)">이 동안 운영 서버는 검색만 합니다</text>
+  <rect x="640" y="140" width="100" height="44" fill="var(--card)" stroke="var(--ok)" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="664" y="169" font-size="18" fill="var(--ok)" font-weight="700">복원 ?</text>
+  <rect x="740" y="140" width="36" height="44" fill="var(--ok)"/>
+  <rect x="784" y="134" width="3" height="56" fill="var(--no)"/>
+  <rect x="30" y="214" width="26" height="18" fill="var(--card)" stroke="var(--ok)" stroke-width="2" stroke-dasharray="5 3"/><text x="66" y="229" font-size="17" fill="var(--text)">③ 파일 넣기: 아직 재지 않음 (파일 크기도 미측정)</text>
+  <rect x="30" y="244" width="26" height="18" fill="var(--ok)"/><text x="66" y="259" font-size="17" fill="var(--text)">④ 색인·통계 만들기: 2분 22초 (CPU 1~2분)</text>
+  <rect x="40" y="272" width="4" height="22" fill="var(--no)"/><text x="66" y="289" font-size="17" fill="var(--text)">⑤ 바꿔 끼우기: 0.33초</text>
+</svg>
+</div>
+<p class="cap">가로 길이는 가져오기 #2의 시간 비율입니다. 내 PC에서 가져오기가 실패해도 운영 서버는 영향이 없습니다.</p>
+</section>
+
+<!-- 5 -->
+<section class="card">
+<h2><span class="num">5</span>이 방식이 맞게 돌려면 지켜야 할 것</h2>
+<p class="gist">내 PC의 DB와 운영 DB가 "책 표와 도서관 목록이 같은 상태"여야 책 번호가 그대로 이어집니다.</p>
+<p>가져오기는 이미 있는 책에는 옛 번호를 그대로 주고, 새 책에만 다음 번호를 줍니다. 이 비교를 내 PC의 DB를 보고 하므로, 내 PC의 DB가 운영과 다르면 번호가 어긋납니다.</p>
+<div class="fig">
+<svg viewBox="0 0 820 260" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <path d="M30 50v170c0 11 45 20 100 20s100-9 100-20V50" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+  <ellipse cx="130" cy="50" rx="100" ry="20" fill="var(--card)" stroke="var(--accent)" stroke-width="2"/>
+  <text x="80" y="140" font-size="20" font-weight="700" fill="var(--text)">내 PC DB</text>
+  <path d="M590 50v170c0 11 45 20 100 20s100-9 100-20V50" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/>
+  <ellipse cx="690" cy="50" rx="100" ry="20" fill="var(--card)" stroke="var(--ok)" stroke-width="2"/>
+  <text x="640" y="140" font-size="20" font-weight="700" fill="var(--text)">운영 DB</text>
+  <g font-size="18" fill="var(--text)">
+    <rect x="250" y="62" width="320" height="44" rx="8" fill="var(--card)" stroke="var(--warn)"/><text x="268" y="91">＝ 책 표 (운영에 마지막으로 넣은 것)</text>
+    <rect x="250" y="122" width="320" height="44" rx="8" fill="var(--card)" stroke="var(--warn)"/><text x="268" y="151">＝ 서비스 도서관 seed</text>
+    <rect x="250" y="182" width="320" height="44" rx="8" fill="var(--card)" stroke="var(--warn)"/><text x="268" y="211">＝ collection_link</text>
+  </g>
+</svg>
+</div>
+<p class="cap"><code>collection_link</code>는 서비스 도서관 번호와 수집 DB 도서관 번호를 짝지은 표입니다.</p>
+
+<h3 class="t">운영에서 책 표를 따로 고치면 생기는 일</h3>
+<div class="fig">
+<svg viewBox="0 0 820 200" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <line x1="40" y1="60" x2="790" y2="60" stroke="var(--muted)" stroke-width="2"/>
+  <circle cx="90" cy="60" r="12" fill="var(--ok)"/><circle cx="410" cy="60" r="12" fill="var(--warn)"/><circle cx="730" cy="60" r="12" fill="var(--no)"/>
+  <text x="40" y="30" font-size="18" font-weight="700" fill="var(--ok)">반영 1</text>
+  <text x="350" y="30" font-size="18" font-weight="700" fill="var(--warn)">운영에서 직접 고침</text>
+  <text x="680" y="30" font-size="18" font-weight="700" fill="var(--no)">반영 2</text>
+  <text x="40" y="100" font-size="17" fill="var(--text)">두 DB가 같아짐</text>
+  <text x="350" y="100" font-size="17" fill="var(--text)">운영만 바뀜.</text>
+  <text x="350" y="126" font-size="17" fill="var(--text)">내 PC는 모름</text>
+  <text x="560" y="100" font-size="17" fill="var(--text)">내 PC가 옛 상태로 번호를 매김</text>
+  <text x="560" y="126" font-size="17" fill="var(--text)">→ 번호가 어긋날 수 있음</text>
+  <text x="560" y="152" font-size="17" fill="var(--text)">→ 운영에서 고친 것은 옛 표와</text>
+  <text x="560" y="178" font-size="17" fill="var(--text)">함께 지워짐</text>
+</svg>
+</div>
+<p class="cap">바꿔 끼우기는 운영의 옛 책 표를 통째로 지우고 새 표로 바꿉니다. 그래서 운영에서는 책 표를 고치지 않고, 고칠 것은 내 PC 쪽 가져오기로 넣어야 합니다.</p>
+
+<h3 class="t">운영 디스크 여유</h3>
+<div class="fig">
+<svg viewBox="0 0 820 150" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <text x="30" y="30" font-size="17" fill="var(--text)">평소 책 표</text>
+  <rect x="30" y="40" width="300" height="32" rx="4" fill="var(--muted)"/><text x="342" y="63" font-size="18" font-weight="700" fill="var(--text)">약 8GB</text>
+  <text x="30" y="104" font-size="17" fill="var(--text)">바꿔 끼우는 동안 (옛 표 + 새 표)</text>
+  <rect x="30" y="114" width="600" height="32" rx="4" fill="var(--warn)"/><text x="642" y="137" font-size="18" font-weight="700" fill="var(--warn)">최대 약 16GB</text>
+</svg>
+</div>
+<p class="cap">dev 예상치입니다. 운영 서버는 파일만 받아 넣으므로 실제 최대값은 이 사이클에서 다시 잽니다. 아직 없는 것: 파일을 받아 넣고 바꿔 끼우는 명령과 절차 문서. 사이클 08에서는 만들지 않았습니다.</p>
+</section>
+
+<!-- 6 -->
+<section class="card">
+<h2><span class="num">6</span>운영 서버 크기가 어떻게 달라지나</h2>
+<p class="gist">가져오기를 내 PC에서 하면, 운영 서버는 검색에 필요한 만큼만 있으면 됩니다.</p>
+<div class="fig">
+<svg viewBox="0 0 820 340" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <text x="20" y="30" font-size="19" font-weight="700" fill="var(--text)">가: 운영 서버에서 직접 가져오기</text>
+  <rect x="20" y="46" width="370" height="280" rx="14" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="2"/>
+  <text x="38" y="78" font-size="17" font-weight="700" fill="var(--warn)">운영 서버</text>
+  <rect x="38" y="92" width="334" height="34" rx="6" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="52" y="115" font-size="17" fill="var(--text)">검색 서비스 힙 512MB</text>
+  <rect x="38" y="134" width="334" height="96" rx="6" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="52" y="168" font-size="17" fill="var(--text)">가져오기 힙 6~8GB</text><text x="52" y="194" font-size="16" fill="var(--muted)">(4GB는 멈춤)</text>
+  <rect x="38" y="238" width="334" height="34" rx="6" fill="var(--card)" stroke="var(--muted)"/><text x="52" y="261" font-size="17" fill="var(--text)">사본·국가서지 파일</text>
+  <rect x="38" y="280" width="334" height="34" rx="6" fill="var(--card)" stroke="var(--muted)"/><text x="52" y="303" font-size="17" fill="var(--text)">DB (가져오는 동안 두 벌)</text>
+  <text x="430" y="30" font-size="19" font-weight="700" fill="var(--text)">나: 내 PC에서 하고 옮기기</text>
+  <rect x="430" y="46" width="370" height="132" rx="14" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/>
+  <text x="448" y="78" font-size="17" font-weight="700" fill="var(--ok)">운영 서버</text>
+  <rect x="448" y="92" width="334" height="34" rx="6" fill="var(--card)" stroke="var(--ok)"/><text x="462" y="115" font-size="17" fill="var(--text)">검색 서비스 힙 512MB</text>
+  <rect x="448" y="134" width="334" height="34" rx="6" fill="var(--card)" stroke="var(--muted)"/><text x="462" y="157" font-size="17" fill="var(--text)">DB (바꿔 끼울 때 두 벌)</text>
+  <rect x="430" y="194" width="370" height="132" rx="14" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2" stroke-dasharray="7 5"/>
+  <text x="448" y="226" font-size="17" font-weight="700" fill="var(--accent)">내 PC (32GB)</text>
+  <rect x="448" y="240" width="334" height="34" rx="6" fill="var(--card)" stroke="var(--accent)"/><text x="462" y="263" font-size="17" fill="var(--text)">가져오기 힙 6~8GB</text>
+  <rect x="448" y="282" width="334" height="34" rx="6" fill="var(--card)" stroke="var(--muted)"/><text x="462" y="305" font-size="17" fill="var(--text)">사본·국가서지 파일</text>
+</svg>
+</div>
+<p class="cap">"가"로 하면 dev 메모대로 가져오기용 8GB급 힙을 전제로 운영 서버 크기를 정해야 합니다. "나"로 하면 가져오기용 메모리는 내 PC(32GB)가 감당합니다.</p>
+</section>
+
+<!-- 7 -->
+<section class="card">
+<h2><span class="num">7</span>사이클 11에서 정할 것</h2>
+<p class="gist">가장 먼저 정할 것: 운영 서버가 아직 따로 없습니다. 반영할 곳을 무엇으로 시험할지 정해야 합니다.</p>
+<p>배포는 보류돼 있습니다(백로그 208행). 지금은 내 PC에서 서비스를 돌리고 Cloudflare 빠른 터널로 임시 주소를 엽니다.</p>
+
+<div class="item"><h3><span class="no">1</span>운영 쪽은 같은 PC에 DB를 하나 더 띄워 시험함 [안]</h3>
+<p>내 PC에서 가져와 파일로 내보내고, 같은 PC의 두 번째 DB(운영 역할)에 넣고 바꿔 끼웁니다. 그 두 번째 DB에 검색 서비스를 붙여, 반영하는 동안 검색이 멈추지 않는지 봅니다. 진짜 서버로 옮길 때는 파일을 보내는 곳만 바뀝니다.</p>
+<p class="alt"><b>다른 선택:</b> 배포를 이 사이클에 같이 해서 진짜 운영 서버로 시험. 서버 고르기·비용·접속 설정이 더해져 사이클이 커지고, 보류해 둔 배포 결정(백로그 208행)을 당기게 됩니다.</p>
+<p class="rec">추천: 같은 PC의 두 번째 DB. 배포 보류 결정을 바꾸지 않습니다.</p></div>
+
+<div class="item"><h3><span class="no">2</span>힙 6GB 줄이기는 이 사이클에 넣지 않음 [안]</h3>
+<p>가져오기는 내 PC(32GB)에서 돌므로 6GB여도 됩니다. 사이클 08의 #3(6GB로 끝까지 되는지)과 #4(글자 합치기 옵션 효과) 결과는 기록만 해 둡니다. 안 1·2·3은 백로그에 그대로 둡니다.</p>
+<p class="alt"><b>다른 선택:</b> 안 1(겹치는 글자 합치기, 작은 일)만 같이. 30~40% 줄지만 결과가 바뀌지 않는지 다시 확인해야 합니다. <b>안 2·3</b>은 일이 커서 이 사이클과 따로 하는 편이 낫습니다.</p>
+<p class="rec">추천: 넣지 않음. 6GB가 문제 되는 건 가져오기를 운영 서버에서 돌릴 때인데, 이 사이클이 그걸 없앱니다.</p></div>
+
+<div class="item"><h3><span class="no">3</span>두 DB가 다르면 반영을 시작하지 않고 이유를 기록함 [안]</h3>
+<p>운영에 넣기 전에 5번 카드의 세 가지(책 표, 도서관 seed, <code>collection_link</code>)가 내 PC가 기준으로 삼은 것과 같은지 봅니다. 하나라도 다르면 운영 표는 그대로 두고, 가져오기 기록에 실패와 이유를 남깁니다. 무엇으로 비교할지(기록 번호, 버전 등)는 설계 단계에서 정합니다.</p>
+<p class="alt"><b>다른 선택:</b> 비교 없이 절차 문서에 "운영에서 책 표를 고치지 말 것"만 적기. 만들 것은 줄지만, 실수하면 책 번호가 어긋난 채로 반영됩니다.</p>
+<p class="rec">추천: 반영 전에 확인하고, 다르면 멈춤.</p></div>
+
+<div class="item"><h3><span class="no">4</span>이 사이클은 손으로 돌리는 절차까지, 자동 갱신은 밖에 둠 [안]</h3>
+<p>만드는 것은 명령 두 개(내 PC에서 내보내기, 운영에서 넣고 바꿔 끼우기)와 절차 문서입니다. "정해진 때마다 자동 갱신"은 이 사이클 밖에 두고, 백로그에 "가져오기를 내 PC에서 하면 자동 갱신은 내 PC가 켜져 있을 때 돌리고 파일을 올리는 모양이 된다"는 메모만 더합니다.</p>
+<p class="alt"><b>다른 선택:</b> 자동 갱신 방식까지 이 사이클에서 정하기. 언제 돌릴지, 내 PC가 꺼져 있으면 어떻게 할지까지 정해야 해서 범위가 두 배쯤 됩니다.</p>
+<p class="rec">추천: 손으로 돌리는 절차까지. 앞서 "자동 갱신과의 관계를 이 사이클에서 정하는 편이 낫다"고 썼던 것을 이렇게 줄였습니다.</p></div>
+</section>
+
+<p class="foot">이 글은 요약이며 근거는 원본에 있습니다: plan <code>docs/cycles/11-separate-import/scope.md</code>, <code>docs/backlog.md</code> 208·225·226행, <code>docs/current/data-model.md</code> "가져오기: 새 표에 쓰고 바꿔 끼우기", dev <code>docs/plan-feedback.md</code> 사이클 08 8단계(가져오기 #2)와 요약 5절 7·8번, dev <code>BookGrouping.java</code> (2026-10-11).</p>
+</main>
+</body>
+</html>

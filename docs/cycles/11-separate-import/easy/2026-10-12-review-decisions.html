@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>설계 검토 결과</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.card h3.t{font-size:21px;margin:26px 0 8px}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font-size:15px;line-height:1.55;margin:8px 0 6px;word-break:normal}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+pre .cm{color:var(--muted)} pre .hl{background:var(--warn-bg);color:var(--warn);font-weight:700}
+.src{color:var(--muted);font-size:15px;margin:14px 0 0}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+.fig{overflow-x:auto;margin:8px 0 4px}
+.fig svg{width:100%;min-width:640px;height:auto;display:block}
+.mine{border:1px dashed var(--warn);background:var(--warn-bg);border-radius:8px;padding:10px 14px;font-size:18px;margin:10px 0}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0}
+.pc>div{border-radius:10px;padding:12px 16px;font-size:18px}
+.pc .p{background:var(--ok-bg)} .pc .c{background:var(--no-bg)}
+.pc h4{margin:0 0 6px;font-size:18px}
+.pc ul{margin:0;padding-left:20px}
+.pc li{margin:0 0 8px}
+@media (max-width:640px){.pc{grid-template-columns:1fr} body{font-size:18px} .lead{font-size:24px}}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">설계 검토에서 나온 것: 정할 것 2개</p>
+<p class="sub">설계 검토(design-reviewer) 결과 막는 것은 없고, 고칠 것 5개·작은 것 6개였습니다. 표기·번호 같은 것은 바로 고쳤고(7번 카드), 설계를 정해야 하는 두 가지(#1, #2)만 여쭙니다. #2는 승인하셨고 #1이 남았습니다. (2026-10-12)</p>
+
+<section class="card" style="padding:18px 26px"><p style="margin:0 0 6px;font-weight:700">이 페이지 읽는 순서</p>
+<ol style="margin:0;padding-left:22px">
+<li>말 정하기: 책 표 A·B, 작은 표</li>
+<li>정상일 때: 내 PC와 운영을 오가는 네 걸음</li>
+<li><code>finish</code>가 하는 일 여섯 단계</li>
+<li><code>finish</code>가 실패하면: 내 PC·운영 나눠 보기 → <b>결정 #1</b></li>
+<li>참고: 색인을 만든 채로 옮길 수 없는 이유</li>
+<li>번호 비교는 누가 하나 → <b>결정 #2 (승인됨)</b></li>
+<li>바로 고친 것</li>
+</ol></section>
+
+<!-- 1 -->
+<section class="card">
+<h2><span class="num">1</span>말 정하기</h2>
+<p class="gist">책 표 <b>A</b> = 지금 두 DB가 같이 가진 책 표. 책 표 <b>B</b> = 이번에 내 PC에서 새로 만든 책 표. 목표는 끝났을 때 <b>두 DB 모두 B</b>.</p>
+<ul>
+<li class="ic"><span><b>작은 표</b>(<code>load_manifest</code>): 파일과 내 PC의 새 표 B에 붙어 있는 한 줄짜리 표입니다. "이 파일을 만들 때 내 PC 책 표는 A였다"가 적혀 있습니다. 내 PC에 이게 남아 있으면 내 PC는 "운영 반영을 기다리는 새 표가 있다"고 압니다(= <b>기다림</b> 상태).</span></li>
+<li class="ic"><span><b>기다림 상태에서는</b> 다음 <code>export</code>가 시작하지 않고 "먼저 finish 또는 discard"를 알립니다(설계 #6, 승인).</span></li>
+<li class="ic"><span><b>작은 표 없는 새 표</b>는 지난 실행이 죽고 남은 것으로 보고, 다음 실행이 지웁니다(사이클 08 방식).</span></li>
+</ul>
+</section>
+
+<!-- 2 -->
+<section class="card">
+<h2><span class="num">2</span>정상일 때: 네 걸음</h2>
+<p class="gist">내 PC에서 B를 만들어 파일로 보내고, 운영이 A와 맞는지 확인한 뒤 B로 바꾸고, 마지막에 내 PC도 B로 바꿉니다.</p>
+<div class="fig">
+<svg viewBox="0 0 820 250" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <text x="20" y="80" font-size="16" font-weight="700" fill="var(--accent)">내 PC</text>
+  <text x="20" y="180" font-size="16" font-weight="700" fill="var(--ok)">운영</text>
+  <g font-size="14" fill="var(--text)">
+  <text x="120" y="26" font-weight="700">① export</text><text x="300" y="26" font-weight="700">② 파일 옮김</text><text x="470" y="26" font-weight="700">③ apply</text><text x="650" y="26" font-weight="700">④ finish</text>
+  </g>
+  <g font-size="14">
+  <rect x="110" y="50" width="150" height="56" rx="8" fill="var(--card)" stroke="var(--accent)"/><text x="120" y="72" fill="var(--text)">책 표 A</text><text x="120" y="96" fill="var(--warn)" font-weight="700">새 표 B+작은 표</text>
+  <rect x="290" y="50" width="150" height="56" rx="8" fill="var(--card)" stroke="var(--accent)"/><text x="300" y="72" fill="var(--text)">책 표 A</text><text x="300" y="96" fill="var(--warn)" font-weight="700">새 표 B+작은 표</text>
+  <rect x="460" y="50" width="150" height="56" rx="8" fill="var(--card)" stroke="var(--accent)"/><text x="470" y="72" fill="var(--text)">책 표 A</text><text x="470" y="96" fill="var(--warn)" font-weight="700">새 표 B+작은 표</text>
+  <rect x="640" y="50" width="160" height="56" rx="8" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/><text x="650" y="84" fill="var(--text)" font-weight="700">책 표 B</text>
+  <rect x="110" y="150" width="150" height="56" rx="8" fill="var(--card)" stroke="var(--ok)"/><text x="120" y="184" fill="var(--text)">책 표 A</text>
+  <rect x="290" y="150" width="150" height="56" rx="8" fill="var(--card)" stroke="var(--ok)"/><text x="300" y="172" fill="var(--text)">책 표 A</text><text x="300" y="196" fill="var(--muted)">파일 받음</text>
+  <rect x="460" y="150" width="150" height="56" rx="8" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/><text x="470" y="172" fill="var(--text)" font-weight="700">책 표 B</text><text x="470" y="196" fill="var(--muted)">A와 비교 ✓</text>
+  <rect x="640" y="150" width="160" height="56" rx="8" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/><text x="650" y="184" fill="var(--text)" font-weight="700">책 표 B</text>
+  </g>
+  <path d="M365 106 V146" stroke="var(--text)" stroke-width="2" stroke-dasharray="4 3"/>
+  <text x="20" y="236" font-size="14" fill="var(--muted)">③에서 운영은 작은 표의 "A"와 자기 책 표 A를 비교해서 같으니 넣고 바꿔 끼웁니다.</text>
+</svg>
+</div>
+<ol>
+<li><b>① 내 PC export</b>: B를 만들고 작은 표에 "내 책 표는 A"를 적어 함께 파일로 뜸. 내 PC 책 표는 아직 A.</li>
+<li><b>② 파일 옮김</b>: 이 사이클은 같은 PC라 경로만 줌.</li>
+<li><b>③ 운영 apply</b>: A = A 확인 → 넣기 → 색인 → 바꿔 끼우기. 운영은 B.</li>
+<li><b>④ 내 PC finish</b>: 남겨 둔 B로 바꿔 끼움. 두 DB 모두 B → 다음 가져오기는 B 기준.</li>
+</ol>
+</section>
+
+<!-- 3 -->
+<section class="card">
+<h2><span class="num">3</span><code>finish</code>가 하는 일 여섯 단계</h2>
+<p class="gist"><code>finish</code>는 운영 <code>apply</code>에서 "파일 넣기"와 "해시 비교"를 뺀 나머지입니다. B는 이미 내 PC에 있으니 색인을 붙이고, 통계를 만들고, 바꿔 끼웁니다. (아래는 결정 #1 제안대로 한 순서)</p>
+<table>
+<tr><th>단계</th><th>하는 일</th><th>시간 (사이클 08)</th></tr>
+<tr><td>1. 짝 확인</td><td>파일 번호(<code>export_id</code>)가 내 PC 작은 표와 같은지, 내 PC 책 표가 아직 A인지(수·가장 큰 번호·시퀀스). 다르면 멈춤</td><td>짧음</td></tr>
+<tr><td>2. 만들다 만 색인 지우기</td><td>지난 <code>finish</code>가 3단계에서 실패했을 때만. 처음이면 할 일 없음</td><td>짧음</td></tr>
+<tr><td>3. 색인·제약 만들기</td><td>내 PC 책 표 A의 정의를 읽어 같은 이름으로 B에 붙임. 기본 키 → 유일 제약(ISBN 등) → 검사 제약 → 외래 키(소장 → 책) → 나머지 색인(제목 검색용 pg_bigm 등). 색인 메모리는 내 PC라 1GB</td><td>약 1분 39초</td></tr>
+<tr><td>4. 통계</td><td><code>VACUUM (ANALYZE)</code>. 검색이 "색인으로 읽을지"를 고를 때 씀. 파일에는 통계가 안 들어감</td><td>약 43초</td></tr>
+<tr><td>5. 바꿔 끼우기</td><td>짧은 트랜잭션 하나: 작은 표 지우기 → 옛 A 네 표 지우기 → B 네 표를 <code>catalog</code>로 → 빈 <code>catalog_next</code> 지우기 → 확정. 잠금을 2초 안에 못 잡으면 10초 쉬고 다시, 최대 5번</td><td>0.33초</td></tr>
+<tr><td>6. 기록</td><td>내 PC <code>catalog_import</code>에 한 줄(가져오기 기록 + 색인·통계·바꿔 끼우기 시간, 같은 <code>export_id</code>)</td><td>짧음</td></tr>
+</table>
+<p class="cap">운영 <code>apply</code>는 이 앞에 해시 비교와 파일 넣기(시간 미측정)가 붙고, 색인 메모리가 256MB라 3단계가 더 걸릴 수 있습니다.</p>
+</section>
+
+<!-- 4 -->
+<section class="card">
+<h2><span class="num">4</span><code>finish</code>가 색인을 만들다 실패하면: 내 PC와 운영 나눠 보기</h2>
+<p class="gist">운영은 이미 B입니다(③ 성공). 문제는 내 PC입니다. 작은 표를 <b>먼저</b> 지우면 내 PC가 "기다리는 중"이라는 걸 잊어서 B를 지워 버리고, 다음 반영이 막힙니다. 작은 표를 <b>바꿔 끼우는 순간에</b> 지우면 실패해도 기다림이 남아 <code>finish</code>를 다시 하면 됩니다.</p>
+
+<h3 class="t">지금 설계: 작은 표를 먼저 지움</h3>
+<div class="fig">
+<svg viewBox="0 0 820 230" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <text x="20" y="80" font-size="16" font-weight="700" fill="var(--accent)">내 PC</text>
+  <text x="20" y="180" font-size="16" font-weight="700" fill="var(--ok)">운영</text>
+  <g font-size="13" fill="var(--text)">
+  <text x="100" y="24" font-weight="700">④ finish 시작</text><text x="275" y="24" font-weight="700">색인 중 실패</text><text x="450" y="24" font-weight="700">다음 export</text><text x="630" y="24" font-weight="700">그다음 apply</text>
+  <rect x="90" y="44" width="165" height="64" rx="8" fill="var(--card)" stroke="var(--accent)"/><text x="100" y="66">책 표 A</text><text x="100" y="90" fill="var(--no)">작은 표 먼저 지움</text>
+  <rect x="265" y="44" width="165" height="64" rx="8" fill="var(--no-bg)" stroke="var(--no)"/><text x="275" y="66">책 표 A</text><text x="275" y="90">B만 남음(작은 표 없음)</text>
+  <rect x="440" y="44" width="170" height="64" rx="8" fill="var(--no-bg)" stroke="var(--no)"/><text x="450" y="66">B를 "죽고 남은 것"</text><text x="450" y="90">으로 보고 지움</text>
+  <rect x="620" y="44" width="180" height="64" rx="8" fill="var(--card)" stroke="var(--accent)"/><text x="630" y="66">책 표 A</text><text x="630" y="90">새 파일: "내 표는 A"</text>
+  <rect x="90" y="144" width="165" height="64" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="100" y="180" font-weight="700">책 표 B</text>
+  <rect x="265" y="144" width="165" height="64" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="275" y="180" font-weight="700">책 표 B</text>
+  <rect x="440" y="144" width="170" height="64" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="450" y="180" font-weight="700">책 표 B</text>
+  <rect x="620" y="144" width="180" height="64" rx="8" fill="var(--no-bg)" stroke="var(--no)" stroke-width="2"/><text x="630" y="166" font-weight="700">A ≠ B → mismatch</text><text x="630" y="190">반영 막힘</text>
+  </g>
+  <path d="M710 108V140" stroke="var(--no)" stroke-width="2" stroke-dasharray="4 3"/>
+</svg>
+</div>
+<p class="cap">되살리려면 운영에 넣었던 같은 파일을 내 PC에도 <code>apply</code>해야 합니다. 운영자가 이걸 알고 있어야 합니다.</p>
+
+<h3 class="t">제안: 작은 표는 바꿔 끼우는 순간에 지움</h3>
+<div class="fig">
+<svg viewBox="0 0 820 230" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <text x="20" y="80" font-size="16" font-weight="700" fill="var(--accent)">내 PC</text>
+  <text x="20" y="180" font-size="16" font-weight="700" fill="var(--ok)">운영</text>
+  <g font-size="13" fill="var(--text)">
+  <text x="100" y="24" font-weight="700">④ finish 시작</text><text x="275" y="24" font-weight="700">색인 중 실패</text><text x="450" y="24" font-weight="700">다음 export</text><text x="630" y="24" font-weight="700">finish 다시</text>
+  <rect x="90" y="44" width="165" height="64" rx="8" fill="var(--card)" stroke="var(--accent)"/><text x="100" y="66">책 표 A</text><text x="100" y="90" fill="var(--warn)">B+작은 표 그대로</text>
+  <rect x="265" y="44" width="165" height="64" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="275" y="66">책 표 A</text><text x="275" y="90">B+작은 표 = 기다림</text>
+  <rect x="440" y="44" width="170" height="64" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="450" y="66">시작 안 함</text><text x="450" y="90">"먼저 finish"</text>
+  <rect x="620" y="44" width="180" height="64" rx="8" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/><text x="630" y="76" font-weight="700">책 표 B</text><text x="630" y="98">만들다 만 색인부터 다시</text>
+  <rect x="90" y="144" width="165" height="64" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="100" y="180" font-weight="700">책 표 B</text>
+  <rect x="265" y="144" width="165" height="64" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="275" y="180" font-weight="700">책 표 B</text>
+  <rect x="440" y="144" width="170" height="64" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="450" y="180" font-weight="700">책 표 B</text>
+  <rect x="620" y="144" width="180" height="64" rx="8" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/><text x="630" y="166" font-weight="700">책 표 B</text><text x="630" y="190">두 DB 모두 B ✓</text>
+  </g>
+</svg>
+</div>
+<p class="cap">운영은 어느 쪽이든 내내 B이고 검색도 정상입니다. 차이는 내 PC가 "운영과 맞추는 중"이라는 표시(작은 표)를 실패 뒤에도 가지고 있느냐입니다.</p>
+
+<div class="item"><h3><span class="no">1</span><code>finish</code>는 작은 표를 바꿔 끼우는 순간(같은 짧은 트랜잭션)에 지우고, 그 전에 실패하면 "기다림" 상태로 남겨 <code>finish</code>를 다시 돌릴 수 있게 한다. 다시 돌릴 때는 만들다 만 색인부터 지운다. 수용 기준을 하나 더한다: "finish가 색인 단계에서 실패해도 다시 finish 하면 끝까지 되고, 그동안 export는 막힌다" [안]</h3>
+<p class="alt"><b>다른 선택:</b> 실패하면 새 표를 지우고, 같은 파일을 내 PC에 <code>apply</code>해서 되살림. 코드는 단순하지만 운영자가 이 방법을 알아야 하고, 넣기 시간이 한 번 더 듭니다.</p>
+<p class="rec">추천: 기다림 유지 + 다시 finish.</p></div>
+</section>
+
+<!-- 5 -->
+<section class="card">
+<h2><span class="num">5</span>참고: 색인을 만든 채로 운영에 옮길 수 없는 이유</h2>
+<p class="gist"><code>pg_dump</code> 파일에는 색인 내용이 아니라 "색인을 만들어라"라는 명령만 들어갑니다. 받는 쪽이 새로 만듭니다. 색인째 옮기는 길은 DB 전체를 파일째 복사하는 것뿐인데, 운영에는 쓸 수 없습니다.</p>
+<ul>
+<li class="ic"><span><b>파일에 든 것:</b> 표를 만드는 명령, 줄 데이터, 시퀀스 값, 그리고 색인·제약의 "정의". 우리 설계는 내 PC에서 색인을 아예 만들지 않고 덤프하고, 운영이 자기 표 정의를 읽어 색인을 만듭니다.</span></li>
+<li class="ic"><span><b>DB 파일 통째 복사:</b> 서버를 멈춰야 하고, 표 하나만 골라 옮길 수 없습니다(전체 거래 기록 없이는 표 파일을 쓸 수 없음). 클러스터 전체를 옮기면 운영에만 있는 회원·내 도서관 데이터까지 덮어씁니다.</span></li>
+<li class="ic"><span><b>그래서</b> 색인 시간(사이클 08 1분 39초, 운영은 256MB라 더 걸릴 수 있음)은 운영에서 들고, 이번 사이클에 상한 1GB를 건 운영 역할 DB로 잽니다(AC-14). 그동안 검색은 옛 표로 계속됩니다.</span></li>
+</ul>
+<p class="cap">근거(확인 2026-10-12): SQL 덤프는 "generate a file with SQL commands that, when fed back to the server, will recreate the database" — <a href="https://www.postgresql.org/docs/18/backup-dump.html">SQL Dump</a>; post-data는 "definitions of indexes, triggers, rules and constraints" — <a href="https://www.postgresql.org/docs/18/app-pgrestore.html">pg_restore</a>; 파일 복사는 "The database server must be shut down", 표 하나만은 "not usable without the commit log files", "only work for complete backup and restoration of an entire database cluster" — <a href="https://www.postgresql.org/docs/18/backup-file.html">File System Level Backup</a>.</p>
+</section>
+
+<!-- 6 -->
+<section class="card">
+<h2><span class="num">6</span>세 방식의 "번호" 비교는 누가 DB를 읽나</h2>
+<p class="gist">세 방식이 번호까지 같은지 보려면 방식마다 <code>export</code> 뒤 <code>catalog_next</code>의 책·소장 번호를 꺼내야 합니다. 이걸 가져오기 코드(<code>collection</code>)가 읽으면 남의 모듈 표를 직접 읽는 셈이라 모듈 규칙에 어긋납니다.</p>
+<div class="item"><h3><span class="no">2</span>번호 꺼내기는 앱 밖 비교 스크립트(<code>compare_grouping.py</code>가 psql로)가 한다. 시험용 도구라 앱 코드에 넣지 않는다 [안]</h3>
+<p>예: 방식마다 <code>export</code> → 스크립트가 <code>catalog_next.book</code>·<code>catalog_next.holding</code>의 번호를 파일로 뽑음 → <code>discard</code> → 세 방식의 파일 비교. dev는 이미 측정 스크립트에서 psql로 DB를 읽고 있습니다.</p>
+<p class="alt"><b>다른 선택:</b> <code>CatalogLoad</code>에 "번호 내보내기" 기능을 하나 더함(8개로). 시험에만 쓰는 기능이 공개 API에 남고 ADR-0078을 고쳐야 합니다.</p>
+<p class="rec">추천: 바깥 스크립트. (승인됨, 2026-10-12)</p></div>
+</section>
+
+<!-- 7 -->
+<section class="card">
+<h2><span class="num">7</span>바로 고친 것 (결정 필요 없음)</h2>
+<table>
+<tr><th>지적</th><th>고친 곳</th></tr>
+<tr><td>표 구조 해시를 누가 계산하나, 기준값은 <code>catalog</code>와 <code>catalog_next</code> 중 어느 쪽 값인가</td><td><code>design-delta.md</code>: <code>catalog</code>가 계산해 <code>baseline()</code>으로 돌려줌, 기준값은 마지막 반영분 <code>catalog</code> 값</td></tr>
+<tr><td>절차 문서(<code>3-import.md</code>)와 <code>compare_books.py</code>가 설계에 없음</td><td><code>design-delta.md</code>에 "인프라·문서" 줄 추가</td></tr>
+<tr><td>섞인 태그</td><td>"모양은 확정, 이름은 안"으로 나눠 적음</td></tr>
+<tr><td><code>temp_buffers</code> 8MB 출처</td><td>PostgreSQL 문서 주소·확인일</td></tr>
+<tr><td>설계 제안의 "AC-5"</td><td>"최종 스펙 AC-13"으로</td></tr>
+<tr><td>상태 그림에 <code>in-place</code> 성공 길이 없음</td><td>추가(그림 다시 그림)</td></tr>
+<tr><td><code>collection/005</code> 번호</td><td>"인계 때 dev의 마지막 번호를 보고 정함"</td></tr>
+<tr><td><code>scope.md</code> 상태 줄</td><td>08·09 회고 끝, 10 개발 중으로</td></tr>
+</table>
+<p><b>고치지 않은 것:</b> ADR-0078·0079 이유 칸의 "제안 → 승인"은 이 프로젝트가 계속 쓰는 표기(ADR-0065 등)이고, Accepted ADR은 고치지 않는 규칙이라 그대로 둡니다.</p>
+</section>
+
+<p class="foot">근거: 설계 검토 결과(2026-10-12), <code>../design-delta.md</code>, <code>../spec.md</code>, ADR-0078.</p>
+</main>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>설계 문서 요약</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.card h3.t{font-size:21px;margin:26px 0 8px}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font-size:15px;line-height:1.55;margin:8px 0 6px;word-break:normal}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+pre .cm{color:var(--muted)} pre .hl{background:var(--warn-bg);color:var(--warn);font-weight:700}
+.src{color:var(--muted);font-size:15px;margin:14px 0 0}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+.fig{overflow-x:auto;margin:8px 0 4px}
+.fig svg{width:100%;min-width:640px;height:auto;display:block}
+.mine{border:1px dashed var(--warn);background:var(--warn-bg);border-radius:8px;padding:10px 14px;font-size:18px;margin:10px 0}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0}
+.pc>div{border-radius:10px;padding:12px 16px;font-size:18px}
+.pc .p{background:var(--ok-bg)} .pc .c{background:var(--no-bg)}
+.pc h4{margin:0 0 6px;font-size:18px}
+.pc ul{margin:0;padding-left:20px}
+.pc li{margin:0 0 8px}
+@media (max-width:640px){.pc{grid-template-columns:1fr} body{font-size:18px} .lead{font-size:24px}}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">사이클 11 설계 문서 한 장 요약</p>
+<p class="sub"><code>design-delta.md</code>를 쉬운 말로 옮겼습니다. 새로 정한 것은 없고, 지금까지 정하신 것(스펙 12개, 설계 12개, 점검 5개, ADR-0078·0079)을 한 문서로 모은 것입니다. 그림이 든 원문은 <code>design-delta-original.html</code>. (2026-10-12)</p>
+
+<section class="card">
+<h2><span class="num">1</span>dev가 만드는 것</h2>
+<p class="gist">새 모듈·화면·REST API는 없습니다. <code>catalog</code>(책 표 쪽)과 <code>collection</code>(가져오기 쪽) 안을 고치고, 표에 칸 두 개와 compose에 DB 하나를 더합니다.</p>
+<table>
+<tr><th>어디</th><th>만드는 것</th></tr>
+<tr><td><code>catalog</code></td><td><code>CatalogLoad</code>에 기능 7개(만들기·내보내기·읽기·기준값·반영·마저·지우기). 지금의 긴 가져오기 순서를 단계로 나눔. 컨테이너 안 <code>pg_dump</code>·<code>pg_restore</code>를 부르는 부분</td></tr>
+<tr><td><code>collection</code></td><td>가져오기 명령의 모드 다섯(<code>in-place</code>·<code>export</code>·<code>apply</code>·<code>finish</code>·<code>discard</code>), 두 DB 비교(도서관·연결표·책 표·표 구조), 기록 칸 두 개(<code>export_id</code>, <code>exported_at</code>), 묶는 방식 셋(<code>current</code>·<code>compact</code>·<code>sql</code>)과 결과 비교용 파일</td></tr>
+<tr><td>compose</td><td>운영 역할 DB <code>db-ops</code>(포트 5434, 자기 볼륨, 메모리 상한 1GB)</td></tr>
+<tr><td>스크립트·문서</td><td>세 방식 결과 비교 스크립트, 측정 보강(GC 기록, 임시 파일 양, CPU), dev <code>3-import.md</code>에 반영 절차</td></tr>
+</table>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>운영자가 돌리는 순서</h2>
+<div class="fig">
+<svg viewBox="0 0 820 160" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <g font-size="15" fill="var(--text)">
+  <rect x="20" y="30" width="170" height="70" rx="10" fill="var(--card)" stroke="var(--muted)"/><text x="34" y="60" font-weight="700">0. 새 사본 복사</text><text x="34" y="84" font-size="13" fill="var(--muted)">수집 멈췄을 때</text>
+  <rect x="220" y="30" width="170" height="70" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/><text x="234" y="60" font-weight="700">1. export</text><text x="234" y="84" font-size="13" fill="var(--muted)">내 PC, 약 33분</text>
+  <rect x="420" y="30" width="170" height="70" rx="10" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/><text x="434" y="60" font-weight="700">2. apply</text><text x="434" y="84" font-size="13" fill="var(--muted)">운영 역할 DB 5434</text>
+  <rect x="620" y="30" width="180" height="70" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/><text x="634" y="60" font-weight="700">3. finish / discard</text><text x="634" y="84" font-size="13" fill="var(--muted)">성공 / 실패에 따라</text>
+  </g>
+  <path d="M190 65h24M390 65h24M590 65h24" stroke="var(--text)" stroke-width="2"/>
+  <text x="20" y="140" font-size="14" fill="var(--muted)">2에서 두 DB가 다르면 운영은 그대로 두고 mismatch를 남김. 남은 빈 새 표는 어느 DB에서든 discard로 지움.</text>
+</svg>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>dev가 먼저 시험할 것과 잴 것</h2>
+<p class="gist">본 개발 전에 작은 시험 넷으로 방식이 되는지 봅니다. 안 되면 설계 안에서 대안(파일을 파이프 대신 폴더로 주고받기 등)으로 바꿉니다.</p>
+<table>
+<tr><th>먼저 시험</th><th>안 될 때</th></tr>
+<tr><td>덤프·복원 뒤 책·소장 번호 시퀀스 값이 같은지</td><td>복원 뒤 번호 값을 따로 맞춤</td></tr>
+<tr><td>WSL·Docker 파이프로 파일이 깨지지 않는지</td><td>파일을 공유 폴더로 주고받음</td></tr>
+<tr><td>컨테이너 안 도구가 암호 없이 붙는지</td><td>접속 설정 추가</td></tr>
+<tr><td>Java가 죽어도 컨테이너 안 복원이 계속 도는지</td><td>다음 실행이 확인하고 멈춤</td></tr>
+</table>
+<p>잴 것: 덤프 파일 크기, 복원 시간, 상한 1GB에서 색인 시간, 운영 디스크 최대, 그리고 세 방식 × 여섯 관점 × 두 번(+ Java 옵션 두 경우). 결과는 dev가 <code>plan-feedback.md</code>로 넘깁니다.</p>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>다음 단계</h2>
+<p class="gist">설계가 끝나면 마무리(설계 검토 → <code>docs/current/</code> 반영 → 인계서)입니다. 그런데 지금 <code>docs/current/handoff.md</code>는 사이클 10 인계서이고, dev가 그것을 읽고 개발 중입니다.</p>
+<div class="item"><h3><span class="no">1</span>이 설계 문서대로 확정하고 마무리 단계로 간다 [안]</h3>
+<p class="rec">추천: 승인.</p></div>
+<div class="item"><h3><span class="no">2</span>마무리 중 설계 검토(design-reviewer)와 인계서 초안은 지금 만들어 사이클 폴더에 두고, <code>docs/current/</code> 반영과 인계서 바꿔 넣기는 사이클 10 개발 결과를 본 뒤에 한다 [안]</h3>
+<p><code>docs/current/handoff.md</code>를 지금 바꾸면 사이클 10을 개발 중인 dev가 읽는 인계서가 바뀝니다. 사이클 10도 "인계서는 08·09 결과를 본 뒤"로 같은 순서를 지켰습니다. 사이클 10이 <code>catalog</code>에 기능(<code>BookLookup</code>)을 더하므로, 그 결과를 보고 사이클 11 인계서의 코드 위치를 맞추는 편이 안전합니다.</p>
+<p class="alt"><b>다른 선택:</b> 지금 바로 인계서까지 바꿈 — 사이클 10 개발과 섞입니다.</p>
+<p class="rec">추천: 초안까지 지금, 바꿔 넣기는 사이클 10 뒤.</p></div>
+</section>
+
+<p class="foot">근거: <code>../design-delta.md</code>, <code>../spec.md</code>, ADR-0078·0079, <code>docs/current/handoff.md</code>(사이클 10).</p>
+</main>
+</body>
+</html>

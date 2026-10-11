@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EC2 크기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.card h3.t{font-size:21px;margin:26px 0 8px}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font-size:15px;line-height:1.55;margin:8px 0 6px;word-break:normal}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+pre .cm{color:var(--muted)} pre .hl{background:var(--warn-bg);color:var(--warn);font-weight:700}
+.src{color:var(--muted);font-size:15px;margin:14px 0 0}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+.fig{overflow-x:auto;margin:8px 0 4px}
+.fig svg{width:100%;min-width:640px;height:auto;display:block}
+.mine{border:1px dashed var(--warn);background:var(--warn-bg);border-radius:8px;padding:10px 14px;font-size:18px;margin:10px 0}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0}
+.pc>div{border-radius:10px;padding:12px 16px;font-size:18px}
+.pc .p{background:var(--ok-bg)} .pc .c{background:var(--no-bg)}
+.pc h4{margin:0 0 6px;font-size:18px}
+.pc ul{margin:0;padding-left:20px}
+.pc li{margin:0 0 8px}
+@media (max-width:640px){.pc{grid-template-columns:1fr} body{font-size:18px} .lead{font-size:24px}}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">가져오기를 따로 하면 EC2는 이렇게</p>
+<p class="sub">이미 정한 모양(EC2 한 대에 nginx·서비스·조회 서버·DB, 2026-10-04)에, 사이클 11의 "가져오기는 내 PC, 운영은 파일만 받아 넣기"를 더해 크기를 잡았습니다. 운영 서버에는 가져오기용 힙 6GB도, 사본·국가서지 파일도 필요 없습니다. (2026-10-12)</p>
+
+<section class="card">
+<h2><span class="num">1</span>한 장으로 보면</h2>
+<p class="gist">추천: t4g.medium(2 vCPU, 메모리 4GiB) 한 대 + gp3 디스크 40GiB. 내 PC에서 가져온 파일을 올려 반영합니다.</p>
+<div class="fig">
+<svg viewBox="0 0 820 330" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <rect x="20" y="40" width="220" height="250" rx="14" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2" stroke-dasharray="7 5"/>
+  <text x="38" y="30" font-size="18" font-weight="700" fill="var(--accent)">내 PC (32GB)</text>
+  <g font-size="16" fill="var(--text)">
+  <rect x="38" y="60" width="184" height="44" rx="8" fill="var(--card)" stroke="var(--accent)"/><text x="52" y="88">가져오기 (힙 6GB)</text>
+  <rect x="38" y="116" width="184" height="44" rx="8" fill="var(--card)" stroke="var(--muted)"/><text x="52" y="144">사본·국가서지</text>
+  <rect x="38" y="172" width="184" height="44" rx="8" fill="var(--card)" stroke="var(--muted)"/><text x="52" y="200">가져오기용 DB</text>
+  <rect x="38" y="228" width="184" height="44" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="52" y="256">덤프 파일 하나</text>
+  </g>
+  <path d="M222 250H330" stroke="var(--text)" stroke-width="2.5"/><path d="M322 243l10 7-10 7" fill="none" stroke="var(--text)" stroke-width="2.5"/>
+  <text x="240" y="238" font-size="14" fill="var(--muted)">scp 또는 S3</text>
+  <rect x="340" y="40" width="460" height="270" rx="14" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/>
+  <text x="358" y="30" font-size="18" font-weight="700" fill="var(--ok)">EC2 t4g.medium (4GiB) · 서울</text>
+  <g font-size="16" fill="var(--text)">
+  <rect x="358" y="60" width="200" height="44" rx="8" fill="var(--card)" stroke="var(--muted)"/><text x="372" y="88">nginx</text>
+  <rect x="580" y="60" width="200" height="44" rx="8" fill="var(--card)" stroke="var(--ok)"/><text x="594" y="88">서비스 (힙 512MB)</text>
+  <rect x="358" y="116" width="200" height="44" rx="8" fill="var(--card)" stroke="var(--muted)"/><text x="372" y="144">조회 서버</text>
+  <rect x="580" y="116" width="200" height="44" rx="8" fill="var(--card)" stroke="var(--ok)"/><text x="594" y="144">DB (상한 1GB)</text>
+  <rect x="358" y="180" width="422" height="110" rx="8" fill="var(--card)" stroke="var(--accent)"/>
+  <text x="372" y="208" font-weight="700">gp3 40GiB</text>
+  <text x="372" y="236">평소 DB 약 8.5GiB</text>
+  <text x="372" y="262">반영할 때 책 표 두 벌 약 16GB + 덤프 파일</text>
+  </g>
+</svg>
+</div>
+<p class="cap">반영 명령은 EC2에서 돌고, 하는 일은 파일 넣기 → 색인 → 바꿔 끼우기뿐입니다.</p>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>메모리: 왜 4GiB인가</h2>
+<p class="gist">서비스와 DB가 쓰는 양을 더하면 2GiB 안팎이라 2GiB 서버는 여유가 없습니다. 4GiB면 남는 만큼을 DB 파일 캐시로 써서 검색이 빨라집니다.</p>
+<div class="fig">
+<svg viewBox="0 0 820 200" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <text x="20" y="26" font-size="17" fill="var(--text)">4GiB 안에 놓이는 것 (1GiB = 180px, 대략)</text>
+  <rect x="20" y="40" width="720" height="56" rx="6" fill="var(--bg)" stroke="var(--muted)"/>
+  <rect x="20" y="40" width="160" height="56" fill="var(--ok)"/><text x="30" y="74" font-size="15" fill="var(--card)">서비스 ~0.9</text>
+  <rect x="180" y="40" width="180" height="56" fill="var(--accent)"/><text x="190" y="74" font-size="15" fill="var(--card)">DB 상한 1</text>
+  <rect x="360" y="40" width="70" height="56" fill="var(--warn)"/><text x="366" y="74" font-size="14" fill="var(--card)">조회 ?</text>
+  <rect x="430" y="40" width="70" height="56" fill="var(--muted)"/><text x="438" y="74" font-size="14" fill="var(--card)">OS</text>
+  <text x="520" y="74" font-size="15" fill="var(--text)">남는 곳 → DB 파일 캐시</text>
+  <line x1="380" y1="110" x2="380" y2="130" stroke="var(--no)" stroke-width="2"/>
+  <text x="20" y="150" font-size="15" fill="var(--no)">t4g.small(2GiB)이면 여기쯤이 끝 → 캐시 자리 거의 없음</text>
+  <text x="20" y="184" font-size="15" fill="var(--muted)">서비스: 힙 512MB + 그 밖 Java 메모리(사이클 08 측정 합계 350MB 기준 여유). 조회 서버·OS는 재지 않음</text>
+</svg>
+</div>
+<p class="cap">숫자는 내 PC에서 잰 값입니다(사이클 08). 운영 서버에서 다시 잽니다(백로그 "배포 사이클: 메모리 값").</p>
+<div class="item"><h3><span class="no">1</span>EC2는 t4g.medium(2 vCPU, 4GiB) 한 대로 시작한다 [안]</h3>
+<p>t4g는 CPU를 평소 기준(vCPU당 20%)까지 쓰고, 그보다 많이 쓸 때는 모아 둔 크레딧을 씁니다. 반영할 때 색인을 1~2분 만드는 정도는 크레딧(최대 576)으로 충분하다고 봅니다. 기본 모드(Unlimited)에서는 하루 평균이 기준을 넘으면 넘은 만큼 요금이 더 붙습니다.</p>
+<p class="alt"><b>다른 선택:</b> t4g.small(2GiB) — 메모리 여유 없음. t4g.large(8GiB) — 캐시가 넉넉하지만 더 비쌈. m7g.large(8GiB, 크레딧 없는 일반형) — CPU를 늘 많이 쓸 때.</p>
+<p class="cap">근거: 사양 <a href="https://docs.aws.amazon.com/ec2/latest/instancetypes/gp.html">EC2 instance types (general purpose)</a>, 크레딧 <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/burstable-credits-baseline-concepts.html">burstable credits</a> (확인 2026-10-12). 금액은 5번 카드.</p>
+<p class="rec">추천: t4g.medium.</p></div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>디스크: 왜 40GiB인가</h2>
+<p class="gist">반영할 때는 옛 책 표와 새 책 표가 잠깐 함께 있어 DB가 두 배 가까이 됩니다. 덤프 파일과 OS·이미지 자리까지 더해 40GiB를 제안합니다.</p>
+<div class="fig">
+<svg viewBox="0 0 820 170" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <text x="20" y="24" font-size="16" fill="var(--text)">40GiB = 720px</text>
+  <rect x="20" y="36" width="720" height="44" rx="6" fill="var(--bg)" stroke="var(--muted)"/>
+  <rect x="20" y="36" width="153" height="44" fill="var(--ok)"/><text x="28" y="64" font-size="14" fill="var(--card)">평소 DB 8.5</text>
+  <rect x="173" y="36" width="135" height="44" fill="var(--warn)"/><text x="181" y="64" font-size="14" fill="var(--card)">반영 때 +7.5</text>
+  <rect x="308" y="36" width="70" height="44" fill="var(--accent)" opacity=".6"/><text x="314" y="64" font-size="14" fill="var(--card)">덤프 ?</text>
+  <rect x="378" y="36" width="110" height="44" fill="var(--muted)"/><text x="386" y="64" font-size="14" fill="var(--card)">OS·이미지</text>
+  <text x="500" y="64" font-size="14" fill="var(--text)">남는 곳 (책이 늘 때)</text>
+  <text x="20" y="114" font-size="15" fill="var(--muted)">반영 때 최대 약 16GB는 dev 예상치. 덤프 파일 크기는 사이클 11에서 잼. OS·이미지 크기는 재지 않음.</text>
+  <text x="20" y="144" font-size="15" fill="var(--muted)">gp3는 크기와 상관없이 기본 3,000 IOPS·125MiB/s, 모자라면 서버를 멈추지 않고 늘릴 수 있음.</text>
+</svg>
+</div>
+<div class="item"><h3><span class="no">2</span>디스크는 gp3 40GiB로 시작한다 [안]</h3>
+<p>사이클 11에서 덤프 파일 크기와 반영 때 최대 크기를 재면 다시 맞춥니다. 늘리는 것은 서버를 멈추지 않고 할 수 있어서, 처음에 크게 잡을 필요는 없습니다.</p>
+<p class="alt"><b>다른 선택:</b> 30GiB — 반영 때 빠듯할 수 있음. 60GiB 이상 — 여유는 크지만 당장 필요 없음.</p>
+<p class="cap">근거: <a href="https://docs.aws.amazon.com/ebs/latest/userguide/general-purpose.html">EBS gp3</a> "baseline IOPS performance of 3,000 IOPS", "125 MiB/s", Elastic Volumes로 멈추지 않고 바꿈 (확인 2026-10-12)</p>
+<p class="rec">추천: 40GiB.</p></div>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>확인하고 넘어갈 것</h2>
+<p class="gist">t4g는 ARM 칩(Graviton)이라, 지금 쓰는 Docker 이미지가 ARM에서 도는지 먼저 봐야 합니다. 안 되면 같은 크기의 Intel(t3.medium)로 갑니다.</p>
+<div class="item"><h3><span class="no">3</span>t4g(ARM)로 가되, 배포 전에 DB 이미지(PostgreSQL 18 + pg_bigm)와 서비스가 ARM에서 도는지 시험하고, 안 되면 t3.medium(Intel, 4GiB)으로 바꾼다 [안]</h3>
+<p>공식 <code>postgres</code> 이미지가 ARM을 지원하는지, pg_bigm을 ARM에서 빌드할 수 있는지는 확인하지 못했습니다. 배포 사이클에서 서버를 하나 띄워 빌드해 봅니다.</p>
+<p class="alt"><b>다른 선택:</b> 처음부터 t3.medium(Intel). 이미지 걱정은 없지만 한 달 약 $7.6 더 듭니다(서울, 5번 카드).</p>
+<p class="rec">추천: t4g로 시험 후 결정.</p></div>
+<table>
+<tr><th>더 확인할 것</th><th>방법</th></tr>
+<tr><td>반영할 때 DB 메모리</td><td>5번 카드: 256MB 제안, 사이클 11 설계에서 정함</td></tr>
+<tr><td>조회 서버가 쓰는 메모리</td><td>5번 카드: 상한 없음 → 256MB 제안, 배포 전 측정</td></tr>
+<tr><td>서울 리전에 t4g가 있는지, 금액</td><td>5번 카드: 있음, 한 달 약 $37.7</td></tr>
+<tr><td>인스턴스 종류를 바꿀 때 멈춰야 하는지</td><td>공식 문서 확인</td></tr>
+</table>
+</section>
+
+<section class="card">
+<h2><span class="num">5</span>더 찾아본 것: 값, 서울 리전, 조회 서버 메모리, 반영 때 DB 메모리</h2>
+<p class="gist">t4g.medium은 서울에 있고, 한 대·40GiB·공인 IPv4 하나로 한 달 약 38달러(세금·추가 전송 제외, 730시간 기준)입니다. 조회 서버와 반영 때 DB는 메모리 상한을 따로 정해야 합니다.</p>
+
+<h3 class="t">한 달 값 (서울, 온디맨드, Linux)</h3>
+<div class="fig">
+<svg viewBox="0 0 820 260" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <text x="20" y="24" font-size="15" fill="var(--muted)">인스턴스만, 시간당 값 × 730시간 (1달러 = 7px)</text>
+  <g font-size="16" fill="var(--text)">
+  <text x="20" y="58">t4g.small 2GiB</text><rect x="200" y="42" width="106" height="24" rx="3" fill="var(--muted)"/><text x="316" y="60">$15.2</text>
+  <text x="20" y="96" font-weight="700">t4g.medium 4GiB</text><rect x="200" y="80" width="213" height="24" rx="3" fill="var(--ok)"/><text x="423" y="98" font-weight="700">$30.4</text>
+  <text x="20" y="134">t3.medium 4GiB</text><rect x="200" y="118" width="266" height="24" rx="3" fill="var(--accent)"/><text x="476" y="136">$38.0</text>
+  <text x="20" y="172">t4g.large 8GiB</text><rect x="200" y="156" width="425" height="24" rx="3" fill="var(--muted)"/><text x="635" y="174">$60.7</text>
+  <text x="20" y="210">m7g.large 8GiB</text><rect x="200" y="194" width="512" height="24" rx="3" fill="var(--muted)"/><text x="722" y="212">$73.2</text>
+  </g>
+  <text x="20" y="248" font-size="14" fill="var(--muted)">자료: AWS 가격 데이터(게시 2026-10-09), 서울 Linux 온디맨드. 예약·Savings Plans 할인 전 값</text>
+</svg>
+</div>
+<table>
+<tr><th>항목 (서울)</th><th>단가</th><th>제안 구성 한 달</th></tr>
+<tr><td>t4g.medium</td><td>$0.0416 / 시간</td><td>약 $30.37</td></tr>
+<tr><td>gp3 디스크</td><td>$0.0912 / GB·월 (3,000 IOPS·125MiB/s 포함)</td><td>40GB → 약 $3.65</td></tr>
+<tr><td>공인 IPv4 주소</td><td>$0.005 / 시간 (쓰는 중·안 쓰는 중 같음)</td><td>약 $3.65</td></tr>
+<tr><td>CPU 크레딧 초과(Unlimited)</td><td>$0.04 / vCPU·시간 (Linux)</td><td>하루 평균이 기준 20% 안이면 0</td></tr>
+<tr><td>인터넷으로 나가는 전송</td><td>매달 100GB까지 무료(모든 서비스·리전 합산)</td><td>넘을 때만</td></tr>
+<tr><td>스냅샷 백업(하면)</td><td>$0.05 / GB·월</td><td>쓰는 만큼</td></tr>
+<tr><td colspan="2"><b>합계 (세금 별도)</b></td><td><b>약 $37.7</b></td></tr>
+</table>
+<p class="cap">근거(모두 확인 2026-10-12): 인스턴스 시간당 값은 AWS 가격 페이지가 쓰는 데이터 <code>ec2-ondemand-without-sec-sel / Asia Pacific (Seoul) / Linux</code>(게시 2026-10-09)에서 t4g.small $0.0208, t4g.medium $0.0416, t4g.large $0.0832, t3.small $0.026, t3.medium $0.052, t3.large $0.104, m7g.large $0.1003. gp3·스냅샷은 같은 출처의 EBS 데이터(서울 "Storage General Purpose gp3 GB Mo" $0.0912, 스냅샷 $0.05). 크레딧 $0.04·무료 전송 100GB는 <a href="https://aws.amazon.com/ec2/pricing/on-demand/">EC2 On-Demand 가격</a>, IPv4 $0.005는 <a href="https://aws.amazon.com/vpc/pricing/">VPC 가격</a>. 730시간은 한 달을 시간으로 칠 때의 가정입니다. 서울에서 t4g를 쓸 수 있는지는 이 가격 데이터에 서울 항목이 있는 것으로 확인했습니다.</p>
+
+<h3 class="t">조회 서버가 쓰는 메모리</h3>
+<p>재 본 값은 없습니다. 대신 코드와 문서에서 이렇게 알 수 있습니다.</p>
+<ul>
+<li class="ic"><span>조회 서버(<code>fetch-service</code>)에는 힙 상한 설정이 없습니다(<code>build.gradle</code>, <code>application.yml</code>). 이러면 Java가 <b>실메모리의 1/4</b>을 힙 상한으로 잡아서, 4GiB 서버라면 1GiB까지 커질 수 있습니다.</span></li>
+<li class="ic"><span>dev가 적어 둔 최악의 경우: 동시 32건 × 응답 최대 4MB × 1.33(base64) ≈ 170MB(<code>application.yml</code> 주석).</span></li>
+</ul>
+<p class="rec">제안: 조회 서버 힙 상한을 256MB로 정하고(최악 170MB + 여유), 배포 전에 재서 맞춥니다. 상한을 두지 않으면 서비스·DB와 메모리를 다툽니다.</p>
+<p class="cap">근거: "Maximum heap size of 1/4 of physical memory" — <a href="https://docs.oracle.com/en/java/javase/25/gctuning/ergonomics.html">Java 25 GC tuning, Ergonomics</a> (확인 2026-10-12)</p>
+
+<h3 class="t">반영할 때 DB 메모리 (<code>maintenance_work_mem</code>)</h3>
+<div class="fig">
+<svg viewBox="0 0 820 170" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <text x="20" y="24" font-size="15" fill="var(--text)">DB 컨테이너 상한 1GB 안에서 (1GB = 600px)</text>
+  <rect x="20" y="36" width="600" height="40" rx="4" fill="var(--bg)" stroke="var(--muted)"/>
+  <rect x="20" y="36" width="38" height="40" fill="var(--accent)"/>
+  <rect x="58" y="36" width="562" height="40" fill="var(--no)" opacity=".75"/>
+  <text x="70" y="62" font-size="15" fill="var(--card)">사이클 08 가져오기: 색인용 1GB → 상한을 넘음</text>
+  <text x="630" y="62" font-size="14" fill="var(--muted)">공유 버퍼 64MB</text>
+  <rect x="20" y="96" width="600" height="40" rx="4" fill="var(--bg)" stroke="var(--muted)"/>
+  <rect x="20" y="96" width="38" height="40" fill="var(--accent)"/>
+  <rect x="58" y="96" width="150" height="40" fill="var(--ok)"/>
+  <text x="66" y="122" font-size="15" fill="var(--card)">256MB</text>
+  <text x="220" y="122" font-size="15" fill="var(--text)">제안: 나머지는 연결·작업 메모리·여유</text>
+  <text x="20" y="162" font-size="14" fill="var(--muted)">병렬 색인 작업자를 늘려도 이 값은 명령 전체에 한 번만 적용됨(PostgreSQL 문서)</text>
+</svg>
+</div>
+<ul>
+<li class="ic"><span><code>maintenance_work_mem</code>은 <code>CREATE INDEX</code>, <code>VACUUM</code> 등이 쓰는 메모리 상한이고 기본값은 64MB입니다. 반영 단계의 색인 만들기가 이 값을 씁니다.</span></li>
+<li class="ic"><span>사이클 08 가져오기는 이 값을 세션에서 <b>1GB</b>, 병렬 작업자 4로 돌렸습니다(색인 1분 39초). 운영 DB 컨테이너 상한 1GB(권장)와 같은 크기라 운영에서 그대로 쓰면 안 됩니다. 또 dev 로컬 compose에는 컨테이너 메모리 상한이 실제로 걸려 있지 않아, 지금까지 측정은 상한 없이 한 것입니다.</span></li>
+<li class="ic"><span>병렬 작업자 수는 메모리를 늘리지 않습니다. 문서에 따르면 병렬 유지보수 명령은 <code>maintenance_work_mem</code>을 명령 전체에 대한 한도로 씁니다. 대신 CPU·디스크를 더 씁니다.</span></li>
+</ul>
+<p class="rec">제안: 운영 반영 명령은 <code>maintenance_work_mem=256MB</code>로 돌리고, 사이클 11 시험 때 운영 역할 DB(포트 5434) 컨테이너에 메모리 상한 1GB를 실제로 걸고 색인 시간을 잽니다. 값은 사이클 11 설계에서 정합니다.</p>
+<p class="cap">근거: "maximum amount of memory to be used by maintenance operations, such as VACUUM, CREATE INDEX … defaults to 64 megabytes", "treat the resource limit maintenance_work_mem as a limit to be applied to the entire utility command" — <a href="https://www.postgresql.org/docs/18/runtime-config-resource.html">PostgreSQL 18, Resource Consumption</a> (확인 2026-10-12). 사이클 08 값은 dev <code>plan-feedback.md</code> 8단계.</p>
+</section>
+
+<p class="foot">이 글은 요약이며 근거는 <code>../aws-layout.md</code> 6절에 있습니다. 배포는 지금 보류 중(백로그 208행)이라, 이 페이지는 배포 사이클의 준비 자료입니다.</p>
+</main>
+</body>
+</html>

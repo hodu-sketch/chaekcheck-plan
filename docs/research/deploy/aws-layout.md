@@ -64,3 +64,40 @@
 | 멈추는 때 | 덤프·복원하는 동안(그 사이 가입·탈퇴를 막아야 함) | 없게 할 수 있음(도메인을 돌리기 전에 CloudFront 주소로 시험) |
 | 어려운 곳 | RDS의 `pg_bigm` preload 설정 [확인 필요]. 일찍 확인 | 보안 헤더·CSP, 화면 주소를 `index.html`로 돌리기, SSE와 30초 Response timeout을 다시 시험. ADR-0042에 덧붙임 필요 |
 | 되돌리기 | 서버 안의 DB를 지우지 않고 꺼 두면 주소를 되돌림 | 도메인을 서버로 되돌림 |
+
+## 6. 가져오기를 따로 할 때 EC2 크기 (사용자 질문 "aws ec2를 어느 스펙으로 어떻게 구성하면 좋을지", 2026-10-12)
+
+전제: 3절 모양 A(EC2 한 대에 nginx·Spring·조회 서버·PostgreSQL) [확정] + 사이클 11 "가져오기는 내 PC, 운영은 파일을 받아 넣고 바꿔 끼우기만" [확정]. 그래서 운영 서버에 가져오기 힙(6GB)·사본·국가서지 파일은 필요 없음.
+
+### 6-1. 필요한 양 (dev 측정, 모두 로컬 PC 기준)
+
+| 항목 | 값 | 근거 |
+|---|---|---|
+| 서비스 힙 | 512MB (`-Xmx`), 측정 뒤 힙 사용 약 77MB | dev `plan-feedback.md` 사이클 08 메모리 측정 |
+| 서비스 Java 전체 | NMT 합 committed 350MB(힙 116MB 포함), 측정 시점 | 같은 곳 |
+| DB | `shared_buffers` 64MB, `effective_cache_size` 768MB, `work_mem` 4MB, 컨테이너 상한 권장 1GB | 사이클 08 결정 |
+| 조회 서버(`fetch-service`) | 재지 않음 | [확인 필요] |
+| DB 크기 | 평소 약 8.5GiB(끝난 뒤 8,550MB: `holding` 6,714MB, `book` 1,000MB, `book_contributor` 312MB). 사이클 08 가져오기 때 최대 19.1GiB | dev 측정 2026-10-11 |
+| 반영할 때 디스크 | 옛 책 표 + 새 책 표 두 벌 → 약 16GB(dev 예상) + 덤프 파일(크기 미측정) | 사이클 11 scope |
+| 반영할 때 CPU | 색인 만들기 1~2분 | dev 의견 |
+
+### 6-2. 공식 문서 (확인 2026-10-12)
+
+| 사실 | 출처 |
+|---|---|
+| t4g.small 2 vCPU·2GiB, t4g.medium 2 vCPU·4GiB, t4g.large 2 vCPU·8GiB (Graviton2). t3.small/medium/large 같은 메모리(Intel). m7g.large 2 vCPU·8GiB(Graviton3, 크레딧 없음) | https://docs.aws.amazon.com/ec2/latest/instancetypes/gp.html |
+| T4g·T3 기본 Unlimited 모드. 기준 사용률(vCPU당) t4g.small·medium 20%, t4g.large 30%. 시간당 크레딧 24(small·medium), 36(large), 모을 수 있는 최대 576·864 | https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/burstable-credits-baseline-concepts.html |
+| Unlimited: 24시간 평균이 기준을 넘으면 넘은 만큼 vCPU-시간당 추가 요금 | 같은 곳 |
+| gp3: 기본 3,000 IOPS·125MiB/s 포함, 크기 1GiB~64TiB, 버스트 없음 | https://docs.aws.amazon.com/ebs/latest/userguide/general-purpose.html |
+| gp2 → gp3 등 볼륨 바꾸기는 인스턴스를 멈추지 않고 가능(Elastic Volumes) | 같은 곳 |
+
+### 6-3. 제안 [안]
+
+- 인스턴스: **t4g.medium (2 vCPU, 4GiB)** [확정] (사용자 승인, 2026-10-12). 서비스 Java 약 1GB 미만 + DB 컨테이너 1GB + 조회 서버 + OS를 넣고, 나머지를 DB 파일 캐시로 씀. t4g.small(2GiB)은 여유가 없음. 메모리가 모자라 보이면 t4g.large(8GiB)로 올림(인스턴스 종류 바꾸기는 멈췄다 켜야 함 [확인 필요: 공식 문서])
+- 디스크: **gp3 40GiB** [확정] (사용자 승인, 2026-10-12). 평소 DB 약 8.5GiB + 반영 때 두 벌(약 16GB) + 덤프 파일 + OS·Docker 이미지. 커지면 멈추지 않고 늘림
+- CPU 크레딧: 반영은 가끔(색인 1~2분), 평소는 검색 몇 건이라 기준 20% 안일 것으로 봄 [안]. 실제는 CloudWatch `CPUCreditBalance`로 봄
+- 반영할 때 DB 메모리: 사이클 08 가져오기는 세션 `maintenance_work_mem=1GB`로 돌았음. 4GiB 서버에서는 반영 명령의 이 값을 낮춰야 함(예 256MB) [안] → 사이클 11 설계에서 정함
+- Graviton(t4g, arm64)이면 Docker 이미지(`postgres:18` + pg_bigm 빌드, Java 25)가 arm64로 돌아야 함 [확인 필요: 공식 이미지 지원 아키텍처 확인 + 서버에서 빌드 시험]. 안 되면 t3.medium(Intel, 같은 4GiB) — t4g로 시험 후 결정 [확정] (사용자 승인, 2026-10-12)
+- 리전 서울(ap-northeast-2) [안] (4절). t4g가 서울에 있는지 [확인 필요: 콘솔·요금 페이지]
+- 파일 옮기기: 내 PC → EC2로 `scp` 또는 S3를 거쳐 [안]. 크기는 사이클 11 측정 뒤
+- 값: 이 문서에는 금액을 적지 않음. AWS 요금 계산기로 확인 [확인 필요]

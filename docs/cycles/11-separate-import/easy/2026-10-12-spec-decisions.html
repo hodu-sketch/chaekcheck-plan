@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 11 스펙</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.card h3.t{font-size:21px;margin:26px 0 8px}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font-size:15px;line-height:1.55;margin:8px 0 6px;word-break:normal}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+pre .cm{color:var(--muted)} pre .hl{background:var(--warn-bg);color:var(--warn);font-weight:700}
+.src{color:var(--muted);font-size:15px;margin:14px 0 0}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+.fig{overflow-x:auto;margin:8px 0 4px}
+.fig svg{width:100%;min-width:640px;height:auto;display:block}
+.mine{border:1px dashed var(--warn);background:var(--warn-bg);border-radius:8px;padding:10px 14px;font-size:18px;margin:10px 0}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0}
+.pc>div{border-radius:10px;padding:12px 16px;font-size:18px}
+.pc .p{background:var(--ok-bg)} .pc .c{background:var(--no-bg)}
+.pc h4{margin:0 0 6px;font-size:18px}
+.pc ul{margin:0;padding-left:20px}
+.pc li{margin:0 0 8px}
+@media (max-width:640px){.pc{grid-template-columns:1fr} body{font-size:18px} .lead{font-size:24px}}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">사이클 11 스펙: 여쭤볼 것 12가지</p>
+<p class="sub">dev 코드와 공식 문서를 확인하고 스펙 초안(<code>spec.md</code>)을 썼습니다. 이 페이지는 그 안의 제안을 하나씩 정하는 곳입니다. 새 화면은 없고, "운영자"는 가져오기를 돌리는 사용자 본인입니다. (2026-10-12)</p>
+
+<!-- 1 -->
+<section class="card">
+<h2><span class="num">1</span>전체 순서 한눈에</h2>
+<p class="gist">내 PC에서 가져와 파일로 내보내고, 운영 역할 DB가 먼저 두 DB가 같은지 확인한 뒤 넣고 바꿔 끼웁니다. 운영이 성공하면 내 PC도 바꿔 끼웁니다.</p>
+<div class="fig">
+<svg viewBox="0 0 820 300" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <text x="20" y="26" font-size="18" font-weight="700" fill="var(--accent)">내 PC DB</text>
+  <text x="20" y="176" font-size="18" font-weight="700" fill="var(--ok)">운영 역할 DB (같은 PC, 포트 5434)</text>
+  <g font-size="16" fill="var(--text)">
+    <rect x="20" y="38" width="150" height="56" rx="8" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="34" y="62">① 가져오기</text><text x="34" y="84" font-size="14" fill="var(--muted)">번호 잇기까지</text>
+    <rect x="190" y="38" width="150" height="56" rx="8" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="204" y="62">② 파일로</text><text x="204" y="84" font-size="14" fill="var(--muted)">catalog_next 남김</text>
+    <rect x="630" y="38" width="170" height="56" rx="8" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="644" y="62">⑦ 내 PC도</text><text x="644" y="84" font-size="14" fill="var(--muted)">바꿔 끼우기</text>
+    <rect x="190" y="188" width="140" height="56" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="204" y="212">③ 같은지</text><text x="204" y="234" font-size="14" fill="var(--muted)">확인</text>
+    <rect x="345" y="188" width="130" height="56" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="359" y="222">④ 넣기</text>
+    <rect x="490" y="188" width="140" height="56" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="504" y="212">⑤ 색인·통계</text>
+    <rect x="645" y="188" width="155" height="56" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="659" y="212">⑥ 바꿔 끼우기</text><text x="659" y="234" font-size="14" fill="var(--muted)">사이클 08 그대로</text>
+  </g>
+  <path d="M170 66h14M330 216h9M475 216h9M630 216h9" stroke="var(--text)" stroke-width="2"/>
+  <path d="M265 94v88" stroke="var(--text)" stroke-width="2.5"/><path d="M258 174l7 10 7-10" fill="none" stroke="var(--text)" stroke-width="2.5"/>
+  <text x="274" y="146" font-size="14" fill="var(--muted)">파일</text>
+  <path d="M722 188v-88" stroke="var(--ok)" stroke-width="2.5"/><path d="M715 108l7-10 7 10" fill="none" stroke="var(--ok)" stroke-width="2.5"/>
+  <text x="732" y="146" font-size="14" fill="var(--ok)">성공하면</text>
+  <text x="190" y="276" font-size="15" fill="var(--no)">③에서 다르면 여기서 멈춤 → 운영은 그대로, 기록에 "mismatch"</text>
+</svg>
+</div>
+<p class="cap">④~⑥은 사이클 08의 마지막 단계와 같아서 그 코드를 다시 씁니다. 새로 만드는 것은 ②, ③, ⑦과 명령 두 개(내보내기, 반영)입니다.</p>
+</section>
+
+<!-- 2 -->
+<section class="card">
+<h2><span class="num">2</span>번호를 어디서 매기나</h2>
+<p class="gist">dev 코드를 보니, 책·소장 번호를 잇는 단계가 "지금 그 DB에 있는 책 표"를 직접 읽습니다. 그래서 내 PC에서 번호를 매기면 내 PC의 책 표가 운영과 같아야 합니다.</p>
+<p>번호를 잇는 단계는 새로 읽은 소장마다 (도서관, 책 코드)가 같은 옛 소장을 찾아 그 번호와 책 번호를 그대로 씁니다. 없으면 가장 큰 번호 다음부터 줍니다(<code>JdbcCatalogLoad.java</code> <code>Ids.decide</code>, ADR-0062·0070).</p>
+<div class="fig">
+<svg viewBox="0 0 820 220" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <text x="20" y="26" font-size="18" font-weight="700" fill="var(--text)">2-가: 내 PC에서 번호 (dev 의견)</text>
+  <rect x="20" y="40" width="380" height="160" rx="12" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+  <g font-size="16" fill="var(--text)"><text x="38" y="72">내 PC: 읽기 → 묶기 → <tspan font-weight="700">번호 잇기</tspan> → 쓰기</text><text x="38" y="102">운영: 넣기 → 색인 → 바꿔 끼우기</text><text x="38" y="140" fill="var(--warn)">조건: 내 PC 책 표 = 운영 책 표</text><text x="38" y="168" fill="var(--muted)">운영에 남는 일이 가장 적음</text></g>
+  <text x="430" y="26" font-size="18" font-weight="700" fill="var(--text)">2-나: 운영에서 번호</text>
+  <rect x="430" y="40" width="370" height="160" rx="12" fill="var(--card)" stroke="var(--muted)" stroke-width="2"/>
+  <g font-size="16" fill="var(--text)"><text x="448" y="72">내 PC: 읽기 → 묶기 → 번호 없이 쓰기</text><text x="448" y="102">운영: 넣기 → <tspan font-weight="700">번호 잇기</tspan> → 쓰기 → …</text><text x="448" y="140" fill="var(--ok)">내 PC 책 표가 달라도 됨</text><text x="448" y="168" fill="var(--muted)">운영에서 약 5분 더(#2: 2분 19초+2분 27초)</text></g>
+</svg>
+</div>
+<div class="item"><h3><span class="no">1</span>번호 잇기는 내 PC에서 하고, 내 PC 책 표가 운영과 같아야 한다는 조건을 둔다 [안]</h3>
+<p>운영 서버가 하는 일이 가장 적고(넣기·색인·바꿔 끼우기), 지금 코드를 거의 그대로 씁니다. 조건이 깨지는 경우는 다음 2번과 3번이 막습니다.</p>
+<p class="alt"><b>다른 선택(2-나):</b> 번호 잇기를 운영으로 옮김. 내 PC 책 표가 달라도 되지만, 운영에서 번호 잇기·쓰기(#2 기준 약 5분, 임시 표 포함)를 해야 하고 가져오기 코드를 둘로 쪼개야 합니다.</p>
+<p class="rec">추천: 내 PC에서 (2-가).</p></div>
+</section>
+
+<!-- 3 -->
+<section class="card">
+<h2><span class="num">3</span>내 PC는 언제 바꿔 끼우나</h2>
+<p class="gist">내 PC 책 표가 운영과 계속 같으려면, 내 PC도 운영과 같은 표로 바꿔 끼워야 합니다. 문제는 순서입니다.</p>
+<div class="fig">
+<svg viewBox="0 0 820 220" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <text x="20" y="26" font-size="17" font-weight="700" fill="var(--ok)">운영 성공 뒤에 내 PC 바꿔 끼우기 (추천)</text>
+  <g font-size="15" fill="var(--text)">
+  <rect x="20" y="38" width="170" height="44" rx="6" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="32" y="65">내 PC 새 표 남김</text>
+  <rect x="210" y="38" width="170" height="44" rx="6" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="222" y="65">운영 반영 성공</text>
+  <rect x="400" y="38" width="170" height="44" rx="6" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="412" y="65">내 PC 바꿔 끼움</text>
+  <rect x="590" y="38" width="210" height="44" rx="6" fill="var(--card)" stroke="var(--ok)"/><text x="602" y="65">두 DB 같음 → 다음 가능</text>
+  </g>
+  <path d="M190 60h14M380 60h14M570 60h14" stroke="var(--text)" stroke-width="2"/>
+  <text x="20" y="128" font-size="17" font-weight="700" fill="var(--no)">내 PC를 먼저 바꿔 끼우면</text>
+  <g font-size="15" fill="var(--text)">
+  <rect x="20" y="140" width="170" height="44" rx="6" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="32" y="167">내 PC 바꿔 끼움</text>
+  <rect x="210" y="140" width="170" height="44" rx="6" fill="var(--no-bg)" stroke="var(--no)"/><text x="222" y="167">운영 반영 실패</text>
+  <rect x="400" y="140" width="400" height="44" rx="6" fill="var(--card)" stroke="var(--no)"/><text x="412" y="167">두 DB가 달라짐 → 내 PC를 되돌려야 다음 가능</text>
+  </g>
+  <path d="M190 162h14M380 162h14" stroke="var(--text)" stroke-width="2"/>
+</svg>
+</div>
+<div class="item"><h3><span class="no">2</span>내 PC의 바꿔 끼우기는 운영 반영이 성공한 뒤에 하고, 그때까지 내 PC의 <code>catalog_next</code>를 남겨 둔다 [안]</h3>
+<p>운영 반영 명령이 성공하면, 운영자가 내 PC에서 "마저 바꿔 끼우기" 명령을 한 번 더 돌립니다. 운영이 실패하면 내 PC의 <code>catalog_next</code>만 지우면 두 DB가 그대로 같습니다.</p>
+<p class="alt"><b>다른 선택:</b> 내보내기 때 내 PC를 바로 바꿔 끼움. 명령이 하나 줄지만, 운영이 실패하면 내 PC가 앞서 나가 다음 가져오기 전에 되돌려야 합니다(옛 표는 이미 지워져 되돌릴 수 없음).</p>
+<p class="rec">추천: 운영 성공 뒤.</p></div>
+</section>
+
+<!-- 4 -->
+<section class="card">
+<h2><span class="num">4</span>두 DB가 같은지 무엇으로 보나</h2>
+<p class="gist">이미 정하신 것: 다르면 반영하지 않고 이유를 기록합니다. 정할 것은 비교하는 값입니다.</p>
+<table>
+<tr><th>비교할 것</th><th>왜</th><th>방법 (제안)</th></tr>
+<tr><td>도서관 목록 (켜진 곳의 번호·주소·업체 종류)</td><td>가져오기가 켜진 도서관만 읽고, 주소가 다르면 건너뜀</td><td>내용 해시 하나</td></tr>
+<tr><td><code>collection_link</code> (서비스 ↔ 수집 도서관 번호)</td><td>사본의 도서관을 서비스 도서관에 잇는 표</td><td>내용 해시 하나</td></tr>
+<tr><td>책 표 (<code>book</code>, <code>holding</code>)</td><td>번호 잇기가 읽음(2번 카드)</td><td>줄 수, 가장 큰 번호, 번호 시퀀스 값</td></tr>
+</table>
+<div class="item"><h3><span class="no">3</span>도서관 목록과 <code>collection_link</code>는 내용 해시로, 책 표는 줄 수·가장 큰 번호·시퀀스 값으로 비교하고, 다르면 실패 이유 <code>mismatch</code>와 다른 항목을 기록한다 [안]</h3>
+<p>내 PC가 이 값들을 파일에 함께 싣고, 운영이 자기 값과 맞대 봅니다. 책 표를 내용 해시로 하지 않는 것은 소장이 수백만 줄이라 시간이 들기 때문입니다. 운영에서 책 표를 직접 고치지 않는다는 전제에서는 줄 수·번호로 충분합니다.</p>
+<p class="alt"><b>다른 선택:</b> 책 표도 내용 해시. 가장 확실하지만 반영할 때마다 소장 전체를 읽습니다(시간은 재 봐야 앎). <b>더 가벼운 선택:</b> Liquibase 변경 기록(<code>databasechangelog</code>)만 비교. 빠르지만 손으로 고친 것은 못 잡습니다.</p>
+<p class="rec">추천: 위 제안.</p></div>
+</section>
+
+<!-- 5 -->
+<section class="card">
+<h2><span class="num">5</span>옮기는 방법과 기록</h2>
+<p class="gist">내 PC의 <code>catalog_next</code> 스키마를 통째로 떠서 운영에 넣으면, 운영에서도 그대로 <code>catalog_next</code>에 들어갑니다. 스키마 이름을 바꿀 필요가 없습니다.</p>
+<p class="cap">근거: <code>pg_restore</code>에는 복원하면서 스키마 이름을 바꾸는 옵션이 없습니다(PostgreSQL 18 문서에 해당 옵션 없음). 그래서 이름을 바꾸지 않아도 되는 이 방법이 맞습니다. <a href="https://www.postgresql.org/docs/18/app-pgrestore.html">postgresql.org/docs/18/app-pgrestore.html</a> (확인 2026-10-12)</p>
+<div class="item"><h3><span class="no">4</span>파일은 <code>pg_dump</code> 사용자 지정 형식(<code>-Fc</code>) 하나로 만든다 [안]</h3>
+<p>파일 하나라 옮기기 쉽고, 기본으로 압축됩니다. 복원도 <code>pg_restore -j</code>로 여러 작업을 나눠 돌릴 수 있습니다.</p>
+<p class="alt"><b>다른 선택:</b> 디렉터리 형식(<code>-Fd</code>). 내보내기도 나눠 돌릴 수 있어(<code>pg_dump -j</code>는 이 형식만 됨) 빠를 수 있지만, 파일이 폴더째라 옮기기가 번거롭습니다. 측정에서 느리면 그때 바꿉니다.</p>
+<p class="cap">근거: "custom-format archive … compressed by default", "-j … only use this option with the directory output format" — <a href="https://www.postgresql.org/docs/18/app-pgdump.html">app-pgdump.html</a> (확인 2026-10-12)</p>
+<p class="rec">추천: <code>-Fc</code>.</p></div>
+
+<div class="item"><h3><span class="no">5</span>운영 반영 순서: 남은 <code>catalog_next</code> 지우기 → 파일 넣기 → 색인·제약(운영 정의를 읽어) → 통계 → 바꿔 끼우기 [안]</h3>
+<p>맨 앞의 지우기는 지난 반영이 도중에 죽어 빈 <code>catalog_next</code>가 남았을 때를 위한 것입니다(사이클 08과 같은 방식). 바꿔 끼우기 잠금 값(2초, 10초, 5번)은 사이클 08 그대로입니다.</p>
+<p class="rec">추천: 이 순서.</p></div>
+
+<div class="item"><h3><span class="no">6</span>운영 DB 가져오기 기록은 한 줄: 내 PC 기록(책·소장 수, 수집 기간, 단계 시간)을 파일에 실어 보내고, 운영이 반영 단계 시간(넣기·색인·통계·바꿔 끼우기)과 결과를 더해 남긴다 [안]</h3>
+<p>예: 운영 기록 한 줄에 "읽기 13분 … 쓰기 2분 27초 | 넣기 ?분, 색인 1분 39초, 통계 43초, 바꿔 끼우기 0.2초, 성공"이 함께 있습니다. 내 PC에도 자기 기록이 남습니다.</p>
+<p class="alt"><b>다른 선택:</b> 운영에는 반영 결과만 남김. 단순하지만 운영에서 "언제 수집한 것이 들어왔나"를 보려면 내 PC를 봐야 합니다.</p>
+<p class="rec">추천: 한 줄에 함께.</p></div>
+
+<div class="item"><h3><span class="no">7</span>운영 역할 DB는 compose 서비스를 하나 더 만든다(같은 이미지, 자기 볼륨, 포트 5434) [안]</h3>
+<p>dev가 2026-10-05에 포트 5434로 복사본 DB를 쓴 적이 있습니다. 진짜 서버처럼 따로 된 DB라, 메모리 설정도 따로 줄 수 있습니다.</p>
+<p class="alt"><b>다른 선택:</b> 지금 DB 안에 데이터베이스를 하나 더(<code>CREATE DATABASE</code>). 더 간단하지만 두 DB가 메모리를 같이 써서, 반영할 때 내 PC 가져오기와 섞여 측정이 흐려집니다.</p>
+<p class="rec">추천: 서비스 하나 더.</p></div>
+</section>
+
+<!-- 6 -->
+<section class="card">
+<h2><span class="num">6</span>힙 줄이기: SQL 방식을 어디까지 SQL로</h2>
+<p class="gist">글자를 정리하는 Java 코드(제목·출판사 정리, 저자 나누기 등)를 SQL로 다시 쓰면 결과가 달라지기 쉽습니다. 정리는 Java에 두고, 메모리를 많이 먹는 "묶기"만 SQL로 옮기는 것을 제안합니다.</p>
+<div class="fig">
+<svg viewBox="0 0 820 190" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <rect x="20" y="20" width="370" height="150" rx="12" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+  <text x="38" y="50" font-size="18" font-weight="700" fill="var(--text)">Java (줄마다, 들고 있지 않음)</text>
+  <g font-size="16" fill="var(--text)"><text x="38" y="80">제목·본제목·출판사 정리</text><text x="38" y="106">첫 저자 (저자 나누기 155줄 코드 그대로)</text><text x="38" y="132">교보식 코드 → ISBN, 출판일</text><text x="38" y="158" fill="var(--muted)">→ 임시 표에 한 줄씩 넣음</text></g>
+  <path d="M390 95h40" stroke="var(--text)" stroke-width="2.5"/><path d="M422 88l10 7-10 7" fill="none" stroke="var(--text)" stroke-width="2.5"/>
+  <rect x="440" y="20" width="360" height="150" rx="12" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/>
+  <text x="458" y="50" font-size="18" font-weight="700" fill="var(--text)">SQL (DB가 함)</text>
+  <g font-size="16" fill="var(--text)"><text x="458" y="80">같은 코드·ISBN·글끼리 묶기</text><text x="458" y="106">사슬처럼 이어 붙이기 (반복)</text><text x="458" y="132">칸마다 가장 많은 값 고르기</text><text x="458" y="158" fill="var(--muted)">동점이면 지금과 같은 값</text></g>
+</svg>
+</div>
+<div class="item"><h3><span class="no">8</span><code>sql</code> 방식은 글자 정리를 Java가 줄마다 해서 임시 표에 넣고, 묶기·이어 붙이기·대표값 고르기만 SQL로 한다 [안]</h3>
+<p>Java는 줄을 읽어 정리한 뒤 바로 DB로 보내고 들고 있지 않으므로 힙이 작습니다. 정리 규칙이 한 곳(Java)에만 있어, 세 방식의 결과가 같기 쉽습니다.</p>
+<p class="alt"><b>다른 선택:</b> 정리까지 모두 SQL. Java가 거의 일을 안 하지만, 저자 나누기(역할어 약 30개, 별칭, "외 N명")를 SQL로 다시 써야 하고 Java와 PostgreSQL의 정규식 차이(공백 문자 범위 등)로 결과가 달라질 위험이 큽니다.</p>
+<p class="rec">추천: 정리는 Java, 묶기만 SQL.</p></div>
+
+<div class="item"><h3><span class="no">9</span>가장 많은 값이 동점이면 지금과 같은 값을 고른다: SQL에서는 <code>mode()</code>를 쓰지 않고 개수 큰 순 + 글자 순(C 정렬)으로 고른다 [안]</h3>
+<p>PostgreSQL의 <code>mode()</code>는 동점일 때 "임의로 첫 번째"를 고른다고 문서에 적혀 있어, 지금 Java(동점이면 작은 값)와 같은 결과를 보장하지 못합니다. 이모지 같은 드문 글자에서 Java와 DB의 글자 순서가 다를 수 있는데, 그건 결과 비교에서 잡습니다.</p>
+<p class="cap">근거: <code>mode()</code> "arbitrarily choosing the first one if there are multiple equally-frequent values" — <a href="https://www.postgresql.org/docs/18/functions-aggregate.html">functions-aggregate.html</a>; C 정렬은 "byte values" 순 — <a href="https://www.postgresql.org/docs/18/collation.html">collation.html</a>; Java <code>String.compareTo</code>는 UTF-16 글자 단위 — <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html">String (Java 25)</a> (모두 확인 2026-10-12)</p>
+<p class="rec">추천: 이렇게.</p></div>
+</section>
+
+<!-- 7 -->
+<section class="card">
+<h2><span class="num">7</span>결과 비교와 측정에 더할 것</h2>
+<p class="gist">세 방식의 결과 비교와 여섯 관점 측정은 이미 정하셨습니다. 그 세부 두 가지와, 코드 없이 잴 수 있는 Java 옵션 두 개를 제안합니다.</p>
+
+<div class="item"><h3><span class="no">10</span>결과 비교에서 "새로 생긴 책의 번호 순서"는 보지 않는다 [안]</h3>
+<p>있던 책은 옛 번호를 그대로 받으니 세 방식이 같아야 합니다. 새 책은 가장 큰 번호 다음부터 받는데, 방식마다 새 책을 처리하는 순서가 달라 번호가 서로 바뀔 수 있습니다. 예: <code>current</code>에서 새 책 X가 100번, Y가 101번인데 <code>sql</code>에서는 반대. 책 내용과 묶음이 같으면 통과로 봅니다.</p>
+<p class="alt"><b>다른 선택:</b> 새 책 번호까지 같아야 통과. <code>sql</code>에서 처리 순서까지 맞추는 일이 더해집니다.</p>
+<p class="rec">추천: 보지 않음.</p></div>
+<div class="chg"><b>질문 "어느 방식마다?"에 대한 답 — 그리고 제안을 바꿉니다</b>
+<p>"순서"는 가져오기가 <b>책을 만드는 순서</b>입니다. 방식마다 이렇게 됩니다.</p>
+<table>
+<tr><th>방식</th><th>책을 만드는 순서</th></tr>
+<tr><td><code>current</code></td><td>그 책의 첫 줄을 사본에서 읽은 순서 (<code>BookGrouping</code>이 "첫 줄 순서"로 내놓음)</td></tr>
+<tr><td><code>compact</code></td><td>같은 Java 묶기를 쓰므로 <code>current</code>와 같음</td></tr>
+<tr><td><code>sql</code></td><td>따로 정하지 않으면 DB가 편한 순서. 줄마다 읽은 순번을 같이 넣고 "첫 줄 순번" 순으로 꺼내면 <code>current</code>와 같아짐</td></tr>
+</table>
+<p>다시 코드를 보니 이 순서는 새 책 번호만이 아니라 <b>있던 책의 번호에도 닿습니다</b>. 옛 책 하나의 소장이 새 책 둘로 똑같이 나뉘면(동점), 먼저 만든 책이 옛 번호를 받습니다(<code>JdbcCatalogLoad.java</code> 546행, 554행). 그래서 순서가 다르면 드물게 "같은 책인데 번호가 다름"이 생깁니다.</p>
+<svg viewBox="0 0 820 120" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <rect x="20" y="20" width="230" height="80" rx="10" fill="var(--card)" stroke="var(--muted)"/><text x="36" y="52" font-size="16" fill="var(--text)">옛 책 7번</text><text x="36" y="80" font-size="15" fill="var(--muted)">소장 4개</text>
+  <path d="M250 45L330 35M250 75L330 85" stroke="var(--text)" stroke-width="2"/>
+  <rect x="330" y="14" width="200" height="40" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="344" y="40" font-size="15" fill="var(--text)">새 책 A (소장 2) 먼저</text>
+  <rect x="330" y="66" width="200" height="40" rx="8" fill="var(--card)" stroke="var(--muted)"/><text x="344" y="92" font-size="15" fill="var(--text)">새 책 B (소장 2)</text>
+  <text x="550" y="40" font-size="15" fill="var(--ok)">→ 7번을 받음</text>
+  <text x="550" y="92" font-size="15" fill="var(--muted)">→ 새 번호</text>
+</svg>
+<p class="cap">책 번호와 숫자는 설명용 예시입니다. 순서가 바뀌면 B가 7번을 받습니다.</p>
+<p><b>바꾼 제안:</b> 세 방식 모두 "첫 줄을 읽은 순서"로 책을 만들고, 결과 비교에서 <b>번호까지</b> 같아야 통과로 봅니다. <code>sql</code>에 순번 하나를 더 싣는 작은 일입니다. 이쪽이 낫다고 봅니다. #10을 <b>미승인</b>으로 보내 주시면 이 바꾼 제안으로 적용하겠습니다(원래 제안대로 하시려면 승인).</p>
+</div>
+
+<div class="item"><h3><span class="no">11</span><code>current</code>에 Java 옵션 두 개를 붙인 경우도 함께 재고, GC 기록을 켠다 [안]</h3>
+<table>
+<tr><th>옵션</th><th>하는 일</th><th>근거</th></tr>
+<tr><td><code>-XX:+UseStringDeduplication</code></td><td>같은 글자를 담은 문자열이 글자 배열 하나를 같이 쓰게 함. 기본은 꺼짐</td><td><a href="https://openjdk.org/jeps/192">JEP 192</a></td></tr>
+<tr><td><code>-XX:+UseCompactObjectHeaders</code></td><td>객체마다 붙는 머리를 96~128비트에서 64비트로. Java 25에서 정식, 기본은 꺼짐. 문서: 객체당 평균 4바이트 줄어듦</td><td><a href="https://openjdk.org/jeps/519">JEP 519</a></td></tr>
+<tr><td><code>-Xlog:gc</code></td><td>GC 기록을 남겨 힙 사용량을 봄(지금은 꺼져 있음)</td><td><a href="https://openjdk.org/jeps/158">JEP 158</a></td></tr>
+</table>
+<p>dev는 Java 25를 쓰므로 명령에 붙이기만 하면 됩니다. 객체 머리 줄이기는 지금 방식처럼 객체가 많을 때(묶음 760만 × 개수표 6개 등) 효과가 있을 수 있습니다. 얼마나 줄지는 재 봐야 압니다. 사이클 08에서는 글자 합치기 옵션을 재지 않았습니다.</p>
+<p class="alt"><b>다른 선택:</b> 세 방식만 잼. 측정 횟수가 줄지만, 코드를 안 바꾸고 얻을 수 있는 효과를 놓칩니다.</p>
+<p class="rec">추천: 함께 잼 (방식 셋 + 옵션 두 경우).</p></div>
+
+<div class="item"><h3><span class="no">12</span>반영하는 동안 운영 검색 기준: 기다린 시간 1초 안, 서버 오류 0 [안]</h3>
+<p>사이클 08 가져오기에서 기다린 시간은 0.1~0.3초, 서버 오류 0이었습니다. 반영은 그중 마지막 단계와 같으므로 같은 수준을 기대하고, 여유를 두어 1초로 잡습니다.</p>
+<p class="rec">추천: 1초 안, 오류 0.</p></div>
+</section>
+
+<p class="foot">근거: <code>../spec.md</code>, <code>../research.md</code>(dev 코드 위치와 공식 문서 원문), <code>../scope.md</code>. 숫자 "약 5분"은 사이클 08 가져오기 #2의 번호 잇기 139초 + 쓰기 147초. 설정 값 이름·포트 5434·"1초"는 Claude 제안입니다.</p>
+</main>
+</body>
+</html>

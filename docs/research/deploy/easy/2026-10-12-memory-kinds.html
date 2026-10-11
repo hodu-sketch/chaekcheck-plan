@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>서버 메모리 종류</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.card h3.t{font-size:21px;margin:26px 0 8px}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font-size:15px;line-height:1.55;margin:8px 0 6px;word-break:normal}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+pre .cm{color:var(--muted)} pre .hl{background:var(--warn-bg);color:var(--warn);font-weight:700}
+.src{color:var(--muted);font-size:15px;margin:14px 0 0}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+.fig{overflow-x:auto;margin:8px 0 4px}
+.fig svg{width:100%;min-width:640px;height:auto;display:block}
+.mine{border:1px dashed var(--warn);background:var(--warn-bg);border-radius:8px;padding:10px 14px;font-size:18px;margin:10px 0}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0}
+.pc>div{border-radius:10px;padding:12px 16px;font-size:18px}
+.pc .p{background:var(--ok-bg)} .pc .c{background:var(--no-bg)}
+.pc h4{margin:0 0 6px;font-size:18px}
+.pc ul{margin:0;padding-left:20px}
+.pc li{margin:0 0 8px}
+@media (max-width:640px){.pc{grid-template-columns:1fr} body{font-size:18px} .lead{font-size:24px}}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">서버 메모리, 종류별로 무엇을 하나</p>
+<p class="sub">운영 서버(EC2 t4g.medium, 4GiB) 한 대 위에서 프로그램 넷이 메모리를 나눠 씁니다: Java 프로그램 셋(서비스, 조회 서버, 반영 명령)과 PostgreSQL DB. 사이클 11 설계 결정 #12의 설명을 따로 뺀 페이지입니다. (2026-10-12)</p>
+
+<section class="card" style="padding:18px 26px"><p style="margin:0 0 6px;font-weight:700">이 페이지 읽는 순서</p><ol style="margin:0;padding-left:22px"><li>한눈에: 누가 얼마를 쓰나</li><li>Java 프로그램의 메모리: 힙과 힙 밖</li><li>PostgreSQL의 메모리: 다 같이 쓰는 것과 연결마다 쓰는 것</li><li>"임시"라는 말이 붙는 것 셋: 어디에 생기고 어떻게 움직이나</li><li>DB가 책 한 권을 읽을 때 메모리를 거치는 순서</li><li>반영하는 동안만 늘어나는 것</li></ol><p class="cap" style="margin:8px 0 0">1에서 전체를 보고, 2·3에서 Java와 PostgreSQL을 따로, 4에서 메모리가 모자랄 때, 5·6에서 실제 동작을 봅니다. 설정 기본값은 2·3의 표에 있습니다.</p></section>
+<!-- 1 -->
+<section class="card">
+<h2><span class="num">1</span>한눈에: 누가 얼마를 쓰나</h2>
+<p class="gist">Java 프로그램은 저마다 "힙" 상한 하나를 정합니다. PostgreSQL은 쓰임새마다 따로 정합니다. 둘 다 쓰고 남은 메모리는 운영체제(Linux)가 디스크 파일을 담아 두는 데 씁니다.</p>
+<div class="fig">
+<svg viewBox="0 0 820 300" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <rect x="10" y="10" width="800" height="280" rx="16" fill="var(--bg)" stroke="var(--muted)" stroke-width="2"/>
+  <text x="28" y="40" font-size="18" font-weight="700" fill="var(--text)">EC2 메모리 4GiB</text>
+  <g font-size="15" fill="var(--text)">
+  <rect x="28" y="56" width="180" height="120" rx="10" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/>
+  <text x="42" y="82" font-weight="700">Java: 서비스</text><text x="42" y="108">힙 상한 512MB</text><text x="42" y="132">+ 힙 밖 메모리</text><text x="42" y="158" font-size="13" fill="var(--muted)">늘 켜져 있음</text>
+  <rect x="220" y="56" width="160" height="120" rx="10" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="2"/>
+  <text x="234" y="82" font-weight="700">Java: 조회 서버</text><text x="234" y="108">힙 상한 256MB</text><text x="234" y="132">+ 힙 밖 메모리</text><text x="234" y="158" font-size="13" fill="var(--muted)">늘 켜져 있음</text>
+  <rect x="392" y="56" width="160" height="120" rx="10" fill="var(--card)" stroke="var(--accent)" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="406" y="82" font-weight="700">Java: 반영 명령</text><text x="406" y="108">힙 상한 512MB</text><text x="406" y="132">+ 힙 밖 메모리</text><text x="406" y="158" font-size="13" fill="var(--muted)">반영할 때만</text>
+  <rect x="564" y="56" width="230" height="120" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+  <text x="578" y="82" font-weight="700">PostgreSQL (DB 컨테이너)</text><text x="578" y="108">컨테이너 상한 1GB</text><text x="578" y="132">안에서 쓰임새별로 나눔</text><text x="578" y="158" font-size="13" fill="var(--muted)">늘 켜져 있음</text>
+  <rect x="28" y="192" width="766" height="80" rx="10" fill="var(--card)" stroke="var(--muted)"/>
+  <text x="42" y="220" font-weight="700">Linux 파일 캐시 (나머지 전부)</text>
+  <text x="42" y="246">최근에 읽은 디스크 파일을 메모리에 남겨 둠. DB 파일도 여기 담겨서 다시 읽을 때 디스크까지 안 감</text>
+  </g>
+</svg>
+</div>
+<p class="cap">값은 사이클 08 확정(서비스 512MB, DB 설정)과 사이클 11·배포 제안(조회 서버 256MB, 반영 512MB, DB 컨테이너 1GB, 승인 2026-10-12)입니다. 힙 밖 메모리와 Linux 자체가 쓰는 양은 운영 서버에서 재 봐야 합니다.</p>
+</section>
+
+<!-- 2 -->
+<section class="card">
+<h2><span class="num">2</span>Java 프로그램의 메모리: 힙과 힙 밖</h2>
+<p class="gist">Java 프로그램이 다루는 데이터(검색 결과, 읽은 책 줄, 묶음 등)는 모두 "힙"에 놓입니다. 상한은 <code>-Xmx</code>로 정합니다. 힙 밖에도 Java 자체가 돌아가는 데 드는 메모리가 따로 있습니다.</p>
+<div class="fig">
+<svg viewBox="0 0 820 300" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <text x="20" y="24" font-size="16" font-weight="700" fill="var(--text)">서비스 Java 프로세스 한 개 (사이클 08 측정 시점, 내 PC)</text>
+  <rect x="20" y="40" width="480" height="150" rx="10" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/>
+  <text x="36" y="66" font-size="16" font-weight="700" fill="var(--text)">힙 (상한 -Xmx 512MB)</text>
+  <rect x="36" y="80" width="112" height="90" rx="6" fill="var(--ok)"/><text x="44" y="120" font-size="14" fill="var(--card)">잡아 둔 116MB</text><text x="44" y="142" font-size="13" fill="var(--card)">(실제 사용 73MB)</text>
+  <text x="164" y="120" font-size="14" fill="var(--text)">필요하면 512MB까지 늘어남</text>
+  <text x="164" y="146" font-size="13" fill="var(--muted)">검색 결과·응답 본문·캐시 등</text>
+  <rect x="520" y="40" width="280" height="150" rx="10" fill="var(--card)" stroke="var(--muted)" stroke-width="2"/>
+  <text x="536" y="66" font-size="16" font-weight="700" fill="var(--text)">힙 밖 (합 약 234MB)</text>
+  <g font-size="14" fill="var(--text)">
+  <text x="536" y="94">클래스 정보(Metaspace) 84MB</text>
+  <text x="536" y="118">GC가 쓰는 장부 63MB</text>
+  <text x="536" y="142">실행용 기계어(Code) 23MB</text>
+  <text x="536" y="166">이름표(Symbol) 21MB · 그 밖</text>
+  </g>
+  <text x="20" y="222" font-size="15" fill="var(--text)">힙이 차면 GC(쓰레기 수거)가 안 쓰는 데이터를 지워 자리를 만듭니다.</text>
+  <text x="20" y="248" font-size="15" fill="var(--text)">지워도 모자라면 GC를 계속 돌다 멈춥니다. 가져오기를 힙 4GB로 돌렸을 때가 이 경우였습니다.</text>
+  <text x="20" y="280" font-size="13" fill="var(--muted)">숫자: dev plan-feedback 사이클 08 NMT 측정(committed 합 350MB, 힙 116MB, Metaspace 84MB, GC 63MB, Code 23MB, Symbol 21MB)</text>
+</svg>
+</div>
+
+<h3 class="t">Java 설정: 기본값과 우리 값</h3>
+<table>
+<tr><th>설정</th><th>하는 일</th><th>기본값</th><th>우리 값</th></tr>
+<tr><td><code>-Xmx</code></td><td>힙 상한</td><td>실메모리의 1/4</td><td>서비스 512MB, 조회 서버 256MB(제안), 반영 512MB(제안), 내 PC 가져오기 6GB</td></tr>
+<tr><td><code>-Xms</code></td><td>처음 잡는 힙</td><td>실메모리의 1/64</td><td>기본</td></tr>
+<tr><td><code>-XX:MaxMetaspaceSize</code></td><td>클래스 정보 상한</td><td>상한 없음</td><td>기본</td></tr>
+<tr><td><code>-XX:+UseStringDeduplication</code></td><td>같은 글자 배열 합치기</td><td>꺼짐</td><td>사이클 11 측정에서 켜 봄</td></tr>
+<tr><td><code>-XX:+UseCompactObjectHeaders</code></td><td>객체 머리 줄이기 (Java 25 정식)</td><td>꺼짐</td><td>사이클 11 측정에서 켜 봄</td></tr>
+</table>
+<p class="cap">근거: Java 힙 기본 상한 "Maximum heap size of 1/4 of physical memory" — <a href="https://docs.oracle.com/en/java/javase/25/gctuning/ergonomics.html">Java 25 Ergonomics</a>; 클래스 정보는 "allocated in native memory", 기본 상한 없음("by default unlimited") — <a href="https://docs.oracle.com/en/java/javase/25/gctuning/other-considerations.html">Java 25 Other Considerations</a> (확인 2026-10-12)</p>
+</section>
+
+<!-- 3 -->
+<section class="card">
+<h2><span class="num">3</span>PostgreSQL의 메모리: 다 같이 쓰는 것과 연결마다 쓰는 것</h2>
+<p class="gist">PostgreSQL은 연결(서비스·반영 명령이 DB에 붙은 줄 하나) 하나마다 프로세스를 따로 띄웁니다. 모든 연결이 함께 쓰는 "공유 버퍼"가 하나 있고, 정렬·색인 만들기 같은 작업은 그 연결이 따로 메모리를 잡습니다.</p>
+<div class="fig">
+<svg viewBox="0 0 820 360" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <rect x="10" y="10" width="800" height="340" rx="16" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+  <text x="28" y="40" font-size="17" font-weight="700" fill="var(--text)">DB 컨테이너 (상한 1GB)</text>
+  <rect x="270" y="60" width="280" height="80" rx="10" fill="var(--card)" stroke="var(--accent)" stroke-width="2"/>
+  <text x="286" y="88" font-size="16" font-weight="700" fill="var(--text)">공유 버퍼 shared_buffers 64MB</text>
+  <text x="286" y="114" font-size="14" fill="var(--text)">자주 읽는 표·색인 조각(8kB 단위)</text>
+  <text x="286" y="132" font-size="13" fill="var(--muted)">모든 연결이 함께 씀</text>
+  <g font-size="14" fill="var(--text)">
+  <rect x="28" y="180" width="240" height="150" rx="10" fill="var(--card)" stroke="var(--ok)" stroke-width="2"/>
+  <text x="42" y="204" font-weight="700">연결: 서비스의 검색</text>
+  <rect x="42" y="216" width="100" height="34" rx="5" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="50" y="238">정렬 4MB</text>
+  <rect x="152" y="216" width="100" height="34" rx="5" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="160" y="238">해시 4MB</text>
+  <text x="42" y="276">work_mem 4MB씩, 작업마다</text>
+  <text x="42" y="298" font-size="13" fill="var(--muted)">넘으면 임시 파일(디스크)로</text>
+  <text x="42" y="318" font-size="13" fill="var(--muted)">연결이 여럿이면 각자</text>
+  <rect x="290" y="180" width="240" height="150" rx="10" fill="var(--card)" stroke="var(--accent)" stroke-width="2"/>
+  <text x="304" y="204" font-weight="700">연결: 반영 명령</text>
+  <rect x="304" y="216" width="212" height="34" rx="5" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="312" y="238">색인 만들기 256MB</text>
+  <text x="304" y="276">maintenance_work_mem</text>
+  <text x="304" y="298" font-size="13" fill="var(--muted)">이 연결에서만 256MB로 올림</text>
+  <text x="304" y="318" font-size="13" fill="var(--muted)">병렬 작업자가 늘어도 합쳐서 256MB</text>
+  <rect x="552" y="180" width="240" height="150" rx="10" fill="var(--card)" stroke="var(--warn)" stroke-width="2"/>
+  <text x="566" y="204" font-weight="700">자동 청소 작업자 (최대 3)</text>
+  <rect x="566" y="216" width="64" height="34" rx="5" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="572" y="238">64MB</text>
+  <rect x="638" y="216" width="64" height="34" rx="5" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="644" y="238">64MB</text>
+  <rect x="710" y="216" width="64" height="34" rx="5" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="716" y="238">64MB</text>
+  <text x="566" y="276">지운 줄 자리를 정리</text>
+  <text x="566" y="298" font-size="13" fill="var(--muted)">서버 기본 64MB를 그대로 씀</text>
+  </g>
+  <path d="M148 180 L330 140 M410 180 L410 140 M672 180 L490 140" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="4 3"/>
+</svg>
+</div>
+<h3 class="t">PostgreSQL 설정: 하는 일, 기본값, 우리 값</h3>
+<table>
+<tr><th>설정</th><th>하는 일</th><th>기본값</th><th>우리 값</th><th>어디서 바꾸나</th></tr>
+<tr><td><code>shared_buffers</code></td><td>모든 연결이 같이 쓰는 캐시</td><td>보통 128MB</td><td>64MB (사이클 08)</td><td>compose <code>command</code>, 재시작 필요</td></tr>
+<tr><td><code>effective_cache_size</code></td><td>메모리 안 잡음. 계산용 짐작값</td><td>4GB</td><td>768MB (사이클 08)</td><td>compose <code>command</code></td></tr>
+<tr><td><code>work_mem</code></td><td>정렬 하나의 메모리</td><td>4MB</td><td>4MB (사이클 08)</td><td>compose <code>command</code> 또는 연결마다 <code>SET</code></td></tr>
+<tr><td><code>hash_mem_multiplier</code></td><td>해시는 <code>work_mem</code>의 몇 배까지</td><td>2.0 (→ 해시 하나 8MB)</td><td>기본</td><td>—</td></tr>
+<tr><td><code>maintenance_work_mem</code></td><td>색인 만들기·청소 메모리</td><td>64MB</td><td>서버 64MB, 반영 연결 256MB, 내 PC 가져오기 1GB</td><td>명령 설정 <code>chaekcheck.catalog.load.maintenance-work-mem</code> (연결마다)</td></tr>
+<tr><td><code>max_parallel_maintenance_workers</code></td><td>색인을 나눠 만드는 작업자 수</td><td>2</td><td>반영 2(제안), 내 PC 4</td><td>명령 설정 (연결마다)</td></tr>
+<tr><td><code>autovacuum_work_mem</code></td><td>자동 청소 작업자 하나의 메모리</td><td>-1 (= <code>maintenance_work_mem</code>)</td><td>기본 (64MB)</td><td>—</td></tr>
+<tr><td><code>autovacuum_max_workers</code></td><td>자동 청소 동시 작업자</td><td>3</td><td>기본</td><td>—</td></tr>
+<tr><td><code>temp_buffers</code></td><td>임시 표 전용 메모리, 연결마다</td><td>8MB</td><td>기본</td><td>연결마다 <code>SET</code>(임시 표를 처음 쓰기 전에만)</td></tr>
+<tr><td><code>temp_file_limit</code></td><td>한 프로세스의 임시 파일 상한</td><td>-1 (상한 없음)</td><td>기본</td><td>—</td></tr>
+<tr><td><code>temp_tablespaces</code></td><td>임시 파일·임시 표를 둘 자리</td><td>빈 값 (DB 기본 자리)</td><td>기본</td><td>—</td></tr>
+<tr><td><code>max_connections</code></td><td>동시 연결 수</td><td>보통 100</td><td>기본</td><td>—</td></tr>
+<tr><td>컨테이너 <code>mem_limit</code></td><td>DB 컨테이너 전체 상한</td><td>없음 (compose 기본)</td><td>운영 역할 DB 1GB (승인)</td><td>compose</td></tr>
+</table>
+<div class="mine" style="border-style:solid;border-color:var(--accent);background:var(--accent-bg)"><b>표의 <code>temp_file_limit</code>·<code>temp_tablespaces</code>가 말하는 "임시 파일"</b>
+<p>4번 카드의 <b>① 임시 파일</b>입니다. 정렬·해시가 메모리(<code>work_mem</code>, 색인 만들기는 <code>maintenance_work_mem</code>)를 넘칠 때 PostgreSQL이 스스로 만들었다가 작업이 끝나면 지우는 파일입니다. 우리가 만드는 표(임시 표, <code>catalog_next</code>)와는 다릅니다.</p>
+<div class="fig">
+<svg viewBox="0 0 820 200" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <g font-size="14" fill="var(--text)">
+  <rect x="20" y="20" width="230" height="160" rx="10" fill="var(--card)" stroke="var(--muted)"/>
+  <text x="34" y="46" font-weight="700">DB 연결 하나 (프로세스)</text>
+  <rect x="34" y="60" width="200" height="40" rx="6" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="44" y="85">정렬 메모리 다 참</text>
+  <path d="M134 100v20" stroke="var(--text)" stroke-width="2"/>
+  <rect x="34" y="124" width="200" height="40" rx="6" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="44" y="149">넘친 만큼 임시 파일로</text>
+  <path d="M250 144H320" stroke="var(--text)" stroke-width="2.5"/><path d="M312 137l10 7-10 7" fill="none" stroke="var(--text)" stroke-width="2.5"/>
+  <rect x="330" y="20" width="230" height="160" rx="10" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="2"/>
+  <text x="344" y="46" font-weight="700">어디에: temp_tablespaces</text>
+  <text x="344" y="76">기본 빈 값 = DB 기본 자리</text>
+  <text x="344" y="102">= 데이터 폴더 base/pgsql_tmp</text>
+  <text x="344" y="128">= Docker 볼륨 db-data</text>
+  <text x="344" y="154">= 서버 디스크 (EC2면 gp3)</text>
+  <rect x="580" y="20" width="220" height="160" rx="10" fill="var(--no-bg)" stroke="var(--no)" stroke-width="2"/>
+  <text x="594" y="46" font-weight="700">얼마까지: temp_file_limit</text>
+  <text x="594" y="76">연결(프로세스) 하나가</text>
+  <text x="594" y="102">쓸 수 있는 임시 파일 합</text>
+  <text x="594" y="128">기본 -1 = 상한 없음</text>
+  <text x="594" y="154">넘으면 그 작업 취소</text>
+  </g>
+</svg>
+</div>
+<ul>
+<li class="ic"><span><b><code>temp_tablespaces</code> = 어디에 쓰나.</b> 비워 두면(기본) 그 DB의 기본 자리, 곧 데이터 폴더 안 <code>base/pgsql_tmp/</code>에 씁니다. 우리 DB는 데이터 폴더가 Docker 볼륨 <code>db-data</code>(<code>/var/lib/postgresql</code>) 안이라 결국 <b>서버 디스크</b>를 씁니다. 다른 디스크를 따로 붙여 이름(tablespace)을 주면 그쪽으로 보낼 수 있지만, 우리는 디스크 하나라 기본 그대로입니다.</span></li>
+<li class="ic"><span><b><code>temp_file_limit</code> = 얼마까지 쓰나.</b> 연결 하나(프로세스 하나)가 동시에 들고 있을 수 있는 임시 파일 크기의 상한입니다. 문서가 꼽는 대상은 정렬·해시 임시 파일과 보류 커서 저장 파일입니다. 넘으면 그 트랜잭션이 취소됩니다. 기본은 -1(상한 없음)이라, 큰 정렬 하나가 디스크를 다 채울 수도 있습니다.</span></li>
+<li class="ic"><span><b>우리에게 닿는 곳:</b> 운영 반영의 색인 만들기(256MB를 넘는 정렬이 임시 파일로 감)와 <code>sql</code> 방식 묶기(내 PC). 운영 디스크 40GiB 안에서 "평소 DB + 반영 때 두 벌 + 덤프 파일 + 이 임시 파일"이 다 들어가야 합니다. 그래서 이번 사이클에 <code>temp_bytes</code>로 임시 파일 양을 같이 잽니다. 운영에 <code>temp_file_limit</code>을 걸지(예: 디스크가 꽉 차기 전에 작업만 취소되게)는 그 측정을 보고 정하면 됩니다(지금은 기본).</span></li>
+</ul>
+<p class="cap">근거(확인 2026-10-12): <code>temp_file_limit</code> "the maximum amount of disk space that a process can use for temporary files, such as sort and hash temporary files, or the storage file for a held cursor. A transaction attempting to exceed this limit will be canceled … -1 (the default) means no limit" — <a href="https://www.postgresql.org/docs/18/runtime-config-resource.html">Resource Consumption</a>; <code>temp_tablespaces</code> "Temporary files for purposes such as sorting large data sets are also created in these tablespaces … The default value is an empty string, which results in all temporary objects being created in the default tablespace of the current database" — <a href="https://www.postgresql.org/docs/18/runtime-config-client.html">Client Connection Defaults</a>; 위치 "PGDATA/base/pgsql_tmp" — <a href="https://www.postgresql.org/docs/18/storage-file-layout.html">Database File Layout</a>.</p>
+</div>
+
+<p class="cap">근거(확인 2026-10-12): <a href="https://www.postgresql.org/docs/18/runtime-config-resource.html">Resource Consumption</a> — <code>work_mem</code> "the total memory used could be many times the value of work_mem", <code>autovacuum_work_mem</code> "-1, indicating that the value of maintenance_work_mem should be used", <code>temp_buffers</code> "session-local buffers used only for access to temporary tables … default is eight megabytes", 병렬 유지보수 명령은 <code>maintenance_work_mem</code>을 "a limit to be applied to the entire utility command"로 씀; <a href="https://www.postgresql.org/docs/18/runtime-config-query.html">Query Planning</a> — <code>effective_cache_size</code> "used only for estimation purposes"; <a href="https://docs.docker.com/reference/compose-file/services/">Compose</a> — <code>mem_limit</code>. 자동 청소 작업자 최대 3은 <code>autovacuum_max_workers</code> 기본값으로 알고 있으나 이번에 문서로 다시 확인하지 못했습니다.</p>
+
+<p class="cap">근거(확인 2026-10-12): PostgreSQL 18 문서 <a href="https://www.postgresql.org/docs/18/runtime-config-resource.html">Resource Consumption</a>(shared_buffers "typically 128 megabytes", work_mem 4MB, hash_mem_multiplier 2.0, maintenance_work_mem 64MB, autovacuum_work_mem -1, temp_buffers 8MB, temp_file_limit -1), <a href="https://www.postgresql.org/docs/18/runtime-config-query.html">Query Planning</a>(effective_cache_size 4GB), <a href="https://www.postgresql.org/docs/18/runtime-config-autovacuum.html">Autovacuum</a>(autovacuum_max_workers 3), <a href="https://www.postgresql.org/docs/18/runtime-config-connection.html">Connections</a>(max_connections "typically 100"), <a href="https://www.postgresql.org/docs/18/runtime-config-client.html">Client</a>(temp_tablespaces 빈 값); Java <a href="https://docs.oracle.com/en/java/javase/25/gctuning/ergonomics.html">Ergonomics</a>(1/4, 1/64), <a href="https://docs.oracle.com/en/java/javase/25/gctuning/other-considerations.html">Other Considerations</a>(Metaspace 상한 없음), <a href="https://openjdk.org/jeps/192">JEP 192</a>·<a href="https://openjdk.org/jeps/519">JEP 519</a>. <code>shared_buffers</code>를 바꾸려면 재시작이 필요하다는 것은 이번에 문서로 다시 확인하지 못했습니다(compose <code>command</code>로 주므로 컨테이너를 다시 띄울 때 적용).</p>
+</section>
+
+<!-- 4 -->
+<section class="card">
+<h2><span class="num">4</span>"임시"라는 말이 붙는 것 셋: 어디에 생기고 어떻게 움직이나</h2>
+<p class="gist">PostgreSQL에서 "임시"는 서로 다른 셋입니다. ① 정렬·해시가 메모리를 넘칠 때 쓰는 <b>임시 파일</b>, ② <code>CREATE TEMPORARY TABLE</code>로 만든 <b>임시 표</b>, ③ 우리 가져오기의 <code>catalog_next</code>(이건 이름만 준비용이고 PostgreSQL이 말하는 임시는 아님). ①·②는 연결이 끝나면 사라지고, 셋 다 DB 디스크(<code>db-data</code> 볼륨)를 씁니다.</p>
+<table>
+<tr><th></th><th>① 임시 파일</th><th>② 임시 표</th><th>③ <code>catalog_next</code></th></tr>
+<tr><td>누가 만드나</td><td>PostgreSQL이 알아서 (정렬·해시·색인 만들기가 메모리를 넘칠 때)</td><td>우리가 SQL로 (<code>sql</code> 방식의 줄 표, 가져오기의 <code>load_*</code>)</td><td>우리가 SQL로 (보통 표, 준비용 스키마)</td></tr>
+<tr><td>어디에</td><td>DB 데이터 폴더 <code>base/pgsql_tmp/</code>, 이름 <code>pgsql_tmp&lt;프로세스번호&gt;.&lt;번호&gt;</code></td><td>그 DB 폴더 안, 이름 <code>t&lt;프로세스번호&gt;_&lt;번호&gt;</code></td><td>그 DB 폴더 안, 보통 표와 같음</td></tr>
+<tr><td>메모리</td><td>넘치기 전까지 <code>work_mem</code>(해시는 × 2) 또는 <code>maintenance_work_mem</code></td><td>연결마다 <code>temp_buffers</code> 8MB까지, 넘으면 디스크</td><td>공유 버퍼(다른 표와 같이)</td></tr>
+<tr><td>언제 지워지나</td><td>그 작업이 끝나면 바로. DB가 죽었으면 다시 켤 때 지움</td><td>연결이 끝나면</td><td>바꿔 끼우기 때 <code>catalog</code>가 되거나, 실패·<code>discard</code> 때 지움. 죽으면 남음(사이클 08 회고)</td></tr>
+<tr><td>잴 때</td><td><code>pg_stat_database.temp_bytes</code>, <code>log_temp_files</code></td><td><code>pg_database_size</code></td><td><code>pg_database_size</code></td></tr>
+</table>
+
+<h3 class="t">① 임시 파일이 생기는 모습: 정렬이 4MB를 넘을 때</h3>
+<div class="fig">
+<svg viewBox="0 0 820 260" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <text x="20" y="24" font-size="15" font-weight="700" fill="var(--text)">예: 출판일 순으로 정렬할 결과가 20MB일 때 (숫자는 설명용)</text>
+  <g font-size="14" fill="var(--text)">
+  <rect x="20" y="44" width="170" height="80" rx="10" fill="var(--card)" stroke="var(--muted)"/><text x="34" y="72" font-weight="700">정렬할 줄들</text><text x="34" y="98">20MB</text>
+  <rect x="230" y="44" width="170" height="80" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/><text x="244" y="72" font-weight="700">메모리 work_mem</text><text x="244" y="98">4MB만큼씩 정렬</text>
+  <rect x="440" y="44" width="170" height="80" rx="10" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="2"/><text x="454" y="72" font-weight="700">임시 파일</text><text x="454" y="98">조각을 디스크에</text>
+  <rect x="650" y="44" width="160" height="80" rx="10" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/><text x="664" y="72" font-weight="700">조각을 합쳐</text><text x="664" y="98">결과 내고 지움</text>
+  </g>
+  <path d="M190 84h32M400 84h32M610 84h32" stroke="var(--text)" stroke-width="2"/>
+  <text x="20" y="160" font-size="14" fill="var(--text)">메모리에 다 들어가면 임시 파일 없이 끝남. 넘칠수록 디스크를 쓰고 그만큼 느려짐.</text>
+  <text x="20" y="186" font-size="14" fill="var(--text)">우리에게 해당하는 곳: 반영 때 소장 표 색인 만들기(256MB 안에서 정렬, 넘치면 임시 파일),</text>
+  <text x="20" y="210" font-size="14" fill="var(--text)">검색 정렬(보통 4MB 안), sql 방식 묶기(큰 GROUP BY·정렬).</text>
+  <text x="20" y="242" font-size="13" fill="var(--muted)">임시 파일 크기에는 기본 상한이 없음(temp_file_limit = -1) → 그만큼 디스크 여유가 필요</text>
+</svg>
+</div>
+<p>그래서 반영 때 색인 메모리를 1GB에서 256MB로 낮추면, 메모리는 아끼지만 정렬이 임시 파일로 더 많이 넘쳐 디스크를 더 쓰고 느려질 수 있습니다. 이번 사이클에서 <code>temp_bytes</code>와 디스크 최대, 색인 시간을 같이 재는 이유입니다(AC-14).</p>
+<p class="cap">근거(확인 2026-10-12): 임시 파일 위치·이름 "created within PGDATA/base/pgsql_tmp", 임시 표 파일 이름 "t<i>BBB</i>_<i>FFF</i>" — <a href="https://www.postgresql.org/docs/18/storage-file-layout.html">Database File Layout</a>; <code>temp_tablespaces</code> 기본 빈 값 = DB 기본 자리 — <a href="https://www.postgresql.org/docs/18/runtime-config-client.html">Client Connection Defaults</a>; <code>temp_file_limit</code> "-1 (the default) means no limit", <code>hash_mem_multiplier</code> 기본 2.0, 정렬은 <code>ORDER BY</code>·<code>DISTINCT</code>·병합 조인, 해시는 해시 조인·해시 집계 — <a href="https://www.postgresql.org/docs/18/runtime-config-resource.html">Resource Consumption</a>; 죽은 뒤 정리 <code>remove_temp_files_after_crash</code> 기본 on — <a href="https://www.postgresql.org/docs/18/runtime-config-developer.html">Developer Options</a>; <code>log_temp_files</code>는 파일을 "when it is deleted" 기록 — <a href="https://www.postgresql.org/docs/18/runtime-config-logging.html">Logging</a>. dev compose의 DB 볼륨은 <code>db-data:/var/lib/postgresql</code>(dev <code>compose.yaml</code> 38행). 정렬을 조각으로 나눠 합치는 방식은 이해를 돕는 요약이며 문서 문장 그대로는 아닙니다.</p>
+</section>
+
+<!-- 5 -->
+<section class="card">
+<h2><span class="num">5</span>DB가 책 한 권을 읽을 때 메모리를 거치는 순서</h2>
+<p class="gist">PostgreSQL은 먼저 공유 버퍼를 보고, 없으면 Linux에 파일을 달라고 합니다. Linux는 파일 캐시에 있으면 바로 주고, 없을 때만 디스크를 읽습니다. 그래서 서버에 남는 메모리가 많을수록 디스크를 덜 읽습니다.</p>
+<div class="fig">
+<svg viewBox="0 0 820 200" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <g font-size="15" fill="var(--text)">
+  <rect x="20" y="60" width="150" height="70" rx="10" fill="var(--card)" stroke="var(--muted)"/><text x="36" y="92">책 화면 요청</text><text x="36" y="116" font-size="13" fill="var(--muted)">소장 몇십 줄</text>
+  <rect x="220" y="60" width="160" height="70" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/><text x="236" y="92">① 공유 버퍼</text><text x="236" y="116" font-size="13" fill="var(--muted)">64MB, DB 안</text>
+  <rect x="430" y="60" width="170" height="70" rx="10" fill="var(--card)" stroke="var(--muted)" stroke-width="2"/><text x="446" y="92">② Linux 파일 캐시</text><text x="446" y="116" font-size="13" fill="var(--muted)">남는 메모리 전부</text>
+  <rect x="650" y="60" width="150" height="70" rx="10" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="2"/><text x="666" y="92">③ 디스크 gp3</text><text x="666" y="116" font-size="13" fill="var(--muted)">가장 느림</text>
+  </g>
+  <path d="M170 95h42M380 95h42M600 95h42" stroke="var(--text)" stroke-width="2"/>
+  <text x="196" y="160" font-size="14" fill="var(--ok)">있으면 여기서 끝</text>
+  <text x="420" y="160" font-size="14" fill="var(--ok)">있으면 여기서 끝</text>
+  <text x="20" y="190" font-size="13" fill="var(--muted)">같은 조각이 ①과 ② 양쪽에 다 있을 수도 있음(PostgreSQL 문서 "some data might exist in both places")</text>
+</svg>
+</div>
+<p>사이클 08에서 이 효과를 잰 예: 소장을 책 순서로 붙여 쓴 뒤, 책 3권의 소장을 읽는 데 1,169조각·78ms 걸리던 것이 77조각·1.4ms가 됐습니다(dev 측정). 읽을 조각 수가 줄면 ①·② 메모리에 담기기도 쉬워집니다.</p>
+</section>
+
+<!-- 6 -->
+<section class="card">
+<h2><span class="num">6</span>반영하는 동안만 늘어나는 것</h2>
+<p class="gist">반영 명령을 돌리는 몇 분 동안만 Java 반영 명령(힙 512MB)이 하나 더 뜨고, DB 안에서는 그 연결이 색인을 만들며 256MB를 씁니다. 끝나면 둘 다 돌려놓습니다.</p>
+<div class="fig">
+<svg viewBox="0 0 820 220" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <line x1="40" y1="180" x2="790" y2="180" stroke="var(--muted)" stroke-width="2"/>
+  <g font-size="14" fill="var(--text)">
+  <text x="40" y="204">평소</text><text x="210" y="204">비교</text><text x="300" y="204">파일 넣기</text><text x="450" y="204">색인·통계</text><text x="610" y="204">바꿔 끼우기</text><text x="720" y="204">평소</text>
+  </g>
+  <rect x="40" y="130" width="750" height="40" fill="var(--ok)" opacity=".7"/><text x="50" y="156" font-size="14" fill="var(--card)">서비스 Java + 조회 서버 + DB 공유 버퍼 (늘)</text>
+  <rect x="200" y="86" width="500" height="40" fill="var(--accent)" opacity=".75"/><text x="210" y="112" font-size="14" fill="var(--card)">반영 명령 Java (힙 상한 512MB)</text>
+  <rect x="440" y="42" width="160" height="40" fill="var(--warn)"/><text x="448" y="68" font-size="14" fill="var(--card)">색인 256MB (DB 안)</text>
+  <text x="610" y="30" font-size="13" fill="var(--muted)">끝나면 반영 명령도 내려감</text>
+</svg>
+</div>
+<p class="cap">가로 길이는 시간 비율이 아니라 순서만 나타냅니다. 실제 시간(파일 넣기, 색인)은 사이클 11 시험에서 운영 역할 DB(5434)에 컨테이너 상한 1GB를 걸고 잽니다.</p>
+<div class="mine" style="border-style:solid;border-color:var(--accent);background:var(--accent-bg)"><b>질문 "maintenance_work_mem은 유동적으로 바꿀 수 있는 값이야?" (2026-10-12)</b>
+<p><b>네, 실행할 때마다 바꿀 수 있습니다. 서버를 다시 켤 필요도, 코드를 고칠 필요도 없습니다.</b> 다만 저절로 바뀌는 값은 아니고, 돌릴 때 사람이 정해 주는 값입니다.</p>
+<table>
+<tr><th>어디서 바꾸나</th><th>언제 적용</th><th>누구에게</th></tr>
+<tr><td>가져오기·반영 명령의 설정 <code>chaekcheck.catalog.load.maintenance-work-mem</code> (예: <code>--chaekcheck.catalog.load.maintenance-work-mem=512MB</code>)</td><td>그 명령을 돌릴 때 바로</td><td>그 명령의 DB 연결 하나만. 검색·자동 청소는 그대로</td></tr>
+<tr><td>DB 서버 설정 파일(<code>postgresql.conf</code>) 또는 compose <code>command</code></td><td>설정을 다시 읽히면(재시작 없이) 이후 연결부터</td><td>모든 연결, 자동 청소 포함</td></tr>
+</table>
+<p>지금 dev 코드가 이미 그렇게 합니다: 가져오기 연결에서 <code>SET maintenance_work_mem = …</code>을 실행하고(<code>JdbcCatalogLoad.java</code> 110행), 사이클 08은 이 값을 1GB로 주고 돌렸습니다. 이번 반영 명령도 같은 설정 칸으로 256MB를 줍니다.</p>
+<p><b>지킬 것:</b> 이 값은 DB 컨테이너 상한(1GB)보다 넉넉히 작아야 합니다. 사이클 08에서 상한 512MB에 1GB를 주었다가 DB가 메모리 부족으로 죽었습니다. 256MB로 재 보고 색인이 너무 느리면 올리고, 그때 공유 버퍼·검색 연결 몫을 빼고 남는 만큼만 올립니다.</p>
+<p class="cap">근거: PostgreSQL에서 이런 종류(context <code>user</code>) 설정은 "within a session via the SET command" 바꿀 수 있고 "Any user is allowed to change their session-local value" — <a href="https://www.postgresql.org/docs/18/view-pg-settings.html">pg_settings</a> (확인 2026-10-12). <code>maintenance_work_mem</code>이 세션에서 바뀌는 것은 dev 코드와 사이클 08 실행으로 확인.</p>
+</div>
+
+</section>
+
+
+<p class="foot">이 글은 요약이며 근거는 <code>../aws-layout.md</code> 6절, <code>docs/cycles/11-separate-import/architect-proposal.md</code> 결정 기록, dev <code>docs/plan-feedback.md</code> 사이클 08 메모리 측정에 있습니다.</p>
+</main>
+</body>
+</html>

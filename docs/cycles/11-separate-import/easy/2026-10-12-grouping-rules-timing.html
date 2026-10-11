@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>묶기 기준 시기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.card h3.t{font-size:21px;margin:26px 0 8px}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font-size:15px;line-height:1.55;margin:8px 0 6px;word-break:normal}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+pre .cm{color:var(--muted)} pre .hl{background:var(--warn-bg);color:var(--warn);font-weight:700}
+.src{color:var(--muted);font-size:15px;margin:14px 0 0}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+.fig{overflow-x:auto;margin:8px 0 4px}
+.fig svg{width:100%;min-width:640px;height:auto;display:block}
+.mine{border:1px dashed var(--warn);background:var(--warn-bg);border-radius:8px;padding:10px 14px;font-size:18px;margin:10px 0}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0}
+.pc>div{border-radius:10px;padding:12px 16px;font-size:18px}
+.pc .p{background:var(--ok-bg)} .pc .c{background:var(--no-bg)}
+.pc h4{margin:0 0 6px;font-size:18px}
+.pc ul{margin:0;padding-left:20px}
+.pc li{margin:0 0 8px}
+@media (max-width:640px){.pc{grid-template-columns:1fr} body{font-size:18px} .lead{font-size:24px}}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">책 묶기 기준 다시 보기를 사이클 11에 넣을까</p>
+<p class="sub">질문: "책 묶기 기준 다시 보기, 이것 지금 사이클에서 같이 하는 건?" (2026-10-12). 묶기 기준은 다음에 가져올 때 같은 책을 한 권으로 묶는 규칙이고, 지금 규칙과 알려진 문제는 <code>docs/research/ebook-catalog/same-book-isbn.md</code> 5절에 있습니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>같이 하면 부딪히는 곳</h2>
+<p class="gist">사이클 11의 힙 줄이기는 "세 방식이 지금 규칙으로 한 권도 다르지 않게, 번호까지 같게" 만드는 일입니다. 같은 사이클에 규칙을 바꾸면 비교할 기준이 움직이고, 바꾼 규칙을 세 방식 모두에 넣어야 합니다.</p>
+<div class="fig">
+<svg viewBox="0 0 820 250" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <text x="20" y="26" font-size="17" font-weight="700" fill="var(--ok)">나눠서 할 때 (추천)</text>
+  <g font-size="15" fill="var(--text)">
+  <rect x="20" y="40" width="240" height="60" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="34" y="66">사이클 11: 세 방식을</text><text x="34" y="88">지금 규칙으로 같게 → 기본 정함</text>
+  <rect x="290" y="40" width="240" height="60" rx="8" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="304" y="66">사이클 12: 규칙 바꾸기</text><text x="304" y="88">기본 방식 하나에만 넣음</text>
+  <rect x="560" y="40" width="240" height="60" rx="8" fill="var(--card)" stroke="var(--muted)" stroke-dasharray="5 4"/><text x="574" y="66">지금부터 미리 (사이클 밖)</text><text x="574" y="88">알려진 문제 표본 조사</text>
+  </g>
+  <path d="M260 70h24" stroke="var(--text)" stroke-width="2"/>
+  <path d="M680 100 C 680 130, 410 130, 410 104" stroke="var(--muted)" stroke-width="2" fill="none" stroke-dasharray="5 4"/>
+  <text x="440" y="140" font-size="13" fill="var(--muted)">조사 결과가 사이클 12 결정의 근거</text>
+  <text x="20" y="182" font-size="17" font-weight="700" fill="var(--no)">사이클 11에 같이 넣을 때</text>
+  <g font-size="15" fill="var(--text)">
+  <rect x="20" y="194" width="780" height="44" rx="8" fill="var(--no-bg)" stroke="var(--no)"/>
+  <text x="34" y="221">규칙 바꾸기 × (current Java · compact Java · sql SQL) 세 곳 + 결과 비교 기준이 "지금 규칙"이 아니게 됨</text>
+  </g>
+</svg>
+</div>
+<ul>
+<li class="ic"><span><b>세 곳에 넣어야 함:</b> 규칙은 지금 Java 코드(<code>BookGrouping</code>)에 있습니다. <code>sql</code> 방식은 같은 규칙을 SQL로 다시 쓰는 것이라, 규칙이 바뀌면 SQL도 바꿔야 합니다.</span></li>
+<li class="ic"><span><b>비교가 흐려짐:</b> "다른 책 0권"은 같은 규칙끼리라서 의미가 있습니다. 규칙과 방식을 동시에 바꾸면, 결과가 달라졌을 때 규칙 때문인지 방식 때문인지 가르기 어렵습니다.</span></li>
+<li class="ic"><span><b>번호가 바뀜:</b> 규칙이 바뀌면 묶음이 갈라지거나 합쳐진 책의 번호가 바뀝니다(ADR-0062는 소장이 같으면 번호를 잇지만, 묶음이 바뀐 책은 새 번호·사라진 번호가 생김). 회원 책 저장 같은 기능이 생기기 전에 하는 편이 낫습니다.</span></li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>다시 보기 전에 알아야 할 것 (지금은 숫자만 있음)</h2>
+<p class="gist">알려진 문제 대부분이 "표본을 보지 않음" 상태입니다. 규칙을 고르기 전에 표본 조사가 먼저 필요하고, 이건 코드 없이 plan에서 미리 할 수 있습니다.</p>
+<table>
+<tr><th>알려진 문제</th><th>지금 아는 것</th></tr>
+<tr><td>덜 합쳐짐: 부제·시리즈 표시를 도서관마다 다르게 적어 같은 책이 따로 남음</td><td>몇 권인지 세지 않음</td></tr>
+<tr><td>잘못 합쳐짐: 판 표시 없는 개정판이 원판과 합쳐짐</td><td>④로 합친 책 중 출판일이 2년 넘게 차이 나는 책 11,019권(2026-09-30), 표본 40개만 봄</td></tr>
+<tr><td><code>48090…</code> 코드 37,678줄, 확인 숫자 안 맞음 5,352줄</td><td>뜻 모름, ISBN 계산에서 뺌</td></tr>
+<tr><td>국가서지와 제목이 다른 약 5%, 국가서지에 없는 23.3%</td><td>원인 미조사</td></tr>
+<tr><td>모호한 키 5,303, 판이 여러 개인 인기 책</td><td>국가서지 ISBN이 안 붙음</td></tr>
+</table>
+<p class="cap">출처: <code>same-book-isbn.md</code> 5절·5.1·5.3절. 숫자는 2026-09-30 dry run 기준이라, 지금 사본으로 다시 세야 합니다.</p>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>정할 것</h2>
+<div class="item"><h3><span class="no">1</span>책 묶기 기준 다시 보기는 사이클 11에 넣지 않고, 사이클 11에서 기본 방식이 정해진 뒤 사이클 12로 한다 [안]</h3>
+<p>사이클 11이 끝나면 묶는 방식이 하나(기본)로 정해지므로, 바뀐 규칙은 그 방식에 넣고 다른 방식은 그대로 두거나 정리합니다. 비교 도구(사이클 11에서 만듦)로 "규칙을 바꾸면 몇 권이 달라지는지"를 바로 셀 수 있게 됩니다.</p>
+<p class="alt"><b>다른 선택:</b> 사이클 11에 같이. 위 1번 카드처럼 세 곳에 넣고 비교 기준이 움직이며, 사이클이 크게 늘어납니다. <b>또는</b> 사이클 11 앞에 먼저: 힙 줄이기의 비교 기준이 새 규칙이 되지만, 규칙 조사가 끝날 때까지 사이클 11이 기다려야 합니다.</p>
+<p class="rec">추천: 사이클 12.</p></div>
+<div class="item"><h3><span class="no">2</span>그동안 알려진 문제 표본 조사(위 2번 카드 다섯 줄)를 사이클 밖 조사로 plan에서 미리 한다 [안]</h3>
+<p>수집 DB 사본을 읽기만 해서, 줄마다 숫자를 지금 사본으로 다시 세고 표본을 봅니다(예: 출판일 2년 넘게 차이 나는 책 100권을 판 차이/등록일 차이로 나눔). 결과는 <code>docs/research/ebook-catalog/</code>에 적고, 사이클 12가 그걸 근거로 시작합니다.</p>
+<p class="alt"><b>다른 선택:</b> 사이클 12가 시작할 때 조사. 미리 할 일이 줄지만 사이클 12가 길어집니다.</p>
+<p class="rec">추천: 미리 조사.</p></div>
+</section>
+
+<p class="foot">근거: <code>docs/research/ebook-catalog/same-book-isbn.md</code> 5절, <code>../scope.md</code>(힙 줄이기 결과 비교 결정), <code>../spec.md</code> R-B5. 백로그 215행 "책 묶기 기준 다시 보기".</p>
+</main>
+</body>
+</html>

@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>힙 줄이기 후속</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.card h3.t{font-size:21px;margin:26px 0 8px}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font-size:15px;line-height:1.55;margin:8px 0 6px;word-break:normal}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+pre .cm{color:var(--muted)} pre .hl{background:var(--warn-bg);color:var(--warn);font-weight:700}
+.src{color:var(--muted);font-size:15px;margin:14px 0 0}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+.fig{overflow-x:auto;margin:8px 0 4px}
+.fig svg{width:100%;min-width:640px;height:auto;display:block}
+.mine{border:1px dashed var(--warn);background:var(--warn-bg);border-radius:8px;padding:10px 14px;font-size:18px;margin:10px 0}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0}
+.pc>div{border-radius:10px;padding:12px 16px;font-size:18px}
+.pc .p{background:var(--ok-bg)} .pc .c{background:var(--no-bg)}
+.pc h4{margin:0 0 6px;font-size:18px}
+.pc ul{margin:0;padding-left:20px}
+.pc li{margin:0 0 8px}
+@media (max-width:640px){.pc{grid-template-columns:1fr} body{font-size:18px} .lead{font-size:24px}}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">사이클 11 후속: 힙 줄이기 두 방식과 측정, 운영 쪽 시험</p>
+<p class="sub">앞 페이지에서 정한 것은 셋입니다. #3 두 DB가 다르면 반영하지 않음(승인), #4 손으로 돌리는 절차까지(승인), 그리고 말씀하신 대로 힙 줄이기는 안 2와 안 3을 둘 다 만들어 설정으로 고르고 각각 측정합니다. 이 페이지는 그걸 어떻게 할지와, 다시 여쭐 #1을 다룹니다. (2026-10-11)</p>
+
+<!-- 0 -->
+<section class="card">
+<h2><span class="num">0</span>사이클 08 최종 결과에서 달라진 숫자</h2>
+<p class="gist">마지막 가져오기(#3c)는 힙 6GB로 끝까지 됐고 33분 걸렸습니다. 다만 살아 있는 데이터가 최대 약 4.8GB라 6GB는 여유가 크지 않습니다.</p>
+<div class="fig">
+<svg viewBox="0 0 820 160" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <text x="30" y="26" font-size="17" fill="var(--text)">힙 6GB 안에서 실제로 쓴 데이터 (가져오기 #3c)</text>
+  <rect x="30" y="38" width="600" height="40" rx="4" fill="var(--bg)" stroke="var(--muted)"/>
+  <rect x="30" y="38" width="480" height="40" rx="4" fill="var(--warn)"/>
+  <text x="46" y="65" font-size="18" fill="var(--card)" font-weight="700">살아 있는 데이터 최대 약 4.8GB</text>
+  <text x="642" y="65" font-size="18" fill="var(--text)" font-weight="700">6GB</text>
+  <line x1="430" y1="30" x2="430" y2="86" stroke="var(--no)" stroke-width="3" stroke-dasharray="5 3"/>
+  <text x="400" y="108" font-size="16" fill="var(--no)">4GB: 멈춤</text>
+  <text x="30" y="146" font-size="16" fill="var(--muted)">여유 약 1.2GB. 책이 늘면 6GB도 모자랄 수 있습니다.</text>
+</svg>
+</div>
+<table>
+<tr><th>항목</th><th>앞 페이지 (#2)</th><th>최종 (#3c)</th></tr>
+<tr><td>힙 6GB</td><td>재는 중</td><td>끝까지 됨, 살아 있는 데이터 최대 약 4.8GB</td></tr>
+<tr><td>전체 시간</td><td>약 41분</td><td>약 33분</td></tr>
+<tr><td>국가서지 읽기</td><td>원본 파일에서 7분 55초</td><td>DB에 남겨 둔 표에서 2분 46초</td></tr>
+<tr><td>검색이 기다린 시간</td><td>0.33초</td><td>0.13초</td></tr>
+</table>
+<p class="cap">출처: dev 사이클 08 최종 요약(사용자가 전달, 2026-10-11). 원문은 dev <code>docs/plan-feedback.md</code> <code># 사이클 08</code> 절 끝 "plan에 넘길 요약". dev가 #4에서 재겠다던 Java 글자 합치기 옵션(<code>-XX:+UseStringDeduplication</code>) 효과는 <b>재지 않았습니다</b>. #4를 생략했고, #3c 결과와 dev 설정·문서 어디에도 이 옵션이 없습니다(plan 확인 2026-10-11). 이 사이클의 힙 줄이기 측정에서 함께 잴지는 설계 때 정합니다.</p>
+</section>
+
+<!-- 1 -->
+<section class="card">
+<h2><span class="num">1</span>운영 쪽을 어디서 시험할지 다시 여쭙니다</h2>
+<p class="gist">앞 페이지 #1을 미승인하셨는데, 사유 칸에 추천 문구("같은 PC의 두 번째 DB. 배포 보류 결정을 바꾸지 않습니다")가 그대로 들어와 있어 뜻을 알 수 없었습니다. 둘 중 하나만 승인해 주세요.</p>
+<div class="fig">
+<svg viewBox="0 0 820 230" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <text x="20" y="28" font-size="19" font-weight="700" fill="var(--text)">1-가: 같은 PC 안에서</text>
+  <rect x="20" y="44" width="380" height="170" rx="14" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+  <text x="38" y="76" font-size="17" font-weight="700" fill="var(--accent)">내 PC</text>
+  <rect x="38" y="92" width="150" height="104" rx="8" fill="var(--card)" stroke="var(--accent)"/>
+  <text x="52" y="122" font-size="16" fill="var(--text)">DB 1</text><text x="52" y="148" font-size="16" fill="var(--text)">가져오기용</text>
+  <rect x="232" y="92" width="150" height="104" rx="8" fill="var(--card)" stroke="var(--ok)"/>
+  <text x="246" y="122" font-size="16" fill="var(--text)">DB 2</text><text x="246" y="148" font-size="16" fill="var(--text)">운영 역할</text><text x="246" y="174" font-size="16" fill="var(--text)">+ 검색 서비스</text>
+  <path d="M188 144h36" stroke="var(--text)" stroke-width="2.5"/><path d="M216 137l10 7-10 7" fill="none" stroke="var(--text)" stroke-width="2.5"/>
+  <text x="430" y="28" font-size="19" font-weight="700" fill="var(--text)">1-나: 진짜 서버로</text>
+  <rect x="430" y="44" width="160" height="170" rx="14" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+  <text x="448" y="76" font-size="17" font-weight="700" fill="var(--accent)">내 PC</text>
+  <rect x="448" y="92" width="124" height="104" rx="8" fill="var(--card)" stroke="var(--accent)"/><text x="462" y="148" font-size="16" fill="var(--text)">가져오기 DB</text>
+  <rect x="640" y="44" width="160" height="170" rx="14" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/>
+  <text x="658" y="76" font-size="17" font-weight="700" fill="var(--ok)">운영 서버</text>
+  <rect x="658" y="92" width="124" height="104" rx="8" fill="var(--card)" stroke="var(--ok)"/><text x="672" y="138" font-size="16" fill="var(--text)">운영 DB</text><text x="672" y="164" font-size="16" fill="var(--text)">+ 검색</text>
+  <path d="M590 129h42" stroke="var(--text)" stroke-width="2.5"/><path d="M624 122l10 7-10 7" fill="none" stroke="var(--text)" stroke-width="2.5"/>
+  <text x="594" y="116" font-size="14" fill="var(--muted)">인터넷</text>
+</svg>
+</div>
+<div class="item"><h3><span class="no">1-가</span>같은 PC에 DB를 하나 더 띄워 운영 역할로 시험 [안]</h3>
+<p>파일 내보내기 → 넣기 → 바꿔 끼우기를 모두 시험할 수 있습니다. 진짜 서버로 갈 때는 파일을 보내는 곳만 바뀝니다. 배포 보류(백로그 208행)는 그대로입니다.</p>
+<p class="alt"><b>못 보는 것:</b> 인터넷으로 파일을 보내는 시간, 운영 서버 사양에서 색인을 만드는 시간.</p>
+<p class="rec">추천</p></div>
+<div class="item"><h3><span class="no">1-나</span>배포를 이 사이클에 같이 해서 진짜 운영 서버로 시험 [안]</h3>
+<p>파일 전송 시간과 실제 서버에서 넣기·색인 시간까지 잽니다. 대신 서버 고르기·비용·접속 설정이 이 사이클에 들어오고, 보류해 둔 배포 결정을 당깁니다.</p></div>
+</section>
+
+<!-- 2 -->
+<section class="card">
+<h2><span class="num">2</span>묶는 방식을 설정으로 고르기</h2>
+<p class="gist">가져오기를 시작할 때 설정 값 하나로 묶는 방식을 고릅니다. 지금 방식도 남겨 두어, 새 두 방식의 결과가 맞는지 비교하는 기준으로 씁니다.</p>
+<table>
+<tr><th>설정 값 (이름은 제안)</th><th>방식</th><th>힙 (dev 예상)</th></tr>
+<tr><td><code>current</code></td><td>지금 방식. 비교 기준</td><td>6GB (4GB는 멈춤)</td></tr>
+<tr><td><code>compact</code></td><td>안 2: 겹치는 글자 합치기(안 1) + 개수표를 묶음 안의 칸으로 + 묶음 열쇠를 숫자로</td><td>3GB 안팎</td></tr>
+<tr><td><code>sql</code></td><td>안 3: 줄을 임시 표에 넣고 DB(SQL)에서 묶기</td><td>몇백 MB</td></tr>
+</table>
+<div class="item"><h3><span class="no">2</span>설정 값은 current·compact·sql 셋, 측정이 끝날 때까지 기본값은 current [안]</h3>
+<p>예를 들어 가져오기 명령에 <code>--chaekcheck.catalog.import.grouping=sql</code>처럼 붙이면 안 3으로 돌고, 아무것도 안 붙이면 지금 방식으로 돕니다. 설정 이름은 dev가 기존 설정(<code>chaekcheck.catalog.load.*</code>)에 맞춰 정합니다.</p>
+<p class="alt"><b>다른 선택:</b> 지금 방식은 빼고 compact·sql 둘만. 코드는 줄지만, 새 방식의 결과가 맞는지 비교할 기준과 문제가 생겼을 때 되돌아갈 곳이 사라집니다.</p>
+<p class="rec">추천: 셋. 기본값은 측정 뒤에 정합니다(아래 5번).</p></div>
+</section>
+
+<!-- 3 -->
+<section class="card">
+<h2><span class="num">3</span>세 방식의 결과가 같은지 확인하기</h2>
+<p class="gist">방식이 달라도 만들어지는 책은 한 권도 달라지면 안 됩니다. 달라지면 그 책의 번호가 바뀌기 때문입니다(ADR-0062 책 번호 잇기).</p>
+<div class="fig">
+<svg viewBox="0 0 820 220" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <rect x="20" y="80" width="150" height="60" rx="10" fill="var(--card)" stroke="var(--muted)"/><text x="38" y="116" font-size="17" fill="var(--text)">같은 사본</text>
+  <rect x="250" y="20" width="200" height="50" rx="8" fill="var(--card)" stroke="var(--muted)"/><text x="266" y="51" font-size="17" fill="var(--text)">current로 묶기</text>
+  <rect x="250" y="85" width="200" height="50" rx="8" fill="var(--card)" stroke="var(--warn)"/><text x="266" y="116" font-size="17" fill="var(--text)">compact로 묶기</text>
+  <rect x="250" y="150" width="200" height="50" rx="8" fill="var(--card)" stroke="var(--ok)"/><text x="266" y="181" font-size="17" fill="var(--text)">sql로 묶기</text>
+  <path d="M170 110L242 45M170 110H242M170 110L242 175" stroke="var(--text)" stroke-width="2" fill="none"/>
+  <path d="M450 45L540 110M450 110H540M450 175L540 110" stroke="var(--text)" stroke-width="2" fill="none"/>
+  <rect x="548" y="70" width="252" height="80" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+  <text x="564" y="102" font-size="17" font-weight="700" fill="var(--text)">책마다 한 권씩 비교</text>
+  <text x="564" y="130" font-size="16" fill="var(--text)">다른 책 0권이어야 통과</text>
+</svg>
+</div>
+<div class="item"><h3><span class="no">3</span>같은 사본으로 세 방식을 돌려 책마다 비교하고, 다른 책이 한 권이라도 있으면 그 방식은 쓰지 않음 [안]</h3>
+<p>비교하는 것은 어떤 줄들이 한 책이 됐는지, 책마다 고른 제목·저자·출판사·출판일·ISBN·콘텐츠 종류, 그 책을 가진 도서관 목록입니다. 다른 책이 있으면 예시 목록을 남겨 dev가 고칩니다. 책 표에 쓰지 않고 묶기까지만 하는 시험 실행(dry run)이 이미 있어서 그것을 씁니다.</p>
+<p class="alt"><b>다른 선택:</b> 책 수만 같으면 통과. 빠르지만, 수는 같아도 다른 책끼리 묶였으면 놓칩니다.</p>
+<p class="rec">추천: 책마다 비교.</p></div>
+</section>
+
+<!-- 4 -->
+<section class="card">
+<h2><span class="num">4</span>무엇을 잴지 (여러 관점)</h2>
+<p class="gist">메모리만 보면 안 3이 이기지만, 안 3은 DB에 일을 더 시킵니다. 그래서 시간·DB 디스크·검색 영향까지 같이 잽니다.</p>
+<table>
+<tr><th>관점</th><th>재는 것</th><th>왜</th></tr>
+<tr><td>메모리</td><td>Java 힙 최고 사용량(GC 기록), 힙을 6→4→3→2→1GB로 줄여 가며 끝까지 되는 가장 작은 값</td><td>목표 그 자체. "줄였다"를 숫자로</td></tr>
+<tr><td>시간</td><td>전체 시간, 단계별 시간(<code>step_seconds</code>)</td><td>메모리를 줄이고 느려지면 안 됨. 지금 약 33분(#3c)</td></tr>
+<tr><td>DB 디스크</td><td>DB 크기 최대(<code>pg_database_size</code>), DB가 임시 파일로 쓴 양(<code>temp_bytes</code>)</td><td>안 3은 메모리 대신 디스크를 씀</td></tr>
+<tr><td>CPU</td><td>Java와 DB 각각의 CPU 시간</td><td>안 3은 일을 DB로 옮김</td></tr>
+<tr><td>검색 영향</td><td>가져오는 동안 검색 응답 p95·오류(사이클 08 측정 스크립트 <code>probe_during_import.py</code>)</td><td>같은 PC에서 돌면 DB가 바빠져 검색이 느려질 수 있음. 사이클 08은 p95 560ms</td></tr>
+<tr><td>결과</td><td>3번 카드의 책마다 비교</td><td>한 권도 달라지면 안 됨</td></tr>
+</table>
+<p class="cap">근거: <code>temp_bytes</code>는 PostgreSQL 통계 표 <code>pg_stat_database</code>의 칸으로, 이 DB에서 질의가 임시 파일에 쓴 데이터 총량입니다. <a href="https://www.postgresql.org/docs/18/monitoring-stats.html">postgresql.org/docs/18/monitoring-stats.html</a> (확인 2026-10-11).</p>
+<div class="item"><h3><span class="no">4</span>위 여섯 관점을 세 방식 모두 같은 사본·같은 PC에서, 방식마다 두 번씩 잼 [안]</h3>
+<p>두 번씩 재는 것은 한 번만 재면 우연히 빠르거나 느린 것을 가려낼 수 없어서입니다. 힙을 줄여 가며 재는 것은 끝까지 되는 값을 찾을 때까지만 합니다. 결과는 표 하나(방식 × 관점)로 받습니다.</p>
+<p class="alt"><b>다른 선택:</b> 한 번씩만. 측정 시간이 반으로 줄지만(가져오기 한 번이 30분 안팎), 차이가 작을 때 판단하기 어렵습니다.</p>
+<p class="rec">추천: 두 번씩.</p></div>
+</section>
+
+<!-- 5 -->
+<section class="card">
+<h2><span class="num">5</span>측정 뒤 기본값을 고르는 기준</h2>
+<p class="gist">측정이 끝나면 기본값을 하나로 정합니다. 기준을 미리 정해 두면 결과를 보고 바로 고를 수 있습니다.</p>
+<div class="item"><h3><span class="no">5</span>결과 비교를 통과한 방식 중, 전체 시간이 지금보다 10분 넘게 늘지 않고 힙이 가장 작은 것을 기본값으로 [안]</h3>
+<p>예를 들어 sql이 힙 500MB인데 50분이 걸리면(17분 늘어남) 기본값이 되지 않고, compact가 3GB에 36분이면 compact가 기본값이 됩니다. 숫자는 설명용 예시입니다. 검색 영향(p95)이 사이클 08보다 눈에 띄게 나빠지면 그것도 따로 보고드립니다.</p>
+<p class="alt"><b>다른 선택:</b> 기준 없이 측정 결과를 보고 그때 정하기. 지금 정할 것은 없지만, 결과가 애매하면 결정 페이지가 한 번 더 필요합니다.</p>
+<p class="rec">추천: 이 기준. "10분"은 제 제안 값이라 바꾸셔도 됩니다.</p></div>
+<div class="chg"><b>질문 "지금은 얼마나 걸려"에 대한 답</b>
+<p>지금 방식(<code>current</code>)은 사이클 08 마지막 가져오기(#3c)에서 <b>전체 약 33분</b>이었습니다(dev 최종 요약). 그 전 #2는 약 41분이었고, 국가서지를 원본 파일 대신 DB에 남겨 둔 표에서 읽게 되면서(7분 55초 → 2분 46초) 줄었습니다. 그래서 이 기준대로면 <b>43분 안에 끝나는 방식</b>만 기본값 후보가 됩니다.</p>
+<svg viewBox="0 0 820 150" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <text x="20" y="26" font-size="16" fill="var(--text)">#2 (사이클 08 중간)</text>
+  <rect x="20" y="34" width="574" height="28" rx="4" fill="var(--muted)"/><text x="604" y="55" font-size="17" fill="var(--text)" font-weight="700">약 41분</text>
+  <text x="20" y="88" font-size="16" fill="var(--text)">#3c 지금 방식 + 10분까지 허용</text>
+  <rect x="20" y="96" width="462" height="28" rx="4" fill="var(--accent)"/>
+  <rect x="482" y="96" width="140" height="28" fill="var(--accent)" opacity=".3"/>
+  <text x="36" y="116" font-size="16" fill="var(--card)" font-weight="700">약 33분</text>
+  <text x="632" y="117" font-size="17" fill="var(--text)" font-weight="700">43분까지</text>
+</svg>
+<p class="cap">#3c의 단계별 시간은 아직 받지 못했습니다. dev <code>docs/plan-feedback.md</code> 최종 요약을 retro 때 읽고 맞춥니다. 10분 대신 비율(예: 지금의 1.3배 이내)로 정해도 됩니다. 원하시면 기타에 적어 주세요.</p>
+</div>
+</section>
+
+<!-- 6 -->
+<section class="card">
+<h2><span class="num">6</span>사이클이 커졌습니다: 순서</h2>
+<p class="gist">사이클 11에 큰 일이 둘 들어왔습니다. 따로 하기(내보내기·반영)와 힙 줄이기(두 방식, 검증, 측정)입니다. 서로 기다릴 필요는 없습니다.</p>
+<div class="fig">
+<svg viewBox="0 0 820 150" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <rect x="20" y="40" width="340" height="60" rx="10" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/>
+  <text x="36" y="66" font-size="17" font-weight="700" fill="var(--text)">A. 따로 하기</text><text x="36" y="90" font-size="15" fill="var(--muted)">내보내기, 넣고 바꿔 끼우기, 절차 문서</text>
+  <path d="M360 70h50" stroke="var(--text)" stroke-width="2.5"/><path d="M402 63l10 7-10 7" fill="none" stroke="var(--text)" stroke-width="2.5"/>
+  <rect x="420" y="40" width="380" height="60" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+  <text x="436" y="66" font-size="17" font-weight="700" fill="var(--text)">B. 힙 줄이기</text><text x="436" y="90" font-size="15" fill="var(--muted)">compact·sql, 책마다 비교, 측정</text>
+  <text x="20" y="134" font-size="16" fill="var(--muted)">인계서 하나에 두 묶음. A가 끝나면 사이클 목표가 먼저 이루어집니다.</text>
+</svg>
+</div>
+<div class="item"><h3><span class="no">6</span>한 사이클로 두되, 인계서를 A(따로 하기) → B(힙 줄이기) 두 묶음으로 나눔 [안]</h3>
+<p>A는 사이클 08의 바꿔 끼우기 코드를 다시 써서 비교적 작고, 끝나면 사이클 목표가 먼저 이루어집니다. B는 측정에 가져오기를 여러 번(방식 셋 × 두 번 + 힙 줄여 가기) 돌려야 해서 오래 걸립니다.</p>
+<p class="alt"><b>다른 선택:</b> B를 사이클 12로 떼기. 사이클은 작아지지만 "이 사이클에 넣어 달라"는 말씀과 다릅니다. <b>B 먼저:</b> 힙이 먼저 줄지만 사이클 목표(따로 하기)가 늦어집니다.</p>
+<p class="rec">추천: 한 사이클, A → B.</p></div>
+</section>
+
+<p class="foot">근거: <code>../scope.md</code>, 앞 페이지 <code>2026-10-11-scope-decisions.html</code>, dev 사이클 08 최종 요약(dev <code>docs/plan-feedback.md</code> <code># 사이클 08</code> 절 끝), dev <code>BookGrouping.java</code>. 힙·시간 숫자는 dev 측정·예상치이고, 5번의 "10분"과 설정 값 이름은 Claude 제안입니다.</p>
+</main>
+</body>
+</html>

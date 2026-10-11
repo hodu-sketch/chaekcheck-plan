@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ADR 초안</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.card h3.t{font-size:21px;margin:26px 0 8px}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font-size:15px;line-height:1.55;margin:8px 0 6px;word-break:normal}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+pre .cm{color:var(--muted)} pre .hl{background:var(--warn-bg);color:var(--warn);font-weight:700}
+.src{color:var(--muted);font-size:15px;margin:14px 0 0}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+.fig{overflow-x:auto;margin:8px 0 4px}
+.fig svg{width:100%;min-width:640px;height:auto;display:block}
+.mine{border:1px dashed var(--warn);background:var(--warn-bg);border-radius:8px;padding:10px 14px;font-size:18px;margin:10px 0}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0}
+.pc>div{border-radius:10px;padding:12px 16px;font-size:18px}
+.pc .p{background:var(--ok-bg)} .pc .c{background:var(--no-bg)}
+.pc h4{margin:0 0 6px;font-size:18px}
+.pc ul{margin:0;padding-left:20px}
+.pc li{margin:0 0 8px}
+@media (max-width:640px){.pc{grid-template-columns:1fr} body{font-size:18px} .lead{font-size:24px}}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">사이클 11 ADR 초안 두 개</p>
+<p class="sub">지금까지 정하신 것을 결정 기록(ADR) 두 개로 묶었습니다. 승인하시면 <code>docs/adr/</code>에 Accepted로 씁니다. 원문 초안: <code>../adr-draft-0078.md</code>, <code>../adr-draft-0079.md</code> (2026-10-12)</p>
+
+<section class="card">
+<h2><span class="num">1</span>ADR-0078: 가져오기는 내 PC, 운영에는 파일 하나로</h2>
+<p class="gist">가져오기는 내 PC에서 끝까지 하고, 새 책 표와 비교용 작은 표를 파일 하나로 운영에 옮겨 바꿔 끼웁니다. 두 DB가 다르면 운영은 손대지 않습니다.</p>
+<div class="fig">
+<svg viewBox="0 0 820 220" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <g font-size="15" fill="var(--text)">
+  <rect x="20" y="30" width="160" height="70" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/><text x="34" y="60" font-weight="700">export (내 PC)</text><text x="34" y="84" font-size="13">가져오기 → 파일</text>
+  <rect x="220" y="30" width="170" height="70" rx="10" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="2"/><text x="234" y="60" font-weight="700">파일 하나</text><text x="234" y="84" font-size="13">새 표 4 + load_manifest</text>
+  <rect x="430" y="30" width="180" height="70" rx="10" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/><text x="444" y="60" font-weight="700">apply (운영)</text><text x="444" y="84" font-size="13">비교 → 넣기 → 바꿔 끼움</text>
+  <rect x="650" y="30" width="150" height="70" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/><text x="664" y="60" font-weight="700">finish (내 PC)</text><text x="664" y="84" font-size="13">같은 표로 바꿔 끼움</text>
+  </g>
+  <path d="M180 65h32M390 65h32M610 65h32" stroke="var(--text)" stroke-width="2"/>
+  <rect x="430" y="130" width="180" height="60" rx="10" fill="var(--no-bg)" stroke="var(--no)"/><text x="444" y="156" font-size="14" fill="var(--text)">다르면 mismatch</text><text x="444" y="178" font-size="13" fill="var(--muted)">운영 그대로</text>
+  <rect x="650" y="130" width="150" height="60" rx="10" fill="var(--card)" stroke="var(--muted)"/><text x="664" y="156" font-size="14" fill="var(--text)">discard</text><text x="664" y="178" font-size="13" fill="var(--muted)">실패하면 지움</text>
+  <path d="M520 100v26M725 100v26" stroke="var(--muted)" stroke-dasharray="4 3"/>
+</svg>
+</div>
+<table>
+<tr><th>담긴 결정</th><th>근거</th></tr>
+<tr><td>모드 다섯: <code>in-place</code>(기본)·<code>export</code>·<code>apply</code>·<code>finish</code>·<code>discard</code></td><td>설계 #3</td></tr>
+<tr><td>번호 잇기는 내 PC, 내 PC 바꿔 끼우기는 운영 성공 뒤</td><td>스펙 #1·#2</td></tr>
+<tr><td>비교: 도서관·연결표 해시, 책·소장 수·가장 큰 번호·시퀀스, 표 구조 → 다르면 <code>mismatch</code></td><td>스펙 #3, 설계 #1·#2</td></tr>
+<tr><td><code>pg_dump -Fc</code> 파일 하나, 컨테이너 안 18판 도구를 Java가 부름</td><td>스펙 #4, 설계 #4</td></tr>
+<tr><td>운영 반영 순서, 색인 메모리 256MB, 운영 역할 DB(5434, 상한 1GB, 처음 복사)</td><td>스펙 #5·#7, 설계 #12</td></tr>
+<tr><td>기록: 운영 반영마다 한 줄, 내 PC <code>finish</code> 뒤 한 줄, <code>export_id</code>로 이음</td><td>스펙 #6, 설계 #7</td></tr>
+<tr><td>기다리는 새 표 보호, <code>discard</code>가 남은 빈 표 지우기를 겸함</td><td>설계 #6, 점검 #1(사이클 08 회고)</td></tr>
+<tr><td><code>CatalogLoad</code>에 기능 7개, 모듈 방향 그대로</td><td>설계 #5</td></tr>
+</table>
+<p>이유 칸에는 말씀하신 문장만 넣었습니다: "가져오기를 이 서버에서 하고 그것을 따로 운영중인 서버에 따로 반영하도록 하는 건?", "사이클 11은 가져오기 따로 하기로 잡아줘". 나머지는 "제안 → 승인"으로 적었습니다. 사이클 08의 ADR-0065는 바꾸지 않고 이어 씁니다. 그때 고르지 않았던 "다른 DB에서 가져와 옮기기"를 이번에 고른 것이라 배경에 그렇게 적었습니다.</p>
+<div class="item"><h3><span class="no">1</span>ADR-0078 초안대로 Accepted로 쓴다 [안]</h3>
+<p class="rec">추천: 승인.</p></div>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>ADR-0079: 묶는 방식 셋을 설정으로, 결과는 번호까지 같아야</h2>
+<p class="gist">묶는 방식 <code>current</code>·<code>compact</code>·<code>sql</code>을 설정으로 고르고, 같은 사본으로 돌린 결과가 책·번호까지 같아야 씁니다. 묶는 규칙 자체는 바꾸지 않습니다(사이클 12).</p>
+<div class="fig">
+<svg viewBox="0 0 820 170" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <g font-size="15" fill="var(--text)">
+  <rect x="20" y="20" width="200" height="40" rx="8" fill="var(--card)" stroke="var(--muted)"/><text x="34" y="46">current 힙 6GB</text>
+  <rect x="20" y="70" width="200" height="40" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="34" y="96">compact 3GB 안팎(예상)</text>
+  <rect x="20" y="120" width="200" height="40" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="34" y="146">sql 몇백 MB(예상)</text>
+  <rect x="300" y="45" width="220" height="90" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/><text x="316" y="76" font-weight="700">결과 비교</text><text x="316" y="102" font-size="14">다른 책 0권 + 번호 같음</text><text x="316" y="124" font-size="13" fill="var(--muted)">첫 줄 읽은 순서로 책을 만듦</text>
+  <rect x="600" y="45" width="200" height="90" rx="10" fill="var(--card)" stroke="var(--muted)"/><text x="616" y="76" font-weight="700">측정 → 기본값</text><text x="616" y="102" font-size="14">43분 안, 힙 가장 작은 것</text><text x="616" y="124" font-size="13" fill="var(--muted)">그때까지 current</text>
+  </g>
+  <path d="M220 40 L292 80 M220 90 H292 M220 140 L292 100 M520 90 H592" stroke="var(--text)" stroke-width="2" fill="none"/>
+</svg>
+</div>
+<p>이유 칸: "힙 메모리도 줄일 수 있으면 줄이고 싶어", "이거 하고 … 이것도 하고 따로 설정으로서 골라서 하게 해줘 이거 다 만들고 각각 성능/기능을 다양한 관점에서 측정해 줘", 그리고 번호까지 비교는 바꾼 제안을 고르신 문장. 버린 안 여섯(넣지 않기, 하나만, 정리까지 SQL, 정확한 숫자 열쇠, 묶기 기준 같이 바꾸기)에는 말씀하신 이유가 있으면 그 문장, 없으면 "이유 미확인"을 적었습니다.</p>
+<div class="item"><h3><span class="no">2</span>ADR-0079 초안대로 Accepted로 쓴다 [안]</h3>
+<p class="rec">추천: 승인.</p></div>
+</section>
+
+<p class="foot">ADR로 쓰지 않은 것: 책 묶기 기준 시기(사이클 12로)는 범위 결정이라 <code>scope.md</code>·백로그에만 적었습니다. 이름(설정 키, 모드 값, 표·칸 이름)은 ADR 대상이 아니라 설계 문서에 적습니다.</p>
+</main>
+</body>
+</html>
