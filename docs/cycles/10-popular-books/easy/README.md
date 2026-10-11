@@ -6,3 +6,11 @@
 | [2026-10-11-category-picker-decisions.html](2026-10-11-category-picker-decisions.html) | PC·태블릿 분류 고르기 창 세 모양(가운데 창 추천, 펼쳐지는 목록, 왼쪽 옆 목록)과 고른 뒤 이동 | `../scope.md` | 없음 (펼쳐지는 목록, 고른 뒤 이동으로 결정) |
 | [2026-10-11-followup-decisions.html](2026-10-11-followup-decisions.html) | 분류 인기순 기준(9월 분류별 판매 부수), 책 누름 가운데 창(PC·태블릿·폰 그림), 이용 문의 메일 초안 | `../scope.md`, `../../../research/popular-books/kpipa.md` 2-1절 | 없음 (#1·#2는 고쳐서 다음 페이지로, #3 승인) |
 | [2026-10-11-third-decisions.html](2026-10-11-third-decisions.html) | 분류 순서에서 어린이·청소년 자리(11번째 제안)·기타 맨 뒤, 가운데 창 도서관 줄 3개 고르는 규칙 | `../scope.md` | 없음 (11번째 승인, "외 N곳" 빼고 결정) |
+| [2026-10-11-spec-decisions.html](2026-10-11-spec-decisions.html) | 스펙 세부 20가지: 받는 날·실패·다시 받기·지난 값, 분류 동률, ISBN만 맞추기·짝 저장, 카드 글·표지 실패, 가운데 창 값·조회·줄 순서, 로그인·로딩·빈 상태·오류, 신청 링크 | `../spec.md` | 없음 (16 승인, 4개는 후속 페이지로) |
+| [2026-10-11-spec-followup-decisions.html](2026-10-11-spec-followup-decisions.html) | 표지 그림이 안 열릴 때, 표지만 카드의 순위 숫자·흐림, 받기 실패 기록, 처음 넣을 때 바로 받기 | `../spec.md` R1-4·R4-4·R4-5 | 없음 (4개 승인) |
+| [2026-10-11-flow-decisions.html](2026-10-11-flow-decisions.html) | 화면 흐름 17가지: 머리 링크·주소, 넘긴 쪽 기억·밀기·세모 자리, 분류 목록·ⓘ, 창 닫기·뒤로 가기, 책 화면에서 돌아오기 (PC·태블릿·폰 그림) | `../flow.md` | 없음 (17개 승인, 1번에 설명 글 빼기 더함) |
+| [2026-10-11-design-decisions.html](2026-10-11-design-decisions.html) | 설계 13가지: 새 모듈, 짝을 볼 때마다 ISBN으로 찾기(R3-2 바뀜), 표 4개, 분류 이름 코드, 표지 핫링크·CSP, 빈 응답, 받기 시각·다시 받기·ISBN 빈 책, AC-12 요청 수, 이름, User-Agent | `../architect-proposal.md` | 없음 (12 승인, 5번은 서버가 넘겨주기로, 세부는 후속 페이지) |
+| [2026-10-11-design-followup-decisions.html](2026-10-11-design-followup-decisions.html) | 표지 미리 받아 DB에 저장·우리 주소로, 표지 보관 두 달, 책 정보 공용 캐시 10분 | `../architect-proposal.md` 결정 2·5 | 없음 (3개 승인) |
+| [2026-10-11-adr-drafts.html](2026-10-11-adr-drafts.html) | ADR 초안 4개: 0072 출처, 0073 새 모듈 popular, 0074 볼 때 ISBN 맞추기·공용 캐시, 0075 표지 미리 받아 넘겨주기 | `../architect-proposal.md`, 결정 페이지들 | 없음 (4개 승인, Accepted로 씀) |
+| [design-delta-original.html](design-delta-original.html) | design-delta.md 원본, 그림 7개 포함 | `../design-delta.md` | 설명 |
+| [2026-10-11-design-delta.html](2026-10-11-design-delta.html) | 설계 문서 한 장 요약(만드는 것, 표), 남은 작은 값 다섯: 시간 제한, 표지 칸 이름, 표지 응답 30일·404, 코드 위치는 dev, 마무리로 감 | `../design-delta.md` | 없음 (1~4 승인, 5는 인계서를 08·09 결과 뒤로) |

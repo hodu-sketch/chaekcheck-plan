@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>인기 도서 ADR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+svg{max-width:100%;height:auto;display:block}
+.mock{border:2px dashed var(--line);border-radius:12px;padding:14px;margin:10px 0;font-size:17px}
+.row{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;background:var(--card);flex-wrap:wrap}
+.tag{font-size:14px;border-radius:6px;padding:0 6px;background:var(--code-bg);color:var(--muted)}
+.okt{color:var(--ok);font-weight:500}.mut{color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="doc">
+<style>
+.adr{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;font-size:16px;margin:8px 0}
+.adr h4{margin:10px 0 4px;font-size:16px}
+.adr p,.adr li{margin:2px 0}
+</style>
+
+<p class="lead">인기 도서에서 정하신 것 중 기록으로 남길 결정 4가지의 ADR 초안입니다.</p>
+<p class="sub">ADR은 "왜 이렇게 정했나"를 나중에 찾아볼 수 있게 남기는 결정 기록입니다. 번호는 다른 세션이 만든 ADR-0071 다음인 0072부터입니다. 이유 칸에는 하신 말씀만 옮겼고, 말씀이 없던 곳은 "[이유 미확인]"으로 두었습니다. 승인하시면 파일로 쓰고 상태를 Accepted로 둡니다. 이름 짓기·화면 모양 같은 결정은 ADR 없이 설계 문서에만 둡니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>ADR-0072: 인기 도서 출처는 출판유통통합전산망 공개 통계 화면</h2>
+<div class="adr">
+<p><b>배경</b> 분야별 인기 도서를 보여 주려면 바깥 순위 데이터가 필요했다. 알라딘 OpenAPI는 2026-10-30에 기존 이용자까지 종료되고(https://blog.aladin.co.kr/openapi/17486624, 2026-10-11 확인), 도서관 정보나루는 인기 "대출" 목록이다. 출판유통통합전산망은 교보문고·예스24·알라딘·영풍문고·지역서점 종이책 판매를 합친 분야별 월간 Top50을 로그인 없이 보여 주고, 우리 서버가 화면과 같은 조회(쿠키 + 보안 토큰)로 받을 수 있음을 시험했다(2026-10-11, <code>docs/research/popular-books/kpipa.md</code>).</p>
+<h4>결정</h4>
+<p>인기 도서는 출판유통통합전산망 "주제분류별 판매량 순위"(1단계 21분류 + 전체, 지난달 Top50)와 "주제분류별 판매량 통계"(분류 순서용 판매 부수)를 매달 한 번 우리 서버가 받아 쓴다. 회원 전용 Open API는 쓰지 않는다. 화면 게시 허락은 공개 전까지 이용 문의로 받는다.</p>
+<h4>이유 (사용자 발언)</h4>
+<ul><li>"나는 알라딘/정보나루 안 할 거야 출판유통통합전산망 이걸로 해줘" (2026-10-11)</li>
+<li>"인기 도서 목록이 전자책에서 많이 비어도 괜찮아 10%만 있어도 충분해" (2026-10-11) — 종이책 순위라 전자책이 없는 책이 많아도 됨</li></ul>
+<h4>검토한 대안</h4>
+<p>A안 출판유통통합전산망 (채택). B안 알라딘 OpenAPI — 2026-10-30 종료, 채택하지 않은 이유: 위 사용자 발언. C안 도서관 정보나루 인기대출도서 — 채택하지 않은 이유: 위 사용자 발언.</p>
+<h4>결과</h4>
+<p>좋아지는 점: 서점 다섯 곳 합산 판매 순위, 로그인·키 없음. 감수하는 점: 공개 API가 아니라 화면 조회라 사이트 화면이 바뀌면 받기가 멈춤(그달은 저장하지 않고 앞 달을 보임), 게시 조건 미확인(문의 중), 종이책 ISBN으로 맞춰 9월 기준 27.8%만 전자책과 맞음.</p>
+</div>
+<div class="item"><h3><span class="no">1</span>ADR-0072 초안대로 기록 [안]</h3></div>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>ADR-0073: 인기 도서는 새 모듈 <code>popular</code>가 받기·저장·API를 맡는다</h2>
+<div class="adr">
+<p><b>배경</b> 순위 받기(바깥 사이트 HTTP·HTML 해석·매달 예약), 우리 DB 저장, 화면용 API를 둘 곳이 필요했다. <code>collection</code>은 따로 켜서 도는 가져오기 프로세스이고, <code>catalog</code> 밖으로 가져오기를 뺀 결정(ADR-0060)이 있다.</p>
+<h4>결정</h4>
+<p>새 모듈 <code>popular</code>(스키마 <code>popular</code>, 표 <code>fetch_run</code>·<code>ranking_month</code>·<code>ranking_category</code>·<code>ranking_entry</code>와 표지 저장)가 받기·예약·저장·<code>GET /api/v1/popular-books</code>를 맡는다. <code>catalog</code>와 <code>library</code>에만 기대고(<code>allowedDependencies</code>), 새 이벤트는 없다. 예약은 자기 스케줄링으로 매일 새벽 5시(KST)와 서버가 켜질 때 받을지 따진다.</p>
+<h4>이유 (사용자 발언)</h4>
+<ul><li>[이유 미확인] — 설계 제안(새 모듈) → 승인 (2026-10-11)</li>
+<li>"인기 도서도 우리 쪽 db에 저장하는 걸로 해야 해" (2026-10-11)</li></ul>
+<h4>검토한 대안</h4>
+<p>A안 새 모듈 (채택). B안 <code>collection</code> 안 — 운영 예약 작업과 따로 도는 가져오기 프로필 조건이 섞임, 채택하지 않은 이유: [이유 미확인]. C안 <code>catalog</code> 안 — ADR-0060 방향과 거꾸로, 채택하지 않은 이유: [이유 미확인].</p>
+<h4>결과</h4>
+<p>좋아지는 점: 바깥 사이트 받기 코드가 책 검색·가져오기와 섞이지 않음, 따로 떼어 내기 쉬움. 감수하는 점: 검색 계획 파라미터 읽는 코드가 하나 더 생김. 나중에 서비스로 분리할 때: ISBN 찾기와 계획 만들기가 HTTP 호출로 바뀜.</p>
+</div>
+<div class="item"><h3><span class="no">2</span>ADR-0073 초안대로 기록 [안]</h3></div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>ADR-0074: 순위 책과 우리 책은 저장하지 않고 볼 때 ISBN으로 맞추며, 책 정보는 공용 캐시</h2>
+<div class="adr">
+<p><b>배경</b> 스펙 처음 글은 "짝을 받을 때 저장하고 가져오기 뒤 다시 맞춘다"였다. 그런데 있음/없음은 이용자마다 도서관이 달라 화면을 열 때마다 책 목록에 한 번 물어야 하고, 목록 가져오기는 따로 켜졌다 끝나면 꺼지는 프로세스라 "가져오기 끝남"을 알리는 길이 까다롭다(dev <code>CatalogImportRunner</code>, 2026-10-11 읽음).</p>
+<h4>결정</h4>
+<p>짝을 저장하지 않는다. <code>catalog</code>에 공개 API <code>BookLookup.byIsbn13</code>를 더하고, 그달 순위 ISBN 약 1,050개의 책 번호와 그 책을 가진 도서관 목록을 서버 메모리에 모두가 함께 쓰는 한 벌로 둔다(10분마다, 새 달을 받으면 바로 새로 고침). 이용자별 값(내 도서관과 겹치는지)은 요청마다 계산하고 캐시하지 않는다. 제목으로는 맞추지 않는다. 스펙 R3-2 처음 글을 바꾼다.</p>
+<h4>이유 (사용자 발언)</h4>
+<ul><li>"응 그리고 캐싱 활용할 수 있으면 활용하려고 해 사용자별로가 아니라 그냥 도서 정보" (2026-10-11)</li>
+<li>제목 맞추기 안 함: 표본 30권 중 약 20권이 틀림 → ISBN만 승인 (2026-10-11). 이유 발언은 [이유 미확인]</li></ul>
+<h4>검토한 대안</h4>
+<p>A안 볼 때 찾기 + 공용 캐시 (채택). B안 저장 + 가져오기 끝 알림(이벤트) — 가져오기 프로세스가 바로 꺼져 알림이 끊길 수 있음, 채택하지 않은 이유: [이유 미확인]. C안 저장 + 하루 한 번 다시 맞춤 — 최대 하루 옛 값, 채택하지 않은 이유: [이유 미확인].</p>
+<h4>결과</h4>
+<p>좋아지는 점: 짝 표·다시 맞추기·이벤트가 없음, 가져오기 뒤 늦어도 10분 안에 반영. 감수하는 점: 캐시를 새로 고칠 때 1,050권을 한 번에 찾음(시간 재지 않음). 나중에 서비스로 분리할 때: 짝 저장으로 옮기는 것을 다시 검토.</p>
+</div>
+<div class="item"><h3><span class="no">3</span>ADR-0074 초안대로 기록 [안]</h3></div>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>ADR-0075: 표지는 순위 출처의 것을 매달 미리 받아 우리 서버가 넘겨준다</h2>
+<div class="adr">
+<p><b>배경</b> 표지는 순위 출처(출판유통통합전산망) 것을 쓰기로 했다. 그림을 이용자 브라우저가 사이트에서 바로 부르는 방법과 우리 서버가 받아 넘겨주는 방법이 있었다. 작은 표지는 한 장 약 51KB(2026-10-11 시험 1건)이다.</p>
+<h4>결정</h4>
+<p>매달 순위를 받은 뒤 그달 작은 표지를 2초 간격으로 미리 받아 <code>popular</code> DB에 저장하고(이미 있는 그림 주소는 다시 받지 않음), 화면은 우리 주소로 그림을 받는다. 최근 두 달 순위에 쓰인 표지만 남긴다. 몇 장이 실패해도 그달 순위는 성공으로 두고 그 책은 제목 글자로 보인다. 보안 설정(CSP)은 바꾸지 않는다.</p>
+<h4>이유 (사용자 발언)</h4>
+<ul><li>"출판유통통합전산망 화면의 표지를 그대로" (2026-10-11)</li>
+<li>"다른 선택 우리 서버가 그림을 받아 넘겨주기 이걸로 해줘" (2026-10-11). 그 까닭은 [이유 미확인]</li></ul>
+<h4>검토한 대안</h4>
+<p>A안 미리 받아 저장 후 넘겨주기 (채택). B안 출처 주소 그대로(핫링크, CSP에 사이트 추가) — 채택하지 않은 이유: 위 사용자 발언, 까닭 [이유 미확인]. C안 볼 때 받아 넘겨주기 — 첫 화면이 느리거나 사이트에 요청이 몰림, 채택하지 않은 이유: [이유 미확인].</p>
+<h4>결과</h4>
+<p>좋아지는 점: 화면이 늘 빠르고 사이트에 가는 요청이 한 달 한 번 새벽에 모임, 우리 주소가 사이트에 전해지지 않음. 감수하는 점: 표지를 복사해 보관함(게시 허락은 이용 문의로 확인 중), 첫 달 약 1,050건·약 35분 요청, 저장 약 100MB 안쪽.</p>
+</div>
+<div class="item"><h3><span class="no">4</span>ADR-0075 초안대로 기록 [안]</h3></div>
+</section>
+
+<p class="foot">원본: <code>docs/cycles/10-popular-books/architect-proposal.md</code>, 결정 페이지 <code>2026-10-11-design-decisions.html</code>·<code>2026-10-11-design-followup-decisions.html</code>, <code>spec.md</code>.</p>
+</main>
+</body>
+</html>

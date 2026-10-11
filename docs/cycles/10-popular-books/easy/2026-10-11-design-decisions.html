@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>인기 도서 설계</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+svg{max-width:100%;height:auto;display:block}
+.mock{border:2px dashed var(--line);border-radius:12px;padding:14px;margin:10px 0;font-size:17px}
+.row{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;background:var(--card);flex-wrap:wrap}
+.tag{font-size:14px;border-radius:6px;padding:0 6px;background:var(--code-bg);color:var(--muted)}
+.okt{color:var(--ok);font-weight:500}.mut{color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">인기 도서를 서버에 어떻게 만들지 정할 것 13가지입니다.</p>
+<p class="sub">설계 제안을 쉬운 말로 옮겼습니다. 추천은 모두 "지금 서비스 방식과 같게, 늘어나는 것이 가장 적게"입니다. 2번은 스펙에서 승인하신 글(짝을 저장해 두기)을 바꾸는 제안이라 따로 표시했습니다. 원본은 <code>architect-proposal.md</code>입니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>무엇이 어디에 생기나</h2>
+<div class="gist">서버에 "인기 도서" 칸(모듈)을 하나 새로 만들고, 이 칸이 사이트에서 순위를 받아 우리 DB에 저장하고 화면에 내줍니다. 책 검색 칸에는 "ISBN으로 책 찾기" 하나만 더합니다.</div>
+<svg viewBox="0 0 640 300" role="img" aria-label="모듈 구성">
+<defs><marker id="m1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+<rect x="230" y="10" width="180" height="44" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="244" y="30" font-size="14" font-weight="700" fill="var(--text)">화면 (웹)</text><text x="244" y="46" font-size="12" fill="var(--muted)">인기 도서 · 가운데 창</text>
+<line x1="320" y1="54" x2="320" y2="98" stroke="var(--muted)" marker-end="url(#m1)"/>
+<rect x="220" y="100" width="200" height="60" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/>
+<text x="234" y="124" font-size="14" font-weight="700" fill="var(--text)">인기 도서 칸 (새)</text><text x="234" y="144" font-size="12" fill="var(--muted)">매달 받기 · 저장 · 화면에 내줌</text>
+<line x1="420" y1="130" x2="498" y2="130" stroke="var(--muted)" marker-end="url(#m1)"/>
+<rect x="500" y="104" width="130" height="52" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="510" y="126" font-size="13" font-weight="700" fill="var(--text)">출판유통</text><text x="510" y="144" font-size="13" font-weight="700" fill="var(--text)">통합전산망</text>
+<line x1="270" y1="160" x2="170" y2="218" stroke="var(--muted)" marker-end="url(#m1)"/>
+<rect x="40" y="220" width="200" height="60" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/>
+<text x="54" y="244" font-size="14" font-weight="700" fill="var(--text)">책 검색 칸 (조금 바뀜)</text><text x="54" y="264" font-size="12" fill="var(--muted)">+ ISBN으로 책 찾기</text>
+<line x1="370" y1="160" x2="470" y2="218" stroke="var(--muted)" marker-end="url(#m1)"/>
+<rect x="400" y="220" width="200" height="60" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="414" y="244" font-size="14" font-weight="700" fill="var(--text)">도서관 칸 (그대로)</text><text x="414" y="264" font-size="12" fill="var(--muted)">내가 검색할 도서관 정하기</text>
+</svg>
+<p class="cap">노란 칸이 새로 생기거나 바뀌는 곳입니다. 가운데 창의 대출 줄은 지금 책 화면이 쓰는 대출 조회를 그대로 씁니다(그림에서 뺌).</p>
+
+<div class="item"><h3><span class="no">1</span>"인기 도서" 모듈을 새로 만듦 (이름 <code>popular</code>) [안]</h3>
+<p>예: 사이트에서 받는 코드, 매달 받는 예약, 인기 도서 표, 화면용 API가 모두 이 칸 안에 있습니다. 나중에 따로 떼어 내기도 쉽습니다.</p>
+<p class="alt"><b>다른 선택</b> ① 수집 목록 가져오기 칸(<code>collection</code>) 안에: 그 칸은 가끔 따로 켜서 도는 프로그램이라, 매일 도는 운영 서버 일과 섞입니다. ② 책 검색 칸(<code>catalog</code>) 안에: 바깥 사이트 받기를 책 검색 칸 밖으로 빼낸 예전 결정(ADR-0060)과 거꾸로입니다.</p>
+<p class="rec">추천: 새 모듈.</p></div>
+
+<div class="item"><h3><span class="no">2</span>순위 책과 우리 책의 짝은 저장하지 않고, 화면을 열 때마다 ISBN으로 찾음 [안]</h3>
+<div class="chg">스펙 R3-2 "짝은 받을 때 한 번 정해 저장하고, 책 목록을 새로 가져오면 다시 맞춘다"(승인하신 글)를 바꾸는 제안입니다. 바라는 결과(목록이 바뀌면 바로 맞음)는 같습니다.</div>
+<p>예: 인기 도서 화면을 열면 우리 서버가 순위 책 약 1,050권의 ISBN을 한 번에 책 목록에서 찾고, 그 자리에서 "내 도서관에 있나"까지 확인합니다. 15일에 전자책 목록을 새로 가져오면 그 바로 다음 화면부터 새 책이 반영됩니다.</p>
+<p>이렇게 바꾸려는 이유: 있음/없음은 사람마다 도서관이 달라 어차피 화면을 열 때마다 책 목록에 한 번 물어야 합니다. 짝을 저장해도 묻는 횟수가 줄지 않습니다. 또 지금 목록 가져오기는 따로 켜졌다가 끝나면 바로 꺼지는 프로그램이라, "가져오기가 끝났다"를 인기 도서 칸에 알리는 길을 만들기가 생각보다 까다롭습니다.</p>
+<p class="alt"><b>다른 선택</b> ① 스펙대로 저장 + 가져오기가 끝나면 알림으로 다시 맞춤: 위의 까다로운 길을 만들어야 합니다. ② 저장 + 하루 한 번 다시 맞춤: 가져온 뒤 최대 하루 옛 짝이 보입니다.</p>
+<p class="rec">추천: 열 때마다 찾기. 걸리는 시간은 개발 때 재 봅니다(색인 한 번이라 짧을 것으로 보지만 재지 않음).</p></div>
+
+<div class="item"><h3><span class="no">3</span>표 4개: 받기 기록 / 달 / 분류 / 순위 책 [안]</h3>
+<p>예: 받기 기록(언제 어느 달을 받았고 성공·실패·이유), 달(받은 달과 받은 때), 분류(그 달 분류별 판매 부수와 보이는 순서), 순위 책(분류마다 1~50위의 제목·ISBN·표지 주소). 한 달에 약 1,100줄입니다. DB가 "순위는 1~50", "한 달에 같은 순서 둘 없음"을 막아 줍니다.</p>
+<p class="alt"><b>다른 선택</b> 한 달을 통째로 한 줄(JSON)에: 쓰기는 쉽지만 이런 규칙을 DB가 막지 못합니다.</p>
+<p class="rec">추천: 표 4개.</p></div>
+
+<div class="item"><h3><span class="no">4</span>분류 이름(줄인 이름)과 고정 자리는 코드에 적어 둠 [안]</h3>
+<p>예: "00000000000000000303 = 소설", "어린이·청소년은 11번째"가 코드에 있습니다. DB에는 그 달 판매 부수와 계산한 순서만 저장합니다.</p>
+<p class="alt"><b>다른 선택</b> 분류 표를 DB에 따로: 표가 하나 더 생기지만 고정 자리 규칙은 결국 코드에 있어야 합니다. 이름을 바꿀 때 배포가 필요한 것은 둘 다 같습니다.</p>
+<p class="rec">추천: 코드.</p></div>
+
+<div class="item"><h3><span class="no">5</span>표지는 출처 사이트 주소를 그대로 씀, 그러려고 보안 설정에 그 사이트를 더함 [안]</h3>
+<p>예: 화면이 <code>https://bnk.kpipa.or.kr/files/isbn/…jpg</code>를 바로 불러옵니다. 우리 서버는 그림을 복사하거나 저장하지 않습니다. 지금 서비스는 보안 설정(CSP: 어디서 그림을 불러와도 되는지 정한 목록)이 우리 주소만 허락하므로, 이 사이트 하나를 더합니다. 우리 주소가 그 사이트에 전해지지 않게 합니다.</p>
+<p class="alt"><b>다른 선택</b> 우리 서버가 그림을 받아 넘겨주기: 표지를 복사해 보관하게 되어 이용 문의 답이 오기 전엔 더 조심스럽고, 코드가 늘어납니다.</p>
+<p class="rec">추천: 주소 그대로. 사이트가 다른 곳에서 그림 부르는 것을 막는지는 개발 때 시험합니다(막히면 모두 제목 글자로 보임).</p></div>
+
+<div class="item"><h3><span class="no">6</span>순위가 아직 없을 때 서버는 "정상, 빈 목록"으로 답함 [안]</h3>
+<p>예: 처음 받기 전이면 서버가 "달 없음, 분류 없음"을 정상으로 보내고, 화면이 "아직 인기 도서를 준비하고 있어요"를 보입니다. 오류 안내 줄과 섞이지 않습니다.</p>
+<p class="alt"><b>다른 선택</b> "없음" 오류로 답하기: 정상 상태를 오류처럼 다루게 됩니다.</p>
+<p class="rec">추천: 빈 목록.</p></div>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>매달 받기의 세부</h2>
+<div class="gist">서버가 켜질 때와 매일 새벽 5시에 "받아야 하나"를 한 번씩 따져 보고, 받아야 할 때만 받습니다.</div>
+<table>
+<tr><th>날</th><th>새벽 5시에 하는 일 (10월 예)</th></tr>
+<tr><td>10월 1~2일</td><td>받지 않음 (9월 값이 아직 다 안 들어옴)</td></tr>
+<tr><td>10월 3일</td><td>9월 받기. 성공하면 끝</td></tr>
+<tr><td>10월 4일</td><td>3일에 실패했으면 다시 받기</td></tr>
+<tr><td>10월 5일~</td><td>두 번 실패했으면 그달은 앞 달(8월) 그대로, 기록에 남음</td></tr>
+</table>
+<p class="cap">요청은 순위 22번 + 판매 부수 21번을 2초 간격으로, 약 1분 반 걸립니다. 서버 시작이나 다른 일을 막지 않게 따로 돌립니다.</p>
+
+<div class="item"><h3><span class="no">7</span>판단 시각은 매일 새벽 5시(한국 시각), 서버가 켜질 때도 한 번 [안]</h3>
+<p>예: 3일 새벽 5시에 9월 값을 받습니다. 서버가 3~4일에 꺼져 있었다면 켜질 때 받습니다.</p>
+<p class="alt"><b>다른 선택</b> 다른 시각: 이용자가 적은 새벽이면 어느 때든 됩니다. 원하시는 시각이 있으면 "기타"에 적어 주세요.</p>
+<p class="rec">추천: 새벽 5시.</p></div>
+
+<div class="item"><h3><span class="no">8</span>순위가 하나도 없을 때 켜질 때 받기가 실패하면, 받을 때까지 매일 새벽 5시에 다시 [안]</h3>
+<p>예: 10월 20일 첫 배포 때 사이트가 멈춰 실패하면 21일 새벽 5시, 그래도 실패하면 22일 새벽 5시에 다시 합니다. 스펙에는 이 경우가 없어 새로 정하는 것입니다.</p>
+<p class="alt"><b>다른 선택</b> 다음 달 3일까지 기다림: 그동안 "준비하고 있어요"만 보입니다.</p>
+<p class="rec">추천: 매일 다시.</p></div>
+
+<div class="item"><h3><span class="no">9</span>첫 배포가 그달 1~2일이면 일단 받고, 3일에 한 번 더 받아 바꿈 [안]</h3>
+<p>예: 11월 1일에 처음 올리면 바로 10월 값을 받지만 10월 31일 값이 빠져 있을 수 있습니다. 11월 3일에 10월을 다시 받아 바꿉니다. 이것도 스펙에 없던 경우입니다.</p>
+<p class="rec">추천: 3일에 다시.</p></div>
+
+<div class="item"><h3><span class="no">10</span>순위 책 중 ISBN이 비었거나 틀린 책은 그대로 저장하고 "전자책 없음"(흐림) [안]</h3>
+<p>예: 50권 중 한 권의 ISBN 칸이 비어 있어도 그달 받기는 성공으로 하고, 그 책은 흐리게 보입니다. 받기 기록에 그런 책 수를 남깁니다. "목록을 제대로 못 뽑으면 저장 안 함"(승인하신 규칙)은 목록 자체가 50권 미만이거나 화면 모양이 바뀐 경우에만 씁니다.</p>
+<p class="alt"><b>다른 선택</b> 한 권이라도 ISBN이 틀리면 그달 전체 실패: 사이트 쪽 작은 빈칸 하나로 한 달이 통째로 밀립니다.</p>
+<p class="rec">추천: 그 책만 흐리게.</p></div>
+
+<div class="item"><h3><span class="no">11</span>스펙 AC-12의 요청 수를 "45건"(세션 여는 요청 2건 포함)으로 고침 [안]</h3>
+<p>예: 사이트에 들어가 보안 값을 받는 요청이 순위 화면·판매량 화면에 한 번씩 더 있어 실제로는 2 + 22 + 21 = 45건입니다. 스펙 글은 "43건"이라 실제와 맞게 고칩니다.</p>
+<p class="rec">추천: 45건으로 고침.</p></div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>이름과 사이트에 밝힐 우리 정보</h2>
+<div class="gist">새로 짓는 이름은 지금 서비스의 이름 짓는 방식을 따르고, 사이트에 보내는 요청에는 우리 서비스 이름과 주소를 밝힙니다.</div>
+<table>
+<tr><th>무엇</th><th>제안 이름</th></tr>
+<tr><td>모듈·DB 칸 묶음(스키마)</td><td><code>popular</code></td></tr>
+<tr><td>화면용 API 주소</td><td><code>/api/v1/popular-books</code></td></tr>
+<tr><td>표</td><td><code>fetch_run</code>(받기 기록), <code>ranking_month</code>, <code>ranking_category</code>, <code>ranking_entry</code></td></tr>
+<tr><td>책 검색 칸에 더하는 것</td><td><code>BookLookup.byIsbn13</code></td></tr>
+<tr><td>"전체" 분류 코드</td><td><code>ALL</code></td></tr>
+<tr><td>실패 이유 값</td><td><code>session_failed</code>, <code>request_rejected</code>, <code>format_changed</code>, <code>too_few_books</code>, <code>network_error</code></td></tr>
+</table>
+
+<div class="item"><h3><span class="no">12</span>위 표의 이름들로 함 [안]</h3>
+<p>예: 개발자는 이 이름으로 코드와 표를 만듭니다. 화면에는 보이지 않습니다. 바꾸고 싶은 이름이 있으면 "기타"에 적어 주세요.</p>
+<p class="rec">추천: 위 이름.</p></div>
+
+<div class="item"><h3><span class="no">13</span>사이트에 보내는 요청에 "책첵"과 서비스 주소를 밝힘 [안]</h3>
+<p>예: 요청마다 붙는 자기소개 글(User-Agent)에 "chaekcheck (+서비스 주소)"를 넣어, 사이트 운영자가 누가 부르는지 알 수 있게 합니다. 서비스 주소는 배포 때 정해지면 넣습니다. 개인 연락처는 넣지 않습니다.</p>
+<p class="alt"><b>다른 선택</b> 브라우저처럼 보이는 글: 공공기관 사이트에 정체를 숨기는 셈이라 권하지 않습니다.</p>
+<p class="rec">추천: 서비스 이름과 주소.</p></div>
+</section>
+
+<p class="foot">원본: <code>docs/cycles/10-popular-books/architect-proposal.md</code> (dev 코드 읽어 확인, 2026-10-11). 근거: <code>spec.md</code>, <code>flow.md</code>, <code>docs/research/popular-books/kpipa.md</code>.</p>
+</main>
+</body>
+</html>

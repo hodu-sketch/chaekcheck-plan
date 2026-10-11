@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>인기 도서 화면 흐름</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+svg{max-width:100%;height:auto;display:block}
+.mock{border:2px dashed var(--line);border-radius:12px;padding:14px;margin:10px 0;font-size:17px}
+.row{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;background:var(--card);flex-wrap:wrap}
+.tag{font-size:14px;border-radius:6px;padding:0 6px;background:var(--code-bg);color:var(--muted)}
+.okt{color:var(--ok);font-weight:500}.mut{color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="doc">
+<style>
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.cov{position:relative;height:64px;border-radius:5px;background:var(--code-bg);border:1px solid var(--line);display:grid;place-items:center;color:var(--muted);font-size:12px}
+.cov.dim{opacity:.4}
+.rk{position:absolute;left:3px;top:3px;background:var(--text);color:var(--card);border-radius:4px;font-size:11px;padding:0 4px;font-weight:700}
+.car{display:flex;align-items:center;gap:8px}.car .g3{flex:1}
+.arw{flex:none;font-size:20px;color:var(--accent);width:20px;text-align:center}.arw.off{visibility:hidden}
+.hdr{display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line);padding:6px 4px;font-size:15px;flex-wrap:wrap}
+.hdr .lk{color:var(--accent);font-weight:700;border-bottom:2px solid var(--accent)}
+.screen{border:2px dashed var(--line);border-radius:12px;padding:10px;margin:8px auto;background:var(--bg)}
+.ttl{display:flex;justify-content:space-between;align-items:center;font-size:15px;margin:6px 0}
+.dd{border:1px solid var(--line);border-radius:8px;background:var(--card);width:170px;margin-left:auto;font-size:13px}
+.dd div{padding:2px 8px;border-bottom:1px solid var(--line)}
+.sheet{border:1px solid var(--line);border-radius:14px 14px 0 0;padding:8px 12px;background:var(--card);font-size:14px}
+.modal{border:2px solid var(--accent);border-radius:12px;padding:12px;background:var(--card);font-size:14px;line-height:1.5}
+.lib{display:flex;justify-content:space-between;border:1px solid var(--line);border-radius:8px;padding:3px 8px;margin:4px 0}
+.st{font-size:12px;border-radius:6px;padding:0 6px;background:var(--ok-bg);color:var(--ok)}.st.w{background:var(--warn-bg);color:var(--warn)}
+.bt{display:inline-block;border:1px solid var(--accent);color:var(--accent);border-radius:8px;padding:0 8px;font-size:13px}
+.tip{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:8px 12px;font-size:14px;max-width:330px;margin-left:auto}
+</style>
+
+<p class="lead">인기 도서 화면 흐름에서 정할 것 17가지입니다.</p>
+<p class="sub">앞서 정하신 모양(3×3, 세모, 분류 순서, 가운데 창, 신청 안내)은 그대로 옮겼습니다. 여기에는 들어가는 곳, 주소, 닫는 방법, 뒤로 가기처럼 그 사이를 잇는 것만 있습니다. 그림은 자리와 순서만 보여 주며 실제 모양이 아닙니다. 머리 부분은 dev 코드의 지금 머리(로고 "책첵" + 로그인 버튼)를 보고 그렸습니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>화면 사이의 길</h2>
+<svg viewBox="0 0 660 300" role="img" aria-label="인기 도서 화면 흐름">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+<rect x="10" y="125" width="110" height="50" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/>
+<text x="22" y="148" font-size="14" font-weight="700" fill="var(--text)">머리 (바뀜)</text><text x="22" y="166" font-size="12" fill="var(--muted)">"인기 도서" 링크</text>
+<line x1="120" y1="150" x2="168" y2="150" stroke="var(--muted)" marker-end="url(#ar)"/>
+<rect x="170" y="115" width="140" height="70" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/>
+<text x="182" y="140" font-size="14" font-weight="700" fill="var(--text)">S13 인기 도서</text><text x="182" y="158" font-size="12" fill="var(--muted)">3×3, 세모, 분류 칸</text><text x="182" y="174" font-size="12" fill="var(--muted)">ⓘ 도움말</text>
+<line x1="240" y1="115" x2="240" y2="72" stroke="var(--muted)" marker-end="url(#ar)"/>
+<rect x="170" y="20" width="140" height="50" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/>
+<text x="182" y="42" font-size="14" font-weight="700" fill="var(--text)">분류 목록</text><text x="182" y="60" font-size="12" fill="var(--muted)">폰: 아래 창</text>
+<line x1="310" y1="135" x2="378" y2="80" stroke="var(--muted)" marker-end="url(#ar)"/>
+<text x="318" y="96" font-size="12" fill="var(--ok)">전자책 있음</text>
+<rect x="380" y="40" width="150" height="56" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/>
+<text x="392" y="64" font-size="14" font-weight="700" fill="var(--text)">S14 가운데 창</text><text x="392" y="84" font-size="12" fill="var(--muted)">폰: 아래 창</text>
+<line x1="310" y1="170" x2="378" y2="222" stroke="var(--muted)" marker-end="url(#ar)"/>
+<text x="318" y="212" font-size="12" fill="var(--muted)">흐린 책</text>
+<rect x="380" y="200" width="150" height="56" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/>
+<text x="392" y="224" font-size="14" font-weight="700" fill="var(--text)">S15 신청 안내</text><text x="392" y="244" font-size="12" fill="var(--muted)">작은 창</text>
+<line x1="530" y1="58" x2="558" y2="40" stroke="var(--muted)" marker-end="url(#ar)"/>
+<rect x="560" y="14" width="92" height="42" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="570" y="32" font-size="13" font-weight="700" fill="var(--text)">S3 책 화면</text><text x="570" y="48" font-size="11" fill="var(--muted)">책 검색 &gt;&gt;</text>
+<line x1="530" y1="80" x2="558" y2="98" stroke="var(--muted)" marker-end="url(#ar)"/>
+<rect x="560" y="80" width="92" height="42" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="570" y="98" font-size="13" font-weight="700" fill="var(--text)">도서관 사이트</text><text x="570" y="114" font-size="11" fill="var(--muted)">새 창</text>
+</svg>
+<p class="cap">노란 칸이 새로 생기거나 바뀌는 곳입니다. S3 책 화면과 도서관 사이트는 지금 그대로입니다. 창(S14·S15)을 닫으면 S13의 같은 자리로 돌아옵니다.</p>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>들어가는 곳: 머리의 "인기 도서"</h2>
+<div class="gist">모든 화면 머리에서 로고 오른쪽에 "인기 도서" 글자 링크를 둡니다.</div>
+<p><b>PC</b></p>
+<div class="screen" style="max-width:640px"><div class="hdr"><b>책첵</b><span class="mut" style="font-size:13px">전자도서관 대출 가능 확인</span><span class="lk">인기 도서</span><span style="margin-left:auto">[로그인]</span></div></div>
+<p><b>폰</b></p>
+<div class="screen" style="max-width:360px"><div class="hdr"><b>책첵</b><span class="lk">인기 도서</span><span style="margin-left:auto">[로그인]</span></div></div>
+<p class="cap">폰에서는 지금처럼 머리 폭이 좁아 "전자도서관 대출 가능 확인" 글이 먼저 줄어듭니다(지금 동작).</p>
+
+<div class="item"><h3><span class="no">1</span>로고 오른쪽, 로그인 버튼 왼쪽에 "인기 도서" 글자 링크 [안]</h3>
+<p>예: 어느 화면에서든 머리의 "인기 도서"를 누르면 인기 도서 화면이 열립니다. 인기 도서 화면에 있을 때는 이 글자에 밑줄이 그어집니다.</p>
+<p class="alt"><b>다른 선택</b> 검색 화면(S1)에만 두기: 책 화면에서 인기 도서로 가려면 로고를 눌러 검색 화면을 거쳐야 합니다.</p>
+<p class="rec">추천: 모든 화면 머리.</p></div>
+
+<div class="item"><h3><span class="no">2</span>약관·개인정보 화면에서는 빼기 [안]</h3>
+<p>예: 지금 약관(S8)·개인정보(S9) 화면은 머리에 로그인 버튼도 없습니다. 같은 이유로 "인기 도서"도 뺍니다. 그 밖의 화면(검색, 책, 내 도서관, 서비스 안내)에는 보입니다.</p>
+<p class="rec">추천: 빼기.</p></div>
+
+<div class="item"><h3><span class="no">3</span>폰에서도 같은 자리, 같은 글자 [안]</h3>
+<p>예: 폰 머리에 "책첵 · 인기 도서 · [로그인]"이 한 줄로 보입니다.</p>
+<p class="alt"><b>다른 선택</b> 폰은 메뉴 버튼(☰) 안에: 지금 서비스에 메뉴 버튼이 없어 새로 만들어야 합니다.</p>
+<p class="rec">추천: 같은 자리.</p></div>
+
+<div class="item"><h3><span class="no">4</span>주소는 <code>/popular</code> [안]</h3>
+<p>예: 주소창에 chaekcheck 주소 뒤 <code>/popular</code>로 바로 열 수 있고 즐겨찾기에 넣을 수 있습니다. 지금 다른 화면 주소도 영어(<code>/books</code>, <code>/my-libraries</code>)입니다.</p>
+<p class="rec">추천: <code>/popular</code>.</p></div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>인기 도서 화면 (S13)</h2>
+<div class="gist">분류마다 3×3 하나가 한 화면을 채우고, 각 분류에서 넘긴 쪽은 다른 분류에 갔다 와도 그대로입니다.</div>
+<p><b>PC (1280px)</b></p>
+<div class="screen" style="max-width:600px">
+<div class="ttl"><b>인기 도서 · 2026년 9월 판매 순위</b><span>[분류: 소설 ▾] ⓘ</span></div>
+<div class="mut" style="font-size:14px">소설</div>
+<div class="car"><span class="arw">◀</span><div class="g3">
+<div class="cov"><span class="rk">10</span>표지</div><div class="cov dim"><span class="rk">11</span>표지</div><div class="cov"><span class="rk">12</span>표지</div>
+<div class="cov"><span class="rk">13</span>표지</div><div class="cov"><span class="rk">14</span>표지</div><div class="cov dim"><span class="rk">15</span>표지</div>
+<div class="cov"><span class="rk">16</span>표지</div><div class="cov"><span class="rk">17</span>표지</div><div class="cov">책 제목</div>
+</div><span class="arw">▶</span></div>
+<div class="mut" style="font-size:13px;margin-top:6px">출처: 출판유통통합전산망 (종이책 판매 합산) · 2026년 9월 · 10월 3일 받음</div>
+</div>
+<p class="cap">"소설"에서 ▶를 한 번 누른 뒤(10~18위)입니다. 18위 칸은 표지 그림이 안 열려 제목이 보이는 경우입니다.</p>
+<p><b>태블릿 (768px)</b> — PC와 같은 모양, 폭만 좁아집니다.</p>
+<p><b>폰 (375px)</b></p>
+<div class="screen" style="max-width:340px">
+<div class="ttl"><b>인기 도서 · 9월</b><span>[전체 ▾] ⓘ</span></div>
+<div class="mut" style="font-size:14px">전체</div>
+<div class="car" style="gap:2px"><span class="arw off">◀</span><div class="g3">
+<div class="cov"><span class="rk">1</span>표지</div><div class="cov"><span class="rk">2</span>표지</div><div class="cov dim"><span class="rk">3</span>표지</div>
+<div class="cov"><span class="rk">4</span>표지</div><div class="cov"><span class="rk">5</span>표지</div><div class="cov"><span class="rk">6</span>표지</div>
+<div class="cov"><span class="rk">7</span>표지</div><div class="cov dim"><span class="rk">8</span>표지</div><div class="cov"><span class="rk">9</span>표지</div>
+</div><span class="arw">▶</span></div>
+</div>
+<p class="cap">첫 쪽이라 왼쪽 세모가 없습니다.</p>
+
+<div class="item"><h3><span class="no">5</span>각 분류에서 넘긴 쪽은 다른 분류에 갔다 와도 그대로 [안]</h3>
+<p>예: "소설"을 10~18위로 넘긴 뒤 아래 "문학·인물"까지 내렸다가 다시 올라오면 "소설"은 여전히 10~18위입니다. 화면을 새로 열면 모두 1~9위부터입니다.</p>
+<p class="alt"><b>다른 선택</b> 다른 분류로 가면 1~9위로 돌아감: 보던 곳을 잃습니다.</p>
+<p class="rec">추천: 그대로.</p></div>
+
+<div class="item"><h3><span class="no">6</span>폰·태블릿에서는 좌우로 밀어서도 넘김 [안]</h3>
+<p>예: 폰에서 3×3을 왼쪽으로 밀면 ▶를 누른 것과 같습니다. 세모도 그대로 있습니다.</p>
+<p class="alt"><b>다른 선택</b> 세모만: 만들기 단순하지만 폰에서는 미는 동작을 먼저 해 보는 사람이 많습니다(확인 못 함, 일반적인 경험에서 하는 말).</p>
+<p class="rec">추천: 밀기도 됨.</p></div>
+
+<div class="item"><h3><span class="no">7</span>PC·태블릿은 세모를 격자 바깥 좌우에 [안]</h3>
+<p>예: PC 그림처럼 3×3 왼쪽·오른쪽 바깥에 ◀ ▶가 있어 표지를 가리지 않습니다.</p>
+<p class="rec">추천: 바깥.</p></div>
+
+<div class="item"><h3><span class="no">8</span>폰은 세모를 격자 좌우 끝에 작게 [안]</h3>
+<p>예: 폰 그림처럼 폭을 표지에 거의 다 쓰고, 세모는 양 끝에 좁게 둡니다.</p>
+<p class="alt"><b>다른 선택</b> 세모를 격자 아래에 "◀ 1/6 ▶"로: 표지가 더 커지지만 손가락을 아래로 옮겨야 합니다.</p>
+<p class="rec">추천: 좌우 끝.</p></div>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>분류 목록과 도움말</h2>
+<div class="gist">분류 목록에서는 지금 분류를 진하게 보이고, 바깥을 누르거나 Esc로 닫습니다. ⓘ는 옆에 작은 말풍선으로 뜹니다.</div>
+<p><b>PC 분류 목록</b></p>
+<div class="screen" style="max-width:600px"><div class="ttl"><b>인기 도서</b><span>[분류: 소설 ▴] ⓘ</span></div>
+<div class="dd"><div>전체</div><div><b>소설</b></div><div>문학·인물</div><div>사회</div><div>… (아래로 18개 더)</div></div></div>
+<p><b>ⓘ 도움말 (PC)</b></p>
+<div class="tip">출처: 출판유통통합전산망 (교보문고·예스24·알라딘·영풍문고·지역서점 종이책 판매 합산) · 2026년 9월 · 10월 3일 받음<br>종이책 순위라서 전자책이 없는 책도 있어요.<br>흐린 책은 내 도서관에 전자책이 없어요.<br>있음/없음은 검색 화면에서 고른 지역·범위 기준이에요.</div>
+
+<div class="item"><h3><span class="no">9</span>분류 목록에서 지금 분류를 진하게 [안]</h3>
+<p>예: "소설"을 보는 중에 목록을 열면 "소설"이 진하게 보입니다.</p>
+<p class="rec">추천: 진하게.</p></div>
+
+<div class="item"><h3><span class="no">10</span>분류 목록 닫기: 바깥 누름, Esc(PC), ⓧ(폰) [안]</h3>
+<p>예: PC에서 목록을 열었다가 마음이 바뀌면 화면 다른 곳을 누르거나 Esc를 누릅니다. 폰 아래 창은 ⓧ나 창 바깥을 누릅니다.</p>
+<p class="rec">추천: 그대로.</p></div>
+
+<div class="item"><h3><span class="no">11</span>ⓘ 마지막 줄에 "있음/없음은 검색 화면에서 고른 지역·범위 기준이에요" [안]</h3>
+<p>예: 흐린 책이 많아 이상하다고 느낀 사람이 ⓘ를 열면 검색 화면에서 지역·범위를 바꾸면 달라진다는 것을 압니다.</p>
+<p class="rec">추천: 넣기. 앞 세 줄은 이미 정한 내용입니다.</p></div>
+
+<div class="item"><h3><span class="no">12</span>ⓘ는 옆에 작은 말풍선, 폰은 아래 창 [안]</h3>
+<p>예: PC에서 ⓘ를 누르면 그림처럼 바로 아래에 말풍선이 뜨고, 바깥을 누르면 닫힙니다. 폰은 분류 창처럼 아래에서 올라옵니다.</p>
+<p class="rec">추천: 그대로.</p></div>
+</section>
+
+<section class="card">
+<h2><span class="num">5</span>가운데 창(S14)과 신청 안내(S15) 닫기</h2>
+<div class="gist">창은 ⓧ·바깥·Esc로 닫고, 폰에서 뒤로 가기를 누르면 창만 닫힙니다.</div>
+<p><b>PC 가운데 창</b></p>
+<div class="screen" style="max-width:520px;background:var(--code-bg)"><div class="modal">
+<div style="text-align:right">ⓧ</div>
+<div style="display:flex;gap:10px"><div class="cov" style="width:70px;height:100px;flex:none">표지</div><div style="flex:1">
+<b>침묵의 봄</b> <span class="bt">책 검색 &gt;&gt;</span><br><span class="mut">레이첼 카슨 · 에코리브르</span>
+<div class="lib"><span>○○구립도서관</span><span class="st">대출 가능</span></div>
+<div class="lib"><span>◇◇시립도서관</span><span class="st">구독형 · 바로 대출</span></div>
+<div class="lib"><span>△△교육청도서관</span><span class="st w">대출 중 · 예약 2</span></div>
+</div></div></div></div>
+<p><b>폰 신청 안내 (S15)</b></p>
+<div class="screen" style="max-width:340px;background:var(--code-bg)"><div class="sheet"><div style="text-align:right">ⓧ</div><b>악의</b><br>아직 내 도서관에 전자책이 없어요. 이용하는 전자도서관 사이트에서 희망도서로 신청해 보세요.</div></div>
+
+<div class="item"><h3><span class="no">13</span>가운데 창은 Esc(PC)로도 닫힘 [안]</h3>
+<p>예: ⓧ와 바깥 누름(이미 정함)에 더해 키보드 Esc로도 닫힙니다.</p>
+<p class="rec">추천: Esc 더함.</p></div>
+
+<div class="item"><h3><span class="no">14</span>폰에서 뒤로 가기를 누르면 창만 닫힘 [안]</h3>
+<p>예: 폰에서 가운데 창(아래 창)을 연 채 뒤로 가기를 누르면 창이 닫히고 인기 도서 화면은 그대로 있습니다. 검색 화면으로 나가지 않습니다.</p>
+<p class="alt"><b>다른 선택</b> 뒤로 가기는 앞 화면으로: 창을 닫으려다 인기 도서에서 나가 버립니다.</p>
+<p class="rec">추천: 창만 닫힘.</p></div>
+
+<div class="item"><h3><span class="no">15</span>신청 안내에는 책 제목 한 줄을 위에 [안]</h3>
+<p>예: 폰 그림처럼 "악의" 제목 아래 안내 문장이 보입니다. 표지는 넣지 않습니다.</p>
+<p class="alt"><b>다른 선택</b> 문장만: 어느 책 이야기인지 알기 어렵습니다.</p>
+<p class="rec">추천: 제목 한 줄.</p></div>
+
+<div class="item"><h3><span class="no">16</span>신청 안내는 PC·태블릿에서 작은 가운데 창, 폰은 아래 창, ⓧ·바깥으로 닫힘 [안]</h3>
+<p>예: 가운데 창(S14)과 같은 방식으로 뜨고 닫힙니다. 크기만 작습니다.</p>
+<p class="rec">추천: 같은 방식.</p></div>
+</section>
+
+<section class="card">
+<h2><span class="num">6</span>책 화면에서 돌아오기</h2>
+<div class="gist">"책 검색 &gt;&gt;"로 책 화면에 갔다가 뒤로 가기를 누르면, 보던 분류·쪽·스크롤 자리로 돌아옵니다.</div>
+<div class="item"><h3><span class="no">17</span>책 화면에서 뒤로 가기 → 인기 도서의 보던 분류·쪽·스크롤 자리 [안]</h3>
+<p>예: "소설" 10~18위에서 「침묵의 봄」의 책 검색 &gt;&gt;를 눌러 책 화면을 본 뒤 뒤로 가면, 다시 "소설" 10~18위가 보입니다. 가운데 창은 닫힌 상태입니다.</p>
+<p class="alt"><b>다른 선택</b> 인기 도서 맨 위 "전체" 1~9위로: 만들기는 쉽지만 보던 곳을 다시 찾아야 합니다.</p>
+<p class="rec">추천: 보던 자리.</p></div>
+</section>
+
+<p class="foot">원본: <code>docs/cycles/10-popular-books/flow.md</code>. 근거: <code>spec.md</code>, dev <code>web/src/components/AppLayout.tsx</code>·<code>main.tsx</code> (2026-10-11 읽음).</p>
+</main>
+</body>
+</html>

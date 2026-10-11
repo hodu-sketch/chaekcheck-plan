@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>표지와 캐시</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+svg{max-width:100%;height:auto;display:block}
+.mock{border:2px dashed var(--line);border-radius:12px;padding:14px;margin:10px 0;font-size:17px}
+.row{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;background:var(--card);flex-wrap:wrap}
+.tag{font-size:14px;border-radius:6px;padding:0 6px;background:var(--code-bg);color:var(--muted)}
+.okt{color:var(--ok);font-weight:500}.mut{color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">표지를 우리 서버가 넘겨주는 방법과, 책 정보 캐시의 세부 세 가지입니다.</p>
+<p class="sub">설계 13개 중 12개는 승인대로 적었습니다. 표지는 "우리 서버가 그림을 받아 넘겨주기"로 정하셨고, 2번에 "책 정보는 공용으로 캐시"를 더하셨습니다. 그에 따라 생긴 세부입니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>표지: 언제 받아 어디에 두나</h2>
+<div class="gist">매달 순위를 받을 때 표지 약 1,050장을 함께 미리 받아 우리 DB에 저장하고, 화면은 우리 서버에서 그림을 받는 것을 제안합니다.</div>
+<p>2026-10-11에 표지 한 장을 시험으로 받아 보았습니다: 큰 그림 76KB, 작은 그림(<code>s_</code>) 51KB. 다른 사이트 주소를 Referer로 붙여도 열렸습니다. 작은 그림으로 한 달 약 1,050장 × 51KB ≈ 54MB입니다.</p>
+<table>
+<tr><th></th><th>미리 받기 (추천)</th><th>볼 때 받기</th></tr>
+<tr><td>사이트에 가는 요청</td><td>한 달에 한 번 몰아서 약 1,050건 (2초 간격이면 약 35분, 새벽)</td><td>이용자가 처음 보는 표지마다. 보지 않는 표지는 안 받음</td></tr>
+<tr><td>화면 속도</td><td>늘 빠름 (우리 서버에서 바로)</td><td>처음 보는 사람은 느림. 2초 간격을 지키면 9장에 최대 18초</td></tr>
+<tr><td>만들 것</td><td>받기에 표지 단계 하나 더</td><td>요청이 몰릴 때 줄 세우기</td></tr>
+</table>
+
+<div class="item"><h3><span class="no">1</span>매달 순위를 받은 뒤 작은 표지를 2초 간격으로 미리 받아 DB에 저장, 화면은 우리 주소로 받음 [안]</h3>
+<p>예: 3일 새벽 5시에 순위(약 1분 반)를 받고 이어서 표지 약 1,050장(약 35분)을 받습니다. 이미 저장된 표지(같은 그림 주소)는 다시 받지 않아, 둘째 달부터는 새로 들어온 책만 받습니다. 표지 몇 장이 실패해도 그달 순위는 성공으로 두고 그 책은 제목 글자로 보입니다. 화면은 <code>/api/v1/popular-books/covers/…</code> 같은 우리 주소로 그림을 받고, 브라우저가 오래 저장해 둡니다. 보안 설정(CSP)은 바꾸지 않습니다.</p>
+<p class="alt"><b>다른 선택</b> 볼 때 받기: 위 표처럼 첫 화면이 느리거나, 사이트에 동시에 여러 요청을 보내게 됩니다.</p>
+<p class="rec">추천: 미리 받기. 큰 그림 대신 작은 그림이 3×3에 충분한지는 개발 때 봅니다.</p></div>
+
+<div class="item"><h3><span class="no">2</span>표지는 최근 두 달에 쓰인 것만 남기고 그보다 오래된 것은 지움 [안]</h3>
+<p>예: 11월에 10월 순위를 받으면 10월·9월 순위에 나오는 표지는 남기고, 8월에만 나왔던 표지는 지웁니다. 표지 저장 크기가 약 100MB 안에 머뭅니다. 순위 자체(제목·ISBN)는 지난 달도 남깁니다(승인하신 R1-5).</p>
+<p class="alt"><b>다른 선택</b> ① 모두 남김: 한 달에 새 표지만큼(수십 MB) 계속 늘어납니다. ② 이번 달 것만: 받기가 실패해 앞 달을 보일 때 표지가 없을 수 있습니다.</p>
+<p class="rec">추천: 최근 두 달.</p></div>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>책 정보 공용 캐시</h2>
+<div class="gist">그달 순위와 "ISBN별 우리 책 번호·그 책을 가진 도서관 목록"을 서버 메모리에 모두가 함께 쓰는 한 벌로 두고, 화면을 열 때는 내 도서관과 겹치는지만 계산합니다.</div>
+<p>지금 서비스도 도서관 사이트 결과를 3분 동안 메모리에 저장해 두고 함께 씁니다(ADR-0006). 이번 캐시도 같은 방식입니다. 이용자별 값(내 도서관)은 캐시에 넣지 않습니다.</p>
+<div class="item"><h3><span class="no">3</span>공용 캐시는 10분마다 새로 고침, 새 달을 받으면 바로 새로 고침 [안]</h3>
+<p>예: 15일에 전자책 목록을 새로 가져오면, 늦어도 10분 안에 인기 도서의 "있음/없음"이 새 목록을 따릅니다. 3일에 새 달을 받으면 그 즉시 새 순위가 보입니다. 메모리는 약 1,050권 × (번호 + 도서관 목록)이라 수 MB 안쪽으로 봅니다(재지 않음).</p>
+<p class="alt"><b>다른 선택</b> ① 1시간: DB에 덜 묻지만 가져오기 뒤 최대 1시간 옛 값. ② 캐시 없이 매번 DB: 가장 단순하지만 화면을 열 때마다 1,050권을 찾습니다.</p>
+<p class="rec">추천: 10분.</p></div>
+</section>
+
+<p class="foot">원본: <code>docs/cycles/10-popular-books/architect-proposal.md</code> 결정 2·5. 앞 페이지: <code>2026-10-11-design-decisions.html</code>. 표지 크기는 2026-10-11 시험(표지 한 장, 큰·작은 그림 각 1건).</p>
+</main>
+</body>
+</html>
