@@ -105,6 +105,12 @@ rdoSearchType=bookType&txtDate=202609&searchCtg=<분류ID>&strTypeArr=&searchOrd
 - 순위 목록 HTML에는 순위 숫자 칸(`.badge-label-rank`)이 없음. 목록 순서 = 순위 [확정] (202609 응답 확인). 책마다 `.type`(예: 종이책) 칸이 더 있음
 - 표지 주소는 `img[data-originalsrc]` = `/files/isbn/YYYY/MM/DD/<id>.jpg`(큰 것), `src` = 같은 폴더 `s_<id>.jpg`(작은 것), 사이트 주소 뒤에 붙여 엶
 
+### 토큰 하나로 두 화면 (2026-10-11 23시경 KST 시험)
+
+- 순위 화면(`adiStatsCtgSaleRank`)을 열어 받은 쿠키·`m_sCsrf` 토큰으로 판매량 조회(`adiStatsCtgSaleCnt/search`)를 보내도 `200`, 소설 202609 = 883,478부(2-1절 값과 같음) [확정] (시험 1건)
+- 그래서 세션 여는 GET은 한 번이면 됨(요청 44건). 설계의 "45건 이하"(AC-12) 안에 듦
+- 걸린 시간: 화면 GET 0.30초, 판매량 POST 0.19초. 설계의 읽기 시간 제한 10초보다 훨씬 짧음
+
 ## 3. 우리 전자책 목록과 맞추기
 
 - 서비스 `catalog.book.isbn13`은 종이책 ISBN [확정] (`docs/current/data-model.md`, 묶기 기준 `../ebook-catalog/same-book-isbn.md` 1절). 이 목록의 ISBN도 종이책 ISBN이라 같은 값으로 바로 맞출 수 있음

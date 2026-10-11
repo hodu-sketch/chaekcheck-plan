@@ -6,6 +6,8 @@
 
 - 다음 단계: `/cycle-close`(검토·`docs/current/` 반영·인계서)는 사이클 08·09 결과를 본 뒤에 함 [확정] (사용자: "인계서는 cycle 08, 09 결과 보고 만들어", 2026-10-11)
 
+- 분류 빼기(2026-10-11): 만화·어린이·청소년·기타·의학·스포츠를 받지도 보이지도 않음 (사용자 승인, 2026-10-11, 분류 빼기 #1·#2: 만화·어린이·청소년, 기타·의학·스포츠 — 9월 기준 ISBN으로 맞춘 책이 0~3권). ADR-0072 결정 글의 "1단계 21분류"는 이 결정으로 16분류가 됨(ADR은 고치지 않음, 받는 출처는 그대로)
+
 ## 구조 그림
 
 ### 모듈 구성도
@@ -25,7 +27,7 @@ flowchart TB
     availability --> catalog
     availability --> library
   end
-  popular -->|"세션 GET 2 + POST 43 + 표지 GET (2초 간격, 매달)"| kpipa
+  popular -->|"세션 GET 1~2 + POST 33 + 표지 GET (2초 간격, 매달)"| kpipa
   web -->|"GET /api/v1/popular-books (+ 계획 파라미터)"| popular
   web -->|"GET covers/{coverId}"| popular
   web -->|"GET /api/v1/books/{bookId} (S14)"| catalog
@@ -48,14 +50,14 @@ sequenceDiagram
     J-->>T: 건너뜀
   else 받음
     J->>K: GET 순위 화면 → JSESSIONID + m_sCsrf
-    loop 22개 분류, 2초 간격
+    loop 17개 분류(전체 + 16), 2초 간격
       J->>K: POST /adiStatsCtgSaleRank/search
     end
     J->>K: GET 판매량 화면 → 토큰
-    loop 21개 분류, 2초 간격
+    loop 16개 분류, 2초 간격
       J->>K: POST /adiStatsCtgSaleCnt/search
     end
-    alt 검증 통과 (각 50권, 부수 21건)
+    alt 검증 통과 (각 50권, 부수 16건)
       J->>DB: 한 트랜잭션: 그 달 지우고 month·category·entry 넣기
       loop 새 표지만, 2초 간격
         J->>K: GET /files/isbn/…/s_<id>.jpg
@@ -88,7 +90,7 @@ sequenceDiagram
     P-->>W: 200 month=null, categories=[] → "아직 인기 도서를 준비하고 있어요"
   else 있음
     P->>P: available = libraryIds ∩ 계획 ≠ ∅ (요청마다, 캐시 안 함)
-    P-->>W: 200 분류 22개 × 50권 {rank, title, coverUrl, bookId, available}
+    P-->>W: 200 분류 17개 × 50권 {rank, title, coverUrl, bookId, available}
   end
   W->>P: GET covers/{coverId} (브라우저가 오래 저장)
   Note over W: 그림이 안 열리면 제목 글자, available=false면 흐림
@@ -178,7 +180,7 @@ classDiagram
     libraryIds
   }
   RankingMonth "1" --> "1" FetchRun : 저장한 받기
-  RankingMonth "1" -- "22" RankingCategory
+  RankingMonth "1" -- "17" RankingCategory
   RankingCategory "1" -- "1..50" RankingEntry
   RankingEntry "0..*" ..> "0..1" Cover : coverPath
   RankingCategory ..> PopularCategory : categoryCode (코드 상수)
@@ -196,10 +198,10 @@ classDiagram
 - `popular` 패키지 `com.chaekcheck.popular`, 안쪽 `internal/fetch`(세션·파서), `internal/schedule`, `internal/store`(JdbcClient), `internal/cache`, `internal/web`(컨트롤러, 계획 파라미터 파서, 오류) — 예시, 안쪽 위치는 dev가 정함 [확정] (사용자 승인, 2026-10-11, design-delta 확인)
 - `@ApplicationModule(allowedDependencies = {"catalog", "library"})` [확정] (설계 #1)
 - JPA 엔티티 없음, JdbcClient (지금 관례)
-- 분류 사이트 ID·줄인 이름·고정 자리(어린이·청소년 11, 기타 21)는 코드 상수 enum `PopularCategory` [확정] (설계 #4). 22개 값은 조사 문서 2절 표와 spec R2-1
+- 분류 사이트 ID·줄인 이름은 코드 상수 enum `PopularCategory` [확정] (설계 #4). 17개(전체 + 소설, 문학·인물, 사회, 언어, 철학·종교, 경제·경영, 자기계발, 예술, 컴퓨터·IT, 생활·취미, 과학, 역사, 기술·공학, 법, 참고·정보, 지리·환경), 고정 자리 없음 (사용자 승인, 2026-10-11, 분류 빼기 #1·#2: 만화·어린이·청소년, 기타·의학·스포츠 — 9월 기준 ISBN으로 맞춘 책이 0~3권). 사이트 ID는 조사 문서 2절 표
 - 예약: `popular` 설정 클래스에 자기 `@EnableScheduling`(지금 `RefreshTokenCleanup`의 것은 로그인이 꺼지면 꺼짐). 받기는 단일 스레드 실행기에서, 실행 중 표시(`AtomicBoolean`)로 겹침 막음. 운영 서버 1대 [확정] (module-map) [확정] (설계 #7)
 - 판단 `shouldFetch(today)` (Asia/Seoul): 서버 켜질 때(`ApplicationReadyEvent`)와 매일 05:00 → ① 저장된 달 없으면 받음 ② 대상 = 지난달 ③ 그 달이 다음 달 3일 00:00 뒤에 저장됐으면 안 받음 ④ 3일 이후 그 달 실패가 2번이면 안 받음 ⑤ 오늘이 3일 이후면 받음 [확정] (설계 #7~#9, spec R1-2·R1-3·R1-6)
-- 분류 순서: "전체" 0, 나머지 19개를 판매 부수 큰 순(같으면 사이트 ID 순)으로 1~21번 중 11·21번을 비우고 채움, 어린이·청소년 11, 기타 21. 받을 때 계산해 `display_order`로 저장 [확정] (spec R2-2·R2-3)
+- 분류 순서: "전체" 0, 나머지 16개를 판매 부수 큰 순(같으면 사이트 ID 순)으로 1~16. 받을 때 계산해 `display_order`로 저장 [확정] (spec R2-2)
 - 공용 캐시: 최근 달 순위(분류·책)와 ISBN별 `(bookId, libraryIds)` 한 벌. 10분마다, 새 달 저장 직후 바로 새로 고침. 이용자별 계산(계획과 겹치는지)은 캐시하지 않음 [확정] (ADR-0074, 설계 후속 #3)
 - 설정 [확정 이름] (설계 #12) / 값: `chaekcheck.popular.fetch.enabled`(기본 true, `collection-import` 프로필·시험 false), `cron` `"0 0 5 * * *"` [확정], `zone` `Asia/Seoul`, `request-interval` 2초 [확정 2초 이상, 값 승인], `connect-timeout` 5초, `read-timeout` 10초 [확정] (사용자 승인, 2026-10-11, design-delta 확인) (개발 때 측정 뒤 바꿀 수 있음), `base-url` `https://bnk.kpipa.or.kr` [확정], `user-agent` `chaekcheck (+<서비스 주소>)` [확정] (설계 #13, 주소는 배포 때)
 
@@ -233,7 +235,7 @@ erDiagram
     date target_month PK,FK
     text category_code PK "ALL 또는 사이트 ID"
     bigint sales_copies "NULL(ALL), >= 0"
-    smallint display_order "0..21"
+    smallint display_order "0..16"
   }
   RANKING_ENTRY {
     date target_month PK,FK
@@ -275,7 +277,7 @@ erDiagram
 | `ranking_month.fetched_at` | timestamptz | NOT NULL | 출처 줄 "받은 날" | [확정] |
 | `ranking_category (target_month, category_code)` | date, text | PK, FK `ranking_month` ON DELETE CASCADE | `ALL` 또는 20자리 사이트 ID | [확정] |
 | `ranking_category.sales_copies` | bigint | `ALL`이면 NULL, 아니면 `>= 0` | 판매 부수 | [확정] |
-| `ranking_category.display_order` | smallint | 0..21, UNIQUE `(target_month, display_order)` | 계산한 순서 | [확정] |
+| `ranking_category.display_order` | smallint | 0..16, UNIQUE `(target_month, display_order)` | 계산한 순서 | [확정] |
 | `ranking_entry (target_month, category_code, rank)` | | PK, FK `ranking_category` ON DELETE CASCADE, `rank` 1..50 | | [확정] |
 | `ranking_entry.isbn13` | text | NULL, CHECK `^97[89][0-9]{10}$` | 비었거나 틀리면 NULL → 흐림 | [확정] (설계 #10) |
 | `ranking_entry.title` | text | NOT NULL | | [확정] |
@@ -289,7 +291,7 @@ erDiagram
 | `cover.fetched_at` | timestamptz | NOT NULL | | [확정] (사용자 승인, 2026-10-11, design-delta 확인) |
 
 - 지우기: 받기 성공 뒤, 최근 두 달 `ranking_entry.cover_path`에 없는 `cover` 줄을 지움 [확정] (설계 후속 #2). 순위 표는 지우지 않음 [확정] (spec R1-5)
-- 크기: 한 달 분류 22줄 + 책 1,100줄, 표지 약 1,050장 × 51KB ≈ 54MB, 두 달 ≈ 100MB 안쪽(계산값)
+- 크기: 한 달 분류 17줄 + 책 850줄, 표지 최대 850장 × 51KB ≈ 43MB(겹치는 책은 더 적음), 두 달 ≈ 90MB 안쪽(계산값)
 - 저자 칸 없음 [확정] (spec 입력과 출력)
 - Liquibase: 새 changelog `db/changelog/popular/001-popular-schema.yaml`(예시, 경로는 dev가 정함 [확정] (사용자 승인, 2026-10-11, design-delta 확인)), 기존 changeset 수정 없음. `updated_at` 칸이 없어 트리거 없음(ADR-0068 대상 아님)
 
@@ -343,8 +345,8 @@ erDiagram
 
 | 대상 | 방식 | 제한·키 관리 | 실패 시 동작 | 상태 태그 |
 |---|---|---|---|---|
-| 출판유통통합전산망 순위·판매량 화면 | `java.net.http.HttpClient` + `CookieManager`, GET 화면 → `m_sCsrf` → POST(`X-CSRF-TOKEN`, `X-Requested-With`, `Referer`), Jsoup 1.23.2(이미 의존성)로 해석. 조회 서버(GET만)는 쓰지 않음 | 키 없음. 한 번에 45건, 2초 이상 간격, 매달 1회(+재시도). User-Agent `chaekcheck (+<서비스 주소>)` | 그달 저장 안 함, `fetch_run` FAILED + `log.error`, 앞 달 그대로, 다음 날 다시 | 방식 [확정] (조사 2026-10-11), 시간 제한 [확정] (사용자 승인, 2026-10-11, design-delta 확인) |
-| 같은 사이트 표지 그림 | GET `/files/isbn/…/s_<id>.jpg`, 새 경로만 | 2초 간격, 첫 달 약 1,050건(약 35분), 다음 달부터 새 책만 | 그 표지만 건너뜀(그달 순위는 성공), 화면은 제목 글자 | [확정] (ADR-0075) |
+| 출판유통통합전산망 순위·판매량 화면 | `java.net.http.HttpClient` + `CookieManager`, GET 화면 → `m_sCsrf` → POST(`X-CSRF-TOKEN`, `X-Requested-With`, `Referer`), Jsoup 1.23.2(이미 의존성)로 해석. 조회 서버(GET만)는 쓰지 않음 | 키 없음. 한 번에 35건 이하, 2초 이상 간격, 매달 1회(+재시도). User-Agent `chaekcheck (+<서비스 주소>)` | 그달 저장 안 함, `fetch_run` FAILED + `log.error`, 앞 달 그대로, 다음 날 다시 | 방식 [확정] (조사 2026-10-11), 시간 제한 [확정] (사용자 승인, 2026-10-11, design-delta 확인) |
+| 같은 사이트 표지 그림 | GET `/files/isbn/…/s_<id>.jpg`, 새 경로만 | 2초 간격, 첫 달 최대 850건(약 28분), 다음 달부터 새 책만 | 그 표지만 건너뜀(그달 순위는 성공), 화면은 제목 글자 | [확정] (ADR-0075) |
 | 게시 허락 | 이용 문의 메일 (사용자가 보냄) | | 답에 따라 출처 문구·표지 사용 고침 | [확인 필요] |
 
 ## 결정 기록
@@ -358,10 +360,10 @@ erDiagram
 
 | 항목 | 왜 | 확인 방법 | 막는 단계 |
 |---|---|---|---|
-| 순위 화면 토큰이 판매량 화면에도 통하는지 | 요청 수 | API 호출 시험 (개발 때) | 없음(화면마다 다시 받는 것으로 설계) |
+| ~~순위 화면 토큰이 판매량 화면에도 통하는지~~ → 통함 (2026-10-11 시험, 조사 문서 "토큰 하나로 두 화면"). 세션 GET 한 번이면 됨(34건, AC-12 "35건 이하" 안). 두 번 열어도 무방 — dev가 정함 | 요청 수 | 끝남 | 없음 |
 | 연결 5초·읽기 10초가 맞는지 | 시간 제한 | API 호출 시험 (개발 때) | 없음 |
 | 작은 표지(`s_`)가 3×3에 충분한지 | 화질 | 프로토타입 | 없음 |
-| 캐시 새로 고칠 때 ISBN 1,050개 찾는 시간, 공용 캐시 메모리 | 성능 | 프로토타입 (`EXPLAIN ANALYZE`, 측정) | 없음 |
+| 캐시 새로 고칠 때 ISBN 최대 850개 찾는 시간, 공용 캐시 메모리 | 성능 | 프로토타입 (`EXPLAIN ANALYZE`, 측정) | 없음 |
 | 서비스 DB ISBN 일치율(수집 DB 27.8%와 비슷한지) | AC-6 기대값 | 프로토타입 | 없음 |
 | S14가 첫 묶음만 쓰는 것이 `useHoldings`로 되는지 | 흐름 3 | dev 확인 (인계서) | 없음 |
 | 순위·표지 게시 허락 | 공개 | 공식 문의 (사용자) | 공개(배포) |

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>분류 빼기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+svg{max-width:100%;height:auto;display:block}
+.mock{border:2px dashed var(--line);border-radius:12px;padding:14px;margin:10px 0;font-size:17px}
+.row{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;background:var(--card);flex-wrap:wrap}
+.tag{font-size:14px;border-radius:6px;padding:0 6px;background:var(--code-bg);color:var(--muted)}
+.okt{color:var(--ok);font-weight:500}.mut{color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">전자책이 거의 없는 분류를 인기 도서에서 뺄지 정해 주세요.</p>
+<p class="sub">시안의 흐린 책은 실제 우리 수집 DB(도서관 사이트에서 모은 전자책 목록)에서 같은 ISBN을 찾지 못한 책입니다. 다만 수집 DB의 줄 가운데 약 68%(YES24 번호, 북큐브 번호 등)는 코드에서 ISBN이 나오지 않아(<code>same-book-isbn.md</code> 3절), 흐린 책 중 일부는 실제로는 어느 도서관에 있을 수 있습니다. "확실히 있음"만 밝게 보이는 셈입니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>분류별로 몇 권이 "있음"인가 (2026년 9월)</h2>
+<div class="gist">만화 0권, 어린이·청소년 3권입니다. 그 밖에 기타 0권, 의학 2권, 스포츠 3권도 거의 없습니다.</div>
+<table>
+<tr><th>분류</th><th>있음 / 50</th><th>분류</th><th>있음 / 50</th></tr>
+<tr><td>전체</td><td>15</td><td>예술</td><td>13</td></tr>
+<tr><td>소설</td><td>20</td><td>컴퓨터·IT</td><td>17</td></tr>
+<tr><td>문학·인물</td><td>19</td><td style="color:var(--no)"><b>어린이·청소년</b></td><td style="color:var(--no)"><b>3</b></td></tr>
+<tr><td>사회</td><td>8</td><td>생활·취미</td><td>12</td></tr>
+<tr><td>언어</td><td>16</td><td>과학</td><td>30</td></tr>
+<tr><td style="color:var(--no)"><b>만화</b></td><td style="color:var(--no)"><b>0</b></td><td>역사</td><td>16</td></tr>
+<tr><td>철학·종교</td><td>28</td><td>기술·공학</td><td>6</td></tr>
+<tr><td>경제·경영</td><td>22</td><td style="color:var(--warn)">의학</td><td style="color:var(--warn)">2</td></tr>
+<tr><td>자기계발</td><td>28</td><td>법</td><td>17</td></tr>
+<tr><td>지리·환경</td><td>22</td><td style="color:var(--warn)">스포츠</td><td style="color:var(--warn)">3</td></tr>
+<tr><td>참고·정보</td><td>10</td><td style="color:var(--warn)">기타</td><td style="color:var(--warn)">0</td></tr>
+</table>
+<p class="cap">수집 DB 사본에서 ISBN(교보식 코드)으로 맞춘 값, 오디오북 제외, 2026-10-11. 내 도서관 기준이 아니라 "모은 도서관 어디든 한 곳" 기준이라 실제 화면에서는 더 적게 나옵니다. 달마다 바뀝니다.</p>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>무엇을 뺄까</h2>
+<div class="gist">말씀하신 만화·어린이·청소년을 빼는 것을 먼저 여쭙고, 같은 이유로 기타·의학·스포츠도 뺄지 따로 여쭙니다.</div>
+<div class="chg">앞서 정하신 "어린이·청소년은 11번째에 고정"이 없어집니다. 빼면 그 분류는 받지도 않아 요청이 분류 하나에 2건씩 줄어듭니다(순위 1 + 판매 부수 1). "전체" 목록에는 그 분류 책도 그대로 섞여 나옵니다(사이트의 전체 순위이기 때문).</div>
+
+<div class="item"><h3><span class="no">1</span>"만화"와 "어린이·청소년" 분류를 인기 도서에서 뺌 [안]</h3>
+<p>예: 분류 목록과 화면에 두 분류가 없고, 21개(전체 + 19)만 보입니다. 순서는 전체 → 판매 부수 순, 기타는 맨 뒤 그대로입니다. 요청은 44건 → 40건입니다.</p>
+<p class="alt"><b>다른 선택</b> 그대로 두기: 펼치면 거의 다 흐린 화면이 50위까지 이어집니다.</p>
+<p class="rec">추천: 뺌 (말씀하신 대로).</p></div>
+
+<div class="item"><h3><span class="no">2</span>"기타"(0권)·"의학"(2권)·"스포츠"(3권)도 뺌 [안]</h3>
+<p>예: 위 둘과 함께 다섯 분류를 빼면 17개(전체 + 16)가 남습니다. 기타를 빼면 "기타는 맨 뒤" 규칙도 없어지고 모두 판매 부수 순이 됩니다.</p>
+<p class="alt"><b>다른 선택</b> 위 둘만 빼기: 의학·스포츠·기타는 판매 부수가 적어 이미 목록 뒤쪽(16·18·21번째)에 있어 눈에 덜 띕니다.</p>
+<p class="rec">추천: 이것도 뺌. 같은 이유(거의 다 흐림)이고, 이번 사이클은 "있는 책을 찾는 화면"이 목적이기 때문입니다. 남겨 두고 싶으시면 미승인을 눌러 주세요.</p></div>
+</section>
+
+<p class="foot">근거: 시안 데이터(2026년 9월 순위 22개 × 50권, 수집 DB ISBN 맞춤 292권), <code>docs/research/ebook-catalog/same-book-isbn.md</code> 3절. 원본: <code>docs/cycles/10-popular-books/spec.md</code> R2.</p>
+</main>
+</body>
+</html>

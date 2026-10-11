@@ -15,3 +15,4 @@
 | [design-delta-original.html](design-delta-original.html) | design-delta.md 원본, 그림 7개 포함 | `../design-delta.md` | 설명 |
 | [2026-10-11-design-delta.html](2026-10-11-design-delta.html) | 설계 문서 한 장 요약(만드는 것, 표), 남은 작은 값 다섯: 시간 제한, 표지 칸 이름, 표지 응답 30일·404, 코드 위치는 dev, 마무리로 감 | `../design-delta.md` | 없음 (1~4 승인, 5는 인계서를 08·09 결과 뒤로) |
 | [2026-10-11-cycle08-align-decisions.html](2026-10-11-cycle08-align-decisions.html) | 사이클 08 중간 요약과 맞추기: 폰 창은 08 결정을 따름, 아래 창 닫는 방법 08과 같게, 개발 때 잴 기준 | `../scope.md` | 없음 (1은 "인기 도서는 별개"로, 2·3 승인) |
+| [2026-10-11-category-drop-decisions.html](2026-10-11-category-drop-decisions.html) | 전자책이 거의 없는 분류 빼기: 만화·어린이·청소년, 기타·의학·스포츠 (9월 분류별 있음 수) | `../spec.md` R2 | 없음 (두 개 승인, 17개로) |
