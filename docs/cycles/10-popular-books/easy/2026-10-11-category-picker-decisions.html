@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>분류 고르기 창</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+svg{max-width:100%;height:auto;display:block}
+.mock{border:2px dashed var(--line);border-radius:12px;padding:14px;margin:10px 0;font-size:17px}
+.row{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;background:var(--card);flex-wrap:wrap}
+.tag{font-size:14px;border-radius:6px;padding:0 6px;background:var(--code-bg);color:var(--muted)}
+.okt{color:var(--ok);font-weight:500}.mut{color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="doc">
+<style>
+.btns{display:grid;gap:6px;margin:8px 0}.b4{grid-template-columns:repeat(4,1fr)}.b3{grid-template-columns:repeat(3,1fr)}
+.btn{border:1px solid var(--line);border-radius:8px;padding:4px 6px;text-align:center;font-size:14px;background:var(--card)}
+.btn.on{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.modal{border:2px solid var(--accent);border-radius:12px;padding:12px 14px;background:var(--card);max-width:520px;margin:8px auto}
+.dd{border:1px solid var(--line);border-radius:8px;background:var(--card);width:220px;margin-left:auto;font-size:14px}
+.dd div{padding:3px 10px;border-bottom:1px solid var(--line)}
+.side{display:flex;gap:10px}.side .list{flex:none;width:150px;font-size:14px;border-right:1px solid var(--line)}
+.side .list div{padding:2px 6px}.side .list .on{background:var(--accent-bg);font-weight:700}
+.ph{flex:1;border:1px dashed var(--line);border-radius:8px;display:grid;place-items:center;color:var(--muted);min-height:120px}
+</style>
+
+<p class="lead">PC·태블릿에서 분류 칸을 눌렀을 때의 모양을 골라 주세요.</p>
+<p class="sub">폰은 이미 정한 대로 아래에서 올라오는 창입니다. 그림은 자리와 순서만 보여 주며 실제 모양이 아닙니다. 분류 이름은 앞 페이지에서 제안한 줄인 이름으로 그렸습니다(아직 정하지 않음).</p>
+
+<section class="card">
+<h2><span class="num">1</span>세 가지 모양</h2>
+<div class="gist">22개 분류를 버튼으로 한눈에 보여 주는 가운데 창을 추천합니다. 폰의 아래 창과 내용이 같아 한 번만 만들면 됩니다.</div>
+
+<p><b>가운데 창 (추천)</b> — 분류 칸을 누르면 화면 가운데에 분류 버튼 22개가 뜹니다. PC는 4줄로, 태블릿은 3줄로 놓습니다.</p>
+<div class="modal"><b>도서 분류</b> <span style="float:right">ⓧ</span>
+<div class="btns b4"><span class="btn on">전체</span><span class="btn">소설</span><span class="btn">문학·인물</span><span class="btn">예술</span><span class="btn">역사</span><span class="btn">철학·종교</span><span class="btn">언어</span><span class="btn">사회</span><span class="btn">경제·경영</span><span class="btn">법</span><span class="btn">과학</span><span class="btn">의학</span><span class="btn">지리·환경</span><span class="btn">기술·공학</span><span class="btn">컴퓨터·IT</span><span class="btn">자기계발</span><span class="btn">생활·취미</span><span class="btn">스포츠</span><span class="btn">만화</span><span class="btn">어린이·청소년</span><span class="btn">참고·정보</span><span class="btn">기타</span></div></div>
+<p class="cap">PC 그림입니다. 지금 보고 있는 분류가 진하게 보입니다. 바깥을 누르거나 ⓧ를 누르면 닫힙니다.</p>
+<p class="alt"><b>좋은 점</b> 22개가 스크롤 없이 한 번에 보입니다. <b>드는 것</b> 창 하나를 새로 만들지만 폰 아래 창과 같은 버튼 묶음을 씁니다.</p>
+
+<p><b>펼쳐지는 목록</b> — 분류 칸 바로 아래로 목록이 펼쳐집니다.</p>
+<div class="mock" style="max-width:620px;margin:0 auto"><div class="row"><span><b>인기 도서</b></span><span>[분류: 전체 ▴] ⓘ</span></div>
+<div class="dd"><div><b>전체</b></div><div>소설</div><div>문학·인물</div><div>예술</div><div>역사</div><div>… (아래로 내려 17개 더)</div></div></div>
+<p class="alt"><b>좋은 점</b> 가장 흔한 모양이고 만들기 쉽습니다. <b>드는 것</b> 22줄이라 목록 안에서 다시 내려야 합니다. 3×3 격자를 가립니다.</p>
+
+<p><b>왼쪽 옆 목록</b> — PC에서는 분류 칸 대신 왼쪽에 분류 이름이 늘 보입니다. 태블릿은 폭이 좁아 가운데 창을 씁니다.</p>
+<div class="mock" style="max-width:620px;margin:0 auto"><div class="side"><div class="list"><div class="on">전체</div><div>소설</div><div>문학·인물</div><div>예술</div><div>역사</div><div>…</div></div><div class="ph">3×3 격자</div></div></div>
+<p class="alt"><b>좋은 점</b> 누를 필요 없이 늘 보이고, 아래로 내릴 때 지금 분류가 표시됩니다. <b>드는 것</b> 3×3 격자가 그만큼 좁아집니다. PC와 태블릿이 다른 모양이 됩니다.</p>
+
+<div class="item">
+<h3><span class="no">1</span>PC·태블릿 모두 가운데 창 (분류 버튼 22개) [안]</h3>
+<p>예: PC에서 "분류: 전체 ▾"를 누르면 가운데 창에 버튼 22개가 뜨고, "역사"를 누릅니다.</p>
+<p class="rec">추천: 가운데 창. 다른 모양을 원하시면 "기타"에 "펼쳐지는 목록" 또는 "왼쪽 옆 목록"이라고 적어 주세요.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>분류를 고른 뒤</h2>
+<div class="gist">창이 닫히고 그 분류의 3×3 첫 쪽(1~9위)으로 화면이 내려갑니다.</div>
+<div class="item">
+<h3><span class="no">2</span>고르면 창이 닫히고 그 분류 1~9위로 이동 [안]</h3>
+<p>예: "역사"를 누르면 창이 닫히고, 화면이 아래로 내려가 "역사" 1~9위가 한 화면을 채웁니다. 분류 칸 글씨도 "역사"로 바뀝니다. 폰도 같습니다.</p>
+<p class="alt"><b>다른 선택</b> 고른 분류만 남기고 다른 분류는 숨기기: 아래로 내려 다음 분류로 가는 방식(이미 정함)과 맞지 않습니다.</p>
+<p class="rec">추천: 그 분류로 이동.</p>
+</div>
+</section>
+
+<p class="foot">원본: <code>docs/cycles/10-popular-books/scope.md</code> ("PC·태블릿 분류 고르기 창"). 앞 페이지: <code>2026-10-11-scope-decisions.html</code></p>
+</main>
+</body>
+</html>

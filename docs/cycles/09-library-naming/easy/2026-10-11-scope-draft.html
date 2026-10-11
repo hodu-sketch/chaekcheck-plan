@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 09 범위 초안</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--text:#1d1d1f;--sub:#55555a;--line:#e2e2df;--key:#eef4ff;--keyline:#3b6fd8;--ok:#1f8a4c;--okbg:#e8f6ee;--warn:#a66a00;--warnbg:#fff4dc;--no:#c0392b;--nobg:#fdecea;--code:#f0f0ed}
+:root[data-theme="dark"]{--bg:#17181a;--card:#222326;--text:#ececec;--sub:#a8a8ad;--line:#3a3b3f;--key:#1e2a40;--keyline:#7aa2f7;--ok:#5cc98a;--okbg:#1d3326;--warn:#f0b84f;--warnbg:#3a2f17;--no:#f08072;--nobg:#3d2220;--code:#2c2d31}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",sans-serif;font-size:20px;line-height:1.65;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:860px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:34px;line-height:1.35;margin:0 0 8px;text-wrap:balance}
+h2{font-size:25px;line-height:1.4;margin:0 0 14px;text-wrap:balance}
+p,li,td{text-wrap:pretty}
+.top{background:var(--key);border-left:6px solid var(--keyline);padding:18px 20px;border-radius:10px;margin:18px 0 28px;font-size:22px;font-weight:500}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 22px 18px;margin:0 0 22px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--keyline);color:#fff;font-weight:700;margin-right:8px;font-size:18px}
+.lead{background:var(--key);padding:12px 16px;border-radius:8px;margin:0 0 16px;font-weight:500}
+.lead.warn{background:var(--warnbg)}
+table{width:100%;border-collapse:collapse;font-size:18px}
+th,td{border-bottom:1px solid var(--line);padding:10px 8px;text-align:left;vertical-align:top}
+th{color:var(--sub);font-weight:500}
+code{background:var(--code);padding:1px 6px;border-radius:5px;font-size:.85em;word-break:break-all}
+.item{display:flex;gap:14px;margin:0 0 18px}
+.item svg{flex:0 0 30px;margin-top:4px;stroke:var(--keyline);fill:none;stroke-width:2}
+.item h3{font-size:21px;margin:0 0 4px}
+.item p{margin:0 0 6px}
+.ex{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:10px 0}
+.pill{border:1px solid var(--line);border-radius:8px;padding:6px 12px;background:var(--bg)}
+.tag{color:var(--sub);font-size:.85em}
+.q{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:0 0 12px}
+.q b{display:block;margin-bottom:4px}
+.small{color:var(--sub);font-size:17px}
+.theme{position:fixed;top:12px;right:12px;font:inherit;font-size:15px;padding:6px 12px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer}
+svg text{font-family:"Noto Sans KR",sans-serif}
+@media (max-width:600px){body{font-size:19px}h1{font-size:28px}.card{padding:18px 14px}table{font-size:16px}}
+</style>
+</head>
+<body>
+<button class="theme" onclick="var r=document.documentElement;r.dataset.theme=r.dataset.theme==='dark'?'light':'dark'">어둡게 / 밝게</button>
+<main>
+<h1>세 문서를 사이클 09<br>범위 초안으로 옮겼습니다</h1>
+<p class="small">2026-10-11 · 커밋은 아직 하지 않음</p>
+
+<div class="top">사이클 09는 "도서관 이름에서 괄호를 떼고, 업체·대출 방식을 이름 옆에 따로 보여 주기"입니다. 범위만 미리 잡아 두었고, 개발로 넘기는 것은 사이클 08 개발이 끝난 뒤입니다.</div>
+
+<!-- 1 -->
+<section class="card">
+<h2><span class="num">1</span>보내 주신 세 문서는 어디에 들어갔나</h2>
+<p class="lead">두 문서는 이미 계획에 들어가 있었습니다. 새로 한 일은 "이름 규칙" 인계 문서를 사이클 09 범위로 만든 것입니다.</p>
+<table>
+<tr><th>문서</th><th>무엇이 들어 있나</th><th>어디에 들어갔나</th></tr>
+<tr><td><code>collection-by-vendor-2026-10-09.md</code></td><td>업체별로 어떤 도서관을 어떻게 받았는지, 교보 대여·혼합 230곳을 빼기로 한 결정</td><td>빼기 결정은 이미 사이클 08에서 처리함(ADR-0067). 이번에는 각 도서관의 대출 방식을 채울 때 근거로 연결만 함</td></tr>
+<tr><td><code>library-naming.md</code></td><td>이름 규칙을 바꾸자는 조사와 결정 6개</td><td>이미 문서 목록(<code>reference-index.md</code>)에 있음. 사이클 09 범위의 근거로 연결</td></tr>
+<tr><td><code>library-naming-handoff.md</code></td><td>다음 사이클이 이것 하나로 시작하도록 모은 인계 문서(ADR 초안 포함)</td><td><b>사이클 09 범위 초안</b>의 바탕</td></tr>
+</table>
+</section>
+
+<!-- 2 -->
+<section class="card">
+<h2><span class="num">2</span>사이클 09에서 무엇이 바뀌나</h2>
+<p class="lead">지금은 같은 기관의 두 번째 사이트에만 괄호가 붙고, 붙는 말도 제각각입니다. 이걸 모든 도서관에 같은 꼴로 바꿉니다. 6개 모두 이미 승인하신 결정입니다.</p>
+<div class="ex">
+  <span class="pill">○○도서관 (YES24)</span><span>→</span>
+  <span class="pill">○○도서관 <span class="tag">· YES24 · 소장</span></span>
+</div>
+<div class="ex">
+  <span class="pill">부산광역시 전자도서관(구독)</span><span>→</span>
+  <span class="pill">부산광역시 전자도서관 <span class="tag">· 북큐브 · 구독</span></span>
+</div>
+
+<div class="item"><svg viewBox="0 0 30 30"><rect x="4" y="6" width="22" height="18" rx="3"/><path d="M9 12h12M9 18h8"/></svg>
+<div><h3>이름과 분류</h3><p>이름에는 기관 정식 이름만 남기고 업체·대출 방식 괄호를 뗍니다(약 279곳, 숫자는 dev가 다시 셈). <code>(주)</code>처럼 기관 이름의 일부인 괄호는 남깁니다. 모든 도서관에 업체(교보·YES24·북큐브·알라딘·통합 포털·자체)와 대출 방식(소장·구독·대여·혼합)을 채웁니다.</p></div></div>
+
+<div class="item"><svg viewBox="0 0 30 30"><circle cx="11" cy="15" r="7"/><circle cx="19" cy="15" r="7"/></svg>
+<div><h3>겹침 규칙</h3><p>지금은 이름만 겹치지 않으면 됩니다. 앞으로는 이름·업체·대출 방식 셋이 모두 같을 때만 겹친 것으로 봅니다. 그래서 "동대문구립도서관 · 교보"와 "동대문구립도서관 · YES24"가 함께 있을 수 있습니다. 그래도 겹치는 3곳(부산 구독 사이트, 양산 두 곳, 부여대왕초 두 곳)은 따로 처리합니다.</p></div></div>
+
+<div class="item"><svg viewBox="0 0 30 30"><rect x="3" y="5" width="24" height="16" rx="2"/><path d="M11 25h8M15 21v4"/></svg>
+<div><h3>화면</h3><p>도서관 이름 옆에 "교보 · 소장"을 작게 붙입니다. 어느 화면에 붙일지(검색 결과 카드, 내 도서관, 직접 추가)는 화면 흐름 단계에서 정합니다.</p></div></div>
+
+<div class="item"><svg viewBox="0 0 30 30"><path d="M8 3h11l5 5v19H8z"/><path d="M19 3v5h5"/></svg>
+<div><h3>기록과 dev 할 일</h3><p>예전 규칙(ADR-0017, 사이클 07 이름 규칙)을 대신하는 새 ADR을 씁니다. 초안은 인계 문서 7절에 있습니다. dev에서는 이름에 괄호를 붙이는 스크립트 <code>build_candidate_seed.py</code>와 dev 문서 <code>library-maintenance.md</code>를 고칩니다.</p></div></div>
+</section>
+
+<!-- 3 -->
+<section class="card">
+<h2><span class="num">3</span>바로 개발로 넘기지 못하는 이유와 주의할 점</h2>
+<p class="lead warn">사이클 08 개발이 지금 같은 스크립트와 같은 이름을 고치고 있습니다. 그 결과를 본 다음에 사이클 09 설계를 얹어야 서로 덮어쓰지 않습니다.</p>
+
+<svg viewBox="0 0 760 150" width="100%" role="img" aria-label="진행 순서">
+  <rect x="10" y="40" width="220" height="60" rx="10" fill="none" stroke="var(--keyline)" stroke-width="2"/>
+  <text x="120" y="68" text-anchor="middle" font-size="19" fill="var(--text)">사이클 08 개발</text>
+  <text x="120" y="90" text-anchor="middle" font-size="15" fill="var(--sub)">지금 진행 중</text>
+  <path d="M232 70h40" stroke="var(--sub)" stroke-width="2"/><path d="M266 64l8 6-8 6" fill="none" stroke="var(--sub)" stroke-width="2"/>
+  <rect x="276" y="40" width="210" height="60" rx="10" fill="none" stroke="var(--sub)" stroke-width="2" stroke-dasharray="6 5"/>
+  <text x="381" y="68" text-anchor="middle" font-size="19" fill="var(--text)">사이클 08 회고</text>
+  <text x="381" y="90" text-anchor="middle" font-size="15" fill="var(--sub)">dev 코드와 비교</text>
+  <path d="M488 70h40" stroke="var(--sub)" stroke-width="2"/><path d="M522 64l8 6-8 6" fill="none" stroke="var(--sub)" stroke-width="2"/>
+  <rect x="532" y="40" width="218" height="60" rx="10" fill="none" stroke="var(--sub)" stroke-width="2" stroke-dasharray="6 5"/>
+  <text x="641" y="68" text-anchor="middle" font-size="19" fill="var(--text)">사이클 09 설계</text>
+  <text x="641" y="90" text-anchor="middle" font-size="15" fill="var(--sub)">기능 명세 → 화면 → 설계</text>
+  <text x="381" y="132" text-anchor="middle" font-size="15" fill="var(--sub)">범위 초안은 지금 만들어 둠 · 점선은 아직 안 한 단계</text>
+</svg>
+
+<div class="item"><svg viewBox="0 0 30 30"><path d="M5 25l20-20M8 5h9v9"/><circle cx="8" cy="22" r="3"/></svg>
+<div><h3>① 사이클 08도 도서관 이름을 고치는 중</h3><p>사이클 08 개발 11단계는 이름이 바뀐 기관(공식 개명·틀린 이름)을 고칩니다. 고칠 목록 파일 <code>name_overrides.tsv</code>를 만들고, 같은 스크립트 <code>build_candidate_seed.py</code>가 그 목록을 읽게 합니다. 사이클 09도 같은 스크립트와 같은 이름을 고치므로, 08이 어떻게 들어갔는지 보고 그 위에 설계합니다.</p></div></div>
+
+<div class="item"><svg viewBox="0 0 30 30"><ellipse cx="15" cy="7" rx="10" ry="3.5"/><path d="M5 7v16c0 2 4.5 3.5 10 3.5s10-1.5 10-3.5V7"/></svg>
+<div><h3>② 대출 방식 값은 이미 책을 읽는 방식에 쓰임</h3><p>지금은 교보 구독형 화면 도서관에만 대출 방식이 채워져 있습니다. 서비스가 그 도서관의 소장 책을 읽을 때 대출 방식이 "소장"이면 사이트의 책 상세 쪽까지 읽습니다. 모든 도서관에 값을 채우면 다른 도서관을 읽는 방식도 바뀔 수 있어서, 설계 때 dev 코드를 확인합니다.</p></div></div>
+
+<div class="item"><svg viewBox="0 0 30 30"><rect x="6" y="13" width="18" height="13" rx="2"/><path d="M10 13V9a5 5 0 0 1 10 0v4"/></svg>
+<div><h3>③ "한 번 정한 이름은 바꾸지 않음" 규칙에 이미 예외가 하나 있음</h3><p>사이클 08에서 "공식 개명이나 틀린 이름은 번호를 그대로 두고 고친다"는 예외를 승인하셨습니다. 이번에는 괄호를 떼느라 많은 이름이 한 번 더 바뀝니다. 그 뒤로 이 규칙을 어떻게 할지는 아래 4번에서 여쭙니다.</p></div></div>
+</section>
+
+<!-- 4 -->
+<section class="card">
+<h2><span class="num">4</span>여쭤볼 것 네 가지</h2>
+<p class="lead">아래 넷은 정하지 않고 범위 초안의 "먼저 조사할 것"에 적어 두었습니다. 원하시면 다음에 결정 페이지로 만들어 드립니다.</p>
+<div class="q"><b>이번 뒤로도 "한 번 정한 이름은 바꾸지 않음"을 지킬지</b>지금 규칙: 처음 정한 이름은 바꾸지 않습니다. 예외는 공식 개명·틀린 이름(사이클 08)과 이번 괄호 떼기입니다.</div>
+<div class="q"><b>양산 두 곳의 이름</b>사이트 93(첫 화면 "양산시 전자도서관", 가입 안내는 양산시립)은 "양산시립도서관"으로, 사이트 100747(경남교육청 서버, 첫 화면 "양산도서관")은 "경상남도교육청 양산도서관"으로 하자는 제안이 있습니다.</div>
+<div class="q"><b>통합 포털 7곳의 대출 방식</b>부산·대구 등 통합 포털은 한 화면에 교보·북큐브·YES24·알라딘 책이 섞여 있어 대출 방식을 하나로 말할 수 없습니다. 따로 값을 둘지, 비워 둘지 정해야 합니다.</div>
+<div class="q"><b>사이클 09에 다른 일도 같이 넣을지</b>사이클 08에서 미뤄 둔 일: 새 수집 사본 가져오기, 후보 도서관 더 넣기, 정해진 때마다 자동 갱신, 수집기를 서비스 쪽으로 옮길지, 책 묶기 기준 다시 보기. 지금 초안은 이름 바꾸기만 담았습니다.</div>
+</section>
+
+<!-- 5 -->
+<section class="card">
+<h2><span class="num">5</span>바꾼 파일</h2>
+<p class="lead">문서 세 개만 바꿨고 dev 폴더는 건드리지 않았습니다. 커밋도 아직 하지 않았습니다.</p>
+<table>
+<tr><th>파일</th><th>바꾼 것</th></tr>
+<tr><td><code>docs/cycles/09-library-naming/scope.md</code></td><td>새로 만듦. 목표, 할 일, 완료 기준(화면에서 괄호가 안 보이고 분류가 보임, 내 도서관이 그대로 남음), 먼저 조사할 것</td></tr>
+<tr><td><code>CLAUDE.md</code></td><td>"지금 사이클"을 사이클 09 초안으로 바꾸고, 사이클 08 개발과 회고가 아직이라고 적음</td></tr>
+<tr><td><code>docs/backlog.md</code></td><td>이름 규칙 줄에 "→ 사이클 09 (scope 초안)" 표시</td></tr>
+</table>
+</section>
+
+<p class="small">이 글은 요약이며 근거는 원본에 있습니다: <code>docs/cycles/09-library-naming/scope.md</code>, <code>docs/research/maintenance/library-naming-handoff.md</code>, <code>docs/current/handoff.md</code> 11단계, <code>docs/current/data-model.md</code>.</p>
+</main>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>인기 도서 후속 결정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+svg{max-width:100%;height:auto;display:block}
+.mock{border:2px dashed var(--line);border-radius:12px;padding:14px;margin:10px 0;font-size:17px}
+.row{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;background:var(--card);flex-wrap:wrap}
+.tag{font-size:14px;border-radius:6px;padding:0 6px;background:var(--code-bg);color:var(--muted)}
+.okt{color:var(--ok);font-weight:500}.mut{color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="doc">
+<style>
+.modal{border:2px solid var(--accent);border-radius:12px;padding:14px;background:var(--card);margin:8px auto;font-size:15px;line-height:1.5}
+.mrow{display:flex;gap:14px}.mcv{flex:none;width:120px;height:170px;border-radius:6px;background:var(--code-bg);display:grid;place-items:center;color:var(--muted)}
+.mcv.s{width:72px;height:102px}
+.lib{display:flex;justify-content:space-between;border:1px solid var(--line);border-radius:8px;padding:5px 10px;margin:5px 0}
+.st{font-size:13px;border-radius:6px;padding:0 6px;background:var(--ok-bg);color:var(--ok)}.st.w{background:var(--warn-bg);color:var(--warn)}.st.m{background:var(--code-bg);color:var(--muted)}
+.bt{display:inline-block;border:1px solid var(--accent);color:var(--accent);border-radius:8px;padding:0 10px;font-size:14px}
+.dim2{background:var(--code-bg);border-radius:12px;padding:16px 10px}
+.mail{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;font-size:17px;white-space:pre-wrap}
+.bar{display:flex;align-items:center;gap:8px;font-size:15px;margin:3px 0}.bar span:first-child{flex:none;width:110px}
+.bar i{display:block;height:12px;background:var(--accent);border-radius:3px}
+</style>
+
+<p class="lead">앞 페이지에서 이어진 세 가지를 골라 주세요.</p>
+<p class="sub">분류를 인기순으로 줄 세우는 기준, 책을 눌렀을 때 뜨는 가운데 창, 이용 문의 메일 초안입니다. 그림은 자리와 순서만 보여 주며 실제 모양이 아닙니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>분류를 인기순으로 줄 세우기</h2>
+<div class="gist">출판유통통합전산망의 "주제분류별 판매량 통계"에 분류마다 한 달 판매 부수가 있습니다. 이 부수가 큰 분류부터 놓는 것을 추천합니다.</div>
+<p>사이트 화면: https://bnk.kpipa.or.kr/home/v3/addition/adiStatsCtgSaleCnt . 순위 목록과 같은 방식으로 우리 서버가 받을 수 있는 것을 2026-10-11에 확인했습니다(분류 21개, 2초 간격). 9월 전체 판매는 8,153,169부입니다.</p>
+<div>
+<div class="bar"><span>어린이·청소년</span><i style="width:300px"></i>2,786,957</div>
+<div class="bar"><span>소설</span><i style="width:95px"></i>883,478</div>
+<div class="bar"><span>문학·인물</span><i style="width:80px"></i>739,250</div>
+<div class="bar"><span>사회</span><i style="width:79px"></i>731,208</div>
+<div class="bar"><span>언어</span><i style="width:50px"></i>463,935</div>
+<div class="bar"><span>만화</span><i style="width:50px"></i>463,318</div>
+<div class="bar"><span>철학·종교</span><i style="width:44px"></i>406,420</div>
+<div class="bar"><span>경제·경영</span><i style="width:42px"></i>387,669</div>
+<div class="bar"><span>자기계발</span><i style="width:39px"></i>360,765</div>
+<div class="bar"><span>예술</span><i style="width:23px"></i>213,287</div>
+<div class="bar"><span>컴퓨터·IT</span><i style="width:16px"></i>152,493</div>
+<div class="bar"><span>생활·취미</span><i style="width:15px"></i>141,480</div>
+<div class="bar"><span>과학</span><i style="width:14px"></i>130,289</div>
+<div class="bar"><span>역사</span><i style="width:10px"></i>89,508</div>
+<div class="bar"><span>기술·공학</span><i style="width:7px"></i>61,812</div>
+<div class="bar"><span>의학</span><i style="width:5px"></i>47,942</div>
+<div class="bar"><span>기타</span><i style="width:4px"></i>34,765</div>
+<div class="bar"><span>법</span><i style="width:2px"></i>21,547</div>
+<div class="bar"><span>스포츠</span><i style="width:2px"></i>17,690</div>
+<div class="bar"><span>참고·정보</span><i style="width:1px"></i>11,448</div>
+<div class="bar"><span>지리·환경</span><i style="width:1px"></i>7,908</div>
+</div>
+<p class="cap">2026년 9월 분류별 판매 부수(종이책). 어린이·청소년에는 학습서가 함께 들어 있어 크게 나온 것으로 보입니다(분류 이름 "어린이, 청소년, 학습"에서 짐작, 확인 못 함).</p>
+
+<div class="item">
+<h3><span class="no">1</span>"전체"를 맨 앞에, 그다음은 지난달 판매 부수가 큰 분류부터 [안]</h3>
+<p>예: 10월에 열면 전체 → 어린이·청소년 → 소설 → 문학·인물 → 사회 … → 지리·환경 순서입니다. 분류 목록과 아래로 내리는 순서가 같습니다. 매달 순위를 받을 때 이 부수도 함께 받아(22건 더) 순서를 바꿉니다.</p>
+<p class="alt"><b>다른 선택</b> ① "전체" Top50에 책이 많이 든 분류부터: 요청이 늘지 않지만, 50권 안에 한 권도 없는 분류가 많아 그 분류끼리는 순서가 정해지지 않습니다. ② 판매 금액 순: 같은 화면에 있지만 비싼 책이 많은 분류가 앞으로 옵니다.</p>
+<p class="rec">추천: 판매 부수 순. 어린이·청소년이 늘 맨 위에 오는 것이 싫으시면 "기타"에 적어 주세요.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>책을 눌렀을 때: 손그림대로 가운데 창</h2>
+<div class="gist">전자책이 있는 책을 누르면 그 자리에서 가운데 창이 뜨고, 내 도서관마다 대출 가능 여부가 차례로 채워집니다.</div>
+<p>손그림에서 읽은 것: 왼쪽에 표지, 오른쪽에 제목과 버튼, 그 아래 지은이·출판사, 그 아래 "○○도서관 대출 가능" 줄들. 버튼 옆 말풍선은 "클릭하면 해당 도서 검색 페이지로"입니다. 버튼을 누르면 지금 있는 책 화면으로 간다는 뜻으로 읽었습니다.</p>
+
+<p><b>PC (1280px)</b> — 뒤에 인기 도서 격자가 흐리게 남습니다.</p>
+<div class="dim2"><div class="modal" style="max-width:600px">
+<div style="text-align:right">ⓧ</div>
+<div class="mrow"><div class="mcv">표지</div><div style="flex:1">
+<b style="font-size:18px">책 제목</b> <span class="bt">책 화면에서 보기 ›</span><br><span class="mut">지은이 · 출판사</span>
+<div class="lib"><span>○○구립도서관</span><span class="st">대출 가능</span></div>
+<div class="lib"><span>△△시립도서관</span><span class="st w">대출 중 · 예약 2</span></div>
+<div class="lib"><span>□□교육청도서관</span><span class="st m">확인 중…</span></div>
+</div></div>
+</div></div>
+<p class="cap">도서관 줄을 누르면 지금처럼 그 도서관 사이트의 책 페이지가 새 창으로 열립니다. 상태 칸 모양은 지금 책 화면과 같게 합니다.</p>
+
+<p><b>태블릿 (768px)</b></p>
+<div class="dim2"><div class="modal" style="max-width:460px">
+<div style="text-align:right">ⓧ</div>
+<div class="mrow"><div class="mcv s">표지</div><div style="flex:1"><b>책 제목</b><br><span class="mut">지은이 · 출판사</span><br><span class="bt">책 화면에서 보기 ›</span></div></div>
+<div class="lib"><span>○○구립도서관</span><span class="st">대출 가능</span></div>
+<div class="lib"><span>△△시립도서관</span><span class="st w">대출 중</span></div>
+</div></div>
+
+<p><b>폰 (375px)</b> — 분류 창처럼 아래에서 올라옵니다.</p>
+<div class="dim2" style="max-width:360px"><div class="modal" style="border-radius:14px 14px 0 0;margin-bottom:-16px">
+<div style="text-align:right">ⓧ</div>
+<div class="mrow"><div class="mcv s">표지</div><div style="flex:1"><b>책 제목</b><br><span class="mut">지은이 · 출판사</span><br><span class="bt">책 화면 ›</span></div></div>
+<div class="lib"><span>○○구립</span><span class="st">대출 가능</span></div>
+<div class="lib"><span>△△시립</span><span class="st w">대출 중</span></div>
+</div></div>
+
+<div class="item">
+<h3><span class="no">2</span>가운데 창: 표지·제목·"책 화면에서 보기"·지은이·출판사·내 도서관 줄 (폰은 아래에서 올라옴) [안]</h3>
+<p>예: 9월 소설 1위를 누르면 격자 위에 창이 뜹니다. 내 도서관 줄은 지금 책 화면이 쓰는 대출 조회를 그대로 써서 하나씩 채워집니다. ⓧ나 창 바깥을 누르면 닫히고 격자의 같은 자리로 돌아옵니다.</p>
+<p class="alt"><b>다른 선택</b> ① 창에 도서관 줄 없이 표지·제목·버튼만: 만들기 쉽지만 손그림의 "대출 가능" 줄이 빠집니다. ② 폰도 가운데 창: 폰 화면이 좁아 도서관 줄이 두세 개만 보입니다.</p>
+<p class="rec">추천: 위 그림대로. 내 도서관이 많으면 창 안에서 아래로 내려 봅니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>이용 문의 메일 초안</h2>
+<div class="gist">공개 통계 화면의 순위·판매 부수·표지를 출처를 밝혀 보여도 되는지, 월 1회 자동으로 받아도 되는지, 요구하는 출처 문구가 있는지를 묻습니다. 보내기는 직접 해 주세요.</div>
+<p>받는 곳: kbookdata@kpipa.or.kr (출판유통통합전산망 고객지원, 전화 070-8209-4271, 붙여 주신 조사 메모 기준). 대괄호 칸은 채워서 보내 주세요.</p>
+<div class="mail">제목: 공개 통계(주제분류별 판매량 순위) 데이터 이용 문의
+
+안녕하세요. 개인이 준비하고 있는 전자도서관 통합 검색 서비스 [서비스 이름·주소]의 [이름]입니다.
+
+출판유통통합전산망 누리집의 공개 통계 화면 중 아래 내용을 저희 서비스에 보여 드리고 싶어 이용 가능 여부를 여쭙니다.
+
+1. 이용하려는 자료
+ - 출판산업 통계 &gt; 판매 통계 &gt; 주제분류별 판매량 순위 (1단계 분류별 월간 Top50: 순위, 도서명, ISBN, 분류)
+ - 주제분류별 판매량 통계의 분류별 월간 판매 부수 (분류를 보여 주는 순서를 정하는 데만 사용)
+ - 위 순위 화면에 보이는 도서 표지 이미지
+
+2. 이용 방식
+ - 매달 한 번, 지난달 자료를 자동으로 조회해 저장합니다. 요청 사이에 간격을 두어 한 달에 50건 안팎만 조회합니다.
+ - 이용자가 순위의 책을 누르면, 그 책을 자신이 이용하는 전자도서관에서 빌릴 수 있는지 안내합니다.
+ - 화면에 "출처: 출판유통통합전산망"과 기준 달을 표시합니다.
+ - 수익 모델: [없음 / 해당 내용]
+
+3. 여쭙고 싶은 점
+ (1) 위 자료를 출처를 밝혀 외부 서비스 화면에 보여도 되는지
+ (2) 위와 같이 월 1회 자동 조회해도 되는지, 권장하는 조회 방법이나 간격이 있는지
+ (3) 표지 이미지를 함께 보여도 되는지 (안 된다면 표지 없이 보여 드리겠습니다)
+ (4) 꼭 지켜야 할 출처 표기 문구나 위치가 있는지
+ (5) 별도 신청이나 협약이 필요하다면 그 절차
+
+확인해 주시면 안내에 맞춰 준비하겠습니다. 감사합니다.
+
+[이름] 드림
+[연락처]</div>
+<p class="cap">한 달 요청 수 "50건 안팎"은 순위 22건과 판매 부수 22건(위 1번을 승인하면)을 더한 값입니다. 서비스 이름은 정해진 것을 확인하지 못해 빈칸으로 두었습니다.</p>
+
+<div class="item">
+<h3><span class="no">3</span>이 초안으로 메일 문의 (대괄호 칸만 채워 보냄) [안]</h3>
+<p>예: 대괄호 칸을 채워 보내시고 답이 오면 알려 주세요. 출처 문구와 표지 사용을 그 답에 맞춰 고칩니다.</p>
+<p class="alt"><b>다른 선택</b> 전화로 먼저 묻기(070-8209-4271): 빠르지만 답이 글로 남지 않습니다.</p>
+<p class="rec">추천: 메일. 고칠 곳은 "기타"에 적어 주세요.</p>
+</div>
+</section>
+
+<p class="foot">원본: <code>docs/cycles/10-popular-books/scope.md</code>, <code>docs/research/popular-books/kpipa.md</code> 2-1절. 앞 페이지: <code>2026-10-11-scope-decisions.html</code></p>
+</main>
+</body>
+</html>

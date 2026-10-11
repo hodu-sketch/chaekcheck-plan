@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 09 범위 결정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+svg{max-width:100%;height:auto;display:block}
+.pill{display:inline-block;border:1px solid var(--line);border-radius:8px;padding:4px 10px;background:var(--bg);margin:2px 0}
+.tag{color:var(--muted);font-size:.85em}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">사이클 09 범위를 정하기 전에<br>네 가지를 골라 주세요.</p>
+<p class="sub">사이클 09는 도서관 이름에서 괄호를 떼고, 업체·대출 방식을 이름 옆에 따로 보여 주는 일입니다(이미 승인하신 결정 6개). 아래 넷은 그 결정을 실제로 적용할 때 남은 빈칸입니다. 고르시면 범위 초안(<code>scope.md</code>)에 적고, 사이클 08 개발이 끝난 뒤 기능 명세로 넘어갑니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>이름 규칙</h2>
+<p class="gist">이름이 언제 바뀔 수 있는지와, 양산 두 곳의 이름을 정합니다.</p>
+
+<div class="item">
+<h3>"한 번 정한 이름은 바꾸지 않음"을 이번 뒤로도 지킬지 <span class="an">[안]</span></h3>
+<p><b>지금 규칙</b>: 서비스에 넣은 도서관 이름은 수집 사본이 새로 와서 seed 생성 스크립트(<code>build_candidate_seed.py</code>)를 다시 돌려도 바꾸지 않습니다(사이클 07). 예외로 사이클 08에서 "공식 개명·틀린 이름은 번호를 그대로 두고 고친다"를 승인하셨고, 고친 이름은 목록 파일 <code>name_overrides.tsv</code>에 옛 이름·새 이름·출처와 함께 적습니다.</p>
+<p><b>제안</b>: 이번 괄호 떼기는 한 번만 하는 예외로 두고, 그 뒤에는 지금 규칙(예외는 공식 개명·틀린 이름)을 그대로 지킵니다.</p>
+<p>예: 다음 수집 사본에서 어느 학교 사이트 제목이 조금 달라져도 서비스 이름은 그대로입니다. 학교가 실제로 이름을 바꿨으면 목록 파일에 출처와 함께 적고 고칩니다.</p>
+<p class="alt"><b>다른 선택 — 규칙을 없앰</b>: 스크립트를 다시 돌릴 때마다 수집 목록의 이름을 따릅니다. 목록에 오타나 줄임말이 들어오면 그대로 서비스에 보이고, 무엇이 바뀌었는지 매번 확인해야 합니다.</p>
+<p class="alt">어느 쪽이든 도서관 번호는 그대로라 저장된 내 도서관에는 영향이 없습니다.</p>
+<p class="rec">추천: 제안대로. 사이클 08에서 이미 정한 예외 방식에 이번 일을 하나 더하는 것이라 새로 만들 것이 없습니다.</p>
+</div>
+
+<div class="item">
+<h3>양산 두 곳의 이름 <span class="an">[안]</span></h3>
+<p>괄호를 떼면 두 곳 모두 "양산도서관"이 되고, 업체·대출 방식도 같아 겹칩니다. 서로 다른 기관이라(승인하신 결정 4) 이름으로 나눕니다.</p>
+<table>
+<tr><th>사이트</th><th>확인한 것</th><th>제안 이름</th></tr>
+<tr><td>93 <code>elib.gyeongnam.go.kr:8116</code></td><td>사이트 첫 화면 "양산시 전자도서관", 가입 안내는 <code>lib.yangsan.go.kr</code>. 그 사이트의 머리 로고와 저작권 줄이 "양산시립도서관"(2026-10-11 확인, https://lib.yangsan.go.kr/)</td><td><b>양산시립도서관</b></td></tr>
+<tr><td>100747 <code>ebook.gne.go.kr</code></td><td>경상남도교육청 서버, 사이트 첫 화면 "양산도서관". 교육청 쪽 정식 이름은 확인 못 함(2026-10-11 경남교육청 누리집에서 이름을 읽지 못함)</td><td><b>경상남도교육청 양산도서관</b></td></tr>
+</table>
+<p class="alt"><b>다른 선택 — 사이트 첫 화면 이름 그대로</b>: "양산시 전자도서관" / "양산도서관". 화면에 보이는 말과 같지만, 다른 도서관은 기관 이름을 쓰므로 두 곳만 꼴이 다릅니다.</p>
+<p class="rec">추천: 제안 이름. 승인하신 결정 1("이름에는 기관 정식 이름만")과 맞습니다. 100747 이름은 dev가 이름을 고칠 때 출처를 다시 확인합니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>통합 포털의 대출 방식</h2>
+<p class="gist">통합 포털 7곳은 한 화면에 여러 업체 책이 섞여 있어 대출 방식을 하나로 말할 수 없습니다. 비워 두고 화면에는 "통합 포털"만 보이게 하자는 제안입니다.</p>
+<div class="item">
+<h3>통합 포털 7곳은 대출 방식을 비워 둠 <span class="an">[안]</span></h3>
+<p>통합 포털은 시·도나 교육청이 여러 업체 전자책을 한 화면에 모은 사이트입니다. 서비스에 7곳이 있습니다: 부산광역시 전자도서관, 대구전자도서관, 경기도교육청 전자도서관, 인천광역시교육청 통합전자도서관, 경상북도교육청 전자도서관, 전북특별자치도교육청 전자도서관, 강원특별자치도교육청 전자도서관. 수집 DB에서는 한 포털 안에 교보문고 약 8만 2천, 북큐브 약 4만 6천, 예스24, 알라딘, 오디언 책이 섞여 있습니다.</p>
+<p><b>제안</b>: 대출 방식을 비워 둡니다. 화면 표시는 <span class="pill">부산광역시 전자도서관 <span class="tag">· 통합 포털</span></span> 처럼 업체 자리만 보입니다(승인하신 화면 예시와 같은 꼴).</p>
+<p class="alt"><b>다른 선택 — "소장"으로 채움</b>: 포털 화면에 대출·예약이 보이므로 소장으로 볼 수도 있습니다. 다만 지금 서비스는 대출 방식이 "소장"인 도서관을 읽을 때 사이트의 책 상세 쪽까지 읽습니다. 포털에 "소장"을 넣으면 포털을 읽는 방식이 바뀔 수 있어 dev 확인이 필요합니다.</p>
+<p class="alt"><b>다른 선택 — "섞임" 같은 새 값을 만듦</b>: 지금 값 넷(소장·구독·혼합·대여) 중 "혼합"은 교보 구독형 기관의 소장+대여 섞임을 뜻해서, 포털용 값을 하나 더 만들어야 합니다. 화면에 "통합 포털 · 섞임"처럼 같은 말이 두 번 보입니다.</p>
+<p class="rec">추천: 비워 둠. 지금 서비스 동작을 바꾸지 않고, 화면에도 필요한 정보("통합 포털")가 이미 보입니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>사이클 09에 넣을 일</h2>
+<p class="gist">지금 초안은 이름 바꾸기만 담았습니다. 사이클 08에서 미뤄 둔 일을 같이 넣을지 정합니다.</p>
+<div class="item">
+<h3>사이클 09는 이름 바꾸기만 함 <span class="an">[안]</span></h3>
+<p>사이클 08 범위에서 "사이클 09 후보"로 미뤄 둔 일은 다섯입니다.</p>
+<table>
+<tr><th>미뤄 둔 일</th><th>뜻</th></tr>
+<tr><td>새 사본으로 가져오기</td><td>수집 세션이 새로 받은 책 목록을 서비스 DB에 넣음</td></tr>
+<tr><td>후보 도서관 더 넣기</td><td>아직 서비스에 넣지 않은 도서관(도서관 411 포함)을 넣음</td></tr>
+<tr><td>정해진 때마다 자동 갱신</td><td>가져오기를 사람이 돌리지 않고 일정에 따라 돌림</td></tr>
+<tr><td>수집기를 서비스 쪽으로 옮길지</td><td>지금 따로 도는 수집 작업을 서비스 프로젝트 안으로 옮길지 정함</td></tr>
+<tr><td>책 묶기 기준 다시 보기</td><td>같은 책을 하나로 묶는 기준을 다시 봄</td></tr>
+</table>
+<p><b>제안</b>: 사이클 09는 이름 바꾸기만 하고, 위 다섯은 그대로 다음 후보로 둡니다. 다만 "후보 도서관 더 넣기"는 새 이름 규칙으로 이름을 만들게 되므로 사이클 09 뒤에 하는 것이 맞습니다.</p>
+<p class="alt"><b>다른 선택 — "새 사본으로 가져오기"를 함께</b>: 한 번 개발로 두 가지가 끝나지만, 사이클이 커지고 사이클 08의 가져오기 바꿔 끼우기 결과를 보기 전에 설계하게 됩니다.</p>
+<p class="rec">추천: 이름 바꾸기만. 작은 단위로 끝내고 다음 사이클에서 사이클 08·09 결과를 보고 고르는 편이 단순합니다.</p>
+</div>
+
+<div class="item" style="background:var(--accent-bg);border-radius:10px;padding:16px 18px">
+<h3>질문: "후보 도서관 더 넣기"는 교보 대여·혼합을 빼기로 해서 없어진 것 아닌가?</h3>
+<p><b>맞습니다. 표에 남아 있으면 안 되는 줄이었습니다.</b> 이 일은 사이클 08을 시작한 2026-10-05에 "교보 대여·혼합형 수집 한 바퀴 뒤"에 하기로 미뤄 둔 것입니다. 그때는 대여·혼합 도서관을 다 받은 뒤 서비스에 넣을 생각이었습니다.</p>
+<p>2026-10-10에 "교보 구독형 플랫폼 – 대여·혼합"을 아예 빼기로 정하셨습니다(ADR-0067).</p>
+<table>
+<tr><th>대여·혼합 230곳</th><th>결정 뒤 어떻게 되나</th></tr>
+<tr><td>서비스에 이미 들어간 11곳</td><td>사이클 08 개발에서 seed에서 빼 지움</td></tr>
+<tr><td>나머지 219곳</td><td>서비스에 넣지 않음. 아직 못 받은 202곳은 더 받지 않음. 230곳 모두 수집 DB에 "받지 않음"으로 표시(지우지는 않음)</td></tr>
+</table>
+<p>그래서 "후보 도서관 더 넣기"로 넣을 도서관은 남지 않습니다. 남는 것은 도서관 411 하나입니다. 411은 이미 서비스에 있는 도서관인데 주소가 다른 곳으로 넘어가서 책이 빠졌습니다. 사이클 08에서 수집 주소를 고쳐 다시 받고, 책은 "새 사본으로 가져오기" 때 함께 들어옵니다.</p>
+<p>고친 것: 사이클 09 범위 초안의 다음 후보에서 "후보 도서관 더 넣기"를 빼고 "새 사본으로 가져오기(411 책 포함)"로 적겠습니다. 이 페이지의 위 표는 읽으신 그대로 두었습니다.</p>
+<p class="alt">위 "사이클 09는 이름 바꾸기만 함" 제안은 그대로입니다. 남은 다음 후보는 넷입니다: 새 사본으로 가져오기, 정해진 때마다 자동 갱신, 수집기를 서비스 쪽으로 옮길지, 책 묶기 기준 다시 보기.</p>
+</div>
+</section>
+
+<p class="foot">원본: <code>docs/cycles/09-library-naming/scope.md</code> "먼저 조사할 것", <code>docs/research/maintenance/library-naming-handoff.md</code> 3·4·6절, <code>library-naming.md</code> 4절, <code>docs/cycles/08-polish-swap-memory/scope.md</code> 포함 4·제외, <code>docs/current/data-model.md</code> <code>lending_model</code>. 작성 2026-10-11.</p>
+</main>
+</body>
+</html>

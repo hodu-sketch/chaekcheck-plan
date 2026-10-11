@@ -10,3 +10,4 @@
 | [2026-10-04-library-table-decisions.html](2026-10-04-library-table-decisions.html) | 도서관은 한 표, 가입 조건은 따로("나"), 조건 없는 도서관은 내 도서관에 넣어야 보이고 요청도 그때만 | `../collection-areas.md` 2-1절 | 없음. 승인 (2026-10-04) |
 | [2026-10-05-library-logos-decisions.html](2026-10-05-library-logos-decisions.html) | 도서관 로고를 서비스 화면에 보여 줄지(이름만 / 장치와 함께 / 허락받은 곳만) | `../library-logos.md` 4절 | 없음. 2번 승인 (2026-10-05), 조건은 후속 페이지로 |
 | [2026-10-05-library-logos-followup.html](2026-10-05-library-logos-followup.html) | 로고를 보여 줄 도서관 범위, "제휴 아님" 안내를 둘 곳 (앞 페이지 2번 승인의 후속) | `../library-logos.md` 4절 | 없음. 1번 공공도서관만, 4번 서비스 안내 페이지 승인 (2026-10-05) |
+| [2026-10-11-library-naming-decisions.html](2026-10-11-library-naming-decisions.html) | 도서관 이름의 괄호를 없애고 업체·대출 방식 분류 칸을 모든 도서관에, 겹침은 (이름, 업체, 대출 방식) 조합으로 | `../library-naming.md` | 없음. 6개 모두 승인 (2026-10-11) → `../library-naming-handoff.md` |
