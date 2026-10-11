@@ -36,7 +36,7 @@
 4. 가져오기 기록: 운영은 반영마다 한 줄, 내 PC는 `finish` 뒤 한 줄, `export_id`로 이음(칸 2개 추가). 내 PC `finish`(마저 바꿔 끼우기)·`discard`(지우기) 명령. `discard`는 어느 DB에서든 남은 `catalog_next`를 지우는 명령을 겸함(사이클 08 회고 결정)
 5. 절차 문서(dev `docs/maintenance/3-import.md`에 반영 절차 추가)
 6. 가져오기 힙 줄이기: 묶는 방식 `current`·`compact`·`sql`을 설정(`chaekcheck.collection.import.grouping`)으로 고름, 결과 비교 도구(다른 책 0권, 번호까지 같음), 측정(여섯 관점, Java 옵션 둘 포함)
-7. 시험은 새 수집 사본(도서관 411 새 주소 포함)으로, 사이클 08과 바로 비교하려고 옛 사본으로도 한 번 [확정] (사용자 승인, 2026-10-12, 점검 #2). 새로 수집하지 않고, 수집이 멈춰 있을 때 원본(`chaekcheck-data\ebook-catalog.sqlite`, 411은 2026-10-11 22:54 다시 수집 끝)을 `snapshots\`에 복사
+7. 시험은 새 수집 사본(도서관 411 새 주소 포함)으로, 사이클 08과 바로 비교하려고 옛 사본으로도 한 번 [확정] (사용자 승인, 2026-10-12, 점검 #2) — `current` 힙 6GB 측정 한 번만 (사용자 승인, 2026-10-12, `easy/2026-10-12-handoff-review.html` #2). 새로 수집하지 않고, 수집이 멈춰 있을 때 원본(`chaekcheck-data\ebook-catalog.sqlite`, 411은 2026-10-11 22:54 다시 수집 끝)을 `snapshots\`에 복사
 
 ## 제외 [확정] (사용자 승인, 2026-10-12, 점검 #4)
 

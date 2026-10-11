@@ -20,7 +20,7 @@ Do not plan or design the whole product up front. One cycle takes one small feat
 5. `/adr <title>` — record each decision as it is made
 6. `/cycle-close` — review (`design-reviewer`), update `docs/current/`, write the handoff (`planner`)
 
-Current cycle: docs/cycles/11-separate-import (design decided; review and handoff draft in the cycle folder; docs/current merge and handoff swap wait for cycle 10 dev results)
+Current cycle: docs/cycles/11-separate-import (handoff approved, kept in the cycle folder; swap into docs/current/handoff.md and merge docs/current after reviewing cycle 10 dev results)
 
 ## Documents
 

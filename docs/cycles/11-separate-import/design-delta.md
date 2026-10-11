@@ -263,7 +263,7 @@ erDiagram
 
 ### 반영 세션 메모리
 
-- `chaekcheck.catalog.load.maintenance-work-mem` = 256MB (반영·마저 연결에서만, 서버 기본 64MB 그대로) [확정: 설계 #12]. 내 PC `export`·`in-place`는 지금(1GB, 병렬 4) 그대로
+- `chaekcheck.catalog.load.maintenance-work-mem` = 256MB (운영 `apply` 연결에서만, 서버 기본 64MB 그대로). 내 PC `finish`는 1GB [확정] (사용자 승인, 2026-10-12, `easy/2026-10-12-handoff-review.html` #1) [확정: 설계 #12]. 내 PC `export`·`in-place`는 지금(1GB, 병렬 4) 그대로
 - 근거: 사이클 08 #3b, 컨테이너 상한 512MB에서 1GB로 `OOMKilled`(`../08-polish-swap-memory/retro.md` 59행). 설명 `docs/research/deploy/easy/2026-10-12-memory-kinds.html`
 
 ## B. 묶는 방식
