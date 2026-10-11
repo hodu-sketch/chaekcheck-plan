@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 13 사전 질문</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+.flow{display:grid;gap:10px;margin:10px 0 16px}.lane{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--card)}.lane b{display:block;margin-bottom:4px}.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{font-size:14px;border-radius:6px;padding:2px 8px;background:var(--code-bg)}.chip.new{background:var(--warn-bg)}.chip.dev{background:var(--ok-bg)}.arrow{text-align:center;color:var(--muted);font-size:18px;line-height:1}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">사이클 13을 시작하기 전에<br>미리 정해 두면 좋은 것 여덟 가지</p>
+<p class="sub">"도서관 넣기를 collection 모듈이 재시작 없이"를 하려고 dev 코드를 읽어 봤습니다. 정할 것을 항목마다 골라 주세요. 여기서 정한 것은 사이클 13의 범위(scope)와 명세(spec)에 그대로 들어갑니다.</p>
+
+<section class="card"><h2><span class="num">1</span>조사해서 알게 된 것</h2>
+<div class="gist">재시작 없이 넣는 것은 가능합니다. 서비스는 도서관 표를 요청마다 읽고 캐시가 없어서, DB에 줄이 들어가면 바로 보입니다. 다만 지금 Java 코드에는 도서관을 "넣는" 기능이 아예 없습니다. 지금까지는 Liquibase(앱 시작 때 도는 seed)만 넣었습니다.</div>
+<div class="flow">
+<div class="lane"><b>지금</b>
+<div class="chips"><span class="chip">수집 DB 사본 + 사람이 정한 표들</span><span class="chip">→ Python 스크립트</span><span class="chip">→ seed CSV 3개 (git)</span><span class="chip">→ 앱 재시작 때 Liquibase가 넣음</span></div></div>
+<div class="arrow">▼ 사이클 13</div>
+<div class="lane"><b>바꾸면 (제안)</b>
+<div class="chips"><span class="chip dev">수집 DB 사본 + 사람이 정한 표들</span><span class="chip dev">→ collection 모듈의 "도서관 넣기" 명령 (따로 돌고 끝남)</span><span class="chip dev">→ library 모듈의 새 "도서관 더하기" 기능으로 도서관·가입 규칙</span><span class="chip dev">→ collection이 짝 표</span><span class="chip dev">→ 서비스는 재시작 없이 바로 봄</span></div></div>
+</div>
+<table>
+<tr><th>알게 된 것</th><th>뜻</th></tr>
+<tr><td>도서관 표의 주인은 <code>library</code> 모듈이고, 모듈끼리는 공개 기능으로만 서로 씀 (dev 규칙)</td><td><code>collection</code>이 도서관 표에 직접 쓰면 규칙 위반. <code>library</code>에 "도서관 더하기"를 새로 만들어야 함</td></tr>
+<tr><td>스크립트 안에 사람이 정한 값이 많음</td><td>이름 바꾸기 295줄, 같은 사이트 8, 체험용 4, 같은 호스트지만 남김 22, 가입 범위 덮어쓰기 8, 그리고 가입 조사·종류·교보 probe·북큐브 권수 파일. 명령이 이것들을 어디서 읽을지 정해야 함</td></tr>
+<tr><td>지금 스크립트는 "앞서 만든 seed 파일"을 읽어 번호·이름을 이어 감</td><td>명령으로 바꾸면 서비스 DB를 읽어 이어 가야 함</td></tr>
+<tr><td>사이클 11은 운영에 반영할 때 두 DB의 도서관·짝 표가 같은지 봄</td><td>명령으로 넣은 도서관이 두 DB에 똑같이 있어야 반영이 됨</td></tr>
+<tr><td>지금 남은 오류: 서비스 1215 <code>한화S&amp;amp;C</code> (HTML 글자가 이름에 남음)</td><td>이번에 함께 고칠 것 (아래 8번)</td></tr>
+</table>
+<p class="note">자세한 기록: <code>docs/cycles/13-crawler-to-dev/research.md</code></p>
+</section>
+
+<section class="card"><h2><span class="num">2</span>도서관 넣기 명령</h2>
+
+<div class="item"><h3><span class="no">1</span>library 모듈에 "도서관 더하기" 공개 기능을 새로 만들고, collection 명령이 그것을 부른다 (추천) <span class="an">[안]</span></h3>
+<figure><svg viewBox="0 0 860 300" role="img" aria-label="1번: 명령은 collection에 있고, 도서관 줄은 library의 새 공개 기능이 넣음. 짝 표만 collection이 직접 씀. 셋은 한 번에(한 트랜잭션)."><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs><rect x="20" y="110" width="190" height="70" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.5"/><text x="115.0" y="143.0" text-anchor="middle" font-size="15" fill="var(--text)" font-weight="700">도서관 넣기 명령</text><text x="115.0" y="163.0" text-anchor="middle" font-size="12" fill="var(--muted)">collection 모듈</text><rect x="330" y="30" width="230" height="70" rx="10" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="1.5"/><text x="445.0" y="63.0" text-anchor="middle" font-size="15" fill="var(--text)" font-weight="700">"도서관 더하기" (새 기능)</text><text x="445.0" y="83.0" text-anchor="middle" font-size="12" fill="var(--muted)">library 모듈 공개 기능</text><rect x="650" y="20" width="190" height="50" rx="10" fill="var(--card)" stroke="var(--line)" stroke-width="1.5"/><text x="745.0" y="51.0" text-anchor="middle" font-size="15" fill="var(--text)">library.library</text><rect x="650" y="85" width="190" height="50" rx="10" fill="var(--card)" stroke="var(--line)" stroke-width="1.5"/><text x="745.0" y="116.0" text-anchor="middle" font-size="15" fill="var(--text)">library.eligibility_rule</text><rect x="330" y="190" width="230" height="70" rx="10" fill="var(--card)" stroke="var(--line)" stroke-width="1.5"/><text x="445.0" y="223.0" text-anchor="middle" font-size="15" fill="var(--text)">collection.collection_link</text><text x="445.0" y="243.0" text-anchor="middle" font-size="12" fill="var(--muted)">collection이 직접 씀</text><line x1="210" y1="130" x2="328" y2="70" stroke="var(--muted)" stroke-width="2" marker-end="url(#ah)"/><text x="269.0" y="93.0" text-anchor="middle" font-size="12" fill="var(--muted)">부름</text><line x1="560" y1="55" x2="648" y2="45" stroke="var(--muted)" stroke-width="2" marker-end="url(#ah)"/><line x1="560" y1="75" x2="648" y2="110" stroke="var(--muted)" stroke-width="2" marker-end="url(#ah)"/><line x1="210" y1="160" x2="328" y2="220" stroke="var(--muted)" stroke-width="2" marker-end="url(#ah)"/><text x="269.0" y="183.0" text-anchor="middle" font-size="12" fill="var(--muted)">씀</text><line x1="212" y1="148" x2="645" y2="118" stroke="var(--no)" stroke-width="2" stroke-dasharray="5 5"/><text x="440" y="155" font-size="12" fill="var(--no)" text-anchor="middle">✕ 직접 쓰기 안 됨 (모듈 규칙)</text></svg><figcaption>1번: 명령은 collection에 있고, 도서관 줄은 library의 새 공개 기능이 넣음. 짝 표만 collection이 직접 씀. 셋은 한 번에(한 트랜잭션).</figcaption></figure>
+<p>도서관·가입 규칙 줄은 <code>library</code>가 넣고, 짝 표만 <code>collection</code>이 넣습니다. 둘을 한 번에(같은 트랜잭션) 처리합니다.</p>
+<p class="alt"><b>다른 선택:</b> collection이 SQL로 도서관 표에 직접 씀(모듈 규칙 위반) / 이벤트로 알림(새 번호를 돌려받기 어려워 이 일에 맞지 않음).</p></div>
+
+<div class="item"><h3><span class="no">2</span>지금까지 seed로 들어간 2,600여 곳은 그대로 두고, 앞으로 더하는 곳만 명령으로 넣는다 (추천) <span class="an">[안]</span></h3>
+<figure><svg viewBox="0 0 860 190" role="img" aria-label="2번: 번호로 보면 seed 구간과 명령 구간이 나뉨. 명령은 몇 번 돌려도 같은 결과가 나오게 만듦."><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs><rect x="20" y="60" width="560" height="44" rx="8" fill="var(--code-bg)" stroke="var(--line)"/><text x="300" y="88" font-size="14" fill="var(--text)" text-anchor="middle">1 ~ 2674번: 지금까지 seed로 들어간 도서관 (그대로 둠)</text><rect x="580" y="60" width="260" height="44" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="710" y="88" font-size="14" fill="var(--text)" text-anchor="middle">2675번 ~: 명령으로 더함</text><text x="20" y="40" font-size="13" fill="var(--muted)" text-anchor="start">서비스 도서관 번호</text><text x="20" y="140" font-size="13" fill="var(--text)" text-anchor="start">로컬 DB를 새로 만들 때: ① 앱 시작(seed 1~2674) → ② 넣기 명령 다시 실행 → 같은 상태</text><text x="20" y="165" font-size="13" fill="var(--no)" text-anchor="start">앞으로 seed로 도서관 번호를 넣지 않음 (2675번 이후와 부딪힘)</text></svg><figcaption>2번: 번호로 보면 seed 구간과 명령 구간이 나뉨. 명령은 몇 번 돌려도 같은 결과가 나오게 만듦.</figcaption></figure>
+<p>이미 들어간 도서관은 건드리지 않습니다. 대신 앞으로는 seed로 도서관 번호를 넣지 않습니다(명령으로 넣은 번호와 부딪히기 때문). 로컬 DB를 처음부터 다시 만들 때는 seed 뒤에 명령을 한 번 더 돌리면 같은 상태가 됩니다(명령은 몇 번 돌려도 같은 결과가 나오게).</p>
+<p class="alt"><b>다른 선택:</b> 있는 seed도 지우고 모두 명령으로 다시 넣음(테스트·seed를 크게 고침) / 명령이 DB에 넣으면서 seed 파일도 함께 씀(같은 줄이 두 번 들어가는 문제를 따로 막아야 함).</p></div>
+<div class="item"><h3>답: "어차피 비교해서 해야 하는 거 아니야? 도서관에 변동이 있을 수 있잖아" (2026-10-12)</h3><p><b>맞습니다. 명령은 매번 전체를 비교합니다.</b> 2번에서 "그대로 둔다"는 것은 이미 들어간 도서관을 <b>명령이 고쳐 쓰지 않는다</b>는 뜻이지, 비교에서 뺀다는 뜻이 아닙니다.</p><figure><svg viewBox="0 0 860 300" role="img" aria-label="미리 보기 때 비교"><defs><marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs><rect x="20" y="40" width="200" height="70" rx="10" fill="var(--code-bg)" stroke="var(--line)" stroke-width="1.5"/><text x="120" y="71" text-anchor="middle" font-size="14" fill="var(--text)" font-weight="700">수집 DB 사본</text><text x="120" y="91" text-anchor="middle" font-size="12" fill="var(--muted)">+ 사람이 정한 파일</text><rect x="20" y="170" width="200" height="70" rx="10" fill="var(--code-bg)" stroke="var(--line)" stroke-width="1.5"/><text x="120" y="201" text-anchor="middle" font-size="14" fill="var(--text)" font-weight="700">서비스 DB</text><text x="120" y="221" text-anchor="middle" font-size="12" fill="var(--muted)">seed로 들어간 곳 + 명령으로 들어간 곳 모두</text><rect x="290" y="105" width="170" height="70" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.5"/><text x="375" y="136" text-anchor="middle" font-size="14" fill="var(--text)" font-weight="700">비교 (미리 보기)</text><text x="375" y="156" text-anchor="middle" font-size="12" fill="var(--muted)">매번 전체를</text><rect x="540" y="10" width="300" height="60" rx="10" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="1.5"/><text x="690" y="36" text-anchor="middle" font-size="14" fill="var(--text)" font-weight="700">새로 생긴 도서관</text><text x="690" y="56" text-anchor="middle" font-size="12" fill="var(--muted)">→ ② 넣기에서 넣음</text><rect x="540" y="85" width="300" height="60" rx="10" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="1.5"/><text x="690" y="111" text-anchor="middle" font-size="14" fill="var(--text)" font-weight="700">바뀐 도서관</text><text x="690" y="131" text-anchor="middle" font-size="12" fill="var(--muted)">주소·이름·종류·대출 방식 → 보고, 사람이 처리</text><rect x="540" y="160" width="300" height="60" rx="10" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="1.5"/><text x="690" y="186" text-anchor="middle" font-size="14" fill="var(--text)" font-weight="700">사라진 도서관</text><text x="690" y="206" text-anchor="middle" font-size="12" fill="var(--muted)">수집에서 빠짐·실패 → 보고, 사람이 처리</text><rect x="540" y="235" width="300" height="55" rx="10" fill="var(--card)" stroke="var(--line)" stroke-width="1.5"/><text x="690" y="258" text-anchor="middle" font-size="14" fill="var(--text)" font-weight="700">그대로인 도서관</text><text x="690" y="278" text-anchor="middle" font-size="12" fill="var(--muted)">아무것도 안 함</text><line x1="220" y1="75" x2="288" y2="130" stroke="var(--muted)" stroke-width="2" marker-end="url(#ah2)"/><line x1="220" y1="205" x2="288" y2="150" stroke="var(--muted)" stroke-width="2" marker-end="url(#ah2)"/><line x1="460" y1="130" x2="538" y2="40" stroke="var(--muted)" stroke-width="2" marker-end="url(#ah2)"/><line x1="460" y1="135" x2="538" y2="115" stroke="var(--muted)" stroke-width="2" marker-end="url(#ah2)"/><line x1="460" y1="145" x2="538" y2="190" stroke="var(--muted)" stroke-width="2" marker-end="url(#ah2)"/><line x1="460" y1="155" x2="538" y2="262" stroke="var(--muted)" stroke-width="2" marker-end="url(#ah2)"/></svg><figcaption>매번 수집 DB와 서비스 DB 전체를 비교해 네 가지로 나눔. 넣는 것은 "새로 생긴 도서관"뿐이고(5번 승인), 바뀐 곳·사라진 곳은 보고서에 나와 사람이 처리.</figcaption></figure><ul><li>비교는 지금 스크립트처럼 "앞서 만든 seed 파일"이 아니라 <b>서비스 DB</b>를 기준으로 합니다. 그래서 seed로 들어간 곳과 명령으로 들어간 곳을 똑같이 봅니다.</li><li>바뀐 곳의 예: 사이트 주소가 옮겨짐, 공식 이름이 바뀜(사이클 09처럼), 북큐브가 구독으로 바뀜, 수집에서 "받지 않음"이 됨.</li><li>이런 변화를 명령이 자동으로 고치지 않는 것은 5번(이번에는 더하기만)을 승인하셨기 때문입니다. 보고서를 보고 지금처럼 SQL·changeset으로 고칩니다. 나중에 "바뀐 곳도 명령이 고치기"로 넓힐 수 있습니다.</li><li>그래서 2번은 "seed로 들어간 곳은 지우지 않고 그대로 두되, 비교에는 모두 넣는다"로 읽으시면 됩니다.</li></ul><p>이 설명으로 2번을 골라 주세요. "바뀐 곳도 이번에 명령이 고친다"를 원하시면 기타에 적어 주세요(그러면 5번과 함께 다시 정합니다).</p></div>
+
+<div class="item"><h3><span class="no">3</span>사람이 정한 값은 git 안의 파일로 두고 명령이 읽는다 (추천) <span class="an">[안]</span></h3>
+<figure><svg viewBox="0 0 860 250" role="img" aria-label="3번: 사람이 정한 값은 모두 git 파일로. 바뀐 내역이 커밋으로 남고 리뷰할 수 있음."><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs><rect x="20" y="20" width="250" height="90" rx="10" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="1.5"/><text x="145.0" y="63.0" text-anchor="middle" font-size="15" fill="var(--text)">dev git: scripts/library/*.tsv</text><text x="145.0" y="83.0" text-anchor="middle" font-size="12" fill="var(--muted)">이름 바꾸기·같은 사이트·체험용·같은 호스트·가입 범위</text><rect x="20" y="140" width="250" height="90" rx="10" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="1.5"/><text x="145.0" y="183.0" text-anchor="middle" font-size="15" fill="var(--text)">dev git (옮겨 옴)</text><text x="145.0" y="203.0" text-anchor="middle" font-size="12" fill="var(--muted)">가입 조사·도서관 종류·교보 probe·북큐브 권수</text><rect x="330" y="80" width="200" height="90" rx="10" fill="var(--code-bg)" stroke="var(--line)" stroke-width="1.5"/><text x="430.0" y="123.0" text-anchor="middle" font-size="15" fill="var(--text)">수집 DB 사본</text><text x="430.0" y="143.0" text-anchor="middle" font-size="12" fill="var(--muted)">chaekcheck-data (git 밖)</text><rect x="610" y="80" width="230" height="90" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.5"/><text x="725.0" y="123.0" text-anchor="middle" font-size="15" fill="var(--text)" font-weight="700">도서관 넣기 명령</text><text x="725.0" y="143.0" text-anchor="middle" font-size="12" fill="var(--muted)">파일 + 사본을 읽어 넣음</text><line x1="270" y1="65" x2="608" y2="110" stroke="var(--muted)" stroke-width="2" marker-end="url(#ah)"/><line x1="270" y1="185" x2="608" y2="140" stroke="var(--muted)" stroke-width="2" marker-end="url(#ah)"/><line x1="530" y1="125" x2="608" y2="125" stroke="var(--muted)" stroke-width="2" marker-end="url(#ah)"/></svg><figcaption>3번: 사람이 정한 값은 모두 git 파일로. 바뀐 내역이 커밋으로 남고 리뷰할 수 있음.</figcaption></figure>
+<table>
+<tr><th>값</th><th>지금</th><th>제안</th></tr>
+<tr><td>이름 바꾸기, 같은 사이트, 체험용, 같은 호스트 남김, 가입 범위 덮어쓰기</td><td>스크립트 안 상수 + <code>name_overrides.tsv</code></td><td>dev <code>scripts/library/</code>(또는 resources)의 TSV 파일들. 바뀐 내역이 git에 남고 리뷰할 수 있음</td></tr>
+<tr><td>공공도서관 가입 조사, 도서관 종류, 교보 probe, 북큐브 권수</td><td>데이터 폴더 TSV(git 밖)</td><td>같은 git 파일로 옮김 (공개된 기관 정보뿐)</td></tr>
+</table>
+<p class="alt"><b>다른 선택:</b> 수집 DB에 표로 넣음(수집 세션이 관리) / 서비스 DB에 표로 넣음(운영 화면 없이 SQL로 고쳐야 함).</p></div>
+
+<div class="item"><h3><span class="no">4</span>명령은 먼저 "넣을 것 보고서"만 내고, 사람이 확인한 뒤 실제로 넣는다 (추천) <span class="an">[안]</span></h3>
+<figure><svg viewBox="0 0 860 200" role="img" aria-label="4번: 넣기 전에 반드시 미리 보기. 같은 호스트 의심·순번 2 이상이 있으면 ②가 멈춤."><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs><rect x="20" y="60" width="180" height="80" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.5"/><text x="110.0" y="98.0" text-anchor="middle" font-size="15" fill="var(--text)" font-weight="700">① 미리 보기</text><text x="110.0" y="118.0" text-anchor="middle" font-size="12" fill="var(--muted)">아무것도 안 씀</text><rect x="260" y="60" width="200" height="80" rx="10" fill="var(--card)" stroke="var(--line)" stroke-width="1.5"/><text x="360.0" y="98.0" text-anchor="middle" font-size="15" fill="var(--text)">보고서</text><text x="360.0" y="118.0" text-anchor="middle" font-size="12" fill="var(--muted)">넣을 곳·이름·순번·의심</text><rect x="520" y="60" width="140" height="80" rx="10" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="1.5"/><text x="590.0" y="106.0" text-anchor="middle" font-size="15" fill="var(--text)">사람 확인</text><rect x="710" y="60" width="130" height="80" rx="10" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="1.5"/><text x="775.0" y="98.0" text-anchor="middle" font-size="15" fill="var(--text)" font-weight="700">② 넣기</text><text x="775.0" y="118.0" text-anchor="middle" font-size="12" fill="var(--muted)">DB에 씀</text><line x1="200" y1="100" x2="258" y2="100" stroke="var(--muted)" stroke-width="2" marker-end="url(#ah)"/><line x1="460" y1="100" x2="518" y2="100" stroke="var(--muted)" stroke-width="2" marker-end="url(#ah)"/><line x1="660" y1="100" x2="708" y2="100" stroke="var(--muted)" stroke-width="2" marker-end="url(#ah)"/><text x="684.0" y="93.0" text-anchor="middle" font-size="12" fill="var(--muted)">의심 없음</text><text x="775" y="170" font-size="12" fill="var(--no)" text-anchor="middle">의심이 남아 있으면 멈춤</text></svg><figcaption>4번: 넣기 전에 반드시 미리 보기. 같은 호스트 의심·순번 2 이상이 있으면 ②가 멈춤.</figcaption></figure>
+<p>지금 스크립트는 같은 호스트가 의심되거나 순번 2가 생기면 멈춥니다(파일은 이미 쓴 뒤). DB에 넣은 것은 파일보다 되돌리기 어려우니, 명령을 두 단계로 둡니다: ① 미리 보기(아무것도 안 씀, 넣을 도서관·이름·순번·의심 목록) → ② 넣기. 의심이 남아 있으면 ②가 멈춥니다.</p>
+<p class="alt"><b>다른 선택:</b> 한 번에 넣고 의심은 보고만 함.</p></div>
+
+<div class="item"><h3><span class="no">5</span>이번에는 "새 도서관 더하기"만. 이름 바꾸기·끄기는 지금처럼 따로 <span class="an">[안]</span></h3>
+<figure><svg viewBox="0 0 860 150" role="img" aria-label="5번: 명령이 하는 일은 "더하기" 하나로 작게."><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs><rect x="20" y="30" width="250" height="80" rx="10" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="1.5"/><text x="145.0" y="68.0" text-anchor="middle" font-size="15" fill="var(--text)" font-weight="700">새 도서관 더하기</text><text x="145.0" y="88.0" text-anchor="middle" font-size="12" fill="var(--muted)">명령이 함 (이번)</text><rect x="310" y="30" width="250" height="80" rx="10" fill="var(--code-bg)" stroke="var(--line)" stroke-width="1.5"/><text x="435.0" y="68.0" text-anchor="middle" font-size="15" fill="var(--text)">이름 바꾸기</text><text x="435.0" y="88.0" text-anchor="middle" font-size="12" fill="var(--muted)">지금처럼 SQL·changeset</text><rect x="600" y="30" width="240" height="80" rx="10" fill="var(--code-bg)" stroke="var(--line)" stroke-width="1.5"/><text x="720.0" y="68.0" text-anchor="middle" font-size="15" fill="var(--text)">끄기 (enabled)</text><text x="720.0" y="88.0" text-anchor="middle" font-size="12" fill="var(--muted)">지금처럼 SQL</text></svg><figcaption>5번: 명령이 하는 일은 "더하기" 하나로 작게.</figcaption></figure>
+<p>있는 도서관의 이름 바꾸기·끄기(<code>enabled</code>)는 지금처럼 SQL이나 changeset으로 합니다. 명령이 하는 일을 작게 둡니다.</p>
+<p class="alt"><b>다른 선택:</b> 이름 바꾸기·끄기도 명령이 함(일이 커짐).</p></div>
+</section>
+
+<section class="card"><h2><span class="num">3</span>사이클 11과 맞추기</h2>
+
+<div class="item"><h3><span class="no">6</span>도서관 넣기는 내 PC에서 하고, 운영에는 사이클 11의 반영 파일에 함께 실어 보낸다 (추천) <span class="an">[안]</span></h3>
+<figure><svg viewBox="0 0 860 290" role="img" aria-label="6번: 새 도서관도 사이클 11의 반영 파일에 실어, 운영에는 도서관과 그 책이 함께 나타남."><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs><text x="20" y="24" font-size="14" fill="var(--text)" text-anchor="start" font-weight="700">내 PC</text><rect x="20" y="40" width="190" height="70" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.5"/><text x="115.0" y="73.0" text-anchor="middle" font-size="15" fill="var(--text)">① 도서관 넣기 명령</text><text x="115.0" y="93.0" text-anchor="middle" font-size="12" fill="var(--muted)">도서관·짝 표</text><rect x="20" y="140" width="190" height="70" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.5"/><text x="115.0" y="173.0" text-anchor="middle" font-size="15" fill="var(--text)">② 가져오기</text><text x="115.0" y="193.0" text-anchor="middle" font-size="12" fill="var(--muted)">책 (catalog_next)</text><rect x="300" y="90" width="220" height="90" rx="10" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="1.5"/><text x="410.0" y="133.0" text-anchor="middle" font-size="15" fill="var(--text)" font-weight="700">반영 파일</text><text x="410.0" y="153.0" text-anchor="middle" font-size="12" fill="var(--muted)">도서관 + 짝 표 + 책</text><text x="620" y="24" font-size="14" fill="var(--text)" text-anchor="start" font-weight="700">운영</text><rect x="620" y="90" width="220" height="90" rx="10" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="1.5"/><text x="730.0" y="133.0" text-anchor="middle" font-size="15" fill="var(--text)" font-weight="700">③ 반영 (사이클 11)</text><text x="730.0" y="153.0" text-anchor="middle" font-size="12" fill="var(--muted)">도서관 → 짝 표 → 책 한 번에</text><line x1="210" y1="75" x2="298" y2="115" stroke="var(--muted)" stroke-width="2" marker-end="url(#ah)"/><line x1="210" y1="175" x2="298" y2="155" stroke="var(--muted)" stroke-width="2" marker-end="url(#ah)"/><line x1="520" y1="135" x2="618" y2="135" stroke="var(--muted)" stroke-width="2" marker-end="url(#ah)"/><text x="569.0" y="128.0" text-anchor="middle" font-size="12" fill="var(--muted)">옮김</text><text x="430" y="255" font-size="13" fill="var(--muted)" text-anchor="middle">운영에서 따로 명령을 돌리지 않음 → 두 DB가 달라 멈추는(mismatch) 일이 없음</text></svg><figcaption>6번: 새 도서관도 사이클 11의 반영 파일에 실어, 운영에는 도서관과 그 책이 함께 나타남.</figcaption></figure>
+<p>사이클 11에서는 내 PC에서 가져오기를 하고 파일로 운영에 반영합니다. 반영할 때 두 DB의 도서관·짝 표가 같은지 보고, 다르면 멈춥니다. 그래서 새 도서관도 같은 파일에 실어 "도서관 → 짝 표 → 책" 순서로 한 번에 넣으면, 운영에서는 도서관과 그 책이 함께 나타나고 멈출 일도 없습니다.</p>
+<p class="alt"><b>다른 선택:</b> 운영에서도 같은 명령을 따로 돌림(순서를 사람이 지켜야 하고, 그 사이 반영이 mismatch로 멈춤).</p>
+<p class="note">사이클 11이 지금 진행 중이라, 사이클 11 설계에 자리만 비워 둘지는 사이클 11 세션에 알려야 합니다(결정되면 메시지를 만들어 드림).</p></div>
+</section>
+
+<section class="card"><h2><span class="num">4</span>수집기 쪽</h2>
+
+<div class="item"><h3><span class="no">7</span>수집기는 Python 그대로 dev로 옮긴다 (Java로 다시 쓰지 않음) (추천) <span class="an">[안]</span></h3>
+<figure><svg viewBox="0 0 860 170" role="img" aria-label="7번: 둘은 사본 파일로만 이어져서, 수집기 언어는 Python 그대로여도 됨."><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs><rect x="20" y="40" width="240" height="90" rx="10" fill="var(--code-bg)" stroke="var(--line)" stroke-width="1.5"/><text x="140.0" y="83.0" text-anchor="middle" font-size="15" fill="var(--text)">수집기 (Python)</text><text x="140.0" y="103.0" text-anchor="middle" font-size="12" fill="var(--muted)">데이터 폴더 → dev scripts/crawl/</text><rect x="330" y="40" width="200" height="90" rx="10" fill="var(--code-bg)" stroke="var(--line)" stroke-width="1.5"/><text x="430.0" y="83.0" text-anchor="middle" font-size="15" fill="var(--text)">수집 DB 사본</text><text x="430.0" y="103.0" text-anchor="middle" font-size="12" fill="var(--muted)">SQLite 파일</text><rect x="600" y="40" width="240" height="90" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.5"/><text x="720.0" y="83.0" text-anchor="middle" font-size="15" fill="var(--text)">넣기·가져오기 (Java)</text><text x="720.0" y="103.0" text-anchor="middle" font-size="12" fill="var(--muted)">collection 모듈</text><line x1="260" y1="85" x2="328" y2="85" stroke="var(--muted)" stroke-width="2" marker-end="url(#ah)"/><text x="294.0" y="78.0" text-anchor="middle" font-size="12" fill="var(--muted)">만듦</text><line x1="530" y1="85" x2="598" y2="85" stroke="var(--muted)" stroke-width="2" marker-end="url(#ah)"/><text x="564.0" y="78.0" text-anchor="middle" font-size="12" fill="var(--muted)">읽음</text></svg><figcaption>7번: 둘은 사본 파일로만 이어져서, 수집기 언어는 Python 그대로여도 됨.</figcaption></figure>
+<p>수집기(1,305줄)는 이번 사이클에서 위치만 옮기고, 언어는 그대로 둡니다. 도서관 넣기 명령(Java)은 수집 DB 사본만 읽으면 되므로 수집기 언어와 상관없습니다.</p>
+<p class="alt"><b>다른 선택:</b> backend(Java)로 다시 씀(아주 큰 일).</p></div>
+
+<div class="item"><h3><span class="no">8</span>이름 속 HTML 글자(&amp;amp; 등)는 명령이 넣을 때 풀고, 남은 한 곳(1215 한화S&amp;amp;C)도 이번에 고친다 (추천) <span class="an">[안]</span></h3>
+<figure><svg viewBox="0 0 860 140" role="img" aria-label="8번: HTML 글자(&amp;amp; → &amp;)는 넣을 때 풀고, 이미 들어간 1215도 고침."><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs><rect x="20" y="30" width="300" height="70" rx="10" fill="var(--no-bg)" stroke="var(--no)" stroke-width="1.5"/><text x="170.0" y="63.0" text-anchor="middle" font-size="15" fill="var(--text)">한화S&amp;amp;C</text><text x="170.0" y="83.0" text-anchor="middle" font-size="12" fill="var(--muted)">사이트에서 읽은 글자 그대로</text><rect x="520" y="30" width="300" height="70" rx="10" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="1.5"/><text x="670.0" y="63.0" text-anchor="middle" font-size="15" fill="var(--text)">한화S&amp;C</text><text x="670.0" y="83.0" text-anchor="middle" font-size="12" fill="var(--muted)">넣을 때 보통 글자로</text><line x1="320" y1="65" x2="518" y2="65" stroke="var(--muted)" stroke-width="2" marker-end="url(#ah)"/><text x="419.0" y="58.0" text-anchor="middle" font-size="12" fill="var(--muted)">풀기</text></svg><figcaption>8번: HTML 글자(&amp;amp; → &amp;)는 넣을 때 풀고, 이미 들어간 1215도 고침.</figcaption></figure>
+<p>수집 DB 이름은 사이트에서 읽은 그대로라 <code>&amp;amp;</code> 같은 글자가 남을 수 있습니다. 명령이 넣을 때 보통 글자로 바꾸고, 수집 DB에서도 같은 곳을 고칩니다.</p></div>
+</section>
+
+<p class="foot">원본: <code>docs/cycles/13-crawler-to-dev/research.md</code>, 범위 초안 <code>scope.md</code>. 근거: dev <code>build_candidate_seed.py</code>, <code>collection</code>·<code>library</code> 모듈, Liquibase changelog, 사이클 11 spec R-A3·ADR-0078 (2026-10-12 읽음).</p>
+</main>
+</body>
+</html>
