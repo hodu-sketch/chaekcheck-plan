@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>백로그 확인 뒤 질문</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.gist.ok{background:var(--ok-bg)}.gist.warn{background:var(--warn-bg)}.gist.no{background:var(--no-bg)}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.tw{overflow-x:auto}
+ul.ic{list-style:none;margin:0;padding:0}
+ul.ic li{display:flex;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
+ul.ic li:first-child{border-top:none}
+ul.ic svg{flex:0 0 28px;width:28px;height:28px;margin-top:4px;stroke:var(--accent);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.s{display:block;color:var(--muted);font-size:17px}
+h4{font-size:19px;margin:18px 0 4px;color:var(--muted)}
+.tag{font-size:15px;font-weight:700;border-radius:6px;padding:1px 7px;white-space:nowrap}
+.t-ok{background:var(--ok-bg);color:var(--ok)}.t-warn{background:var(--warn-bg);color:var(--warn)}.t-no{background:var(--no-bg);color:var(--no)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">그사이 바뀐 것을 맞춰 보니<br>정할 것이 세 가지 남았습니다.</p>
+<p class="sub">백로그 두 줄은 dev에서 이미 끝난 것으로 고쳐 두었습니다(아래 카드 0). 질문은 카드 1~3입니다.</p>
+
+<section class="card">
+<h2><span class="num">0</span>질문 없이 고친 것</h2>
+<div class="gist ok">dev와 다른 plan 세션이 이미 끝낸 일이라 <code>docs/backlog.md</code>에 "끝남"으로 적었습니다.</div>
+<ul class="ic">
+<li><svg viewBox="0 0 24 24"><path d="M5 12l4 4 10-10"/></svg><div>dev 도구 <code>build_candidate_seed.py</code>가 도서관 업체 정보를 수집 DB에서 읽게 하기<span class="s">dev 커밋 <code>406465d</code> (dev <code>plan-feedback.md</code> 2745행)</span></div></li>
+<li><svg viewBox="0 0 24 24"><path d="M5 12l4 4 10-10"/></svg><div>가져오기가 중간에 죽으면 남는 빈 표 지우기<span class="s">사이클 11의 <code>discard</code> 명령에 들어감 (<code>11-separate-import/scope.md</code> 41행)</span></div></li>
+</ul>
+<p class="alt">사이클 10·11 회고와 인계 내용은 다른 plan 세션이 이미 반영해 두어서 더 고칠 것이 없었습니다.</p>
+</section>
+
+<section class="card">
+<h2><span class="num">1</span>책 번호 유지를<br>사이클 12에 같이 넣을까요</h2>
+<div class="gist">지금 사이클 12에는 "책 묶기 기준 다시 보기"만 들어 있습니다. 책 번호 유지는 아직 어느 사이클에도 없습니다.</div>
+<div class="item">
+<h3>[안] 사이클 12에서 묶기 기준을 먼저 고치고, 이어서 책 번호 유지를 합니다</h3>
+<p>예: 12에서 묶기 기준을 바꾼 새 결과로 한 번 가져오고, 그 결과에 책 번호를 고정합니다. 그 뒤로는 다시 가져와도 <code>/books/{bookId}</code>가 같은 책을 가리킵니다. 번호가 고정된 뒤에 묶기 기준이 다시 바뀌는 일을 피할 수 있습니다.</p>
+<p>앞서 사용자가 두 일을 함께 다음 사이클로 하자고 했습니다: "이거 다음 cycle이 어떨까 하는데 흠 왜냐면 사이클 11이 너무 커져서" (2026-10-12).</p>
+<p class="alt">다른 선택: 12는 묶기 기준만 하고, 책 번호 유지는 13(수집기 dev로) 뒤 따로 사이클로 합니다. 12가 작아지지만, 회원이 책을 저장하는 알림이 그만큼 늦어집니다. 예전 말 "책 번호 유지는 별개의 사이클로 해줘"(2026-10-04)와는 이쪽이 맞습니다.</p>
+<p>추천: 12에 같이 넣습니다. 조사해 보니 일이 크면 12의 범위를 정할 때 다시 나눌 수 있습니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>검색 설정 창의 ⓧ는<br>어디서 켤까요</h2>
+<div class="gist">사이클 10이 만든 공용 아래 창에는 ⓧ가 있습니다. 폰 "검색 설정" 창도 이 공용 아래 창을 쓰는데, 사이클 10 인계서가 "이번 범위 아님"이라 ⓧ를 꺼 두었습니다(dev <code>SettingsPanel.tsx</code> 144행).</div>
+<div class="item">
+<h3>[안] 사이클 밖 작은 작업으로 dev에 바로 요청합니다</h3>
+<p>dev가 검색 설정 창에서 ⓧ와 "폰 뒤로 가기로 창만 닫기"를 켭니다. 그러면 폰의 아래 창 다섯 개가 모두 같은 방식으로 닫힙니다. plan은 dev에 보낼 짧은 메시지를 만들어 드립니다.</p>
+<p class="alt">다른 선택: 사이클 11 인계서에 덧붙입니다. 11 인계서는 이미 승인되어 다시 고쳐야 합니다. 또는 사이클 12 인계서에 넣습니다. 묶기·번호와 상관없는 화면 일이라 섞이고, 그때까지 ⓧ가 없습니다.</p>
+<p>추천: 사이클 밖 작은 작업. 업체 정보 읽기(<code>406465d</code>)도 같은 방식으로 따로 했습니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>묶기 문제 표본 조사를<br>지금 시작할까요</h2>
+<div class="gist">다른 plan 세션에서 "알려진 문제의 표본 조사는 사이클 밖에서 plan이 미리 한다"고 정했습니다. 언제 할지는 아직 안 정했습니다.</div>
+<div class="item">
+<h3>[안] 이 세션에서 지금 시작합니다</h3>
+<p>지금 로컬 서비스 DB를 읽기만 해서 표본을 뽑아 봅니다. 대상은 출판일이 2년 넘게 차이 나는 묶음, 부제·시리즈 표시 때문에 따로 남은 책, <code>48090…</code> 번호, 새로 넣은 도서관 2,394곳의 책이 기존 책끼리 이어 붙인 경우입니다. 결과는 <code>same-book-isbn.md</code>에 적고 쉬운 페이지로 보여 드립니다.</p>
+<p class="alt">다른 선택: 사이클 11에서 새 사본으로 가져온 뒤에 합니다. 숫자는 그때가 정확하지만, 같은 책인지 아닌지 보는 판단은 데이터가 바뀌어도 대부분 그대로입니다. 대신 그만큼 늦게 시작합니다.</p>
+<p>추천: 지금 시작합니다. 숫자는 11의 가져오기 뒤에 다시 셉니다.</p>
+</div>
+</section>
+
+<p class="foot">근거: <code>docs/backlog.md</code>, <code>docs/cycles/10-popular-books/handoff.md</code> C6, <code>docs/cycles/11-separate-import/scope.md</code>, <code>docs/cycles/13-crawler-to-dev/scope.md</code>, dev <code>docs/plan-feedback.md</code> 사이클 10 절, dev <code>web/src/features/search/SettingsPanel.tsx</code>.</p>
+</main>
+</body>
+</html>
