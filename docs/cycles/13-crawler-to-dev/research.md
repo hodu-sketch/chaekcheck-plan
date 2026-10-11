@@ -178,5 +178,5 @@ ames-before-2026-10-12.tsv`에 덧붙임. 서비스 쪽 1215는 사이클 13에�
 | 5 | 업체·대출 방식·순번 규칙 | `research.md` 1-3 그대로: 업체 = 수집 `vendor` 칸이 있으면 그 값, 없으면 화면 종류 대응표. 대출 방식 = 교보 구독형 probe 값 / 북큐브 권수 0이면 구독 / 통합 포털 비움 / 나머지 소장. 순번 = (이름, 업체, 대출 방식)별로 번호 순. 서비스 DB 제약 `UNIQUE NULLS NOT DISTINCT (name, vendor, lending_model, order_no)`(dev `library/014`). 새 6곳은 모두 소장 |
 | 6 | 받지 않는 도서관·문제별 대처가 갈아탄 수집기에서도 같은지 | 같음: dev 복사본은 원본의 마지막 수정(10-04 19:52) 뒤인 10-05 02:36에 떴고, dev가 바꾼 것은 데이터 폴더 위치·`DEV_SEED` 경로·`status` 읽기 전용·`sys.path`뿐(dev `plan-feedback.md` 1144~1150행). `crawl_skip` 처리는 그대로 |
 | 7 | 전체 성공 기록 없는 도서관 | 받지 않음 표시가 없는 것 중 **2곳**: 무주초등학교 100252(북큐브, 사이트 404), 창원문성대학교 102020(YES24, 첫 화면 500). 둘 다 그대로 실패 |
-| 8 | robots.txt·User-Agent 연락처 | 아직 정하지 않음: `crawl-method.md` "robots.txt: 기록은 하되 막아도 호출할지는 사용자 결정 [확인 필요]", "User-Agent 연락처 [확인 필요]". 지금 값 `Mozilla/5.0 (Windows NT 10.0; Win64; x64) chaekcheck-crawler/0.1 (catalog survey)`, 개인 연락처는 넣지 않음 [확정] → 사용자에게 질문 |
+| 8 | robots.txt·User-Agent 연락처 | 아직 정하지 않음: `crawl-method.md` "robots.txt: 기록은 하되 막아도 호출할지는 사용자 결정 [확인 필요]", "User-Agent 연락처 [확인 필요]". 지금 값 `Mozilla/5.0 (Windows NT 10.0; Win64; x64) chaekcheck-crawler/0.1 (catalog survey)`, 개인 연락처는 넣지 않음 [확정]. **정함 (2026-10-12)**: robots.txt는 기록만 하고 수집은 함(실제로 막히면 그 도서관만 받지 않음), User-Agent 연락처는 서비스 주소·공개 문의 주소가 생기면 넣음 [확정] (사용자 선택). `crawl-method.md`에 반영 |
 
