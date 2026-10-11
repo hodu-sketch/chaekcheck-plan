@@ -74,8 +74,9 @@
 | [ADR-0068](0068-updated-at-by-db-trigger.md) | 고친 시각(updated_at)은 모듈마다 DB 트리거가 적음 | Accepted | 2026-10-11 | 08 |
 | [ADR-0069](0069-national-bibliography-raw-and-rule-change.md) | 국가서지는 원문을 남기고 매번 다듬음(판 번호 없음), 정리 규칙을 바꿀 때 상황별로 다시 가져옴 (ADR-0065 일부를 바꿈) | Accepted | 2026-10-11 | 08 |
 | [ADR-0070](0070-holding-id-carry-over-and-gone-notice.md) | 같은 소장은 옛 소장 번호를 잇고, 빠진 책·소장은 따로 알림(`holding_not_found`) (ADR-0065 일부를 바꿈) | Accepted | 2026-10-11 | 08 |
-| [ADR-0071](0071-library-name-and-classification.md) | 도서관 이름에는 기관 이름만, 업체·대출 방식은 분류로, (이름, 업체, 대출 방식, 순번) UNIQUE (ADR-0017 일부·사이클 07 seed 이름 규칙을 바꿈) | Proposed | 2026-10-11 | 09 |
+| [ADR-0071](0071-library-name-and-classification.md) | 도서관 이름에는 기관 이름만, 업체·대출 방식은 분류로, (이름, 업체, 대출 방식, 순번) UNIQUE (ADR-0017 일부·사이클 07 seed 이름 규칙을 바꿈) | Accepted | 2026-10-11 | 09 |
 | [ADR-0072](0072-popular-books-source-kpipa.md) | 인기 도서 출처는 출판유통통합전산망 공개 통계 화면(알라딘·정보나루 안 씀) | Accepted | 2026-10-11 | 10 |
 | [ADR-0073](0073-popular-module.md) | 인기 도서는 새 모듈 `popular`가 받기·저장·API를 맡음 | Accepted | 2026-10-11 | 10 |
 | [ADR-0074](0074-popular-isbn-lookup-shared-cache.md) | 순위 책과 우리 책은 볼 때 ISBN으로 맞추고 책 정보는 공용 캐시(10분) | Accepted | 2026-10-11 | 10 |
 | [ADR-0075](0075-popular-cover-prefetch-proxy.md) | 표지는 매달 미리 받아 우리 서버가 넘겨줌, 최근 두 달 보관 | Accepted | 2026-10-11 | 10 |
+| [ADR-0076](0076-library-classification-api-and-rename.md) | 도서관 분류 값(vendor·lendingModel·orderNo)은 API로 보내고 화면이 글자를 만듦, 이름은 번호로 고치는 changeset(014), 이름 찾기는 화면에서 (ADR-0071을 이어서) | Accepted | 2026-10-11 | 09 |

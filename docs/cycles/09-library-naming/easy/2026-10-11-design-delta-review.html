@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 09 설계 검토</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+.pill{display:inline-block;border:1px solid var(--line);border-radius:8px;padding:4px 10px;background:var(--bg);margin:2px 0}
+.tag{color:var(--muted);font-size:.85em}
+.mocks{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start;margin:12px 0}
+.dev{border:2px dashed var(--line);border-radius:12px;padding:10px;font-size:15px;line-height:1.5;background:var(--bg)}
+.dev .lbl{font-size:13px;color:var(--muted);margin-bottom:6px}
+.dev.pc{flex:1 1 520px;max-width:600px}.dev.tab{flex:1 1 360px;max-width:420px}.dev.ph{flex:0 1 230px;width:230px}
+.rcard{display:grid;grid-template-columns:1.4fr 1fr .8fr;gap:8px;border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--card);margin:6px 0}
+.dev.ph .rcard{grid-template-columns:1fr}
+.rcard .t{font-weight:700}.rcard .m{color:var(--muted);font-size:13px}
+.lname{color:var(--accent);text-decoration:underline}
+.cls{color:var(--muted);font-size:13px}
+.lrow{display:flex;justify-content:space-between;align-items:center;gap:8px;border:1px solid var(--line);border-radius:8px;padding:6px 8px;background:var(--card);margin:4px 0}
+.btn{border:1px solid var(--line);border-radius:6px;padding:0 8px;font-size:13px;white-space:nowrap}
+.inp{border:1px solid var(--line);border-radius:6px;padding:4px 8px;background:var(--card);margin:4px 0}
+.logo{display:inline-block;width:14px;height:14px;border-radius:3px;background:var(--line);vertical-align:-2px;margin-right:4px}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">사이클 09 설계 문서입니다.<br>정하신 것을 dev가 만들 모양으로 옮겼습니다.</p>
+<p class="sub">새로 정할 것은 작은 것 두 개이고, 마지막에 "이 문서대로 인계서로 넘어감"을 골라 주세요. 그림이 들어간 원본은 <code>design-delta-original.html</code>(대화에 링크)에 있습니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>무엇을 만드나</h2>
+<p class="gist">새 모듈·새 표·새 이벤트는 없습니다. 도서관 표에 칸 둘을 더하고, 이름을 고치고, 서버와 화면이 분류를 보이게 합니다.</p>
+<table>
+<tr><th>어디</th><th>바뀌는 것</th></tr>
+<tr><td>도서관 표 (DB)</td><td>이름 겹침 규칙을 지우고 → 이름 약 293곳 고침 → 업체 칸 더해 채움 → 대출 방식 채움 → 순번 칸 더함 → 확인 규칙 셋 → 새 겹침 규칙(이름·업체·대출 방식·순번)</td></tr>
+<tr><td>서버</td><td>도서관 목록과 검색 스트림에 <code>vendor</code>·<code>lendingModel</code>·<code>orderNo</code></td></tr>
+<tr><td>화면</td><td>결과 카드는 이름 다음 줄에 "교보 · 소장", 내 도서관은 이름 옆(폰은 아래 줄), 이름 찾기가 분류 글자도 찾음</td></tr>
+<tr><td>seed 생성 스크립트</td><td>괄호 규칙을 지우고 업체 대응표·대출 방식 규칙·순번 세기. 배포 뒤에는 바뀐 것만 변경 파일로</td></tr>
+<tr><td>수집 DB</td><td>같은 이름으로 바꿈(수집 세션이 함)</td></tr>
+</table>
+<p>고치는 이름의 내역: 괄호 떼기 277곳, 사이클 08이 붙인 "(북큐브)" 2곳, 따로 정한 7곳(서대문, 마산, 양산 둘, 완주동상초, 메리츠, 진천군립), 977 국립경국대학교, 이름이 바뀐 학교 6곳.</p>
+<p>검색 결과의 "대출 가능" 판정은 바뀌지 않습니다. 대출 방식으로 동작이 갈리는 곳(교보 구독형이 "소장"인지)에 새로 "소장"이 들어가는 도서관이 없기 때문입니다(dev 코드 확인, 2026-10-11).</p>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>업체 칸의 확인 규칙</h2>
+<p class="gist">업체는 도서관 수집이 정하고(정하신 것), DB는 허용 값인지 확인합니다. 그 확인 규칙의 이름과 "비어 있어도 되는 때"를 정합니다.</p>
+<div class="item">
+<h3>업체는 6값 중 하나, 전자도서관이면 반드시 있어야 함 <span class="an">[안]</span></h3>
+<p>DB 확인 규칙 <code>library_vendor_check</code>: 업체 값은 <code>KYOBO</code>·<code>YES24</code>·<code>BOOKCUBE</code>·<code>ALADIN</code>·<code>PORTAL</code>·<code>IN_HOUSE</code> 중 하나. 그리고 지금 "전자도서관이면 화면 종류와 주소가 있어야 함" 규칙처럼, 전자도서관이면 업체도 있어야 합니다. 나중에 실물 도서관이 들어오면 업체가 비어 있어도 됩니다.</p>
+<p class="alt"><b>다른 선택 — 업체를 늘 필수로</b>: 단순하지만, 실물 도서관 사이클에서 규칙을 다시 고쳐야 합니다.</p>
+<p class="rec">추천: 전자도서관이면 필수. 지금 표의 규칙과 같은 모양입니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>dev 도구 하나 정리</h2>
+<div class="item">
+<h3>사이트 제목과 이름을 비교하는 도구의 "괄호 떼기"를 지움 <span class="an">[안]</span></h3>
+<p>dev 도구 <code>check_front_page_names.py</code>는 사이트 첫 화면 제목과 우리 이름을 비교할 때, 우리 이름에서 "(교보)", "(구독)" 같은 괄호를 먼저 뗍니다. 이번에 이름에서 괄호가 모두 없어지므로 이 단계가 필요 없습니다.</p>
+<p class="alt"><b>다른 선택 — 그대로 둠</b>: 해는 없지만, 읽는 사람이 왜 있는지 헷갈립니다.</p>
+<p class="rec">추천: 지움.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>남은 확인 (개발 때 dev가 함)</h2>
+<p class="gist">정하실 것은 아니고, dev가 개발하며 확인하고 다르면 여쭙는 것들입니다.</p>
+<ul>
+<li>북큐브 구독 4곳의 서비스 번호(339·380·386·705)를 수집 번호와 다시 맞춤</li>
+<li>이름이 바뀐 학교 6곳, 977, 양산·마산 교육청 도서관의 공식 이름을 출처로 다시 확인</li>
+<li>도서관 목록 응답이 얼마나 커지는지(압축 뒤)</li>
+<li>변경 파일 번호(지금 마지막이 013이라 014로 봄)</li>
+<li>수집 DB 이름을 바꾸는 방법·때(수집 세션)</li>
+</ul>
+<div class="item">
+<h3>이 설계 문서대로 인계서로 넘어감 <span class="an">[안]</span></h3>
+<p>승인하시면 설계 검토(design-reviewer)를 돌리고, ADR-0071을 Accepted로 바꾸고, dev가 따라 만들 인계서를 써서 보여 드립니다.</p>
+</div>
+</section>
+
+<p class="foot">원본: <code>docs/cycles/09-library-naming/design-delta.md</code> (그림은 <code>easy/design-delta-original.html</code>). 작성 2026-10-11.</p>
+</main>
+</body>
+</html>

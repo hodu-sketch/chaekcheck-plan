@@ -36,7 +36,7 @@
 
 - A안: 이미 적용된 seed(002 SQL, 003~006·008 CSV)를 직접 고침 — `db`·`db-test`를 지우고 다시 적용, `catalog`·`collection` 다시 가져오기 필요, 사이클 08 방식과 갈림
 - **B안 (추천)**: 새 UPDATE changeset을 번호로(013과 같은 꼴). 목록은 `name_overrides.tsv`에 더함
-  - 대상: 괄호 뗄 277줄, 76·64, 93·943, 1575, 1149. 434·456은 `old_name`을 "… (북큐브)"로, `new_name`을 괄호 없이(013은 고치지 않음)
+  - 대상: 괄호 뗄 277줄, 76·64, 93·943, 1575, 1149 (아래 "약 285줄"은 옛 숫자, 최신은 `design-delta.md`). 434·456은 `old_name`을 "… (북큐브)"로, `new_name`을 괄호 없이(013은 고치지 않음)
   - `name_overrides.tsv`: 434·456 `new_name`에서 괄호를 뗌, 이번 줄도 같은 파일에(`changed_on` 표시 `label-removed` [안], `source_url` ADR-0071, 사이트 제목으로 고친 곳은 그 출처). 다른 안: 파일을 따로(`name_label_removal.tsv`)
   - 스크립트: `name_candidates()`·`LABELS` 지우고 `VENDORS`·`assign_order_no()`, `apply_name_overrides()`가 등록 도서관도 받게(메모리 속 이름에만 적용), 겹침 열쇠를 (이름, 업체, 대출 방식, 순번)으로, 테스트 고침. 다음 실행 때 008 CSV에 고친 이름이 들어가고 이번 UPDATE는 `WHERE old_name` 때문에 아무 일도 안 함
   - 단점: VALUES 약 285줄(TSV에서 만듦), 002~006 파일에는 옛 이름이 남음
@@ -98,5 +98,5 @@
 - "진천군립도서관 대여형" → "진천군립도서관" [확정] (사용자 승인)
 - 결정 5 A안 (값 `vendor`·`lendingModel`·`orderNo`를 보내고 웹이 글자를 만듦) [확정] (사용자 승인)
 - 이름 목록(`vendor`, `order_no`, 업체 값 6개, 제약 이름, `orderNo`, `label-removed`) [확정] (사용자 승인)
-- 결정 1: **업체는 도서관 수집이 정하고 seed 생성 스크립트가 보통 칸 `vendor`에 씀. DB는 허용 값 6개만 CHECK. 대응표는 seed 생성 스크립트 한 곳. 지금 있는 줄은 이번 changeset이 화면 종류 대응표로 한 번 채움. 스크립트 테스트로 "대응표와 다른 업체는 수집이 따로 적은 곳뿐"을 확인** [확정] (사용자 승인, 2026-10-11, `easy/2026-10-11-vendor-followup.html`; (나) DB 계산 안은 미승인: "역할 분리"). 사용자 질문: "이게 나은 것 같으데 수집 스크립트가 하는게... 역할 분리를 잘 따져봐야 할 것 같아". 이에 따라 결정 4의 CHECK는 `(vendor = 'PORTAL') = (lending_model IS NULL)`로 맞춤 [안]
+- 결정 1: **업체는 도서관 수집이 정하고 seed 생성 스크립트가 보통 칸 `vendor`에 씀. DB는 허용 값 6개만 CHECK. 대응표는 seed 생성 스크립트 한 곳. 지금 있는 줄은 이번 changeset이 화면 종류 대응표로 한 번 채움. 스크립트 테스트로 "대응표와 다른 업체는 수집이 따로 적은 곳뿐"을 확인** [확정] (사용자 승인, 2026-10-11, `easy/2026-10-11-vendor-followup.html`; (나) DB 계산 안은 미승인: "역할 분리"). 사용자 질문: "이게 나은 것 같으데 수집 스크립트가 하는게... 역할 분리를 잘 따져봐야 할 것 같아". 이에 따라 결정 4의 CHECK는 `(vendor = 'PORTAL') = (lending_model IS NULL)`로 맞춤 [확정] (vendor-followup)
 - 결정 6: 이름 찾기는 웹에서만 바꿈(서버 찾기 API 없음, ADR-0058 그대로) [확정] (사용자 승인, 2026-10-11, 맥락 설명을 읽은 뒤)

@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 08 남은 결정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+.pill{display:inline-block;border:1px solid var(--line);border-radius:8px;padding:4px 10px;background:var(--bg);margin:2px 0}
+.tag{color:var(--muted);font-size:.85em}
+.mocks{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start;margin:12px 0}
+.dev{border:2px dashed var(--line);border-radius:12px;padding:10px;font-size:15px;line-height:1.5;background:var(--bg)}
+.dev .lbl{font-size:13px;color:var(--muted);margin-bottom:6px}
+.dev.pc{flex:1 1 520px;max-width:600px}.dev.tab{flex:1 1 360px;max-width:420px}.dev.ph{flex:0 1 230px;width:230px}
+.rcard{display:grid;grid-template-columns:1.4fr 1fr .8fr;gap:8px;border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--card);margin:6px 0}
+.dev.ph .rcard{grid-template-columns:1fr}
+.rcard .t{font-weight:700}.rcard .m{color:var(--muted);font-size:13px}
+.lname{color:var(--accent);text-decoration:underline}
+.cls{color:var(--muted);font-size:13px}
+.lrow{display:flex;justify-content:space-between;align-items:center;gap:8px;border:1px solid var(--line);border-radius:8px;padding:6px 8px;background:var(--card);margin:4px 0}
+.btn{border:1px solid var(--line);border-radius:6px;padding:0 8px;font-size:13px;white-space:nowrap}
+.inp{border:1px solid var(--line);border-radius:6px;padding:4px 8px;background:var(--card);margin:4px 0}
+.logo{display:inline-block;width:14px;height:14px;border-radius:3px;background:var(--line);vertical-align:-2px;margin-right:4px}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">사이클 08 dev가 넘긴 "plan이 정할 것" 7개 중<br>새로 고르실 것은 6개입니다.</p>
+<p class="sub">dev가 사이클 08 최종 문서(dev <code>docs/plan-feedback.md</code> "plan에 넘길 요약", 2026-10-11)를 냈습니다. 측정 두 가지(가져오기 #3·#4)는 아직 도는 중이라 결과만 나중에 덧붙입니다. 아래를 정하시면 사이클 08 회고(<code>retro.md</code>)를 쓰고 사이클 09 설계로 넘어갑니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>이미 정해진 것</h2>
+<p class="gist">7개 중 2개는 오늘 다른 페이지에서 이미 정하셨습니다.</p>
+<table>
+<tr><th>dev의 질문</th><th>이미 정한 것</th></tr>
+<tr><td>434·456과 같은 학교의 다른 사이트(745, 2239, 977)에 라벨을 붙여 맞출지</td><td>라벨을 붙이지 않습니다. 사이클 09에서 괄호를 모두 떼고 업체·대출 방식으로 나눕니다(ADR-0071). 977 "경국대학교"는 "국립경국대학교"로 고칩니다.</td></tr>
+<tr><td>배포 뒤 seed를 다시 만드는 방식</td><td>첫 배포 전까지 번호로 고치는 변경 파일, 첫 배포 직전 한 번 정리, 배포 뒤 seed 고정(사이클 08 중간 결정 페이지)</td></tr>
+</table>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>폰 설정 창: 바텀 시트</h2>
+<p class="gist">써 보시고 고르는 것이라 추천은 없습니다. 둘 중 하나만 승인해 주세요.</p>
+<svg viewBox="0 0 640 230" role="img" aria-label="바텀 시트와 작은 창">
+<rect x="20" y="10" width="150" height="210" rx="16" fill="var(--card)" stroke="var(--line)" stroke-width="2"/>
+<rect x="30" y="120" width="130" height="92" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+<rect x="80" y="127" width="30" height="4" rx="2" fill="var(--muted)"/>
+<text x="40" y="152" font-size="13" fill="var(--text)">찾을 도서관</text>
+<text x="40" y="174" font-size="13" fill="var(--text)">보기 방식</text>
+<text x="40" y="196" font-size="13" fill="var(--text)">직접 찾기</text>
+<text x="185" y="110" font-size="15" fill="var(--text)" font-weight="700">바텀 시트 (지금)</text>
+<text x="185" y="134" font-size="14" fill="var(--muted)">아래에서 올라옴, 손잡이,</text>
+<text x="185" y="156" font-size="14" fill="var(--muted)">아래로 끌거나 바깥을 눌러 닫음</text>
+<rect x="400" y="10" width="150" height="210" rx="16" fill="var(--card)" stroke="var(--line)" stroke-width="2"/>
+<rect x="425" y="60" width="100" height="92" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+<text x="435" y="86" font-size="13" fill="var(--text)">찾을 도서관</text>
+<text x="435" y="108" font-size="13" fill="var(--text)">보기 방식</text>
+<text x="435" y="130" font-size="13" fill="var(--text)">직접 찾기</text>
+<text x="400" y="180" font-size="15" fill="var(--text)" font-weight="700">작은 창 (예전)</text>
+<text x="400" y="202" font-size="14" fill="var(--muted)">가운데 뜨는 창</text>
+</svg>
+<p class="cap">왼쪽: 사이클 08에서 바꾼 바텀 시트. 오른쪽: 예전 작은 창(코드를 남겨 둬서 설정 하나로 되돌릴 수 있음). 위치와 순서만 보여 주는 그림입니다.</p>
+
+<div class="item">
+<h3>바텀 시트를 유지 <span class="an">[안]</span></h3>
+<p>폰에서 설정을 누르면 지금처럼 화면 아래에서 창이 올라옵니다.</p>
+</div>
+<div class="item">
+<h3>예전 작은 창으로 되돌림 <span class="an">[안]</span></h3>
+<p>dev가 설정 하나(<code>PHONE_SETTINGS_SHEET = false</code>)로 되돌립니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>이름이 바뀐 학교 7곳</h2>
+<p class="gist">사이클 08에서 "모두 그대로"(주소·끄기)로 정하셨고, 이름 후보는 다음 사이클로 넘어왔습니다. 사이클 09가 마침 이름을 고치는 사이클이라 함께 넣자는 제안입니다.</p>
+<table>
+<tr><th>번호</th><th>지금 이름</th><th>업체</th><th>사이클 09 이름 후보 (괄호 없이)</th><th>근거 (dev 조사, 2026-10-11)</th></tr>
+<tr><td>895</td><td>한경대학교</td><td>교보</td><td>한경국립대학교</td><td>사이트 제목·화면 아래 "한경국립대학교", 대학알리미 2023 개명</td></tr>
+<tr><td>1002</td><td>한국산업기술대학교</td><td>교보</td><td>한국공학대학교</td><td>사이트 "한국공학대학교 도서관", 대학 연혁 2022-03 교명 변경</td></tr>
+<tr><td>769</td><td>강릉원주대학교 (교보)</td><td>교보</td><td>강원대학교 강릉캠퍼스</td><td>대학알리미 2026 통합 "현 학교명: 강원대학교". 원주캠퍼스도 쓰는지 확인 못 함</td></tr>
+<tr><td>2257</td><td>강릉원주대학교 (YES24)</td><td>YES24</td><td>강원대학교 강릉캠퍼스</td><td>사이트 아래 주소 줄 "강원대학교 강릉캠퍼스 도서관"</td></tr>
+<tr><td>428</td><td>경남도립거창대학교</td><td>북큐브</td><td>국립창원대학교 거창캠퍼스</td><td>대학알리미 2026 통합. 같은 호스트의 교보 사이트 765가 이미 이 이름</td></tr>
+<tr><td>429</td><td>경남도립남해대학교 전자도서관</td><td>북큐브</td><td>국립창원대학교 남해캠퍼스</td><td>대학알리미 2026 통합. 국립창원대 쪽 남해캠퍼스 안내는 못 찾음</td></tr>
+<tr><td>607</td><td>원광보건대학</td><td>북큐브</td><td>(보류)</td><td>대학알리미 2026 "현 학교명: 원광대학교". 사이트는 "원광보건대학교 전자책도서관"이고 합친 안내가 없음</td></tr>
+</table>
+
+<div class="item">
+<h3>6곳(607 빼고)의 이름을 사이클 09 이름 작업에 넣음 <span class="an">[안]</span></h3>
+<p>사이클 09의 "번호로 고치는 변경 파일"에 6곳을 더합니다. 업체가 달라 같은 이름끼리도 겹치지 않습니다(예: 769 교보와 2257 YES24 모두 "강원대학교 강릉캠퍼스"). 이름은 dev가 사이클 08처럼 공식 출처로 다시 확인하고, 다르면 여쭙니다. 607은 사이트가 아직 옛 학교 이름으로 따로 돌아가 근거가 약해 그대로 둡니다.</p>
+<p class="alt"><b>다른 선택 — 나중 사이클로</b>: 사이클 09가 작아지지만, 이름 고침 목록을 한 번 더 만들어야 합니다.</p>
+<p class="rec">추천: 사이클 09에 넣음.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>배포 때나 나중에 볼 것</h2>
+<p class="gist">지금 정할 수 없거나 급하지 않은 셋을 나중 할 일(backlog)로 보내자는 제안입니다.</p>
+
+<div class="item">
+<h3>서비스 힙 512MB의 여유는 운영 이용 기록을 보고 정함 <span class="an">[안]</span></h3>
+<p>dev가 짚은 점: 검색 한 번에 도서관 사이트 응답을 최대 4MB까지 읽고, 동시에 100개까지 읽으면 이론상 400MB라 힙 512MB에 여유가 작습니다. 지금은 혼자 쓰는 로컬이라 판단할 자료가 없습니다.</p>
+<p>제안: 배포 사이클에서 메모리를 다시 잴 때(이미 backlog) 실제 이용 기록으로 보고, 그때 힙을 늘릴지 응답 상한 4MB를 낮출지 정합니다.</p>
+<p class="alt"><b>다른 선택 — 지금 응답 상한을 낮춤</b>: 여유가 생기지만, 큰 응답을 주는 사이트의 결과가 잘릴 수 있는데 어느 사이트가 그런지 아직 모릅니다.</p>
+<p class="rec">추천: 운영 기록을 보고 정함.</p>
+</div>
+
+<div class="item">
+<h3>1016·1079·2161 사이트 이름은 교보 서버가 풀리면 다시 확인 <span class="an">[안]</span></h3>
+<p>사이클 08에서 고친 이름 중 셋(국가평생교육진흥원, 한국농수산식품유통공사, 한국형사·법무정책연구원)은 교보 구독형 서버가 응답하지 않아 10-05에 본 사이트 제목으로 확인했습니다. 서버가 다시 열리면 사이트 제목과 맞는지 봅니다.</p>
+<p class="rec">추천: backlog에 남김.</p>
+</div>
+
+<div class="item">
+<h3>가져오기 힙 6GB 줄이기는 다음 후보로 <span class="an">[안]</span></h3>
+<p>가져오기는 4GB로는 첫 읽기에서 멈췄고 6GB로 다시 재는 중입니다. 첫 읽기가 값별 줄 수를 모두 들고 있어서 큽니다(dev). 운영 서버 메모리가 작으면 문제가 되므로, "새 사본으로 가져오기" 같은 가져오기 사이클의 후보로 남깁니다.</p>
+<p class="rec">추천: 다음 후보로.</p>
+</div>
+</section>
+
+<p class="foot">원본: dev <code>docs/plan-feedback.md</code> "plan에 넘길 요약 (사이클 08, 2026-10-11)" 5절, dev <code>docs/library-maintenance.md</code> 4-12-2(흡수된 학교 7곳), plan <code>docs/cycles/08-polish-swap-memory/dev-midpoint-2026-10-11.md</code>. 작성 2026-10-11.</p>
+</main>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 09 설계 검토 결과</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+.pill{display:inline-block;border:1px solid var(--line);border-radius:8px;padding:4px 10px;background:var(--bg);margin:2px 0}
+.tag{color:var(--muted);font-size:.85em}
+.mocks{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start;margin:12px 0}
+.dev{border:2px dashed var(--line);border-radius:12px;padding:10px;font-size:15px;line-height:1.5;background:var(--bg)}
+.dev .lbl{font-size:13px;color:var(--muted);margin-bottom:6px}
+.dev.pc{flex:1 1 520px;max-width:600px}.dev.tab{flex:1 1 360px;max-width:420px}.dev.ph{flex:0 1 230px;width:230px}
+.rcard{display:grid;grid-template-columns:1.4fr 1fr .8fr;gap:8px;border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--card);margin:6px 0}
+.dev.ph .rcard{grid-template-columns:1fr}
+.rcard .t{font-weight:700}.rcard .m{color:var(--muted);font-size:13px}
+.lname{color:var(--accent);text-decoration:underline}
+.cls{color:var(--muted);font-size:13px}
+.lrow{display:flex;justify-content:space-between;align-items:center;gap:8px;border:1px solid var(--line);border-radius:8px;padding:6px 8px;background:var(--card);margin:4px 0}
+.btn{border:1px solid var(--line);border-radius:6px;padding:0 8px;font-size:13px;white-space:nowrap}
+.inp{border:1px solid var(--line);border-radius:6px;padding:4px 8px;background:var(--card);margin:4px 0}
+.logo{display:inline-block;width:14px;height:14px;border-radius:3px;background:var(--line);vertical-align:-2px;margin-right:4px}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">설계 검토 결과입니다.<br>고친 것을 보시고 3가지만 골라 주세요.</p>
+<p class="sub">설계 검토 에이전트(design-reviewer)가 사이클 09 문서를 읽고 "반드시 고칠 것" 7개, "고치면 좋은 것" 8개를 냈습니다. 모두 이미 정하신 결정과 문서를 맞추는 일이라 고쳐 두었습니다. 새로 정할 것은 ADR 하나와 작은 이름 하나입니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>반드시 고칠 것 7개: 고친 내용</h2>
+<p class="gist">문서끼리 어긋난 곳을 정하신 대로 맞췄습니다.</p>
+<table>
+<tr><th>짚은 것</th><th>고친 것</th></tr>
+<tr><td>명세 R2에 "업체를 칸으로 둘지 설계에서 정함"이 남음</td><td>"DB 칸, 도서관 수집이 정함"으로</td></tr>
+<tr><td>겹침 규칙과 완료 기준 AC-7에 순번이 빠짐</td><td>"이름·업체·대출 방식·순번이 모두 같으면 거절, 순번만 다르면 들어감"으로. 범위 목표도 같게</td></tr>
+<tr><td>"· N번째 사이트" 표시가 화면 흐름·완료 기준에 없음</td><td>화면 흐름의 모든 자리(결과 카드, 내 도서관 세 목록)와 상태에 더함. 완료 기준 AC-9 새로 더함(지금 데이터엔 없어 테스트 데이터로 확인)</td></tr>
+<tr><td>API로 값을 보내는 것, 번호로 고치는 변경 파일, 이름 찾기를 화면에서 하는 것이 ADR에 없음</td><td>ADR-0071은 이미 Accepted라 고칠 수 없어 <b>새 ADR-0076 초안</b>을 만듦(아래 3번에서 고르심)</td></tr>
+<tr><td>고칠 이름 수가 문서마다 다름(285, 293)</td><td>"번호당 한 줄, 최종 이름 하나. 293은 겹침을 빼기 전 수, 실제 줄 수는 dev가 셈"으로 적음. 예: 1575는 괄호 떼기와 "완주동상초등학교"가 겹쳐 한 줄</td></tr>
+<tr><td>진천군립 "대여형" 떼기가 명세에 없음</td><td>명세 R1-11로 더함</td></tr>
+<tr><td>정해진 것에 <code>[안]</code> 표시가 남음</td><td><code>[확정]</code>으로 바꿈, 사전 조사 문서 맨 위에 "결과는 명세·설계가 최신" 한 줄</td></tr>
+</table>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>고치면 좋은 것: 고친 것과 못 고친 것</h2>
+<p class="gist">8개 중 6개는 고쳤고, 2개는 ADR 규칙 때문에 그대로 둡니다.</p>
+<table>
+<tr><th>고친 것</th></tr>
+<tr><td>명세·화면 흐름의 낡은 문장(사이클 08이 "진행 중"이라고 쓴 곳)을 회고 결과로 바꿈</td></tr>
+<tr><td>범위의 "포함"에 덤 작업 한 줄: 메리츠 이름 오류, 서대문·마산, 진천군립, 수집 DB 이름, dev 도구 정리</td></tr>
+<tr><td>명세 R5에 "결과 카드는 이름 다음 줄"을 적음</td></tr>
+<tr><td>업체 필수 규칙에 새 이름이 없던 것 → 아래 2번 칩</td></tr>
+<tr><td>backlog: "실물 도서관이 생기면 업체가 비어 겹칠 수 있음" 한 줄, "013·014" 표기</td></tr>
+<tr><td>dev 웹 테스트 줄 번호(201 → 202)</td></tr>
+</table>
+<table>
+<tr><th>그대로 두는 것</th><th>이유</th></tr>
+<tr><td>ADR-0071의 대안 순서(A, B, C, F, D, E)</td><td>Accepted ADR은 상태 줄 말고는 고칠 수 없게 막혀 있음</td></tr>
+<tr><td>ADR-0017 본문에 "ADR-0071로 바뀜" 링크</td><td>같은 이유. ADR 목록(<code>docs/adr/README.md</code>)과 ADR-0071 쪽에 이미 적혀 있음</td></tr>
+</table>
+<div class="item">
+<h3>고치면 좋은 것은 위처럼 고친 대로 둠 <span class="an">[안]</span></h3>
+<p>모두 정하신 내용을 다시 적은 것이고 새 결정은 없습니다.</p>
+<p class="rec">추천: 이대로.</p>
+</div>
+<div class="item">
+<h3>업체 필수 규칙 이름은 <code>library_vendor_required_check</code> <span class="an">[안]</span></h3>
+<p>앞서 정하신 "전자도서관이면 업체가 꼭 있어야 함"을 DB 확인 규칙으로 만들 때의 이름입니다. 업체 값 6개를 확인하는 <code>library_vendor_check</code>와 따로 둡니다. 지금은 도서관이 모두 전자도서관이라 늘 필수이고, 실물 도서관 사이클에서 다시 봅니다.</p>
+<p class="alt"><b>다른 선택 — 규칙 하나로 합침</b>: 이름이 하나 줄지만 위반이 났을 때 어느 조건인지 덜 분명합니다.</p>
+<p class="rec">추천: 따로 둠.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>새 ADR-0076 초안</h2>
+<p class="gist">설계에서 정하신 세 가지를 기록으로 남깁니다. 번호는 사이클 10 세션이 0072~0075를 써서 0076입니다.</p>
+<table>
+<tr><th>칸</th><th>내용</th></tr>
+<tr><td>제목</td><td>도서관 분류 값은 API로 보내고 화면이 글자를 만듦, 이름은 번호로 고치는 changeset, 이름 찾기는 화면에서</td></tr>
+<tr><td>결정</td><td>① 도서관 목록과 검색 스트림에 <code>vendor</code>·<code>lendingModel</code>·<code>orderNo</code>, 글자는 웹이 만듦, 값이 없으면 이름만 ② 이미 있는 이름은 새 변경 파일(<code>library/014</code>)에서 번호와 옛 이름이 맞을 때만 고침, seed는 그대로, 목록은 <code>name_overrides.tsv</code>에 ③ 직접 추가 이름 찾기는 웹에서만(ADR-0058 그대로)</td></tr>
+<tr><td>바꾸는 기록</td><td><code>docs/current/api.md</code>의 "대출 방식은 웹에 보내지 않음". ADR-0019("화면은 화면 종류로 갈리지 않음")는 그대로 지킴</td></tr>
+<tr><td>이유</td><td>세 결정 모두 "제안 → 승인"(2026-10-11, 설계 결정 페이지)</td></tr>
+<tr><td>검토한 대안</td><td>서버가 글자를 보냄 / 웹이 화면 종류로 업체를 계산 / seed 파일을 직접 고침 / 서버에 찾기 API — 채택하지 않은 이유는 모두 "이유 미확인"(말씀하신 이유가 없어서)</td></tr>
+<tr><td>결과</td><td>DB를 다시 만들지 않음, 화면 문구가 웹 한 곳에. 대신 목록 응답이 커지고 이름 고침 목록이 길어짐(첫 배포 직전 정리 때 합침)</td></tr>
+</table>
+<div class="item">
+<h3>ADR-0076을 이 초안대로 씀 <span class="an">[안]</span></h3>
+<p>승인하시면 <code>docs/adr/0076-…md</code>로 쓰고, 결정 자체는 이미 승인하셨으므로 Accepted로 둡니다. 그다음 현재 설계 문서에 사이클 09를 합치고 인계서를 씁니다.</p>
+<p class="rec">추천: 이대로.</p>
+</div>
+</section>
+
+<p class="foot">원본: 설계 검토 결과(design-reviewer, 2026-10-11), <code>docs/cycles/09-library-naming/adr-draft-0076.md</code>, <code>spec.md</code>, <code>flow.md</code>, <code>design-delta.md</code>. 작성 2026-10-11.</p>
+</main>
+</body>
+</html>

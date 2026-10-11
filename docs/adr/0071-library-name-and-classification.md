@@ -1,6 +1,6 @@
 # ADR-0071: 도서관 이름에는 기관 이름만, 업체·대출 방식은 분류로
 
-Status: Proposed
+Status: Accepted
 Date: 2026-10-11
 Cycle: 09-library-naming
 Supersedes: 없음 (ADR-0017의 "같은 기관의 두 번째 사이트에는 '(구독)' 등을 붙여 이름을 구분"과 사이클 07 design-delta seed 규칙의 "이름" 줄을 바꿈)

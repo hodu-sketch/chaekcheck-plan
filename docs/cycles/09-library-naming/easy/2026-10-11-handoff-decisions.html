@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 09 인계서</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+.pill{display:inline-block;border:1px solid var(--line);border-radius:8px;padding:4px 10px;background:var(--bg);margin:2px 0}
+.tag{color:var(--muted);font-size:.85em}
+.mocks{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start;margin:12px 0}
+.dev{border:2px dashed var(--line);border-radius:12px;padding:10px;font-size:15px;line-height:1.5;background:var(--bg)}
+.dev .lbl{font-size:13px;color:var(--muted);margin-bottom:6px}
+.dev.pc{flex:1 1 520px;max-width:600px}.dev.tab{flex:1 1 360px;max-width:420px}.dev.ph{flex:0 1 230px;width:230px}
+.rcard{display:grid;grid-template-columns:1.4fr 1fr .8fr;gap:8px;border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--card);margin:6px 0}
+.dev.ph .rcard{grid-template-columns:1fr}
+.rcard .t{font-weight:700}.rcard .m{color:var(--muted);font-size:13px}
+.lname{color:var(--accent);text-decoration:underline}
+.cls{color:var(--muted);font-size:13px}
+.lrow{display:flex;justify-content:space-between;align-items:center;gap:8px;border:1px solid var(--line);border-radius:8px;padding:6px 8px;background:var(--card);margin:4px 0}
+.btn{border:1px solid var(--line);border-radius:6px;padding:0 8px;font-size:13px;white-space:nowrap}
+.inp{border:1px solid var(--line);border-radius:6px;padding:4px 8px;background:var(--card);margin:4px 0}
+.logo{display:inline-block;width:14px;height:14px;border-radius:3px;background:var(--line);vertical-align:-2px;margin-right:4px}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">사이클 09 인계서입니다.<br>dev가 이 순서로 만듭니다.</p>
+<p class="sub">인계서(<code>handoff.md</code>)는 dev가 그대로 따라 만드는 작업 순서입니다. 정하신 것만 담았고, 새로 고르실 것은 작은 것 5개와 마지막 "넘김" 하나입니다. 승인하시면 <code>docs/current/handoff.md</code>로 옮겨 dev 세션이 자동으로 읽습니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>만드는 순서 (0~7단계)</h2>
+<svg viewBox="0 0 860 250" role="img" aria-label="단계 순서">
+<rect x="10" y="10" width="200" height="64" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/><text x="22" y="36" font-size="15" font-weight="700" fill="var(--text)">0 기준 재기</text><text x="22" y="60" font-size="13" fill="var(--muted)">응답 크기·판정·내 도서관</text>
+<rect x="222" y="10" width="200" height="64" rx="8" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="2"/><text x="234" y="36" font-size="15" font-weight="700" fill="var(--text)">1 이름 다시 확인</text><text x="234" y="60" font-size="13" fill="var(--muted)">공식 출처, 이름 고침 목록</text>
+<rect x="434" y="10" width="200" height="64" rx="8" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="2"/><text x="446" y="36" font-size="15" font-weight="700" fill="var(--text)">2 seed 생성 스크립트</text><text x="446" y="60" font-size="13" fill="var(--muted)">업체·대출 방식·순번</text>
+<rect x="646" y="10" width="204" height="64" rx="8" fill="var(--no-bg)" stroke="var(--no)" stroke-width="2"/><text x="658" y="36" font-size="15" font-weight="700" fill="var(--text)">3 DB 변경 파일 014</text><text x="658" y="60" font-size="13" fill="var(--muted)">위험 높음: 이름 한 번에</text>
+<rect x="10" y="100" width="200" height="64" rx="8" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="2"/><text x="22" y="126" font-size="15" font-weight="700" fill="var(--text)">4 서버</text><text x="22" y="150" font-size="13" fill="var(--muted)">값 세 개, 테스트 고침</text>
+<rect x="222" y="100" width="200" height="64" rx="8" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="2"/><text x="234" y="126" font-size="15" font-weight="700" fill="var(--text)">5 화면</text><text x="234" y="150" font-size="13" fill="var(--muted)">분류 글자, 이름 찾기</text>
+<rect x="434" y="100" width="200" height="64" rx="8" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/><text x="446" y="126" font-size="15" font-weight="700" fill="var(--text)">6 도구·문서</text><text x="446" y="150" font-size="13" fill="var(--muted)">유지보수 문서, gradle 주석</text>
+<rect x="646" y="100" width="204" height="64" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/><text x="658" y="126" font-size="15" font-weight="700" fill="var(--text)">7 전체 확인</text><text x="658" y="150" font-size="13" fill="var(--muted)">AC-1~9, 4가지 폭</text>
+<rect x="10" y="190" width="840" height="48" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="2" stroke-dasharray="6 5"/><text x="22" y="220" font-size="14" fill="var(--text)">따로: 수집 세션이 수집 DB 이름을 같은 이름으로 바꿈 (방법·때는 수집 세션과 정함)</text>
+</svg>
+<p class="cap">색: 파랑 = 재기·확인, 주황 = 보통, 빨강 = 위험 높음, 초록 = 문서. 점선은 dev 밖의 일입니다.</p>
+<p>dev가 지킬 것 중 이번에 새로 더한 것: 이미 적용된 seed·변경 파일은 고치지 않음(정하신 seed 방식), 교보 구독형 서버에는 요청하지 않음(막혀 있음), 검색 결과의 대출 가능 판정이 바뀌면 멈추고 보고.</p>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>도중에 여쭐 것</h2>
+<p>dev가 만들다가 아래를 보여 드리고 답을 받습니다.</p>
+<ul>
+<li>공식 이름이 명세와 다른 곳(학교 6곳, 977, 양산·마산 교육청 도서관): 출처 원문과 제안</li>
+<li>북큐브 구독 번호가 339·380·386·705가 아니면</li>
+<li>순번 2 이상이 나오면(지금은 없을 것으로 봄): 사이트 이름 확인</li>
+<li>실제로 이름을 바꿀 줄 수와 목록: 변경 파일을 커밋하기 전</li>
+<li>도서관 목록 응답이 얼마나 커졌는지, 화면 확인</li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>고르실 것</h2>
+<p class="gist">인계서에서 처음 나온 작은 제안들입니다. 정하신 큰 틀은 바뀌지 않습니다.</p>
+
+<div class="item">
+<h3>결과 카드 순서: 이름 → 분류 → 폰 안내 <span class="an">[안]</span></h3>
+<p>YES24 폰 안내("폰에서는 사이트가 다른 화면을…")가 있는 13곳은 카드에 줄이 셋이 됩니다. 이름 다음에 "YES24 · 소장", 그 아래에 폰 안내를 둡니다.</p>
+<p class="alt"><b>다른 선택 — 이름 → 폰 안내 → 분류</b>: 안내가 이름에 더 가깝지만, 분류가 이름과 떨어져 보입니다.</p>
+<p class="rec">추천: 이름 → 분류 → 폰 안내.</p>
+</div>
+
+<div class="item">
+<h3>[추가]·[빼기] 버튼의 화면 읽기용 이름에 분류를 넣음 <span class="an">[안]</span></h3>
+<p>화면 읽기 프로그램을 쓰는 사람에게 버튼이 "동대문구립도서관 추가"로만 읽히면 같은 이름 두 줄을 구분할 수 없습니다. "동대문구립도서관 YES24 소장 추가"처럼 읽히게 합니다. 화면에 보이는 글자는 그대로입니다.</p>
+<p class="rec">추천: 넣음.</p>
+</div>
+<div class="item" style="background:var(--accent-bg);border-radius:10px;padding:16px 18px">
+<h3>질문: 무슨 상황인지 그림으로</h3>
+<p><b>앞이 잘 안 보여 화면을 소리로 듣는 사람이 내 도서관 화면에서 [추가] 버튼을 고를 때의 일입니다.</b> 폰의 VoiceOver(아이폰)·TalkBack(안드로이드) 같은 화면 읽기 기능은 손가락이 닿은 버튼의 "읽기용 이름"을 소리로 읽어 줍니다. 이 이름은 화면에 보이지 않고, 웹 코드에 따로 적어 둡니다(<code>aria-label</code>).</p>
+<svg viewBox="0 0 860 330" role="img" aria-label="화면 읽기 비교">
+<text x="10" y="22" font-size="16" font-weight="700" fill="var(--text)">화면 (눈으로 보는 사람)</text>
+<rect x="10" y="34" width="400" height="44" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="2"/>
+<text x="22" y="62" font-size="15" fill="var(--text)">동대문구립도서관</text><text x="160" y="62" font-size="13" fill="var(--muted)">· 교보 · 소장</text>
+<rect x="340" y="42" width="58" height="28" rx="6" fill="var(--card)" stroke="var(--accent)" stroke-width="2"/><text x="369" y="61" font-size="14" fill="var(--text)" text-anchor="middle">추가</text>
+<rect x="10" y="86" width="400" height="44" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="2"/>
+<text x="22" y="114" font-size="15" fill="var(--text)">동대문구립도서관</text><text x="160" y="114" font-size="13" fill="var(--muted)">· YES24 · 소장</text>
+<rect x="340" y="94" width="58" height="28" rx="6" fill="var(--card)" stroke="var(--accent)" stroke-width="2"/><text x="369" y="113" font-size="14" fill="var(--text)" text-anchor="middle">추가</text>
+<text x="10" y="160" font-size="14" fill="var(--muted)">눈으로 보면 분류 글씨로 두 줄을 구분할 수 있음</text>
+
+<text x="440" y="22" font-size="16" font-weight="700" fill="var(--text)">화면 읽기 기능이 버튼에서 읽는 말</text>
+<rect x="440" y="34" width="410" height="120" rx="10" fill="var(--no-bg)" stroke="var(--no)" stroke-width="2"/>
+<text x="452" y="58" font-size="14" font-weight="700" fill="var(--no)">지금처럼 이름만 적으면</text>
+<text x="452" y="86" font-size="14" fill="var(--text)">첫째 버튼: "동대문구립도서관 추가"</text>
+<text x="452" y="112" font-size="14" fill="var(--text)">둘째 버튼: "동대문구립도서관 추가"</text>
+<text x="452" y="138" font-size="13" fill="var(--muted)">→ 둘이 똑같이 들려 어느 쪽이 YES24인지 모름</text>
+<rect x="440" y="170" width="410" height="120" rx="10" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/>
+<text x="452" y="194" font-size="14" font-weight="700" fill="var(--ok)">제안: 분류를 넣으면</text>
+<text x="452" y="222" font-size="14" fill="var(--text)">첫째: "동대문구립도서관 교보 소장 추가"</text>
+<text x="452" y="248" font-size="14" fill="var(--text)">둘째: "동대문구립도서관 YES24 소장 추가"</text>
+<text x="452" y="274" font-size="13" fill="var(--muted)">→ 듣고 바로 고를 수 있음</text>
+<text x="10" y="200" font-size="14" fill="var(--text)">왜 이번에 생기나:</text>
+<text x="10" y="224" font-size="14" fill="var(--muted)">지금은 이름에 "(YES24)"가 붙어</text>
+<text x="10" y="246" font-size="14" fill="var(--muted)">읽기용 이름도 달랐는데, 괄호를 떼면</text>
+<text x="10" y="268" font-size="14" fill="var(--muted)">같은 이름 묶음이 약 130개 생김</text>
+</svg>
+<p class="cap">눈으로 보는 화면은 바뀌지 않습니다. 소리로 읽히는 말에만 분류가 더해집니다. [빼기] 버튼과 직접 추가한 도서관 목록도 같습니다.</p>
+<p>dev 웹 코드는 지금도 버튼마다 읽기용 이름을 "○○ 추가", "○○ 빼기"로 적어 두고 있습니다(<code>MyLibrariesPage.tsx</code>, 2026-10-11 읽음). 이번 제안은 그 말에 분류를 끼워 넣는 것뿐입니다. 위 버튼으로 골라 주세요.</p>
+</div>
+
+
+<div class="item">
+<h3>이름 찾기에서 띄어쓰기 없이 친 검색어도 지금처럼 찾힘 <span class="an">[안]</span></h3>
+<p>새 규칙은 검색어를 띄어쓰기로 나눠 낱말마다 봅니다. 여기에 "검색어 전체(띄어쓰기를 지운 것)가 이름에 들어 있어도 맞음"을 남겨, 지금 찾히던 것이 새 규칙 때문에 안 찾히는 일이 없게 합니다. 예: "창원대학교거창"으로 "국립창원대학교 거창캠퍼스"가 찾힘.</p>
+<p class="rec">추천: 남김.</p>
+</div>
+
+<div class="item">
+<h3>이름 고침 목록의 표시: "(sam)"·"대여형"도 괄호 떼기와 같은 표시, 메리츠는 오타 표시 <span class="an">[안]</span></h3>
+<p>이름 고침 목록(<code>name_overrides.tsv</code>)에는 고친 까닭을 짧게 적습니다. 괄호 떼기는 <code>label-removed</code>로 정하셨습니다. 서대문 "(sam)"과 진천군립 "대여형"도 같은 표시로, 메리츠의 깨진 글자는 사이클 08에서 오타를 고칠 때 쓴 <code>typo</code>로 적습니다. 출처 칸에는 괄호 떼기의 경우 "ADR-0071"을 적습니다.</p>
+<p class="rec">추천: 이대로.</p>
+</div>
+
+<div class="item">
+<h3>DB 변경 파일 014는 한 덩어리로 실행 <span class="an">[안]</span></h3>
+<p>이름 고침부터 새 겹침 규칙까지 일곱 단계를 한 번에 실행합니다. 중간에 겹침이 나오면 일곱 단계 전부가 취소되고 배포가 멈춥니다. 반쯤 바뀐 상태로 남지 않습니다(PostgreSQL은 표 구조 변경도 한꺼번에 되돌림).</p>
+<p class="alt"><b>다른 선택 — 단계마다 나눔</b>: 어디서 멈췄는지 더 잘 보이지만, 반쯤 바뀐 상태가 남을 수 있습니다.</p>
+<p class="rec">추천: 한 덩어리.</p>
+</div>
+
+<div class="item">
+<h3>이 인계서로 dev에 넘김 <span class="an">[안]</span></h3>
+<p>승인하시면 <code>docs/current/handoff.md</code>를 이 인계서로 바꾸고, 지금 사이클 표시를 "사이클 09 넘김"으로 바꿉니다. 그 밖에 dev가 바꿔도 되는 이름·경로·예시(<code>[안]</code> 표시)는 dev가 정하고 알려 줍니다.</p>
+</div>
+</section>
+
+<p class="foot">원본: <code>docs/cycles/09-library-naming/handoff.md</code> (planner 작성), <code>design-delta.md</code>, ADR-0071·0076. 작성 2026-10-11.</p>
+</main>
+</body>
+</html>

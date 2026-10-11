@@ -1,6 +1,6 @@
 # 참고 문서 색인 — 다음에 개발·설계·관리할 때 볼 문서
 
-작성 2026-10-01, 고침 2026-10-04(정기 작업 문서, 3-1절 가져오기·검색), 2026-10-05(사이클 07 회고: 가져오기는 `collection` 모듈·dev `3-import.md`, 코드 위치, 꺼진 도서관), 2026-10-11(사이클 08 cycle-close: 도서관 이름 고침, 교보 대여·혼합 제외, 가져오기 바꿔 끼우기·시간 줄이기 방향, 정리 규칙을 바꿀 때, ADR-0065~0070). 사이클과 상관없이 계속 쓰는 문서들을 주제별로 모았습니다. 사이클 문서(`docs/cycles/NN-*/`)는 그 사이클의 기록이고, 여기 적힌 것은 "지금 어떻게 하는가"를 아는 데 필요한 문서입니다. 문서를 새로 만들거나 원본이 바뀌면 이 색인을 고칩니다.
+작성 2026-10-01, 고침 2026-10-04(정기 작업 문서, 3-1절 가져오기·검색), 2026-10-05(사이클 07 회고: 가져오기는 `collection` 모듈·dev `3-import.md`, 코드 위치, 꺼진 도서관), 2026-10-11(사이클 08 cycle-close: 도서관 이름 고침, 교보 대여·혼합 제외, 가져오기 바꿔 끼우기·시간 줄이기 방향, 정리 규칙을 바꿀 때, ADR-0065~0070), 2026-10-11(사이클 09 cycle-close: 도서관 이름은 기관 이름만, 업체·대출 방식·순번 분류, ADR-0071·0076). 사이클과 상관없이 계속 쓰는 문서들을 주제별로 모았습니다. 사이클 문서(`docs/cycles/NN-*/`)는 그 사이클의 기록이고, 여기 적힌 것은 "지금 어떻게 하는가"를 아는 데 필요한 문서입니다. 문서를 새로 만들거나 원본이 바뀌면 이 색인을 고칩니다.
 
 원칙 [확정] (사용자, 2026-10-01, dev C2-U-7 답): **절차의 원본은 dev `docs/library-maintenance.md`**, **조사 기록과 근거 수치는 plan**. 둘이 어긋나면 dev 절차가 최신입니다. 정기 유지보수 절차(도서관 목록 확인, 책 목록 수집, 가져오기)와 수집기 코드는 dev `docs/maintenance/`·`scripts/crawl/`로 모읍니다 (ADR-0047, 2026-10-04). **문서(A)는 2026-10-04 dev가 옮김**: 절차는 dev `docs/maintenance/` (`README.md` 순서, `1-libraries.md`, `2-crawl.md`, `platforms.md`, `3-import.md`). 수집기 코드(B)와 도서관 정보 도구(C)는 전체 수집이 끝난 뒤. 요청서 `docs/research/maintenance/dev-move-request.md`
 
@@ -33,7 +33,8 @@
 | plan `docs/cycles/02-library-expansion/research.md` | 조사 결과·근거(1·8·10절), 새 주소 못 찾은 약 20곳(12절), robots.txt 방침(9절) | 기록용 |
 | plan `docs/cycles/02-library-expansion/data/kyobo-institutions.tsv` | 교보 기관 목록 원자료 | 재조사 때 비교 |
 | plan `docs/research/library-join/name-changes-2026-10-10.md` | 도서관·기관 이름이 바뀌는 경우(대학 통합·교명 변경, 정부·공공기관 개편, 회사 사명, 학교, 공공도서관)와 실제 예(1절), 서비스 도서관 중 개명 기관과 흡수된 학교 사이트(2절), 이름 이력을 남기는 방법(4절). 사이클 08 이름 고침 목록(dev `scripts/library/name_overrides.tsv` [안 경로])의 첫 근거 | 2026-10-10 |
-| plan `docs/current/data-model.md` `library` 절 "이름 고침", seed 절 | 이름 고침 규칙: "처음 정한 이름은 바꾸지 않음"의 예외(공식 개명·틀린 이름, 목록에 있을 때만, 번호 유지), 이미 적용된 seed는 고치지 않고 새 changeset에서 UPDATE | 설계됨(미구현, 사이클 08) |
+| plan `docs/current/data-model.md` `library` 절 "이름 고침", seed 절 | 이름 고침 규칙: "처음 정한 이름은 바꾸지 않음"의 예외(공식 개명·틀린 이름, 목록에 있을 때만, 번호 유지), 이미 적용된 seed는 고치지 않고 새 changeset에서 UPDATE | 구현됨 (사이클 08) |
+| plan `docs/current/data-model.md` `library` 절 "도서관 이름과 분류", `docs/adr/0071-library-name-and-classification.md`, `docs/adr/0076-library-classification-api-and-rename.md` | **도서관 이름 규칙 (사이클 09)**: 이름에는 기관 정식 이름만(끝의 업체·대출 방식 괄호 없음), 모든 도서관에 업체(`vendor`, 도서관 수집이 정함)·대출 방식(`lending_model`, 통합 포털만 비움), 겹침은 (이름, 업체, 대출 방식, 순번) UNIQUE, 겹치면 seed 생성 스크립트가 순번을 붙이고 목록으로 보임. 대출 방식 채우는 규칙, 이름은 번호로 고치는 changeset | 설계됨(미구현, 사이클 09) |
 | plan `docs/adr/0067-exclude-kyobo-rental-mixed.md` | 교보 대여·혼합 도서관은 받지도 넣지도 않음(230곳, 이미 넣은 11곳 2664~2674는 seed에서 빼 지움), seed 규칙 "교보 대여·혼합은 넣지 않음" | 확정 (2026-10-11) |
 | plan `docs/adr/0068-updated-at-by-db-trigger.md` | 도서관·지역 표를 고칠 때 `updated_at`은 DB 트리거가 적음(모듈마다 함수). 직접 SQL로 고쳐도 적힘 | 확정 (2026-10-11), 설계됨(미구현, 사이클 08) |
 
@@ -52,7 +53,7 @@
 | plan `docs/research/library-limits/research.md` (+ `easy/`) | 구독형 도서관의 한도(월 예산·연 예산·1인 월 권수), 도서관별 현황(2026-10-04: 강동구립·서구 통합 마감), 알리는 방법 결정, YES24 크레마클럽·북큐브·부커스 구독형 | 2026-10-04 |
 | plan `docs/research/maintenance/library-logos.md`, `chaekcheck-data/logos/` (`logos.tsv`) | 도서관 로고 수집: 위치(교보 `headerLogo.json`, 그 밖 머리말 그림), 도서관 번호 매핑, 업체 기본 로고, 이용 조건 조사와 결정(공공도서관만, 안내는 서비스 안내 페이지) | 2026-10-05 |
 | plan `docs/research/library-join/candidates.md`, `chaekcheck-data/library-join/` | 후보 도서관 2,639곳 종류 나누기(이름 기준)와 공공도서관 120곳 가입 조건 조사·결정(사이클 밖). 결과 `public-join-2026-10-05.tsv` | 2026-10-05 |
-| plan `docs/research/maintenance/library-naming.md`, `library-naming-handoff.md` | 도서관 이름 규칙: 괄호 대신 업체·대출 방식 분류 칸, (이름, 업체, 대출 방식) UNIQUE, 겹침 시험 결과, 다음 사이클 인계·ADR 초안 | 2026-10-11 |
+| plan `docs/research/maintenance/library-naming.md`, `library-naming-handoff.md` | 도서관 이름 규칙: 괄호 대신 업체·대출 방식 분류 칸, (이름, 업체, 대출 방식) UNIQUE, 겹침 시험 결과, 다음 사이클 인계·ADR 초안. 사이클 09에서 순번을 더해 확정한 규칙은 `docs/current/data-model.md` "도서관 이름과 분류"·ADR-0071 | 2026-10-11 (조사 기록) |
 | `chaekcheck-data/scripts/probe_kyobo_limits.py`, 결과 `other-platforms/kyobo-limits-2026-10-04.tsv` | 교보 구독형 사이트 팝업·공지 제목 확인(로그인 없이). dev `scripts/library/`로 옮길 예정(요청서 C) | git 밖 |
 
 ## 3. ② 도서관-책 수집 (전자책 목록을 도서관 사이트에서 모으기)
@@ -123,7 +124,8 @@
 - 로그인해야 전자책 주소가 보이는 8곳(포항·고령·레인보우영동·광주동구·서귀포·정읍·함평·창원): dev `library-site-issues.md` 7절 — 사람이 로그인
 - 판단 못 한 2곳(김해시청, 충북도청): dev `library-site-issues.md` 4절
 - 꺼 둔 2곳(id 59, 131) 2027-01 재개 확인: dev `library-maintenance.md` 6-2. 사이클 07에 더 끈 3곳(135 전라북도교육청통합도서관, 2194 장안대학교 (YES24), 2198 성균관대학교 (YES24)): dev `library/010-library-disabled.yaml`, `library-site-issues.md` 9절
-- 기관 이름이 바뀐 곳(대학 통합·교명 변경 등)과 흡수된 학교 사이트 6~7곳(428, 429, 769, 2257, 607, 895, 1002): `docs/research/library-join/name-changes-2026-10-10.md` 2절, 이름 고침 목록 dev `scripts/library/name_overrides.tsv` [안 경로]
+- 기관 이름이 바뀐 곳(대학 통합·교명 변경 등)과 흡수된 학교 사이트 6~7곳(428, 429, 769, 2257, 607, 895, 1002): `docs/research/library-join/name-changes-2026-10-10.md` 2절, 이름 고침 목록 dev `scripts/library/name_overrides.tsv` [안 경로]. 사이클 09에서 607 말고 6곳을 고침(설계됨(미구현, 사이클 09), `docs/cycles/09-library-naming/spec.md` R1-10)
+- 도서관 업체·대출 방식·순번(사이클 09): 새 도서관을 넣을 때 seed 생성 스크립트가 화면 종류 대응표·교보 probe·북큐브 전체 권수로 채우고 순번 2 이상 목록을 보임. 규칙은 `docs/current/data-model.md` "도서관 이름과 분류"·seed 절, 절차 원본은 dev `library-maintenance.md`(1-1절 `name`, 4-5절, 이름 고침 절을 사이클 09에서 고침)
 - 리다이렉트로 호스트까지 바뀐 도서관(411)과 사이트 제목이 다른 기관인 곳 약 10곳, YES24 모바일판 13곳: dev `library-site-issues.md` 10절, plan `docs/cycles/07-candidate-libraries/retro.md` "새로 알게 된 제약"
 - 도서관 사이트 연결에만 믿는 최상위 기관(OISTE WISeKey Global Root GB CA)과 중간 인증서: dev `tls/library-roots/` (ADR-0061, ADR-0022 보완)
 - 중간 인증서 만료 2027-05-21(GlobalSign AlphaSSL), 2027-11-02(Thawte): dev `library-site-issues.md` 3절

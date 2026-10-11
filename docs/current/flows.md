@@ -2,7 +2,9 @@
 
 현재 설계의 주요 흐름을 그림으로 모은 문서입니다. 변경 기록이 아닙니다.
 
-사이클 08 cycle-close (2026-10-11): 흐름 20(가져오기: 새 표에 쓰고 바꿔 끼우기), 21(검색 계획과 책 화면 소장 읽기), 22(막혔을 때 429·503)를 더하고, 흐름 6·16과 "화면 공통"에 바뀌는 점을 적음 — 설계됨(미구현, 사이클 08). 근거 `docs/cycles/08-polish-swap-memory/design-delta.md` "주요 흐름"(흐름 A~C), ADR-0065~0070.
+사이클 09 cycle-close (2026-10-11): 흐름 23(도서관 이름과 분류: 이름·분류 changeset, 화면에 분류 보이기, 새 후보 도서관을 넣을 때)을 더하고 "화면 공통"에 분류 표시를 적음 — 설계됨(미구현, 사이클 09). 근거 `docs/cycles/09-library-naming/design-delta.md` "주요 흐름", flow.md, ADR-0071·0076.
+사이클 08 cycle-close (2026-10-11): 흐름 20(가져오기: 새 표에 쓰고 바꿔 끼우기), 21(검색 계획과 책 화면 소장 읽기), 22(막혔을 때 429·503)를 더하고, 흐름 6·16과 "화면 공통"에 바뀌는 점을 적음 — 구현됨 (사이클 08). 근거 `docs/cycles/08-polish-swap-memory/design-delta.md` "주요 흐름"(흐름 A~C), ADR-0065~0070.
+사이클 08 회고 (2026-10-11): dev 보고(`plan-feedback.md` "# 사이클 08")와 대조해 흐름 20~22와 화면 공통을 구현됨으로 바꾸고 달라진 점(넓은 줄 두 번 쓰기, 실패 기록 칸, S2 그대로·돌아가기는 S8·S9·S10만, "정렬 없음 ⓘ"은 검색 줄, 이름 찾기 가운뎃점 무시)과 측정값을 적음. 흐름 21 그림의 "지금은 …" 두 곳을 "사이클 07까지는 …"으로 고침. 가져오기 힙(AC-12)·색인 단계 중단(AC-9 둘째)·국가서지 재사용 시간(AC-15)은 측정 중 [확인 필요]. 근거 `docs/cycles/08-polish-swap-memory/retro.md`.
 
 사이클 07 회고 반영 (2026-10-05): 후보 도서관 넣기 — 흐름 16~19를 더하고 흐름 6(교보 구독형 화면)·흐름 8(가져오기)·흐름 13(S11)에 사이클 07 변경을 적음 — 구현됨 (사이클 07). 근거 docs/cycles/07-candidate-libraries/retro.md, dev plan-feedback.md '# 사이클 07'. 설계 근거 `docs/cycles/07-candidate-libraries/design-delta.md` "주요 흐름"(흐름 A~D), ADR-0052~0060.
 
@@ -197,8 +199,8 @@ sequenceDiagram
   else 있음
     C-->>W: items(책, 보유 도서관 수, 가입 단계), hasMore
     W->>A: SSE /book-availabilities/stream?bookIds=…&지역·filter·scope·visit
-    A->>C: holdingsOf(bookIds)
     A->>L: planSearch(…)
+    A->>C: holdingsOf(bookIds, 계획 도서관 번호)
     A-->>W: event targets (libraries[], holdings[] 계획 순서)
     loop 묶음 (20줄, 8초, 같은 호스트 1건·1초, 바쁜 호스트 건너뛰기)
       alt 교보 구독형 (lending_model이 OWNED가 아님)
@@ -218,8 +220,8 @@ sequenceDiagram
 ```
 
 - 사이클 07 (구현됨 (사이클 07), ADR-0056·0055): 책 화면(소장 스트림)의 "교보 구독형 → 요청 없이 `SUBSCRIPTION`"은 `lending_model = OWNED`가 아닐 때만이고, `OWNED`면 상세 쪽을 읽어 숫자를 보입니다. "도서관에서 직접 찾기" 목록은 `lending_model`과 상관없이 줄마다 숫자가 있으면 숫자, 없으면 구독으로 판정합니다(혼합형은 줄마다 다름, dev 사이트 시험 2026-10-05). 북큐브는 상세 XML(`detailFetchUri`)을 읽고 대여형이면 `SUBSCRIPTION`, 알라딘은 상세 HTML "보유현황"을 읽습니다. `catalog`의 "계획 도서관 소장만"은 `book.library_ids && 계획 번호`로 거릅니다(흐름 17). 계획 도서관이 50곳 [안]을 넘으면 GIN 인덱스 없이 거릅니다 [이유 미확인: dev가 정함]
-- 사이클 07: 묶음 스트림과 도서관별 더 보기는 동시 검색이 20 [안]을 넘으면 스트림을 열지 않고 503 `server_busy`, nginx IP별 한도를 넘으면 429 `too_many_requests`(`api.md` "요청 수·응답 크기 제한"). 사이클 08: 503에 `Retry-After: 5`, 화면은 두 경우를 따로 안내(흐름 22) — 설계됨(미구현, 사이클 08)
-- 사이클 08 (설계됨(미구현, 사이클 08), ADR-0066·0070): 소장 스트림은 `planSearch`로 계획을 먼저 만든 뒤 `holdingsOf(bookIds, 계획 도서관 번호)`로 계획에 든 도서관 소장 줄만 읽음(흐름 21). 위 그림의 `holdingsOf(bookIds)` → `planSearch` 순서는 지금 코드(사이클 07). 소장 번호가 지금 목록에 없으면 `holding-failed` `holding_not_found`(꺼진·없는 도서관 `library_not_found`와 나눔)
+- 사이클 07: 묶음 스트림과 도서관별 더 보기는 동시 검색이 20 [안]을 넘으면 스트림을 열지 않고 503 `server_busy`, nginx IP별 한도를 넘으면 429 `too_many_requests`(`api.md` "요청 수·응답 크기 제한"). 사이클 08: 503에 `Retry-After: 5`, 화면은 두 경우를 따로 안내(흐름 22) — 구현됨 (사이클 08)
+- 사이클 08 (구현됨 (사이클 08), ADR-0066·0070): 소장 스트림은 `planSearch`로 계획을 먼저 만든 뒤 `holdingsOf(bookIds, 계획 도서관 번호)`로 계획에 든 도서관 소장 줄만 읽음(흐름 21). 위 그림도 이 순서로 고침(사이클 08 회고, 2026-10-11; 사이클 07까지는 `holdingsOf(bookIds)` → `planSearch`, 옛 `holdingsOf(bookIds)`는 지움). 소장 번호가 지금 목록에 없으면 `holding-failed` `holding_not_found`(꺼진·없는 도서관 `library_not_found`와 나눔)
 - 도서관 하나의 조회 상태 그림(맨 위)은 사이클 04에서 도서관 대신 소장(`holdingId`) 단위로 같게 적용합니다. 상세 페이지 조회라 "다음 쪽" 상태는 없습니다.
 
 ## 흐름 7: 책 먼저 고르기 → 책 화면 — 구현됨(dev, 사이클 04)
@@ -555,8 +557,8 @@ sequenceDiagram
 - 짝 맞춘 서비스 도서관이 켜졌는지와 사이트 주소는 `LibraryCatalog.enabledLibraryRefs()`로 확인합니다(`library` 표는 읽지 않음). 비교는 호스트·경로·쿼리만(http/https·포트 차이 허용, `CollectedCatalog.sameSite`) [확정] (dev 구현 확인, 2026-10-05; 인계서 C10을 바꿈, 사용자 요청 2026-10-05)
 - `collection`이 만든 책·사람·소장을 `catalog`에 넘기는 모양: `CatalogLoad.replaceAll(source, loader)`의 콜백 세션(`addBook` → `addHolding` → `addLibrarySnapshot`, 책을 다 넣은 뒤 소장), 한 트랜잭션, 실패하면 이전 그대로 [확정] (dev 구현 확인, 2026-10-05). `addBook`이 돌려주는 번호는 이번 가져오기 안에서만 쓰고, 저장 번호는 끝에 책 번호 잇기(`docs/research/ebook-catalog/catalog-refresh.md` 5.2절)로 정함 [확정] (사용자: "이것도 같이 구현해 줘", 2026-10-05)
 - 실행: 프로필 `collection-import`, 설정 `chaekcheck.collection.import.*`(`sqlite-path`, `ttl-path`, `dry-run`, `placeholder-date-libraries`) [확정] (dev 구현 확인, 2026-10-05). 원본은 배포용 사본 `ebook-catalog-2026-10-05-0745.sqlite` [확정]. 걸린 시간 36분 43초(빈 DB), 2회차 40분 36초(kept 1,617,445, new 0, dropped 0). 절차는 dev `docs/maintenance/3-import.md`
-- 알려진 빈틈: 리다이렉트로 호스트까지 바뀐 411(`ebook2.ezville.net` → `gsenc.bookcube.biz`)은 안전장치에 걸려 소장 64,461줄이 빠짐 [확인 필요] (어떻게 이을지 사용자에게 질문)
-- 사이클 08 (설계됨(미구현, 사이클 08), ADR-0065·0069·0070): 위 그림의 "한 트랜잭션, 임시 표 → 표 비우고 옮김(검색은 기다림)"과 커밋 뒤 `VACUUM`은 지금 코드(사이클 07) 모양입니다. 사이클 08부터 `replaceAll`은 새 표(`catalog_next`)에 쓰고 바꿔 끼우며, 국가서지는 남긴 원문을 다시 쓰고, 같은 소장은 옛 소장 번호를 잇습니다(흐름 20). 교보 대여·혼합 11곳(2664~2674)은 seed와 짝 표에서 빠짐(ADR-0067)
+- 알려진 빈틈: 리다이렉트로 호스트까지 바뀐 411(`ebook2.ezville.net` → `gsenc.bookcube.biz`)은 안전장치에 걸려 소장 64,461줄이 빠짐. 사이클 08에 수집 DB 주소를 고치고 다시 수집함(2026-10-11) → 서비스에는 다음 사본·가져오기 때 들어옴 [확인 필요] (다음 가져오기에서 확인)
+- 사이클 08 (구현됨 (사이클 08), ADR-0065·0069·0070): 위 그림의 "한 트랜잭션, 임시 표 → 표 비우고 옮김(검색은 기다림)"과 커밋 뒤 `VACUUM`은 사이클 07 코드 모양입니다. 사이클 08부터 `replaceAll`은 새 표(`catalog_next`)에 쓰고 바꿔 끼우며, 국가서지는 남긴 원문을 다시 쓰고, 같은 소장은 옛 소장 번호를 잇습니다(흐름 20). 교보 대여·혼합 11곳(2664~2674)은 seed와 짝 표에서 빠짐(ADR-0067)
 
 ## 흐름 17: 로그인 전 직접 추가한 후보 도서관으로 검색 — 구현됨 (사이클 07)
 
@@ -627,7 +629,7 @@ sequenceDiagram
 - 계정에 이미 직접 추가가 있으면 409 `library_import_not_empty` [확정] (dev 구현 확인, 2026-10-05) → 웹은 계정 값을 다시 읽음. 형식 오류는 400 `validation_error` (`api.md` "내 도서관")
 - 답한 기록 키는 `chaekcheck.regionImport.v1` 하나를 지역·도서관이 함께 씀 [이유 미확인: dev가 정함] (한 질문으로 둘을 묻기 때문), 회고에서 그대로 둠 [확정] (사용자 승인, 2026-10-05). 한 번 답한 계정은 그 브라우저에서 다시 묻지 않음(나중에 브라우저에 추가한 도서관은 계정으로 옮겨지지 않음)
 
-## 흐름 20: 가져오기 — 새 표에 쓰고 바꿔 끼우기 — 설계됨(미구현, 사이클 08)
+## 흐름 20: 가져오기 — 새 표에 쓰고 바꿔 끼우기 — 구현됨 (사이클 08)
 
 흐름 16의 쓰기 단계를 바꿉니다(ADR-0065, ADR-0069, ADR-0070). 공개 `CatalogLoad.replaceAll` 모양과 모듈 방향은 그대로입니다.
 
@@ -665,12 +667,15 @@ sequenceDiagram
   end
 ```
 
-- 국가서지 원문 표와 지문 표: `data-model.md` `collection` 절. 지문이 다르면 ① 지문 줄 지우기 → ② 원문 표 비우고 다시 쓰기 → ③ 맨 마지막에 지문 줄 쓰기 [확정] (사용자 승인, 2026-10-11, 설계 검토)
-- `lock_timeout` 2초·10초 뒤 다시·최대 5번 [확정] (사용자 승인, 2026-10-11, 설계 검토)(값은 측정 뒤 바꿀 수 있음). "TTL 풀기 6.5~9분"은 추정 [안] (`docs/cycles/08-polish-swap-memory/research.md` 10절)
+- 국가서지 원문 표와 지문 표: `data-model.md` `collection` 절. 원문은 ISBN마다 한 줄 [확정] (사용자 승인, 2026-10-11). 지문이 다르면 ① 지문 줄 지우기 → ② 원문 표 비우고 다시 쓰기 → ③ 맨 마지막에 지문 줄 쓰기 [확정] (사용자 승인, 2026-10-11, 설계 검토). 구현은 ②·③을 한 트랜잭션으로 함 (dev 3단계)
+- `lock_timeout` 2초·10초 뒤 다시·최대 5번 [확정] (사용자 승인, 2026-10-11, 설계 검토). 측정 뒤에도 바꾸지 않음(잠금 줄 서기 시험, dev 2026-10-11). "TTL 풀기 6.5~9분"은 추정이었고, 가져오기 #2에서 TTL을 풀며 원문 표를 처음 쓴 `nb`는 475초(7분 55초) (dev 측정, 2026-10-11). 표에서 다시 읽는 시간은 측정 중 [확인 필요] (AC-15)
+- 그림의 "replaceAll" 안 쓰기는 실제로 임시 표(`load_*`)에 COPY → 맞대기 → `catalog_next`에 책 번호 순 INSERT로, 넓은 줄(소장)을 두 번 씀(`book_id` 순 정렬 때문) [확정] (사용자 승인, 2026-10-11). 바꿔 끼우기 직전 바깥 외래 키 조회(있으면 `outside_foreign_key`로 실패) (dev 4단계)
+- 실패하면 가져오기 기록에 `status = 'FAILED'`와 `failure_reason`(`lock_not_acquired`, `outside_foreign_key`, `error`), `failure_detail`을 남김. 가져오기 시작 전 실패(사본 경로 오류)는 기록 줄이 없음. 색인 단계에서 멈췄을 때(AC-9 둘째 경우)는 측정 중 [확인 필요]
+- 결과(가져오기 #2, 2026-10-11, dev 측정): 검색이 기다린 시간 0.33초(#1 지금 방식 9분 37초), 전체 약 41분, 가져오는 동안 검색 p95 560ms·5xx 0, 디스크 최대 19.1GiB(시작 8.5GiB). 가져오기 힙 `-PbootRunXmx=6g`로 끝까지 가는지는 측정 중 [확인 필요] (AC-12)
 - 바꿔 끼운 뒤 옛 화면의 요청: 같은 소장은 옛 번호 그대로라 정상, 빠진 소장은 `holding_not_found`, 빠진 책은 `book_not_found` (ADR-0070)
 - 정리 규칙을 바꿀 때 서비스를 다시 켤지는 `data-model.md` "정리 규칙을 바꿀 때" (ADR-0069)
 
-## 흐름 21: 검색 계획과 책 화면 소장 읽기 — 설계됨(미구현, 사이클 08)
+## 흐름 21: 검색 계획과 책 화면 소장 읽기 — 구현됨 (사이클 08)
 
 ADR-0066. 계획에 들어갈 도서관만, 그 도서관의 소장 줄만 DB에서 읽습니다. 켜짐 여부는 요청마다 읽습니다(ADR-0004 그대로).
 
@@ -684,17 +689,18 @@ sequenceDiagram
   W->>A: 책 대출 현황 스트림 (bookIds, 지역, libraryIds)
   A->>L: planSearch
   L->>DB: 켜진 도서관 중 join_survey IN (SURVEYED, NOT_FOUND) OR id = ANY(직접 추가)
-  DB-->>L: 약 385곳 + 직접 추가 (지금은 2,674곳 전부)
+  DB-->>L: 약 385곳 + 직접 추가 (사이클 07까지는 전부)
   L-->>A: 계획
   A->>C: holdingsOf(bookIds, 계획 도서관 번호)
   C->>DB: book_id = ANY AND library_id = ANY
-  DB-->>C: 계획에 든 소장 줄만 (지금은 모든 도서관 줄)
+  DB-->>C: 계획에 든 소장 줄만 (사이클 07까지는 모든 도서관 줄)
   A-->>W: targets + 줄별 결과
 ```
 
-- 두 캐시는 통계(`recordStats()`)를 켜고 캐시마다 상한 설정을 나눔, 상한 값은 측정 뒤(ADR-0006 그대로, ADR-0066)
+- 두 캐시는 통계(`recordStats()`)를 켜고 캐시마다 상한 설정을 나눔(ADR-0066). 상한은 측정 뒤에도 두 캐시 모두 1,000 그대로 — ADR-0006 값 변경 없음 [확정] (사용자 승인, 2026-10-11)
+- 계획 결과가 바꾸기 전과 같음(12묶음, AC-17). 소장 읽기: 줄 붙이기 뒤 책 3권 77쪽·1.4ms(전 1,169쪽·78ms) (dev 측정, 2026-10-11)
 
-## 흐름 22: 막혔을 때 (429·503) — 설계됨(미구현, 사이클 08)
+## 흐름 22: 막혔을 때 (429·503) — 구현됨 (사이클 08)
 
 ```mermaid
 sequenceDiagram
@@ -712,7 +718,72 @@ sequenceDiagram
   end
 ```
 
-- 문구 전체와 태그는 `api.md` "요청 수·응답 크기 제한"·오류 코드 표. `Retry-After: 5` [확정] (사용자 승인, 2026-10-11)
+- 문구 전체와 태그는 `api.md` "요청 수·응답 크기 제한"·오류 코드 표. `Retry-After: 5` [확정] (사용자 승인, 2026-10-11). 웹은 상태 코드만 보고 결과 목록 위에 안내 줄 하나, 다시 버튼 없음, 첫 요청이 막히면 결과 자리에 같은 문구 (dev 7단계). 실제 429·503 화면은 띄워 보지 않고 Vitest로 확인 (AC-3)
+
+## 흐름 23: 도서관 이름과 분류 — 설계됨(미구현, 사이클 09)
+
+ADR-0071(이름에는 기관 이름만, 업체·대출 방식은 분류로), ADR-0076(분류 값은 API로 보내고 화면이 글자를 만듦, 이름은 번호로 고치는 changeset, 이름 찾기는 화면에서). 표·제약은 `data-model.md` "도서관 이름과 분류", 화면은 `module-map.md` "사이클 09 웹".
+
+### 23-1. 이름·분류를 바꾸는 changeset (배포 때 Liquibase가 한 번 실행)
+
+```mermaid
+sequenceDiagram
+  participant LB as Liquibase library/014
+  participant DB as library.library
+  LB->>DB: DROP CONSTRAINT library_name_key
+  LB->>DB: UPDATE name (번호와 옛 이름이 맞을 때만)
+  LB->>DB: ADD COLUMN vendor, UPDATE vendor (화면 종류 대응표)
+  LB->>DB: UPDATE lending_model (규칙 + 번호 목록)
+  LB->>DB: ADD COLUMN order_no DEFAULT 1
+  LB->>DB: ADD CHECK (vendor 값, 대출 방식 필수, 순번)
+  LB->>DB: ADD UNIQUE NULLS NOT DISTINCT (name, vendor, lending_model, order_no)
+  alt 겹치는 줄이 남음
+    DB-->>LB: unique 위반 → 배포 멈춤
+  end
+```
+
+- 파일 번호 `library/014` [안 번호]. 순서 [확정] (사용자 승인, 2026-10-11). 이미 적용된 seed·changeset은 고치지 않음 [확정] (ADR-0076)
+
+### 23-2. 화면에 분류를 보이기
+
+```mermaid
+sequenceDiagram
+  participant W as 웹
+  participant L as library
+  participant A as availability
+  W->>L: GET /api/v1/libraries
+  L-->>W: [{id, name, vendor, lendingModel, orderNo, …}]
+  W->>W: S10 목록: "이름 · YES24 · 소장" (폰은 이름 아래 줄)
+  W->>W: 이름 찾기: 낱말마다 이름 또는 분류 글자에 있으면 맞음
+  W->>A: 검색 스트림 · 대출 현황 스트림 (ebook-searches, book-availabilities)
+  A-->>W: targets.libraries[]: {id, name, vendor, lendingModel, orderNo, …}
+  W->>W: 결과 카드: 이름, 다음 줄 "교보 · 소장"(순번 2 이상이면 "· 2번째 사이트")
+  alt 분류 값이 없음 (배포 순서가 어긋남)
+    W->>W: 이름만 보임
+  end
+```
+
+- 스트림 경로는 `/api/v1/ebook-searches/stream`(직접 찾기)과 `/api/v1/book-availabilities/stream`(대출 현황)이고 두 곳의 `targets` 이벤트에 세 칸이 실림 (`api.md`). design-delta 그림의 `GET /api/v1/books/search/stream`은 이 두 스트림을 줄여 적은 것
+- 통합 포털은 `lendingModel`이 null이라 "통합 포털"만 보임. 검색·소장 판정 동작은 바뀌지 않음 [확정] (spec R3)
+
+### 23-3. 새 후보 도서관을 넣을 때 (seed 생성 스크립트)
+
+```mermaid
+sequenceDiagram
+  participant S as build_candidate_seed.py
+  participant C as 수집 결과·probe·북큐브 권수
+  participant O as name_overrides.tsv
+  S->>C: 화면 종류, 대출 방식 근거 읽기
+  S->>S: vendor = 수집이 적은 값, 없으면 VENDORS 대응표
+  S->>S: lending_model 규칙 (교보 probe, 북큐브 전체 권수, 포털 NULL, 나머지 OWNED)
+  S->>O: 이름 고침 적용 (등록·후보 모두, 메모리에서)
+  S->>S: (이름, vendor, lending_model) 묶음마다 서비스 번호 순 order_no
+  alt order_no 2 이상
+    S-->>S: (id, order_no) 목록 출력 → dev가 changeset
+  end
+```
+
+- 배포 뒤에는 seed 파일을 다시 쓰지 않고 바뀐 것만 changeset으로 냄 [확정] (seed 고치는 방식, `data-model.md` "이름 고침"). 수집이 업체를 따로 적는 자리 [확인 필요: 수집 세션]
 
 ## 화면 공통: 안내 줄과 검색 결과 머리 — 구현됨 (사이클 06 마무리, 2026-10-05)
 
@@ -725,5 +796,7 @@ sequenceDiagram
 - 사이클 07 (구현됨 (사이클 07)): 로그인 전 S1의 [내 지역 ▾]/[내 지역 설정]을 로그인 후와 같은 [내 도서관 관리 ▾](폰은 [내 도서관 관리], 지역도 직접 추가도 없으면 "내 도서관 설정" → S10)로 바꾸고 S10을 로그인 전에도 엽니다 [확정] (사용자 승인, 2026-10-05). 결과 카드의 북큐브·알라딘은 보유·대출 중·예약 칸, 북큐브 대여형은 "구독형 · 바로 대출 ⓘ", 교보 구독형 화면은 줄에 숫자가 있으면 숫자 칸(책 화면은 `lending_model = OWNED`일 때) [확정] (spec R5, 판정 방식은 dev 사이트 시험 2026-10-05). 알라딘 수가 없는 줄은 "확인 필요"
 - 사이클 07 (구현됨 (사이클 07)): 검색 범위 스위치 기본값은 가입할 수 있는 쪽, 그 버튼이 왼쪽(로그인 전 지역 없음 "누구나 가입", 지역 있음 "가입 가능한 곳", 로그인 후 "내 도서관", 비어 있어도) [확정] (사용자: "이 프로젝트의 편의성을 생각했을 때 가입할 수 있는 곳으로 가는 것이 사용자 측면에서 좋다고 봐서", 2026-10-05)
 - 사이클 07 (구현됨 (사이클 07)): 브라우저 `chaekcheck.searchSettings.v1`에 기억하는 것은 범위(로그인 전 `guestScope`, 로그인 후 `myScope`), 방문 없이 가입, 지금 빌릴 수 있는 책만, 보기 방식(`view`), 직접 찾기(`direct`) [확정]. 주소 값이 이기고 검색어는 저장 안 함. 지금 코드는 정렬·완전 일치·옮긴이·그림·엮은이(`sort`·`exact`·`roles`)도 저장하지만 사용자가 "정렬, 상세검색의 완전 일치·옮긴이·그림·엮은이 … 이건 기억하지 마"(2026-10-05, 회고 질문 #2)라고 정해 다음 dev 인계서에서 뺌(backlog)
-- 동시 검색이 다 차거나(503 `server_busy`) IP별 한도를 넘으면(429 `too_many_requests`) 화면은 따로 안내 줄: 429 "검색을 너무 자주 했어요. 1분쯤 뒤에 다시 해 주세요.", 503 "지금 찾는 사람이 많아요. 잠시 뒤에 다시 해 주세요." 받은 결과는 남김 [확정] (사이클 08 spec R2) — 설계됨(미구현, 사이클 08), 흐름 22. (지금 코드, 사이클 07: 두 경우 모두 일반 문구 "검색하지 못했어요. 잠시 뒤 다시 시도해 주세요.")
-- 사이클 08 (설계됨(미구현, 사이클 08)): `mobileSiteDiffers`인 도서관은 폭 640px 이하에서 결과 카드 이름 아래·책 화면 줄·직접 찾기 결과·가입 정보 창 첫 화면 링크 옆에 YES24 폰 안내 [확정] 자리(문구 [안]). 빠진 책은 "책을 찾을 수 없어요" 아래 "도서관 목록을 새로 받으면서 빠진 책일 수 있어요. 다시 검색해 주세요.", 빠진 소장은 책 화면 그 도서관 줄에 "이 도서관 목록에서 빠졌어요" [확정] (ADR-0070). 브라우저 `chaekcheck.searchSettings.v1`에서 정렬·완전 일치·역할을 쓰지 않고 남아 있으면 지움 [확정] (spec R1)
+- 동시 검색이 다 차거나(503 `server_busy`) IP별 한도를 넘으면(429 `too_many_requests`) 화면은 따로 안내 줄: 429 "검색을 너무 자주 했어요. 1분쯤 뒤에 다시 해 주세요.", 503 "지금 찾는 사람이 많아요. 잠시 뒤에 다시 해 주세요." 받은 결과는 남김 [확정] (사이클 08 spec R2) — 구현됨 (사이클 08), 흐름 22. (사이클 07까지: 두 경우 모두 일반 문구 "검색하지 못했어요. 잠시 뒤 다시 시도해 주세요.")
+- 사이클 08 (구현됨 (사이클 08)): `mobileSiteDiffers`인 도서관은 폭 640px 이하에서 결과 카드 이름 아래(바로 보기·직접 찾기·책 화면 줄)·가입 정보 창 "도서관 첫 화면"·"전자도서관에서 가입 안내 보기" 링크 옆에 YES24 폰 안내 [확정] 자리, 문구 "폰에서는 사이트가 다른 화면을 보여요. PC에서 열어 주세요" [확정] (사용자: 인계서 안 그대로, dev 세션 2026-10-11). 빠진 책은 "책을 찾을 수 없어요" 아래 "도서관 목록을 새로 받으면서 빠진 책일 수 있어요. 다시 검색해 주세요.", 빠진 소장은 책 화면 그 도서관 줄에 "이 도서관 목록에서 빠졌어요" [확정] (ADR-0070). 브라우저 `chaekcheck.searchSettings.v1`에서 정렬·완전 일치·역할을 쓰지 않고 남아 있으면 읽을 때 지움 [확정] (spec R1)
+- 사이클 08 (구현됨 (사이클 08)): 폰 설정 창은 바텀 시트 유지 [확정] (사용자 승인, 2026-10-11, `docs/cycles/08-polish-swap-memory/easy/2026-10-11-final-decisions.html`) (되돌림 `PHONE_SETTINGS_SHEET = false`). 폰 직접 찾기의 흐린 "정렬 없음 ⓘ"은 **검색 줄 끝**("N곳" 옆) — 처음 둔 결과 위 도구줄이 폰에서 숨겨져 옮김 (dev 12단계), 설계 자리("검색줄 둘째 줄 오른쪽 끝")와 같음. 돌아가기("← 돌아가기")와 ⓘ는 **S8·S9·S10만**, **S2(지역 고르기 창)는 바꾸지 않음** [확정] (사용자: "A. 그대로", dev 세션 2026-10-11; S2는 [저장]을 눌러야 저장되어 "즉시 저장" 안내가 맞지 않음). S10 ⓘ 문구 "고르는 즉시 이 브라우저에 저장돼요"(로그인 전)/"고르는 즉시 계정에 저장돼요"(로그인 뒤) [확정] (사용자, dev 세션 2026-10-11). S10 이름 찾기는 공백과 함께 가운뎃점(·)도 무시 [확정] (사용자 승인, 2026-10-11). 글꼴은 줄인 파일("Chaekcheck Barun")을 먼저 쓰고 드문 음절이 있을 때만 원래 나눔바른고딕을 받음
+- 사이클 09 — 설계됨(미구현, 사이클 09) (ADR-0071·0076, 흐름 23): 도서관 이름은 기관 이름만 보이고, 결과 카드(S1·S3)는 모든 폭에서 이름 다음 줄에 "교보 · 소장", S10 세 목록은 "이름 · 업체 · 대출 방식"(폰은 이름 아래 줄), 순번 2 이상이면 "· N번째 사이트". 요약 줄·지역 가져오기 창·직접 찾기 결과 이름 나열·가입 정보 창은 이름만. 분류 값이 없으면 이름만 [확정]. 교보 구독형 중 대여 9곳 가운데 8곳은 이름의 "(구독)"이 빠지고 분류가 "대여"로 보임 [확정] (spec R3)

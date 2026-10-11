@@ -8,3 +8,7 @@
 | [2026-10-11-duplicate-order-followup.html](2026-10-11-duplicate-order-followup.html) | 이름·업체·대출 방식이 같을 때 순번: 따로 된 칸 / 이름 뒤 숫자 (앞 페이지 9번 미승인의 다시 낸 제안) | `../spec.md` R4-4 | 없음. 따로 된 칸 승인, 이름 뒤 숫자 미승인 (2026-10-11) |
 | [2026-10-11-design-decisions.html](2026-10-11-design-decisions.html) | 설계 대안: 업체 칸(DB 계산), 순번 칸, 이름·대출 방식 바꾸는 방법, 진천군립 "대여형", API 값, 이름 찾기, 새 이름들 | `../architect-proposal.md` | 없음. 8개 승인, 1번(업체 칸)은 다시 낸 제안 `2026-10-11-vendor-followup.html`에서 정함 (2026-10-11) |
 | [2026-10-11-vendor-followup.html](2026-10-11-vendor-followup.html) | 업체 칸을 누가 채우나: 도서관 수집이 정해 보통 칸 / DB가 화면 종류에서 계산 (설계 페이지 1번 질문의 다시 낸 제안) | `../architect-proposal.md` 결정 1 | 없음. (가) 승인, (나) 미승인 "역할 분리" (2026-10-11) |
+| [2026-10-11-design-delta-review.html](2026-10-11-design-delta-review.html) | 설계 문서 검토: 무엇을 만드나, 업체 확인 규칙, dev 도구 정리, 인계서로 넘어감 | `../design-delta.md` | 없음. 3개 모두 승인 (2026-10-11) |
+| [design-delta-original.html](design-delta-original.html) | 설계 문서 원본(그림 6개를 미리 그림) | `../design-delta.md` | — |
+| [2026-10-11-review-decisions.html](2026-10-11-review-decisions.html) | 설계 검토 결과(고친 것), 업체 필수 규칙 이름, ADR-0076 초안 | design-reviewer 결과, `../adr-draft-0076.md` | 없음. 3개 모두 승인 (2026-10-11) |
+| [2026-10-11-handoff-decisions.html](2026-10-11-handoff-decisions.html) | 인계서: 만드는 순서, 도중에 여쭐 것, 작은 제안 5개, 넘김 | `../handoff.md` | 없음. 6개 모두 승인 (2026-10-11) |

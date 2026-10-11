@@ -23,3 +23,4 @@
 | [2026-10-11-handoff-decisions.html](2026-10-11-handoff-decisions.html) | 인계서: 만드는 순서 13단계, 도중에 여쭐 것, 정할 것 3가지 | `../handoff.md` | 3개 모두 승인 (2026-10-11) |
 | [2026-10-11-commit.html](2026-10-11-commit.html) | 사이클 08 넘김 뒤 커밋할 목록과 메시지 | `git status` | 승인 (push도), 2026-10-11 |
 | [2026-10-11-midpoint-decisions.html](2026-10-11-midpoint-decisions.html) | dev 중간 요약으로 미리 정할 것: 결과 같은 변경 받아들임, 실패 기록 칸, 가운뎃점 무시, 배포 뒤 seed 고치는 방식, 977 이름, 운영 메모리 다시 재기 | `../dev-midpoint-2026-10-11.md` | 없음. 6개 모두 승인 (2026-10-11) |
+| [2026-10-11-final-decisions.html](2026-10-11-final-decisions.html) | dev 최종 요약의 "plan이 정할 것": 바텀 시트, 이름 바뀐 학교 6곳을 사이클 09에, 힙 여유·사이트 이름 재확인·가져오기 힙은 나중에 | dev `docs/plan-feedback.md` 사이클 08 요약 5절 | 없음. 바텀 시트 유지, 6곳 사이클 09에, 셋은 backlog (2026-10-11) |
