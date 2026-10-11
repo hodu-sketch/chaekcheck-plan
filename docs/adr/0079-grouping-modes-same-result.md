@@ -51,6 +51,6 @@ Supersedes: 없음 (묶기 규칙 `same-book-isbn.md` 5절과 ADR-0062 번호 �
 
 - 결정: `compact`와 `sql`을 둘 다 쓸 수 있게 남기고, 사이클 12의 새 묶기 규칙(`same-book-isbn.md` 5.5절)을 둘 다에 넣는다. 기본값은 사이클 11 측정 결과로 바꾼다 [확정] (사용자: "compact와 sql 둘 다 가능하게 하고 기본값을 바꾸느 걸로 해", 2026-10-12, `docs/easy/2026-10-12-remaining-decisions.html` #1 "기본이 되지 않은 방식은 지움" 미승인)
 - 바뀌는 것: 위 "나중에"의 "기본 방식에만 넣는다"
-- `current`(지금 방식)를 남길지는 이 말에 없음 → `docs/easy/2026-10-12-remaining-followup-decisions.html`에서 질문
+- `current`(지금 방식)는 사이클 12에서 지우고 `compact`·`sql`만 남긴다 [확정] (사용자 승인, 2026-10-12, `docs/easy/2026-10-12-remaining-followup-decisions.html` #1)
 - 감수하는 점: 새 규칙을 두 곳에 넣고, 두 방식의 결과가 같은지 사이클 12에서도 비교해야 함(R-B5와 같은 비교)
 
