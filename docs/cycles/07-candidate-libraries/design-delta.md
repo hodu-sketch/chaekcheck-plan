@@ -1,6 +1,6 @@
 # 설계 변경: 사이클 07 후보 도서관 넣기
 
-- 작성: 2026-10-05. 근거: `architect-proposal.md`(D1~D17, Q1~Q4, 사용자 결정 2026-10-05), `spec.md`(R1~R9, AC-1~AC-22), `flow.md`, `research.md`
+- 작성: 2026-10-05. 근거: `architect-proposal.md`(D1~D17, Q1~Q4, 사용자 결정 2026-10-05), `spec.md`(R1~R9, AC-1~AC-24), `flow.md`, `research.md`
 - `docs/current/`에 대한 변경만 적습니다. `docs/current/`는 `/cycle-close`에서 합칩니다.
 - 이름 중 `[안]`·`[안 이름]`·`[안 경로]`는 dev가 코드에 맞춰 바꿀 수 있는 세부 이름입니다. 바꾸면 dev `plan-feedback.md` `# 사이클 07`에 알리기만 합니다 [확정] (사용자 승인, 2026-10-05, 설계 검토). 규칙·뜻은 아래 태그대로입니다.
 
@@ -28,7 +28,7 @@ flowchart TB
   WEB --> MY
   CAT -->|LibraryCatalog| LIB
   COL -->|규칙 빌림, 표 바꾸기| CAT
-  COL -->|library 번호 확인| LIB
+  COL -->|LibraryCatalog<br/>켜짐·base_url 확인| LIB
   COL --> SNAP
   AV -->|LibraryCatalog| LIB
   AV -->|CatalogLookup| CAT
@@ -166,13 +166,13 @@ classDiagram
 | 모듈 | 신규/변경 | 책임 | 공개 API | 발행/구독 이벤트 | 소유 테이블 |
 |---|---|---|---|---|---|
 | `collection` [안 이름] | 신규 (ADR-0052, ADR-0060) | 수집 번호 ↔ 서비스 번호 짝, **가져오기 전부**: 사본 나눠 읽기, 번호 바꾸기, 거르기, 같은 책 묶기, 대표값·날짜 규칙, `library_ids` 계산, 가져오기 기록(지금 `catalog_import` 표를 이 모듈로). 앞으로 갱신도 여기서 | 없음(실행 명령·설정만) | 없음 | `collection.collection_link`, `collection.catalog_import` [안] |
-| `library` | 변경 | 후보 도서관 줄, `join_survey`, `lending_model`, 로고 표시 값, 화면 종류 2개. 계획: 조사 상태가 `MEMBERS_ONLY`·`NOT_SURVEYED`이고 직접 추가가 아니면 뺌 | `SearchTarget`·`LibraryEligibility`의 등급에 `UNSURVEYED`, `LibraryRef`에 `lendingModel` [안] | 없음 | `library.library`(칸 추가), `library.eligibility_rule`(후보 공공도서관 줄 추가) |
+| `library` | 변경 | 후보 도서관 줄, `join_survey`, `lending_model`, 로고 표시 값, 화면 종류 2개. 계획: 조사 상태가 `MEMBERS_ONLY`·`NOT_SURVEYED`이고 직접 추가가 아니면 뺌 | `SearchTarget`·`LibraryEligibility`의 등급에 `UNSURVEYED`, `LibraryRef`에 `lendingModel` [안]. `collection`이 쓰는 것: 기존 `LibraryCatalog.enabledLibraryRefs()`로 서비스 도서관(켜짐·`base_url`) 조회 — 짝 맞춘 서비스 도서관이 있고 켜졌는지(`library_not_in_service`), `base_url` 안전장치(`library_base_url_mismatch`) [안] (메서드는 dev 코드에 있음: "Every enabled library with its site root") | 없음 | `library.library`(칸 추가), `library.eligibility_rule`(후보 공공도서관 줄 추가) |
 | `catalog` | 변경 | 책·사람·소장 표와 검색(`library_ids && :planned`). 가져오기 코드는 `collection`으로 옮김. 제목 다듬기 규칙(`CatalogText`, `Contributors` 등)은 그대로 두고 공개 | 새 Java `CatalogLoad.replaceAll(...)`(받은 책·사람·소장으로 표를 통째로 바꾸고 VACUUM) [안 이름], 제목 다듬기 규칙 공개 | 없음 | `catalog.book`(칸 추가). `catalog.catalog_import`는 `collection`으로 [안] |
 | `availability` | 변경 | `BookcubeFxAdapter`, `AladinV1Adapter`, 상세 요청 주소 훅, 북큐브 대여형 `SUBSCRIPTION`, 교보 소장형은 숫자 | 그대로 | 없음 | 없음 |
 | `mylibrary` | 변경 | 묶음 옮기기 `POST /api/v1/me/library-imports` (ADR-0057) | 그대로 | 그대로 (`AccountDeleted` 구독) | 그대로 |
 | `auth`, `region`, `fetch-service` | 그대로 | | | | |
 
-- 의존: `collection → catalog → library → region`, `collection → library`, `availability → catalog, library`, `mylibrary → auth, library, region`. 고리 없음, 새 이벤트 없음 (ADR-0060)
+- 의존: `collection → catalog → library → region`, `collection → library`(`LibraryCatalog`만, `library` 표는 읽지 않음), `availability → catalog, library`, `mylibrary → auth, library, region`. 고리 없음, 새 이벤트 없음 (ADR-0060)
 - `collection`의 `@ApplicationModule(allowedDependencies = {"catalog", "library"})` [안]
 
 ## 데이터
@@ -207,12 +207,13 @@ erDiagram
   - `homepage_url = base_url`, `holdings_count = NULL`, `enabled = true`
   - 가입: 조사된 후보 공공도서관(`public-join-2026-10-05.tsv`, `decision` 칸)은 `SURVEYED` + 가입 규칙 줄 + `join_method`·`visit_required`·`join_caution`·`extra_condition_text`(책이음 9곳). 원문 못 찾은 곳은 `NOT_FOUND` + 규칙 없음(ADR-0013 자격 미확인). 종류 표(`candidate-kinds-2026-10-05.tsv`)의 초·중·고·대학·회사·정부·공공기관·단체·아파트는 `MEMBERS_ONLY`, 모름은 `NOT_SURVEYED`, `join_method = NULL` [확정] (ADR-0053). 시험용 6곳은 넣지 않음 [확정] (사용자 승인, 2026-10-05, 설계 검토)
 - Liquibase: 새 파일로 추가 [확정] (사용자 승인, 2026-10-05). 새 파일로 넣고 비교·대조한 뒤 기존 파일에 합칠지 고침 [확정] (사용자 제안) — 합치는 때는 배포 전(`PRE_DEPLOYMENT` 동안) [확정] (사용자 승인, 2026-10-05, 설계 검토). 합칠 때 대조 규칙 [확정] (사용자 제안: "만약에 기존 것에 있고 새거에는 없다면 기존 것이 정말로 활성화된 사이트인가 검사하고 해야 할 거 같은데", 2026-10-05): 둘 다 있으면 합치고 다른 점은 목록으로 보고, 새 파일에만 있으면 넣고, **옛 파일에만 있으면 지우지 않고** dev가 그 사이트 첫 화면을 한 번 열어 확인 → 열리지 않거나 바뀌었으면 `enabled = false` 제안 목록을 사용자에게 보여 주고 사용자가 정함
-  - `collection/001-collection-schema.yaml` (스키마, 표, 등록 도서관 짝 `INSERT … SELECT id, id FROM library.library`)
+  - `collection/001-collection-schema.yaml` (스키마, `collection.collection_link`, 가져오기 기록 표 `collection.catalog_import` [안 이름]). 등록 도서관 짝(같은 번호끼리)은 `library.library`를 읽지 않고 seed CSV에 줄로 적어 넣음(`collection/002`와 같은 방식) [안] — 다른 모듈 표를 읽지 않기 위해
   - `library/007-library-candidates-schema.yaml` (`join_survey`, `join_method` NULL + CHECK, 화면 종류 CHECK, `lending_model`)
   - `library/008-library-seed-candidates.yaml` + CSV(도서관, 가입 규칙) — IDENTITY 맞춤
-  - `collection/002-collection-seed-candidates.yaml` + CSV(짝)
+  - `collection/002-collection-seed-candidates.yaml` + CSV(짝: 등록 도서관 같은 번호 짝 + 후보 도서관 짝)
   - `catalog/002-book-library-ids.yaml` (`library_ids` + GIN)
-  - 순서: master에서 `library/007` → `library/008` → `collection/001` → `collection/002` → `catalog/002` [확정] (사용자 승인, 2026-10-05, 설계 검토)
+  - `catalog/003-drop-catalog-import.yaml` [안 이름]: `catalog.catalog_import`를 지움. 지우기 전에 있던 줄을 `collection.catalog_import`로 옮기거나, 배포 전이라 남길 줄이 없다고 보고 그냥 지움 — 둘 중 dev가 정함 [안]. `collection/001` 뒤에 둠 [안]
+  - 순서: master에서 `library/007` → `library/008` → `collection/001` → `collection/002` → `catalog/002` [확정] (사용자 승인, 2026-10-05, 설계 검토). `catalog/003`은 그 뒤 [안]
 
 ## 가져오기 변경 (`catalog` → `collection`으로 옮김, ADR-0060)
 
@@ -288,7 +289,7 @@ GET /api/v1/libraries (한 항목)
 
 ## 결정 기록
 
-- ADR-0052 후보 도서관은 서비스 새 번호로, 짝 표는 새 모듈 `collection` (seed로 넣음)
+- ADR-0052 후보 도서관은 서비스 새 번호로, 짝 표는 새 모듈 `collection` (seed로 넣음) (ADR-0060으로 넓힘: 가져오기·짝 조회 모두 collection 안)
 - ADR-0053 가입 정보 미조사 도서관은 직접 추가했을 때만 검색에 (ADR-0013·0050 보완)
 - ADR-0054 가져오기는 모든 서비스 도서관의 책을, 나눠 읽어서 (사이클 04 범위 변경)
 - ADR-0055 책마다 가진 도서관 번호 목록을 미리 계산
@@ -297,6 +298,7 @@ GET /api/v1/libraries (한 항목)
 - ADR-0058 도서관 목록은 통째로 + 응답 압축 (ADR-0049 전환 조건 정리)
 - ADR-0060 가져오기는 `collection`이 맡고, 제목 다듬기 규칙은 `catalog`에 한 벌 (ADR-0052 넓힘, ADR-0031 위치 바꿈)
 - ADR-0059 도서관 로고는 자체 로고가 있는 공공도서관만, 미리 줄인 파일로, 누르면 메인 페이지, 없으면 빈 상자, DB 값으로 바로 내림, 서비스 안내 화면에 고지
+- ADR 없음: Liquibase "새 파일로 넣고 비교·대조 뒤 합침" 방침과 합칠 때 대조 규칙은 사용자 결정으로 이 문서 "데이터" 절에만 기록 (따로 ADR을 쓰지 않음)
 
 ## 확인 필요
 
@@ -304,6 +306,7 @@ GET /api/v1/libraries (한 항목)
 |---|---|---|
 | 로고 내림 요청 이메일 주소 | 사용자가 만들어 알려 줌 | 배포 |
 | dev 규칙 "자격 조사 없이 도서관 추가 금지" 예외: `MEMBERS_ONLY`·`NOT_SURVEYED` 곳(약 2,500곳)은 ADR-0053대로 조사 상태 표시로 넣음 → 인계서에 이 범위의 예외를 적음 [확정] (사용자 승인, 2026-10-05, 설계 검토) | 해결 | — |
+| `catalog.catalog_library_snapshot.import_id`가 `catalog_import`를 FK로 가리킴 → `catalog_import`가 `collection`으로 가면 모듈 경계를 넘음. 안: FK를 없애고 번호만 둠(다른 모듈 사이 FK 없음 규칙과 같음) [안] | 사용자에게 질문 (인계서 검토) | 인계 |
 | 교보 구독형 화면 소장형의 숫자를 읽는 위치 | dev 사이트 시험 | 구현 |
 | importer 나눠 읽기 크기, 가져오기 시간, DB 크기(약 9~10GB 추정) | dev dry run | 구현 |
 | `GET /libraries` 크기(약 460KB, gzip 약 40KB 추정) | dev 측정 | 구현 |

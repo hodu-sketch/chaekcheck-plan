@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 08 인계서</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+svg{max-width:100%;height:auto;display:block}
+.mock{border:2px dashed var(--line);border-radius:12px;padding:14px;margin:10px 0;font-size:17px}
+.row{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;background:var(--card);flex-wrap:wrap}
+.tag{font-size:14px;border-radius:6px;padding:0 6px;background:var(--code-bg);color:var(--muted)}
+.okt{color:var(--ok);font-weight:500}.mut{color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">dev에 넘길 인계서입니다.<br>무엇을 어떤 순서로 만드는지 봐 주세요.</p>
+<p class="sub">인계서(<code>handoff.md</code>)는 dev가 그대로 따라 만드는 작업 순서입니다. 지금까지 정하신 것만 담았고, 새로 정할 것은 끝의 세 항목입니다. 승인하시면 <code>docs/current/handoff.md</code>로 옮겨 dev가 자동으로 읽게 됩니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>만드는 순서 (13단계)</h2>
+<svg viewBox="0 0 640 330" role="img" aria-label="단계 순서">
+<rect x="10" y="10" width="200" height="50" rx="8" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="20" y="32" font-size="12" font-weight="700" fill="var(--text)">0 지금 상태 재기</text><text x="20" y="50" font-size="11" fill="var(--muted)">코드 바꾸기 전 기준</text>
+<rect x="220" y="10" width="200" height="50" rx="8" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="230" y="32" font-size="12" font-weight="700" fill="var(--text)">1 가져오기 단계별 시간</text><text x="230" y="50" font-size="11" fill="var(--muted)">지금 방식으로 #1 실행</text>
+<rect x="430" y="10" width="200" height="50" rx="8" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="440" y="32" font-size="12" font-weight="700" fill="var(--text)">2 DB 변경 파일</text><text x="440" y="50" font-size="11" fill="var(--muted)">교보 11곳 삭제·트리거·칸</text>
+<rect x="10" y="80" width="200" height="50" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="20" y="102" font-size="12" font-weight="700" fill="var(--text)">3 국가서지 원문 남기기</text><text x="20" y="120" font-size="11" fill="var(--muted)">지문 같으면 다시 씀</text>
+<rect x="220" y="80" width="200" height="50" rx="8" fill="var(--no-bg)" stroke="var(--no)"/><text x="230" y="102" font-size="12" font-weight="700" fill="var(--text)">4 새 표에 쓰고 바꿔 끼우기</text><text x="230" y="120" font-size="11" fill="var(--muted)">위험 높음: 잠금·번호 잇기</text>
+<rect x="430" y="80" width="200" height="50" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="440" y="102" font-size="12" font-weight="700" fill="var(--text)">5 대출 현황 쪽</text><text x="440" y="120" font-size="11" fill="var(--muted)">빠진 소장 코드·503·캐시</text>
+<rect x="10" y="150" width="200" height="50" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="20" y="172" font-size="12" font-weight="700" fill="var(--text)">6 도서관 쪽</text><text x="20" y="190" font-size="11" fill="var(--muted)">검색 계획 SQL로 거르기</text>
+<rect x="220" y="150" width="200" height="50" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="230" y="172" font-size="12" font-weight="700" fill="var(--text)">7 웹 화면</text><text x="230" y="190" font-size="11" fill="var(--muted)">안내 문구·바텀 시트·돌아가기</text>
+<rect x="430" y="150" width="200" height="50" rx="8" fill="var(--no-bg)" stroke="var(--no)"/><text x="440" y="172" font-size="12" font-weight="700" fill="var(--text)">8 바꿔 끼우는 가져오기 #2</text><text x="440" y="190" font-size="11" fill="var(--muted)">서비스 켠 채로, 검색 안 멈춤 확인</text>
+<rect x="10" y="220" width="200" height="50" rx="8" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="20" y="242" font-size="12" font-weight="700" fill="var(--text)">9 메모리 재고 줄이기</text><text x="20" y="260" font-size="11" fill="var(--muted)">1초·20% 넘기 전 단계</text>
+<rect x="220" y="220" width="200" height="50" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="230" y="242" font-size="12" font-weight="700" fill="var(--text)">10 수집 폴더·dev 문서</text><text x="230" y="260" font-size="11" fill="var(--muted)">교보 230곳 표시, 규칙 표</text>
+<rect x="430" y="220" width="200" height="50" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="440" y="242" font-size="12" font-weight="700" fill="var(--text)">11 이름 고치기·흡수 학교</text><text x="440" y="260" font-size="11" fill="var(--muted)">목록을 여쭙고 정함</text>
+<rect x="10" y="290" width="620" height="34" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="20" y="312" font-size="12" font-weight="700" fill="var(--text)">12 전체 확인: 1280·768·375·320 폭 화면, 검사 기준 AC-1~21 표를 dev가 채워 보고</text>
+</svg>
+<p>색: 파랑 = 재기·준비, 주황 = 보통, 빨강 = 위험 높음, 초록 = 문서·데이터.</p>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>도중에 여쭐 것</h2>
+<p>dev가 만들다가 아래를 보여 드리고 답을 받습니다.</p>
+<ul>
+<li>이름 고침 목록: 다시 확인한 새 이름과 근거 (11단계)</li>
+<li>흡수된 학교 7곳: "주소 바꿈 / 끄기 / 그대로" 제안. 이번에는 보고만 하고 바꾸지 않음</li>
+<li>글꼴 줄이는 도구가 새로 설치할 것이면 승인 (7단계 전)</li>
+<li>바텀 시트를 써 보고 유지 / 되돌림 (예전 작은 창 코드는 남겨 둠)</li>
+<li>남은 문구 "안": YES24 폰 안내, "고르는 즉시 저장돼요"</li>
+<li>메모리 측정표와 고른 값</li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>dev가 확인하고 알려 줄 것</h2>
+<ul>
+<li>가져오기 #1(지금 방식)과 #2(바꿔 끼우기)의 단계별 시간, 검색이 멈춘 시간, 디스크 최대</li>
+<li>바꿔 끼운 뒤 켜져 있던 서비스가 바로 새 표를 읽는지(연결 풀 시험)</li>
+<li>바꿔 끼울 때 뒤에 온 검색이 줄을 서는지, 2초·5번이 맞는지</li>
+<li>메모리 "줄이기 전 / 뒤" 표, 캐시 적중률과 상한</li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>정할 것</h2>
+<div class="item">
+<h3><span class="no">1</span>수집 기간 칸과 폰 사이트 다름 표시는 따로 결정 기록(ADR)을 남기지 않음 [안]</h3>
+<p>둘 다 범위·요구 문서에 사용자 말씀과 날짜로 이미 적혀 있고, 칸 하나씩 더하는 작은 변경이라 구조를 바꾸는 결정이 아닙니다. 승인하시면 지금처럼 범위(<code>scope.md</code> 3·7번) 기록으로 둡니다.</p>
+<p class="alt"><b>다른 선택</b> ADR 두 개를 새로 씀: 나중에 찾기는 쉬워지지만 결정 기록이 작은 칸 추가로 늘어남.</p>
+</div>
+<div class="item">
+<h3><span class="no">2</span>이름 고침 목록은 후보 도서관 seed 스크립트(<code>build_candidate_seed.py</code>)가 적용 [안]</h3>
+<p>고칠 곳이 모두 후보로 들어온 도서관(번호 281 이상)이라, 그 seed를 만드는 스크립트가 목록을 읽게 합니다. 다음에 seed를 다시 만들어도 고친 이름이 유지됩니다.</p>
+<p class="alt"><b>다른 선택</b> 등록 도서관 스크립트(<code>build_seed.py</code>)까지 둘 다 읽음: 나중에 등록 도서관 이름이 바뀌어도 같은 목록을 쓸 수 있지만 지금은 대상이 없음.</p>
+<p class="gist"><b>답: 구체적으로 어떻게 되나요?</b><br>도서관 목록은 손으로 쓰지 않고 스크립트가 만든 파일(seed CSV)로 DB에 들어갑니다. 스크립트가 둘 있습니다.</p>
+<table>
+<tr><th>스크립트</th><th>만드는 것</th><th>대상</th></tr>
+<tr><td><code>build_seed.py</code></td><td>처음 등록한 도서관 파일(<code>library/004</code> 등)</td><td>번호 1~280쯤, 교보 사이트 점검으로 넣은 곳. 이미 다 만들어져 다시 돌리지 않음</td></tr>
+<tr><td><code>build_candidate_seed.py</code></td><td><code>library/008-library-candidates.csv</code>, <code>collection/002-collection-link.csv</code></td><td>번호 281 이상, 수집 DB에서 온 후보 도서관. 새 사본이 오거나 규칙이 바뀌면 다시 돌림(이번 교보 11곳 빼기도 이걸로)</td></tr>
+</table>
+<svg viewBox="0 0 640 170" role="img" aria-label="이름 고침 적용 흐름">
+<rect x="10" y="10" width="170" height="56" rx="8" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="20" y="33" font-size="12" fill="var(--text)">수집 DB 사본</text><text x="20" y="52" font-size="11" fill="var(--muted)">원래 이름 "진주교대…"</text>
+<rect x="10" y="90" width="170" height="56" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="20" y="113" font-size="12" fill="var(--text)">name_overrides.tsv</text><text x="20" y="132" font-size="11" fill="var(--muted)">번호 → 새 이름 + 출처·확인일</text>
+<text x="188" y="78" font-size="16" fill="var(--muted)">→</text>
+<rect x="210" y="40" width="210" height="76" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="220" y="63" font-size="12" font-weight="700" fill="var(--text)">build_candidate_seed.py</text><text x="220" y="83" font-size="11" fill="var(--text)">① 번호·이름 정하기(지금 규칙)</text><text x="220" y="101" font-size="11" fill="var(--text)">② 목록에 있는 번호만 새 이름으로</text>
+<text x="428" y="78" font-size="16" fill="var(--muted)">→</text>
+<rect x="450" y="40" width="180" height="76" rx="8" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="460" y="63" font-size="12" fill="var(--text)">008 CSV</text><text x="460" y="83" font-size="11" fill="var(--text)">번호 그대로, 이름만 새것</text><text x="460" y="101" font-size="11" fill="var(--muted)">→ DB에 들어감</text>
+<text x="10" y="165" font-size="11" fill="var(--muted)">예시 이름은 자리만 보이려는 것입니다. 실제 새 이름은 dev가 다시 확인해 여쭙니다.</text>
+</svg>
+<p>왜 목록 파일이 필요한가: 이 스크립트는 다시 돌릴 때 "이미 있는 후보는 번호와 이름을 그대로 둔다"는 규칙이 있어(dev <code>build_candidate_seed.py</code> 21행), 이름을 한 번 손으로 고쳐도 근거가 남지 않고, 수집 DB 이름으로 새로 만들 때 옛 이름이 돌아올 수 있습니다. 목록이 있으면 스크립트가 매번 목록대로 덮어써서 고친 이름이 유지되고, 출처와 확인일도 함께 남습니다. 고칠 곳(434, 456, 1016, 1079, 2161, 2264, 2563, 2611)이 모두 281 이상이라 후보 스크립트 하나만 읽으면 됩니다.</p>
+<p>덧붙임: 아직 배포 전이라(<code>PRE_DEPLOYMENT</code> 표시, dev <code>CLAUDE.md</code> 47행) 교보 11곳처럼 CSV를 다시 만들고 로컬 DB를 초기화하는 방식이 됩니다. 그러면 설계에 적은 별도 이름 고침 UPDATE 파일(<code>library/013</code>)은 없어도 됩니다. 원하시면 다음 페이지에서 따로 여쭙겠습니다.</p>
+</div>
+<div class="item">
+<h3><span class="no">3</span>이 인계서대로 dev에 넘김 [안]</h3>
+<p>승인하시면 <code>docs/current/handoff.md</code>를 이 내용으로 바꾸고, 지금 사이클을 "넘김"으로 표시한 뒤 커밋 여부를 여쭙니다.</p>
+</div>
+</section>
+<p class="foot">원본: <code>handoff.md</code> (planner 작성), <code>design-delta.md</code>, ADR-0065~0070. 작성 2026-10-11.</p>
+</main>
+</body>
+</html>

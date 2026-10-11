@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>다음 사이클 후보</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+svg{max-width:100%;height:auto;display:block}
+.mock{border:2px dashed var(--line);border-radius:12px;padding:14px;margin:10px 0;font-size:17px}
+.row{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;background:var(--card);flex-wrap:wrap}
+.tag{font-size:14px;border-radius:6px;padding:0 6px;background:var(--code-bg);color:var(--muted)}
+.okt{color:var(--ok);font-weight:500}.mut{color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">다음 사이클(08)에 무엇을 할지<br>다섯 가지 안입니다.</p>
+<p class="sub">backlog, 사이클 06·07 회고, 조사 문서, dev 보고를 읽고 모았습니다. 사이클 08에 넣고 싶은 안의 칩을 승인해 주세요(여러 개 가능). 원하시면 기타에 영향·확신·노력을 1~5로 적어 주시면 점수표도 만들어 드립니다. 고른 뒤에 범위(<code>scope.md</code>)를 씁니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>먼저 알아 둘 것</h2>
+<div class="gist">사용자가 정한 배포 목표는 <b>2026-10-06 새벽</b>입니다. 그리고 "배포가 우선, 다 세팅한 다음에 갱신 기능"이라고 하셨습니다.</div>
+<table>
+<tr><th>사용자 말</th><th>출처</th></tr>
+<tr><td>"나는 다음 작업을 이렇게 하고 싶어", "목표는 10월 6일 새벽까지" — 순서 ① 책 묶기 기준 → ② 검색·지역 화면 → ③ 직장별 도서관 → ④ 내 도서관 → ⑤ 정렬, 화면 이상한 것 수정 → ⑥ 배포(카카오 로그인만)</td><td><code>docs/backlog.md</code> (2026-10-04)</td></tr>
+<tr><td>"배포가 우선이라서 점차 늘릴거야 그리고 다 세팅한다음에 '갱신'기능을 만들 거야"</td><td><code>docs/backlog.md</code>, 사이클 07 <code>scope.md</code></td></tr>
+<tr><td>사이클 06 회고의 다음 순서: 책 번호 유지 → 구독형 한도 알리기 → 알림</td><td><code>docs/cycles/06-my-libraries/retro.md</code></td></tr>
+</table>
+<p>③·④는 사이클 06에서, 후보 도서관 넣기와 책 번호 유지는 사이클 07에서 끝났습니다. 배포 전 순서에서 남은 것은 ⑤ 화면 수정과 ⑥ 배포입니다.</p>
+<p class="chg">dev 쪽 DB에는 아직 "배포 전" 표시(<code>PRE_DEPLOYMENT</code>)가 있습니다. 이 표시가 있는 동안에는 DB 구조 파일을 고쳐 쓸 수 있습니다. 첫 배포 뒤에는 새 파일만 더할 수 있으므로, 칸·트리거를 더하는 작은 수정은 배포 전에 하는 편이 깔끔합니다(dev <code>CLAUDE.md</code>).</p>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>다섯 가지 안</h2>
+
+<div class="item">
+<h3><span class="no">A</span>배포(운영에 올리기) 준비 [안]</h3>
+<p><b>하는 일.</b> 서버를 어디에 둘지(AWS 서버 한 대 / 먼저 내 PC + Cloudflare 터널), 도메인, 운영 설정(실제 사용자 IP 받기, https 뒤에서 주소 알아보기, 시험용 데이터 빼기), 서비스 DB를 운영으로 옮기는 방법, 카카오 로그인만 켜기, 로고 내림 연락 이메일. 첫 배포 때 "배포 전" 표시를 지웁니다.</p>
+<p><b>왜 지금.</b> 사용자 순서의 ⑥이고 목표가 10월 6일 새벽입니다.</p>
+<p><b>크기.</b> 중간. 코드보다 사용자 결정과 설정이 많습니다.</p>
+<p><b>막는 것.</b> 실제 카카오 로그인 확인(AC-19), 도메인, 이메일 주소, 서버 크기(가져오기 Java 메모리 8GB, DB 약 9.8GB).</p>
+<p><b>보이는 결과.</b> 실제 주소로 서비스가 열립니다.</p>
+<p class="cap">"운영 설정이 남음" 중 일부(시험 데이터, https 설정)는 <code>(개인 메모)</code>의 진단이고, dev 코드로 다시 확인하지 못했습니다.</p>
+</div>
+
+<div class="item">
+<h3><span class="no">B</span>배포 전 다듬기 (사이클 07 남은 작은 수정 + 화면 수정 ⑤) [안]</h3>
+<p><b>하는 일.</b></p>
+<ul>
+<li>회고에서 정한 것: 정렬·완전 일치·역할은 기억하지 않음, 가져오기 기록에 사본 수집 기간, 고친 시각이 자동으로 적히게(트리거)</li>
+<li>dev 남은 질문 페이지에서 정하실 것: 429·503 문구, 도서관 411, 이름이 다른 도서관 등</li>
+<li>⑤ 화면 수정: dev가 넘긴 화면 질문(폰 설정 창, 정렬 안내, 글꼴 크기 약 3MB 줄이기, 약관 화면에서 돌아오는 길)과 사용자가 주시기로 한 "이상한 곳" 캡처</li>
+</ul>
+<p><b>왜 지금.</b> 회고에서 "다음 인계서로" 정했고, 사용자 순서의 ⑤이며, "배포 전" 표시가 있을 때 하는 편이 깔끔합니다.</p>
+<p><b>크기.</b> 작음~중간. 하나하나가 작습니다.</p>
+<p><b>보이는 결과.</b> 검색 조건 기억이 바뀌고, 첫 화면이 빨리 뜨고, 도서관 이름이 맞게 나옵니다.</p>
+</div>
+
+<div class="item">
+<h3><span class="no">C</span>책 목록 주기 갱신 + DB 메모리 줄이기 [안]</h3>
+<p><b>하는 일.</b> 가져오는 동안에도 검색이 멈추지 않게(새 표를 만든 뒤 바꿔 끼우기), 다음 사본으로 아직 수집이 덜 끝난 후보 도서관을 더 넣기, 같은 책의 소장 줄을 붙여 저장(DB 메모리 안 1), PostgreSQL 메모리 설정(안 2), 책 묶기 기준 다시 보기.</p>
+<p><b>왜 지금.</b> 지금 가져오기 쓰기 22~27분 동안 검색이 기다립니다. 교보 대여·혼합형 수집은 10월 11~12일쯤 끝날 것으로 적혀 있습니다(사이클 07 <code>scope.md</code>).</p>
+<p><b>크기.</b> 큼. 가져오기 구조, 수집기 옮기기, 갱신 주기가 얽힙니다.</p>
+<p><b>막는 것.</b> 수집 한 바퀴가 끝나야 합니다. 메모리 설정 값은 서버를 정한 뒤 정합니다. 사용자 말 "다 세팅한다음에 '갱신'기능"으로는 배포 뒤입니다.</p>
+<p><b>보이는 결과.</b> 찾을 수 있는 도서관과 책이 늘고, 갱신 중에도 검색이 됩니다.</p>
+</div>
+
+<div class="item">
+<h3><span class="no">D</span>구독형 한도 알리기 [안]</h3>
+<p><b>하는 일.</b> 구독형 도서관 줄에 그 도서관의 고정 규칙(한 사람 한 달 몇 권, 매달 1일 다시 열림)과 공지로 본 "이번 달 마감"을 보입니다. 구독 규칙을 도서관 정보와 따로 둘지는 설계에서 정합니다.</p>
+<p><b>왜 지금.</b> "책 번호 유지 다음에 함"으로 정했는데(<code>docs/research/library-limits/research.md</code>), 책 번호 유지가 사이클 07에서 만들어졌습니다. 마감 공지 기록은 쌓이고 있습니다.</p>
+<p><b>크기.</b> 중간. 도서관마다 규칙 값을 사람이 모아야 하고, 월말에 실제로 확인해야 합니다.</p>
+<p><b>보이는 결과.</b> "구독형 · 바로 대출" 줄에 한도와 마감이 보입니다.</p>
+</div>
+
+<div class="item">
+<h3><span class="no">E</span>알림 [안]</h3>
+<p><b>하는 일.</b> 관심 책 저장, "빌릴 수 있게 됨"을 서버가 확인, 알림 보내기(수단은 조사 필요), 알림 끄기.</p>
+<p><b>왜 지금.</b> 처음 계획에서 회원 다음 순서였습니다("회원 뒤에 함", 2026-10-01).</p>
+<p><b>크기.</b> 큼. 서버가 스스로 도서관을 확인해야 해서 호출 예의 문제가 있고, 보내는 수단은 공식 문서 확인이 필요합니다.</p>
+<p><b>막는 것.</b> 회원이 저장한 책 번호를 다시 가져올 때 고쳐 쓰는 일, 갱신(C)으로 책 번호 합치기·나뉨을 실데이터로 본 뒤가 안전합니다.</p>
+<p><b>보이는 결과.</b> 원하는 책을 빌릴 수 있게 되면 알림을 받습니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>무엇이 먼저인가</h2>
+<svg viewBox="0 0 860 220" role="img" aria-label="안들의 순서">
+<rect x="10" y="20" width="200" height="70" rx="10" fill="var(--ok-bg)" stroke="var(--ok)"/>
+<text x="26" y="50" font-size="17" font-weight="700" fill="var(--text)">B 배포 전 다듬기</text>
+<text x="26" y="75" font-size="14" fill="var(--muted)">"배포 전" 표시가 있을 때</text>
+<text x="218" y="62" font-size="22" fill="var(--muted)">→</text>
+<rect x="245" y="20" width="180" height="70" rx="10" fill="var(--ok-bg)" stroke="var(--ok)"/>
+<text x="261" y="50" font-size="17" font-weight="700" fill="var(--text)">A 배포</text>
+<text x="261" y="75" font-size="14" fill="var(--muted)">목표 10/6 새벽</text>
+<text x="433" y="62" font-size="22" fill="var(--muted)">→</text>
+<rect x="460" y="20" width="190" height="70" rx="10" fill="var(--card)" stroke="var(--line)"/>
+<text x="476" y="50" font-size="17" font-weight="700" fill="var(--text)">C 주기 갱신</text>
+<text x="476" y="75" font-size="14" fill="var(--muted)">수집 한 바퀴 뒤</text>
+<text x="658" y="62" font-size="22" fill="var(--muted)">→</text>
+<rect x="685" y="20" width="160" height="70" rx="10" fill="var(--card)" stroke="var(--line)"/>
+<text x="701" y="50" font-size="17" font-weight="700" fill="var(--text)">E 알림</text>
+<text x="701" y="75" font-size="14" fill="var(--muted)">책 번호 실데이터 뒤</text>
+<rect x="460" y="130" width="190" height="70" rx="10" fill="var(--card)" stroke="var(--line)"/>
+<text x="476" y="160" font-size="17" font-weight="700" fill="var(--text)">D 구독형 한도</text>
+<text x="476" y="185" font-size="14" fill="var(--muted)">막는 것 없음, 언제든</text>
+</svg>
+<p class="cap">초록은 추천하는 사이클 08 범위입니다. D는 순서에 묶이지 않아 배포 뒤 아무 때나 할 수 있습니다.</p>
+<p class="rec">추천: <b>B와 A를 묶어 사이클 08 "배포 준비"</b>로. 사용자가 정한 배포 전 순서(⑤ → ⑥)와 맞고, "배포 전" 표시가 있을 때 작은 구조 수정을 끝낼 수 있습니다. 목표 시각까지 시간이 짧으므로, A 가운데 사용자 결정이 필요한 것(서버 위치, 도메인, 이메일)을 맨 앞에 묻겠습니다.</p>
+<p>바뀐 이전 계획: 처음에는 "사이클 07 = 알림"이었는데 사이클 07은 후보 도서관 넣기가 되었고, "책 번호 유지는 따로 사이클"이었는데 사이클 07에서 만들어졌습니다. 고르신 결과에 맞춰 backlog를 고치겠습니다.</p>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>답: 배포는 로컬 + Cloudflare로 이미 됐으니 넣어 둠</h2>
+<div class="gist">알겠습니다. A(배포 준비)는 보류로 적었습니다. 사용자: "마무리를 하고 올리는 거가 내 '배포' 였어 로컬 클라우드플레어로도 일단 충족되었다고 생각해 그래서 배포는 넣어둬" (2026-10-05)</div>
+<p>그래서 10월 6일 새벽 목표에 묶인 순서도 끝난 것으로 봅니다. 남은 네 안(B·C·D·E) 가운데 추천을 바꿉니다.</p>
+<table>
+<tr><th>안</th><th>지금 하기 좋은 까닭</th><th>추천</th></tr>
+<tr><td>B 다듬기</td><td>회고와 dev 질문에서 정한 작은 수정이 이미 쌓여 있음. 하나하나 작음</td><td class="okt">사이클 08</td></tr>
+<tr><td>C 주기 갱신 + DB 메모리</td><td>"다 세팅한다음에 '갱신'기능"이라고 하셨고, 이제 세팅(후보 도서관, 공개)이 끝남. 다만 교보 대여·혼합형 수집이 끝나야 다음 사본을 만들 수 있음</td><td>사이클 09 (수집 한 바퀴 뒤)</td></tr>
+<tr><td>D 구독형 한도</td><td>막는 것 없음</td><td>C와 순서는 사용자 선택</td></tr>
+<tr><td>E 알림</td><td>C로 책 번호 합치기·나뉨을 실데이터로 본 뒤가 안전</td><td>C 뒤</td></tr>
+</table>
+<p class="rec">새 추천: 사이클 08 = <b>B 다듬기</b> (작게 끝내고), 그다음 수집 한 바퀴가 끝나면 C. B 칩과 함께 C·D·E 중 하고 싶은 것을 고르시면 그대로 따르겠습니다.</p>
+<p>로컬 + Cloudflare로 열어 둔 동안 남는 것: 터널 주소는 실행할 때마다 바뀌는 임시 주소이고, 로그인 기능은 꺼진 상태입니다(dev 공개 시험 기록). 이것을 바꿀지는 A를 다시 꺼낼 때 정합니다.</p>
+</section>
+
+<section class="card">
+<h2><span class="num">5</span>답: B와 C를 같이 하고 싶음</h2>
+<div class="gist">좋습니다. 다만 C 가운데 "다음 사본으로 다시 가져오기"는 교보 대여·혼합형 수집이 끝나야(10월 11~12일쯤으로 적혀 있음) 할 수 있습니다. 그래서 C를 <b>지금 할 수 있는 것</b>과 <b>수집 한 바퀴 뒤에 할 것</b>으로 나눠 제안합니다.</div>
+<table>
+<tr><th>사이클 08에 넣음 (지금 가능)</th><th>뒤로 (수집 한 바퀴 뒤)</th></tr>
+<tr><td>
+<ul>
+<li><b>B 다듬기</b> 전부: 검색 조건 기억 줄이기, 429·503 문구, YES24 13곳 안내, 이름 고치기, 고친 시각 자동 기록, 가져오기 기록에 수집 기간</li>
+<li><b>C-1 바꿔 끼우기</b>: 기존 표를 두고 새 표에 쓴 뒤 바꿈 → 가져오는 동안에도 검색됨</li>
+<li><b>C-2 같은 책 소장 줄 붙여 저장</b> (DB 메모리 안 1): 새 표에 쓸 때 책 번호 순으로 씀. 바꿔 끼우기와 같은 곳을 고치므로 함께 하면 한 번에 끝남</li>
+<li><b>C-3 지금 사본으로 한 번 다시 가져와서</b> 바꿔 끼우기·메모리 효과를 잼</li>
+</ul>
+</td><td>
+<ul>
+<li>새 사본으로 가져오기, 후보 도서관 더 넣기(411 포함)</li>
+<li>정해진 때마다 저절로 갱신(주기), 수집기를 서비스 쪽으로 옮길지</li>
+<li>책 묶기 기준 다시 보기</li>
+<li>PostgreSQL 메모리 설정 값(DB 메모리 안 2): 서버가 정해져야 정할 수 있음 (배포 보류)</li>
+</ul>
+</td></tr>
+</table>
+<p class="rec">추천: 위 왼쪽 칸을 사이클 08로. B 칩과 C 칩을 승인하시면 이 나눔으로 범위(<code>scope.md</code>)를 쓰겠습니다. 나눔을 바꾸고 싶으면 C 칩의 기타에 적어 주세요.</p>
+</section>
+
+<section class="card">
+<h2><span class="num">6</span>답: B가 너무 작음, DB 메모리와 캐시 메모리도 줄이고 싶음</h2>
+<div class="gist">알겠습니다. 사이클 08을 <b>"배포 전 다듬기 + 가져오기 바꿔 끼우기 + 메모리 줄이기"</b>로 키우는 것을 제안합니다. 먼저 지금 캐시가 무엇을 얼마나 담는지 dev 코드로 확인한 결과입니다.</div>
+<table>
+<tr><th>메모리를 쓰는 곳</th><th>지금 담는 것 (dev 코드, 2026-10-05 읽음)</th><th>크기</th></tr>
+<tr><td>도서관 검색 쪽 캐시 (<code>SearchPageCache</code>)</td><td>도서관 검색 결과 한 쪽을 읽어 낸 값(책 목록), 3분, <b>최대 1,000쪽</b></td><td>원본 HTML은 담지 않고 읽어 낸 값만 담음. 실제 크기는 재지 않음</td></tr>
+<tr><td>책 상세 판정 캐시 (<code>DetailVerdictCache</code>)</td><td>책 한 권·한 도서관의 보유·대출·예약 수와 판정, 3분, <b>최대 1,000개</b></td><td>한 개가 숫자 몇 개라 작음</td></tr>
+<tr><td>서비스 DB(PostgreSQL)</td><td>인기 책의 소장 줄이 표 전체에 흩어져 있어, 책 화면을 열 때 읽는 쪽이 많음</td><td>상위 1,000권의 소장이 1,727MB에 흩어짐 (<code>db-memory.md</code> 측정)</td></tr>
+<tr><td>가져오기 실행</td><td>사본을 읽고 묶는 동안</td><td>Java 메모리 8GB 안에서 끝남 (더 작게는 안 재 봄)</td></tr>
+</table>
+<p class="cap">두 캐시 설정: dev <code>application.yml</code> <code>cache-ttl: 3m</code>, <code>cache-max-size: 1000</code>, <code>CaffeineSearchPageCache.java</code>, <code>CaffeineDetailVerdictCache.java</code>.</p>
+<p>보이는 점: 두 캐시는 <b>개수</b>로만 막혀 있어서, 담긴 것이 커지면 메모리가 얼마나 될지 정해져 있지 않습니다. 반대로 1,000개가 도서관 2,600곳·책 상세에는 적어서 자주 밀려날 수도 있습니다. 어느 쪽인지는 <b>실제로 재 봐야</b> 압니다(확인 못 함).</p>
+<p>사이클 08 메모리 쪽 제안 [안이라 아래 칩과 함께 정함]:</p>
+<ul>
+<li>먼저 잼: 검색을 여러 번 돌린 뒤 서비스 Java 메모리와 두 캐시의 실제 크기·적중률</li>
+<li>캐시: 개수 대신 <b>크기(바이트)로 상한</b>을 두거나, 담는 값을 화면에 필요한 칸만 남기게 줄임</li>
+<li>서비스 Java 메모리 상한을 정해 둠(지금은 PC 메모리의 1/4이 기본)</li>
+<li>DB: 같은 책의 소장 줄을 붙여 저장(DB 메모리 안 1, 바꿔 끼우기와 함께), 책 화면이 계획한 도서관 줄만 읽기(안 3)</li>
+<li>가져오기: 더 작은 Java 메모리로 되는지 잼</li>
+</ul>
+<p class="rec">새 추천 사이클 08 = <b>B 다듬기 + C-1 바꿔 끼우기 + C-2 소장 줄 붙여 저장 + 메모리(재기 → 캐시·Java·DB 줄이기)</b>. 새 사본 가져오기와 주기 갱신은 수집 한 바퀴 뒤. B·C 칩을 승인하시면 이 범위로 <code>scope.md</code>를 쓰겠습니다.</p>
+</section>
+
+<p class="foot">원본: <code>docs/backlog.md</code>, <code>docs/cycles/06-my-libraries/retro.md</code>, <code>docs/cycles/07-candidate-libraries/retro.md</code>·<code>scope.md</code>, <code>docs/research/deploy/</code>, <code>docs/research/ebook-catalog/catalog-refresh.md</code> 5절, <code>docs/research/library-limits/research.md</code>, <code>docs/research/member-and-alerts/</code>, <code>(개인 메모)</code>, dev <code>docs/plan-feedback.md</code> "plan에 넘길 요약". 작성 2026-10-05.</p>
+</main>
+</body>
+</html>

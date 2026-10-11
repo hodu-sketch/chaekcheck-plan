@@ -1,684 +1,534 @@
-# 개발 인계서: 사이클 06 내 도서관 (지역·직장 저장과 검색 연결)
+# 개발 인계서: 사이클 08 다듬기 + 가져오기 바꿔 끼우기 + 메모리 줄이기
 
 ## 요약
 
-로그인한 사람의 거주지·직장 지역과 직접 고른 도서관(최대 20곳)을 서버에 저장합니다. 검색 화면의 "전체 도서관 | 내 도서관" 스위치가 이 값을 바로 씁니다. 로그인하지 않은 사람은 사이클 05까지와 똑같이 씁니다.
-- 새 모듈 `mylibrary`(패키지 `com.chaekcheck.mylibrary`, 스키마 `mylibrary`)를 만듭니다. 이 모듈은 `auth`의 `AccountDeleted`를 처음으로 실제로 받아 처리합니다.
-- `auth`에는 다른 모듈이 쓸 공개 장치 셋을 더합니다: 계정 줄 잠금, `AccountId` 인자 해석기, 켜고 끄기 표시.
-- 검색 쪽(`library`, `catalog`, `availability`)에는 `libraryIds` 한 칸과 "직접 추가" 표시(`chosen`, `JoinTier.CHOSEN`)가 더해집니다. 검색 모듈은 여전히 회원을 모릅니다(ADR-0037).
-- `library`에 로그인 없이 쓰는 공개 목록 `GET /api/v1/libraries`가 생깁니다.
-- 웹에는 다음이 생기거나 바뀝니다.
-  - S1: "내 도서관" 줄, 스위치 글자와 기본값
-  - S2: 로그인 후에는 서버에 저장
-  - S10 `/my-libraries`(새 화면), S11 지역 옮기기 창(새 창)
-  - 결과 줄의 "직접 추가" 표시
-  - 동의·처리방침·탈퇴 안내 문구
-- 사이클 05 보완 셋도 함께 합니다: `signup_success`, `withdraw_request_expired`, `withdraw_state_mismatch`.
-
-## 목표
-
-로그인한 사람의 거주지·직장 지역과 직접 고른 도서관이 서버에 저장되고, 검색 화면의 "내 도서관만" 스위치로 바로 쓰인다(`scope.md` 목표 [확정]).
-
-**포함**
-- `mylibrary` 모듈: Liquibase 새 changelog, `JdbcClient` 저장소, 저장 API 다섯 개, `AccountDeleted` listener
-- `auth` 추가
-  - `AccountPresence.lockIfExists`: 호출한 트랜잭션 안에서 계정 줄을 잠금
-  - `AccountId` 인자 해석기
-  - `ConditionalOnAuthEnabled`를 `auth` 루트로 옮김 [안]
-- 검색 쪽 변경
-  - `libraryIds` 파라미터, `SearchTarget.chosen`, 계획 규칙(ADR-0050), `JoinTier.CHOSEN`
-  - `GET /api/v1/libraries`
-- 발행 저장소 설정 `republish-outstanding-events-on-restart`와 재시작 시험
-- 웹 화면: S1, S2, S10, S11과 결과 줄 변경
-- 문구 변경: S6, S9(동의 항목 추가, 버전 그대로), S7(지워지는 것)
-- 사이클 05 보완 셋
-
-**제외**: 관심 책·알림, 책 번호 유지, 소속 기관 자격, 연락처·별명, 검색 화면 다듬기, 배포. 자세한 내용은 "이번에 하지 않는 것"에 있습니다.
+이번 사이클은 세 가지를 합니다. 사이클 07에서 남은 작은 수정과 화면 수정을 끝냅니다. 가져오기는 새 표(`catalog_next`)에 다 쓴 뒤 짧은 트랜잭션에서 바꿔 끼워, 가져오는 동안에도 책 검색이 멈추지 않게 합니다. DB·캐시·Java 메모리는 **먼저 재고 나서** 속도를 잃지 않는 선까지 줄입니다.
+- 바꿔 끼울 때 책 번호(ADR-0062)와 소장 번호(ADR-0070)는 옛 번호를 그대로 잇습니다.
+- 국가서지는 원문을 남겨 두고 다시 씁니다(ADR-0069).
+- 교보 대여·혼합 도서관 11곳은 seed에서 지웁니다(ADR-0067).
+- `updated_at`은 DB 트리거가 적습니다(ADR-0068).
 
 ## 이 인계서를 쓰는 규칙
 
 - 이 파일은 chaekcheck-plan이 관리합니다. **dev에서 고치지 마세요.** plan 저장소의 어떤 파일도 고치지 않습니다.
-- 구현이 이 인계서나 `design-delta.md`와 달라져야 하면(값, 이름, 구조, 순서) **조용히 바꾸지 말고** 먼저 사용자에게 알리세요.
-  - 내용과 이유는 dev `docs/plan-feedback.md`의 **새 `# 사이클 06` 절**에 쌓습니다. 사용자 발언이면 그대로 옮깁니다.
-- 세부 이름은 `design-delta.md`대로 씁니다. 해당 이름: `AccountPresence.lockIfExists`, `library_limit_reached`, `matchedBy`, `cautioned`, `JoinTier.CHOSEN`, `chosen`, `chaekcheck.regionImport.v1`, 표·changelog 이름.
-  - dev가 코드에 맞춰 바꾸면 `# 사이클 06` 절에 알리기만 합니다 [확정] (사용자 승인, 2026-10-04, design-delta 검토).
-  - 아래에서 [안]으로 표시한 이름은 이런 "바꿀 수 있는 세부 이름"입니다.
+- 구현이 이 인계서나 `design-delta.md`와 달라져야 하면(값, 이름, 구조, 순서) **조용히 바꾸지 말고** 먼저 사용자에게 알리세요. 내용과 이유는 dev `docs/plan-feedback.md`의 **새 `# 사이클 08` 절**에 쌓습니다. 사용자 발언이면 그대로 옮깁니다.
+- `[안]`·`[안 이름]`·`[안 경로]`로 표시한 이름은 dev가 코드에 맞춰 바꿀 수 있습니다. 바꾸면 `# 사이클 08` 절에 알리기만 합니다. 규칙과 뜻은 바꾸지 않습니다.
+  - 해당 이름 예: `catalog_next`, `holdingsOf(bookIds, libraryIds)`, `mobile_site_differs`/`mobileSiteDiffers`, `collected_from`/`collected_to`, `step_seconds`와 그 키, `national_bibliography_record`/`_source`, `set_updated_at()`, changelog 파일 번호, 설정·환경 변수 이름
 - 태그 뜻
-  - `[확정]`: 사용자가 정했거나 공식 문서로 확인한 값입니다.
-  - `[안]`: 제안입니다.
-  - `[확인 필요]`: 모르는 값입니다. 확정된 것처럼 코드에 넣지 말고(필요하면 `TODO(확인 필요)` 주석), 확인한 뒤 결과를 보고합니다.
-- 이번 사이클은 **새 의존성이 없습니다**. 의존성이 필요해지면(테스트용 포함) 사용자에게 먼저 알리고 승인받습니다.
-- 단계마다 적힌 확인이 통과해야 다음 단계로 넘어갑니다.
-  - 백엔드: `backend/`에서 `./gradlew build` (`ModularityTests`, `DocumentationTests` 포함)
+  - `[확정]`: 사용자가 정했거나 공식 문서로 확인한 값
+  - `[안]`: 제안
+  - `[확인 필요]`: 모르는 값. 확정된 것처럼 코드에 넣지 말고 `TODO(확인 필요)`로 둔 뒤, 확인하고 보고합니다.
+- **새 의존성은 원칙적으로 없습니다.** Actuator·Micrometer도 넣지 않습니다 [확정] (ADR-0066). 글꼴 서브셋 도구처럼 의존성이 필요해지면(Python 패키지 포함) 먼저 사용자 승인을 받습니다.
+- 단계마다 아래 확인이 통과해야 다음 단계로 넘어갑니다.
+  - 백엔드: `backend/`에서 `./gradlew build` (`ModularityTests`의 `ApplicationModules.of(ChaekcheckApplication.class).verify()`, `DocumentationTests` 포함)
   - 웹: `web/`에서 `npm test`, `npm run build`, `npm run lint`
-  - `fetch-service/`는 바뀌지 않습니다.
-- **구현 기준은 `design-delta.md`입니다.** JSON 예시와 표 정의 전체는 여기 다 옮기지 않았습니다.
+- **구현 기준은 `design-delta.md`입니다.** `architect-proposal.md`는 기록일 뿐 구현 기준이 아닙니다.
+- dev `CLAUDE.md`, 스킬(`spring-modulith`, `postgres-patterns`, `jpa-patterns`, `api-design`), 사이클 05~07 인계서의 제약을 그대로 따릅니다. 아래에는 이번에 더하거나 바뀌는 것만 적습니다.
 
 ## 참고 문서 (chaekcheck-plan, 읽기 전용)
 
-- `../chaekcheck-plan/docs/cycles/06-my-libraries/design-delta.md`: **기준 문서**
-  - 구조 그림(모듈 구성도, 흐름 셋, 도메인 모델), 모듈 표, 검색 계획 규칙 표
-  - 데이터(ER, 칼럼 표), API 표와 예시, 브라우저 저장 표, 그 밖의 변경, 확인 필요
-- `../chaekcheck-plan/docs/cycles/06-my-libraries/design-diagrams.md`: 설계 그림 모음(설계 수준 클래스 그림, 시퀀스 5, 흐름도 3, 화면 상태, 예상 설계 패턴). 클래스 이름은 예시 [안]
-- `../chaekcheck-plan/docs/cycles/06-my-libraries/spec.md`: R1~R9, R8-1, R8-2, 상태별 동작, AC-1~AC-18, 비목표
-- `../chaekcheck-plan/docs/cycles/06-my-libraries/flow.md`
-  - S1(변경), S2(변경), S10(새), S11(새)
-  - S4(그대로), S6·S9·S7(문구만)
-  - AC·상태 대응표
-- `../chaekcheck-plan/docs/cycles/06-my-libraries/scope.md`: 사이클 05 보완 표(탈퇴 코드 문구)
+- `../chaekcheck-plan/docs/cycles/08-polish-swap-memory/design-delta.md`: **기준 문서**. 흐름 A(가져오기)·B(계획·소장 읽기)·C(막힘), 데이터 표, "정리 규칙을 바꿀 때" 표, API, 웹, 메모리 측정과 설정, 이름 고치기, 확인 필요
+- `.../08-polish-swap-memory/spec.md`: R1~R10, 상태별 동작, AC-1~AC-21(AC-8b, AC-8c 포함), 비목표
+- `.../08-polish-swap-memory/flow.md`: 화면별 바뀜, "검토 결과", 빠진 책·소장 문구
+- `.../08-polish-swap-memory/research.md`
+  - 7절: 측정 순서
+  - 9절: 코드에서 본 메모리 쓰임과 파일 위치
+  - 10절: 가져오기 단계와 시간, 잠금에 대한 공식 사실, 방향 비교
+- `.../08-polish-swap-memory/scope.md`
 - ADR (`../chaekcheck-plan/docs/adr/`)
-  - 0048: 둘째 회원 모듈은 `mylibrary`. ADR-0036의 `member`를 대체합니다.
-  - 0049: S10이 쓰는 목록(`GET /api/v1/libraries`)과 저장 방법(지역은 통째로, 도서관은 하나씩)
-  - 0050: 직접 추가한 도서관은 검색에서 맨 앞에 두고, 자격 규칙의 예외로 다룹니다.
-  - 0051: 계정 줄 잠금 + 재시작 때 남은 이벤트를 다시 처리합니다.
-  - 그대로 따르는 것: 0001, 0003, 0008, 0013, 0027, 0037, 0038, 0041, 0044
-- 사이클 05: `../chaekcheck-plan/docs/cycles/05-login-account/handoff.md`(C1~C34, 결과 코드 규칙 C21), `retro.md`
+  - 0065: 새 표에 쓰고 바꿔 끼움
+  - 0066: 메모리 줄이는 구조
+  - 0067: 교보 대여·혼합 제외
+  - 0068: `updated_at` 트리거
+  - 0069: 국가서지 원문, 정리 규칙을 바꿀 때의 순서
+  - 0070: 소장 번호 잇기, 빠진 책·소장 안내
+  - 그대로 따르는 것: 0004, 0006, 0053, 0054, 0055, 0060, 0062
+- `../chaekcheck-plan/docs/research/library-join/name-changes-2026-10-10.md` 2절: 이름 고칠 곳, 흡수된 학교
+- `../chaekcheck-plan/docs/research/deploy/db-memory.md`: DB 메모리 안 1~5
+- `../chaekcheck-plan/docs/research/ebook-catalog/crawl-runbook.md` 8-2-1절, `collection-by-vendor-2026-10-09.md`: 교보 대여·혼합
+- 사이클 07: `../chaekcheck-plan/docs/cycles/07-candidate-libraries/retro.md`, dev `docs/plan-feedback.md` `# 사이클 07`(14~17단계, 측정 기준선)
+- 데이터
+  - 가져오기 원본: `../chaekcheck-data/snapshots/ebook-catalog-2026-10-05-0745.sqlite` (읽기만) [확정]
+  - 측정 기준선: dev `data/cycle07/`
 
 ## 결정 기록
 
 | ADR | 이번 구현에 주는 것 |
 |---|---|
-| 0048 | 새 모듈 `mylibrary`. `auth`에는 `AccountId`, `AccountDeleted`, 계정 줄 잠금으로만 기댐. 관심 책은 넣지 않음 |
-| 0049 | `GET /api/v1/libraries`(공개, 회원 모름). 지역 저장은 `PUT /api/v1/me/regions`(통째로), 도서관은 `PUT`/`DELETE /api/v1/me/libraries/{libraryId}`(하나씩). S11 답과 스위치 값은 브라우저에만 저장 |
-| 0050 | `libraryIds`의 켜진 도서관은 자격과 상관없이 계획에 넣고 `chosen` 표시를 붙여 맨 앞에 둠("전체"여도). `priorityGroup`은 원래 값 유지. `visit=none`이어도 남김. 가입 자격 배지 대신 "직접 추가" 표시 |
-| 0051 | `AccountPresence.lockIfExists`(`SELECT … FOR NO KEY UPDATE`, 호출한 트랜잭션 안). `republish-outstanding-events-on-restart: true` |
-
-인계서에도 옮겨 적는 사항이 둘 있습니다(cycle-close 검토). 이미 확정된 ADR은 고칠 수 없어서 `docs/current/`와 이 인계서에 적습니다.
-- ADR-0037에는 `member`라고 적혀 있지만 이번 모듈 이름은 `mylibrary`이고, `libraryIds` 상한은 20입니다 [확정] (spec R3).
-- `auth`가 계정 번호를 다른 모듈에 넘기는 장치(`AccountId` 인자 해석기)와 켜고 끄기 표시를 공개로 옮기는 일은 이 사이클에서 합니다.
+| 0065 | 준비 스키마에 색인 없이 쓰기 → 색인·제약 → `VACUUM (ANALYZE)` → 짧은 트랜잭션에서 옛 표 `DROP` + 새 표 `SET SCHEMA`. 옛 표는 바로 지움. **쓰기 단계 안의 시간을 먼저 나눠 잼** |
+| 0066 | `planSearch`는 들어갈 도서관만 SQL로 읽음. `holdingsOf`는 계획 도서관 줄만 읽음. 캐시 통계를 켜고 캐시마다 상한을 둠. 재는 도구는 `jcmd`·로그·PG 통계만. DB 메모리 값은 compose에 둠. 본문 복사를 줄임. 멈추는 기준은 첫 쪽 1초, 기준 대비 20% |
+| 0067 | 대여·혼합 230곳은 수집도 서비스도 하지 않음. 서비스에 들어간 11곳(2664~2674)은 seed에서 지움 |
+| 0068 | `BEFORE UPDATE FOR EACH ROW` 트리거. 함수는 모듈 스키마마다 둠. `postgres-patterns` 스킬에 지침을 더함 |
+| 0069 | 국가서지 원문과 파일 지문을 `collection`에 남김. 다듬기는 매번 지금 규칙으로 함. 정리 규칙을 바꿀 때의 순서를 `3-import.md`에 적음 |
+| 0070 | 같은 (도서관, `item_key`)는 옛 `holding.id`를 씀. 빠진 소장은 `holding_not_found`, 빠진 책은 `book_not_found` + 안내 한 줄 |
 
 ## 지켜야 할 제약
 
-dev `CLAUDE.md`, 스킬 규칙(`.claude/skills/spring-modulith`, `postgres-patterns`, `jpa-patterns`, `api-design`), 사이클 05 인계서 C1~C34를 그대로 따릅니다. 이 사이클에서 더하거나 바뀌는 것만 적습니다.
-
-### 모듈 경계
-- C1. 의존 방향은 `mylibrary → auth, library, region` 하나뿐입니다(ADR-0048).
-  - `mylibrary`가 쓰는 공개 API
-    - `auth`: `AccountId`, `AccountDeleted`, `AccountPresence`, `ConditionalOnAuthEnabled`
-    - `library`: `LibraryCatalog.findEnabledTarget`
-    - `region`: `RegionDirectory.expandForMatching`
-  - 다른 모듈의 `internal`, 표, 저장소는 쓰지 않습니다.
-  - `catalog`·`availability`는 `mylibrary`·`auth`를 모릅니다(ADR-0037).
-  - `auth`는 여전히 다른 모듈에 의존하지 않습니다.
-  - `ModularityTests`에서 순환이 없어야 합니다.
-- C2. `mylibrary` 표는 `auth.account`에 FK를 두지 않습니다(모듈 경계). 다른 스키마와 JOIN하지 않습니다. 탈퇴 정리는 이벤트로만 합니다(ADR-0036·0048).
-- C3. `module-map`의 문장 "다른 모듈은 auth에 의존하지 않습니다"는 이제 "`mylibrary`만 auth의 공개 타입에 의존"으로 바뀝니다. `auth/package-info.java`의 설명("No other module depends on this one")도 함께 고칩니다.
-
-### 계정 잠금과 탈퇴
-- C4. `AccountPresence.lockIfExists(AccountId): boolean` [안 이름]은 **호출한 트랜잭션 안에서만** 동작합니다(`Propagation.MANDATORY`) [확정] (ADR-0051).
-  - 잠금 문장은 `SELECT … FROM auth.account WHERE id = ? FOR NO KEY UPDATE`입니다.
-  - `mylibrary`의 저장은 처음에 반드시 이것을 부릅니다. `false`이면 줄을 만들지 않고 401 `unauthorized`를 줍니다.
-  - ADR-0051 원문은 "모든 저장의 처음"입니다. `DELETE /api/v1/me/libraries/{id}`에도 잠금을 걸지는 dev가 정하고 보고합니다.
-- C5. `AccountDeleted` listener는 `mylibrary.account_region`, `mylibrary.account_library`에서 `WHERE account_id = ?`로 지웁니다. 두 번 와도 결과가 같아야 합니다(멱등, spec R8). 이벤트 모양(accountId만)은 바꾸지 않습니다(사이클 05 C3).
-- C6. `spring.modulith.events.republish-outstanding-events-on-restart: true` [확정] (ADR-0051). 사이클 05 C28의 세 값은 그대로 둡니다.
-
-### 켜고 끄기
-- C7. `mylibrary`의 모든 빈(컨트롤러, 저장소, listener, 설정)은 `chaekcheck.auth.enabled`에 묶습니다 [안].
-  - 꺼져 있으면 `/api/v1/me/regions`, `/api/v1/me/libraries/**`는 404(루트 핸들러의 `not_found`)입니다.
-  - 표는 늘 만듭니다 [안] (사이클 05와 같음).
-  - `GET /api/v1/libraries`와 `libraryIds`는 로그인 기능과 상관없이 늘 동작합니다(공개).
-- C8. `ConditionalOnAuthEnabled`를 `com.chaekcheck.auth`(루트)로 옮겨 공개합니다 [안]. 옮긴 뒤에도 `ModularityTests`가 통과하는지는 [확인 필요]입니다.
-  - 지금 이 annotation은 `auth.internal.AuthToggleEnvironmentPostProcessor.ENABLED`를 씁니다. 같은 모듈 안이라 괜찮을 것으로 보지만 확인합니다.
-  - 통과하지 않으면 멈추고 사용자에게 알립니다.
-
-### API
-- C9. `/api/v1/me/**`에는 이미 액세스 쿠키, 요청마다의 계정 확인, 변경 메서드의 `X-XSRF-TOKEN`이 적용되어 있습니다(ADR-0044, 사이클 05 `SecurityConfiguration.PROTECTED`). 보안 설정은 바꾸지 않습니다.
-- C10. 계정은 `AccountId` 인자 해석기로만 받습니다. 주소에 계정 번호를 넣지 않습니다(사이클 05 C5).
-- C11. `PUT /api/v1/me/libraries/{libraryId}`의 처리 순서 [확정] (사용자 승인, 2026-10-04, 마무리 검토)
-  1. 잠금. 계정이 없으면 401입니다.
-  2. 켜진 도서관인지 확인합니다(`findEnabledTarget`). 없음, 꺼짐, 숫자 아님이면 404 `library_not_found`입니다.
-  3. **이미 직접 추가돼 있으면 204**입니다. 20곳이 차 있어도 오류가 아닙니다.
-  4. 없는데 이미 20곳이면 409 `library_limit_reached` [안 이름]입니다.
-  5. `INSERT … ON CONFLICT DO NOTHING` 뒤 204를 줍니다.
-  - 꺼진 도서관도 뺄 때까지 20곳에 셉니다 [확정].
-- C12. 오류는 RFC 9457 + `code`입니다(ADR-0008). 새 컨트롤러의 400·404·409·422는 모듈 자신의 `@RestControllerAdvice(basePackageClasses = …)`로 씁니다. 지금 `catalog.internal.web.CatalogErrors`, `availability.internal.web.AvailabilityErrors`와 같은 방식입니다. 루트 `ApiExceptionHandler`는 바꾸지 않습니다.
-- C13. `libraryIds` 검사 [안] (지역 ID 규칙과 같게)
-  - 쉼표로 구분한 양의 정수, 최대 20개, 중복은 합칩니다.
-  - 400 `validation_error`, `errors[].field: libraryIds`, `code`는 `invalid_format` 또는 `too_many`입니다.
-  - 검사 순서: 조건 → `filter` → `scope` → `visit` → `libraryIds` → 지역.
-  - 꺼졌거나 없는 번호는 **오류 없이 무시**합니다(AC-10).
-
-### 검색 계획 (ADR-0050)
-- C14. 계획 규칙 [확정]
-  - `libraryIds`의 켜진 도서관은 자격과 상관없이 계획에 넣습니다. **지역을 보냈을 때 `place()`가 `null`이라 빠지던 도서관도 넣습니다.**
-  - `scope=joinable`이면 `joinable() || chosen`을 남깁니다.
-  - `visit=none`이면 방문 가입이라도 `chosen`이면 남깁니다.
-  - 순서: `chosen` 묶음이 맨 앞이고, 묶음 안은 지금 `IN_GROUP` 비교로 정렬합니다. 그 뒤는 ADR-0027 순서입니다. 스위치가 "전체"여도 같습니다.
-  - `priorityGroup`은 원래 값을 유지합니다.
-- C15. `chosen`인데 지역 규칙이 안 맞는 도서관(지금은 빠지던 도서관)의 `eligibility`는 `UNKNOWN`입니다 [안 내부 값]. 화면에는 보이지 않습니다.
-  - 이 경우의 `priorityGroup` 값은 설계에 없습니다. dev가 정하고 보고합니다.
-- C16. 다음 묶음 두 API(`/api/v1/ebook-searches/batches/stream` 계열, `/api/v1/book-availabilities/batches/stream` 계열)와 도서관별 더 보기는 바꾸지 않습니다 [안]. 계획에서 나온 후보만 받습니다.
-  - 이 API들은 `findEnabledTarget`(지역 없이 둔 자리)로 대상을 다시 만듭니다. 그래서 웹은 `chosen`을 **첫 스트림의 `targets`에서** 읽어 유지합니다.
-- C17. `libraryIds`는 화면 주소창(웹 주소)에 넣지 않습니다 [안]. 지역 ID처럼 API로만 보냅니다.
-
-### 웹
-- C18. 로그인한 동안 화면은 서버 값만 씁니다 [확정] (spec R1).
-  - `chaekcheck.regions.v1`은 읽지도 쓰지도 지우지도 않습니다. 로그아웃하면 다시 그 값을 씁니다.
-  - 로그인하지 않았으면 서버로 지역을 보내지 않습니다(AC-2).
-- C19. 서버에 저장된 지역이 폐지·대체됐을 때(R6) [확정]
-  - 화면은 해석한 값으로 검색하고 안내합니다.
-  - **서버 값을 자동으로 고쳐 저장하지 않습니다.** 이용자가 다시 저장할 때 고쳐집니다.
-  - 예외는 S11뿐입니다. S11은 해석한 값으로 PUT합니다.
-- C20. 계정 확인이 필요한 요청(`/api/v1/me/**`)은 기존 `meRequest`(`web/src/api/auth.ts`)를 거칩니다. 401 갱신(Web Locks)과 CSRF 한 번 재시도를 그대로 씁니다.
-- C21. React에서 `dangerouslySetInnerHTML`을 쓰지 않습니다(사이클 05 C22). S10의 도서관 이름과 검색 결과도 마찬가지입니다.
-- C22. 새 결과 코드(`withdraw_request_expired`, `withdraw_state_mismatch`, 그리고 서버 코드로 정해진다면 `signup_success`)는 사이클 05 C21을 따릅니다. 목록에 있는 코드만 정해진 문구로 보이고, 코드 글자는 화면에 찍지 않습니다.
-
-### 동의 문서
-- C23. 동의 항목은 문구만 더합니다. **문서 버전은 올리지 않습니다** [확정] (사용자: "아직 배포 전이라서 뭐 버전 올릴 것도 없어", 2026-10-04).
-  - `application.yml`의 `chaekcheck.auth.documents.*`와 `web/src/features/auth/documentVersions.json`은 바꾸지 않습니다.
-  - 이미 가입한 계정에 다시 동의를 받는 화면은 만들지 않습니다.
-
-### 알고 받아들인 한계 (버그로 고치지 않음)
-- 두 탭에서 동시에 지역을 바꾸면 나중 저장이 이깁니다(ADR-0049).
-- S11 답과 스위치 값은 그 브라우저에만 있습니다. 다른 기기는 모릅니다(ADR-0049).
-- 실패한 listener 기록은 다음 재시작까지 남습니다(ADR-0051).
-- 서버가 여러 대일 때 재시작 다시 처리의 동작은 문서에 없습니다 [확인 불가].
-- `auth`의 `last_login_at` 갱신이 잠금 때문에 잠깐 기다릴 수 있습니다(밀리초 단위 추정, ADR-0051).
-- 이용자가 실제로 가입하지 않은 도서관을 직접 추가해도 경고가 없습니다(ADR-0050).
+- C1. 모듈 의존 방향과 이벤트는 바뀌지 않습니다 [확정]: `collection → catalog, library`, `availability → catalog, library`, `catalog → library → region`. 표 바꿔 끼우기 SQL은 `catalog` 안(`catalog/internal/JdbcCatalogLoad.java`)에 둡니다. 국가서지 원문 표는 `collection` 안에 둡니다. `collection`은 지금처럼 `CatalogLoad.replaceAll`만 부릅니다.
+- C2. **외래 키 다시 확인** [확정]: 옛 표를 `DROP`하고 새 표를 `SET SCHEMA`하기 전에, 다른 모듈 표가 `catalog.book`·`book_contributor`·`holding`·`catalog_library_snapshot`을 가리키지 않는지 다시 봅니다. 2026-10-06 확인 뒤 바뀌었을 수 있습니다.
+  - 구현 직전: dev changelog를 검색하고, `pg_constraint`에서 `confrelid`가 이 네 표인 외래 키를 조회합니다.
+  - 실행 때 [안]: 바꿔 끼우기 직전에 같은 조회를 하고, `catalog`·`catalog_next` 밖의 외래 키가 있으면 바꿔 끼우지 않고 실패로 기록합니다.
+  - `catalog` 안의 외래 키(`book_contributor_book_id_fkey`, `holding_book_id_fkey`)는 새 표끼리 다시 만듭니다.
+- C3. Liquibase 형식 [확정]
+  - 트리거·함수는 formatted SQL(`.sql`)로 씁니다. 첫 줄은 정확히 `--liquibase formatted sql`이고, changeset에 `splitStatements:false`, `runOnChange:true`를 붙이며, `CREATE OR REPLACE`로 씁니다(dev `CLAUDE.md`).
+  - 나머지는 YAML입니다. CHECK가 필요하면 `sql` change를 씁니다.
+- C4. `PRE_DEPLOYMENT`가 있으므로 이미 적용된 seed CSV를 고칠 수 있습니다(교보 11곳). 고친 뒤 로컬 `db`·`db-test`를 초기화해 다시 적용합니다. **초기화하면 `catalog`도 비므로 가져오기를 다시 해야 합니다**(1단계 실행 순서 참고).
+- C5. 바꿔 끼우는 순간 말고는 `/books`, `/books/{id}`, 대출 현황 스트림이 기다리지 않아야 합니다 [확정]. 가져오기는 서비스와 다른 프로세스(`collection-import` 프로필)로 돌리고, 서비스는 켜 둔 채로 둡니다.
+- C6. 외부 사이트를 확인할 때는 같은 사이트에 1건씩, 요청 사이 1초를 둡니다 [확정]. 도서관 조사(이름 고치기, 흡수된 학교)는 dev `CLAUDE.md` "Library Research Record" 규칙대로 `docs/library-maintenance.md`에 기록합니다.
+- C7. 폰 설정 창을 바텀 시트로 바꿀 때 **지금 작은 창(팝오버) 코드를 지우지 않고**, 한 곳에서 되돌릴 수 있게 둡니다 [확정] (사용자: "일단 만들고 나서 내가 이전으로돌아가라고 하면 돌아가줘", 2026-10-06).
+- C8. React에서 `dangerouslySetInnerHTML`을 쓰지 않습니다(새 안내 문구 포함).
 
 ## 개발 시작 전 확인
 
-### dev가 확인하거나 할 것
-
-- [ ] base package는 `com.chaekcheck`로 정해져 있습니다(dev `CLAUDE.md`). 새 모듈 패키지는 `com.chaekcheck.mylibrary`입니다.
-- [ ] Spring Modulith 2.1.1의 `republish-outstanding-events-on-restart`가 **실패(`FAILED`) 상태 기록**도 다시 처리하는지 확인합니다 [확인 필요].
-  - 방법: 공식 문서(https://docs.spring.io/spring-modulith/reference/events.html) + 6단계 시험
-  - 다시 처리하지 않으면 멈추고 사용자에게 알립니다. ADR-0051의 D안(주기 작업) 등을 다시 정해야 할 수 있습니다.
-- [ ] `ConditionalOnAuthEnabled`를 루트로 옮겨도 `ModularityTests`가 통과하는지 확인합니다 [확인 필요]. 1단계에서 먼저 시험합니다.
-- [ ] `signup_success`를 서버 결과 코드로 둘지 웹 상태로 둘지 [확인 필요]. dev가 안을 만들어 사용자에게 묻습니다.
-  - 참고(dev 코드, 2026-10-04 읽음): 지금 가입은 서버 리다이렉트가 아니라 웹의 `postSignup`(201) 뒤 `navigate(takeReturnPath())`로 끝납니다(`web/src/features/auth/SignupPage.tsx`).
-- [ ] 사이클 05 retro의 "15분 동안 다른 모듈 API에서 통과"가 `/api/v1/me/**` 밖 경로만 뜻하는지 확인합니다. 지금 코드는 `/api/v1/me/**`마다 계정을 확인합니다(`AccountJwtAuthenticationConverter`). 결과를 `# 사이클 06` 절에 적습니다.
+### dev가 확인할 것
+- [ ] base package는 `com.chaekcheck`입니다(dev `CLAUDE.md`). 새 모듈은 없습니다.
+- [ ] 사본 `ebook-catalog-2026-10-05-0745.sqlite`가 읽히는지 봅니다.
+- [ ] 국가서지 TTL 파일이 지금 위치(`data/`)에 있는지 봅니다.
+- [ ] C2 외래 키 확인(changelog 검색)
+- [ ] 교보 11곳: `library/008-library-candidates.csv`와 `collection/002-collection-link.csv`에 각 11줄이 있습니다(plan이 2026-10-11에 셈). 가입 규칙 CSV와 로고 CSV에는 없습니다. 다시 확인합니다.
+- [ ] 수집기(`chaekcheck-data`)가 지금 도는지 봅니다. 10단계 표시 작업의 순서를 정하는 데 씁니다.
+- [ ] **0단계 기준 측정을 코드 변경 전에** 합니다. 바꾼 뒤에는 다시 잴 수 없습니다.
 
 ### 사용자가 할 것
 
-| 할 일 | 언제 | 결과를 dev에 알려 줄 것 |
+| 할 일 | 언제 | 결과 |
 |---|---|---|
-| `signup_success`를 서버 코드로 둘지 웹 상태로 둘지 고르기(dev 안을 보고) | 7단계 전 | 고른 방식 |
-| S10·S1 화면 문구 세부와 "직접 추가" 표시 글자 확인: 불러오기 실패, 20곳 찼음, 꺼진 도서관, 검색 결과 없음, `library_not_found` 안내 | 12단계 화면을 본 뒤 | 바꿀 문구 |
-| S10 "지역 선택"의 [변경]이 S2를 거주(또는 직장) 칸이 열린 채로 여는지, 줄의 [빼기]가 오른쪽 끝인지 확인 | 12단계 화면을 본 뒤 | 그대로인지, 바꿀지 |
-| 동의 고지·처리방침 문구 최종 검토. 목적 문구를 얼마나 구체적으로 써야 하는지(개인정보보호위원회 안내서), 필수 동의로 받는 근거(설계의 해석) 확인 | **배포 전**. 배포 뒤 다른 가입자가 생긴 뒤 문구를 바꾸면 다시 동의를 받아야 함 | 문구 |
-| 문서 버전(시행 날짜) 결정(사이클 05에서 넘어옴) | 배포 전 | 날짜 |
-
-### 무엇이 어느 단계를 막는가
-
-| 막는 것 | 막히는 단계 | 막히지 않는 것 |
-|---|---|---|
-| `ConditionalOnAuthEnabled` 루트 이동 시험 | 1단계(이동), 5단계(빈 조건) | 2~4단계 |
-| `FAILED` 기록 재처리 확인 | 6단계 완료 | 1~5단계, 웹 |
-| `signup_success` 방식 | 7단계의 그 부분 | 탈퇴 코드 둘, 다른 웹 단계 |
-| 문구 검토 | 배포 | 모든 단계(자리 글 + `reviewed: false`로 진행) |
+| 이름 고침 목록 승인: dev가 다시 검증한 새 이름 문자열·꼴 | 11단계 중 | 고칠 곳과 이름 |
+| 흡수된 학교 7곳의 "주소 바꿈 / 끄기" 결정 | 11단계 확인 뒤 | 곳마다 할 일. **이번 사이클에는 바꾸지 않음** |
+| 글꼴 서브셋 도구가 새 의존성이면 승인 | 7단계 전 | 승인 여부 |
+| 바텀 시트를 써 보고 유지할지 되돌릴지 | 7단계 뒤 | 유지 / 되돌림 |
+| 문구 [안] 확인: YES24 폰 안내, "고르는 즉시 저장돼요" | 12단계 화면 | 바꿀 점 |
+| 메모리 측정표를 보고 고른 값 확인 | 9단계 뒤 | 승인 |
 
 ## 구현 단계
 
-### 1단계: `auth` 공개 장치 셋 (의존: 없음)
+### 0단계: 기준 재기 (코드 변경 없음) (의존: 없음)
 
-1. **`ConditionalOnAuthEnabled`를 루트로** (파일: `backend/src/main/java/com/chaekcheck/auth/internal/ConditionalOnAuthEnabled.java` → `backend/src/main/java/com/chaekcheck/auth/ConditionalOnAuthEnabled.java`) [안]
-   - 할 일: 패키지를 옮기고 `auth` 안의 import를 모두 고칩니다. 동작(`@ConditionalOnBooleanProperty(…ENABLED)`)은 같습니다.
-   - 이유: `mylibrary`의 빈을 같은 스위치에 묶기 위해서입니다(C7).
-   - 위험: 낮음. 다만 Modulith 검증 결과가 [확인 필요]입니다.
-2. **`AccountPresence`** (새 파일: `backend/src/main/java/com/chaekcheck/auth/AccountPresence.java`, 구현은 `auth/internal/account/` 아래. 이름은 dev가 정함)
-   - 할 일: `boolean lockIfExists(AccountId)`를 만듭니다.
-     - `@Transactional(propagation = Propagation.MANDATORY)`
-     - `SELECT 1 FROM auth.account WHERE id = ? FOR NO KEY UPDATE`
-     - 줄이 있으면 `true`, 없으면 `false`
-     - `@ConditionalOnAuthEnabled`
-   - 이유: ADR-0051. 저장과 탈퇴가 겹쳐도 지워진 계정의 줄이 생기지 않게 하고, 20곳 상한이 동시 요청에서도 정확하게 지켜지게 합니다.
-   - 위험: 중간. 두 모듈이 한 트랜잭션을 함께 씁니다.
-3. **`AccountId` 인자 해석기** (`auth/internal/web/` 또는 `auth/internal/security/`, 이름은 dev가 정함)
-   - 할 일: `HandlerMethodArgumentResolver`를 만들어, 컨트롤러 메서드의 `AccountId` 인자를 현재 인증(`JwtAuthenticationToken`의 `sub`)으로 채웁니다.
-     - `WebMvcConfigurer`로 앱 전체에 등록하고 `@ConditionalOnAuthEnabled`를 붙입니다.
-     - 인증이 없으면 401 `unauthorized`입니다(ProblemDetail).
-   - 이유: 다른 모듈 컨트롤러가 `auth.internal`이나 Spring Security 타입을 모른 채 계정을 받게 합니다.
-   - 위험: 낮음
-4. **설명 고치기** (파일: `backend/src/main/java/com/chaekcheck/auth/package-info.java`): C3
+1. **응답·메모리 기준** (`research.md` 7절 1번)
+   - DB
+     - `SHOW shared_buffers, effective_cache_size, work_mem, maintenance_work_mem`
+     - `docker stats`(db), WSL VM 메모리
+     - `pg_statio_user_tables` 적중률
+     - `pg_buffercache` 표별 쪽 수. 확장은 측정용으로 로컬 `db`에 손으로 `CREATE EXTENSION`하고, Liquibase에는 넣지 않습니다 [안]. 이미지에 들어 있는지는 [확인 필요: 실행해 봄].
+   - 응답
+     - `scripts/catalog/measure_books.py`(9질의 × 3조건 × 1·2쪽)를 데우기 1번 + 3회 돌려 첫 쪽 p50·p95를 냅니다.
+     - 책 몇 권의 `holdingsOf`에 `EXPLAIN (ANALYZE, BUFFERS)`
+   - Java(서비스): `jcmd <pid> GC.heap_info`, `VM.native_memory summary`(시작 때 `-XX:NativeMemoryTracking=summary`), `GC.class_histogram`
+2. **계획 기준(AC-17)**: 아래 입력 묶음으로 지금 `planSearch` 결과(도서관 번호와 순서)를 저장합니다. 묶음은 dev가 정합니다 [안].
+   - 지역 없음 / 거주 1 / 거주+직장
+   - 직접 추가 없음 / 미조사 도서관 직접 추가
+   - `scope=all` / `scope=joinable`
+   - 로그인 전·후
+3. 저장 위치: git 밖 `data/cycle08/` [안 경로]
+- 위험: 낮음
+
+### 1단계: 가져오기 단계별 시간 + 수집 기간 (지금 쓰기 방식 그대로) (의존: 0단계)
+
+ADR-0065 "먼저 쓰기 단계 안의 시간을 나눠 잰 뒤"를 따릅니다. 바꿔 끼우기 코드보다 먼저 합니다.
+
+1. **Liquibase** `collection/003-import-period-and-timings.yaml` [안 파일 이름. design-delta의 `004`는 번호 [안]이고, 지금 `collection/`에는 001·002만 있음]
+   - `collection.catalog_import`에 칸 셋을 더합니다.
+     - `collected_from timestamptz NULL`
+     - `collected_to timestamptz NULL`
+     - `step_seconds jsonb NOT NULL DEFAULT '{}'`
+2. **시간 기록** (`collection/internal/importer/CatalogImporter.java`, `ImportReport.java`, `ImportRecords.java`, `catalog/CatalogLoad.java`의 `Result`, `catalog/internal/JdbcCatalogLoad.java`)
+   - 키 [안]: `read`, `nb`, `normalize`, `match`, `write`, `index`, `analyze`, `swap`
+   - 지금 방식에서는 쓰기 안을 조각 넷(두 번째 읽기, 임시 표 COPY, 맞대기, `TRUNCATE`~커밋 옮겨 쓰기)과 `VACUUM`으로 나눠 잽니다. 키 이름은 dev가 정해 보고합니다.
+   - **`TRUNCATE`부터 커밋까지(검색이 멈춘 시간)를 따로 적습니다.**
+   - `CatalogLoad.Result`에 단계별 시간을 더합니다(모양 [안]).
+3. **수집 기간**: 가져오기에 들어간 도서관의 `collected_at` 최솟값과 최댓값입니다. 건너뛴 도서관은 뺍니다 [확정]. 값은 `catalog_library_snapshot`에 넣는 값과 같은 출처를 씁니다(AC-7).
+4. **실행 순서**: 2단계(교보 11곳, DB 초기화)를 마친 **뒤에** 이 코드로 같은 사본을 한 번 가져옵니다(=**가져오기 #1**).
+   - 전체 시간, 단계별 시간, 검색 멈춘 시간을 `# 사이클 08` 절에 적습니다.
+   - 이것이 AC-8b의 이번 기준이고, 8단계 AC-10의 "kept" 비교 대상입니다.
+   - 사이클 07 2회차 값(40분 36초, 쓰기 26분 55초)과 함께 적습니다.
+- 테스트: 표본 가져오기 뒤 기록 줄에 `collected_from/to`가 스냅숏 최소·최대와 같음, `step_seconds` 키가 있음
+- 위험: 낮음
+
+### 2단계: DB 변경 파일 (의존: 0단계. 1단계와 나란히)
+
+1. **교보 대여·혼합 11곳 지우기** [확정] (ADR-0067)
+   - `scripts/library/build_candidate_seed.py`에 "교보 대여·혼합은 넣지 않음" 규칙을 더합니다. 뺀 이유별 셈에 이름을 붙입니다(예: `kyobo_rental_mixed` [안]).
+     - 지금도 `crawl_skip`이 있으면 빠지므로, 10단계 표시가 끝나면 두 번 걸립니다. 규칙은 `crawl_skip`과 따로 둡니다 [안].
+     - **등록 도서관(278곳, `library/008`의 `lending_model` UPDATE에 RENTAL·MIXED가 있는 곳)과 공공도서관 구독 21곳은 빼지 않습니다.** 대상은 후보 대여·혼합뿐입니다.
+   - 스크립트를 다시 돌려 `library/008-library-candidates.csv`, `collection/002-collection-link.csv`에서 2664~2674 줄이 빠지는지 봅니다. diff가 그 22줄뿐이어야 합니다.
+     - 다른 줄이 바뀌면 멈추고 보고합니다. 번호·이름은 처음 정한 대로 유지해야 합니다.
+     - `RESTART WITH 2675`는 그대로 둡니다. 번호는 다시 쓰지 않습니다.
+   - 로컬 `db`·`db-test`를 초기화해 다시 적용합니다(C4). 그 도서관을 직접 추가한 계정·브라우저의 번호는 꺼진 도서관처럼 건너뜁니다(사이클 06 규칙, 코드 변경 없음).
+2. **`updated_at` 트리거** [확정] (ADR-0068)
+   - 새 파일: `library/011-updated-at-trigger.sql`, `region/003-updated-at-trigger.sql` [안 파일 이름]. 함수는 `library.set_updated_at()`, `region.set_updated_at()` [안 이름]이고, `NEW.updated_at := now()`로 씁니다.
+   - 트리거: `library.library`, `region.region`에 `BEFORE UPDATE FOR EACH ROW`. 형식은 C3을 따릅니다. 트리거도 다시 적용될 수 있게 `DROP TRIGGER IF EXISTS` 뒤 `CREATE` 또는 `CREATE OR REPLACE TRIGGER`로 씁니다(PG14부터).
+   - master에서는 이번 사이클의 다른 UPDATE changeset(아래 3, 11단계 이름 고침)보다 **앞에** 둡니다. 그래야 그 UPDATE에도 시각이 찍힙니다.
+   - 다른 스키마에 `updated_at` 칸이 있는지 changelog를 검색합니다(2026-10-11 plan 검색: `library`, `region` 둘뿐). 있으면 같은 방식으로 하고 보고합니다.
+3. **`mobile_site_differs`** (`library/012-library-mobile-site-differs.yaml` [안])
+   - `boolean NOT NULL DEFAULT false`를 더하고, dev `docs/library-site-issues.md` 10-1의 13곳을 번호로 `UPDATE`합니다.
+   - `Library` 엔티티에 매핑합니다.
+4. **국가서지 원문 표** (`collection/004-national-bibliography.yaml` [안])
+   - `national_bibliography_record(id bigint PK, isbn13 text NOT NULL, title_raw text NOT NULL, author_raw text NULL, publisher_raw text NULL)`. 색인은 없습니다 [확정].
+   - `national_bibliography_source(source_fingerprint text NOT NULL, built_at timestamptz NOT NULL)`. 항상 한 줄입니다.
+5. **스킬 지침** (dev `.claude/skills/postgres-patterns/SKILL.md`): dev가 씁니다 [확정]. 아래 내용을 짧게 더합니다.
+   - `updated_at` 칸을 두는 표에는 같은 changeset 묶음에서 `BEFORE UPDATE` 트리거를 함께 둡니다.
+   - 함수는 모듈 스키마 안에 두고 formatted SQL로 씁니다.
+   - 앱 코드에서 `updated_at`을 직접 적지 않습니다.
 - 테스트
-  - `lockIfExists`: 트랜잭션 없이 부르면 예외(`IllegalTransactionStateException`), 있는 계정은 `true`, 없는 계정은 `false`
-  - **잠금 확인**: 한 트랜잭션이 잠근 동안 다른 스레드의 `AccountDeletion.delete`가 기다리는지(시간 측정 또는 latch)
-  - 해석기: 테스트 전용 `/api/v1/me/**` 컨트롤러로 `AccountId` 값 확인, 토큰 없으면 401
-  - 꺼짐 컨텍스트(`AuthDisabledTests`)가 그대로 통과
-  - `ModularityTests`, `DocumentationTests`
-- 확인 방법: `./gradlew build`
-- 위험: 중간
+  - `UPDATE library.library SET enabled = enabled WHERE id = 1` 뒤 `updated_at`이 바뀜. `region.region`도 같음(AC-6)
+  - `mobile_site_differs`는 13곳만 true(AC-20)
+  - 2664~2674가 `library.library`와 `collection_link`에 없음
+- 확인 방법: 초기화 → `./gradlew build` → `psql`로 `\d library.library`, `\d collection.*`, 트리거 목록 확인
+- 위험: 중간 (seed 재생성 diff)
 
-### 2단계: `library` 계획 규칙 (`libraryIds`, `chosen`) (의존: 없음. 1단계와 나란히 해도 됨)
+### 3단계: 국가서지 원문 남기기 (`collection`) (의존: 1·2단계)
 
-1. **`PlanOptions`** (파일: `backend/src/main/java/com/chaekcheck/library/PlanOptions.java`)
-   - 할 일
-     - `Set<Long> libraryIds`(빈 집합 가능) 칸을 더합니다. `DEFAULT`는 빈 집합입니다.
-     - `apply()`의 거르기를 `scope == ALL || joinable() || chosen`, `visit == ANY || !visitRequired() || chosen`으로 바꿉니다(C14).
-   - 위험: 낮음
-2. **`SearchTarget.chosen`** (파일: `backend/src/main/java/com/chaekcheck/library/SearchTarget.java`)
-   - 할 일: `boolean chosen` 칸을 더합니다. 이 레코드를 만드는 곳(`LibraryService.toTarget`, 테스트의 `availability/internal/TestTargets.java` 등)을 모두 고칩니다.
-   - 위험: 낮음(기계적 수정)
-3. **`LibraryService.planSearch`** (파일: `backend/src/main/java/com/chaekcheck/library/internal/LibraryService.java`)
-   - 할 일
-     - `options.libraryIds()`에 있는 켜진 도서관은 `place()`가 `null`이어도 계획에 넣습니다(C14, C15). 꺼졌거나 없는 번호는 무시합니다.
-     - 그 도서관들에 `chosen=true`를 붙입니다.
-     - 순서: `chosen` 묶음(`IN_GROUP`)을 먼저 두고, 나머지는 지금 순서 계산(ADR-0027)대로 둡니다. 같은 도서관이 두 번 들어가지 않게 합니다.
-     - `findEnabledTarget`은 `chosen=false`를 줍니다.
-   - 이유: ADR-0050, spec R3·R5
-   - 위험: 중간. 계획 순서는 세 검색이 함께 씁니다.
-- 테스트 (`backend/src/test/java/com/chaekcheck/library/LibraryCatalogTests.java`에 더함)
-  - 지역 규칙이 안 맞아 빠지던 도서관이 `libraryIds`로 들어오고 `chosen=true`, `eligibility=UNKNOWN`
-  - `scope=joinable`에서 가입 불가인 `chosen`이 남음
-  - `visit=none`에서 방문 가입인 `chosen`이 남음
-  - `chosen`이 맨 앞(`scope=all`, `scope=joinable` 둘 다), 원래 `priorityGroup` 유지
-  - 꺼진 번호·없는 번호는 오류 없이 빠짐(AC-10)
-  - `libraryIds`가 비면 지금과 같은 계획(회귀)
-- 확인 방법: `./gradlew build`
-- 위험: 중간
-
-### 3단계: `GET /api/v1/libraries` (의존: 2단계)
-
-1. **`LibraryCatalog.eligibilityFor(residenceIds, workIds)`** [안 이름] (파일: `LibraryCatalog.java`, 구현은 `LibraryService`)
-   - 할 일: 켜진 도서관 전체를 id 순서로 돌려주고, 줄마다 다음 값을 붙입니다.
-     - `eligibility`
-     - `matchedBy`(`RESIDENCE`·`WORK` 중 맞은 것. 둘 다 맞으면 둘 다)
-     - `visitRequired`
-     - `cautioned`(`joinCaution` 있음)
-     - `eligibilitySummary`
-   - 판정은 `place()`와 같은 규칙을 씁니다. 다만 거주·직장을 따로 비교해 `matchedBy`를 채우고, 지역 규칙이 안 맞는 줄은 빼지 않고 `UNKNOWN`으로 둡니다.
-   - 다른 모듈이 쓰지 않으면 공개하지 않아도 됩니다(dev가 정하고 보고).
-2. **컨트롤러** (새 파일 예: `backend/src/main/java/com/chaekcheck/library/internal/web/LibraryListController.java`, 오류 advice 예: `LibraryErrors.java`)
-   - 할 일: `GET /api/v1/libraries?residenceRegionIds=&workRegionIds=` → 200 `{"libraries":[…]}`(`design-delta.md` 예시 모양). 로그인이 없고 페이지도 없습니다.
-     - 지역 ID는 쉼표로 구분하고 칸마다 최대 20입니다. 400 `validation_error`, 422 `invalid_region`(지금 스트림과 같은 모양)입니다.
-     - **응답 설명(Javadoc·API 문서)에 적을 것**: 지역 규칙이 안 맞는 줄의 `eligibility=UNKNOWN`은 지금의 뜻("지역을 보내지 않음")과 다르다는 점 [안].
-   - 이유: ADR-0049. S10의 여섯 구역, 누구나 가입 줄, 이름 검색, 직접 추가 줄의 이름에 씁니다.
+(파일: `collection/internal/importer/NationalBibliography.java`, 원문 저장소 새 클래스 [안])
+1. **지문** [확정 형식]: TTL 파일 이름, 크기(바이트), 고친 시각을 `|`로 잇습니다. TTL 파일이 여럿이면 파일마다 지문을 이어 붙입니다 [안].
+2. **지문이 같으면**: TTL을 풀지 않고 원문 표를 처음부터 끝까지 읽습니다.
+3. **지문이 다르거나 처음이면** [확정 순서]
+   1. 지문 줄을 지우고 커밋합니다.
+   2. 원문 표를 비운 뒤 TTL에서 뽑아 씁니다(COPY).
+   3. **맨 마지막에** 지문 줄을 씁니다.
+   - 2에서 멈추면 다음 가져오기가 처음부터 다시 풉니다.
+4. 다듬기는 항상 지금 `catalog :: normalize` 규칙으로 원문에서 합니다. 규칙 판 번호는 두지 않습니다. 결과(키 → ISBN, 애매하면 없음)는 지금 TTL 경로와 같아야 합니다.
+5. 시간 키: `nb`(원문 읽기 또는 TTL 풀기), `normalize`
 - 테스트
-  - 지역 없이 호출하면 OPEN 줄의 `matchedBy`가 빈 배열
-  - 직장 "서울 중구"이면 서울 재직 가능 도서관의 `matchedBy`에 `WORK`(AC-4 서버 쪽)
-  - 거주·직장 둘 다 맞으면 둘 다 들어감
-  - 9001(폐지 시험 데이터)은 422, 형식이 틀리면 400
-  - 꺼진 도서관은 목록에 없음
-- 확인 방법: `./gradlew build`. **응답 크기(278곳)를 측정**해 보고합니다 [확인 필요].
-- 위험: 낮음
+  - 작은 TTL로 첫 실행: 표가 채워지고 지문은 마지막에 써짐
+  - 두 번째 실행: TTL을 읽지 않음(파일을 못 읽게 해도 성공)
+  - 파일 크기를 바꾸면 다시 풂
+  - ②에서 실패를 주입하면 지문이 없음
+  - TTL 경로와 원문 경로의 키 → ISBN 결과가 같음
+- 위험: 중간
 
-### 4단계: `catalog`·`availability`가 `libraryIds`를 받음 (의존: 2단계)
+### 4단계: 새 표에 쓰고 바꿔 끼우기 (`catalog`) (의존: 1·2단계. 1단계 시간표를 보고 시작)
 
-1. **`JoinTier.CHOSEN`** (파일: `backend/src/main/java/com/chaekcheck/catalog/internal/search/JoinTier.java`)
-   - 할 일: `CHOSEN`을 **첫 값**으로 더합니다. `of()`는 `target.chosen()`이면 `CHOSEN`을 줍니다.
-   - 위험: 중간. `PgBigmBookSearch`가 `ordinal()`과 `values()[tier]`로 정렬하므로 순서 값이 하나씩 밀립니다. 양쪽이 같은 enum을 쓰므로 맞을 것으로 보지만, SQL 안에 숫자를 직접 쓴 곳이 없는지 확인합니다.
-2. **`/api/v1/books`, `/api/v1/books/{bookId}`** (파일: `catalog/internal/web/BookParams.java`, `BookSearchController.java`)
-   - 할 일: `libraryIds`를 C13 규칙으로 읽어 `PlanOptions`에 넣습니다(지역보다 먼저). 응답 항목의 `joinTier`에 `"CHOSEN"`이 나옵니다.
-3. **스트림 두 곳** (파일: `availability/internal/web/EbookSearchStreamController.java`, `BookAvailabilityStreamController.java`, 새 파서 예: `LibraryIdsParam.java`. 기존 `IdListParam`을 다시 써도 됨)
-   - 할 일: `libraryIds`를 `visit` 뒤, 지역 앞에서 검사해 `PlanOptions`에 넣습니다.
-   - `StreamEvents.Library`(파일: `availability/internal/search/StreamEvents.java`)에 `chosen`을 더합니다(`targets.libraries[].chosen`).
-4. 다음 묶음 두 API와 `LibraryEbookController`는 바꾸지 않습니다(C16).
+(파일: `catalog/internal/JdbcCatalogLoad.java`, `catalog/CatalogLoad.java` Javadoc. 공개 모양은 그대로 두고 결과에 단계별 시간을 더함)
+1. **준비**
+   - 남은 `catalog_next` 스키마가 있으면(지난 실패) 지우고 새로 만듭니다 [안].
+   - 가져오기 세션에서만 `maintenance_work_mem`, `max_parallel_maintenance_workers`, 필요하면 `work_mem`을 올립니다(값 [확인 필요: 측정]). 서비스 설정은 바꾸지 않습니다.
+2. **번호 잇기** (흐름 A)
+   - 좁은 맞대기 표 `(library_id, item_key, load_book_id)`를 옛 `catalog.holding`과 맞대 책 번호를 정합니다(ADR-0062 규칙 그대로).
+   - **소장 번호도 같은 맞대기에서 정합니다** [확정] (ADR-0070): 같은 (도서관, `item_key`)는 옛 `holding.id`를 쓰고, 새 소장만 옛 최대값 + 1부터 받습니다.
+   - 새 책 IDENTITY = max(옛 최대값, 옛 시퀀스) + 1
+   - 넓은 줄(소장 약 2천만)은 한 번만 쓰는 쪽을 권합니다(`research.md` 10-4 D-2) [안]. 방법은 1단계 시간표를 보고 정해 보고합니다.
+3. **쓰기**
+   - `catalog_next`에 네 표를 색인·제약 없이 만듭니다. 칸·기본값은 운영 표와 같게 하고, IDENTITY 시작값은 위 규칙을 따릅니다.
+   - **소장은 책 번호 순으로** 씁니다(R8. 목표는 `pg_stats` `book_id` 상관도 0.9 이상 [확정]).
+4. **색인·제약**
+   - 운영 표 정의를 `pg_get_indexdef`·`pg_get_constraintdef`로 읽어 **같은 이름으로** `catalog_next` 표에 만듭니다. 내부 외래 키 둘과 `detail_url` 검사도 포함합니다.
+   - 정의 문자열의 스키마 이름만 바꿉니다. 바꾸는 방법은 dev가 정합니다.
+5. `VACUUM (ANALYZE)` `catalog_next` 네 표 (트랜잭션 밖)
+6. **바꿔 끼우기** [확정]
+   - C2 외래 키 조회를 합니다.
+   - 짧은 트랜잭션: `SET LOCAL lock_timeout = '2s'` → 옛 네 표 `DROP` → `catalog_next` 네 표 `ALTER TABLE … SET SCHEMA catalog` → `catalog_next` 스키마 지움 → 커밋
+   - 잠금을 못 얻으면 10초 쉬고 다시 합니다. 최대 5번입니다.
+   - 값 근거: `lock_timeout` 기본 0은 한도 없음, https://www.postgresql.org/docs/18/runtime-config-client.html (2026-10-11 확인). 값은 측정 뒤 바꿀 수 있습니다.
+   - 시간 키: `index`, `analyze`, `swap`(잠금을 기다린 시간 포함)
+7. **실패 처리** [확정]
+   - 바꿔 끼우기 전 어디서 실패해도(5번 다 못 얻음 포함) `catalog_next`를 지우고 옛 표는 그대로 둡니다.
+   - `collection.catalog_import`에 실패를 남깁니다. 이유는 예: 잠금 못 얻음.
+   - 기록 칸 모양(상태 칸을 더할지, `skipped_by_reason`에 넣을지)은 dev가 정해 보고합니다 [안].
+8. **디스크**: 가져오는 동안 `pg_database_size`의 최대값을 적습니다.
+- 테스트(`db-test`)
+  - 표본 가져오기 두 번: 책·소장 번호가 이어짐. 새 소장은 옛 최대 + 1부터 받음. 빠진 소장 번호는 다시 쓰지 않음
+  - 바꿔 끼운 표의 색인·제약·칸 목록이 Liquibase로 만든 새 DB와 같음(`pg_get_indexdef`·`pg_get_constraintdef` 비교)
+  - 다른 세션이 `catalog.book`에 잠금을 오래 잡으면 → 5번 시도 뒤 실패, 옛 표 그대로, `catalog_next` 없음
+  - 쓰기 중 실패를 주입하면 옛 표가 그대로 남음
+  - 바깥 모듈 외래 키를 만들어 두면 바꿔 끼우지 않고 실패함(C2)
+  - 가져오는 동안 다른 연결의 검색이 옛 결과를 줌
+- 위험: **높음** (잠금, 정의 맞추기, 번호 잇기)
+
+### 5단계: `availability` (의존: 2단계. 4단계와 나란히)
+
+1. **`holding_not_found`** [확정] (ADR-0070)
+   - 파일: `availability/internal/search/HoldingSession.java` `notFound`, `BookAvailabilityBatchStreamController.java`
+   - 소장 번호가 지금 목록에 없으면 `holding_not_found`, 도서관이 없거나 꺼졌으면 `library_not_found`로 나눕니다.
+   - Javadoc과 오류 문서도 고칩니다.
+2. **`holdingsOf(bookIds, libraryIds)`** [안 이름] (ADR-0066)
+   - `catalog/CatalogHoldings.java`에 더하고, `catalog/internal/JdbcCatalogHoldings.java`에서 `book_id = ANY AND library_id = ANY`로 읽습니다.
+   - `BookAvailabilityStreamController`가 계획 도서관 번호를 넘깁니다.
+   - 옛 `holdingsOf(bookIds)`는 쓰는 곳이 없으면 지웁니다 [안].
+3. **503 `Retry-After: 5`** [확정] (`availability/internal/web/AvailabilityErrors.java` `server_busy`)
+   - 묶음 스트림과 "더 보기"가 같은 응답을 씁니다.
+   - 429는 nginx가 이미 `Retry-After 2`를 붙이므로 그대로 둡니다(`deploy/nginx/chaekcheck-locations.conf`).
+4. **캐시** [확정 방향] (`fetch/CaffeineSearchPageCache.java`, `resolve/CaffeineDetailVerdictCache.java`, `config/AvailabilityProperties.java`, `application.yml`)
+   - 두 캐시에 `recordStats()`를 켭니다.
+   - 상한 설정을 캐시마다 나눕니다(지금 `cache-max-size` 하나). 값은 지금 1,000 그대로 시작합니다.
+   - 몇 분마다 [안: 5분] 적중률, 항목 수, 내보낸 수를 로그로 씁니다. 비동기 캐시에서 통계를 읽는 방법(`synchronous().stats()`)은 [확인 필요: Caffeine javadoc].
+   - 무게 상한은 쓰지 않습니다 [확정].
+5. **본문 복사 줄이기** [확정 방향, 방법 안]
+   - `fetch/BodyLimit.java`: `Content-Length`가 있으면 그 값(4MB 상한 안)으로 처음 크기를 정하고, 다시 복사하지 않게 합니다.
+   - `fetch/FetchServiceSiteFetcher.java`: 조회 서버 응답의 본문을 문자열을 거치지 않고 `byte[]`로 받습니다. 예: Jackson이 Base64 칸을 `byte[]`로 바로 읽음 [안].
+   - `fetch-service/`는 바꾸지 않는 것을 기본으로 합니다. 바꿔야 하면 보고합니다.
 - 테스트
-  - 각 API에서 `libraryIds` 400(`invalid_format`, `too_many`, 오류 순서: `visit` 오류가 먼저, 지역 오류가 나중)
-  - `targets`에 `chosen`이 있고 맨 앞(AC-6 서버 쪽)
-  - `/books`에서 `CHOSEN`이 가장 먼저 정렬
-  - `libraryIds`가 없으면 지금 응답과 같음(기존 테스트 회귀, AC-14)
-- 확인 방법: `./gradlew build`
+  - 다음 묶음에 없는 소장 번호 → `holding_not_found`, 꺼진 도서관 → `library_not_found`
+  - `holdingsOf`가 계획 밖 도서관 줄을 주지 않음, 스트림 결과는 이전과 같음
+  - 503 응답에 `Retry-After: 5`(AC-18. 기존 `EbookSearchStreamControllerTests`, `LibraryEbookControllerTests`에 더함)
+  - 같은 fixture로 바꾸기 전과 판정·결과가 같음(4MB 넘는 본문 자르기, `Content-Length` 없음·틀림 포함)(AC-19)
+  - 캐시 통계가 켜졌는지
 - 위험: 중간
 
-### 5단계: `mylibrary` 모듈 (의존: 1·2단계)
+### 6단계: `library` (의존: 2단계. 4·5단계와 나란히)
 
-1. **Liquibase** (새 파일: `backend/src/main/resources/db/changelog/mylibrary/001-mylibrary-schema.yaml` [안], master `db.changelog-master.yaml`에 include 한 줄을 `modulith/001` 뒤에)
-   - 할 일: `CREATE SCHEMA mylibrary`, 표 `account_region`, `account_library`를 만듭니다. 칼럼, PK, CHECK는 `design-delta.md` "데이터" 표 그대로입니다.
-     - CHECK는 `sql` changeset으로 씁니다(Liquibase OSS YAML에는 `addCheckConstraint`가 없음).
-     - FK는 없습니다. 다른 인덱스도 없습니다.
-   - `PRE_DEPLOYMENT`가 있으므로 같은 사이클 안의 수정은 허용됩니다. 수정하면 로컬 `db`·`db-test`를 초기화합니다.
-2. **모듈 선언** (새 파일: `backend/src/main/java/com/chaekcheck/mylibrary/package-info.java`)
-   - 할 일: `@ApplicationModule(allowedDependencies = { "auth", "library", "region" })`를 두고 모듈 설명을 씁니다.
-   - 루트에 공개 타입은 두지 않습니다 [안].
-3. **저장소** (`mylibrary/internal/`, `JdbcClient`, JPA 엔티티 없음 [안])
-   - 지역 [확정]
-     - 읽기: `kind`별로 `position` 순서
-     - 통째로 바꾸기: 같은 트랜잭션에서 `DELETE … WHERE account_id = ?` 뒤 INSERT, `position`은 고른 순서
-     - 두 칸이 모두 비면 행이 없습니다(AC-13).
-   - 도서관
-     - 목록: `added_at, library_id` 순서 [안]
-     - 개수: `count(*)`
-     - 추가: `INSERT … ON CONFLICT DO NOTHING`
-     - 빼기: 없어도 성공
-4. **컨트롤러** (`mylibrary/internal/web/` 등, `@ConditionalOnAuthEnabled`, 계정은 `AccountId` 인자)
-
-   | 메서드·경로 | 처리 |
-   |---|---|
-   | `GET /api/v1/me/regions` | 200 `{"residenceRegionIds":[…],"workRegionIds":[…]}`. 폐지된 ID도 그대로 줌 |
-   | `PUT /api/v1/me/regions` | 두 칸 필수(빈 배열 가능), 칸마다 최대 20, 순서 유지 [확정], 중복 합침 [안] → 잠금(없으면 401) → `RegionDirectory.expandForMatching`으로 검증(422 `invalid_region`: `abolished`/`not_found`/`not_sigungu`, `errors[].field`는 칸 이름) → 바꾸기 → 200 저장한 값. 400 `validation_error`(`required`/`invalid_format`/`too_many`) |
-   | `GET /api/v1/me/libraries` | 200 `{"libraryIds":[…],"max":20}`(꺼진 도서관 포함) |
-   | `PUT /api/v1/me/libraries/{libraryId}` | C11 순서 그대로 |
-   | `DELETE /api/v1/me/libraries/{libraryId}` | 204(없어도). 잠금 여부는 C4 |
-
-   - 같은 트랜잭션 경계는 서비스 메서드 하나(`@Transactional`)로 둡니다. `lockIfExists`가 그 안에서 불려야 합니다(`MANDATORY`).
-5. **`AccountDeleted` listener** (`mylibrary/internal/`, `@ApplicationModuleListener`, `@ConditionalOnAuthEnabled`)
-   - 할 일: C5
-- 테스트 (켜짐 컨텍스트, `db-test`)
-  - 스키마가 적용되고 CHECK(`kind`, `region_id > 0`, `position` 0~19, `library_id > 0`)가 걸림
-  - API별 정상·오류 응답 전부. CSRF 없는 PUT·DELETE는 403 `csrf_invalid`, 토큰이 없으면 401
-  - 꺼짐 컨텍스트에서 다섯 경로 모두 404
-  - AC-1(서버): PUT 뒤 GET이 같은 값, 순서 유지
-  - AC-13: 두 칸을 빈 배열로 PUT하고 직접 추가를 모두 빼면 두 표에 그 계정 행이 0
-  - AC-8: 21번째는 409, 이미 있는 도서관을 20곳 찬 상태에서 다시 PUT하면 204
-  - AC-10: 꺼진 도서관 PUT은 404, 이미 저장된 꺼진 도서관은 GET에 그대로 나오고 20곳에 셈
-  - AC-12: 지운 계정의 유효한 액세스 토큰으로 PUT하면 401이고 행 0. 필터를 거치지 않고 서비스를 지운 계정 번호로 직접 불러도 행 0
-  - **동시성 1**: 19곳인 계정에 서로 다른 도서관 두 개를 동시에 PUT하면 하나만 204, 하나는 409이고 최종 20곳. 여러 번 반복
-  - **동시성 2(저장과 탈퇴 경합)**
-    - (a) 저장 트랜잭션이 잠금을 잡은 채 멈춘 동안 `AccountDeletion.delete`를 시작합니다. 삭제가 기다렸다가 진행되고, listener 뒤 두 표 행이 0이 됩니다(`await`).
-    - (b) 삭제가 먼저 커밋되면 저장은 401이고 행 0입니다.
-    - 멈추는 방법(latch, 테스트 전용 훅 등)은 dev가 정합니다.
-  - AC-11: 탈퇴 뒤 두 표 행 0, `modulith.event_publication`에 그 이벤트의 완료 기록 없음. 같은 이벤트를 두 번 처리해도 오류가 없음
-  - `ModularityTests`(허용 의존 셋 밖의 의존이 생기면 실패하는지), `DocumentationTests`(모듈 문서에 `mylibrary`)
-- 확인 방법: `./gradlew build`, `psql`로 `\d mylibrary.*`
-- 위험: 높음(잠금, 트랜잭션 경계, 동시성)
-
-### 6단계: 재시작 때 남은 이벤트 다시 처리 (의존: 5단계)
-
-1. **설정** (파일: `backend/src/main/resources/application.yml`)
-   - 할 일: `spring.modulith.events.republish-outstanding-events-on-restart: true` [확정] (ADR-0051), 주석으로 ADR 번호를 적습니다.
-2. **시험**: listener를 일부러 실패시킨 뒤 재시작합니다(새 테스트 클래스 예: `backend/src/test/java/com/chaekcheck/mylibrary/AccountDeletedRepublishTests.java`)
-   1. 첫 컨텍스트: `mylibrary` listener가 실패하게 만든 상태(방법은 dev가 정함. 예: 테스트 설정으로 예외를 던지게 함)에서 행이 있는 계정을 지웁니다. 두 표 행이 남고, 발행 저장소에 그 listener의 미완료 기록이 남는지 확인합니다.
-   2. 컨텍스트를 닫고, 실패하지 않는 상태로 **새 컨텍스트를 띄웁니다**(재시작).
-   3. 두 표 행이 0이 되고 발행 기록이 지워지는지 `await`로 확인합니다(AC-11).
-   - 1번에서 기록이 `FAILED` 상태로 남는 경우에도 2·3번이 성립하는지가 [확인 필요] 항목입니다. 성립하지 않으면 멈추고 사용자에게 알립니다.
-   - 주의: `db-test`는 함께 쓰는 DB이므로, 재시작 다시 처리가 켜지면 **다른 테스트 컨텍스트가 뜰 때 남은 기록이 다시 처리됩니다**. 기존 `AccountDeletedFailedListenerTests`의 정리(`@AfterEach`)가 계속 동작하는지 확인하고, 새 시험도 끝에 자기 기록을 지웁니다.
-- 확인 방법: `./gradlew build`
-- 위험: 중간
-
-### 7단계: 사이클 05 보완 (서버와 웹 문구) (의존: 없음)
-
-1. **탈퇴 전용 코드** (파일: `backend/src/main/java/com/chaekcheck/auth/internal/login/LoginFailureHandler.java`)
-   - 할 일: 재인증 콜백(`-reauth`)에서 다음처럼 바꿉니다 [확정] (사용자 승인, 2026-10-04).
-     - `Missing.EXPIRED`이면 `withdraw_request_expired`
-     - `Missing.STATE_MISMATCH`이면 `withdraw_state_mismatch`
-     - 로그인 콜백은 지금 코드(`login_expired`, `login_state_mismatch`) 그대로입니다.
-   - 클래스 설명의 "A missing or mismatched state keeps the login codes" 문장도 고칩니다.
-2. **웹 문구** (파일: `web/src/features/auth/authResult.ts`)
-   - `withdraw_request_expired` → "본인 확인 시간이 지났어요. 탈퇴를 다시 눌러 주세요"
-   - `withdraw_state_mismatch` → "안전하지 않은 요청이라 멈췄어요. 탈퇴를 다시 눌러 주세요"
-   - 두 문구 모두 [확정] (`scope.md`)
-3. **첫 가입 안내 `signup_success`** [확정 이름] (방식은 [확인 필요]. 사용자 답에 따라)
-   - 첫 가입을 마친 직후에만 S1 안내 줄에 "가입했어요"를 한 번 보입니다. 다시 로그인할 때(`login_success`)는 보이지 않습니다.
-   - 서버 코드로 정하면 C22를 따릅니다. 웹 상태로 정하면 `SignupPage`의 201 뒤에 기존 `NoticeContext`로 넘깁니다.
+1. **`planSearch`** (`library/internal/LibraryService.java` 76행~, 저장소)
+   - 켜진 도서관 중 `join_survey IN ('SURVEYED','NOT_FOUND') OR id = ANY(:chosen)`만 읽고, 가입 규칙도 그 도서관 것만 읽습니다 [확정] (ADR-0066).
+   - 켜짐은 요청마다 읽습니다(ADR-0004).
+   - `eligibilityFor`(`GET /api/v1/libraries`)는 S10 이름 찾기에 필요하므로 지금처럼 전부 읽습니다.
+2. **`mobileSiteDiffers`** [안 이름]: `LibraryEligibility`, `SearchTarget`, `availability/internal/search/StreamEvents.java`(`targets.libraries[]`), `LibraryListController`
 - 테스트
-  - `LoginCallbackTests`: 재인증 콜백의 만료·`state` 불일치가 새 코드로 가고, 계정이 남아 있음(AC-18)
-  - 로그인 콜백 코드는 그대로
-  - 웹: 두 코드 문구(`authResult.test.ts`), 가입 직후 한 번만 "가입했어요", 다시 로그인하면 없음(AC-17)
-- 확인 방법: `./gradlew build`, `npm test`
-- 위험: 낮음
+  - 0단계 2의 입력 묶음에서 계획 결과(번호·순서)가 같음(AC-17)
+  - 미조사 도서관은 직접 추가했을 때만 나옴(사이클 07 회귀)
+  - `mobileSiteDiffers`가 두 API에 나옴
+- 위험: 중간 (세 검색이 함께 씀)
 
-### 8단계: 웹 API 층과 타입 (의존: 3·4·5단계)
+### 7단계: 웹 (의존: 5·6단계)
 
-1. **타입** (파일: `web/src/api/types.ts`)
-   - `TargetLibrary.chosen: boolean`
-   - `JoinTier`에 `'CHOSEN'`
-   - 공개 목록 줄 타입: `id`, `name`, `eligibility`, `matchedBy`, `visitRequired`, `cautioned`, `eligibilitySummary`
-   - 저장 API 응답 타입
-2. **검색 요청** (파일: `web/src/api/client.ts`, `web/src/api/searchStream.ts`)
-   - 계획 파라미터에 `libraryIds: number[]`를 더합니다. 비어 있지 않을 때만 `libraryIds=`를 붙입니다.
-   - 화면 주소에는 넣지 않습니다(C17).
-3. **공개 목록** (`client.ts`): `fetchLibraries(residence, work)` → `GET /api/v1/libraries`
-4. **내 도서관 API** (새 파일 예: `web/src/api/myLibraries.ts`)
-   - `getMyRegions`, `putMyRegions`, `getMyLibraries`, `addMyLibrary`, `removeMyLibrary`
-   - 모두 `meRequest`를 거칩니다(C20). 변경 요청은 CSRF 헤더를 붙입니다(기존 `send` 규칙).
-- 테스트(Vitest): 주소에 `libraryIds`가 들어가고 빈 배열이면 없음(`requests.test.ts`), 저장 API가 `meRequest`·CSRF를 거침, 401 → 갱신 경로
-- 확인 방법: `npm test`, `npm run build`, `npm run lint`
-- 위험: 낮음
-
-### 9단계: 내 도서관 상태, 지역 저장 위치, S2, S11 (의존: 8단계)
-
-1. **상태 공급자** (새 파일 예: `web/src/features/mylibrary/MyLibraryContext.tsx`. `main.tsx`에서 `AuthProvider` 안쪽에 둠)
-   - 로그인 상태가 되면 `GET /api/v1/me/regions`와 `GET /api/v1/me/libraries`를 **동시에** 부릅니다.
-   - 상태는 불러오는 중 / 실패 / 다 불러옴입니다. "다시 시도"를 둡니다.
-   - 로그아웃하면 상태를 비웁니다.
-2. **지역 저장 위치** (파일: `web/src/features/region/RegionContext.tsx`)
-   - 로그인 전: 지금과 같습니다(`regionStorage.ts`).
-   - 로그인 후: 서버 값을 씁니다(C18).
-     - 읽은 뒤 `/api/v1/regions/resolutions`로 해석해 대체·제외 안내를 냅니다(`applyResolutions` 재사용, AC-9).
-     - 서버에 다시 저장하지는 않습니다(C19).
-   - 읽기가 끝나기 전에는 검색을 막지 않습니다. 지역 없이 전체 기준입니다 [확정] (flow S1).
-3. **S2 저장** (파일: `web/src/features/region/RegionModal.tsx` 등)
-   - 로그인 후에는 "저장"이 `PUT /api/v1/me/regions`입니다.
-   - 상태
-     - 저장 중: 버튼 비활성
-     - 저장 실패: "저장하지 못했어요. 잠시 뒤 다시 해 주세요". 창은 열린 채 값을 유지합니다.
-     - 401: 로그인이 풀렸다는 안내 후 로그인 전 상태
-   - 422가 오면 지금처럼 해석 후 다시 고르게 합니다.
-4. **S11 지역 옮기기 창** (새 파일 예: `web/src/features/mylibrary/RegionImportDialog.tsx`)
-   - 열리는 조건(모두 맞을 때): 로그인 직후, 서버 지역이 비었음, 브라우저에 지역이 있음, `chaekcheck.regionImport.v1`에 이 계정 번호가 없음
-   - 문구 [확정]: "이 브라우저에 고른 지역이 있어요. 계정에 저장할까요?", 지역 이름(거주·직장), [계정에 저장] [저장하지 않기]
-   - 창이 뜰 때 브라우저 지역을 `/api/v1/regions/resolutions`로 해석합니다.
-     - 바뀐 지역: "행정구역이 바뀌어 △△로 저장돼요"
-     - 나뉘었거나 모르는 지역: 빼고, 저장 뒤 "다시 골라 주세요" 안내
-   - [계정에 저장]: 해석한 값으로 PUT하고, S1이 그 지역 기준이 됩니다.
-   - [저장하지 않기]: 서버에 아무것도 보내지 않습니다.
-   - **두 답 모두** 이 계정 번호를 `chaekcheck.regionImport.v1`에 적습니다. 답 없이 닫거나 새로고침하면 적지 않습니다(다음 로그인 때 다시 물음) [확정].
-   - 브라우저의 `chaekcheck.regions.v1`은 그대로 둡니다.
-   - 상태: 저장 중 / 저장 실패(창 안에 실패 문구, 다시 누를 수 있음)
-   - 배치: 가운데 작은 창, 모바일은 아래에서 올라옵니다 [확정].
-- 테스트(Vitest)
-  - 로그인 후 `localStorage` 지역을 읽지도 쓰지도 않음
-  - 로그아웃 뒤 브라우저 값으로 돌아감
-  - 로그인 전 지역 선택에 서버 요청 없음(AC-2)
-  - S11 조건 넷, 두 답 모두 키에 기록, 닫기는 미기록(AC-3)
-  - 해석 결과에 따른 PUT 본문(대체·제외)
-  - 서버 지역 9001 → 대체 안내, 9002 → 다시 고르라는 안내(AC-9)
-  - S2 실패·401
-- 확인 방법: `npm test`, `npm run build`, `npm run lint`
-- 위험: 중간(로그인 상태와 지역 출처 전환)
-
-### 10단계: S1 "내 도서관" 줄, 스위치, 검색 연결 (의존: 9단계)
-
-1. **"내 도서관" 줄** (새 파일 예: `web/src/features/mylibrary/MyLibrarySummary.tsx`. 로그인 후 `web/src/features/search/SearchPage.tsx`에서 `RegionSummary` 자리에)
-   - 글자 [확정]
-     - 기본: `내 도서관 · 거주 서울 마포구 · 직장 서울 중구 · 직접 추가 3곳 · 관리`
-     - 비어 있음: `내 도서관이 비어 있어요. 지역을 고르거나 도서관을 추가하세요 · 관리`
-     - 불러오는 중: "불러오는 중"
-     - 실패: "내 도서관을 불러오지 못했어요 · 다시 시도"(스위치는 전체로)
-   - 모바일에서 줄이 길면 지역 이름을 줄이고 "외"를 붙입니다 [확정].
-   - [관리]를 누르면 `/my-libraries`로 갑니다. **S10으로 들어가는 길은 이것 하나뿐입니다** [확정]. S4(`SettingsPanel.tsx`)는 바꾸지 않습니다.
-   - 이 줄은 메인 화면(검색 전)과 검색 결과 화면에서 같은 자리(검색창 바로 아래)에 있습니다.
-2. **스위치 글자** (파일: `web/src/features/search/LibraryScopeToggle.tsx`)
-   - 로그인 후: `전체 도서관 | 내 도서관` [확정]
-   - 로그인 전: 지금 그대로(`가입 가능한 곳` / 지역 없으면 `누구나 가입`)
-3. **기본값과 유지**: 로그인했고 내 도서관이 있으면 처음부터 "내 도서관"이 켜져 있습니다. 사용자가 바꾼 값은 이 브라우저에서 새로고침해도 유지됩니다 [확정] (spec R5, AC-16).
-   - 저장 위치는 기존 검색 설정 저장소(`web/src/features/search/searchSettings.ts`, `chaekcheck.searchSettings.v1`)입니다.
-   - 지금 `scope`는 주소(`scope=joinable`)에도 있습니다. 주소 값과 저장 값 가운데 어느 쪽이 이기는지는 설계에 없으므로 dev가 정하고 보고합니다.
-4. **검색에 넘기기** (`SearchPage.tsx`, `InstantResults.tsx`, `DirectResults.tsx`, `useHoldings.ts`, `web/src/features/book/BookPage.tsx`)
-   - 로그인 후에는 스위치와 상관없이 직접 추가 `libraryIds`와 서버 지역을 보냅니다.
-   - "내 도서관"이면 `scope=joinable`, "전체"면 `scope=all`입니다.
-   - 두 검색(도서관에서 직접 찾기, 수집 목록 책 검색)과 책 화면에 모두 같은 규칙을 씁니다.
-5. **다 불러온 뒤 다시 검색** [확정] (사용자 승인, 2026-10-04, 마무리 검토)
-   - 읽기가 끝나기 전에 시작한 검색이 있으면, 다 불러온 뒤 "내 도서관" 기준으로 첫 묶음부터 한 번 다시 합니다(스위치를 바꿀 때와 같은 동작).
-- 테스트(Vitest)
-  - 줄 상태 넷, 스위치 글자(로그인 전후)
-  - 기본값 "내 도서관"(내 도서관 있음) / 끈 값이 새로고침 뒤 유지(AC-16)
-  - 요청에 `libraryIds`가 두 스위치 값 모두에서 들어감(AC-6), 비어 있으면 `scope=joinable` + `libraryIds` 없음(AC-7)
-  - 다 불러온 뒤 한 번 다시 검색
-  - 로그인 전 요청이 사이클 05와 같음(AC-14)
-- 확인 방법: `npm test`, `npm run build`, `npm run lint`
+1. **검색 설정 기억** (`web/src/features/search/searchSettings.ts`, 쓰는 곳)
+   - `SearchPrefs`에서 `sort`·`exact`·`roles`를 빼고, 읽을 때 남아 있으면 `chaekcheck.searchSettings.v1`에서 지웁니다(AC-1, AC-2).
+   - 주소에 값이 있으면 그대로 이깁니다.
+2. **막힘 안내** (API 오류 처리, `SearchPage` 쪽) [확정 문구]
+   - 429: "검색을 너무 자주 했어요. 1분쯤 뒤에 다시 해 주세요."
+   - 503: "지금 찾는 사람이 많아요. 잠시 뒤에 다시 해 주세요."
+   - 결과 자리 위에 안내 줄 하나를 둡니다. 받은 결과는 지우지 않고, 다시 검색 버튼은 두지 않습니다.
+3. **YES24 폰 안내**: `mobileSiteDiffers`이고 폭 640px 이하일 때만 보입니다. 링크는 막지 않습니다.
+   - 자리 [확정]: 결과 카드 이름 아래, S3 책 화면 줄, 직접 찾기 결과, 가입 정보 창 첫 화면 링크 옆
+   - 문구: "폰에서는 사이트가 다른 화면을 보여요. PC에서 열어 주세요" [안]
+   - "확인 실패"여도 안내는 보입니다.
+4. **빠진 책·소장** [확정 문구]
+   - `web/src/features/book/BookPage.tsx` `book_not_found`: "책을 찾을 수 없어요" 아래 "도서관 목록을 새로 받으면서 빠진 책일 수 있어요. 다시 검색해 주세요.", 그 아래 "처음으로"
+   - 책 화면 줄의 `holding_not_found`: "이 도서관 목록에서 빠졌어요"
+5. **화면 질문 여섯** (`flow.md` "검토 결과")
+   - 폰 설정 창 → 바텀 시트(손잡이, 바깥 누름·아래로 끌기로 닫힘, 내용·순서 그대로). `SettingsPanel.tsx`의 팝오버는 **남기고**, 한 상수·한 곳으로 되돌릴 수 있게 합니다(C7). 되돌리는 방법을 `# 사이클 08` 절에 적습니다.
+   - 폰 직접 찾기 정렬 자리: 흐린 "정렬 없음 ⓘ". 누르면 "도서관 사이트 검색에서는 정렬을 쓸 수 없어요"
+   - 상태 칸 색: "대출 중 · 예약", "확인 실패", "대출 정보 조회 중", "대출 가능 여부 확인 필요"를 `--brand-faint`(연보라)로. 예약 묶음의 연주황은 그대로
+   - 카드 전체 링크: 그대로
+   - S8·S9: 맨 아래 오른쪽 "← 돌아가기"(이전 화면, 없으면 S1)
+   - S10·S2: 오른쪽 아래 "← 돌아가기" + 제목 옆 ⓘ "고르는 즉시 저장돼요". 로그인 전 "이 브라우저에", 로그인 뒤 "계정에" [안 문구]
+   - 글꼴: 나눔바른고딕을 자주 쓰는 한글만 담아 줄이고, **다른 글꼴 이름**으로 둡니다 [확정].
+     - 서브셋 도구가 새 의존성이면 먼저 승인받습니다.
+     - OFL 예약 이름 여부는 [확인 필요: 네이버 나눔글꼴 라이선스 원문].
+     - 줄이기 전후 파일 합을 적습니다(AC-13).
+- 테스트(Vitest): 저장·지움(AC-1, AC-2), 429·503 문구와 결과 유지(AC-3), 폰 안내 폭·대상(AC-4), 두 빠짐 문구(AC-8c 화면 쪽), 바텀 시트·팝오버 전환, 돌아가기(이전 기록 있음/없음)
 - 위험: 중간
 
-### 11단계: 결과 줄의 "직접 추가"와 정렬 (의존: 8단계)
+### 8단계: 같은 사본으로 바꿔 끼우는 가져오기와 확인 (의존: 1~7단계)
 
-1. **정렬** (파일: `web/src/features/search/sortBatch.ts`)
-   - `SortContext`에 `chosen: ReadonlySet<number>`를 더하고, 제목 안 순서의 가장 앞 단계로 둡니다(`chosen` → 지금의 0~3). 설명 주석도 고칩니다.
-   - `chosen` 집합은 첫 `targets`에서 만듭니다(C16). `holdingView.ts`, `DirectResults.tsx`의 컨텍스트 만들기도 고칩니다.
-2. **결과 줄** (파일: `web/src/features/search/ResultRow.tsx`)
-   - `chosen`이면 가입 자격 배지("가입 자격 확인 필요", 자격 요약)와 가입 주의 문구(`joinCaution`)를 숨기고, "직접 추가" 표시 하나만 보입니다 [확정 규칙] (사용자 제안, 2026-10-04). 글자 "직접 추가"는 [안]입니다.
-3. **책 먼저 고르기** (파일: `web/src/features/search/BookList.tsx` 등): `joinTier: 'CHOSEN'`을 받아도 깨지지 않게 합니다(목록의 표시·정렬).
-- 테스트: `sortBatch.test.ts`(`chosen`이 가입 가능·주의·방문·확인 필요보다 앞), `ResultRow.test.tsx`(`chosen`이면 배지·주의 없음 + "직접 추가", AC-5)
-- 확인 방법: `npm test`, `npm run build`, `npm run lint`
+서비스를 켠 채로 가져오기 **#2**를 돌립니다. 같은 사본이고, 새 코드입니다.
+1. **AC-8**: 가져오는 동안 `/api/v1/books?title=사랑` 첫 쪽(지역 없음)을 계속 부릅니다(간격 [안]). p95가 1초 안이어야 합니다. 바꿔 끼우는 순간 검색·책 화면 요청의 5xx와 끊김이 0건이어야 합니다.
+2. **AC-8b**: 전체 시간과 검색이 기다린 시간(=`swap`)을 사이클 07 2회차(40분 36초)와 가져오기 #1과 비교합니다. 목표는 기다림 10초 안, 전체는 더 짧게입니다 [확정].
+3. **AC-8c**: 바꿔 끼우기 전에 책 화면을 열어 받은 소장 번호로, 바꿔 끼운 뒤 다음 묶음을 부릅니다 → 모두 정상이어야 합니다. 빠진 소장 화면은 `db-test`에서 줄을 지워 재현합니다.
+4. **AC-10**
+   - kept가 가져오기 #1의 책 수와 같고 new·dropped = 0이어야 합니다.
+   - 사이클 07 2회차 1,617,445와의 차이(교보 11곳을 빼서 생긴 것)를 보고합니다.
+   - `pg_stats`에서 `catalog.holding.book_id` 상관도가 0.9 이상이어야 합니다.
+5. **AC-9**: 두 가지로 실패시킵니다. 둘 다 검색 결과가 가져오기 전과 같고 `catalog_next`가 남지 않아야 합니다.
+   - 시작 때 실패(사본 경로를 틀리게)
+   - 색인 단계에서 프로세스를 멈춤
+6. **AC-15**: 두 번째 가져오기의 `nb` 시간이 6.5~9분보다 짧아야 합니다. 지문 순서는 3단계 테스트로 봅니다.
+7. **AC-21** [확인 필요: 프로토타입]: 바꿔 끼우기 **전에** 서비스의 Hikari 연결에서 같은 검색을 여러 번 돌려, 드라이버가 서버 준비 문장을 쓰게 합니다. 바꿔 끼운 뒤 같은 연결로 검색해 새 표 결과가 나오는지 봅니다.
+   - 근거: PostgreSQL은 쓰는 객체에 정의 변경이 있으면 준비된 문장을 다시 분석·계획한다고 적고 있습니다, https://www.postgresql.org/docs/18/sql-prepare.html (2026-10-11 확인).
+   - 오류(예: 계획 결과 형식이 바뀌었다는 오류)가 나면 멈추고 보고합니다.
+8. **잠금 줄 서기** [확인 필요: 프로토타입]
+   - 긴 `SELECT`가 잠금을 잡은 동안 바꿔 끼우기가 기다릴 때, 그 뒤에 온 검색도 줄을 서는지 봅니다.
+   - `lock_timeout` 2초 안에 줄이 풀리는지와 실제 잠금 시간을 잽니다.
+9. 디스크 최대 사용량, `step_seconds` 전체, `pg_total_relation_size`(표·색인)를 기록합니다.
+- 위험: 높음
+
+### 9단계: 메모리 측정과 줄이기 (의존: 8단계. 소장 줄이 붙은 뒤에 해야 함)
+
+순서는 `research.md` 7절 [확정 순서·기준]입니다. 단계마다 같은 측정 묶음을 쓰고, 데우기 1번 + 3회로 첫 쪽 p50·p95, 책 화면 `holdingsOf` 버퍼를 냅니다.
+1. **설정 자리** (`compose.yaml` `db`) [확정 자리]
+   - `command:`에 `-c 이름=${환경 변수:-기본값}` 꼴로 `shared_buffers`, `effective_cache_size`, `work_mem`을 둡니다.
+   - **Dockerfile `CMD`를 덮으므로 `-c shared_preload_libraries=pg_bigm`을 반드시 함께 둡니다.**
+   - 기본값은 처음에는 지금 실제 값(0단계 `SHOW`)으로 두어 동작이 바뀌지 않게 하고, 끝나면 고른 값으로 바꿉니다 [안].
+   - 환경 변수는 `.env.example`에 적습니다. `db-test`는 그대로 둡니다 [안].
+2. **기준 다시 재기**: 줄 붙이기 뒤의 기준을 잽니다. 0단계 값과 함께 적습니다.
+3. **`shared_buffers` 단계로 낮추기**: 예: 지금 → 4GB → 2GB → 1GB → 512MB → 256MB [안]. 단계마다 재시작, 데우기, 측정을 합니다. 컨테이너 상한은 두지 않습니다.
+4. **컨테이너 상한 낮추기**
+   - 3에서 고른 값으로 고정하고 `mem_limit`을 단계로 낮춥니다. `effective_cache_size`도 함께 낮춥니다.
+   - `mem_limit`·`shm_size: 128mb`는 **측정 동안에만** compose에 두고 커밋하지 않습니다 [확정].
+   - OOM이 나면 그 단계는 "못 씀"으로 적고 앞 단계로 돌아갑니다.
+5. **`work_mem`**: `EXPLAIN`에 `external merge`·디스크 정렬이 보일 때만 올립니다.
+6. **캐시**: 통계 로그로 적중률·항목 수를 보고, `GC.class_histogram`으로 캐시 값 바이트를 봅니다. 그 값으로 캐시마다 상한을 정합니다. 같은 질의를 3분 안에 반복하면 적중률이 실제보다 높게 나오는 점을 결과에 함께 적습니다. 상한을 바꾸면 ADR-0006 값이 바뀌므로 보고합니다.
+7. **Java 힙**
+   - 서비스는 `-Xmx`를 단계로 낮추며 같은 측정 + GC 시간을 봅니다. 자리는 `backend/build.gradle` bootRun과 `.claude/launch.json`입니다.
+   - 가져오기는 실행 명령의 `-Xmx`를 따로 단계 시험합니다. 지금 8GB입니다(AC-12).
+8. **멈추는 기준** [확정]: 첫 쪽 p95가 1초를 넘거나 기준보다 20% 넘게 늘어나는 **첫 단계의 바로 앞 단계**를 고릅니다.
+9. 결과: "줄이기 전 / 뒤" 표 하나(AC-11)
+   - 표에 넣을 것: DB 설정, 컨테이너 메모리, 버퍼 적중률, 표별 버퍼, Java 힙, 두 캐시의 항목 수·적중률·바이트, p50·p95
+   - 고른 값을 compose·실행 설정 기본값으로 둡니다. 로컬 PC(WSL2, 32GB) 기준 값이라고 적습니다.
+- 위험: 중간 (측정 시간이 김)
+
+### 10단계: 데이터 폴더와 dev 문서 (의존: 없음. 아무 때나)
+
+1. **교보 대여·혼합 표시** (`chaekcheck-data` 수집 DB `ebook-catalog.sqlite`. plan은 하지 않음)
+   - 230곳에 `crawl_skip` 표시를 합니다. 이유는 "교보 대여·혼합 제외" [안 값]이고, 줄은 지우지 않습니다. 남은 202곳 수집은 멈춥니다 [확정].
+   - 대상은 `kyobo-institutions-probe-2026-10-03.tsv`의 `library_model` 대여·혼합으로 골라 셉니다. 230과 다르면 멈추고 보고합니다.
+   - 수집기가 돌고 있으면 쓰기 충돌이 없게 멈춘 뒤나 쉴 때 합니다 [확인 필요: 수집기 상태].
+   - 사본 `snapshots/…0745.sqlite`는 건드리지 않습니다.
+   - 기록: dev `docs/maintenance/2-crawl.md`, `docs/library-site-issues.md`
+2. **도서관 411** [확정]: 수집 DB 주소를 `https://gsenc.bookcube.biz/FxLibrary`로 고치고 다시 수집합니다. 411은 서비스 번호이므로 수집 번호는 `collection_link`로 찾습니다. 서비스에 다시 들어오는 것은 다음 사본 때입니다.
+3. **`docs/maintenance/1-libraries.md`**: "확인" 단계에 "리다이렉트 뒤 최종 주소(호스트)를 확인해 그 주소로 넣음"을 더합니다.
+4. **`docs/maintenance/3-import.md`** [확정] (ADR-0069, AC-16)
+   - 바꿔 끼우기 흐름, 실패 처리, `step_seconds` 읽는 법, 결과 표(8단계 값)
+   - 아래 표를 그대로 넣습니다.
+
+| 상황 | 할 일 |
+|---|---|
+| 새 사본으로 갱신 (규칙 그대로) | 가져오기 → 바꿔 끼우기. 서비스는 그대로 |
+| 묶기·대표값·날짜 규칙을 고침 | 새 코드로 가져오기 → 바꿔 끼우기. 서비스는 그대로 |
+| 검색어 다듬기 규칙을 고침 | 옛 서비스 켜 둔 채 새 코드로 가져오기 → 바꿔 끼우자마자 서비스를 새 코드로 다시 켬 |
+
 - 위험: 낮음
 
-### 12단계: S10 `/my-libraries` (의존: 9·10단계)
+### 11단계: 이름 고치기와 흡수된 학교 (의존: 2단계. 사용자 답 필요)
 
-1. **라우트** (파일: `web/src/main.tsx`, 새 화면 예: `web/src/features/mylibrary/MyLibrariesPage.tsx`)
-   - 로그인 확인이 끝날 때까지 "불러오는 중"을 보입니다. 로그인 전으로 확인되면 S1로 보냅니다.
-   - 로그인 기능이 꺼져 있으면 라우트를 그리지 않습니다(기존 `LoginOnly`와 같은 방식).
-   - [확정] (사용자 승인, 2026-10-04, 마무리 검토)
-2. **화면** (가운데 한 단, 데스크톱·태블릿·모바일 공통)
-   - 맨 위 한 줄: "누구나 가입하는 도서관 N곳도 늘 내 도서관에 들어 있어요 ▸"(눌러서 펼침, `eligibility=OPEN` 줄)
-   - 여섯 구역을 위에서 아래로 둡니다 [확정] (사용자 제안, 2026-10-04).
-     1. 거주 지역 선택: 고른 시군구 + [변경] → S2
-     2. 거주 지역으로 자동: `matchedBy`에 `RESIDENCE`. 빼기 버튼 없음. "N곳 ▸"로 접어 둠
-     3. 직장 지역 선택: 고른 시군구 + [변경] → S2
-     4. 직장 지역으로 자동: `matchedBy`에 `WORK`. 빼기 버튼 없음. 접어 둠. 둘 다 맞는 도서관은 두 목록 모두에 보임
-     5. 직접 도서관 추가
-        - 이름 검색 칸. 거르기는 화면 안에서 합니다(NFC + 공백 제거 + 부분 일치 [안]).
-        - 이름이 맞는 서비스 도서관 → [추가]
-        - **이미 직접 추가한 곳만** "이미 있음"으로 흐리게 합니다. 지역으로 자동 들어온 곳, 누구나 가입하는 곳도 [추가]할 수 있습니다 [확정] (사용자 승인, 2026-10-04, 마무리 검토).
-     6. 직접 추가한 도서관 N/20: 줄마다 이름 · [빼기]. 가입 자격 배지는 없습니다. 꺼진 도서관(공개 목록에 없는 번호)은 "지금은 쓸 수 없는 도서관이에요" + [빼기]이고 N에 셉니다.
-   - [변경]이 S2를 거주(또는 직장) 칸이 열린 채로 여는지는 [안]입니다(사용자 확인).
-   - 공개 목록은 **해석한 지역 ID**로 부릅니다(ADR-0049).
-3. **추가·빼기는 누르는 즉시 저장**합니다. 따로 "저장" 버튼은 없습니다 [확정].
-   - 화면에 먼저 반영하고 요청을 보냅니다. 응답별 처리:
-
-     | 응답 | 화면 |
-     |---|---|
-     | 409 | 되돌리고 "직접 추가는 20곳까지예요. 하나를 빼면 추가할 수 있어요" |
-     | 404 `library_not_found` | 되돌리고 안내(문구는 flow에 없음. dev 자리 글, 사용자 확인) |
-     | 500·연결 끊김 | 되돌리고 "저장하지 못했어요. 잠시 뒤 다시 해 주세요" |
-     | 401 | 로그인 전 S1 |
-     | 403 `csrf_invalid` | 한 번 다시(기존 규칙) |
-
-   - 20곳이 차면 [추가]가 흐려지고 위 409 문구를 보입니다(AC-8).
-4. **그 밖의 상태** [안 문구, 규칙 확정]
-   - 불러오는 중 / 불러오기 실패("다시 시도")
-   - 비어 있음: "지역을 고르거나 도서관을 추가하세요"
-   - 검색 결과 없음: "이름이 맞는 도서관이 없어요"
-5. 뒤로 가면 보던 S1입니다. 화면에서 바꾼 내용은 S1 줄과 다음 검색에 반영됩니다.
-- 테스트(Vitest)
-  - 여섯 구역과 누구나 가입 줄의 분류(`matchedBy`, OPEN)
-  - 이름 검색(NFC·공백)
-  - 자동·누구나 가입 도서관도 [추가] 가능, 이미 있음 흐림
-  - 즉시 저장과 응답별 되돌리기
-  - 20곳 찼음, 꺼진 도서관 줄
-  - 로그인 전 직접 접근 → S1, 새로고침 때 "불러오는 중"
-  - 도서관 이름을 글자로만 그림
-- 확인 방법: `npm test`, `npm run build`, `npm run lint`, Playwright
-- 위험: 중간
-
-### 13단계: 동의·처리방침·탈퇴 안내 문구 (의존: 없음)
-
-1. **S6 고지 표와 동의 본문** (파일: `web/src/features/auth/legalText.ts`의 `COLLECTION_NOTICE`, 필요하면 `PRIVACY_COLLECTION_BODY`)
-   - 항목에 더할 것: "거주지 지역(시군구), 직장 지역(시군구), 직접 추가한 도서관(고른 경우)"
-   - 목적에 더할 것: "내 지역에서 가입할 수 있는 도서관을 찾아 검색에 쓰기"(지역), "직접 고른 도서관을 검색 결과에서 먼저 보여 주기"(직접 추가)
-   - 이 내용은 [확정] (사용자 승인, 2026-10-04, 마무리 검토)입니다. 최종 문구는 배포 전 사용자 검토라서 `reviewed: false`를 유지합니다.
-   - 보유 기간은 지금 문구 그대로입니다.
-2. **S9 처리방침** (같은 파일 `PRIVACY_POLICY_SECTIONS`의 "처리하는 개인정보와 목적", "정보주체의 권리와 행사 방법")
-   - 같은 항목과 목적을 더합니다.
-   - 내 도서관 화면에서 언제든 비우거나 지울 수 있다는 점을 적습니다(spec R7).
-3. **버전은 그대로**입니다(C23). `DocumentVersionsMatchWebTests`가 그대로 통과해야 합니다.
-4. **S7 탈퇴 안내** (파일: `web/src/features/auth/WithdrawDialog.tsx`): 지워지는 것 목록에 "저장한 지역과 내 도서관"을 더합니다 [확정].
-- 테스트: `SignupPage.test.tsx`·`LegalPage.test.tsx`(새 항목 보임, AC-15), `Withdraw.test.tsx`(새 줄), 백엔드 `DocumentVersionsMatchWebTests`
-- 확인 방법: `npm test`, `npm run build`, `./gradlew build`
+1. **이름 다시 검증**: 아래 곳마다 공식 출처와 사이트 제목을 다시 열어 새 이름 문자열과 근거를 확인합니다(C6).
+   - 대상: `name-changes-2026-10-10.md` 2절의 434, 456, 2264, 2563, 2611, 2161, 1079와 오타 1016
+   - 새 이름의 꼴(예: "경상국립대학교"인지, 라벨이 붙는지)은 [확인 필요: 사용자 확인]입니다.
+   - 확인한 목록을 사용자에게 보이고 곳마다 답을 받습니다. 1203·408은 바꿀 것이 없습니다.
+2. **목록 파일** `scripts/library/name_overrides.tsv` [안 경로]
+   - 칸 [확정]: `library_id`, `old_name`, `new_name`, `changed_on`, `source_url`, `checked_on`
+   - seed 생성 스크립트가 이 목록을 읽어 다음 seed에서도 새 이름을 유지합니다. 목록에 없는 이름은 바꾸지 않습니다.
+   - 적용하는 스크립트는 `build_candidate_seed.py`입니다 [확정] (사용자 승인, 2026-10-11, 인계서 검토). 대상이 모두 후보 번호(≥ 281)입니다. 이 스크립트는 "이미 있는 후보는 번호와 이름을 그대로 둔다"(21행) 뒤에 목록을 덮어써야 합니다.
+3. **changeset** `library/013-library-name-overrides.yaml` [안]: 이미 적용된 seed는 고치지 않고 번호로 `UPDATE`합니다. `library.name` UNIQUE 위반이 없는지 봅니다.
+4. **흡수된 학교 7곳**(428, 429, 769, 2257, 607, 895, 1002) [확정 방법]
+   - 이름은 고치지 않습니다. 사이트가 따로 도는지만 봅니다. 895는 682와 같은 사이트인지도 봅니다.
+   - 곳마다 "주소 바꿈(새 주소) / 끄기 / 그대로" 제안 목록과 근거를 사용자에게 보입니다.
+   - **이번에는 바꾸지 않고 보고만 합니다.**
+5. 기록: `docs/library-maintenance.md`에 방법, 출처 URL, 확인일, 사용자 결정을 적습니다(dev 규칙).
+- 테스트: seed 스크립트가 목록을 읽어 이름을 바꾸고 번호는 그대로 둠, 목록에 없는 이름은 그대로임. 적용 뒤 S10 이름 찾기에 새 이름으로 나오고 옛 이름으로는 안 나옴(AC-5)
 - 위험: 낮음
 
-### 14단계: 화면 확인과 전체 확인 (의존: 1~13단계)
+### 12단계: 전체 확인 (의존: 1~11단계)
 
-- Playwright로 데스크톱 1280 → 태블릿 768 → 모바일 375를 봅니다.
-  - S1(로그인 전·후, 빈 줄, 긴 줄의 "외")
-  - S2 저장 상태
-  - S10 여섯 구역과 접힘
-  - S11(모바일은 아래에서 올라옴)
-  - 결과 줄 "직접 추가"
-  - S6·S9·S7 문구
-- 켜짐과 꺼짐을 모두 봅니다. 꺼짐이면 사이클 05와 같아야 합니다(줄, 스위치, 라우트).
-- 두 브라우저(또는 일반 창 + 시크릿 창)로 AC-1을 봅니다.
-- 아래 AC 표의 결과를 `# 사이클 06` 절에 적습니다.
+- Playwright로 1280 → 768 → 375 → 320 폭을 봅니다.
+  - S1: 막힘 안내, 폰 안내, 상태 칸 색, 정렬 없음 ⓘ, 바텀 시트
+  - S3: 빠짐 문구
+  - S8·S9·S10·S2: 돌아가기와 ⓘ
+  - 글꼴
+- 사용자 확인: 바텀 시트 유지·되돌림, 문구 [안]
+- 아래 AC 표의 결과를 `# 사이클 08` 절에 적습니다.
 
 ## 테스트
 
 - 단위
-  - `PlanOptions.apply`(`chosen` 예외)
-  - `JoinTier.of`
-  - `libraryIds` 파서
-  - `sortBatch`, `authResult`, S10 이름 거르기, S11 조건
-- 통합(모듈, `db-test`)
-  - `ModularityTests`: `ApplicationModules.of(ChaekcheckApplication.class).verify()`. 새 모듈 `mylibrary`(`allowedDependencies = auth, library, region`), 순환 없음, `catalog`·`availability`가 `auth`·`mylibrary`에 의존하지 않음
-  - `DocumentationTests`
-  - `LibraryCatalogTests`(계획 규칙), `GET /api/v1/libraries`, 검색 4곳의 `libraryIds`
-  - `mylibrary` API 전부, 켜짐·꺼짐 두 컨텍스트
-  - **동시성**: 19곳에서 동시에 두 개 추가, 저장과 탈퇴 경합 두 순서, 잠금 대기
-  - **발행 저장소**: 정상 처리 뒤 기록 없음, 실패 listener 뒤 재시작으로 다시 처리
-  - 사이클 05 기존 테스트 전부(회귀)
-- 웹(Vitest): 8~13단계 테스트
-- 화면: Playwright 1280 → 768 → 375. 앱 안 브라우저로 했으면 보고합니다.
+  - 설정 저장과 지움
+  - 지문 비교와 원문 다듬기
+  - 소장 번호 정하기
+  - `BodyLimit`
+  - 캐시 설정
+  - 이름 고침 목록 읽기(Python 테스트)
+- 통합(`db-test`)
+  - `ModularityTests`(의존 방향 그대로, `CatalogHoldings` 공개 메서드 변경), `DocumentationTests`
+  - 트리거, `mobile_site_differs`, 교보 11곳 없음
+  - 바꿔 끼우기: 번호 잇기, 정의 비교, 잠금 실패, 중간 실패, 바깥 외래 키 가드
+  - 국가서지 원문
+  - `holding_not_found`, `holdingsOf(bookIds, libraryIds)`, 503 `Retry-After`
+  - `planSearch` 결과 비교
+  - 사이클 05~07 기존 테스트 전부
+- 웹(Vitest): 7단계 항목
+- 실데이터: 0·1·8·9단계
+- 화면: Playwright 1280/768/375/320
 
 | AC | 확인 방법 | 단계 |
 |---|---|---|
-| AC-1 다른 브라우저에서 로그인해도 같은 지역 | 통합(PUT→GET) + 웹 테스트 + 수동(두 브라우저) | 5, 9, 14 |
-| AC-2 로그인 전 지역 선택에 서버 저장 요청 없음 | 웹 테스트 + 수동(개발자 도구 네트워크) | 9, 14 |
-| AC-3 처음 로그인 때 S11 한 번, 저장/저장하지 않기 | 웹 테스트 + 수동(DB 조회로 행 유무) | 9, 14 |
-| AC-4 직장 "서울 중구" → "지역으로 자동"에 서울 재직 가능 도서관 | 통합(`matchedBy`) + 웹 테스트 + Playwright | 3, 12 |
-| AC-5 직접 추가 → S10에 보이고 계획 맨 앞, 배지 없이 "직접 추가", 빼면 사라짐 | 통합(계획) + 웹 테스트(`ResultRow`, S10) + Playwright | 2, 4, 11, 12 |
-| AC-6 "내 도서관만" = 자동 ∪ 직접 추가, "전체"에서도 직접 추가가 맨 앞 | 통합(스트림 `targets`) + 웹 테스트(요청 파라미터) + 수동(`targets` 확인) | 2, 4, 10 |
-| AC-7 비어 있으면 누구나 가입만 | 통합(`scope=joinable`, 지역·`libraryIds` 없음) + 웹 테스트 | 2, 10 |
-| AC-8 21번째 막기 | 통합(409, **동시 추가**) + 웹 테스트(S10) | 5, 12 |
-| AC-9 폐지·대체 지역(9001·9002) | 웹 테스트 + 수동(서버에 9001·9002를 넣은 뒤 화면) | 9, 14 |
-| AC-10 꺼진 도서관은 계획에 없고 S10에서 안내 | 통합(계획에서 무시, PUT 404, GET 유지) + 웹 테스트 | 2, 5, 12 |
-| AC-11 탈퇴하면 두 표 행 없음, 발행 기록 없음 | 통합(listener, 멱등, **재시작 다시 처리**) + 수동(DB 조회) | 5, 6 |
-| AC-12 지운 계정 토큰으로 저장해도 줄 없음 | 통합(지운 계정 토큰 401, 서비스 직접 호출, **저장·탈퇴 경합**) | 1, 5 |
-| AC-13 모두 비우면 행 없음 | 통합 + 수동(S10에서 비운 뒤 DB 조회) | 5, 12 |
-| AC-14 로그인 전 검색·지역·스위치가 사이클 05와 같음 | 기존 테스트(켜짐·꺼짐) + 웹 테스트 + Playwright | 4, 10, 14 |
-| AC-15 S6 고지 표·S9에 새 항목 | 웹 테스트 + Playwright | 13 |
-| AC-16 처음부터 "내 도서관", 끈 값이 새로고침 뒤 유지 | 웹 테스트 + 수동 | 10, 14 |
-| AC-17 첫 가입 직후에만 "가입했어요" | 웹 테스트(+ 서버 방식이면 통합) + 수동(실제 제공자로 가입·재로그인) | 7, 14 |
-| AC-18 탈퇴 재인증 만료·`state` 불일치 문구, 계정 유지 | 통합(`LoginCallbackTests`) + 웹 테스트 | 7 |
+| AC-1 설정 기억(정렬·완전 일치는 안 남음) | Vitest + Playwright | 7, 12 |
+| AC-2 옛 저장값 지움 | Vitest(옛 형식 저장값으로 시작) | 7 |
+| AC-3 429·503 문구 | Vitest + 수동(nginx 로컬 또는 상한 낮춤) | 7, 12 |
+| AC-4 YES24 폰 안내(375에서만, 13곳만) | Vitest + Playwright | 7, 12 |
+| AC-5 고친 이름, 번호 유지 | seed 테스트 + 수동(S10) | 11, 12 |
+| AC-6 `updated_at` 트리거 | 통합 | 2 |
+| AC-7 수집 기간 = 스냅숏 최소·최대 | 통합 + 실데이터 SQL | 1, 8 |
+| AC-8 가져오는 동안 첫 쪽 p95 1초, 바꿀 때 5xx 0 | 실데이터 측정 | 8 |
+| AC-8b 전체·기다린 시간이 사이클 07 2회차보다 짧음, 기다림 10초 안 | `step_seconds` 비교 | 1, 8 |
+| AC-8c 옛 소장 번호 요청 정상, 빠진 소장·책 문구 | 통합 + Vitest + 실데이터 | 4, 5, 7, 8 |
+| AC-9 실패하면 결과 그대로 | 통합(실패 주입) + 실데이터 두 경우 | 4, 8 |
+| AC-10 kept·new·dropped, 상관도 0.9 이상 | 실데이터 SQL | 8 |
+| AC-11 메모리 측정표, p95 1초, 기준 대비 20% 안 | 측정표 | 0, 9 |
+| AC-12 고른 Java 힙으로 가져오기 끝까지 | 실데이터 | 9 |
+| AC-13 화면 질문 여섯, 글꼴 파일 합 감소 | Playwright 4폭 + 파일 크기 | 7, 12 |
+| AC-14 회귀(빌드, 측정 묶음 결과 목록 같음) | `./gradlew build`, `npm` 세 명령, `measure_books.py` 결과 비교 | 모든 단계, 8 |
+| AC-15 국가서지 원문 재사용과 순서 | 통합 + 실데이터(`nb` 시간) | 3, 8 |
+| AC-16 정리 규칙 바꿀 때 순서가 `3-import.md`에 | 문서 확인 | 10 |
+| AC-17 계획 결과 같음 | 0단계 기준과 비교 | 0, 6 |
+| AC-18 503 `Retry-After: 5` | 통합 | 5 |
+| AC-19 본문 복사 줄인 뒤 결과 같음 | fixture 비교 | 5 |
+| AC-20 `mobile_site_differs` 13곳만 true | 통합 | 2 |
+| AC-21 바꿔 끼운 뒤 풀 연결의 준비 문장이 새 표를 봄 | 프로토타입 | 8 |
 
 ## 완료 기준
 
-- [ ] spec AC-1~AC-18을 위 표의 방법으로 모두 확인함(수동 항목 포함)
-- [ ] `backend/`에서 `./gradlew build` 통과. 포함 항목: `ModularityTests`(`mylibrary` 허용 의존 셋), `DocumentationTests`, 켜짐·꺼짐 테스트, 동시성 테스트, 재시작 다시 처리 테스트
-- [ ] `web/`에서 `npm test`, `npm run build`, `npm run lint` 통과, 1280/768/375 확인
-- [ ] 문서 버전 값(`application.yml`, `documentVersions.json`)이 바뀌지 않음
-- [ ] 기존 changeset을 고쳤다면 로컬 `db`·`db-test`를 초기화해 다시 적용함
-- [ ] "[확인 필요]" 결과, 사용자 답, 설계와 달라진 점을 `docs/plan-feedback.md` `# 사이클 06` 절에 정리하고 사용자에게 전달함
+- [ ] spec AC-1~AC-21(AC-8b, AC-8c 포함)을 위 표의 방법으로 모두 확인함
+- [ ] `backend/`에서 `./gradlew build` 통과(`ModularityTests`의 모듈 검증, `DocumentationTests` 포함)
+- [ ] `web/`에서 `npm test`, `npm run build`, `npm run lint` 통과, 1280/768/375/320 확인
+- [ ] 가져오기 #1(지금 방식)과 #2(바꿔 끼우기)의 `step_seconds`, 검색 멈춘 시간, 디스크 최대값을 `# 사이클 08` 절과 `3-import.md`에 적음
+- [ ] 메모리 "줄이기 전 / 뒤" 표, 고른 값을 compose·실행 설정 기본값으로 반영함. `mem_limit`·`shm_size`는 커밋하지 않음
+- [ ] 교보 11곳 삭제 diff 확인, 로컬 DB 초기화·재적용, 수집 DB 230곳 표시
+- [ ] `postgres-patterns` 스킬 지침, `1-libraries.md`·`3-import.md` 갱신
+- [ ] 이름 고침 목록과 changeset(사용자가 고른 곳만), 흡수된 학교 제안 목록을 사용자에게 전달함
+- [ ] 바텀 시트를 되돌리는 방법을 기록함
+- [ ] [확인 필요] 결과와 설계와 달라진 점을 `# 사이클 08` 절에 적음
 
 ## [확인 필요] 항목과 개발 중 확인 방법
 
-| 항목 | 확인 방법 | 결과에 따라 할 일 | 막는 단계 |
+| 항목 | 확인 방법 | 결과에 따라 | 막는 단계 |
 |---|---|---|---|
-| `republish-outstanding-events-on-restart`가 Modulith 2.1.1에서 실패(`FAILED`) 기록도 다시 처리하는지 | 공식 문서(https://docs.spring.io/spring-modulith/reference/events.html) + 6단계 시험 | 처리하면 설계대로. 안 하면 멈추고 사용자에게(ADR-0051 D안 등 재결정) | 6 |
-| `ConditionalOnAuthEnabled`를 `auth` 루트로 옮겨도 `ModularityTests` 통과 | dev 프로토타입 | 통과하면 설계대로. 안 되면 다른 방법을 사용자에게 제안 | 1, 5 |
-| `GET /api/v1/libraries` 응답 크기(278곳) | dev 측정(바이트, 압축 전후) | 측정값 보고. 너무 크면 사용자에게 알림(ADR-0049 "감수하는 점") | 3 |
-| `signup_success`를 서버 결과 코드로 둘지 웹 상태로 둘지 | dev 안 → 사용자 선택 | 고른 방식으로 7단계 | 7 |
-| retro "15분 동안 다른 모듈 API에서 통과"가 `/api/v1/me/**` 밖 경로만 뜻하는지 | dev 코드 확인 | 결과 보고 | 없음 |
-| 서버가 여러 대일 때 재시작 다시 처리의 동작 | 확인 불가(문서에 없음) | 이번에는 없음. 여러 대로 늘릴 때 다시 확인 | 나중 |
-| 동의 목적 문구를 얼마나 구체적으로 써야 하는지, 필수 동의 근거 | 공식 문서 확인(개인정보보호위원회 안내서), 사용자 검토 | 자리 글(`reviewed: false`)로 진행, 배포 전 사용자 검토 | 배포 |
-| S10 [변경]이 S2를 해당 칸이 열린 채로 여는지 | 화면을 사용자에게 보임 | 사용자 답대로 | 12(마무리) |
-| 화면 문구 세부(불러오기 실패, 20곳 찼음, 꺼진 도서관, 검색 결과 없음, `library_not_found`), "직접 추가" 표시 글자, 줄의 [빼기] 위치 | 화면을 사용자에게 보임 | 사용자 답대로 | 11, 12(마무리) |
-| `chosen`인데 지역 규칙이 안 맞는 도서관의 `priorityGroup` 값 | 설계에 없음. dev가 정함 | 정한 값 보고 | 2 |
-| 스위치 값 저장(`searchSettings`)과 주소 `scope`의 관계 | 설계에 없음. dev가 정함 | 정한 방식 보고 | 10 |
+| 바꿔 끼운 뒤 Hikari 풀 연결의 준비 문장이 새 표를 보는지(AC-21) | 프로토타입 | 안 되면 멈추고 보고 | 8 |
+| `DROP`·`SET SCHEMA`를 기다리는 동안 뒤에 온 검색이 줄을 서는지, 실제 잠금 시간, `lock_timeout` 2초·5번이 맞는지 | 공식 문서(PG18 explicit-locking) + 프로토타입 | 값을 바꾸면 보고 | 8 |
+| 쓰기 단계 조각별 시간 → 더 고칠 곳(두 번째 읽기, 7% 안 읽기, 넓은 줄 한 번 쓰기, 국가서지 병렬) | 1단계 측정 | 가장 느린 곳만 고치고 보고 | 4 |
+| pg_bigm 색인(`gin_bigm_ops`)을 나중에 만들 때 시간·병렬 여부 | 프로토타입 | 보고 | 4 |
+| 가져오기 세션 `maintenance_work_mem` 등 값 | 측정 | 보고 | 4 |
+| 국가서지 원문 크기와 다시 읽는 시간 | 프로토타입 | 보고 | 3 |
+| 바꿔 끼우는 동안 디스크 최대 사용량 | `pg_database_size` | 보고 | 8 |
+| 바깥 모듈 외래 키 없음(C2) | changelog + `pg_constraint` | 있으면 멈추고 보고 | 4 |
+| 비동기 캐시 통계 읽기(`synchronous().stats()`) | 공식 문서(Caffeine javadoc) | 보고 | 5 |
+| 캐시 한 칸 바이트, 적중률, 캐시마다 상한 값 | 측정 | ADR-0006 값 변경을 보고 | 9 |
+| `pg_buffercache` 확장 사용 가능 여부 | 실행해 봄 | 안 되면 `pg_statio`만 | 0 |
+| cgroup v2 상한에 페이지 캐시가 포함되는지, `/dev/shm`과 병렬 쿼리 | 공식 문서 + 프로토타입 | 보고 | 9 |
+| DB·Java 메모리 단계 값과 고른 값 | 측정(멈추는 기준) | 표로 보고 | 9 |
+| 교보 대여·혼합 대상 수 230, 수집기 상태 | probe TSV 대조, 수집기 확인 | 다르면 멈춤 | 10 |
+| 이름 고칠 새 이름 문자열·꼴 | 출처 재검증 → 사용자 | 사용자 답대로 | 11 |
+| 흡수된 학교 7곳 처리 | 사이트 확인 → 사용자 | 이번에는 보고만 | 11 |
+| 나눔바른고딕 OFL 예약 이름, 서브셋 도구 의존성 | 공식 라이선스 원문, 사용자 승인 | 다른 글꼴 이름은 [확정] | 7 |
+| 국가서지 지문이 TTL 파일 여럿을 덮는 방법 | dev 확인 | 보고 | 3 |
+| 가져오기 실패 기록 칸 모양 | dev가 정함 | 보고 | 4 |
 
 ## 이번에 하지 않는 것
 
-- 책 번호 유지(수집기를 갱신 가능하게 바꾸는 일 포함), 관심 책, 알림, 책을 저장하는 모든 기능. 관심 책은 `mylibrary`에 넣지 않습니다(ADR-0048).
-- 대학·회사 등 소속 기관 전자도서관 자격의 입력과 판정
-- 이메일·전화 등 연락처, 별명·프로필 사진
-- 지역 자동 감지(위치 권한, IP), 여러 프로필·가족 계정, 내 도서관 공유
-- 직접 추가한 도서관별 메모·정렬 직접 지정
-- 로그인하지 않은 상태에서 서버에 저장하는 것
-- 자동으로 들어온 도서관을 하나씩 빼기(R4 [확정]: 지역을 바꿔서 조절)
-- 이미 가입한 계정에 다시 동의를 받는 화면, 문서 버전 올리기
-- 설정 창(S4)에 내 도서관 입구 두기
-- 다음 묶음 API·도서관별 더 보기에 `libraryIds` 더하기
-- `region`의 판정 규칙, `auth`의 로그인 동작, 보안 필터 경로, `fetch-service/`
-- 검색 화면 다듬기(책 묶기 안내, 책검색 화면, 정렬, 이상한 곳 수정), 배포
+- 배포, 운영 설정, 운영 서버용 메모리 값(운영 서버가 정해지면 다시 잼), `PRE_DEPLOYMENT` 지우기
+- 요청 제한 숫자 확정, 실제 사용자 IP 받기(배포 때). nginx 429 설정은 바꾸지 않음
+- 새 사본으로 가져오기, 후보 도서관 더 넣기(411을 서비스에 다시 넣는 것 포함), 정해진 때마다 자동 갱신, 도서관 단위 부분 갱신, 수집기를 서비스로 옮기기, 책 묶기 기준 다시 보기
+- 흡수된 학교 7곳의 주소 변경·끄기(사용자 답을 받아 다음에 함)
+- 옛 이름으로도 찾기
+- 이름 고침 목록 밖의 회사·학교 개명 전수 확인
+- 교보 공공도서관 구독 21곳·소장형 1,182곳 변경, 등록 도서관의 `lending_model` 변경
+- Redis 등 바깥 캐시, 캐시 무게 상한, Actuator·Micrometer
+- 소장 표 나누기, 상세 주소 저장하지 않기(DB 메모리 안 4·5), 가져오기용 고유 색인 없애기
+- 도서관 목록(`GET /libraries`) 메모리 기억(ADR-0004 유지)
+- 구독형 한도 알리기, 알림, 회원 데이터의 책 번호 고쳐 쓰기, 도서관 수집 기간
+- `fetch-service/` 변경(필요해지면 보고)
 
 ## 개발 후 plan 쪽에 알려줄 것
 
-다음 `/cycle-start`의 회고 입력입니다. dev `docs/plan-feedback.md`의 새 `# 사이클 06` 절에 **무엇이 달라졌는지와 이유**를 적습니다. 사용자 발언이면 그대로 옮깁니다.
+다음 `/cycle-start`의 회고 입력입니다. dev `docs/plan-feedback.md`의 새 **`# 사이클 08`** 절에 **무엇이 달라졌는지와 이유**를 적습니다. 사용자 발언이면 그대로 옮깁니다.
 
-- 사용자 답: `signup_success` 방식, S10·S1 문구, "직접 추가" 글자, [변경]·[빼기] 위치
+- 사용자 답: 이름 고침 목록, 흡수된 학교 7곳 제안과 답, 글꼴 도구 승인, 바텀 시트 유지·되돌림, 문구 [안] 수정, 메모리 고른 값 승인
+- 측정
+  - 가져오기 #1·#2의 `step_seconds` 전체, 검색 멈춘 시간, 디스크 최대값, 표·색인 크기
+  - AC-8 가져오는 동안의 p95, AC-10 숫자와 상관도
+  - 메모리 "줄이기 전 / 뒤" 표, 캐시 통계와 고른 상한, 서비스·가져오기 `-Xmx`
 - [확인 필요] 표 각 행의 결과. 특히 다음은 꼭 적습니다.
-  - `FAILED` 기록 재처리 여부와 6단계 시험 결과
-  - `ConditionalOnAuthEnabled` 이동 결과
-  - `GET /api/v1/libraries` 응답 크기
-  - retro 문장 확인 결과
+  - AC-21 준비 문장
+  - 잠금 줄 서기
+  - pg_bigm 색인 시간
+  - 국가서지 원문 크기
 - 정한 이름과 방법
-  - 클래스·패키지 배치, 해석기 등록 방법
-  - `lockIfExists`를 `DELETE`에도 걸었는지
-  - `chosen` 줄의 `priorityGroup`
-  - 스위치 값 저장과 주소 `scope`의 관계
-  - 재시작 시험에서 listener를 실패시킨 방법
-  - 웹 파일 이름
-- 설계와 달라진 점, 새로 알게 된 제약. 예:
-  - `JoinTier` 순서 값이 밀려 생긴 영향
-  - 다음 묶음에서 `chosen` 표시가 유지되지 않는 곳
-  - 잠금 대기 시간 측정값
-  - 재시작 다시 처리가 테스트 DB에서 다른 테스트에 준 영향
-- AC 확인표(14단계)
+  - `catalog_next`, `step_seconds` 키, 수집 기간·국가서지 표·트리거 함수·changelog 파일 이름과 번호
+  - `holdingsOf` 모양, 캐시 설정 이름, 환경 변수 이름
+  - 실패 기록 칸, 지문 형식
+  - 넓은 줄을 한 번 쓰는 방법, 소장 정렬 방법
+  - 바텀 시트 되돌리는 방법
+  - 이름 고침 목록을 읽는 스크립트
+- 설계와 달라진 점, 새로 알게 된 제약
+  - 교보 11곳을 뺀 뒤 책 수 차이
+  - `SET SCHEMA`·정의 복사에서 막힌 점
+  - 본문 복사를 줄이려고 `fetch-service`를 고쳐야 했는지
+  - 계획 비교(AC-17)에서 다른 점
+- AC 확인표(12단계)

@@ -55,7 +55,7 @@
 | [ADR-0049](0049-my-library-list-and-save-api.md) | 내 도서관 화면은 도서관 공개 목록 하나로, 저장은 지역 통째로·도서관 하나씩 (`/api/v1/me/` 아래) | Accepted | 2026-10-04 | 06 |
 | [ADR-0050](0050-chosen-libraries-first-and-exempt.md) | 직접 추가한 도서관은 검색에서 맨 앞, 자격 규칙의 예외 | Accepted | 2026-10-04 | 06 |
 | [ADR-0051](0051-account-lock-and-republish.md) | 저장과 탈퇴가 겹쳐도 지워진 계정의 자료가 남지 않게 (계정 줄 잠금, 재시작 때 다시 처리) | Accepted | 2026-10-04 | 06 |
-| [ADR-0052](0052-candidate-libraries-collection-link.md) | 후보 도서관은 서비스 새 번호로, 수집 DB 번호와의 짝은 새 모듈 `collection` (seed로 넣음) | Accepted | 2026-10-05 | 07 |
+| [ADR-0052](0052-candidate-libraries-collection-link.md) | 후보 도서관은 서비스 새 번호로, 수집 DB 번호와의 짝은 새 모듈 `collection` (seed로 넣음) (ADR-0060으로 넓힘: 가져오기·짝 조회 모두 collection 안) | Accepted | 2026-10-05 | 07 |
 | [ADR-0053](0053-unsurveyed-libraries-only-when-chosen.md) | 가입 조사 상태 넷(조사함/원문 없음/소속 구성원용/종류 모름), 조사하지 않은 도서관은 직접 추가했을 때만 검색에 (ADR-0013·0050 보완) | Accepted | 2026-10-05 | 07 |
 | [ADR-0054](0054-import-all-service-libraries.md) | 가져오기는 모든 서비스 도서관의 책을, 나눠 읽어서 (사이클 04 범위 변경) | Accepted | 2026-10-05 | 07 |
 | [ADR-0055](0055-book-library-ids-precomputed.md) | 책마다 가진 도서관 번호 목록을 가져올 때 미리 계산 | Accepted | 2026-10-05 | 07 |
@@ -64,3 +64,13 @@
 | [ADR-0058](0058-library-list-whole-with-compression.md) | 내 도서관 화면의 도서관 찾기는 목록 통째로 + 응답 압축 (ADR-0049 전환 조건 정리) | Accepted | 2026-10-05 | 07 |
 | [ADR-0059](0059-library-logos.md) | 도서관 로고는 자체 로고가 있는 공공도서관만, 미리 줄인 파일, 누르면 메인 페이지, 없으면 빈 상자, DB 값으로 바로 내림, 서비스 안내 화면에 고지 | Accepted | 2026-10-05 | 07 |
 | [ADR-0060](0060-collection-owns-catalog-import.md) | 가져오기는 `collection`이 맡고(ADR-0052 넓힘, ADR-0031 위치 바꿈), 제목 다듬기 규칙은 `catalog`에 한 벌만 두고 빌려 씀 | Accepted | 2026-10-05 | 07 |
+| [ADR-0061](0061-library-extra-trusted-root.md) | 도서관 사이트 연결에만 최상위 인증 기관 하나(OISTE WISeKey Global Root GB CA)를 더 믿음 (ADR-0022 보완) | Accepted | 2026-10-05 | 07 |
+| [ADR-0062](0062-book-id-carry-over-in-catalog-load.md) | 책 번호 잇기는 `catalog`의 표 바꾸기(`CatalogLoad.replaceAll`) 안에서 SQL로 함 | Accepted | 2026-10-05 | 07 |
+| [ADR-0063](0063-candidate-final-origin-and-site-match.md) | 후보 도서관은 리다이렉트 최종 주소를 쓰고, 가져오기는 호스트·경로·쿼리로 같은 사이트를 확인 (ADR-0052 보완) | Accepted | 2026-10-05 | 07 |
+| [ADR-0064](0064-aladin-publisher-bookcube-more-logo-line.md) | 알라딘 출판사 검색 씀, 북큐브 직접 찾기 "더 보기", 로고는 이름 위 줄·없으면 안 그림 (ADR-0056·0059 일부를 바꿈) | Accepted | 2026-10-05 | 07 |
+| [ADR-0065](0065-import-write-new-tables-then-swap.md) | 가져오기는 새 표에 색인 없이 쓰고 이름 바꿔 끼움, 국가서지 결과 남기기, 소장 번호 이어 매김, 옛 표 바로 지움 (ADR-0062 보완) | Accepted (국가서지 부분은 ADR-0069, 소장 번호 부분은 ADR-0070이 바꿈) | 2026-10-11 | 08 |
+| [ADR-0066](0066-memory-reduction-structure.md) | 메모리 줄이기: 계획·소장은 필요한 줄만 읽음, 캐시 통계로 재고 상한, jcmd로 잼, 설정 자리, 응답 복사 줄임 | Accepted | 2026-10-11 | 08 |
+| [ADR-0067](0067-exclude-kyobo-rental-mixed.md) | 교보 대여·혼합 도서관 230곳은 받지도 넣지도 않음, 넣은 11곳 seed에서 지움 (ADR-0052·0054 보완) | Accepted | 2026-10-11 | 08 |
+| [ADR-0068](0068-updated-at-by-db-trigger.md) | 고친 시각(updated_at)은 모듈마다 DB 트리거가 적음 | Accepted | 2026-10-11 | 08 |
+| [ADR-0069](0069-national-bibliography-raw-and-rule-change.md) | 국가서지는 원문을 남기고 매번 다듬음(판 번호 없음), 정리 규칙을 바꿀 때 상황별로 다시 가져옴 (ADR-0065 일부를 바꿈) | Accepted | 2026-10-11 | 08 |
+| [ADR-0070](0070-holding-id-carry-over-and-gone-notice.md) | 같은 소장은 옛 소장 번호를 잇고, 빠진 책·소장은 따로 알림(`holding_not_found`) (ADR-0065 일부를 바꿈) | Accepted | 2026-10-11 | 08 |

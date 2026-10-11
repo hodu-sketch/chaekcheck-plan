@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>가져오기 시간 줄이는 길</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+svg{max-width:100%;height:auto;display:block}
+.mock{border:2px dashed var(--line);border-radius:12px;padding:14px;margin:10px 0;font-size:17px}
+.row{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;background:var(--card);flex-wrap:wrap}
+.tag{font-size:14px;border-radius:6px;padding:0 6px;background:var(--code-bg);color:var(--muted)}
+.okt{color:var(--ok);font-weight:500}.mut{color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">가져오기·교체 시간을 줄이는<br>여러 방향과 장단점입니다.</p>
+<p class="sub">말씀대로 "바꿔 끼우기"로 정하지 않고, 할 수 있는 방향 여덟 가지를 공식 문서와 dev 코드로 조사했습니다. 고르는 것은 돌아오시면 canvas에서 합니다. 원본: <code>research.md</code> 10절 (확인 2026-10-06).</p>
+
+<section class="card">
+<h2><span class="num">1</span>지금 시간이 어디서 드나</h2>
+<div class="gist">한 번 가져오는 데 36~41분이 걸리고, 그중 마지막 쓰기 단계에서 검색이 멈춥니다. 모든 단계가 차례로 돌고, 매번 처음부터 다시 합니다.</div>
+<svg viewBox="0 0 640 210" role="img" aria-label="가져오기 시간 막대">
+<text x="10" y="22" font-size="15" fill="var(--muted)">2회차 가져오기 40분 36초 (같은 사본, 2026-10-05)</text>
+<rect x="10" y="34" width="141" height="50" fill="var(--code-bg)" stroke="var(--line)"/>
+<text x="16" y="56" font-size="14" fill="var(--text)">읽기</text>
+<text x="16" y="76" font-size="13" fill="var(--muted)">9분</text>
+<rect x="151" y="34" width="100" height="50" fill="var(--code-bg)" stroke="var(--line)"/>
+<text x="157" y="56" font-size="14" fill="var(--text)">국가서지</text>
+<text x="157" y="76" font-size="13" fill="var(--muted)">6.5분</text>
+<rect x="251" y="34" width="379" height="50" fill="var(--warn-bg)" stroke="var(--warn)"/>
+<text x="257" y="56" font-size="14" fill="var(--text)">쓰기 27분</text>
+<text x="257" y="76" font-size="13" fill="var(--muted)">두 번째 읽기 + 임시 표 + 맞대기 + 옮겨 쓰기</text>
+<rect x="430" y="96" width="200" height="34" fill="var(--no-bg)" stroke="var(--no)"/>
+<text x="438" y="118" font-size="14" fill="var(--no)">이 끝부분 동안 검색 멈춤</text>
+<text x="10" y="160" font-size="14" fill="var(--text)">매번 다시 하는 것: 수집 DB 두 번 읽기, 국가서지 7.7GB 다시 풀기,</text>
+<text x="10" y="184" font-size="14" fill="var(--text)">소장 2천만 줄을 두 번 쓰기, 색인을 줄마다 고치며 다시 채우기</text>
+</svg>
+<p class="cap">막대 길이는 잰 시간 비율입니다. 검색이 멈춘 부분이 쓰기 27분 중 몇 분인지는 아직 재지 않았습니다(빨간 칸 길이는 자리만 보임).</p>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>여덟 가지 방향</h2>
+<div class="gist">"검색이 안 멈추게"와 "전체 시간을 짧게"는 서로 다른 방향이 맡습니다. 그래서 몇 개를 묶어 쓰는 게 보통입니다.</div>
+
+<div class="item">
+<h3><span class="no">A</span>새 표에 다 쓴 뒤 이름만 바꿔 끼우기</h3>
+<p>지금 표는 그대로 두고 새 표에 다 쓴 다음, 한순간에 이름을 바꿉니다.</p>
+<p class="okt">좋은 점: 검색은 이름 바꾸는 순간만 잠깐 기다림. 옛 줄이 쌓이지 않음. 되돌리기 쉬움. 책 번호 잇기와 잘 맞음. 새 표에 같은 책 줄을 붙여 쓰면 메모리 줄이기도 함께 됨</p>
+<p class="mut">아쉬운 점: 전체 시간은 혼자서는 크게 안 줄어듦. 바꾸는 동안 디스크가 두 벌. 색인 이름을 DB 구조 파일과 맞춰 둘 장치가 필요</p>
+</div>
+
+<div class="item">
+<h3><span class="no">B</span>바뀐 줄만 고치기</h3>
+<p>새 사본과 지금 표를 비교해 새 것만 넣고, 없어진 것만 지웁니다.</p>
+<p class="okt">좋은 점: 바뀐 게 적으면 가장 빠름. 검색이 멈추지 않음. 소장 번호도 그대로 남음</p>
+<p class="mut">아쉬운 점: <b>옛 줄이 쌓임</b> — 9월 30일에 "데드 튜플 쌓이는게 싫어서"라고 하신 바로 그것. 같은 책 묶기가 전체를 보므로 책 표도 매번 바뀜. 붙여 둔 책 줄이 다시 흩어짐</p>
+</div>
+
+<div class="item">
+<h3><span class="no">C</span>도서관마다 표를 나눠 두기 (파티션)</h3>
+<p>소장 표를 도서관 2,650곳으로 쪼개, 한 도서관만 통째로 갈아 끼웁니다.</p>
+<p class="okt">좋은 점: 도서관 하나만 바꿀 때 아주 빠르고 옛 줄도 안 쌓임</p>
+<p class="mut">아쉬운 점: 책 화면은 "이 책을 가진 모든 도서관"을 읽어서 2,650조각을 다 뒤져야 함 → 검색이 느려질 위험이 큼. 공식 문서도 조각 수천 개는 경계선이라고 함. <b>권하지 않음</b></p>
+</div>
+
+<div class="item">
+<h3><span class="no">D</span>색인 없이 넣고, 다 넣은 뒤 색인 만들기</h3>
+<p>PostgreSQL 공식 문서가 대량 넣기에 권하는 방법입니다(줄마다 색인을 고치는 것보다 나중에 한 번에 만드는 게 빠름). 색인은 여러 일꾼이 동시에 만들 수 있습니다.</p>
+<p class="okt">좋은 점: 쓰기 단계에서 효과가 가장 클 것으로 봄. 공식 권장</p>
+<p class="mut">아쉬운 점: 빈 새 표에서만 의미 있음 → A와 함께 써야 함. 혼자 쓰면 색인 만드는 동안에도 검색이 멈춤</p>
+</div>
+
+<div class="item">
+<h3><span class="no">E</span>같은 일을 다시 하지 않기 (국가서지 결과 남기기)</h3>
+<p>국가서지 파일 7.7GB를 매번 처음부터 풀고 있습니다. 한 번 푼 결과를 남겨 두고, 파일이 같으면 다시 씁니다.</p>
+<p class="okt">좋은 점: 6.5~9분이 거의 없어질 것으로 봄. 고치는 곳이 가져오기 모듈 안. 결과가 똑같음</p>
+<p class="mut">아쉬운 점: 글자 정리 규칙이 바뀌면 다시 만들어야 함(판 번호 표시 필요). 남긴 결과의 크기는 아직 모름</p>
+</div>
+
+<div class="item">
+<h3><span class="no">F</span>Java 쪽에서 동시에·덜 읽기</h3>
+<p>국가서지 파일들을 동시에 풀기, 수집 DB 두 번째 읽기 없애기, 서비스에 없는 도서관 줄(약 7%)을 처음부터 안 읽기.</p>
+<p class="okt">좋은 점: 코드만 고침</p>
+<p class="mut">아쉬운 점: 어디가 진짜 느린지(수집 DB 읽기인지 글자 정리인지) 아직 모름. 두 번째 읽기를 없애면 큰 임시 파일이 필요</p>
+</div>
+
+<div class="item">
+<h3><span class="no">G</span>가져오기 때만 쓰는 색인 없애기</h3>
+<p>검색이 안 쓰는 색인 하나(1,075MB)를 없앱니다.</p>
+<p class="okt">좋은 점: 고칠 색인이 하나 줄고 약 1GB 줄어듦</p>
+<p class="mut">아쉬운 점: 같은 도서관 책 코드가 두 번 들어가도 DB가 막아 주지 않음. 책 번호 맞대기가 느려질 수도 있음(재 봐야 앎)</p>
+</div>
+
+<div class="item">
+<h3><span class="no">H</span>다른 DB에서 가져온 뒤 옮기기</h3>
+<p>따로 띄운 DB에서 다 만든 뒤 서비스 DB로 복사합니다.</p>
+<p class="mut">지금 규모에는 지나침: 옮기는 단계가 결국 A+D와 같은 일을 다시 함. 서버도 한 대. <b>권하지 않음</b></p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>한눈에 비교</h2>
+<table>
+<tr><th>방향</th><th>전체 시간</th><th>검색 멈춤</th><th>추천</th></tr>
+<tr><td>A 바꿔 끼우기</td><td>비슷</td><td class="okt">거의 없음</td><td class="okt">○</td></tr>
+<tr><td>B 바뀐 것만</td><td>바뀐 양 따라</td><td class="okt">없음</td><td>×(옛 줄)</td></tr>
+<tr><td>C 도서관별 조각</td><td>부분 교체만 빠름</td><td class="okt">없음</td><td>×</td></tr>
+<tr><td>D 색인 나중에</td><td class="okt">쓰기 단계 크게</td><td>A와 함께면 없음</td><td class="okt">○ (A와)</td></tr>
+<tr><td>E 국가서지 남기기</td><td class="okt">6.5~9분 ↓</td><td>상관없음</td><td class="okt">○</td></tr>
+<tr><td>F 동시에·덜 읽기</td><td>일부</td><td>상관없음</td><td>재 보고</td></tr>
+<tr><td>G 색인 없애기</td><td>조금</td><td>—</td><td>재 보고</td></tr>
+<tr><td>H 다른 DB</td><td>안 줄거나 늘어남</td><td>옮길 때</td><td>×</td></tr>
+</table>
+<p class="cap">"줄어드는 시간"은 모두 코드와 공식 문서로 본 추정이고, 잰 값이 아닙니다.</p>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>묶어서 고르는 안 (단순한 것부터)</h2>
+<div class="gist">추천은 2번 묶음입니다. 검색이 멈추지 않으면서 전체 시간도 6~9분쯤 줄 것으로 봅니다.</div>
+<table>
+<tr><th>묶음</th><th>무엇</th><th>얻는 것</th></tr>
+<tr><td>1번</td><td>A + D: 새 표에 색인 없이 쓰고, 색인까지 만든 뒤 이름 바꾸기</td><td>검색 멈춤이 거의 없어짐. 같은 책 줄 붙이기도 함께</td></tr>
+<tr><td class="okt">2번 (추천)</td><td>1번 + E: 국가서지 푼 결과 남기기</td><td>위 + 전체 시간 6~9분쯤 ↓</td></tr>
+<tr><td>3번</td><td>2번 + 단계별 시간을 잰 뒤 가장 느린 곳(F, G 등)만 더 고침</td><td>위 + 더 줄어듦(얼마나는 재 봐야 앎)</td></tr>
+</table>
+<p>먼저 해야 할 일: 쓰기 27분이 어디서 드는지 단계별로 재는 것. dev에게 시간 기록을 넣어 같은 사본으로 한 번 더 돌리게 하면 됩니다.</p>
+<p>함께 정할 것: A를 고르면 소장 번호를 "지난번 최대 다음부터" 매길지(가져오는 동안 열린 책 화면이 다른 도서관 줄을 가리키지 않게), 옛 표를 바로 지울지 한 번 남길지.</p>
+</section>
+
+<p class="foot">원본: <code>docs/cycles/08-polish-swap-memory/research.md</code> 10절, <code>architect-proposal.md</code> 결정 1. 공식 문서: PostgreSQL 18 Populating a Database, Explicit Locking, ALTER TABLE, MERGE, Routine Vacuuming, Table Partitioning, CREATE INDEX, pg_restore (확인 2026-10-06). 작성 2026-10-06.</p>
+</main>
+</body>
+</html>

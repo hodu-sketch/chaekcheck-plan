@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사라진 책 안내</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+svg{max-width:100%;height:auto;display:block}
+.mock{border:2px dashed var(--line);border-radius:12px;padding:14px;margin:10px 0;font-size:17px}
+.row{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;background:var(--card);flex-wrap:wrap}
+.tag{font-size:14px;border-radius:6px;padding:0 6px;background:var(--code-bg);color:var(--muted)}
+.okt{color:var(--ok);font-weight:500}.mut{color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">소장 번호는 이어 쓰기로 정했습니다.<br>책이 사라졌을 때 보일 말을 정합니다.</p>
+<p class="sub">"승인인데 '책'정보가 사라진 경우에 맞는 메세지 나와야 해"라고 하셨습니다. 새 목록으로 바꿔 끼운 뒤 사라지는 경우는 두 가지라, 각각 보일 말을 제안합니다. 끝에 이 결정을 남길 ADR-0070 초안이 있습니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>사라지는 두 경우</h2>
+<svg viewBox="0 0 640 170" role="img" aria-label="두 경우">
+<rect x="10" y="10" width="300" height="70" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/>
+<text x="22" y="34" font-size="13" font-weight="700" fill="var(--text)">가. 책 자체가 목록에서 빠짐</text>
+<text x="22" y="54" font-size="12" fill="var(--text)">어느 도서관에도 더 없음</text>
+<text x="22" y="72" font-size="11" fill="var(--muted)">책 화면을 다시 열거나 새로 고칠 때</text>
+<rect x="330" y="10" width="300" height="70" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/>
+<text x="342" y="34" font-size="13" font-weight="700" fill="var(--text)">나. 한 도서관에서만 빠짐</text>
+<text x="342" y="54" font-size="12" fill="var(--text)">다른 도서관에는 아직 있음</text>
+<text x="342" y="72" font-size="11" fill="var(--muted)">열린 책 화면이 "더 보기"로 물을 때</text>
+<text x="22" y="110" font-size="12" fill="var(--text)">지금: "책을 찾을 수 없어요 · 처음으로"</text>
+<text x="22" y="130" font-size="11" fill="var(--muted)">이유가 안 보임</text>
+<text x="342" y="110" font-size="12" fill="var(--text)">지금: 도서관이 없을 때와 같은 실패 코드</text>
+<text x="342" y="130" font-size="11" fill="var(--muted)">(library_not_found), 사정이 따로 안 보임</text>
+<text x="10" y="160" font-size="11" fill="var(--muted)">근거: dev BookPage.tsx 100~104행, BookAvailabilityBatchStreamController.java 25행</text>
+</svg>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>보일 말</h2>
+<p class="alt">아래 그림은 자리와 순서만 보입니다. 모양·색은 지금 화면 그대로입니다.</p>
+<div class="item">
+<h3><span class="no">1</span>가. 책 자체가 빠졌을 때: "책을 찾을 수 없어요" 아래에 "도서관 목록을 새로 받으면서 빠진 책일 수 있어요. 다시 검색해 주세요." [안]</h3>
+<div style="display:flex;gap:16px;flex-wrap:wrap">
+<div style="flex:1 1 280px;border:1px solid var(--line);border-radius:10px;padding:14px;background:var(--card)"><p style="font-size:13px;color:var(--muted);margin:0">PC·태블릿</p><p style="margin:6px 0;font-weight:700">책을 찾을 수 없어요</p><p style="margin:0;font-size:16px">도서관 목록을 새로 받으면서 빠진 책일 수 있어요. 다시 검색해 주세요.</p><p style="margin:6px 0 0;color:var(--accent);font-size:16px">처음으로</p></div>
+<div style="flex:0 1 200px;border:1px solid var(--line);border-radius:18px;padding:14px;background:var(--card)"><p style="font-size:13px;color:var(--muted);margin:0">폰</p><p style="margin:6px 0;font-weight:700;font-size:16px">책을 찾을 수 없어요</p><p style="margin:0;font-size:14px">도서관 목록을 새로 받으면서 빠진 책일 수 있어요. 다시 검색해 주세요.</p><p style="margin:6px 0 0;color:var(--accent);font-size:14px">처음으로</p></div>
+</div>
+<p class="alt"><b>다른 선택</b> 지금 문구 그대로: 왜 없는지 모름.</p>
+</div>
+<div class="item">
+<h3><span class="no">2</span>나. 한 도서관에서만 빠졌을 때: 서버가 새 코드 <code>holding_not_found</code>로 알리고, 그 도서관 줄에 "이 도서관 목록에서 빠졌어요" [안]</h3>
+<div style="display:flex;gap:16px;flex-wrap:wrap">
+<div style="flex:1 1 280px;border:1px solid var(--line);border-radius:10px;padding:14px;background:var(--card)"><p style="font-size:13px;color:var(--muted);margin:0">PC·태블릿 (책 화면 도서관 줄)</p><p style="margin:6px 0;font-size:16px"><b>○○시립도서관</b> · 교보</p><p style="margin:0;font-size:15px;color:var(--muted)">이 도서관 목록에서 빠졌어요</p></div>
+<div style="flex:0 1 200px;border:1px solid var(--line);border-radius:18px;padding:14px;background:var(--card)"><p style="font-size:13px;color:var(--muted);margin:0">폰</p><p style="margin:6px 0;font-size:14px"><b>○○시립도서관</b></p><p style="margin:0;font-size:13px;color:var(--muted)">이 도서관 목록에서 빠졌어요</p></div>
+</div>
+<p>도서관 자체가 꺼졌을 때(<code>library_not_found</code>)와 나눠서, 화면이 맞는 말을 고를 수 있게 합니다. 응답 모양(이벤트)은 그대로고 코드 값만 하나 늘어납니다.</p>
+<p class="alt"><b>다른 선택</b> 그 줄을 조용히 빼기: 왜 줄었는지 모름. 지금처럼 같은 실패로: 사이트 오류처럼 보임.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>결정 기록</h2>
+<div class="item">
+<h3><span class="no">3</span>ADR-0070 초안: 같은 소장은 옛 소장 번호를 잇고, 빠진 책·소장은 따로 알린다 (ADR-0065 한 줄을 바꿈) [안]</h3>
+<p><b>결정.</b></p>
+<ul>
+<li>가져오기에서 (도서관, <code>item_key</code>)가 같은 소장은 옛 소장 번호(<code>holding.id</code>)를 그대로 쓴다. 새로 생긴 소장만 옛 최대 번호 다음부터 매긴다. 책 번호 잇기(ADR-0062)와 같은 맞대기 결과를 쓴다</li>
+<li>바꿔 끼운 뒤 옛 화면의 요청: 남아 있는 소장은 정상으로 답한다. 빠진 소장은 <code>holding_not_found</code>, 빠진 책은 지금의 <code>book_not_found</code>로 답하고 화면은 위 1·2의 말을 보인다</li>
+<li>ADR-0065의 "소장 번호는 지난번 최대 번호 다음부터 매긴다"를 바꾼다 (ADR-0065 상태 줄에 표시)</li>
+</ul>
+<p><b>이유.</b> 사용자: "이건 중간 단계를 좀 넣어두는게 어떨까... 매핑 db이런걸로 그럴려면 요청에 버전 번호를 넣어야 할 것 같은데" → 이어 쓰기 안에 "승인인데 '책'정보가 사라진 경우에 맞는 메세지 나와야 해" (2026-10-11).</p>
+<p class="alt"><b>검토한 대안</b> 번호 맞춤 표(옛→새, 버전 번호 불필요): 표 약 2천만 줄과 지울 규칙이 더 생김. 그대로 "찾을 수 없음": 바꿔 끼울 때마다 열린 화면이 실패.</p>
+</div>
+</section>
+<p class="foot">원본: <code>2026-10-11-holding-id-followup.html</code>, 설계 검토 7번, ADR-0062·0065. 작성 2026-10-11.</p>
+</main>
+</body>
+</html>

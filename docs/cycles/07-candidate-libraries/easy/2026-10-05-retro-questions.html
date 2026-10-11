@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 07 회고 질문</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+svg{max-width:100%;height:auto;display:block}
+.mock{border:2px dashed var(--line);border-radius:12px;padding:14px;margin:10px 0;font-size:17px}
+.row{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;background:var(--card);flex-wrap:wrap}
+.tag{font-size:14px;border-radius:6px;padding:0 6px;background:var(--code-bg);color:var(--muted)}
+.okt{color:var(--ok);font-weight:500}.mut{color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">사이클 07 개발이 끝났습니다.<br>회고에 적을 이유와 고칠 문장 여섯 가지를 정해 주세요.</p>
+<p class="sub">dev는 인계서 0~18단계를 모두 마쳤습니다. 개발 중에 바뀐 것은 대부분 dev 보고에 사용자의 말이 남아 있어 그대로 옮깁니다. 여기에는 이유가 남지 않은 것과 plan이 문장을 고쳐야 하는 것만 모았습니다. 이유를 알려 주실 때는 칩의 <b>기타</b>에 적어 주세요.</p>
+
+<section class="card">
+<h2><span class="num">1</span>개발 중에 바뀐 화면의 이유</h2>
+<div class="gist">아래 세 가지는 화면이 바뀐 것은 기록되어 있지만, 왜 바꿨는지 사용자의 말이 남아 있지 않습니다.</div>
+
+<div class="item">
+<h3><span class="no">1</span>검색 범위의 기본값이 "가입할 수 있는 곳"이 됨 [안]</h3>
+<p>예전에는 검색 범위 스위치의 기본값이 "전체 도서관"이었습니다. 지금은 아래처럼 처음부터 가입할 수 있는 쪽이 골라져 있고, 그 버튼이 왼쪽에 있습니다.</p>
+<table>
+<tr><th>이용자</th><th>처음 골라진 쪽</th></tr>
+<tr><td>로그인 전, 지역 없음</td><td>누구나 가입</td></tr>
+<tr><td>로그인 전, 지역 있음</td><td>가입 가능한 곳</td></tr>
+<tr><td>로그인 후</td><td>내 도서관 (비어 있어도)</td></tr>
+</table>
+<p>그래서 로그인하지 않은 사람의 첫 검색이 사이클 06에서 정한 완료 기준("로그인 전 검색 요청은 사이클 05와 같다")과 달라졌습니다.</p>
+<p>제안: 회고에 "사용자 요청, <code>[이유 미확인]</code>"으로 적고, 사이클 06 완료 기준 문장에 "사이클 07에서 바뀜"을 덧붙입니다.</p>
+<p class="alt"><b>다른 선택</b> 바꾼 이유를 기타에 적어 주시면 그 말을 그대로 적습니다.</p>
+</div>
+
+<div class="item">
+<h3><span class="no">2</span>검색 조건을 이 브라우저가 기억함 [안]</h3>
+<p>검색 화면에서 고른 것이 다음에 열어도 그대로 남습니다. 남는 것은 범위, 방문 없이 가입, 지금 빌릴 수 있는 책만, 정렬, 완전 일치, 옮긴이·그림·엮은이입니다. 다른 사람이 보낸 검색 주소를 열면 주소에 적힌 값이 먼저입니다.</p>
+<p>예전 계획 문서에는 "완전 일치와 역할은 검색 조건이라 저장하지 않음"으로 적혀 있었습니다.</p>
+<p>제안: 회고에 "사용자 요청, <code>[이유 미확인]</code>"으로 적고 예전 문장을 고칩니다.</p>
+<p class="alt"><b>다른 선택</b> 이유를 기타에 적어 주세요.</p>
+</div>
+
+<div class="item" style="background:var(--accent-bg);border-radius:10px;padding:16px 18px">
+<h3>질문: 설정 창의 범위·방문 없이 가입·보기 방식·직접 찾기도 기억하나요?</h3>
+<p><b>네, 모두 기억합니다.</b> 위 설명은 사이클 07에 새로 더한 것만 적어서 빠져 보였습니다. dev 웹 코드(<code>web/src/features/search/searchSettings.ts</code>, 2026-10-05 읽음)를 보면, 설정 창의 네 가지와 결과 화면의 선택이 모두 이 브라우저의 같은 자리에 저장됩니다.</p>
+<table>
+<tr><th>화면에서 고르는 것</th><th>기억하기 시작한 때</th></tr>
+<tr><td>보기 방식 (바로 보기 / 책 먼저 고르기)</td><td>사이클 04부터</td></tr>
+<tr><td>도서관에서 직접 찾기 (끔 / 켬)</td><td>사이클 04부터</td></tr>
+<tr><td>범위, 로그인 후 (전체 도서관 / 내 도서관)</td><td>사이클 06부터</td></tr>
+<tr><td>범위, 로그인 전 (전체 도서관 / 누구나 가입·가입 가능한 곳)</td><td>사이클 07부터</td></tr>
+<tr><td>방문 없이 가입</td><td>사이클 07부터</td></tr>
+<tr><td>지금 빌릴 수 있는 책만 / 전체, 정렬, 상세검색의 완전 일치·옮긴이·그림·엮은이</td><td>사이클 07부터</td></tr>
+</table>
+<p>검색어는 기억하지 않습니다. 다른 사람이 보낸 검색 주소를 열면, 주소에 적힌 값이 기억한 값보다 먼저입니다.</p>
+<p>코드만 읽었고 화면에서 직접 열어 보지는 않았습니다. 실제로 써 보니 기억하지 않는 것이 있으면 무엇인지 알려 주세요. 사이클 08에서 고칠 일로 적겠습니다.</p>
+<p>이대로 맞으면 위 칩에서 고르거나, 기억하게 한 이유를 기타에 적어 주세요.</p>
+</div>
+
+<div class="item">
+<h3><span class="no">3</span>로고를 이름 위 줄에 두고, 로고가 없으면 아무것도 그리지 않음 [안]</h3>
+<p>설계에서는 로고를 이름 앞에 두고, 로고가 없는 도서관은 같은 크기의 빈 상자를 그리기로 했습니다(완료 기준 AC-20). 개발 중에 바뀌어 지금은 로고가 이름 위 줄에 있고, 로고가 없으면 그 줄이 없습니다.</p>
+<div class="mock">
+<div class="row"><span>[로고]<br><b>로고가 있는 도서관</b> · 보유 N</span><span class="okt">지금 빌릴 수 있음</span></div>
+<div class="row"><span><b>로고가 없는 도서관</b> · 보유 N</span><span class="okt">지금 빌릴 수 있음</span></div>
+</div>
+<p class="cap">결과 카드의 도서관 줄. 위는 로고가 있는 곳, 아래는 없는 곳입니다. 자리와 순서만 보이는 그림입니다.</p>
+<p>그래서 로고가 없는 도서관은 로고를 눌러 홈페이지로 갈 수 없습니다. 카드의 "홈페이지 (새 창)" 링크는 그대로 있습니다.</p>
+<p>제안: 회고에 "사용자 요청, <code>[이유 미확인]</code>"으로 적고 AC-20 문장을 지금 화면대로 고칩니다.</p>
+<p class="alt"><b>다른 선택</b> 이유를 기타에 적어 주세요.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>지킬 수 없게 된 완료 기준 두 개</h2>
+<div class="gist">후보 도서관이 들어오면서 "이전과 같다"는 기준 두 개가 그대로는 맞지 않게 되었습니다. 코드는 정한 규칙대로 만들어졌고, 문장을 고칠지 정해야 합니다.</div>
+
+<div class="item">
+<h3><span class="no">4</span>로그인 전 검색은 가입 조사를 한 공공도서관만 찾는다로 고침 (AC-15) [안]</h3>
+<p>완료 기준 AC-15는 "로그인하지 않고 직접 넣지 않은 사람의 검색 결과는 이 사이클 전과 같다"입니다. 그런데 가입 조사가 된 후보 도서관 약 107곳은 정한 규칙(ADR-0053)대로 누구의 검색에나 들어갑니다.</p>
+<table>
+<tr><th></th><th>사이클 전</th><th>지금</th></tr>
+<tr><td>로그인 전, 지역 없음일 때 찾는 도서관</td><td>278곳</td><td>385곳</td></tr>
+<tr><td>"사랑" 검색 결과</td><td>8,433권</td><td>9,782권</td></tr>
+</table>
+<p>dev는 후보 도서관을 잠시 끄고 같은 검색을 해서, 등록 도서관 부분이 같은지로 확인했습니다.</p>
+<p>제안: 문장을 "로그인 전 결과 중 <b>등록 도서관 부분</b>은 이 사이클 전과 같다"로 고칩니다.</p>
+<p class="alt"><b>다른 선택</b> AC-15를 지우고 "ADR-0053으로 대신함"이라고 적습니다. 문장은 단순해지지만, 등록 도서관 부분을 따로 확인했다는 기록이 빠집니다.</p>
+<p class="rec">추천: 문장 고치기(dev가 실제로 확인한 기준과 같음)</p>
+</div>
+
+<div class="item" style="background:var(--accent-bg);border-radius:10px;padding:16px 18px">
+<h3>질문: 후보 도서관도 이제 서비스에 들어왔는데 "등록 도서관"이라고 부르는 게 맞나요?</h3>
+<p><b>맞지 않습니다. 이름을 "사이클 07 전부터 있던 도서관(278곳)"으로 바꾸겠습니다.</b> 이제 후보 도서관 2,394곳도 서비스 도서관 표에 들어 있어서, "등록 도서관"으로는 둘을 가를 수 없습니다.</p>
+<table>
+<tr><th>부르는 이름</th><th>뜻</th><th>수</th></tr>
+<tr><td>사이클 07 전부터 있던 도서관</td><td>사이클 06까지 서비스에 있던 도서관 (서비스 번호 1~280 중 켜진 곳)</td><td>278곳</td></tr>
+<tr><td>사이클 07에 넣은 도서관</td><td>후보였다가 이번에 서비스에 넣은 도서관 (서비스 번호 281~2674)</td><td>2,394곳</td></tr>
+</table>
+<p>바꾼 뒤 AC-15 문장은 이렇게 됩니다: "로그인 전 결과 중 <b>사이클 07 전부터 있던 도서관 부분</b>은 이 사이클 전과 같다". 아래 AC-6(#5)의 "등록 도서관"도 같은 이름으로 읽어 주세요. 회고와 <code>docs/current/</code>에도 이 이름을 씁니다.</p>
+<p>이 이름으로 괜찮으면 위 칩에서 승인을, 다른 이름이 좋으면 기타에 적어 주세요.</p>
+</div>
+
+<div class="item" style="background:var(--accent-bg);border-radius:10px;padding:16px 18px">
+<h3>질문: "공공전자도서관"이라고 부르면 어떤가요?</h3>
+<p><b>AC-15에서 가르려는 두 무리는 "공공"인지 아닌지로 나뉘지 않아서, 이 문장에는 맞지 않습니다.</b> 사이클 07에 넣은 도서관 중에도 공공도서관이 약 107곳 있고, 바로 이 107곳 때문에 로그인 전 결과가 달라졌습니다.</p>
+<table>
+<tr><th></th><th>사이클 07 전부터 있던 도서관</th><th>사이클 07에 넣은 도서관</th></tr>
+<tr><td>공공도서관</td><td>대부분 (시·군·구 도서관, 교육청 도서관 등)</td><td>약 107곳 (가입 조사가 된 곳 90 + 가입 안내를 못 찾은 곳 17). <b>로그인 전 검색에 들어감</b></td></tr>
+<tr><td>학교·대학·회사·기관 등</td><td>일부</td><td>약 2,287곳. 직접 추가했을 때만 검색에 들어감</td></tr>
+</table>
+<p class="cap">"공공전자도서관 부분은 이전과 같다"로 쓰면, 새로 들어온 공공도서관 107곳 때문에 틀린 문장이 됩니다.</p>
+<p>그래서 AC-15에는 언제부터 있었는지로 가르는 이름("사이클 07 전부터 있던 도서관")을 권합니다. "공공전자도서관"은 화면이나 서비스 안내에서 도서관 종류를 부를 때 쓰기 좋은 말이라, 그런 자리에서 따로 정하면 됩니다.</p>
+<p>사이클 07 전부터 있던 도서관 중 공공이 아닌 곳이 정확히 몇 곳인지는 세어 보지 않았습니다(확인 못 함).</p>
+</div>
+
+<div class="item" style="background:var(--ok-bg);border-radius:10px;padding:16px 18px">
+<h3>질문: 중요한 건 "로그인 전 검색은 공공도서관을 찾는다"는 것 아닌가요? "이 사이클 전과 같다"는 말은 이제 맞지 않잖아요.</h3>
+<p><b>맞습니다. "이전과 같다"로 비교하지 말고, 로그인 전 검색이 무엇을 찾는지를 그대로 적는 문장으로 바꾸겠습니다.</b> 로그인 전 결과는 사이클 07 전과 같지 않고(278곳 → 385곳), 그게 정한 규칙(ADR-0053)대로입니다.</p>
+<p>새 AC-15 문장 제안:</p>
+<div class="chg">로그인하지 않고 직접 추가한 도서관도 없는 사람의 검색은 <b>가입 조사를 한 공공도서관</b>(지금 385곳)만 찾는다. 학교·대학·회사·기관처럼 구성원만 쓰는 도서관과 종류를 모르는 도서관은 찾지 않고, 그 사이트에 요청도 보내지 않는다.</div>
+<table>
+<tr><th>로그인 전 검색에</th><th>도서관</th><th>수</th></tr>
+<tr><td class="okt">들어감</td><td>사이클 07 전부터 있던 도서관 (국회도서관, 교육청 도서관 포함)</td><td>278곳</td></tr>
+<tr><td class="okt">들어감</td><td>이번에 넣은 공공도서관 (가입 조사가 된 곳 90, 가입 안내를 못 찾은 곳 17)</td><td>107곳</td></tr>
+<tr><td>안 들어감</td><td>구성원만 쓰는 도서관, 종류를 모르는 도서관 (직접 추가하면 들어감)</td><td>2,287곳</td></tr>
+</table>
+<p class="cap">dev가 확인한 값: 직접 추가 없이 검색했을 때 385곳, 구성원용·종류 모름 0곳, 그 사이트로 간 요청 0건(AC-4 확인, 2026-10-05). 꺼진 도서관 3곳(135, 2194, 2198)을 끈 뒤의 수는 다시 세지 않았습니다(확인 못 함).</p>
+<p>이렇게 하면 "사이클 07 전부터 있던 도서관"이라는 새 이름도 AC-15에는 필요 없습니다. 이 이름은 AC-6(사이클 07 전부터 있던 도서관만 쓰는 사람의 결과 비교)에만 남습니다.</p>
+<p><b>위 #4 칩을 승인하시면 이 새 문장으로 고칩니다.</b> 다르게 쓰고 싶으면 기타에 적어 주세요.</p>
+</div>
+
+<div class="item">
+<h3><span class="no">5</span>같은 책 묶음이 합쳐져 생긴 차이는 받아들임 (AC-6) [안]</h3>
+<p>AC-6은 "등록 도서관만 쓰는 사람의 결과는 이전과 같다"입니다. dev 비교 결과는 아래와 같습니다.</p>
+<table>
+<tr><th>비교한 것</th><th>결과</th></tr>
+<tr><td>찾는 도서관 목록과 순서</td><td class="okt">같음</td></tr>
+<tr><td>등록 도서관이 가진 책 (도서관, 책 코드)</td><td class="okt">같음 (새로 뺀 교보 동영상 391줄만 차이)</td></tr>
+<tr><td>책 목록 응답 57개</td><td>19개 같음, 38개 다름</td></tr>
+</table>
+<p>다른 이유는 이렇습니다. 후보 도서관의 책이 같은 책 묶기에 함께 들어가, 따로였던 등록 도서관 책 묶음이 하나로 이어졌습니다. 그래서 권수가 0~2.5% 줄고(예: "사랑" 8,433 → 8,247권), 대표 제목이 바뀐 책이 있습니다(예: "리심 (상)" → "리심 (상) (파리의 조선궁녀)").</p>
+<p>제안: "도서관과 가진 책은 같고, 묶음이 합쳐져 생긴 권수·대표 제목·순서 차이는 받아들임"으로 닫습니다. 인계서에도 "대표 제목·묶음이 조금 바뀔 수 있음"을 알고 받아들인 한계로 적어 두었습니다.</p>
+<p class="alt"><b>다른 선택</b> 다음 사이클에서 묶음이 합쳐진 책을 더 살펴봅니다. 잘못 합쳐진 책이 있는지 알 수 있지만, 그만큼 일이 늘어납니다.</p>
+<p class="rec">추천: 받아들이고 닫기</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>dev가 스스로 정한 것</h2>
+<div class="gist">아래 세 가지는 인계서가 dev에게 맡긴 범위 안에서 dev가 정했습니다. 회고에는 "<code>[이유 미확인: dev가 정함]</code>"과 dev가 적은 설명을 함께 적으려고 합니다.</div>
+
+<div class="item">
+<h3><span class="no">6</span>dev가 정한 세 가지를 회고에 그대로 적음 [안]</h3>
+<table>
+<tr><th>정한 것</th><th>dev가 적은 설명</th></tr>
+<tr><td>검색 대상 도서관이 50곳을 넘으면 "가진 도서관 번호" 색인을 쓰지 않고 거름 (50은 아직 제안 값)</td><td>385곳일 때 색인을 쓰면 첫 쪽이 1.4초 걸려 1초 목표를 넘음. 바꾼 뒤 가장 느린 첫 쪽 393ms, 결과는 같음</td></tr>
+<tr><td>도서관별 수집 기준일 표에서 가져오기 기록 번호 칸을 지움</td><td>검색이 이 칸을 읽지 않고, 가져오기 기록은 새 모듈이 가짐</td></tr>
+<tr><td>로그인 직후 "브라우저에 저장된 것을 계정에 저장할까요?"에 답한 기록을 지역과 도서관이 함께 씀</td><td>한 번의 질문으로 둘을 함께 묻기 때문</td></tr>
+</table>
+<p class="alt"><b>다른 선택</b> 바꾸고 싶은 것이 있으면 기타에 적어 주세요.</p>
+</div>
+
+<div class="item" style="background:var(--accent-bg);border-radius:10px;padding:16px 18px">
+<h3>질문: 세 가지가 각각 언제, 왜 생긴 일인가요?</h3>
+<p><b>셋 다 인계서가 "방법은 dev가 정하고 알려 달라"고 맡긴 자리에서 생겼습니다.</b> 이용자가 화면에서 겪는 때는 첫째와 셋째뿐이고, 둘째는 운영자가 책 목록을 가져올 때만 쓰입니다.</p>
+
+<p><b>① 검색창에서 책을 찾을 때 — 찾는 도서관이 50곳을 넘으면 다른 길로 찾음</b></p>
+<p>언제: 첫 화면에서 검색어를 넣고 결과 목록 첫 쪽을 받을 때마다입니다. 우리 서버는 "제목이 맞는 책" 중에서 "찾는 도서관 중 한 곳이라도 가진 책"만 골라야 합니다.</p>
+<svg viewBox="0 0 860 250" role="img" aria-label="두 가지 찾는 길">
+<rect x="10" y="10" width="400" height="230" rx="12" fill="var(--card)" stroke="var(--line)"/>
+<text x="30" y="44" font-size="20" font-weight="700" fill="var(--text)">길 1: 도서관 쪽에서 먼저 찾기</text>
+<text x="30" y="80" font-size="17" fill="var(--text)">찾는 도서관 385곳이 가진 책</text>
+<text x="30" y="106" font-size="17" fill="var(--no)">→ 약 80만 권을 먼저 모음</text>
+<text x="30" y="142" font-size="17" fill="var(--text)">그중 제목이 맞는 책</text>
+<text x="30" y="178" font-size="17" fill="var(--no)">첫 쪽 약 1.4초 (1초 목표 넘음)</text>
+<text x="30" y="214" font-size="16" fill="var(--muted)">도서관이 몇 곳뿐이면 이 길이 빠름</text>
+<rect x="450" y="10" width="400" height="230" rx="12" fill="var(--card)" stroke="var(--line)"/>
+<text x="470" y="44" font-size="20" font-weight="700" fill="var(--text)">길 2: 제목 쪽에서 먼저 찾기</text>
+<text x="470" y="80" font-size="17" fill="var(--text)">제목이 맞는 책</text>
+<text x="470" y="106" font-size="17" fill="var(--ok)">→ 약 2만 권만 모음</text>
+<text x="470" y="142" font-size="17" fill="var(--text)">그중 찾는 도서관이 가진 책</text>
+<text x="470" y="178" font-size="17" fill="var(--ok)">첫 쪽 0.4초 안</text>
+<text x="470" y="214" font-size="16" fill="var(--muted)">도서관이 많을 때 이 길이 빠름</text>
+</svg>
+<p class="cap">"사랑"을 로그인 전·지역 없음으로 찾았을 때 dev가 잰 값입니다. 결과 책은 두 길이 같습니다.</p>
+<p>왜: 처음에는 늘 길 1로 만들었는데, 사이클 07에 도서관이 늘어 로그인 전 검색 대상이 385곳이 되자 1초 목표를 넘었습니다(dev 15단계 측정). 그래서 dev가 "50곳을 넘으면 길 2"로 나눴습니다. 직접 추가 몇 곳만 찾는 경우처럼 도서관이 적으면 길 1이 그대로 쓰입니다. 50이라는 경계는 재서 고른 값이 아니라 제안 값입니다.</p>
+
+<p><b>② 운영자가 책 목록을 가져올 때 — 기록 번호 칸 하나를 지움</b></p>
+<p>언제: 이용자 화면과는 상관없습니다. 수집 DB 사본에서 책 목록을 서비스 DB로 가져올 때만 쓰입니다.</p>
+<p>왜: 서비스 DB에는 "도서관마다 언제 수집한 목록인지"를 적는 표가 있고(검색 결과의 기준일에 씀), 그 줄마다 "몇 번째 가져오기로 들어왔는지" 번호 칸이 있었습니다. 이번에 가져오기 기록이 새 모듈(<code>collection</code>)로 옮겨 가면서, 모듈끼리는 표를 서로 잇지 않는다는 원칙 때문에 이 칸을 둘지 지울지 인계서가 dev에게 맡겼습니다. dev는 검색이 이 칸을 읽지 않으니 지웠습니다. 화면이나 결과는 달라지지 않습니다.</p>
+
+<p><b>③ 로그인 직후 "브라우저에 저장된 것을 계정에 저장할까요?" 창 — 답한 기록을 하나로</b></p>
+<p>언제: 로그인 전에 이 브라우저에서 지역이나 직접 추가 도서관을 골라 두고, 로그인했을 때 뜨는 창입니다. 한 번 답하면(저장 / 저장 안 함) 그 계정에는 이 브라우저에서 다시 묻지 않도록 브라우저가 "이 계정은 답했음"을 기억합니다.</p>
+<p>왜: 사이클 06에는 이 창이 지역만 물었고 기억도 지역용 하나였습니다. 사이클 07에서 도서관도 같은 창에서 함께 묻게 되자, dev가 기억을 따로 두지 않고 하나로 같이 쓰게 했습니다.</p>
+<p>그래서 생기는 일: 어떤 계정으로 이 창에 한 번 답했다면, 그 뒤에 이 브라우저에서 도서관을 새로 직접 추가하고 같은 계정으로 다시 로그인해도 창이 다시 뜨지 않습니다. 그 도서관은 브라우저에만 남고 계정으로 옮겨지지 않습니다. 이 동작은 dev 웹 코드(<code>web/src/features/mylibrary/regionImport.ts</code>)를 읽어서 알았고, 화면에서 직접 해 보지는 않았습니다.</p>
+<p>이 셋째 동작이 마음에 들지 않으면 기타에 적어 주세요. 다음 dev 인계서에 고칠 일로 넣겠습니다.</p>
+</div>
+
+<div class="item" style="background:var(--ok-bg);border-radius:10px;padding:16px 18px">
+<h3>질문 ②: 어느 수집에서 온 정보인지, 그 수집이 언제부터 언제까지인지는 기록해야 하지 않나요? (다시 정리)</h3>
+<p><b>가져오기 기록 한 줄에 "그 사본의 수집 기간"만 더하면 됩니다. 이번에 지운 칸이 없어도 잃는 정보는 없습니다.</b> 앞서 기록 두 가지로 나눠 써서 헷갈리게 했습니다. 다시 정리합니다.</p>
+<p><b>가져오기가 하는 일.</b> 수집 DB 사본에서 "어느 도서관이 어떤 책을 가졌는지"(도서관–책 짝)를 읽어 서비스 DB로 옮깁니다. 도서관 목록 자체(이름·주소·가입 방법)는 가져오기가 아니라 seed 파일로 따로 들어갑니다.</p>
+<p><b>그래서 하나면 되는 이유.</b> 가져올 때마다 모든 도서관의 도서관–책 짝을 통째로 바꿉니다. 서비스에 있는 짝은 전부 마지막 가져오기 한 번에서 온 것입니다. "몇 번째 가져오기에서 왔는지"를 도서관마다 따로 적을 필요가 없고, 가져오기 기록 한 줄이 그 답입니다.</p>
+<table>
+<tr><th>기록</th><th>지금</th></tr>
+<tr><td>가져오기 기록 한 줄: 원본 사본 파일 이름, 가져온 시각, 책·소장·건너뛴 수</td><td class="okt">남음 (가져올 때마다 한 줄씩 쌓임)</td></tr>
+<tr><td>도서관마다 그 책 목록을 언제 수집했는지</td><td class="okt">남음 (검색 결과 기준일에 씀)</td></tr>
+<tr><td>가져오기 기록 한 줄에 그 사본의 수집 기간 (가장 이른 ~ 가장 늦은 수집)</td><td><b>없음 → 더하기 제안</b></td></tr>
+</table>
+<p>제안: 수집 기간을 가져오기 기록에 더하는 일을 사이클 08 후보로 올립니다. 가져오기 기록은 가져오기를 하는 <code>collection</code> 모듈이 이미 쓰고 있으므로 그 줄에 칸 하나를 더하는 일입니다.</p>
+<p>도서관마다 출처를 따로 적어야 하는 때는, 나중에 도서관 단위로 따로 갱신하게 될 때입니다(backlog "책 목록 주기 갱신"). 그때 그 사이클에서 정합니다.</p>
+</div>
+
+<div class="item" style="background:var(--accent-bg);border-radius:10px;padding:16px 18px">
+<h3>질문: 정확히는 "DB에 몇 번째로 반영되었는지"가 없는 것 아닌가요? 그리고 수집 기간을 적는 게 의미가 있나요?</h3>
+<p><b>맞습니다. 빠진 것은 "도서관 줄이 몇 번째 반영으로 들어왔는지(바뀌었는지)"입니다. 수집 기간을 더하자는 앞의 제안은 거둡니다.</b></p>
+<p>서비스 DB에 데이터를 넣는(반영하는) 길은 둘입니다.</p>
+<table>
+<tr><th>무엇</th><th>반영하는 길</th><th>반영마다 번호·시각</th><th>줄마다 "어느 반영에서 왔나"</th></tr>
+<tr><td>도서관 목록, 가입 규칙, 번호 짝</td><td>seed 파일 → 서버 시작 때 Liquibase가 넣음</td><td class="okt">남음. Liquibase가 자기 기록 표에 파일(changeset)마다 적용 순서와 시각을 적음</td><td><b>안 남음.</b> 도서관 줄에는 어느 seed로 들어왔는지, 언제 마지막으로 바뀌었는지가 없음</td></tr>
+<tr><td>책 목록 (도서관–책 짝)</td><td>가져오기</td><td class="okt">남음. 가져오기 기록 한 줄씩</td><td>필요 없음. 매번 통째로 바뀌어 모두 마지막 가져오기에서 옴</td></tr>
+</table>
+<p class="cap">Liquibase 기록 표(<code>DATABASECHANGELOG</code>)의 적용 순서(<code>ORDEREXECUTED</code>)·시각(<code>DATEEXECUTED</code>) 칸: Liquibase 공식 문서 <a href="https://docs.liquibase.com/concepts/tracking-tables/databasechangelog-table.html">DATABASECHANGELOG table</a> (2026-10-05 확인).</p>
+<p><b>수집 기간 제안을 거두는 이유.</b> 도서관마다 책 목록을 언제 수집했는지는 이미 남아 있어서, 수집 기간(가장 이른 ~ 가장 늦은)은 언제든 그 값에서 셀 수 있습니다. 따로 적어도 새로 알게 되는 것이 없습니다.</p>
+<p><b>남는 제안.</b> 도서관 줄마다 "몇 번째 반영으로 들어왔는지, 마지막으로 바뀐 반영이 무엇인지"를 남기는 일을 사이클 08 후보로 올립니다. 지금은 사이클 07에 넣은 도서관이 번호 281번부터라는 것으로만 가를 수 있습니다. 앞으로 도서관 수집을 다시 돌려 목록을 다시 반영하면(새 도서관 추가, 주소·가입 방법 수정, 끄기) 어느 줄이 어느 반영에서 바뀌었는지 알 수 없게 됩니다.</p>
+<p>말씀하신 뜻이 이것이 맞으면 #6을 승인해 주세요. 다른 뜻이면 기타에 적어 주세요.</p>
+</div>
+
+<div class="item" style="background:var(--accent-bg);border-radius:10px;padding:16px 18px">
+<h3>질문: 도서관 정보를 넣거나 고칠 때마다 그 시각이 기록되나요? (도서관에도 수집 기간을 넣고 싶음)</h3>
+<p><b>칸은 있지만 믿을 수 없습니다. 넣은 시각은 늘 적히고, 고친 시각은 고칠 때 직접 적은 한 번만 적혔습니다.</b> 그리고 두 칸 모두 "DB에 넣은 시각"이지 "도서관 정보를 조사·수집한 시각"이 아닙니다. (dev DB 구조 파일, 2026-10-05 읽음)</p>
+<table>
+<tr><th>도서관 줄의 칸</th><th>무엇이 적히나</th><th>믿을 수 있나</th></tr>
+<tr><td>넣은 시각 (<code>created_at</code>)</td><td>그 줄이 DB에 들어간 시각이 자동으로 적힘</td><td>적히긴 함. 다만 dev가 17단계에서 로컬 DB를 지우고 다시 넣어서, 지금은 모든 도서관이 그 다시 넣은 시각입니다</td></tr>
+<tr><td>고친 시각 (<code>updated_at</code>)</td><td>처음엔 넣은 시각과 같음. 고칠 때 자동으로 바뀌지 않고, 고치는 명령이 직접 적어야 바뀜</td><td><b>아니요.</b> 지금까지 도서관을 고친 명령 4번 중 1번(3곳 끄기)만 적었고, 3번(2곳 끄기, 교보 대출 방식, 로고)은 적지 않았습니다</td></tr>
+<tr><td>보유 수를 센 날 (<code>holdings_counted_on</code>)</td><td>보유 수(<code>holdings_count</code>)를 센 날</td><td>보유 수가 있을 때만. 사이클 07에 넣은 도서관은 비어 있음</td></tr>
+<tr><td>도서관 정보(주소·가입 방법·조사 상태)를 조사한 때</td><td>칸 없음</td><td>조사 날짜는 조사 파일 이름(예: <code>public-join-2026-10-05.tsv</code>)에만 있음</td></tr>
+</table>
+<p>그래서 "도서관에도 수집 기간"을 넣으려면, 위의 "몇 번째 반영" 기록과 함께 아래 둘을 정해야 합니다. 사이클 08 후보 하나로 묶어 올리겠습니다.</p>
+<ul>
+<li>도서관 정보를 조사·수집한 날을 줄마다 둘지(예: 사이트 확인일, 가입 조사일)</li>
+<li>고친 시각을 고칠 때마다 빠짐없이 적히게 할지(DB가 자동으로 적게 하는 방법 등)</li>
+</ul>
+</div>
+
+<div class="item" style="background:var(--ok-bg);border-radius:10px;padding:16px 18px">
+<h3>정하신 것: 가져오기 기록 한 줄에 그 사본의 수집 기간을 넣음</h3>
+<p><b>그렇게 적었습니다.</b> 가져오기 기록에 "그 사본의 가장 이른 수집 시각 ~ 가장 늦은 수집 시각"을 더하는 일을 다음 dev 인계서에 넣습니다(사용자 결정, 2026-10-05). 앞에서 거둔다고 한 제안을 사용자 결정으로 다시 넣습니다.</p>
+</div>
+
+<div class="item" style="background:var(--accent-bg);border-radius:10px;padding:16px 18px">
+<h3>질문: 고친 시각(<code>updated_at</code>)은 왜 제대로 안 적히나요? 기본 아닌가요?</h3>
+<p><b>기본이 맞습니다. 지금은 "넣을 때 지금 시각"만 정해 두고, 고칠 때 시각을 바꾸는 장치를 아무 데도 두지 않았습니다.</b> dev 규칙 문서(스킬)에도 이에 대한 지침이 없습니다(dev <code>.claude/skills</code>와 서버 코드, 2026-10-05 검색).</p>
+<table>
+<tr><th>고치는 길</th><th>지금 고친 시각이 바뀌나</th></tr>
+<tr><td>DB 구조 파일(Liquibase)의 고치는 명령</td><td>명령에 직접 적었을 때만 (4번 중 1번)</td></tr>
+<tr><td>서버 코드</td><td>바꾸는 코드 없음 (지금은 서버가 도서관을 고치지 않음)</td></tr>
+<tr><td>운영자가 DB에 직접 명령</td><td>직접 적었을 때만</td></tr>
+</table>
+<p>이 칸이 있는 표는 지금 둘입니다: 도서관 표(<code>library.library</code>), 지역 표(<code>region.region</code>).</p>
+<p><b>고치는 방법 제안: DB가 스스로 적게 함.</b> PostgreSQL에는 "줄을 고치기 직전에 정해 둔 일을 하는 장치"(트리거)가 있습니다. 이것을 두 표에 걸어 두면, 어느 길로 고치든 고친 시각이 지금 시각으로 바뀝니다. PostgreSQL 공식 문서도 줄을 넣거나 고칠 때마다 시각을 찍는 트리거를 예로 듭니다(<a href="https://www.postgresql.org/docs/current/plpgsql-trigger.html">PL/pgSQL Trigger Functions, 예 41.3</a>, PostgreSQL 18 문서, 2026-10-05 확인).</p>
+<p class="alt"><b>다른 선택</b> 서버 코드에서만 적게 하는 방법은 DB 구조 파일이나 직접 명령으로 고칠 때를 놓칩니다. 지금 이 표들은 그 두 길로만 고쳐지므로 맞지 않습니다. "고칠 때마다 적는다"는 규칙만 두는 방법은 지금 실제로 빠뜨린 방식 그대로입니다.</p>
+<p>다음 dev 인계서에 넣을 것(제안):</p>
+<ul>
+<li>고친 시각 칸이 있는 표 둘에 트리거를 걸고, 테스트로 "고치면 바뀜"을 확인</li>
+<li>dev 규칙 문서(<code>postgres-patterns</code> 스킬)에 "고친 시각 칸을 두는 표는 트리거를 함께 둔다"를 더함</li>
+</ul>
+<p>트리거로 할지는 사이클 08 범위를 정할 때 함께 확인받겠습니다.</p>
+</div>
+
+<div class="item" style="background:var(--ok-bg);border-radius:10px;padding:16px 18px">
+<h3>질문 ③: 그럼 "답했음" 기록은 브라우저 하나에만 저장되나요?</h3>
+<p><b>네. "이 계정은 답했음" 기록은 그 브라우저에만 있습니다.</b> 다른 브라우저나 폰에서는 이 기록이 없으므로, 그 기기에 저장해 둔 지역이나 도서관이 있으면 로그인할 때 창이 다시 뜹니다.</p>
+<table>
+<tr><th>무엇</th><th>어디에 저장</th><th>다른 기기에서</th></tr>
+<tr><td>로그인 전에 고른 지역·직접 추가 도서관</td><td>그 브라우저</td><td>안 보임</td></tr>
+<tr><td>"저장"을 눌러 계정으로 옮긴 지역·도서관</td><td>우리 서버 (계정)</td><td class="okt">로그인하면 보임</td></tr>
+<tr><td>"이 계정은 답했음" 기록</td><td>그 브라우저</td><td>없음 → 다시 물음</td></tr>
+</table>
+<p>로그인한 동안 화면은 계정(서버)에 저장된 값만 씁니다(사이클 06에서 정함). 그래서 앞 칸에서 말한 "답한 뒤 이 브라우저에 새로 추가한 도서관"은 로그인하면 보이지 않고, 로그아웃해야 다시 보입니다.</p>
+<p>이 칸들은 dev 웹 코드를 읽어서 적었고, 화면에서 직접 해 보지는 않았습니다.</p>
+</div>
+
+<div class="item">
+<p><b>#6 칩을 승인하시면 이렇게 적습니다.</b> ① 50곳 기준은 그대로 회고에 적음(사용자 승인). ② 기록 번호 칸을 지운 것은 회고에 적고, 도서관 줄마다 몇 번째 반영으로 들어오거나 바뀌었는지, 조사·수집한 날, 고친 시각을 빠짐없이 남기는 일은 사이클 08 후보 하나로 올림. ③ 동작은 회고에 적고, 고칠지는 기타로 알려 주시면 다음 인계서에 넣음.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>그 밖에</h2>
+<p>개발 중에 바뀐 것이 이 밖에도 더 있으면 canvas 채팅에 적어 주세요. 정해 주시면 회고(<code>retro.md</code>)를 쓰고, 지금 설계 문서(<code>docs/current/</code>)를 실제 코드에 맞게 고칩니다. 그다음 사이클 08 후보를 고르는 페이지를 보여 드립니다.</p>
+<p>dev가 plan에 정해 달라고 한 나머지(요청 수 제한 안내, 주소가 바뀐 도서관, YES24 모바일판, 이름이 다른 사이트, 믿는 인증 기관 추가 등)는 사이클 08 후보와 결정 기록 초안 페이지에서 따로 다룹니다.</p>
+</section>
+
+<p class="foot">원본: dev <code>docs/plan-feedback.md</code> "# 사이클 07"(2026-10-05), <code>../spec.md</code> AC-6·AC-15·AC-20, <code>../handoff.md</code></p>
+</main>
+</body>
+</html>

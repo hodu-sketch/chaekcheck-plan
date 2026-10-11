@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>수집에서 가져오기까지</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+svg{max-width:100%;height:auto;display:block}
+.mock{border:2px dashed var(--line);border-radius:12px;padding:14px;margin:10px 0;font-size:17px}
+.row{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;background:var(--card);flex-wrap:wrap}
+.tag{font-size:14px;border-radius:6px;padding:0 6px;background:var(--code-bg);color:var(--muted)}
+.okt{color:var(--ok);font-weight:500}.mut{color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">도서관 정보와 도서관–책 정보는<br>서로 다른 길로 서비스 DB에 들어갑니다.</p>
+<p class="sub">도서관 정보(이름·주소·가입 방법)는 조사 결과로 seed 파일을 만들어, 서버가 시작할 때 넣습니다. 도서관–책 정보(어느 도서관이 어떤 책을 가졌나)는 수집기가 수집 DB에 모으고, <code>collection</code> 모듈이 가져오기로 서비스 DB에 옮깁니다. 이 페이지는 두 길이 어디서 모으고, 어떻게 다듬고, 어디에 두는지를 보여 드립니다. 정할 것은 없습니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>두 길 한눈에</h2>
+<div class="gist">위 줄이 도서관 정보, 아래 줄이 도서관–책 정보입니다. 두 길은 서비스 DB에서 "수집 번호 ↔ 서비스 번호 짝"으로 이어집니다.</div>
+<svg viewBox="0 0 900 430" role="img" aria-label="도서관 정보와 도서관-책 정보의 두 길">
+<text x="10" y="24" font-size="17" font-weight="700" fill="var(--accent)">도서관 정보</text>
+<rect x="10" y="36" width="190" height="110" rx="10" fill="var(--card)" stroke="var(--line)"/>
+<text x="22" y="62" font-size="16" font-weight="700" fill="var(--text)">어디서</text>
+<text x="22" y="86" font-size="15" fill="var(--text)">기관 목록(교보,</text>
+<text x="22" y="106" font-size="15" fill="var(--text)">웹러브 북스),</text>
+<text x="22" y="126" font-size="15" fill="var(--text)">도서관 사이트 첫 화면</text>
+<text x="208" y="96" font-size="22" fill="var(--muted)">→</text>
+<rect x="232" y="36" width="200" height="110" rx="10" fill="var(--card)" stroke="var(--line)"/>
+<text x="244" y="62" font-size="16" font-weight="700" fill="var(--text)">모아 두는 곳</text>
+<text x="244" y="86" font-size="15" fill="var(--text)">수집 DB 도서관 표,</text>
+<text x="244" y="106" font-size="15" fill="var(--text)">조사 파일(TSV),</text>
+<text x="244" y="126" font-size="15" fill="var(--text)">로고 파일</text>
+<text x="440" y="96" font-size="22" fill="var(--muted)">→</text>
+<rect x="464" y="36" width="200" height="110" rx="10" fill="var(--card)" stroke="var(--line)"/>
+<text x="476" y="62" font-size="16" font-weight="700" fill="var(--text)">다듬기</text>
+<text x="476" y="86" font-size="15" fill="var(--text)">seed 스크립트가 걸러</text>
+<text x="476" y="106" font-size="15" fill="var(--text)">번호·이름을 주고</text>
+<text x="476" y="126" font-size="15" fill="var(--text)">seed 파일을 만듦</text>
+<text x="672" y="96" font-size="22" fill="var(--muted)">→</text>
+<rect x="696" y="36" width="194" height="110" rx="10" fill="var(--accent-bg)" stroke="var(--accent)"/>
+<text x="708" y="62" font-size="16" font-weight="700" fill="var(--accent)">서비스 DB</text>
+<text x="708" y="86" font-size="15" fill="var(--text)">도서관 표, 가입 규칙,</text>
+<text x="708" y="106" font-size="15" fill="var(--text)">번호 짝 표</text>
+<text x="708" y="126" font-size="14" fill="var(--muted)">(서버 시작 때 Liquibase)</text>
+<line x1="793" y1="146" x2="793" y2="260" stroke="var(--accent)" stroke-dasharray="5 4"/>
+<text x="660" y="208" font-size="14" fill="var(--accent)">번호 짝으로 이어짐</text>
+<text x="10" y="248" font-size="17" font-weight="700" fill="var(--accent)">도서관–책 정보</text>
+<rect x="10" y="260" width="190" height="130" rx="10" fill="var(--card)" stroke="var(--line)"/>
+<text x="22" y="286" font-size="16" font-weight="700" fill="var(--text)">어디서</text>
+<text x="22" y="310" font-size="15" fill="var(--text)">도서관 사이트의</text>
+<text x="22" y="330" font-size="15" fill="var(--text)">전자책 목록 화면을</text>
+<text x="22" y="350" font-size="15" fill="var(--text)">쪽마다 읽음 (수집기)</text>
+<text x="208" y="330" font-size="22" fill="var(--muted)">→</text>
+<rect x="232" y="260" width="200" height="130" rx="10" fill="var(--card)" stroke="var(--line)"/>
+<text x="244" y="286" font-size="16" font-weight="700" fill="var(--text)">모아 두는 곳</text>
+<text x="244" y="310" font-size="15" fill="var(--text)">수집 DB 소장 표</text>
+<text x="244" y="330" font-size="15" fill="var(--text)">→ 날짜를 붙인 사본</text>
+<text x="244" y="350" font-size="15" fill="var(--text)">파일로 복사</text>
+<text x="440" y="330" font-size="22" fill="var(--muted)">→</text>
+<rect x="464" y="260" width="200" height="130" rx="10" fill="var(--card)" stroke="var(--accent)" stroke-width="2"/>
+<text x="476" y="286" font-size="16" font-weight="700" fill="var(--accent)">가져오기 (collection)</text>
+<text x="476" y="310" font-size="15" fill="var(--text)">거르기, 번호 바꾸기,</text>
+<text x="476" y="330" font-size="15" fill="var(--text)">글자 정리, 같은 책</text>
+<text x="476" y="350" font-size="15" fill="var(--text)">묶기, 대표값 고르기</text>
+<text x="672" y="330" font-size="22" fill="var(--muted)">→</text>
+<rect x="696" y="260" width="194" height="130" rx="10" fill="var(--accent-bg)" stroke="var(--accent)"/>
+<text x="708" y="286" font-size="16" font-weight="700" fill="var(--accent)">서비스 DB</text>
+<text x="708" y="310" font-size="15" fill="var(--text)">책, 사람, 소장,</text>
+<text x="708" y="330" font-size="15" fill="var(--text)">도서관별 수집 시각,</text>
+<text x="708" y="350" font-size="15" fill="var(--text)">가져오기 기록</text>
+<text x="10" y="420" font-size="14" fill="var(--muted)">수집 DB와 사본은 서비스 밖(데이터 폴더 chaekcheck-data)에 있습니다. 서비스 DB는 PostgreSQL입니다.</text>
+</svg>
+<p class="cap">도서관 정보는 가져오기를 거치지 않습니다. <code>collection</code>은 아래 줄의 가져오기만 합니다.</p>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>도서관 정보: 모으기 → 다듬기 → 넣기</h2>
+<div class="gist">사람과 확인 스크립트가 조사한 결과를 파일로 남기고, seed 스크립트가 그 파일들로 서비스에 넣을 줄을 만듭니다.</div>
+<svg viewBox="0 0 900 330" role="img" aria-label="도서관 정보 흐름">
+<defs><marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+<rect x="10" y="20" width="160" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="22" y="46" font-size="15" font-weight="700" fill="var(--text)">기관 목록</text>
+<text x="22" y="70" font-size="13" fill="var(--muted)">교보, 웹러브 북스</text>
+<line x1="170" y1="52" x2="208" y2="52" stroke="var(--muted)" marker-end="url(#a2)"/>
+<rect x="210" y="20" width="160" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="222" y="46" font-size="15" font-weight="700" fill="var(--text)">확인 스크립트</text>
+<text x="222" y="70" font-size="13" fill="var(--muted)">첫 화면 한 번 열기</text>
+<line x1="370" y1="52" x2="408" y2="52" stroke="var(--muted)" marker-end="url(#a2)"/>
+<rect x="410" y="20" width="200" height="64" rx="8" fill="var(--code-bg)" stroke="var(--line)"/>
+<text x="422" y="46" font-size="15" font-weight="700" fill="var(--text)">수집 DB 도서관 표</text>
+<text x="422" y="70" font-size="13" fill="var(--muted)">번호 100001~, 같은 사이트 표시</text>
+<line x1="610" y1="52" x2="648" y2="52" stroke="var(--muted)" marker-end="url(#a2)"/>
+<rect x="650" y="20" width="240" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="662" y="46" font-size="15" font-weight="700" fill="var(--text)">책 수집이 이 표를 봄</text>
+<text x="662" y="70" font-size="13" fill="var(--muted)">(3번 카드)</text>
+<rect x="210" y="120" width="160" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="222" y="146" font-size="15" font-weight="700" fill="var(--text)">도서관 정보 조사</text>
+<text x="222" y="170" font-size="13" fill="var(--muted)">가입 원문, 종류, 로고</text>
+<line x1="370" y1="152" x2="408" y2="152" stroke="var(--muted)" marker-end="url(#a2)"/>
+<rect x="410" y="120" width="200" height="64" rx="8" fill="var(--code-bg)" stroke="var(--line)"/>
+<text x="422" y="146" font-size="15" font-weight="700" fill="var(--text)">조사 파일 (TSV, 로고)</text>
+<text x="422" y="170" font-size="13" fill="var(--muted)">데이터 폴더</text>
+<line x1="610" y1="60" x2="630" y2="230" stroke="var(--muted)" stroke-dasharray="4 3" marker-end="url(#a2)"/>
+<line x1="510" y1="184" x2="510" y2="218" stroke="var(--muted)" marker-end="url(#a2)"/>
+<rect x="410" y="220" width="200" height="64" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/>
+<text x="422" y="246" font-size="15" font-weight="700" fill="var(--text)">seed 스크립트</text>
+<text x="422" y="270" font-size="13" fill="var(--muted)">거르기·번호·이름·최종 주소</text>
+<line x1="610" y1="252" x2="648" y2="252" stroke="var(--muted)" marker-end="url(#a2)"/>
+<rect x="650" y="220" width="240" height="64" rx="8" fill="var(--accent-bg)" stroke="var(--accent)"/>
+<text x="662" y="246" font-size="15" font-weight="700" fill="var(--accent)">seed 파일 → Liquibase</text>
+<text x="662" y="270" font-size="13" fill="var(--text)">서비스 DB library·collection</text>
+<text x="10" y="318" font-size="13" fill="var(--muted)">점선: seed 스크립트는 수집 DB 도서관 표와 조사 파일을 둘 다 읽습니다.</text>
+</svg>
+<p class="cap">위 줄은 수집 DB에 도서관을 넣는 길, 아래 줄은 서비스 DB에 도서관을 넣는 길입니다.</p>
+<table>
+<tr><th>단계</th><th>무엇을</th><th>결과가 남는 곳</th></tr>
+<tr><td>후보 찾기</td><td>교보 공식 기관 목록, 웹러브 북스 기관 목록에서 전자도서관 사이트를 찾음</td><td>목록 파일 (데이터 폴더)</td></tr>
+<tr><td>확인</td><td>확인 스크립트가 사이트마다 첫 화면을 한 번 열어 열리는지, 화면 종류, 권수, 교보 대출 방식을 봄</td><td>확인 결과 파일 (데이터 폴더)</td></tr>
+<tr><td>수집 DB에 넣기</td><td>확인된 사이트를 수집 DB 도서관 표에 번호 100001번부터 넣음. 책 수집이 이 표를 보고 돎</td><td>수집 DB 도서관 표</td></tr>
+<tr><td>같은 사이트 거르기</td><td>이미 있는 도서관과 같은 사이트면 "받지 않음" 표시(지우지 않음)</td><td>수집 DB 도서관 표의 표시 칸</td></tr>
+<tr><td>도서관 정보 조사</td><td>가입 안내 원문, 도서관 종류, 구독형 마감 공지, 로고. 사람이 읽고 정하는 부분이 있음</td><td>조사 파일(TSV), 로고 파일 (데이터 폴더)</td></tr>
+<tr><td>다듬기 (seed 스크립트)</td><td>수집 DB와 조사 파일을 읽어 넣을 곳을 거르고, 서비스 번호를 주고(마지막 번호 다음, 한 번 준 번호·이름은 유지), 같은 이름에 화면 종류를 붙이고, 가입 조사 상태·교보 대출 방식·리다이렉트를 따라간 최종 주소를 채움</td><td>seed 파일(CSV), dev 저장소</td></tr>
+<tr><td>넣기</td><td>서버가 시작할 때 Liquibase가 아직 넣지 않은 seed 파일을 넣음</td><td><b>서비스 DB</b>: 도서관 표, 가입 규칙 표, 번호 짝 표</td></tr>
+</table>
+<p class="cap">근거: plan <code>docs/research/collection/1-libraries.md</code>, dev <code>scripts/library/build_candidate_seed.py</code>, dev <code>plan-feedback.md</code> 사이클 07 1단계·"handoff 밖 추가 작업 A".</p>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>도서관–책 정보: 수집 DB에 모으기</h2>
+<div class="gist">수집기가 도서관마다 전자책 목록 화면을 처음부터 끝까지 읽어, "이 도서관에 이 책 코드가 있다"는 줄을 수집 DB에 씁니다.</div>
+<svg viewBox="0 0 900 240" role="img" aria-label="책 수집 흐름">
+<defs><marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+<rect x="10" y="20" width="190" height="70" rx="8" fill="var(--code-bg)" stroke="var(--line)"/>
+<text x="22" y="48" font-size="15" font-weight="700" fill="var(--text)">수집 DB 도서관 표</text>
+<text x="22" y="72" font-size="13" fill="var(--muted)">받을 도서관 목록</text>
+<line x1="200" y1="55" x2="238" y2="55" stroke="var(--muted)" marker-end="url(#a3)"/>
+<rect x="240" y="20" width="200" height="70" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/>
+<text x="252" y="48" font-size="15" font-weight="700" fill="var(--text)">수집기</text>
+<text x="252" y="72" font-size="13" fill="var(--muted)">목록 화면 쪽마다, 1건·1초</text>
+<line x1="440" y1="55" x2="478" y2="55" stroke="var(--muted)" marker-end="url(#a3)"/>
+<rect x="480" y="20" width="200" height="70" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="492" y="48" font-size="15" font-weight="700" fill="var(--text)">도서관 사이트</text>
+<text x="492" y="72" font-size="13" fill="var(--muted)">전자책 목록 화면</text>
+<line x1="340" y1="90" x2="340" y2="128" stroke="var(--muted)" marker-end="url(#a3)"/>
+<rect x="240" y="130" width="200" height="90" rx="8" fill="var(--code-bg)" stroke="var(--line)"/>
+<text x="252" y="156" font-size="15" font-weight="700" fill="var(--text)">수집 DB에 씀</text>
+<text x="252" y="180" font-size="13" fill="var(--muted)">소장 줄 (도서관 × 책 코드)</text>
+<text x="252" y="202" font-size="13" fill="var(--muted)">실행 기록, 마지막 성공 시각</text>
+<line x1="440" y1="175" x2="478" y2="175" stroke="var(--muted)" marker-end="url(#a3)"/>
+<rect x="480" y="130" width="200" height="90" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="492" y="156" font-size="15" font-weight="700" fill="var(--text)">날짜 붙인 사본</text>
+<text x="492" y="180" font-size="13" fill="var(--muted)">수집기가 도는 동안의</text>
+<text x="492" y="202" font-size="13" fill="var(--muted)">한 순간을 고정한 복사본</text>
+<line x1="680" y1="175" x2="718" y2="175" stroke="var(--muted)" marker-end="url(#a3)"/>
+<rect x="720" y="130" width="170" height="90" rx="8" fill="var(--accent-bg)" stroke="var(--accent)"/>
+<text x="732" y="156" font-size="15" font-weight="700" fill="var(--accent)">가져오기로</text>
+<text x="732" y="180" font-size="13" fill="var(--text)">(4번 카드)</text>
+</svg>
+<p class="cap">수집기는 계속 돌고, 가져오기는 그중 한 순간을 복사한 사본을 읽습니다.</p>
+<table>
+<tr><th>수집 DB의 표</th><th>한 줄이 뜻하는 것</th><th>담는 것</th></tr>
+<tr><td>도서관 (<code>library</code>)</td><td>수집할 도서관 하나</td><td>번호, 주소, 화면 종류, 받지 않음 표시, 마지막으로 전체 수집에 성공한 시각</td></tr>
+<tr><td>소장 (<code>holding</code>)</td><td>도서관 하나 × 책 코드 하나</td><td>제목·저자·출판사·출간일 원문, 공급사, 자료 종류(오디오북 등), 상세 페이지 주소, 처음 본 시각, 마지막으로 본 시각, 빠진 날짜</td></tr>
+<tr><td>실행 기록 (<code>crawl_run</code>)</td><td>수집 한 번</td><td>시작·끝, 상태, 이어 받기 위치, 오류</td></tr>
+</table>
+<ul>
+<li>소개·목차·서평 문장은 저장하지 않고, 표지는 주소만 둡니다. 보유·대출·예약 수는 저장하지 않고 이용자가 볼 때 도서관 사이트에서 바로 읽습니다.</li>
+<li>수집기는 계속 돌며 수집 DB를 고칩니다. 그래서 가져오기는 원본이 아니라 <b>날짜를 붙인 사본 파일</b>(지금 <code>ebook-catalog-2026-10-05-0745.sqlite</code>)을 읽습니다.</li>
+</ul>
+<p class="cap">근거: plan <code>docs/research/collection/2-books.md</code> 2·3절.</p>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>가져오기: 사본을 다듬어 서비스 DB에 쓰기</h2>
+<div class="gist"><code>collection</code> 모듈이 사본을 읽기만 하고, 아래 순서로 다듬어 서비스 DB의 책 표를 통째로 바꿉니다.</div>
+<svg viewBox="0 0 900 300" role="img" aria-label="가져오기 아홉 단계">
+<defs><marker id="a4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+<g font-size="15" fill="var(--text)">
+<rect x="10" y="20" width="200" height="66" rx="8" fill="var(--code-bg)" stroke="var(--line)"/>
+<text x="22" y="46" font-weight="700">1 읽기 (두 번)</text><text x="22" y="70" font-size="13" fill="var(--muted)">22,051,238줄</text>
+<line x1="210" y1="53" x2="238" y2="53" stroke="var(--muted)" marker-end="url(#a4)"/>
+<rect x="240" y="20" width="200" height="66" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="252" y="46" font-weight="700">2 거르기</text><text x="252" y="70" font-size="13" fill="var(--muted)">1,568,743줄 뺌</text>
+<line x1="440" y1="53" x2="468" y2="53" stroke="var(--muted)" marker-end="url(#a4)"/>
+<rect x="470" y="20" width="200" height="66" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="482" y="46" font-weight="700">3 번호 바꾸기</text><text x="482" y="70" font-size="13" fill="var(--muted)">짝 표, 최종 주소로</text>
+<line x1="670" y1="53" x2="698" y2="53" stroke="var(--muted)" marker-end="url(#a4)"/>
+<rect x="700" y="20" width="190" height="66" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="712" y="46" font-weight="700">4 글자 정리</text><text x="712" y="70" font-size="13" fill="var(--muted)">catalog 규칙 빌려 씀</text>
+<line x1="795" y1="86" x2="795" y2="114" stroke="var(--muted)" marker-end="url(#a4)"/>
+<rect x="590" y="116" width="300" height="66" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/>
+<text x="602" y="142" font-weight="700">5 같은 책 묶기 ①→②→③→④</text><text x="602" y="166" font-size="13" fill="var(--muted)">7,668,819 → 1,622,023권</text>
+<line x1="590" y1="149" x2="562" y2="149" stroke="var(--muted)" marker-end="url(#a4)"/>
+<rect x="330" y="116" width="230" height="66" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="342" y="142" font-weight="700">6 대표값·날짜</text><text x="342" y="166" font-size="13" fill="var(--muted)">가장 많이 나온 값</text>
+<line x1="330" y1="149" x2="302" y2="149" stroke="var(--muted)" marker-end="url(#a4)"/>
+<rect x="10" y="116" width="290" height="66" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="22" y="142" font-weight="700">7 가진 도서관 번호</text><text x="22" y="166" font-size="13" fill="var(--muted)">책마다 번호 목록 (검색용)</text>
+<line x1="155" y1="182" x2="155" y2="210" stroke="var(--muted)" marker-end="url(#a4)"/>
+<rect x="10" y="212" width="290" height="66" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="22" y="238" font-weight="700">8 책 번호 잇기</text><text x="22" y="262" font-size="13" fill="var(--muted)">지난번과 같은 책 = 같은 번호</text>
+<line x1="300" y1="245" x2="328" y2="245" stroke="var(--muted)" marker-end="url(#a4)"/>
+<rect x="330" y="212" width="560" height="66" rx="8" fill="var(--accent-bg)" stroke="var(--accent)"/>
+<text x="342" y="238" font-weight="700" fill="var(--accent)">9 쓰기: 책·사람·소장·수집 시각 표를 한 번에 바꿈</text><text x="342" y="262" font-size="13" fill="var(--text)">+ 가져오기 기록 한 줄. 이 동안 검색은 기다림 (사이클 08에서 바꿔 끼우기로)</text>
+</g>
+</svg>
+<p class="cap">2026-10-05 첫 가져오기 숫자입니다. 노란 칸(같은 책 묶기)에서 책 수가 가장 크게 줄어듭니다.</p>
+<table>
+<tr><th>순서</th><th>하는 일</th><th>2026-10-05 숫자</th></tr>
+<tr><td>1. 읽기</td><td>사본을 두 번 읽음. 첫 번째는 같은 책 묶음마다 값을 세기만 하고, 두 번째는 소장 줄을 바로 씀. 메모리에 다 올리지 않으려는 방법</td><td>읽은 줄 22,051,238</td></tr>
+<tr><td>2. 거르기</td><td>서비스에 없는 도서관, 오디오북·동영상북·소리·영상 파일, http가 아닌 주소, 빠진 책, 제목 없음, 주소가 다른 사이트</td><td>건너뜀 1,568,743</td></tr>
+<tr><td>3. 번호 바꾸기</td><td>번호 짝 표로 수집 번호를 서비스 번호로 바꾸고, 상세 페이지 주소를 서비스 도서관의 최종 주소(https 등)로 옮겨 씀</td><td>도서관 2,669곳</td></tr>
+<tr><td>4. 글자 정리</td><td>제목·저자·출판사를 검색과 같은 규칙으로 정리(문자 통일, 소문자, 공백 제거). 규칙은 <code>catalog</code>에 한 벌만 있고 빌려 씀</td><td>—</td></tr>
+<tr><td>5. 같은 책 묶기</td><td>① 같은 플랫폼 책 코드 → ② 교보식 코드에서 계산한 ISBN → ③ 국가서지 파일 → ④ 정리한 전체 제목+저자+출판사</td><td>책 7,668,819 → 7,348,253 → 6,668,680 → 1,622,023</td></tr>
+<tr><td>6. 대표값·날짜</td><td>묶음마다 가장 많이 나온 제목·저자 등을 대표로 고름. 8자리 날짜를 읽고, 명지대의 1950년 이전 날짜는 비움</td><td>—</td></tr>
+<tr><td>7. 가진 도서관 번호</td><td>책마다 가진 서비스 도서관 번호 목록을 계산함(검색이 이것으로 거름)</td><td>—</td></tr>
+<tr><td>8. 책 번호 잇기</td><td>지난 가져오기와 (도서관, 책 코드)로 맞대어, 같은 책이면 같은 책 번호를 줌</td><td>2회차: 그대로 1,617,445</td></tr>
+<tr><td>9. 쓰기</td><td><code>catalog</code>의 표 바꾸기 기능으로 책·사람·소장·도서관별 수집 시각 표를 한 번에 바꾸고, 가져오기 기록 한 줄을 남김</td><td>소장 20,383,882줄, 한 번에 약 37~41분</td></tr>
+</table>
+<p class="cap">근거: dev <code>docs/maintenance/3-import.md</code>, dev <code>plan-feedback.md</code> 사이클 07 14~17단계, plan <code>docs/research/ebook-catalog/same-book-isbn.md</code> 5절. 5번 숫자는 첫 가져오기(2026-10-05 18:53) 값입니다.</p>
+</section>
+
+<section class="card">
+<h2><span class="num">5</span>시각이 남는 곳</h2>
+<div class="gist">"언제 모은 정보인가"는 책 쪽은 남고, 도서관 정보 쪽은 조사 파일 이름에만 있습니다.</div>
+<svg viewBox="0 0 900 230" role="img" aria-label="수집 시각이 옮겨 가는 길">
+<defs><marker id="a5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+<text x="10" y="20" font-size="14" font-weight="700" fill="var(--muted)">수집 DB</text>
+<rect x="10" y="30" width="270" height="56" rx="8" fill="var(--code-bg)" stroke="var(--line)"/>
+<text x="22" y="54" font-size="14" fill="var(--text)">library.last_full_success_at</text>
+<text x="22" y="76" font-size="13" fill="var(--muted)">끝까지 받은 마지막 시각</text>
+<rect x="10" y="100" width="270" height="56" rx="8" fill="var(--code-bg)" stroke="var(--line)"/>
+<text x="22" y="124" font-size="14" fill="var(--text)">holding.last_seen_at</text>
+<text x="22" y="146" font-size="13" fill="var(--muted)">없을 때 대신 씀 (가장 늦은 값)</text>
+<line x1="280" y1="58" x2="378" y2="88" stroke="var(--muted)" marker-end="url(#a5)"/>
+<line x1="280" y1="128" x2="378" y2="100" stroke="var(--muted)" stroke-dasharray="4 3" marker-end="url(#a5)"/>
+<rect x="380" y="62" width="160" height="56" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/>
+<text x="392" y="88" font-size="15" font-weight="700" fill="var(--text)">가져오기</text>
+<text x="392" y="108" font-size="13" fill="var(--muted)">collection</text>
+<line x1="540" y1="90" x2="598" y2="58" stroke="var(--muted)" marker-end="url(#a5)"/>
+<line x1="540" y1="90" x2="598" y2="140" stroke="var(--muted)" marker-end="url(#a5)"/>
+<text x="600" y="20" font-size="14" font-weight="700" fill="var(--muted)">서비스 DB</text>
+<rect x="600" y="30" width="290" height="56" rx="8" fill="var(--accent-bg)" stroke="var(--accent)"/>
+<text x="612" y="54" font-size="14" fill="var(--text)">catalog_library_snapshot.collected_at</text>
+<text x="612" y="76" font-size="13" fill="var(--muted)">→ 검색 결과 기준일</text>
+<rect x="600" y="112" width="290" height="56" rx="8" fill="var(--accent-bg)" stroke="var(--accent)"/>
+<text x="612" y="136" font-size="14" fill="var(--text)">catalog_import.imported_at, source</text>
+<text x="612" y="158" font-size="13" fill="var(--muted)">+ 사본 수집 기간 (사이클 08)</text>
+<text x="10" y="210" font-size="13" fill="var(--muted)">도서관 정보(이름·가입 방법)를 조사한 날은 이 길에 없고, 조사 파일 이름에만 있습니다.</text>
+</svg>
+<p class="cap">책 목록의 수집 시각은 수집 DB에서 가져오기를 거쳐 서비스 DB로 옮겨 적힙니다.</p>
+<table>
+<tr><th>시각</th><th>어디</th><th>뜻</th></tr>
+<tr><td>처음 본·마지막으로 본 시각</td><td>수집 DB 소장 표</td><td>그 책 코드를 그 도서관에서 처음·마지막으로 본 때</td></tr>
+<tr><td>마지막 전체 수집 성공 시각</td><td>수집 DB 도서관 표</td><td>그 도서관 책 목록을 끝까지 받은 마지막 때</td></tr>
+<tr><td>도서관별 수집 시각</td><td>서비스 DB (<code>catalog</code>)</td><td>가져오기가 위 "마지막 전체 수집 성공 시각"을 옮겨 적음. 없으면 그 도서관에서 마지막으로 본 시각. 검색 결과 기준일에 씀</td></tr>
+<tr><td>가져온 시각, 사본 이름</td><td>서비스 DB 가져오기 기록 (<code>collection</code>)</td><td>가져오기 한 번마다 한 줄. <b>사본의 수집 기간은 다음 인계서에서 더함</b>(사용자 결정, 2026-10-05)</td></tr>
+<tr><td>넣은 시각·고친 시각</td><td>서비스 DB 도서관 표</td><td>DB에 넣은·고친 때. 고친 시각은 지금 믿을 수 없음(회고 질문 페이지 #6)</td></tr>
+<tr><td>도서관 정보를 조사한 날</td><td>조사 파일 이름 (예: <code>public-join-2026-10-05.tsv</code>)</td><td>서비스 DB에는 없음. 넣을지는 다음에 조사해서 여쭙니다(backlog)</td></tr>
+</table>
+<p class="cap">도서관별 수집 시각을 고르는 방법은 dev <code>CollectedCatalog.java</code>(2026-10-05 읽음)에서 확인했습니다.</p>
+
+<h3>표·칸 이름으로 보면</h3>
+<p>수집 DB는 SQLite 파일(<code>chaekcheck-data\ebook-catalog.sqlite</code>, 가져오기는 그 사본)이고, 서비스 DB는 PostgreSQL입니다. 서비스 DB 표 이름의 앞부분(<code>library.</code>, <code>catalog.</code>, <code>collection.</code>)은 그 표를 가진 모듈입니다.</p>
+<table>
+<tr><th>DB</th><th>표.칸</th><th>무엇이 적히나</th><th>누가 적나</th></tr>
+<tr><td>수집 DB</td><td><code>holding.first_seen_at</code></td><td>그 도서관에서 그 책 코드를 처음 본 시각</td><td>수집기</td></tr>
+<tr><td>수집 DB</td><td><code>holding.last_seen_at</code></td><td>마지막으로 본 시각</td><td>수집기</td></tr>
+<tr><td>수집 DB</td><td><code>holding.removed_at</code></td><td>성공한 전체 수집에서 보이지 않아 빠졌다고 본 시각 (줄은 지우지 않음)</td><td>수집기</td></tr>
+<tr><td>수집 DB</td><td><code>library.last_full_success_at</code></td><td>그 도서관 책 목록을 끝까지 받은 마지막 시각</td><td>수집기</td></tr>
+<tr><td>수집 DB</td><td><code>crawl_run.started_at</code>, <code>crawl_run.finished_at</code></td><td>수집 한 번의 시작·끝</td><td>수집기</td></tr>
+<tr><td>서비스 DB</td><td><code>catalog.catalog_library_snapshot.collected_at</code></td><td>도서관별 책 목록 수집 시각. 수집 DB <code>library.last_full_success_at</code>, 없으면 그 도서관 <code>holding.last_seen_at</code>의 가장 늦은 값</td><td>가져오기 (<code>collection</code> → <code>catalog</code> 표 바꾸기)</td></tr>
+<tr><td>서비스 DB</td><td><code>catalog.book.created_at</code></td><td>그 책 줄을 넣은 시각 (가져올 때마다 표를 바꾸므로 사실상 마지막 가져오기 시각)</td><td>DB 자동</td></tr>
+<tr><td>서비스 DB</td><td><code>collection.catalog_import.imported_at</code>, <code>.source</code></td><td>가져온 시각, 원본 사본 파일 이름. 가져오기 한 번마다 한 줄. 사본의 수집 기간 칸은 다음 인계서에서 더함</td><td>가져오기</td></tr>
+<tr><td>서비스 DB</td><td><code>collection.collection_link.created_at</code></td><td>번호 짝 줄을 넣은 시각</td><td>DB 자동 (seed를 넣을 때)</td></tr>
+<tr><td>서비스 DB</td><td><code>library.library.created_at</code></td><td>도서관 줄을 넣은 시각</td><td>DB 자동 (seed를 넣을 때)</td></tr>
+<tr><td>서비스 DB</td><td><code>library.library.updated_at</code></td><td>도서관 줄을 고친 시각. 고치는 명령이 직접 적을 때만 바뀜 (지금 믿을 수 없음)</td><td>고치는 명령</td></tr>
+<tr><td>서비스 DB</td><td><code>library.library.holdings_counted_on</code></td><td>보유 수(<code>holdings_count</code>)를 센 날</td><td>seed</td></tr>
+<tr><td>서비스 DB</td><td><code>library.eligibility_rule.created_at</code></td><td>가입 규칙 줄을 넣은 시각</td><td>DB 자동 (seed를 넣을 때)</td></tr>
+<tr><td>서비스 DB</td><td><code>databasechangelog.dateexecuted</code>, <code>.orderexecuted</code></td><td>Liquibase가 seed·구조 파일(changeset)을 넣은 시각과 순서</td><td>Liquibase</td></tr>
+</table>
+<p class="cap">수집 DB 칸: dev <code>scripts/crawl/crawl_catalog.py</code> 표 만들기 부분. 서비스 DB 칸: dev <code>backend/src/main/resources/db/changelog/</code>의 <code>catalog/001</code>, <code>collection/001</code>, <code>library/001</code> 구조 파일. 2026-10-05 읽음. Liquibase 표는 공식 문서(<a href="https://docs.liquibase.com/concepts/tracking-tables/databasechangelog-table.html">DATABASECHANGELOG table</a>, 2026-10-05 확인).</p>
+</section>
+
+<p class="foot">원본: plan <code>docs/research/collection/1-libraries.md</code>, <code>2-books.md</code>, <code>docs/research/ebook-catalog/same-book-isbn.md</code> 5절, dev <code>docs/maintenance/3-import.md</code>, dev <code>docs/plan-feedback.md</code> "# 사이클 07", dev 코드 <code>collection/internal/importer/CollectedCatalog.java</code>. 작성 2026-10-05.</p>
+</main>
+</body>
+</html>

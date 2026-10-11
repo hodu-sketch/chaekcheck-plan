@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 08 결정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+svg{max-width:100%;height:auto;display:block}
+.mock{border:2px dashed var(--line);border-radius:12px;padding:14px;margin:10px 0;font-size:17px}
+.row{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;background:var(--card);flex-wrap:wrap}
+.tag{font-size:14px;border-radius:6px;padding:0 6px;background:var(--code-bg);color:var(--muted)}
+.okt{color:var(--ok);font-weight:500}.mut{color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">사이클 08에서 정할 것을<br>한 페이지에 모았습니다.</p>
+<p class="sub">주무시는 동안 스펙(<code>spec.md</code>), 화면 흐름(<code>flow.md</code>), 메모리·가져오기 조사(<code>research.md</code>), 구조 안(<code>architect-proposal.md</code>)을 만들었습니다. 각 칩은 추천안입니다. 다 고르시면 이 결과로 설계(<code>design-delta.md</code>)를 씁니다. 자세한 설명은 앞서 보낸 페이지 셋(메모리 쓰임, 메모리 구조 안, 가져오기 시간 안)에 있습니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>가져오기·교체 시간</h2>
+<div class="gist">지금 36~41분, 그중 쓰기 끝부분 동안 검색이 멈춥니다. 여덟 방향 중 셋을 묶는 것을 추천합니다.</div>
+<div class="item">
+<h3><span class="no">1</span>새 표에 색인 없이 쓰고 → 색인을 나중에 만든 뒤 → 이름 바꿔 끼우기 + 국가서지 푼 결과 남기기 [안]</h3>
+<p>검색은 이름을 바꾸는 순간만 잠깐 기다립니다. 국가서지(6.5~9분)를 매번 다시 풀지 않습니다. 새 표에 같은 책 줄을 붙여 써서 DB 메모리 줄이기도 함께 됩니다.</p>
+<p class="alt"><b>다른 선택</b> 바뀐 줄만 고치기(빠르지만 옛 줄이 쌓임, 9월 30일에 피하자고 하신 것), 도서관별로 표 나누기(책 화면이 느려질 위험), 지금 흐름에서 색인만 나중에(검색은 여전히 멈춤).</p>
+</div>
+<div class="item">
+<h3><span class="no">2</span>먼저 쓰기 27분을 단계별로 잰 뒤, 가장 느린 곳을 더 고칠지 정함 [안]</h3>
+<p>두 번째 읽기, 임시 표, 맞대기, 옮겨 쓰기 중 어디가 느린지 아직 모릅니다. dev가 시간 기록을 넣고 같은 사본으로 한 번 더 돌립니다.</p>
+</div>
+<div class="item">
+<h3><span class="no">3</span>소장 번호를 "지난번 최대 번호 다음"부터 매김 [안]</h3>
+<p>지금은 가져올 때마다 1부터 다시 매겨서, 가져오기 직전에 열어 둔 책 화면의 "더 보기"가 다른 도서관 줄을 가리킬 수 있습니다. 이어 매기면 옛 번호는 "없음"으로 실패할 뿐 다른 줄을 가리키지 않습니다.</p>
+<p class="alt"><b>다른 선택</b> 지금처럼 1부터(가져오는 동안 검색이 되면 이 빈틈이 드러남).</p>
+</div>
+<div class="item">
+<h3><span class="no">4</span>바꿔 끼운 뒤 옛 표는 바로 지움 [안]</h3>
+<p>디스크를 빨리 돌려받습니다. 되돌리려면 다시 가져와야 합니다.</p>
+<p class="alt"><b>다른 선택</b> 다음 가져오기까지 한 벌 남김(되돌리기 쉬움, 디스크 약 10GB 더).</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>메모리 구조</h2>
+<div class="item">
+<h3><span class="no">5</span>검색할 때 도서관 2,700곳을 다 읽지 않고, 들어갈 약 390곳만 DB에서 읽음 [안]</h3>
+<p>예전 결정("도서관 켜짐 여부는 요청마다 읽음", ADR-0004)을 그대로 지킵니다.</p>
+<p class="alt"><b>다른 선택</b> 30초 동안 메모리에 기억(DB 읽기는 거의 없어지지만 끈 도서관이 최대 30초 늦게 반영, 예전 결정을 바꿔야 함).</p>
+</div>
+<div class="item">
+<h3><span class="no">6</span>책 화면은 찾을 도서관 줄만 DB에서 읽음. 가져오기용 색인과 원문 칸은 남김 [안]</h3>
+<p class="alt"><b>다른 선택</b> 가져오기용 색인(1,075MB)을 없앰: 약 1GB 줄지만 같은 책 코드 중복을 DB가 막지 않음.</p>
+</div>
+<div class="item">
+<h3><span class="no">7</span>캐시 둘은 개수 상한을 두고 통계를 켜서 잰 뒤 캐시마다 상한을 따로 정함 [안]</h3>
+<p>코드로 센 추정으로는 가득 차도 약 15MB라 작습니다. 캐시 상한 결정(ADR-0006)을 고칠 수 있습니다.</p>
+<p class="alt"><b>다른 선택</b> 크기(무게)로 상한, 담는 값 줄이기.</p>
+</div>
+<div class="item">
+<h3><span class="no">8</span>재는 도구는 따로 더하지 않고 Java 명령과 캐시 통계 로그로 잼 [안]</h3>
+<p class="alt"><b>다른 선택</b> 측정 때만 Actuator(앱 상태 도구)를 내 PC에서만 열리게 켬.</p>
+</div>
+<div class="item">
+<h3><span class="no">9</span>DB 메모리 값은 Docker 실행 설정에 두고 재시작만으로 바꿈. 가져오는 동안만 DB 정렬·색인 메모리를 올림 [안]</h3>
+</div>
+<div class="item">
+<h3><span class="no">10</span>최적점 기준: 검색 첫 쪽이 1초 안이고, 줄이기 전보다 20% 넘게 느려지기 직전 단계 [안]</h3>
+<p>메모리를 단계로 줄이며(예: 4GB → 2GB → 1GB → 512MB → 256MB) 같은 검색을 반복합니다. 20%와 단계 값을 바꾸고 싶으면 기타에 적어 주세요.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>다듬기와 화면</h2>
+<div class="mock">
+<p><b>폰 그림</b> (자리와 순서만, 디자인 아님)</p>
+<div class="row"><span>[검색칸 ──────── 검색]</span></div>
+<div class="row"><span class="mut">검색을 너무 자주 했어요. 1분쯤 뒤에 다시 해 주세요.</span></div>
+<div class="row"><span><b>동대문구립도서관(YES24)</b> · 보유 3<br><span class="mut">폰에서는 사이트가 다른 화면을 보여요. PC에서 열어 주세요</span></span></div>
+<div class="row" style="border-radius:16px 16px 0 0;border-bottom:none"><span>━━ (아래에서 올라오는 설정 창)<br>찾을 도서관 · 방문 없이 가입 · 보기 방식 · 직접 찾기</span></div>
+</div>
+<p class="cap">PC·태블릿은 설정 창이 지금 그대로이고, YES24 안내는 폰 폭에서만 보입니다.</p>
+<div class="item">
+<h3><span class="no">11</span>이미 브라우저에 저장된 정렬·완전 일치·역할 값은 다음 방문 때 지움 [안]</h3>
+</div>
+<div class="item">
+<h3><span class="no">12</span>429 "검색을 너무 자주 했어요. 1분쯤 뒤에 다시 해 주세요.", 503 "지금 찾는 사람이 많아요. 잠시 뒤에 다시 해 주세요." — 결과 위 안내 줄, 이미 받은 결과는 남김 [안]</h3>
+</div>
+<div class="item">
+<h3><span class="no">13</span>YES24 13곳 안내는 폰 폭에서 결과 카드·책 화면 줄·가입 정보 창의 첫 화면 링크 옆에 보임 [안]</h3>
+<p class="alt"><b>다른 선택</b> 결과 카드에는 빼고(책 상세 링크는 폰에서도 맞으므로) 첫 화면 링크 옆에만.</p>
+</div>
+<div class="item">
+<h3><span class="no">14</span>폰 설정 창을 아래에서 올라오는 창으로 바꿈 [안]</h3>
+<p>고르셨던 시안(D안)이 이 모양이었습니다. 내용과 순서는 그대로입니다.</p>
+</div>
+<div class="item">
+<h3><span class="no">15</span>폰 "도서관에서 직접 찾기"일 때 정렬 자리에 흐린 "정렬 없음", 누르면 이유 [안]</h3>
+</div>
+<div class="item">
+<h3><span class="no">16</span>남은 상태 칸("대출 중 · 예약", "확인 실패" 등) 색을 보유 칸과 같은 연보라로 [안]</h3>
+</div>
+<div class="item">
+<h3><span class="no">17</span>카드 전체 링크는 그대로 (글자 선택 문제는 생기면 다시) [안]</h3>
+</div>
+<div class="item">
+<h3><span class="no">18</span>글꼴을 자주 쓰는 한글만 담은 작은 파일로 줄임 (약 3MB → 줄어듦, 라이선스 확인 뒤) [안]</h3>
+</div>
+<div class="item">
+<h3><span class="no">19</span>약관·처리방침 화면 맨 위에 "← 돌아가기" (이전 화면, 없으면 첫 화면) [안]</h3>
+</div>
+<div class="item">
+<h3><span class="no">20</span>도서관 이름을 고친 뒤 예전 이름으로는 찾지 않음 [안]</h3>
+<p class="alt"><b>다른 선택</b> 예전 이름도 찾게 함(이름 칸이 하나 더 필요).</p>
+</div>
+<div class="item">
+<h3><span class="no">21</span>작은 구조 항목은 추천 모양 그대로 [안]</h3>
+<p>고친 시각: 도서관·지역 모듈마다 "고칠 때 시각 적기" 장치. YES24 표시: 도서관 표에 칸 하나. 이름 고치기: 새 DB 변경 파일 + seed 스크립트의 "이름 고침 목록". 수집 기간: 가져오기 기록에 시작·끝 두 칸.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>주무시는 동안 한 일</h2>
+<ul>
+<li>결정 기록 ADR-0061~0064 넷을 승인하신 대로 파일로 씀</li>
+<li><code>docs/current/</code> 세 문서의 그림을 렌더링해 보냄</li>
+<li>사이클 08 <code>scope.md</code>·<code>spec.md</code>·<code>flow.md</code>·<code>research.md</code>(1~10절)·<code>architect-proposal.md</code></li>
+<li>폰용 쉬운 페이지 셋: 메모리 쓰임, 메모리 구조 안, 가져오기 시간 안</li>
+<li>커밋은 하지 않았습니다(사이클 07 마무리 문서도 아직 커밋 전)</li>
+</ul>
+</section>
+
+<p class="foot">원본: <code>docs/cycles/08-polish-swap-memory/spec.md</code>, <code>flow.md</code>, <code>research.md</code> 9·10절, <code>architect-proposal.md</code>. 작성 2026-10-06.</p>
+</main>
+</body>
+</html>

@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>정리 규칙 바꿀 때</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+svg{max-width:100%;height:auto;display:block}
+.mock{border:2px dashed var(--line);border-radius:12px;padding:14px;margin:10px 0;font-size:17px}
+.row{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;background:var(--card);flex-wrap:wrap}
+.tag{font-size:14px;border-radius:6px;padding:0 6px;background:var(--code-bg);color:var(--muted)}
+.okt{color:var(--ok);font-weight:500}.mut{color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">정리 규칙을 바꿀 때의 순서를<br>하나 정해 주세요.</p>
+<p class="sub">질문("정리 규칙이 바뀌면 어떻게 하기로 한거지?")에 답하다 보니, 규칙을 바꿨을 때의 순서가 정해져 있지 않았습니다. 설계 페이지에는 칩을 더할 수 없어 이 페이지에서 따로 여쭙니다. 설명 그림은 설계 페이지 DB 칸 안에 있습니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>정리 규칙을 바꿀 때</h2>
+<div class="gist">정리 규칙(제목·저자·출판사를 다듬는 규칙)은 검색어와 저장값이 같이 씁니다. 코드만 바꾸고 다시 가져오지 않으면, 검색어는 새 규칙으로 다듬어지는데 저장값은 옛 규칙 그대로라 검색이 일부 안 맞을 수 있습니다.</div>
+<div class="item">
+<h3><span class="no">1</span>정리 규칙을 바꾸면 판 번호를 올리고, 그 코드를 올릴 때 같은 사본으로 반드시 다시 가져온다 [안]</h3>
+<p>순서(질문 뒤 고침): ① 규칙 코드를 고치고 판 번호(<code>normalize_version</code>)를 올림 → ② 옛 서비스는 켜 둔 채, 새 코드로 같은 사본을 가져와 새 표를 준비(국가서지도 새 판으로 다시 풂) → ③ 바꿔 끼우자마자 서비스를 새 코드로 다시 켬. 검색이 어긋나는 시간은 ③의 다시 켜는 동안뿐.</p>
+<p>dev 규칙 문서와 가져오기 절차(<code>docs/maintenance/3-import.md</code>)에 이 순서를 적습니다. 정리 규칙의 예상 결과 목록(테스트 벡터)에 판 번호를 함께 적어, 결과가 달라졌는데 번호가 그대로면 빌드가 실패하게 합니다(번호 올리기를 잊지 않게). 규칙 자체는 DB에 남기지 않고, 판 번호는 국가서지 결과가 옛 규칙으로 만든 것인지 가리는 데만 씁니다(아래 질문 답 참고).</p>
+<p class="alt"><b>다른 선택</b> (가) 규칙을 바꾸면 다음 정기 가져오기 때 맞춰짐: 일이 없지만 그 사이 검색이 어긋날 수 있음. (나) 저장값을 SQL로 다시 계산: 묶기 결과는 못 바꿔서 결국 다시 가져와야 함.</p>
+</div>
+<div class="item" style="background:var(--accent-bg);border-radius:10px;padding:16px 18px">
+<h3>질문: 규칙을 DB에 남겨야 하나요? 어차피 새 규칙으로 DB를 새로 만들어야 하지 않나요?</h3>
+<p><b>맞습니다. 규칙 자체는 DB에 남기지 않습니다(규칙은 코드에만 있음). 그리고 규칙이 바뀌면 다시 가져와서 책·사람·소장 표를 새 규칙으로 새로 만드는 것이 정답입니다.</b> DB에 남기는 것은 규칙이 아니라 <b>판 번호 숫자 하나</b>뿐이고, 쓰는 곳도 한 곳입니다.</p>
+<table>
+<tr><th>무엇</th><th>규칙이 바뀌면</th><th>판 번호가 필요한가</th></tr>
+<tr><td>책·사람·소장 표</td><td>다시 가져오면 통째로 새로 만들어짐</td><td>아니요</td></tr>
+<tr><td>국가서지 결과(남겨 두고 다시 쓰는 것)</td><td>다시 가져와도 "파일이 같으니 다시 쓰자"고 옛 규칙 결과를 그대로 쓸 수 있음 → 틀린 묶음</td><td><b>예.</b> "이 결과는 몇 판 규칙으로 만들었나"를 알아야 버리고 다시 풂</td></tr>
+</table>
+<svg viewBox="0 0 640 120" role="img" aria-label="판 번호가 막는 것">
+<rect x="10" y="20" width="190" height="56" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="20" y="44" font-size="13" fill="var(--text)">규칙 3판 → 4판으로 고침</text><text x="20" y="64" font-size="12" fill="var(--muted)">국가서지 파일은 그대로</text>
+<rect x="225" y="20" width="190" height="56" rx="8" fill="var(--no-bg)" stroke="var(--no)"/><text x="235" y="44" font-size="13" fill="var(--no)">판 번호 없으면</text><text x="235" y="64" font-size="12" fill="var(--no)">3판 결과를 그대로 다시 씀</text>
+<rect x="440" y="20" width="190" height="56" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="450" y="44" font-size="13" fill="var(--ok)">판 번호 있으면</text><text x="450" y="64" font-size="12" fill="var(--ok)">3 ≠ 4 → 버리고 다시 풂</text>
+<text x="10" y="105" font-size="12" fill="var(--muted)">판 번호는 국가서지 결과의 한 줄짜리 표에만 있음 (설계 페이지 DB 칸)</text>
+</svg>
+<p>그래서 아래 제안을 단순하게 고쳤습니다. 처음 적었던 "판 번호가 다르면 서버가 시작할 때 경고"는 빼고, 판 번호는 국가서지 결과에만 씁니다. 다시 가져오기는 절차로 지킵니다.</p>
+</div>
+<div class="item" style="background:var(--accent-bg);border-radius:10px;padding:16px 18px">
+<h3>질문: 규칙 번호가 수집과 DB에서 도대체 어떻게 표시되나요?</h3>
+<p><b>규칙 번호는 코드 안의 숫자 하나에서 시작하고, 수집 DB에는 전혀 없으며, 서비스 DB에는 국가서지 결과의 한 줄짜리 표에만 적힙니다.</b> 수집은 원문을 그대로 모으기만 하고, 규칙은 가져올 때와 검색할 때만 쓰이기 때문입니다.</p>
+<svg viewBox="0 0 640 330" role="img" aria-label="규칙 번호가 있는 곳">
+<defs><marker id="rv" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+<g font-size="12">
+<rect x="10" y="20" width="140" height="120" rx="8" fill="var(--code-bg)" stroke="var(--line)"/>
+<text x="20" y="42" font-size="13" font-weight="700" fill="var(--text)">① 수집 DB</text>
+<text x="20" y="64" fill="var(--text)">제목·저자·출판사</text>
+<text x="20" y="82" fill="var(--text)">원문 그대로</text>
+<text x="20" y="110" fill="var(--no)">규칙 번호 없음</text>
+<text x="20" y="128" fill="var(--muted)">(다듬지 않음)</text>
+<line x1="150" y1="80" x2="188" y2="80" stroke="var(--muted)" marker-end="url(#rv)"/>
+<rect x="190" y="20" width="200" height="120" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/>
+<text x="200" y="42" font-size="13" font-weight="700" fill="var(--text)">② 가져오기 (collection)</text>
+<text x="200" y="64" fill="var(--text)">코드의 규칙 번호를 읽음</text>
+<text x="200" y="82" fill="var(--text)">원문을 그 규칙으로 다듬음</text>
+<text x="200" y="100" fill="var(--text)">국가서지 결과의 번호와 비교</text>
+<text x="200" y="118" fill="var(--text)">다르면 결과를 다시 풂</text>
+<line x1="390" y1="80" x2="428" y2="80" stroke="var(--muted)" marker-end="url(#rv)"/>
+<rect x="430" y="20" width="200" height="120" rx="8" fill="var(--accent-bg)" stroke="var(--accent)"/>
+<text x="440" y="42" font-size="13" font-weight="700" fill="var(--accent)">③ 서비스 DB</text>
+<text x="440" y="64" fill="var(--text)">책 표 *_norm = 다듬은 값</text>
+<text x="440" y="82" fill="var(--muted)">(번호는 적지 않음)</text>
+<text x="440" y="106" fill="var(--text)">national_bibliography_source</text>
+<text x="440" y="124" fill="var(--ok)">normalize_version = 4 (한 줄)</text>
+<rect x="190" y="170" width="200" height="60" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="200" y="192" font-size="13" font-weight="700" fill="var(--text)">규칙 코드 (catalog)</text>
+<text x="200" y="214" fill="var(--text)">판 번호 = 4  ← 여기만 진짜</text>
+<line x1="290" y1="170" x2="290" y2="142" stroke="var(--muted)" marker-end="url(#rv)"/>
+<rect x="430" y="170" width="200" height="60" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="440" y="192" font-size="13" font-weight="700" fill="var(--text)">④ 검색할 때</text>
+<text x="440" y="214" fill="var(--text)">검색어를 같은 코드로 다듬음</text>
+<line x1="390" y1="200" x2="428" y2="200" stroke="var(--muted)" marker-end="url(#rv)"/>
+<text x="10" y="268" font-size="13" fill="var(--text)">번호를 바꾸는 사람: 정리 규칙 코드를 고친 개발자 (예: 3 → 4)</text>
+<text x="10" y="292" font-size="13" fill="var(--text)">번호를 읽는 것: 가져오기뿐. 검색은 번호 없이 지금 코드를 그대로 씀</text>
+<text x="10" y="316" font-size="12" fill="var(--muted)">숫자 4는 예시입니다. 실제 시작 번호는 dev가 정함</text>
+</g>
+</svg>
+<table>
+<tr><th>자리</th><th>번호가 있나</th><th>어떻게 보이나</th></tr>
+<tr><td>정리 규칙 코드 (<code>catalog.normalize</code>)</td><td class="okt">있음 (원본)</td><td>코드 안 상수 하나. 규칙을 고칠 때 개발자가 1 올림</td></tr>
+<tr><td>수집 DB (SQLite)</td><td>없음</td><td>원문만 있음. 규칙이 바뀌어도 수집 DB는 그대로</td></tr>
+<tr><td>서비스 DB 책·사람 표</td><td>없음</td><td>다듬은 값(<code>title_norm</code> 등)만. 다시 가져오면 새 규칙 값으로 통째로 바뀜</td></tr>
+<tr><td>서비스 DB 국가서지 결과의 판 표 (한 줄)</td><td class="okt">있음</td><td><code>normalize_version</code> 칸에 "이 결과를 만든 번호"</td></tr>
+<tr><td>검색할 때</td><td>없음</td><td>검색어를 지금 코드로 다듬을 뿐</td></tr>
+</table>
+<p>원하시면 가져오기 기록 한 줄에도 같은 번호를 적어 "지금 서비스 DB가 몇 번 규칙으로 만들어졌나"를 사람이 볼 수 있게 할 수 있습니다(칸 하나). 필요하면 기타에 적어 주세요.</p>
+</div>
+<div class="item" style="background:var(--accent-bg);border-radius:10px;padding:16px 18px">
+<h3>질문: 정리 규칙 코드(<code>catalog.normalize</code>)가 책마다 있는 건가요?</h3>
+<p><b>아닙니다. 서비스 전체에 한 벌만 있는 프로그램 코드입니다.</b> 책 데이터가 아니라 "글자를 다듬는 기계"이고, 160만 권 모두와 이용자가 친 검색어가 같은 기계를 지나갑니다. 그래서 판 번호도 서비스 전체에 하나입니다.</p>
+<svg viewBox="0 0 640 200" role="img" aria-label="한 벌의 규칙 코드">
+<defs><marker id="cn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+<rect x="10" y="20" width="170" height="40" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="20" y="45" font-size="13" fill="var(--text)">책 1: "작별하지 않는다"</text>
+<rect x="10" y="70" width="170" height="40" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="20" y="95" font-size="13" fill="var(--text)">책 2 … 책 160만</text>
+<rect x="10" y="130" width="170" height="40" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="20" y="155" font-size="13" fill="var(--text)">검색어: "작별 하지"</text>
+<line x1="180" y1="40" x2="248" y2="85" stroke="var(--muted)" marker-end="url(#cn)"/>
+<line x1="180" y1="90" x2="248" y2="95" stroke="var(--muted)" marker-end="url(#cn)"/>
+<line x1="180" y1="150" x2="248" y2="105" stroke="var(--muted)" marker-end="url(#cn)"/>
+<rect x="250" y="60" width="190" height="70" rx="10" fill="var(--warn-bg)" stroke="var(--warn)"/>
+<text x="262" y="86" font-size="14" font-weight="700" fill="var(--text)">정리 규칙 코드 한 벌</text>
+<text x="262" y="110" font-size="12" fill="var(--muted)">판 번호 하나 (예: 4)</text>
+<line x1="440" y1="95" x2="478" y2="95" stroke="var(--muted)" marker-end="url(#cn)"/>
+<rect x="480" y="60" width="150" height="70" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/>
+<text x="490" y="86" font-size="13" fill="var(--text)">다듬은 글자</text>
+<text x="490" y="110" font-size="13" fill="var(--ok)">"작별하지않는다"</text>
+</svg>
+<p>이 코드가 하는 일 예(사이클 04·07 규칙, <code>search-and-normalization.md</code> 4절): 전각·반각 문자 통일(NFKC), 영어 소문자, 공백 없애기, 본제목 떼기(부제 앞까지), 저자 이름 나누기와 역할(옮긴이·그림·엮은이) 가리기, 출판사 이름 다듬기, 출판일 읽기, ISBN 검사. dev 코드 위치: <code>catalog/normalize/</code>의 <code>CatalogText</code>, <code>Contributors</code>, <code>Isbn</code>, <code>PublishedDates</code>(사이클 07에 이 자리로 옮김, ADR-0060).</p>
+<p class="cap">예시 검색어 다듬기 결과는 공백 제거 규칙을 보이려는 것이고, 실제 검색은 글자 조각(bigram)으로도 찾습니다.</p>
+</div>
+<div class="item" style="background:var(--accent-bg);border-radius:10px;padding:16px 18px">
+<h3>질문: 정리 규칙 코드와 국가서지 판 표는 뭐가 다른가요? 각각 보여 주세요. 정리 방법이 바뀌었다는 건 어떻게 전달되나요?</h3>
+<p><b>정리 규칙 코드는 DB에 없습니다. 프로그램(소스 코드) 안에 있고, 그 안에 "지금 판 번호"가 숫자로 적혀 있습니다. 국가서지 판 표는 DB에 있는 한 줄이고, "남겨 둔 국가서지 결과를 몇 번 판으로 만들었는지"를 적어 둔 기록입니다.</b> 앞은 "지금 규칙", 뒤는 "결과를 만들 때의 규칙"입니다.</p>
+<table>
+<tr><th></th><th>정리 규칙 코드</th><th>국가서지 판 표</th></tr>
+<tr><td>어디에</td><td>dev 저장소의 Java 코드 (<code>catalog/normalize/</code>), 서버 프로그램 안</td><td>서비스 DB (<code>collection.national_bibliography_source</code>)</td></tr>
+<tr><td>무엇</td><td>글자를 다듬는 규칙 자체 + 지금 판 번호</td><td>숫자 한 줄: 결과를 만들 때의 판 번호, 파일 지문, 만든 시각</td></tr>
+<tr><td>누가 바꾸나</td><td>개발자가 규칙을 고칠 때</td><td>가져오기가 결과를 새로 만들 때 자동으로</td></tr>
+<tr><td>몇 개</td><td>한 벌</td><td>한 줄</td></tr>
+</table>
+<p><b>모양 (예시, 아직 없는 것을 그린 그림)</b></p>
+<div class="mock">
+<div class="row" style="font-family:ui-monospace,Consolas,monospace;font-size:14px"><span>// dev catalog/normalize/NormalizeVersion.java [안 이름]<br>public static final int VERSION = 4;  // 규칙을 고치면 올림</span></div>
+</div>
+<div class="mock">
+<div class="row" style="font-family:ui-monospace,Consolas,monospace;font-size:14px"><span>collection.national_bibliography_source<br>source_fingerprint | normalize_version | built_at<br>nl-ttl:7.7GB:2026-09-28 | 4 | 2026-10-12 03:10</span></div>
+</div>
+<p class="cap">둘 다 예시 값입니다. 판 번호 상수는 지금 dev 코드에 없고, 이번 사이클에 새로 둡니다.</p>
+
+<p><b>바뀌었다는 것이 전달되는 길</b></p>
+<svg viewBox="0 0 640 250" role="img" aria-label="규칙 변경이 전달되는 길">
+<defs><marker id="tr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+<g font-size="12">
+<rect x="10" y="20" width="190" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="20" y="42" font-size="13" font-weight="700" fill="var(--text)">1. 개발자</text>
+<text x="20" y="62" fill="var(--text)">규칙을 고치고 VERSION 3→4</text>
+<line x1="200" y1="52" x2="228" y2="52" stroke="var(--muted)" marker-end="url(#tr)"/>
+<rect x="230" y="20" width="190" height="64" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/>
+<text x="240" y="42" font-size="13" font-weight="700" fill="var(--text)">2. 테스트</text>
+<text x="240" y="62" fill="var(--text)">결과가 바뀌었는데 번호 그대로면</text>
+<text x="240" y="78" fill="var(--no)">빌드 실패 (잊지 않게)</text>
+<line x1="420" y1="52" x2="448" y2="52" stroke="var(--muted)" marker-end="url(#tr)"/>
+<rect x="450" y="20" width="180" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="460" y="42" font-size="13" font-weight="700" fill="var(--text)">3. 서버에 올림</text>
+<text x="460" y="62" fill="var(--text)">새 코드 = 판 4</text>
+<line x1="540" y1="84" x2="540" y2="118" stroke="var(--muted)" marker-end="url(#tr)"/>
+<rect x="400" y="120" width="230" height="70" rx="8" fill="var(--accent-bg)" stroke="var(--accent)"/>
+<text x="410" y="142" font-size="13" font-weight="700" fill="var(--accent)">4. 같은 사본으로 다시 가져옴</text>
+<text x="410" y="162" fill="var(--text)">판 표의 3 ≠ 코드의 4</text>
+<text x="410" y="180" fill="var(--text)">→ 국가서지 다시 풂, 판 표를 4로</text>
+<line x1="400" y1="155" x2="258" y2="155" stroke="var(--muted)" marker-end="url(#tr)"/>
+<rect x="10" y="120" width="246" height="70" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/>
+<text x="20" y="142" font-size="13" font-weight="700" fill="var(--ok)">5. 서비스 DB 전부 새 규칙</text>
+<text x="20" y="162" fill="var(--text)">책·사람 표 다듬은 값도</text>
+<text x="20" y="180" fill="var(--text)">통째로 새로 (바꿔 끼우기)</text>
+<text x="10" y="222" fill="var(--muted)">사람에게 전달: dev가 plan-feedback에 "규칙 판 4, 다시 가져옴"을 적고, 가져오기 절차 문서(3-import.md)에 순서가 있음</text>
+</g>
+</svg>
+<p>2번 테스트는 정리 규칙의 예상 결과 목록(테스트 벡터, ADR-0031이 이미 "정리 규칙을 테스트 벡터 하나로 고정"으로 정함)에 판 번호를 함께 적어 두고, 결과가 달라졌는데 번호가 그대로면 빌드가 실패하게 하는 것입니다. 사람이 번호 올리기를 잊어도 막아 줍니다. 위 #1 제안에 이 테스트를 포함했습니다.</p>
+</div>
+<div class="item" style="background:var(--accent-bg);border-radius:10px;padding:16px 18px">
+<h3>질문: 보통 이렇게 Java 코드의 상수로 전달하나요?</h3>
+<p><b>정해진 표준은 없고, 흔히 쓰는 방법이 셋 있습니다.</b> "남겨 둔 결과가 지금 규칙으로 만든 것인가"를 가리는 문제는 캐시를 언제 버릴지의 문제와 같아서, 빌드 도구 같은 곳에서도 같은 고민을 합니다.</p>
+<table>
+<tr><th>방법</th><th>어떻게</th><th>좋은 점</th><th>아쉬운 점</th></tr>
+<tr><td>가. 손으로 올리는 판 번호 (지금 제안)</td><td>코드에 숫자 상수, 규칙을 고칠 때 개발자가 올림</td><td>가장 단순, 사람이 읽기 쉬움</td><td>올리기를 잊을 수 있음 → 테스트로 막음</td></tr>
+<tr><td>나. 자동 지문</td><td>규칙의 예상 결과 목록(테스트 벡터)을 지금 코드로 돌린 결과를 짧은 값(해시)으로 만들어 판으로 씀</td><td>손으로 올릴 일이 없음. 결과가 달라지면 저절로 판이 바뀜</td><td>테스트 벡터에 없는 경우의 변화는 못 잡음(가도 같음). 판 값이 사람이 읽기 어려운 글자</td></tr>
+<tr><td>다. 앱 배포 번호를 판으로</td><td>새로 배포할 때마다 판이 바뀜</td><td>잊을 일이 전혀 없음</td><td>규칙과 상관없는 배포에도 국가서지를 매번 다시 풂(6.5~9분 손해)</td></tr>
+</table>
+<p class="cap">"나"와 같은 생각의 공식 예: Gradle 빌드 캐시는 작업의 구현과 입력 값이 캐시 키를 이루고, 키가 같을 때만 지난 결과를 다시 씀(<a href="https://docs.gradle.org/current/userguide/build_cache_concepts.html">Gradle Build Cache 개념</a>, 확인 2026-10-11). 이 서비스에 어느 쪽이 "보통"인지 말해 주는 공식 기준은 확인 못 함입니다.</p>
+<p>추천은 그대로 "가 + 잊지 않게 하는 테스트"입니다(단순, 판 번호가 사람 눈에 보임). 손으로 올리는 일을 없애고 싶으시면 위 #1 칩의 기타에 "나로"라고 적어 주세요.</p>
+</div>
+<div class="item" style="background:var(--accent-bg);border-radius:10px;padding:16px 18px">
+<h3>질문: "3. 서버에 올림", "4. 같은 사본으로 다시 가져옴"을 구체적으로</h3>
+<p><b>지금은 배포가 보류라 "서버"는 이 PC입니다(로컬 + Cloudflare 터널). 3은 서비스를 새 코드로 다시 켜는 것이고, 4는 서비스를 켜 둔 채 다른 창에서 가져오기 명령을 한 번 돌리는 것입니다.</b> 가져오기는 웹 서버 없이 한 번 돌고 끝나는 따로 된 실행이라, 서비스와 동시에 돌 수 있습니다(dev <code>docs/maintenance/3-import.md</code>).</p>
+<svg viewBox="0 0 640 300" role="img" aria-label="3과 4의 구체 단계">
+<defs><marker id="s34" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+<g font-size="12">
+<text x="10" y="18" font-size="13" font-weight="700" fill="var(--text)">창 A: 서비스</text>
+<rect x="10" y="26" width="300" height="50" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="20" y="46" fill="var(--text)">3-1. 규칙 고친 코드 커밋, 빌드·테스트 통과</text><text x="20" y="64" fill="var(--muted)">./gradlew build</text>
+<line x1="160" y1="76" x2="160" y2="94" stroke="var(--muted)" marker-end="url(#s34)"/>
+<rect x="10" y="96" width="300" height="56" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="20" y="116" fill="var(--text)">3-2. 돌던 서비스를 끄고 새 코드로 다시 켬</text><text x="20" y="134" fill="var(--muted)">실행 설정 backend-no-login</text><text x="20" y="148" fill="var(--no)">이때부터 검색어 = 새 규칙</text>
+<line x1="160" y1="152" x2="160" y2="170" stroke="var(--muted)" marker-end="url(#s34)"/>
+<rect x="10" y="172" width="300" height="44" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="20" y="198" fill="var(--text)">서비스는 계속 켜져 있음 (검색 가능)</text>
+<text x="330" y="18" font-size="13" font-weight="700" fill="var(--text)">창 B: 가져오기 (한 번 돌고 끝)</text>
+<rect x="330" y="96" width="300" height="56" rx="8" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="340" y="116" fill="var(--text)">4-1. 가져오기 명령 실행</text><text x="340" y="134" fill="var(--muted)">같은 사본 경로, dry-run 없이</text>
+<line x1="480" y1="152" x2="480" y2="170" stroke="var(--muted)" marker-end="url(#s34)"/>
+<rect x="330" y="172" width="300" height="56" rx="8" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="340" y="192" fill="var(--text)">4-2. 판 3≠4 → 국가서지 다시 풂</text><text x="340" y="210" fill="var(--text)">새 표에 씀 → 색인 → 바꿔 끼움</text>
+<line x1="480" y1="228" x2="480" y2="246" stroke="var(--muted)" marker-end="url(#s34)"/>
+<rect x="330" y="248" width="300" height="44" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="340" y="268" fill="var(--text)">4-3. 기록 확인: 판 4, 책 번호 잇기 수,</text><text x="340" y="284" fill="var(--text)">단계별 시간 → 검색 다시 맞음</text>
+<line x1="310" y1="124" x2="328" y2="124" stroke="var(--muted)" marker-end="url(#s34)"/>
+<text x="10" y="248" fill="var(--no)">3-2 ~ 4-2 끝까지: 검색이 일부 안 맞을 수 있는 시간</text>
+<text x="10" y="266" fill="var(--muted)">(지금 기준 약 40분, 바꾼 방식에서 줄어듦)</text>
+</g>
+</svg>
+<p><b>4-1의 실제 명령</b> (dev <code>3-import.md</code> 32행의 명령에서 시험 실행 표시만 뺀 것, 사본 경로는 그때 쓰는 사본):</p>
+<div class="mock"><div class="row" style="font-family:ui-monospace,Consolas,monospace;font-size:13px;word-break:break-all"><span>cd backend<br>./gradlew bootRun --args='--spring.profiles.active=collection-import --chaekcheck.collection.import.sqlite-path=../../chaekcheck-data/snapshots/ebook-catalog-2026-10-05-0745.sqlite --chaekcheck.collection.import.ttl-path=../data/nlk/ttl'</span></div></div>
+<p class="cap">프로필 <code>collection-import</code>는 웹 서버 없이 한 번 돌고 끝나며 로그인 기능은 늘 꺼집니다(dev <code>3-import.md</code> 34행). 이번 사이클에 가져오기 Java 메모리 상한(<code>-Xmx</code>)이 이 명령에 더해집니다.</p>
+<p><b>"같은 사본"인 까닭:</b> 규칙만 바꿨으니 데이터는 그대로 두고 다듬기만 다시 하려는 것입니다. 새 사본이 있으면 그걸로 해도 되지만, 그러면 규칙 효과와 데이터 변화가 섞여 결과를 비교하기 어렵습니다.</p>
+<p><b>어긋나는 시간을 줄이려면:</b> 이용자가 적은 시간(새벽)에 3-2와 4-1을 바로 이어서 합니다. <span style="text-decoration:line-through">4를 먼저 하고 3을 나중에 해도 반대 방향으로 어긋날 뿐이라 시간은 비슷합니다.</span> → 이 문장은 틀렸습니다. 아래 답을 보세요.</p>
+</div>
+
+<div class="item" style="background:var(--ok-bg);border-radius:10px;padding:16px 18px">
+<h3>질문: 표를 미리 만들어 두고 이름만 바꾸는 거 아니었나요? 가져오기를 먼저 하고 이름을 바꾸면 되지 않나요?</h3>
+<p><b>맞습니다. 순서를 거꾸로(가져오기 먼저, 서비스 다시 켜기는 바꿔 끼운 직후) 하는 것이 맞고, 그러면 검색이 어긋나는 시간이 약 40분에서 "서비스를 다시 켜는 동안"으로 줄어듭니다.</b> 앞서 "순서를 바꿔도 시간은 비슷하다"고 쓴 것은 틀렸습니다. 새 표는 바꿔 끼우기 전까지 아무도 읽지 않으므로, 그동안 옛 코드 서비스는 옛 표를 읽어 서로 맞습니다.</p>
+<svg viewBox="0 0 640 260" role="img" aria-label="고친 순서">
+<defs><marker id="ro" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+<g font-size="12">
+<rect x="10" y="20" width="620" height="50" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/>
+<text x="20" y="40" font-weight="700" fill="var(--text)">1. 옛 코드 서비스는 그대로 켜 둠 (검색어 = 옛 규칙, 표 = 옛 표 → 맞음)</text>
+<text x="20" y="60" fill="var(--text)">   그동안 다른 창에서 새 코드로 가져오기: 새 표(catalog_next)에 새 규칙 값으로 쓰고 색인까지</text>
+<line x1="320" y1="70" x2="320" y2="94" stroke="var(--muted)" marker-end="url(#ro)"/>
+<rect x="10" y="96" width="620" height="56" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/>
+<text x="20" y="118" font-weight="700" fill="var(--text)">2. 바꿔 끼우기 (이름만 바꿈, 순간) → 곧바로 서비스를 새 코드로 다시 켬</text>
+<text x="20" y="140" fill="var(--no)">   어긋나는 시간 = 바꿔 끼운 뒤 서비스가 다시 켜질 때까지 (짧음)</text>
+<line x1="320" y1="152" x2="320" y2="176" stroke="var(--muted)" marker-end="url(#ro)"/>
+<rect x="10" y="178" width="620" height="44" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/>
+<text x="20" y="205" font-weight="700" fill="var(--text)">3. 새 코드 서비스 + 새 표 (검색어 = 새 규칙, 표 = 새 규칙 → 맞음)</text>
+<text x="10" y="248" fill="var(--muted)">다시 켜는 데 걸리는 시간은 재지 않았음. 이 PC 기준 1분 안팎으로 보임 [추정]</text>
+</g>
+</svg>
+<p>더 줄이고 싶으면 가져오기를 "새 표 준비"까지만 하고 멈춘 뒤, 서비스를 끄는 순간에 바꿔 끼우기만 따로 실행하는 방법도 있습니다(가져오기 명령에 "바꿔 끼우기는 따로" 선택지). 처음엔 위 단순한 순서로 하고, 필요하면 더합니다.</p>
+<p>위 #1 제안의 순서를 이렇게 고쳤습니다: ① 규칙 고치고 판 번호 올림 → ② <b>옛 서비스는 켜 둔 채 새 코드로 같은 사본을 가져옴</b>(새 표 준비) → ③ 바꿔 끼우자마자 서비스를 새 코드로 다시 켬.</p>
+</div>
+<div class="item" style="background:var(--accent-bg);border-radius:10px;padding:16px 18px">
+<h3>질문: "실행 설정 backend-no-login"은 뭔가요?</h3>
+<p><b>dev 프로젝트에 저장해 둔 "서비스를 켜는 방법" 이름 중 하나로, 로그인 기능을 끈 채 서비스를 켜는 설정입니다.</b> 지금 Cloudflare 터널로 공개 시험할 때 쓰는 켜기 방법입니다(dev 공개 시험 기록, 사이클 07).</p>
+<table>
+<tr><th>이름</th><th>하는 일</th><th>실제 명령</th></tr>
+<tr><td><code>backend</code></td><td>서비스를 평소대로 켬 (로그인 설정은 <code>.env</code>를 따름)</td><td><code>gradlew -p backend bootRun</code></td></tr>
+<tr><td><code>backend-no-login</code></td><td>서비스를 켜되 로그인 기능은 끔 (카카오 로그인·약관·처리방침 화면이 안 보임)</td><td><code>gradlew -p backend bootRun --args=--chaekcheck.auth.enabled=false</code></td></tr>
+<tr><td><code>web</code>, <code>web-lan</code></td><td>화면 개발 서버를 켬 (<code>web-lan</code>은 같은 와이파이의 폰에서도 열림)</td><td><code>npm --prefix web run dev …</code></td></tr>
+</table>
+<p class="cap">출처: dev <code>.claude/launch.json</code>(Claude Code가 서비스를 켤 때 쓰는 설정 파일, 2026-10-11 읽음). 앞 칸의 "새 코드로 다시 켬"은 이 중 지금 쓰는 켜기 방법으로 다시 켠다는 뜻입니다. 로그인을 켜고 운영한다면 <code>backend</code>로 켭니다.</p>
+</div>
+<div class="item" style="background:var(--ok-bg);border-radius:10px;padding:16px 18px">
+<h3>질문: 표를 통째로 바꿔 끼우는 거면 판 번호(3→4)는 필요 없지 않나요?</h3>
+<p><b>맞습니다. 책·사람·소장 표에는 필요 없습니다. 판 번호가 필요한 곳은 "국가서지 결과를 남겨 두고 다시 쓰는 것" 하나뿐이었는데, 이것도 남기는 내용을 바꾸면 판 번호를 아예 없앨 수 있습니다.</b></p>
+<p>지금 제안은 국가서지를 풀어 <b>다듬은 키</b>를 남깁니다. 다듬은 키는 규칙이 바뀌면 틀려지니 판 번호가 필요했습니다. 대신 <b>다듬기 전 원문</b>(ISBN, 제목, 저자, 출판사)을 남기고, 가져올 때마다 그 원문을 지금 규칙으로 다듬으면 규칙이 바뀌어도 남긴 것이 틀려지지 않습니다.</p>
+<svg viewBox="0 0 640 210" role="img" aria-label="원문을 남기면 판 번호가 필요 없음">
+<defs><marker id="rw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+<g font-size="12">
+<rect x="10" y="20" width="150" height="60" rx="8" fill="var(--code-bg)" stroke="var(--line)"/><text x="20" y="44" fill="var(--text)">국가서지 TTL 7.7GB</text><text x="20" y="64" fill="var(--muted)">풀기가 오래 걸림</text>
+<line x1="160" y1="50" x2="198" y2="50" stroke="var(--muted)" marker-end="url(#rw)"/>
+<rect x="200" y="20" width="200" height="60" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="210" y="44" fill="var(--text)">남김: 원문 (ISBN, 제목, 저자, 출판사)</text><text x="210" y="64" fill="var(--ok)">규칙과 상관없음 → 판 번호 불필요</text>
+<line x1="400" y1="50" x2="438" y2="50" stroke="var(--muted)" marker-end="url(#rw)"/>
+<rect x="440" y="20" width="190" height="60" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="450" y="44" fill="var(--text)">가져올 때마다</text><text x="450" y="64" fill="var(--text)">지금 규칙으로 다듬어 키</text>
+<text x="10" y="112" fill="var(--text)">TTL 파일이 바뀌었는지만 지문으로 봄 → 바뀌었으면 다시 풀어 원문을 새로 남김</text>
+<text x="10" y="136" fill="var(--text)">규칙이 바뀌었는지는 볼 필요 없음 → 판 번호·잊지 않게 하는 테스트 둘 다 필요 없음</text>
+<text x="10" y="166" fill="var(--muted)">대가: 남기는 양이 조금 커지고(원문 글자), 가져올 때마다 다듬는 시간이 듦</text>
+<text x="10" y="186" fill="var(--muted)">(오래 걸리는 것은 7.7GB 파일 풀기라 다듬기 시간은 작을 것으로 봄 [추정, 재지 않음])</text>
+</g>
+</svg>
+<p class="rec">새 추천: <b>국가서지는 원문을 남기고 가져올 때마다 다듬는다. 판 번호는 두지 않는다.</b> 규칙을 바꿨을 때 할 일은 "옛 서비스 켜 둔 채 새 코드로 다시 가져오기 → 바꿔 끼우자마자 서비스 다시 켜기"뿐입니다.</p>
+<p>위 #1 칩은 처음 제안(판 번호 + 테스트)입니다. 새 추천으로 하시려면 #1에 기타로 "원문으로"라고 적어 주세요. 설계 페이지의 국가서지 표도 그에 맞춰 고치겠습니다(판 표에서 <code>normalize_version</code>을 빼고, 결과 표를 원문 칸으로).</p>
+</div>
+<div class="item" style="background:var(--accent-bg);border-radius:10px;padding:16px 18px">
+<h3>질문: 왜 서비스를 다시 켜야 하나요?</h3>
+<p><b>돌고 있는 서비스는 켜질 때 읽어 들인 코드로만 움직이기 때문입니다.</b> 검색어를 다듬는 규칙도 그 코드 안에 있어서, 새 규칙 코드를 만들어도 서비스를 다시 켜기 전까지는 옛 규칙으로 검색어를 다듬습니다. Java 서비스는 켜진 채로 코드를 바꿔 끼우지 않습니다.</p>
+<p>그래서 <b>어떤 규칙을 바꿨느냐에 따라</b> 다시 켜야 하는지가 갈립니다.</p>
+<table>
+<tr><th>바꾼 규칙</th><th>어디서 쓰나</th><th>서비스 다시 켜기</th></tr>
+<tr><td>제목·저자·출판사 다듬기 (공백, 대소문자, 본제목, 저자 나누기 등)</td><td>가져오기(저장값) + <b>검색할 때(검색어)</b></td><td><b>필요</b> — 검색어와 저장값이 같은 규칙이어야 찾아짐</td></tr>
+<tr><td>같은 책 묶기 ①~④, 대표값 고르기, 날짜 읽기, 빼는 줄 규칙</td><td>가져오기에만</td><td><b>필요 없음</b> — 다시 가져와 바꿔 끼우기만 하면 됨</td></tr>
+</table>
+<svg viewBox="0 0 640 150" role="img" aria-label="켜진 서비스는 옛 코드를 들고 있음">
+<rect x="10" y="20" width="200" height="60" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="20" y="44" font-size="13" fill="var(--text)">돌고 있는 서비스</text><text x="20" y="66" font-size="12" fill="var(--no)">켜질 때의 규칙(옛)을 들고 있음</text>
+<rect x="230" y="20" width="180" height="60" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="240" y="44" font-size="13" fill="var(--text)">새 규칙 코드</text><text x="240" y="66" font-size="12" fill="var(--muted)">디스크에만 있음</text>
+<rect x="430" y="20" width="200" height="60" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="440" y="44" font-size="13" fill="var(--text)">다시 켠 서비스</text><text x="440" y="66" font-size="12" fill="var(--ok)">새 규칙으로 검색어를 다듬음</text>
+<text x="10" y="112" font-size="12" fill="var(--text)">가져오기는 매번 새로 켜는 따로 된 실행이라, 늘 그때의 최신 코드를 씀</text>
+<text x="10" y="134" font-size="12" fill="var(--muted)">규칙을 DB나 설정 파일로 빼면 다시 켜지 않아도 되지만, 규칙이 코드라 그렇게 바꾸는 일은 큼</text>
+</svg>
+<p>앞의 순서에서 "바꿔 끼우자마자 서비스 다시 켜기"는 첫째 경우(다듬기 규칙)에만 하면 됩니다. 둘째 경우는 다시 가져오기만 합니다.</p>
+</div>
+<div class="item" style="background:var(--ok-bg);border-radius:10px;padding:16px 18px">
+<h3>질문: 트랜잭션으로 표만 교체하면 알아서 되는 것 아닌가요? 검색어 다듬기 규칙이 바뀔 때만 다시 켜면 되는 것 아닌가요?</h3>
+<p><b>둘 다 맞습니다.</b></p>
+<ul>
+<li><b>표 교체는 알아서 됩니다.</b> 바꿔 끼우기는 한 트랜잭션 안에서 옛 표를 지우고 새 표를 같은 이름 자리로 옮깁니다. 켜져 있는 서비스는 다음 검색부터 같은 이름의 새 표를 읽습니다. 서비스가 미리 준비해 둔 쿼리도, PostgreSQL이 "쿼리가 쓰는 표가 바뀌면 쓰기 전에 다시 분석·계획한다"고 공식 문서에 적고 있어 새 표를 봅니다(<a href="https://www.postgresql.org/docs/18/sql-prepare.html">PostgreSQL 18 PREPARE</a>, 확인 2026-10-11). 그래서 서비스를 다시 켤 필요가 없습니다. 다만 우리 서비스(연결 풀)에서 실제로 그런지는 만들어 보고 확인합니다(설계 확인 필요 표에 있음).</li>
+<li><b>서비스 다시 켜기는 검색어 다듬기 규칙이 바뀔 때만입니다.</b> 그 규칙이 서비스 코드 안에 있기 때문입니다. 묶기·대표값·날짜 규칙만 바꿨거나, 규칙은 그대로이고 새 사본을 가져올 때(정기 갱신)는 가져오기만 하면 됩니다.</li>
+</ul>
+<table>
+<tr><th>상황</th><th>할 일</th></tr>
+<tr><td>새 사본으로 갱신 (규칙 그대로)</td><td>가져오기만 → 바꿔 끼우기. 서비스는 그대로</td></tr>
+<tr><td>묶기·대표값·날짜 규칙을 고침</td><td>새 코드로 가져오기만 → 바꿔 끼우기. 서비스는 그대로</td></tr>
+<tr><td>검색어 다듬기 규칙을 고침</td><td>옛 서비스 켜 둔 채 새 코드로 가져오기 → 바꿔 끼우자마자 서비스를 새 코드로 다시 켬</td></tr>
+</table>
+</div>
+</section>
+
+<p class="foot">원본: ADR-0031·0060(정리 코드 한 벌), ADR-0062(책 번호 잇기), ADR-0065(바꿔 끼우기), <code>design-delta.md</code> 데이터 절. 작성 2026-10-11.</p>
+</main>
+</body>
+</html>

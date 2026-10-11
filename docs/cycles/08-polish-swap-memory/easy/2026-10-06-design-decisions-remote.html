@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 08 설계 결정 (원격)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+svg{max-width:100%;height:auto;display:block}
+.mock{border:2px dashed var(--line);border-radius:12px;padding:14px;margin:10px 0;font-size:17px}
+.row{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;background:var(--card);flex-wrap:wrap}
+.tag{font-size:14px;border-radius:6px;padding:0 6px;background:var(--code-bg);color:var(--muted)}
+.okt{color:var(--ok);font-weight:500}.mut{color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">사이클 08 설계: 어떻게 만들지<br>정해 주세요.</p>
+<p class="sub">스펙과 화면 흐름은 정해졌습니다. 여기서는 구조(가져오기 방식, 메모리를 줄이는 구조, 작은 구조 항목)를 고릅니다. 각 칩은 추천안이고, 장단점 그림은 앞서 보낸 "가져오기 시간 줄이는 길", "메모리 구조 바꾸는 안" 페이지에 있습니다. 고르시면 이대로 <code>design-delta.md</code>를 쓰고 구조 그림을 보여 드립니다. 원본: <code>architect-proposal.md</code>, <code>research.md</code> 9·10절.</p>
+
+<div class="chg" style="margin:0 0 28px;padding:16px 18px"><b>원격에서 답하는 법</b><br>대화창에 이렇게 적어 주세요.<br><code>전부 승인</code> 또는 <code>#4 미승인: 이유</code> · <code>#8 기타: 질문이나 제안</code><br>적지 않은 번호는 승인으로 봅니다. 번호는 아래 네모 칸 숫자(1~15)입니다.</div>
+<section class="card">
+<h2><span class="num">1</span>가져오기·교체 시간</h2>
+<div class="gist">지금 36~41분, 그중 쓰기 끝부분 동안 검색이 멈춥니다. 여덟 방향(새 표 바꿔 끼우기, 바뀐 것만, 도서관별 나누기, 색인 나중에, 국가서지 남기기, 동시에 읽기, 색인 없애기, 다른 DB) 중 셋을 묶는 것을 추천합니다.</div>
+<svg viewBox="0 0 640 210" role="img" aria-label="추천 가져오기 흐름">
+<defs><marker id="d1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+<rect x="10" y="20" width="140" height="56" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="20" y="44" font-size="14" fill="var(--text)">사본 읽기</text><text x="20" y="64" font-size="12" fill="var(--muted)">그대로</text>
+<line x1="150" y1="48" x2="178" y2="48" stroke="var(--muted)" marker-end="url(#d1)"/>
+<rect x="180" y="20" width="140" height="56" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="190" y="44" font-size="14" fill="var(--text)">국가서지</text><text x="190" y="64" font-size="12" fill="var(--ok)">남긴 결과 다시 씀</text>
+<line x1="320" y1="48" x2="348" y2="48" stroke="var(--muted)" marker-end="url(#d1)"/>
+<rect x="350" y="20" width="280" height="56" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="360" y="44" font-size="14" fill="var(--text)">새 표에 색인 없이 책 번호 순으로</text><text x="360" y="64" font-size="12" fill="var(--ok)">검색은 옛 표를 계속 읽음</text>
+<line x1="490" y1="76" x2="490" y2="104" stroke="var(--muted)" marker-end="url(#d1)"/>
+<rect x="350" y="106" width="280" height="44" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="360" y="133" font-size="14" fill="var(--text)">색인·통계 한 번에 만들기</text>
+<line x1="490" y1="150" x2="490" y2="166" stroke="var(--muted)" marker-end="url(#d1)"/>
+<rect x="350" y="168" width="280" height="36" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="360" y="191" font-size="14" fill="var(--text)">이름 바꿔 끼우기 (이 순간만 잠깐)</text>
+</svg>
+<div class="item">
+<h3><span class="no">1</span>가져오기 = 새 표에 색인 없이 쓰기 → 색인 나중에 → 이름 바꿔 끼우기, 여기에 국가서지 푼 결과 남기기 [안]</h3>
+<p>검색이 멈추는 시간이 바꿔 끼우는 순간만으로 줄고, 국가서지 6.5~9분이 거의 없어질 것으로 봅니다. 새 표에 책 번호 순으로 써서 "같은 책 소장 줄 붙여 저장"도 함께 됩니다. 표 만들기·바꿔 끼우기는 <code>catalog</code> 안, 국가서지 결과 보관은 <code>collection</code> 안에서 합니다(모듈 경계 그대로).</p>
+<p class="alt"><b>다른 선택</b> 바뀐 줄만 고치기(옛 줄이 쌓임, 9월 30일에 피하자고 하심), 도서관별로 표 나누기(책 화면이 2,650조각을 다 뒤져 느려질 위험), 지금 흐름에서 색인만 나중에(검색은 여전히 멈춤).</p>
+</div>
+<div class="item">
+<h3><span class="no">2</span>먼저 쓰기 단계별 시간을 잰 뒤(dev가 시간 기록을 넣고 같은 사본으로 한 번 더), 가장 느린 곳만 더 고침 [안]</h3>
+<p>두 번째 읽기 없애기, 서비스에 없는 도서관 줄(약 7%) 처음부터 안 읽기, 국가서지 동시에 풀기, 가져오기 전용 색인 없애기는 잰 결과를 보고 고릅니다.</p>
+</div>
+<div class="item">
+<h3><span class="no">3</span>소장 번호를 지난번 최대 번호 다음부터 매김 [안]</h3>
+<p>지금은 가져올 때마다 1부터라 가져오는 동안 열려 있던 책 화면의 "더 보기"가 다른 도서관 줄을 가리킬 수 있습니다. 이어 매기면 옛 번호는 "없음"으로 실패할 뿐입니다. 책 번호도 지금처럼 다시 쓰지 않습니다.</p>
+</div>
+<div class="item">
+<h3><span class="no">4</span>바꿔 끼운 뒤 옛 표는 바로 지움 [안]</h3>
+<p class="alt"><b>다른 선택</b> 다음 가져오기까지 한 벌 남김(되돌리기 쉬움, 디스크 약 10GB 더).</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>메모리를 줄이는 구조</h2>
+<div class="item">
+<h3><span class="no">5</span>검색 계획을 만들 때 도서관 2,700곳을 다 읽지 않고, 들어갈 약 390곳만 DB에서 읽음 [안]</h3>
+<p>"도서관 켜짐 여부는 요청마다 읽음"(ADR-0004)은 그대로 지킵니다. 내 도서관 화면용 전체 목록은 그대로 다 읽습니다.</p>
+<p class="alt"><b>다른 선택</b> 30초 동안 메모리에 기억(DB 읽기는 거의 없어지지만 끈 도서관이 최대 30초 늦게 반영, ADR-0004를 바꿔야 함).</p>
+</div>
+<div class="item">
+<h3><span class="no">6</span>책 화면은 찾을 도서관 줄만 DB에서 읽음. 가져오기용 색인과 원문 칸은 남김 [안]</h3>
+<p>공개 기능에 "책 번호 + 도서관 번호로 소장 읽기"를 더합니다. 소장 줄을 붙여 저장한 뒤에는 차이가 작을 수 있어, 측정 결과를 보고 끝까지 할지 정합니다.</p>
+</div>
+<div class="item">
+<h3><span class="no">7</span>캐시 둘은 개수 상한을 두고 통계(맞힌 비율, 밀려난 수)를 켜서 잰 뒤, 캐시마다 상한을 따로 정함 [안]</h3>
+<p>코드로 센 추정은 가득 차도 약 15MB입니다. 상한 값이 바뀌면 캐시 결정(ADR-0006)을 새 기록으로 남깁니다.</p>
+<p class="alt"><b>다른 선택</b> 크기(무게)로 상한(비동기 캐시에서 어떻게 세는지 확인 못 함), 담는 값 줄이기(줄어드는 양이 작음).</p>
+</div>
+<div class="item">
+<h3><span class="no">8</span>재는 도구는 따로 더하지 않고, Java 명령(<code>jcmd</code>)과 캐시 통계 로그로 잼 [안]</h3>
+<p>새 의존성이 없고, 밖에서 열리는 주소도 생기지 않습니다.</p>
+<p class="alt"><b>다른 선택</b> 측정 때만 Actuator(앱 상태 도구)를 내 PC에서만 열리는 관리 포트로 켬. 운영 모니터링은 backlog.</p>
+</div>
+<div class="item">
+<h3><span class="no">9</span>DB 메모리 값은 Docker 실행 설정(<code>compose.yaml</code>)에 두어 재시작만으로 바꾸고, 가져오는 동안에만 DB 정렬·색인 메모리를 올림. Java 힙 상한은 실행 설정에 [안]</h3>
+<p class="alt"><b>다른 선택</b> DB 이미지 파일에 넣음(바꿀 때마다 다시 만들어야 함).</p>
+</div>
+<div class="item">
+<h3><span class="no">10</span>도서관 응답 본문을 두세 벌 복사하는 것은 측정에서 눈에 띌 때만 고침 [안]</h3>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>작은 구조 항목</h2>
+<div class="item">
+<h3><span class="no">11</span>고친 시각: 도서관·지역 모듈마다 자기 스키마에 "고칠 때 시각 적기" 장치(트리거)를 두고, 값이 그대로여도 고치면 시각이 바뀜 [안]</h3>
+<p>공용 장치 하나를 두지 않는 것은 모듈끼리 DB를 나눠 쓰지 않기 위해서입니다. dev 규칙 문서(<code>postgres-patterns</code>)에도 같은 지침을 더합니다.</p>
+</div>
+<div class="item">
+<h3><span class="no">12</span>YES24 폰 안내: 도서관 표에 "폰에서 사이트가 다르게 보임" 칸(참/거짓)을 더하고 13곳을 켬. 공개 목록과 검색 계획 응답에 그 칸을 실어 보냄 [안]</h3>
+</div>
+<div class="item">
+<h3><span class="no">13</span>도서관 이름 고치기: 새 DB 변경 파일에서 번호로 고치고, seed 스크립트가 "이름 고침 목록"(근거 칸 포함)을 읽어 다음에도 유지 [안]</h3>
+<p>이미 적용한 seed 파일은 고치지 않습니다(DB 변경 도구가 내용 지문으로 막음).</p>
+</div>
+<div class="item">
+<h3><span class="no">14</span>가져오기 기록에 "수집 시작·끝" 두 칸을 더하고, 가져오기 모듈 안에서 셈 (옛 기록은 비어 있음) [안]</h3>
+</div>
+<div class="item">
+<h3><span class="no">15</span>429·503 응답에 "몇 초 뒤 다시"(<code>Retry-After</code>)를 붙임 [안]</h3>
+<p>표준(RFC 6585)이 권하는 방법입니다. 지금 붙이는지는 확인 못 함이라, 안 붙이면 붙입니다. 화면은 이 값과 상관없이 정한 문구를 씁니다.</p>
+<p class="alt"><b>다른 선택</b> 붙이지 않음.</p>
+</div>
+</section>
+
+<p class="foot">원본: <code>docs/cycles/08-polish-swap-memory/architect-proposal.md</code>, <code>research.md</code> 9·10절, <code>spec.md</code>, <code>flow.md</code>. 작성 2026-10-06.</p>
+</main>
+</body>
+</html>

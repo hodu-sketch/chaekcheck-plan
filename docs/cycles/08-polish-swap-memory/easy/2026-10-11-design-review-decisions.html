@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>설계 검토 결과</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+svg{max-width:100%;height:auto;display:block}
+.mock{border:2px dashed var(--line);border-radius:12px;padding:14px;margin:10px 0;font-size:17px}
+.row{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;background:var(--card);flex-wrap:wrap}
+.tag{font-size:14px;border-radius:6px;padding:0 6px;background:var(--code-bg);color:var(--muted)}
+.okt{color:var(--ok);font-weight:500}.mut{color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">사이클 08 설계를 마무리하기 전에<br>검토에서 찾은 문제를 고칩니다.</p>
+<p class="sub">사이클 마무리 첫 단계로, 검토 담당(design-reviewer)이 범위·요구·화면 흐름·설계 문서와 결정 기록(ADR)을 서로 맞대 봤습니다. "반드시 고칠 것" 10가지를 9개 항목으로 묶었고, 마지막 항목은 "고치면 좋은 것"까지 고칠지입니다. 모두 문서끼리 어긋난 곳을 맞추는 일이고, 이미 정하신 방향을 바꾸는 것은 없습니다. 6·7·8번만 새 값(대기 시간, 목표)이 들어갑니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>가져오기 순서와 기록</h2>
+
+<div class="item">
+<h3><span class="no">1</span>가져오기 그림의 순서를 고침: 책 번호를 먼저 정하고, 그 번호 순으로 씀 [안]</h3>
+<p>지금 설계 그림(흐름 A)은 "새 표에 책 번호 순으로 쓰기" 다음에 "책 번호 잇기(옛 번호와 맞대기)"가 옵니다. 그런데 책 번호가 정해져야 그 순서로 쓸 수 있으니 거꾸로입니다.</p>
+<svg viewBox="0 0 640 200" role="img" aria-label="순서 비교">
+<text x="10" y="20" font-size="13" font-weight="700" fill="var(--no)">지금 그림</text>
+<rect x="10" y="30" width="190" height="40" rx="8" fill="var(--no-bg)" stroke="var(--no)"/><text x="20" y="55" font-size="12" fill="var(--text)">① 책 번호 순으로 쓰기</text>
+<text x="208" y="55" font-size="16" fill="var(--muted)">→</text>
+<rect x="228" y="30" width="190" height="40" rx="8" fill="var(--no-bg)" stroke="var(--no)"/><text x="238" y="55" font-size="12" fill="var(--text)">② 책 번호 잇기</text>
+<text x="426" y="55" font-size="12" fill="var(--no)">번호가 없는데 번호 순?</text>
+<text x="10" y="110" font-size="13" font-weight="700" fill="var(--ok)">고친 그림</text>
+<rect x="10" y="120" width="190" height="56" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="20" y="143" font-size="12" fill="var(--text)">① 사본 읽어 묶기</text><text x="20" y="162" font-size="11" fill="var(--muted)">책마다 임시 줄</text>
+<text x="208" y="150" font-size="16" fill="var(--muted)">→</text>
+<rect x="228" y="120" width="190" height="56" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="238" y="143" font-size="12" fill="var(--text)">② 책 번호 잇기</text><text x="238" y="162" font-size="11" fill="var(--muted)">옛 책과 맞대 번호 확정</text>
+<text x="426" y="150" font-size="16" fill="var(--muted)">→</text>
+<rect x="446" y="120" width="190" height="56" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="456" y="143" font-size="12" fill="var(--text)">③ 책 번호 순으로 쓰기</text><text x="456" y="162" font-size="11" fill="var(--muted)">→ 색인 → 통계 → 바꿔 끼우기</text>
+</svg>
+<p>고친 뒤: 그림 흐름 A와 모듈 표의 <code>catalog</code> 줄을 이 순서로 고칩니다. 조사(<code>research.md</code> 10절 D-2)에 적은 순서와 같습니다.</p>
+<p class="alt"><b>다른 선택</b> 쓰고 나서 번호를 다시 매기기: 한 번 더 다 고쳐 써야 해서 느려짐. 추천하지 않음.</p>
+</div>
+
+<div class="item">
+<h3><span class="no">2</span>ADR-0065에 "국가서지 부분은 ADR-0069로 바뀜" 표시 [안]</h3>
+<p>ADR-0065에는 아직 "국가서지 결과를 정리 규칙 판과 함께 남긴다"가 적혀 있어, 나중에 읽는 사람이 ADR-0069와 어긋난다고 느낄 수 있습니다. 확정된 기록은 본문을 고칠 수 없고 상태 줄만 바꿀 수 있습니다.</p>
+<p>고친 뒤: ADR-0065 상태 줄을 <code>Accepted (국가서지 부분은 ADR-0069가 바꿈)</code>, ADR 목록(README)에도 같은 표시. 조사 문서 <code>research.md</code>의 E-1(판 번호와 함께 남기기) 옆에 "기록용, ADR-0069로 바뀜"을 붙입니다.</p>
+</div>
+
+<div class="item">
+<h3><span class="no">3</span>DB 트리거 파일은 SQL 파일(<code>.sql</code>)로 씀 [안]</h3>
+<p>설계에 트리거(<code>updated_at</code>을 DB가 채우는 장치) 파일 이름을 <code>.yaml</code>로 적었는데, dev 프로젝트 규칙(<code>CLAUDE.md</code>)은 함수·트리거를 <code>--liquibase formatted sql</code> 형식의 <code>.sql</code> 파일로, <code>splitStatements:false</code>, <code>CREATE OR REPLACE</code>, <code>runOnChange:true</code>로 쓰라고 합니다.</p>
+<p>고친 뒤: <code>library/013-updated-at-trigger.sql</code>, <code>region/00N-updated-at-trigger.sql</code>. 칸 더하기·이름 고침 같은 나머지 파일은 <code>.yaml</code> 그대로입니다.</p>
+</div>
+
+<div class="item">
+<h3><span class="no">4</span>설계 그림 제목의 "초안" 글자를 지움 [안]</h3>
+<p>흐름 A·B 그림 제목에 "ADR-0065 초안", "ADR-0066 초안"이 남아 있습니다. 둘 다 확정됐으니 "ADR-0065", "ADR-0066"으로 고칩니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>국가서지 표와 바꿔 끼우기 실패</h2>
+
+<div class="item">
+<h3><span class="no">5</span>국가서지 두 표를 자세히 적고, 다시 뽑다 실패하면 어떻게 할지 정함 [안]</h3>
+<p>지금 설계에는 칸 이름만 있습니다. dev가 그대로 만들 수 있게 이렇게 적습니다.</p>
+<table>
+<tr><th>표</th><th>칸</th><th>규칙</th></tr>
+<tr><td><code>national_bibliography_record</code></td><td><code>isbn13</code> 글자 13자리, 비어 있지 않음<br><code>title_raw</code> 글자, 비어 있지 않음<br><code>author_raw</code>, <code>publisher_raw</code> 글자, 비어도 됨</td><td>같은 ISBN이 여러 줄일 수 있어 따로 기본 키 번호(<code>id</code>)를 둠. 가져오기는 처음부터 끝까지 읽기만 해서 색인은 두지 않음</td></tr>
+<tr><td><code>national_bibliography_source</code></td><td><code>source_fingerprint</code> 글자, 비어 있지 않음<br><code>built_at</code> 시각, 비어 있지 않음</td><td>항상 한 줄. 지문 = TTL 파일 이름 + 크기(바이트) + 고친 시각을 <code>|</code>로 이은 글자</td></tr>
+</table>
+<svg viewBox="0 0 640 120" role="img" aria-label="다시 뽑을 때 순서">
+<rect x="10" y="20" width="190" height="56" rx="8" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="20" y="43" font-size="12" fill="var(--text)">① 지문 줄 지우기</text><text x="20" y="62" font-size="11" fill="var(--muted)">원문 표 비우기</text>
+<text x="208" y="52" font-size="16" fill="var(--muted)">→</text>
+<rect x="228" y="20" width="190" height="56" rx="8" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="238" y="43" font-size="12" fill="var(--text)">② TTL 풀어 원문 쓰기</text><text x="238" y="62" font-size="11" fill="var(--muted)">6.5~9분</text>
+<text x="426" y="52" font-size="16" fill="var(--muted)">→</text>
+<rect x="446" y="20" width="190" height="56" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="456" y="43" font-size="12" fill="var(--text)">③ 맨 마지막에 지문 쓰기</text><text x="456" y="62" font-size="11" fill="var(--muted)">다 쓴 때만 "같음"이 됨</text>
+<text x="10" y="105" font-size="12" fill="var(--text)">②에서 멈추면 지문이 없으니, 다음 가져오기는 "다름"으로 보고 처음부터 다시 풂</text>
+</svg>
+<p class="alt"><b>다른 선택</b> ①~③을 한 트랜잭션으로: 실패하면 옛 원문이 그대로 남지만, 수백만 줄을 한 트랜잭션에 넣어 DB 기록(WAL)이 커짐. 지문 마지막 쓰기가 더 단순해 추천.</p>
+<p class="gist"><b>답: TTL이 무슨 약자인가요?</b><br>파일 확장자 <code>.ttl</code>에서 온 이름으로, <b>Turtle</b>(Terse RDF Triple Language, "짧게 쓰는 RDF 세 칸 언어")의 줄임입니다. 국립중앙도서관이 국가서지를 "이 책 — 제목은 — ○○"처럼 <b>주어·서술어·값 세 칸</b>씩 적어 내려 주는 형식이라, 한 권의 정보가 여러 줄에 흩어져 있어 풀어 모으는 데 6.5~9분이 걸립니다. 출처: W3C Turtle 표준, <a href="https://www.w3.org/TR/turtle/">https://www.w3.org/TR/turtle/</a> (확인 2026-10-11).</p>
+<svg viewBox="0 0 640 96" role="img" aria-label="TTL 세 칸 예시">
+<rect x="10" y="10" width="200" height="30" rx="6" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="20" y="30" font-size="12" fill="var(--text)">책 #123 (주어)</text>
+<rect x="220" y="10" width="200" height="30" rx="6" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="230" y="30" font-size="12" fill="var(--text)">제목 (서술어)</text>
+<rect x="430" y="10" width="200" height="30" rx="6" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="440" y="30" font-size="12" fill="var(--text)">"책 제목" (값)</text>
+<rect x="10" y="52" width="200" height="30" rx="6" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="20" y="72" font-size="12" fill="var(--text)">책 #123</text>
+<rect x="220" y="52" width="200" height="30" rx="6" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="230" y="72" font-size="12" fill="var(--text)">ISBN</text>
+<rect x="430" y="52" width="200" height="30" rx="6" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="440" y="72" font-size="12" fill="var(--text)">978로 시작하는 13자리</text>
+</svg>
+</div>
+
+<div class="item">
+<h3><span class="no">6</span>바꿔 끼우기가 잠금을 못 얻으면: 2초 기다림 × 5번, 다 실패하면 새 표 지우고 실패로 기록 [안]</h3>
+<p>바꿔 끼우는 짧은 트랜잭션은 옛 표를 읽고 있는 검색이 끝나야 들어갈 수 있습니다. 너무 오래 기다리면 그 뒤에 온 검색이 줄을 섭니다. 그래서 기다리는 한도(<code>lock_timeout</code>)를 둡니다. PostgreSQL 설명: 잠금을 얻으려고 정한 시간보다 오래 기다리는 문장은 멈춘다, 기본값 0은 한도 없음 (<a href="https://www.postgresql.org/docs/18/runtime-config-client.html">PostgreSQL 18 문서</a>, 확인 2026-10-11).</p>
+<ul>
+<li>한도 2초, 실패하면 10초 쉬고 다시, 최대 5번. 값은 dev 측정 뒤 바꿀 수 있음</li>
+<li>5번 다 실패: <code>catalog_next</code>를 지우고 옛 표 그대로, 가져오기 기록에 실패(이유: 잠금 못 얻음). 다른 실패와 같은 처리</li>
+</ul>
+<p class="alt"><b>다른 선택</b> <code>catalog_next</code>를 남겨 두고 "바꿔 끼우기만" 다시 하는 명령을 둠: 30분 넘는 가져오기를 다시 안 해도 되지만 명령이 하나 더 생김. 실제로 5번 다 실패하는 일이 생기면 그때 더하는 쪽을 추천.</p>
+</div>
+
+<div class="item">
+<h3><span class="no">7</span>"바꿔 끼우는 순간 실패 0건"을 둘로 나눔 [안]</h3>
+<p>소장 번호는 바꿔 끼운 뒤 새로 매겨지므로(ADR-0065), 바꿔 끼우기 전에 연 책 화면이 옛 소장 번호로 대출 현황을 물으면 그 번호는 없습니다. 지금 dev 코드는 없는 번호를 오류가 아니라 "찾을 수 없음"(missing)으로 돌려줍니다(<code>BookAvailabilityBatchStreamController</code>). 이것까지 "실패"로 세면 AC-8을 지킬 수 없습니다.</p>
+<ul>
+<li>AC-8: 바꿔 끼우는 순간 검색·책 화면 요청에 서버 오류(5xx)나 끊김이 0건</li>
+<li>AC-8c(새로): 바꿔 끼운 뒤 옛 소장 번호로 온 대출 현황 요청은 오류 없이 "찾을 수 없음"으로 답함, 다시 검색하면 정상. 그때 화면에 무엇이 보이는지는 웹 코드에서 찾지 못해 확인 못 함 → 인계서에서 dev가 확인</li>
+</ul>
+<p class="gist"><b>답: 중간 단계(번호 맞춤 표)를 두면?</b><br>좋은 생각입니다. 살펴보니 더 단순한 길도 있습니다. 가져올 때 이미 옛 소장 줄과 새 소장 줄을 (도서관, 도서관 안 책 열쇠 <code>item_key</code>)로 맞대어 책 번호를 잇고 있어서, <b>소장 번호도 같은 맞대기로 그대로 이어 쓸 수 있습니다</b>. 그러면 맞춤 표도, 요청의 버전 번호도 필요 없습니다. 또 맞춤 표를 두더라도 새 번호가 옛 최대 번호 다음부터라 옛 번호와 겹치지 않으므로 버전 번호 없이 "지금 표에 없으면 맞춤 표에서 찾기"로 됩니다. 두 안을 <b>다음 페이지(2026-10-11-holding-id-followup)</b>에 그림과 함께 올렸습니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>태그·목표 맞추기</h2>
+
+<div class="item">
+<h3><span class="no">8</span>이미 정한 것인데 "안"으로 남은 표시를 확정으로 맞춤 [안]</h3>
+<ul>
+<li>요구 R7(가져오기·교체): 0번의 "아래 1~5는 고를 때의 규칙 (제안)", 1번, 4번 → ADR-0065로 정했으니 확정. 2번 "바꿔 끼우는 순간 외에는 기다리지 않음"도 확정</li>
+<li>요구 R9.4, 범위 15번 끝 "책 화면이 계획한 도서관 줄만 읽기 (제안)" → 설계 검토에서 승인(ADR-0066, <code>holdingsOf</code>)했으니 확정</li>
+<li>요구 "입력과 출력" 표: 옛 검색 설정 지우기, 429·503 문구가 본문(R1.4, R2.1)은 확정인데 표만 (제안) → 확정</li>
+</ul>
+</div>
+
+<div class="item">
+<h3><span class="no">9</span>가져오기 시간 목표(AC-8b): 검색이 기다리는 시간 10초 안, 전체 시간은 40분 36초보다 짧게 [안]</h3>
+<p>AC-8b에 "몇 분까지는 방향을 고른 뒤"라고 남아 있는데, 방향(새 표에 쓰고 바꿔 끼우기)은 정해졌습니다. 이 방식에서 검색이 기다리는 것은 바꿔 끼우는 순간뿐이라 숫자를 둘 수 있습니다.</p>
+<svg viewBox="0 0 640 110" role="img" aria-label="검색이 기다린 시간 비교">
+<text x="10" y="22" font-size="12" fill="var(--text)">사이클 07</text>
+<rect x="100" y="10" width="520" height="18" fill="var(--line)"/><rect x="230" y="10" width="345" height="18" fill="var(--no)"/>
+<text x="240" y="48" font-size="11" fill="var(--no)">검색 기다림 26분 55초 (전체 40분 36초)</text>
+<text x="10" y="82" font-size="12" fill="var(--text)">사이클 08</text>
+<rect x="100" y="70" width="460" height="18" fill="var(--line)"/><rect x="552" y="70" width="4" height="18" fill="var(--ok)"/>
+<text x="400" y="104" font-size="11" fill="var(--ok)">기다림은 바꿔 끼우는 순간만 (10초 안)</text>
+</svg>
+<p>전체 시간은 숫자 대신 "사이클 07 2회차보다 짧게"만 둡니다. 쓰기 단계 안을 나눠 잰 뒤(ADR-0065) 더 줄일 곳을 정하기 때문입니다. 10초는 6번(2초 × 5번 + 쉬는 시간)을 넘지 않는 성공 경우를 기준으로 했습니다.</p>
+<p class="alt"><b>다른 선택</b> 숫자 없이 "짧게"만: 지켰는지 판단이 흐려짐. 전체 시간도 숫자(예: 30분 안): 재 보기 전이라 근거가 없음.</p>
+</div>
+
+<div class="item">
+<h3><span class="no">10</span>"고치면 좋은 것"도 이번에 같이 고침 [안]</h3>
+<p>꼭은 아니지만 dev가 헷갈리지 않게 손보면 좋은 것들입니다. 모두 정한 내용을 문서에 옮겨 적는 일이고 새로 정하는 것은 없습니다.</p>
+<ul>
+<li>범위(<code>scope.md</code>)에 이미 정한 일 더하기: 흡수된 학교 사이트 확인, 검색 계획을 SQL로 거르기, 응답 복사 줄이기, 503에 "5초 뒤"</li>
+<li>검사 기준(AC) 더하기: 국가서지 원문 다시 쓰기, 정리 규칙 바꿀 때 순서, 검색 계획 결과가 전과 같음, 503 <code>Retry-After: 5</code>, 응답 복사 줄인 뒤 결과 같음, 폰 사이트 다름 13곳 표시</li>
+<li>오래된 태그 정리: <code>spec.md</code> 첫머리·확인 필요 표, <code>flow.md</code> 본문·확인 필요</li>
+<li>새 칸·단계별 시간 이름 옆에 ADR 번호, 연결 풀에서 다시 계획되는지 확인을 AC에, 인계서에 "catalog로 들어오는 외래 키 없음 다시 확인", 도서관 목록 CSV를 고치는 이유 한 줄</li>
+<li>모듈 그림에 <code>catalog :: normalize</code> 이름표, 이름 고침 목록의 예외 규칙을 둘 곳 적기</li>
+</ul>
+<p class="alt"><b>다른 선택</b> 미승인이면 반드시 고칠 것(1~9)만 고치고 나머지는 그대로 인계서로 넘어갑니다.</p>
+</div>
+</section>
+
+<p class="foot">원본: <code>scope.md</code>, <code>spec.md</code>, <code>flow.md</code>, <code>design-delta.md</code>, ADR-0065~0069. 검토: design-reviewer, 2026-10-11. 작성 2026-10-11.</p>
+</main>
+</body>
+</html>

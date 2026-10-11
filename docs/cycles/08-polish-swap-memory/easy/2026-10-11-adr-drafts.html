@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 08 결정 기록 초안</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+svg{max-width:100%;height:auto;display:block}
+.mock{border:2px dashed var(--line);border-radius:12px;padding:14px;margin:10px 0;font-size:17px}
+.row{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;background:var(--card);flex-wrap:wrap}
+.tag{font-size:14px;border-radius:6px;padding:0 6px;background:var(--code-bg);color:var(--muted)}
+.okt{color:var(--ok);font-weight:500}.mut{color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">사이클 08에서 정하신 것을<br>결정 기록(ADR) 넷으로 남깁니다.</p>
+<p class="sub">설계 결정 페이지에서 고르신 것 중 구조를 바꾸는 것만 결정 기록으로 묶었습니다. 승인하시면 <code>docs/adr/</code>에 파일로 쓰고 결정 기록 목록에 더합니다. 이유 칸에는 말씀하신 문장만 옮기고, 추천안을 승인하신 것은 "제안 → 승인"으로 적습니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>ADR-0065: 가져오기는 새 표에 쓰고 바꿔 끼운다</h2>
+<div class="gist">가져오는 동안 검색이 멈추지 않게 하고, 매번 하던 일을 덜 하도록 가져오기 방식을 바꿉니다.</div>
+<svg viewBox="0 0 640 150" role="img" aria-label="바뀐 가져오기 흐름">
+<defs><marker id="z1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+<rect x="10" y="20" width="140" height="50" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="20" y="42" font-size="13" fill="var(--text)">국가서지</text><text x="20" y="60" font-size="12" fill="var(--ok)">남긴 결과 다시 씀</text>
+<line x1="150" y1="45" x2="178" y2="45" stroke="var(--muted)" marker-end="url(#z1)"/>
+<rect x="180" y="20" width="160" height="50" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="190" y="42" font-size="13" fill="var(--text)">새 표에 색인 없이</text><text x="190" y="60" font-size="12" fill="var(--ok)">책 번호 순으로 씀</text>
+<line x1="340" y1="45" x2="368" y2="45" stroke="var(--muted)" marker-end="url(#z1)"/>
+<rect x="370" y="20" width="120" height="50" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="380" y="50" font-size="13" fill="var(--text)">색인 한 번에</text>
+<line x1="490" y1="45" x2="518" y2="45" stroke="var(--muted)" marker-end="url(#z1)"/>
+<rect x="520" y="20" width="110" height="50" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="530" y="42" font-size="13" fill="var(--text)">이름 바꿈</text><text x="530" y="60" font-size="12" fill="var(--muted)">옛 표 지움</text>
+<text x="10" y="105" font-size="13" fill="var(--text)">그동안 검색은 옛 표를 읽음 → 멈추는 것은 이름 바꾸는 순간만</text>
+<text x="10" y="130" font-size="13" fill="var(--muted)">소장 번호는 지난번 최대 다음부터, 책 번호 잇기(ADR-0062)는 그대로</text>
+</svg>
+<div class="item">
+<h3><span class="no">1</span>ADR-0065 초안 [안]</h3>
+<p><b>결정.</b> 가져오기는 기존 책·소장 표를 그대로 둔 채 새 표에 색인 없이 책 번호 순으로 쓰고, 색인·제약·통계를 만든 뒤 짧은 순간에 이름을 바꿔 끼운다. 옛 표는 바로 지운다. 소장 번호는 지난번 최대 번호 다음부터 매긴다. 국가서지 파일을 푼 결과는 파일과 정리 규칙이 같으면 다시 쓴다(<code>collection</code> 안). 표 바꾸기는 <code>catalog</code> 안에서 하고 공개 기능 모양은 그대로다. 먼저 쓰기 단계 안의 시간을 나눠 잰 뒤 가장 느린 곳만 더 고친다. <code>catalog-refresh.md</code> 5.1 "표 통째로 바꾸기"(2026-09-30 사용자 방향)를 구현 방식으로 정하고, ADR-0062(책 번호 잇기)는 그대로 둔다.</p>
+<p><b>이유.</b> 사용자: "기존 테이블을 냅두고 TEMP 테이블 두었다가 다 되면 TEMP랑 기존이랑 바꿔치기 하는 식으로"(2026-10-05), "이거 꼭 이 방향이 아니고 db가져오기? 교체? 시간을 줄이기 위한 것이거든"(2026-10-06), "업데이트도 생각했지만 데드 튜플 쌓이는게 싫어서"(2026-09-30). 여덟 방향 비교 뒤 묶음 추천안 → 승인(2026-10-10).</p>
+<p class="alt"><b>검토한 대안</b> 바뀐 줄만 고치기(옛 줄이 쌓임), 도서관별 표 나누기(책 화면이 모든 조각을 뒤짐), 지금 흐름에서 색인만 나중에(검색 멈춤 그대로), 다른 DB에서 가져와 옮기기(지금 규모에 지나침). 근거 <code>research.md</code> 10절.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>ADR-0066: 메모리를 줄이는 구조</h2>
+<div class="gist">먼저 재고 그다음 줄이며, 읽지도 않을 것을 읽는 곳부터 고칩니다.</div>
+<div class="item">
+<h3><span class="no">2</span>ADR-0066 초안 [안]</h3>
+<p><b>결정.</b></p>
+<ul>
+<li>검색 계획은 검색에 들어갈 수 있는 도서관(가입 조사됨·안내 못 찾음 + 직접 추가)만 DB에서 읽는다. 도서관 켜짐 여부는 지금처럼 요청마다 읽는다(ADR-0004 그대로)</li>
+<li>책 화면의 소장 읽기는 계획에 든 도서관 줄만 DB에서 읽는다. 가져오기용 색인과 원문 칸은 남긴다</li>
+<li>캐시 둘은 통계(맞힌 비율·밀려난 수)를 켜고, 잰 뒤 캐시마다 상한을 정한다. 상한이 1,000건(ADR-0006)에서 바뀌면 그때 새 기록을 남긴다</li>
+<li>재는 도구는 따로 더하지 않고 Java 명령(<code>jcmd</code>)과 캐시 통계 로그로 잰다(Actuator 없음)</li>
+<li>DB 메모리 값은 Docker 실행 설정에 두고, 가져오는 동안에만 DB 정렬·색인 메모리를 올린다. Java 힙 상한은 실행 설정에 둔다</li>
+<li>도서관 응답 본문을 두세 벌 복사하는 것을 이번에 줄인다</li>
+<li>최적점: 검색 첫 쪽 1초 안, 줄이기 전보다 20% 넘게 느려지기 직전 단계(스펙 승인)</li>
+</ul>
+<p><b>이유.</b> 사용자: "DB메모리도 어떻게 해야 최적인가(너무 메모리에 맞춰서 줄였다가 느려지면 또 그건 별로니까) 찾아보자", "물론 DB메모리도 줄이고 캐시 메모리도 줄이고"(2026-10-05), 응답 복사: "비효율적이고 고칠 수 있으면 지금 고치는게 나아"(2026-10-11). 나머지는 추천안 → 승인(2026-10-10~11).</p>
+<p class="alt"><b>검토한 대안</b> 도서관 목록을 30초 메모리에 기억(ADR-0004를 바꿔야 함), 캐시를 크기(무게)로 상한, 측정 때만 Actuator, DB 설정을 이미지 파일에. 근거 <code>architect-proposal.md</code>, <code>research.md</code> 1~9절.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>ADR-0067: 교보 대여·혼합 도서관은 받지도 넣지도 않는다</h2>
+<div class="item">
+<h3><span class="no">3</span>ADR-0067 초안 [안]</h3>
+<p><b>배경.</b> 교보 구독형 플랫폼 서버 하나에 공공도서관 구독 21곳, 소장형 1,182곳, 대여·혼합 230곳이 있습니다. 대여·혼합은 회사·공공기관 직원용이 87%이고, 큰 대여 목록(약 26만 권) 중 계약한 만큼을 보여 도서관마다 달라 하나씩 받아야 합니다. 이 서버가 10월 6~7일 우리 IP를 막아 202곳을 못 받았습니다(<code>crawl-runbook.md</code> 8-2-1절).</p>
+<p><b>결정.</b> 대여·혼합 230곳은 수집하지 않고(수집 DB에 받지 않음 표시, 지우지 않음) 서비스에도 넣지 않는다. 이미 넣은 11곳(2664~2674)은 배포 전이라 seed에서 빼 DB에서 지운다. seed 규칙에 "교보 대여·혼합은 넣지 않음"을 더한다. 공공도서관 구독 21곳과 소장형은 그대로다.</p>
+<p><b>이유.</b> 사용자: "나는 \"교보 구독형 플랫폼 – 대여·혼합\"이걸 아예 제외하려고 해", "이거 다른 사용자들에게 배포 안 되었어. 그냥 DB에서 삭제"(2026-10-10). 범위는 제안 → 승인.</p>
+<p class="alt"><b>검토한 대안</b> 공공도서관 구독 21곳도 함께 뺌(지역 주민 결과에서 구독 전자책이 사라짐), 11곳을 지우지 않고 끔.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>ADR-0068: 고친 시각은 DB가 적는다</h2>
+<div class="item">
+<h3><span class="no">4</span>ADR-0068 초안 [안]</h3>
+<p><b>결정.</b> 고친 시각(<code>updated_at</code>) 칸을 두는 표는 줄을 고칠 때마다 DB가 시각을 적는 장치(트리거)를 함께 둔다. 장치는 모듈마다 자기 스키마에 두고 공용으로 나눠 쓰지 않는다. 값을 그대로 두고 고쳐도 시각이 바뀐다. 지금 대상: <code>library.library</code>, <code>region.region</code>. dev 규칙 문서(<code>postgres-patterns</code>)에 같은 지침을 더한다.</p>
+<p><b>이유.</b> 사용자: "왜 updated_at이 지금 정상적으로 안 되는 거야? 이거 좀 dev가 잘 넣도록 지침이라던가 해줘 이거 기본 아니야?"(2026-10-05). 모듈마다 두는 것은 제안 → 승인(2026-10-10).</p>
+<p class="alt"><b>검토한 대안</b> 서버 코드에서만 적기(DB 변경 파일·직접 명령으로 고칠 때를 놓침), "고칠 때 적는다" 규칙만(지금 빠뜨린 방식 그대로). 근거: PostgreSQL 18 PL/pgSQL 트리거 문서 예 41.3(확인 2026-10-05).</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">5</span>결정 기록 없이 설계 문서에만 적는 것</h2>
+<ul>
+<li>YES24 폰 안내 칸, 도서관 이름 고침 목록(옛 이름·새 이름·바뀐 날·출처), 가져오기 기록의 수집 시작·끝 칸, 429·503에 <code>Retry-After</code>: 표·칸 하나씩이라 <code>design-delta.md</code>에만 적습니다</li>
+</ul>
+</section>
+
+<p class="foot">원본: <code>docs/cycles/08-polish-swap-memory/easy/2026-10-06-design-decisions.html</code>(결정), <code>2026-10-10-kyobo-rental-exclude.html</code>, <code>architect-proposal.md</code>, <code>research.md</code>. 작성 2026-10-11.</p>
+</main>
+</body>
+</html>

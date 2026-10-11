@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ADR-0061 초안</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+svg{max-width:100%;height:auto;display:block}
+.mock{border:2px dashed var(--line);border-radius:12px;padding:14px;margin:10px 0;font-size:17px}
+.row{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;background:var(--card);flex-wrap:wrap}
+.tag{font-size:14px;border-radius:6px;padding:0 6px;background:var(--code-bg);color:var(--muted)}
+.okt{color:var(--ok);font-weight:500}.mut{color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">인증 기관 추가 결정을<br>결정 기록 ADR-0061로 남깁니다.</p>
+<p class="sub">dev 남은 질문 #8에서 "지금 이것만 먼저 기록"으로 정하셨습니다. 아래 초안을 승인하시면 <code>docs/adr/0061-library-extra-trusted-root.md</code>로 쓰고 결정 기록 목록에 더합니다.</p>
+<section class="card">
+<h2><span class="num">1</span>도서관 사이트 보안 연결</h2>
+<div class="gist">세 도서관 사이트의 보안 인증서를 Java가 알아보지 못해 늘 실패했습니다. 그 인증서를 내준 기관 하나를 도서관 사이트 연결에만 믿도록 더했습니다.</div>
+<div class="item">
+<h3><span class="no">1</span>ADR-0061: 도서관 사이트 연결에만 최상위 인증 기관 하나를 더 믿음 (ADR-0022 보완) [안]</h3>
+<p><b>배경.</b> 우리 서버는 도서관 사이트에 https로 접속할 때, Java(JDK)에 들어 있는 최상위 인증 기관만 믿기로 했습니다(ADR-0022). 그런데 세계사이버대, 서울신학대, 충북 전자도서관 3곳은 JDK에 없는 기관(OISTE WISeKey Global Root GB CA)의 인증서를 써서 늘 연결에 실패했습니다. 12곳은 사이트가 중간 인증서를 보내지 않아 실패했습니다.</p>
+<p><b>결정.</b> 이 기관 하나를 <b>도서관 사이트 연결에만</b> 더 믿습니다(로그인 등 다른 연결에는 쓰지 않음). 빠진 중간 인증서 3개도 같은 폴더(<code>tls/library-roots/</code>)에 둡니다. 새 기관을 더할 때는 사용자 승인을 받습니다.</p>
+<p><b>이유.</b> 사용자: "이거 신뢰해줘" (2026-10-05, dev 기록)</p>
+<p class="alt"><b>다른 선택</b> (가) 그대로 두고 3곳은 "확인 실패"로 보임: 보안 설정은 그대로지만 3곳은 결과가 안 나옴. (나) 3곳을 끔: 검색 대상에서 빠짐. 둘 다 채택하지 않은 이유 <code>[이유 미확인]</code>.</p>
+<p class="cap">함께 바로잡을 기록: 사이클 02에 "Sectigo R46 기관은 JDK에 있음"이라고 적었는데, 지금 쓰는 JDK 25에는 없습니다(dev 확인). 다른 인증서 경로로 풀렸습니다.</p>
+</div>
+<p class="cap">다른 결정 기록 초안(책 번호 잇기, 후보 최종 주소, 화면·찾기 규칙)은 사이클 08 범위를 정한 뒤에 보여 드립니다.</p>
+</section>
+<p class="foot">원본: dev <code>docs/plan-feedback.md</code> "handoff 밖 추가 작업 A", dev <code>docs/library-site-issues.md</code> 3-2절, ADR-0022</p>
+</main></body></html>

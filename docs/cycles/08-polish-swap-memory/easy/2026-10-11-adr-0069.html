@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ADR-0069 초안</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+svg{max-width:100%;height:auto;display:block}
+.mock{border:2px dashed var(--line);border-radius:12px;padding:14px;margin:10px 0;font-size:17px}
+.row{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;background:var(--card);flex-wrap:wrap}
+.tag{font-size:14px;border-radius:6px;padding:0 6px;background:var(--code-bg);color:var(--muted)}
+.okt{color:var(--ok);font-weight:500}.mut{color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">국가서지 결과를 남기는 방식이 바뀐 것을<br>결정 기록 ADR-0069로 남깁니다.</p>
+<p class="sub">ADR-0065(가져오기는 새 표에 쓰고 바꿔 끼운다)에는 "국가서지 결과를 파일 지문·정리 규칙 판과 함께 남긴다"고 적었습니다. 그 뒤 질문을 거쳐 "원문을 남기고 판 번호는 두지 않는다", "정리 규칙을 바꿀 때 상황별 할 일"로 정하셨습니다. 확정된 기록은 고칠 수 없어 새 기록으로 남깁니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>ADR-0069 초안</h2>
+<svg viewBox="0 0 640 150" role="img" aria-label="바뀐 것">
+<rect x="10" y="20" width="300" height="70" rx="8" fill="var(--no-bg)" stroke="var(--no)"/>
+<text x="22" y="44" font-size="13" font-weight="700" fill="var(--text)">ADR-0065에 적은 것</text>
+<text x="22" y="66" font-size="12" fill="var(--text)">다듬은 키 → ISBN 결과 + 정리 규칙 판</text>
+<text x="22" y="84" font-size="12" fill="var(--muted)">규칙이 바뀌면 판 번호로 버림</text>
+<text x="320" y="60" font-size="18" fill="var(--muted)">→</text>
+<rect x="340" y="20" width="290" height="70" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/>
+<text x="352" y="44" font-size="13" font-weight="700" fill="var(--text)">ADR-0069</text>
+<text x="352" y="66" font-size="12" fill="var(--text)">원문(ISBN·제목·저자·출판사) + 파일 지문</text>
+<text x="352" y="84" font-size="12" fill="var(--muted)">다듬기는 매번, 판 번호 없음</text>
+<text x="10" y="125" font-size="12" fill="var(--text)">+ 정리 규칙을 바꿀 때: 검색어 다듬기 규칙만 서비스 다시 켜기, 나머지는 다시 가져와 바꿔 끼우기만</text>
+</svg>
+<div class="item">
+<h3><span class="no">1</span>ADR-0069: 국가서지는 원문을 남기고, 정리 규칙을 바꿀 때는 상황별로 다시 가져온다 (ADR-0065 일부를 바꿈) [안]</h3>
+<p><b>결정.</b></p>
+<ul>
+<li>국가서지 TTL에서 뽑은 원문(ISBN·제목·저자·출판사)과 파일 지문만 남긴다. 지문이 같으면 원문을 다시 쓰고, 가져올 때마다 지금 정리 규칙으로 다듬는다. 정리 규칙 판 번호는 두지 않는다</li>
+<li>새 사본으로 갱신하거나 묶기·대표값·날짜 규칙만 고쳤으면: 가져오기 → 바꿔 끼우기. 서비스는 그대로</li>
+<li>검색어 다듬기 규칙을 고쳤으면: 옛 서비스를 켜 둔 채 새 코드로 가져오기 → 바꿔 끼우자마자 서비스를 새 코드로 다시 켬</li>
+<li>표 교체는 한 트랜잭션에서 이름 자리만 바꾸므로 켜진 서비스는 다음 검색부터 새 표를 읽는다(PostgreSQL 18 PREPARE: 쓰는 표가 바뀌면 다시 계획, 확인 2026-10-11). 연결 풀에서의 확인은 만들 때</li>
+</ul>
+<p><b>이유.</b> 사용자: "규칙을 db에 남겨야 하나? 어짜피 새 규칙으로 db가 새로 만들어 져야 하는 거 아니야?", "테이블만 바꿔끼우는 거면 굳이 '규칙을 고치고 VERSION 3→4'이것을 할 필요가 없지 않나?", "그냥 트랜잭션 걸려 있어서 테이블만 교체하면 알아서 되는 거 아니야? 검색어를 다듬는 규칙이 달라지는 경우에만 서비스 다시 키면 되는 거 아니야?", 상황별 표에 "이렇게 해줘" (2026-10-11).</p>
+<p class="alt"><b>검토한 대안</b> 다듬은 키 + 손으로 올리는 판 번호 + 잊지 않게 하는 테스트(처음 제안), 자동 지문(테스트 벡터 해시), 배포 번호를 판으로.</p>
+</div>
+</section>
+
+<p class="foot">원본: <code>easy/2026-10-11-normalize-rule-change.html</code>, <code>design-delta.md</code> "정리 규칙을 바꿀 때", ADR-0065. 작성 2026-10-11.</p>
+</main>
+</body>
+</html>

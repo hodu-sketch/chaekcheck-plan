@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>회고 결정 기록 초안</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+svg{max-width:100%;height:auto;display:block}
+.mock{border:2px dashed var(--line);border-radius:12px;padding:14px;margin:10px 0;font-size:17px}
+.row{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;background:var(--card);flex-wrap:wrap}
+.tag{font-size:14px;border-radius:6px;padding:0 6px;background:var(--code-bg);color:var(--muted)}
+.okt{color:var(--ok);font-weight:500}.mut{color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">개발 중에 바뀐 결정 네 가지를<br>결정 기록(ADR)으로 남기려고 합니다.</p>
+<p class="sub">사이클 07 개발 중에 사용자가 dev와 정한 것 가운데, 이미 있는 결정 기록과 어긋나거나 새 구조를 만든 것을 모았습니다. 아래 초안을 승인하시면 <code>docs/adr/</code>에 파일로 씁니다. 결정 자체는 이미 코드에 들어가 있으므로, 여기서는 "기록을 이대로 남길지"를 정합니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>도서관 사이트 보안 연결</h2>
+<div class="gist">세 도서관 사이트의 보안 인증서를 Java가 알아보지 못해 늘 실패했습니다. 그 인증서를 내준 기관 하나를 도서관 사이트 연결에만 믿도록 더했습니다.</div>
+<div class="item">
+<h3><span class="no">1</span>ADR-0061: 도서관 사이트 연결에만 최상위 인증 기관 하나를 더 믿음 (ADR-0022 보완) [안]</h3>
+<p><b>배경.</b> 우리 서버는 도서관 사이트에 https로 접속할 때, Java(JDK)에 들어 있는 최상위 인증 기관만 믿기로 했습니다(ADR-0022). 그런데 세계사이버대, 서울신학대, 충북 전자도서관 3곳은 JDK에 없는 기관(OISTE WISeKey Global Root GB CA)의 인증서를 써서 늘 연결에 실패했습니다. 12곳은 사이트가 중간 인증서를 보내지 않아 실패했습니다.</p>
+<p><b>결정.</b> 이 기관 하나를 <b>도서관 사이트 연결에만</b> 더 믿습니다(로그인 등 다른 연결에는 쓰지 않음). 빠진 중간 인증서 3개도 같은 폴더(<code>tls/library-roots/</code>)에 둡니다. 새 기관을 더할 때는 사용자 승인을 받습니다.</p>
+<p><b>이유.</b> 사용자: "이거 신뢰해줘" (2026-10-05, dev 기록)</p>
+<p class="alt"><b>다른 선택</b> (가) 그대로 두고 3곳은 "확인 실패"로 보임: 보안 설정은 그대로지만 3곳은 결과가 안 나옴. (나) 3곳을 끔: 검색 대상에서 빠짐. 둘 다 채택하지 않은 이유 <code>[이유 미확인]</code>.</p>
+<p class="cap">함께 바로잡을 기록: 사이클 02에 "Sectigo R46 기관은 JDK에 있음"이라고 적었는데, 지금 쓰는 JDK 25에는 없습니다(dev 확인). 다른 인증서 경로로 풀렸습니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>가져올 때 책 번호 잇기</h2>
+<div class="gist">다시 가져와도 같은 책은 같은 책 번호를 갖게 되었습니다. 2026-10-04에 정한 규칙(<code>catalog-refresh.md</code> 5.2절)을 dev가 이번에 만들었고, 어디서 하는지를 dev가 정했습니다.</div>
+<div class="item">
+<h3><span class="no">2</span>ADR-0062: 책 번호 잇기는 <code>catalog</code>의 표 바꾸기 안에서 함 [안]</h3>
+<p><b>배경.</b> 예전 가져오기는 표를 비우고 책 번호를 1부터 새로 매겨서, 다시 가져오면 책 주소(<code>/books/{번호}</code>)가 다른 책을 가리킬 수 있었습니다. 규칙은 2026-10-04에 정했지만(겹침이 가장 많은 옛 번호를 이어 씀, 합쳐지면 가장 작은 번호, 나뉘면 가장 많이 겹치는 쪽, 번호는 다시 쓰지 않음, 안내표 없음), 어느 모듈에서 할지는 정하지 않았습니다.</p>
+<p><b>결정.</b> <code>catalog</code>의 표 바꾸기 기능 안에서 합니다. 새로 받은 책·소장을 임시 표에 넣고, 옛 소장과 (도서관, 책 코드)로 맞대어 번호를 정한 뒤 표를 바꿉니다. 소장 2천만 줄을 서버 메모리에 올리지 않습니다. 가져오기를 맡은 <code>collection</code>은 바뀌지 않습니다. 이어 쓴·새로 준·없어진 번호 수는 가져오기 기록에 남깁니다.</p>
+<p><b>결과.</b> 같은 사본으로 두 번째 가져오기를 하니 1,617,445권 모두 번호가 그대로였습니다. 대신 쓰기 시간이 17분 51초에서 22분 43초(두 번째 26분 55초)로 늘었습니다.</p>
+<p><b>이유.</b> 사용자: "이것도 같이 구현해 줘", 모듈은 "catalog 해줘" (2026-10-05, dev 기록)</p>
+<p class="alt"><b>다른 선택</b> <code>collection</code>에서 함: 옛 소장을 읽으려면 <code>catalog</code>의 표를 직접 읽어야 해서 모듈 경계 원칙에 걸림. 채택하지 않은 이유 <code>[이유 미확인]</code>.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>후보 도서관 주소</h2>
+<div class="gist">강동대학교 북큐브가 검색되지 않던 원인은, 수집 DB의 http 주소를 그대로 썼는데 사이트가 https로 넘겨서였습니다. 넘겨진 최종 주소를 쓰도록 바꿨습니다.</div>
+<div class="item">
+<h3><span class="no">3</span>ADR-0063: 후보 도서관은 최종 주소를 쓰고, 가져오기는 호스트·경로로 같은 사이트를 확인함 (ADR-0052 보완) [안]</h3>
+<p><b>배경.</b> 수집 DB에는 도서관 목록에서 찾은 주소(대개 http)가 있습니다. 우리 서버는 다른 주소로 넘기는 응답(리다이렉트)을 따라가지 않으므로, https로 넘기는 사이트는 늘 실패했습니다. 책 상세 주소도 http라 책 화면의 대출 확인이 실패했습니다.</p>
+<p><b>결정.</b></p>
+<ul>
+<li>후보 도서관의 서비스 주소는 리다이렉트를 따라간 <b>최종 주소</b>로 둡니다(248곳이 https로 바뀜). 등록 도서관에 하던 확인을 후보에도 합니다.</li>
+<li>가져오기는 수집 주소와 서비스 주소를 <b>호스트·경로·쿼리</b>로 비교합니다. http/https와 포트 차이는 같은 사이트로 봅니다.</li>
+<li>책 상세 주소는 서비스 도서관 주소의 http/https·포트로 옮겨 씁니다.</li>
+</ul>
+<p><b>남은 빈틈.</b> 도서관 411은 넘겨진 곳의 <b>호스트까지</b> 달라(<code>ebook2.ezville.net</code> → <code>gsenc.bookcube.biz</code>) 같은 사이트 확인에 걸려 책 64,461줄이 빠졌습니다. 어떻게 이을지는 사이클 08 후보로 올립니다.</p>
+<p><b>이유.</b> 사용자 보고(강동대학교 북큐브가 "검색해도 안나오고", 2026-10-05, dev 기록). 바꾸는 방법 자체에 대한 사용자 말은 없음 <code>[이유 미확인]</code>.</p>
+<p class="alt"><b>다른 선택</b> (가) 서비스가 요청할 때마다 리다이렉트를 따라감: 요청이 한 번씩 늘고, 다른 호스트로 넘어가는 것을 막는 안전장치와 부딪힘. (나) 수집 DB 주소를 고침: 수집기가 쓰는 주소가 바뀜. 채택하지 않은 이유 <code>[이유 미확인]</code>.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>개발 중에 바꾼 화면·찾기 규칙</h2>
+<div class="gist">ADR-0056(북큐브·알라딘)과 ADR-0059(로고)에 적은 것 중 세 가지가 사용자 요청으로 바뀌었습니다. 확정된 기록은 고칠 수 없으므로 새 기록으로 남깁니다.</div>
+<div class="item">
+<h3><span class="no">4</span>ADR-0064: 알라딘 출판사 검색·북큐브 "더 보기"·로고 자리를 바꿈 (ADR-0056·0059 일부를 바꿈) [안]</h3>
+<table>
+<tr><th>예전 기록</th><th>지금</th><th>이유</th></tr>
+<tr><td>알라딘 "도서관에서 직접 찾기"의 출판사 검색은 그 도서관 실패 (ADR-0056)</td><td>출판사 검색을 씀 (사이트 시험에서 됨)</td><td>사용자: "출판사 검색도 씀"</td></tr>
+<tr><td>북큐브 직접 찾기는 첫 쪽만 (ADR-0056)</td><td>다른 사이트처럼 "더 보기" (한 쪽 10권, 쪽 넘기기 시험에서 됨)</td><td>사용자 결정, 원문 없음 <code>[이유 미확인]</code></td></tr>
+<tr><td>로고는 이름 앞, 없으면 빈 상자 (ADR-0059)</td><td>로고는 이름 위 줄, 없으면 아무것도 그리지 않음</td><td>사용자: "실제로 확인해보고 디자인 측면의 안정감때문에"</td></tr>
+</table>
+<p>ADR-0056·0059의 나머지(북큐브·알라딘을 상세 페이지로 읽음, 북큐브 대여형 판정, 자체 로고만 보임, 누르면 메인 페이지 등)는 그대로입니다.</p>
+<p class="alt"><b>다른 선택</b> ADR-0056·0059를 통째로 새 기록으로 바꿈: 바뀌지 않은 내용까지 다시 적어야 함.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">5</span>기록하지 않는 것</h2>
+<p>아래는 결정 기록 대신 회고(<code>retro.md</code>)와 지금 설계 문서(<code>docs/current/</code>)에만 적습니다. 구조를 바꾸지 않거나, 숫자를 아직 정하지 않았기 때문입니다.</p>
+<ul>
+<li>검색 범위 기본값을 가입 가능 쪽으로, 검색 조건 기억(정렬·완전 일치·역할 빼기는 다음 인계서)</li>
+<li>도서관이 50곳을 넘으면 검색이 다른 길로 찾음(ADR-0055 안의 구현 방법)</li>
+<li>요청 수·응답 크기 제한(429·503, 숫자 모두 제안 값) → 사이클 08 후보에서 정함</li>
+</ul>
+</section>
+
+<p class="foot">원본: dev <code>docs/plan-feedback.md</code> "# 사이클 07"(2026-10-05), <code>docs/cycles/07-candidate-libraries/retro.md</code>, <code>docs/research/ebook-catalog/catalog-refresh.md</code> 5.2절, ADR-0022·0052·0056·0059</p>
+</main>
+</body>
+</html>

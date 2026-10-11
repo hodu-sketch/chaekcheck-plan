@@ -1,5 +1,7 @@
 # 설계 제안: 사이클 07 후보 도서관 넣기
 
+> 이 문서는 제안 이력입니다. 결정은 `design-delta.md`와 ADR-0052~0060이 우선입니다 (2026-10-05).
+
 - 작성: 2026-10-05, `architect` 서브에이전트 제안을 정리. 읽은 것: 이 사이클 `scope.md`·`spec.md`·`flow.md`·`research.md`, `docs/current/`, `docs/research/library-join/candidates.md`, `snapshot-2026-10-05.md`, dev `CLAUDE.md`와 코드(`LibraryService`, `PlanOptions`, `LibraryCatalog`, `CollectedCatalog`, `CatalogImporter`, `CatalogWriter`, `PgBigmBookSearch`, `catalog/001-catalog-schema.yaml`, `PlatformAdapter`, `ParsedDetail`, `HoldingTask`, `AvailabilityResolvers`, 웹 `MyLibrariesPage.tsx`·`libraryNames.ts`)
 - 결정 페이지: `easy/2026-10-05-design-decisions.html`
 

@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>교보 서버 차단 대응</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">교보 구독형 서버가 우리 집 IP를 막았습니다.<br>남은 수집을 어떻게 할지 정합니다.</p>
+<p class="sub">폰(모바일 데이터)에서는 열리고 이 PC에서만 안 열리니, 서버는 살아 있고 우리 IP만 막힌 것입니다. 우회(다른 IP, 프록시, 폰 테더링)는 원칙대로 하지 않습니다. 아래 두 가지를 하나씩 골라 주세요.</p>
+
+<section class="card"><h2><span class="num">1</span>무슨 일이 있었나</h2>
+<div class="gist">교보 대여·혼합형 도서관 232곳은 모두 서버 한 대(103.182.126.192)에 있습니다. 이 서버에 동시에 4건씩 보내다가 두 번 느려졌고, 두 번째 뒤로 우리 IP가 막혔습니다.</div>
+<table>
+<tr><th>때</th><th>본 것</th></tr>
+<tr><td>10월 6일 새벽 3시 20분</td><td>응답이 4~6초에서 14초 넘게 느려짐 → 안전장치가 4건을 1건으로 줄임</td></tr>
+<tr><td>10월 6일 오전 11시 50분</td><td>5.5초로 돌아와 다시 4건으로 켬</td></tr>
+<tr><td>10월 6일 낮 12시 9분 ~ 밤</td><td>다시 느려지고 거의 모든 요청이 시간 초과</td></tr>
+<tr><td>10월 7일 아침</td><td>이 PC에서는 접속이 아예 안 됨. 바로 옆 교보 주소는 잘 열림. <b>폰에서는 열림</b></td></tr>
+</table>
+<p>받은 데이터는 빠진 곳이 없습니다. 넘어간 쪽은 다시 받을 때 그 쪽부터 읽습니다. 남은 것은 교보 대여·혼합형 202곳, 약 42만 7천 쪽입니다. 나머지 도서관(등록 274곳, 후보 2,435곳)은 다 받았습니다.</p>
+<p class="note">교보 정기 점검은 일요일 00:30~09:00에 교보문고 전체를 멈추는 방식이고 10월 공지는 없어서, 점검이 아닙니다(교보문고 공지 1006614·1007060, 2026-10-07 확인). 자세한 기록: <code>docs/research/ebook-catalog/crawl-runbook.md</code> 8-2-1절.</p>
+</section>
+
+<section class="card"><h2><span class="num">2</span>남은 202곳을 어떻게 할까 (하나만 승인)</h2>
+
+<div class="item"><h3><span class="no">1</span>하루에 한 번 첫 화면만 열어 보고, 풀리면 1건씩 천천히 다시 받는다 (추천) <span class="an">[안]</span></h3>
+<p>차단은 며칠 뒤 저절로 풀리는 경우가 많습니다(서버마다 달라 확인 못 함). 하루 한 번, 요청 1건만 보내 확인합니다. 풀리면 동시 1건, 요청 사이 1초로 받습니다. 1건이면 한 쪽에 약 8초라 42만 쪽에 <b>약 40일</b> 걸립니다.</p>
+<p class="alt"><b>잃는 것:</b> 오래 걸립니다. 풀리지 않으면 계속 기다리게 됩니다.</p></div>
+
+<div class="item"><h3><span class="no">2</span>교보 B2B 고객센터에 문의한 뒤 정한다 <span class="an">[안]</span></h3>
+<p>사용자께서 교보에 "도서관 목록 수집 중 IP가 막혔다, 허용되는 요청 속도를 알려 달라"고 묻습니다. 답에 맞춰 속도를 정합니다. 1번과 함께 할 수도 있습니다.</p>
+<p class="alt"><b>잃는 것:</b> 사용자 손이 듭니다. 답이 늦거나 수집을 원하지 않는다고 할 수 있습니다.</p></div>
+
+<div class="item"><h3><span class="no">3</span>남은 202곳은 이번에는 받지 않는다 <span class="an">[안]</span></h3>
+<p>받은 데까지만 씁니다(교보 대여·혼합형 중 30곳은 다 받았고, 6곳은 받다 만 상태). 이 202곳은 수집 DB에서 "받지 않음"으로 표시해 두고, 다음 정기 수집 때 다시 생각합니다.</p>
+<p class="alt"><b>잃는 것:</b> 기업·기관 전자도서관 202곳의 도서관-책 매핑이 없습니다.</p></div>
+</section>
+
+<section class="card"><h2><span class="num">3</span>앞으로 이 서버에 보내는 양</h2>
+
+<div class="item"><h3><span class="no">4</span>이 서버는 다시 1건씩만 보낸다 (설정 파일에서 4건 설정을 지움) (추천) <span class="an">[안]</span></h3>
+<p>앞서 정하신 "이 서버만 동시 4건"(2026-10-04)을 거둡니다. <code>host-slots.txt</code>를 비워 두면 수집기를 다시 켜도 모든 서버가 1건씩입니다. 안전장치(14초 넘으면 1건)는 1건일 때는 쓸 일이 없습니다.</p>
+<p class="alt"><b>다른 선택:</b> 2건으로 줄임. 빠르지만 다시 막힐 수 있습니다.</p></div>
+</section>
+
+<p class="foot">이 PC에서 서비스를 돌려 시험하면, 같은 서버를 쓰는 등록 도서관 21곳(세종시립 구독, 강동구립 구독 등)의 대출 조회도 막혀 있습니다. 배포 서버는 IP가 달라 상관없습니다.</p>
+</main>
+</body>
+</html>

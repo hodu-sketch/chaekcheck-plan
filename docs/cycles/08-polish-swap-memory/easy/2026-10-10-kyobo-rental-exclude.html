@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>교보 대여·혼합 빼기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+svg{max-width:100%;height:auto;display:block}
+.mock{border:2px dashed var(--line);border-radius:12px;padding:14px;margin:10px 0;font-size:17px}
+.row{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;background:var(--card);flex-wrap:wrap}
+.tag{font-size:14px;border-radius:6px;padding:0 6px;background:var(--code-bg);color:var(--muted)}
+.okt{color:var(--ok);font-weight:500}.mut{color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">교보 대여·혼합 도서관을 빼는 범위와<br>할 일을 정해 주세요.</p>
+<p class="sub">말씀하신 결정: "교보 구독형 플랫폼 – 대여·혼합"을 아예 뺍니다(2026-10-10). 같은 교보 서버에 다른 두 무리(공공도서관 구독, 학교 등 소장형)가 함께 있어서, 어디까지 빼는지와 무엇을 고쳐야 하는지만 확인합니다. 원본: <code>docs/research/ebook-catalog/collection-by-vendor-2026-10-09.md</code>, <code>crawl-runbook.md</code> 8-2-1절.</p>
+
+<section class="card">
+<h2><span class="num">1</span>같은 교보 서버의 세 무리</h2>
+<svg viewBox="0 0 640 250" role="img" aria-label="교보 구독형 서버의 세 무리">
+<rect x="10" y="10" width="620" height="34" rx="8" fill="var(--code-bg)" stroke="var(--line)"/>
+<text x="22" y="33" font-size="15" font-weight="700" fill="var(--text)">교보 구독형 플랫폼 서버 (*.dkyobobook.co.kr, IP 하나)</text>
+<rect x="10" y="60" width="196" height="170" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/>
+<text x="22" y="86" font-size="15" font-weight="700" fill="var(--text)">구독 21곳</text>
+<text x="22" y="110" font-size="13" fill="var(--text)">시·구립 공공도서관</text>
+<text x="22" y="132" font-size="13" fill="var(--text)">(세종시립, 강동구립 등)</text>
+<text x="22" y="160" font-size="13" fill="var(--ok)">사이클 07 전부터 서비스</text>
+<text x="22" y="184" font-size="13" fill="var(--ok)">→ 그대로 둠</text>
+<rect x="222" y="60" width="196" height="170" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/>
+<text x="234" y="86" font-size="15" font-weight="700" fill="var(--text)">소장형 1,182곳</text>
+<text x="234" y="110" font-size="13" fill="var(--text)">초·중·고 906 등</text>
+<text x="234" y="132" font-size="13" fill="var(--text)">한 곳 수백~수천 권</text>
+<text x="234" y="160" font-size="13" fill="var(--ok)">다 받음</text>
+<text x="234" y="184" font-size="13" fill="var(--ok)">→ 그대로 둠</text>
+<rect x="434" y="60" width="196" height="170" rx="8" fill="var(--no-bg)" stroke="var(--no)"/>
+<text x="446" y="86" font-size="15" font-weight="700" fill="var(--no)">대여·혼합 230곳</text>
+<text x="446" y="110" font-size="13" fill="var(--text)">회사 131, 정부·공공기관 69</text>
+<text x="446" y="132" font-size="13" fill="var(--text)">단체 15, 대학 7 …</text>
+<text x="446" y="160" font-size="13" fill="var(--text)">받은 것 28, 못 받은 것 202</text>
+<text x="446" y="184" font-size="13" fill="var(--no)">→ 뺌</text>
+<text x="446" y="208" font-size="12" fill="var(--muted)">서비스에 이미 11곳</text>
+</svg>
+<p class="cap">숫자: 수집 DB 2026-10-09 17:33 집계. "서비스에 이미 11곳"은 사이클 07 seed(dev <code>library/008-library-candidates.csv</code>)에서 대출 방식이 대여·혼합인 후보 도서관(서비스 번호 2664~2674, 코렌스·한국거래소·신한카드 전자책도서관 등).</p>
+
+<div class="item">
+<h3><span class="no">1</span>빼는 범위는 오른쪽 "대여·혼합 230곳"만이고, 공공도서관 구독 21곳과 소장형 1,182곳은 그대로 둠 [안]</h3>
+<p>공공도서관 구독 21곳도 같은 서버에서 대여 목록을 쓰지만(책 25만 권 중 24만 7천 권이 대여 목록과 같음), 지역 주민이 쓰는 도서관이라 서비스 핵심입니다. 표의 "공공도서관 1"(전북교육청 통합도서관 구독, 대여·혼합 쪽)은 이미 사이클 07에서 끈 곳과 같은 기관입니다.</p>
+<p class="alt"><b>다른 선택</b> 공공도서관 구독 21곳도 함께 뺌: 그 지역 주민 검색 결과에서 구독 전자책이 사라짐.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>뺄 때 할 일</h2>
+<div class="item">
+<h3><span class="no">2</span>서비스에 이미 들어간 11곳(2664~2674)을 끔 — 사이클 08 인계서에 넣음 [안]</h3>
+<p>사이클 07 17단계처럼 새 DB 변경 파일로 "켜짐 = 아니오"로 둡니다. 끈 도서관은 검색 계획·내 도서관 찾기·결과에서 빠지고, 다음 가져오기에서 책도 들어오지 않습니다. 이 11곳은 소속 구성원용이라 원래 직접 추가한 사람에게만 보였습니다. 직접 추가해 둔 사람의 목록에서는 사라집니다(번호는 남지만 꺼진 도서관은 건너뜀, 사이클 06 규칙).</p>
+<p class="alt"><b>다른 선택</b> 다음 가져오기·seed 정리 때 한꺼번에(그 전까지는 서비스에 남음).</p>
+</div>
+<div class="item">
+<h3><span class="no">3</span>수집 쪽: 남은 202곳은 더 받지 않고, 230곳 모두 수집 DB에 "받지 않음" 표시(이유: 교보 대여·혼합 제외) [안]</h3>
+<p>지우지 않고 표시만 해서 되돌릴 수 있게 둡니다(같은 사이트 99곳과 같은 방식). 이걸로 막힌 서버에 더 요청을 보내지 않게 됩니다. 10월 7일에 열어 둔 "교보 서버가 막음 — 남은 202곳 어떻게" 질문은 이 결정으로 닫습니다.</p>
+</div>
+<div class="item">
+<h3><span class="no">4</span>seed 규칙에 "교보 대여·혼합은 넣지 않음"을 더해 다음 후보 넣기에서도 빠지게 함 [안]</h3>
+<p>사이클 07 seed 규칙(수집 번호 100001 이상, 받지 않음 표시 없음, 전체 수집 끝남)에 한 줄 더합니다. 3번의 "받지 않음" 표시만으로도 빠지지만, 규칙으로도 적어 둡니다.</p>
+</div>
+</section>
+
+<p class="foot">원본: <code>docs/research/ebook-catalog/collection-by-vendor-2026-10-09.md</code>, <code>crawl-runbook.md</code> 8-2-1절, dev <code>library/008-library-candidates.csv</code>. 작성 2026-10-10.</p>
+</main>
+</body>
+</html>
