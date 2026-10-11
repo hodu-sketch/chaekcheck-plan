@@ -14,3 +14,4 @@
 | [2026-10-12-review-decisions.html](2026-10-12-review-decisions.html) | 설계 검토 결과: finish 실패 처리, 번호 비교는 바깥 스크립트, 바로 고친 것 8 | `../design-delta.md` | 없음 (2개 승인, #1은 질문에 답한 뒤) |
 | [2026-10-12-handoff-review.html](2026-10-12-handoff-review.html) | 인계서 초안 검토: 12단계 순서, finish 색인 메모리, 옛 사본 범위, 넘기기(바꿔 넣기는 사이클 10 뒤) | `../handoff.md` | 없음 (3개 승인) |
 | [2026-10-12-close-check.html](2026-10-12-close-check.html) | 마무리 점검: 스킬 여덟 개 단계 대조(사이클 10 회고·사이클 11), 고친 것 넷, flow.md 확정, 커밋·푸시 | 스킬 `.claude/skills/*` | 없음 (2개 승인) |
+| [2026-10-12-interim-decisions.html](2026-10-12-interim-decisions.html) | dev 중간 전달(ac26ee2): A 실데이터 통과, 설계와 달라진 다섯, 정할 것 3(사이클 13 전달 글, 회고 시점, current 조건) | dev `plan-feedback.md` 2828~2968행 | 없음. 3개 승인(2026-10-12), #2는 채팅 "회고할 수 있는 건 먼저 회고해"로 중간 회고 |

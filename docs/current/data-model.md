@@ -254,7 +254,7 @@ erDiagram
 - 묶기 [확정]: ① 같은 플랫폼 코드(번호 체계: 교보·교보 구독형·YES24 V1~V3는 공유, 포털·강남구는 도서관 안) ② 교보식 코드 → 종이책 ISBN ③ 국가서지 ISBN (정리한 본제목·대표 저자·출판사로 하나만 맞을 때) ④ 정리한 전체 제목 + 대표 저자 + 정리한 출판사 (개발 중 사용자 결정, 2026-09-30). 규칙·수치는 `docs/research/ebook-catalog/same-book-isbn.md` 5절
 - 국가서지 파일 위치: dev 저장소 안 `data/nlk/` (git 제외, 사용자 결정 2026-09-30). 인계서 [안]은 저장소 밖이었음. 사이클 08부터 TTL에서 뽑은 원문은 `collection.national_bibliography_record`에 남김(아래 `collection` 절, ADR-0069)
 
-### 가져오기: 새 표에 쓰고 바꿔 끼우기 — 구현됨 (사이클 08), 따로 하기(내보내기·반영·마저·지우기)는 설계됨(미구현, 사이클 11)
+### 가져오기: 새 표에 쓰고 바꿔 끼우기 — 구현됨 (사이클 08), 따로 하기(내보내기·반영·마저·지우기)는 구현됨 (사이클 11, 중간 회고 2026-10-12)
 
 ADR-0065(가져오기는 새 표에 쓰고 바꿔 끼운다), ADR-0070(소장 번호 잇기), ADR-0062(책 번호 잇기 유지). 흐름 그림은 `flows.md` 흐름 20. 절차는 dev `docs/maintenance/3-import.md` 8~12절.
 
@@ -272,22 +272,24 @@ ADR-0065(가져오기는 새 표에 쓰고 바꿔 끼운다), ADR-0070(소장 �
   - 가져오기 힙: `-PbootRunXmx=6g`(dev `3-import.md`). 4GB는 첫 읽기에서 멈춤(첫 읽기가 값별 줄 수를 모두 들고 있음, 살아 있는 데이터 4,066MB). 6GB로 끝까지 가는지는 측정 중(AC-12) [확인 필요]
   - 서비스 힙 512MB는 동시 검색이 많을 때(응답 본문 최대 4MB × 100) 여유가 작음 (dev) [확인 필요] (실제 이용 기록으로 보거나 본문 상한을 낮출지 사용자에게 질문)
 
-#### 따로 하기: 내 PC에서 만들고 운영 DB에는 파일로 — 설계됨(미구현, 사이클 11)
+#### 따로 하기: 내 PC에서 만들고 운영 DB에는 파일로 — 구현됨 (사이클 11, 중간 회고 2026-10-12) — AC-1~AC-7·AC-11~AC-15 실데이터 통과(dev `plan-feedback.md` "# 사이클 11" 중간 전달(2828~2968행, `ac26ee2`))
 
 ADR-0078. 흐름 그림은 `flows.md` 흐름 27(내보내기)·28(반영)·29(마저 바꿔 끼우기·지우기)과 "내 PC의 `catalog_next` 상태". 위 순서 ①~⑤를 모드에 따라 두 DB에 나눠 돌립니다. 모드 `in-place`(기본)는 위 순서 그대로입니다.
 
 | 모드 | 어디서 | 하는 일 | 끝난 뒤 |
 |---|---|---|---|
 | `export` | 내 PC | ① 번호 잇기 → ② `catalog_next`에 쓰기 → `load_manifest` 한 줄 → `pg_dump -Fc -n catalog_next -O -x`로 파일 하나(`.part`에 쓰고 `export_id`가 맞으면 이름 바꿈) | 내 PC `catalog`는 그대로, `catalog_next`(+ `load_manifest`)는 남아 "기다림". 기록 줄 없음. 실패하면 `catalog_next` 지우고 `FAILED` `error` |
-| `apply` | 운영 역할 DB | 파일 속 `load_manifest`만 먼저 읽어(`pg_restore -a -n catalog_next -t load_manifest -f -`) 비교 → 같으면 기준값 다시 확인 → 남은 `catalog_next` 지움 → `pg_restore --single-transaction --exit-on-error -O -x` → `export_id` 확인·`load_manifest` 지움 → ③ 색인·제약(운영 정의) → ④ `VACUUM (ANALYZE)` → ⑤ 바꿔 끼우기 | 성공이면 `SUCCEEDED` 한 줄(내 PC 기록 + 반영 단계 시간, `export_id`). 다르면 운영 표에 손대지 않고 `FAILED` `mismatch`(무엇이 다른지). 복원·색인·통계 실패는 `catalog_next` 지우고 `error`, 잠금 5번 실패는 `lock_not_acquired` |
+| `apply` | 운영 역할 DB | 파일 속 `load_manifest`만 먼저 읽어 비교 — 구현: 같은 한 줄을 표 설명(COMMENT)에도 넣고 `pg_restore -s -n catalog_next -t load_manifest -f -`로 목차만 읽음(파이프 `-Fc`는 표 데이터가 이름 순이라 데이터를 읽으면 파일 전체를 훑음, 목차만은 1초 안) [확정] (dev 프로토타입 5, 2026-10-12). 같은 이름 파일이 있으면 `export`는 시작하지 않음(덮어쓰지 않음) → 같으면 기준값 다시 확인 → 남은 `catalog_next` 지움 → `pg_restore --single-transaction --exit-on-error -O -x` → `export_id` 확인·`load_manifest` 지움 → ③ 색인·제약(운영 정의) → ④ `VACUUM (ANALYZE)` → ⑤ 바꿔 끼우기 | 성공이면 `SUCCEEDED` 한 줄(내 PC 기록 + 반영 단계 시간, `export_id`). 다르면 운영 표에 손대지 않고 `FAILED` `mismatch`(무엇이 다른지). 복원·색인·통계 실패는 `catalog_next` 지우고 `error`, 잠금 5번 실패는 `lock_not_acquired` |
 | `finish` | 내 PC (운영 반영 성공 뒤) | 기다리는 `catalog_next`의 `load_manifest.export_id`·기준값이 파일과 같은지 → (다시 돌릴 때) 만들다 만 색인·제약 지움 → ③ → ④ → ⑤ 한 트랜잭션에서 `load_manifest` 지움 + 옛 표 지움 + `catalog`로 옮김 | `SUCCEEDED` 한 줄(`export_id`). 다르거나 `catalog_next`가 없으면 멈추고 DB 그대로("같은 파일을 내 PC에 `apply`"로 되살림). 색인·통계에서 실패하면 `load_manifest`가 남아 "기다림" 그대로 → `finish`를 다시 돌림 [확정] (사용자 승인, 2026-10-12, `docs/cycles/11-separate-import/easy/2026-10-12-review-decisions.html` #1) |
-| `discard` | 어느 DB든 | `DROP SCHEMA IF EXISTS catalog_next CASCADE` | 기록 줄 없음. 기다리는 새 표를 지울 때는 "운영 반영이 실패했을 때만" 안내 |
+| `discard` | 어느 DB든 | `DROP SCHEMA IF EXISTS catalog_next CASCADE` | 기록 줄 없음. 기다리는 새 표를 지울 때는 "운영 반영이 실패했을 때만" 안내. 구현: 무엇을 지웠는지 돌려줌(`Discarded { NOTHING, LEFT_OVER, WAITING }`) |
+
+- 구현에서 정한 것 (dev, 2026-10-12, 설계에 없던 것): `apply`·`discard` 시작 때 남은 복원 세션(`application_name` `chaekcheck-restore`)을 `pg_terminate_backend`로 끝냄 — 복원 입력을 파일로 넘기면 Java가 죽어도 `wsl.exe`가 끝까지 읽어 커밋될 수 있어서(프로토타입 4) Java가 입력을 직접 씀. `finish`가 실패하면 기록 줄을 남기지 않음(로그만, 기다림 유지). 잠금 5번 실패 때 `finish`는 새 표를 남김. `mismatch`의 `failure_detail`은 다른 항목을 `; `로 이음(예 "도서관: 이 DB 2658곳 315e87cf5b9a / 파일 2658곳 761ce0ae2994"). dry run은 기다리는 새 표가 있어도 돎(`in-place`에서만). 가져오기 실패는 종료 코드 1. 처음에 기다리는 새 표를 확인하는 `CatalogLoad.hasWaitingExport()`(10분 읽은 뒤가 아니라 시작 때 멈춤)
 
 - 기다리는 새 표 보호 [확정] (스펙 R-A7): 내 PC에 `load_manifest`가 있는 `catalog_next`가 있으면 다음 `export`·`in-place`는 시작하지 않고 "먼저 finish 또는 discard"를 알림(DB 그대로). `load_manifest`가 없는 `catalog_next`(죽고 남은 것)는 지금처럼 지우고 시작
 - `finish`가 `load_manifest`를 바꿔 끼우는 트랜잭션 안에서 지우는 까닭: 바꿔 끼우기의 `DROP SCHEMA catalog_next`가 CASCADE 없이 돌기 때문이고, 그 전에 실패해도 "기다림"이 남아 다시 돌릴 수 있게 하려고 [확정] (스펙 R-A10, AC-15). `apply`도 복원 뒤 같은 까닭으로 `load_manifest`를 지움
 - 비교 항목 [확정] (스펙 R-A3, 설계 #2), 계산식 [안]: 도서관 해시(`enabledLibraryRefs()` id 순 `id\tbaseUrl\tplatformType\n` SHA-256 + 개수), 연결표 해시(`collection_library_id, library_id` 순 SHA-256 + 개수), `book`·`holding`의 줄 수·가장 큰 번호·시퀀스 값 6개, 네 표의 (표, 칸, 타입) 목록 SHA-256. 기준값과 표 구조 해시는 `catalog`가 계산(`baseline()`), 도서관·연결표 해시는 `collection`이 계산해 `notes`에 실음
 - 색인 메모리 [확정] (사용자 승인, 2026-10-12, `docs/cycles/11-separate-import/easy/2026-10-12-handoff-review.html` #1; 설계 #12): 운영 `apply` 연결만 `maintenance_work_mem` 256MB(서버 기본 64MB 그대로). 내 PC `finish`는 1GB, 내 PC `export`·`in-place`는 지금(1GB, 병렬 4) 그대로. 근거: 사이클 08 #3b, 컨테이너 상한 512MB에서 1GB로 `OOMKilled`(`docs/cycles/08-polish-swap-memory/retro.md`). 설명 `docs/research/deploy/easy/2026-10-12-memory-kinds.html`
-- `pg_dump`·`pg_restore`는 DB 컨테이너 이미지 안의 18판을 Java가 불러 돌림(`PgTools`, 설정 `chaekcheck.catalog.load.pg-dump-command`·`pg-restore-command` [안]). 공식 문서 사실은 `docs/cycles/11-separate-import/research.md` 9·11절
+- `pg_dump`·`pg_restore`는 DB 컨테이너 이미지 안의 18판을 Java가 불러 돌림(`PgTools`, 설정 — 구현: `chaekcheck.catalog.load.pg-command` 하나(쉼표로 나눈 명령 앞부분, 도구 이름은 앱이 붙임. 실제 값 `wsl -d Ubuntu --exec docker compose -p chaekcheck exec -T <db|db-ops|db-test>`, `application_name`은 `-d` 연결 문자열로)). 공식 문서 사실은 `docs/cycles/11-separate-import/research.md` 9·11절
 - 운영 역할 DB (dev `compose.yaml`) [확정 값] (설계 #12, 스펙 R-A6): 서비스 `db-ops`(이름 [안]), 이미지 `chaekcheck/postgres-bigm:18`, `db`와 같은 `command:`, 포트 `${OPS_DB_PORT:-5434}:5432`, 자기 볼륨 `db-ops-data`, `mem_limit: 1g`. 처음에는 `db`를 통째로 복사해 기준을 같게 시작
 - 새 색인 없음. 확인 필요(시퀀스 값이 덤프로 넘어가는지, 파이프로 바이너리가 깨지지 않는지 등)는 아래 "확인 필요 (사이클 11)"
 
@@ -313,12 +315,13 @@ erDiagram
     bigint holding_count
     bigint holding_max_id
     bigint holding_sequence
-    jsonb notes "도서관·연결표·표 구조 해시, 가져오기 기록"
+    text columns_hash "구현: notes가 아닌 칸"
+    jsonb notes "도서관·연결표 해시, 가져오기 기록"
   }
   CATALOG_IMPORT }o..o| LOAD_MANIFEST : "export_id (파일로만 이어짐, FK 없음)"
 ```
 
-`catalog_next.load_manifest` — 실행 중에만 있는 한 줄 표, Liquibase 아님 (설계됨(미구현, 사이클 11)). 내보낼 때 만들고, 반영·마저 때 복원 뒤 지움. 표 [확정] (설계 #1), 칸 이름 [안].
+`catalog_next.load_manifest` — 실행 중에만 있는 한 줄 표, Liquibase 아님 (구현됨 (사이클 11, 중간 회고 2026-10-12), 같은 줄을 `row_to_json`으로 표 COMMENT에도 넣음). 내보낼 때 만들고, 반영·마저 때 복원 뒤 지움. 표 [확정] (설계 #1), 칸 이름 [안].
 
 | 칸 | 타입 | 설명 |
 |---|---|---|
@@ -327,7 +330,11 @@ erDiagram
 | `exported_at` | timestamptz | 내보낸 시각 |
 | `book_count`, `book_max_id`, `book_sequence` | bigint | 내보낼 때 내 PC `catalog.book`의 줄 수·가장 큰 번호·시퀀스 값 |
 | `holding_count`, `holding_max_id`, `holding_sequence` | bigint | 같은 값의 `catalog.holding` |
-| `notes` | jsonb | 도서관·연결표 해시, 표 구조 해시, 내 PC 가져오기 기록(`catalog`는 해석하지 않음) |
+| `columns_hash` | text | 네 표의 (표, 칸, 타입) 목록 SHA-256. 구현에서 `notes` 밖 칸으로 뺌(`catalog`가 `notes`를 해석하지 않게, `Baseline` 레코드 안에서 `equals` 하나로 비교) |
+| `notes` | jsonb | 도서관·연결표 해시, 내 PC 가져오기 기록(`catalog`는 해석하지 않음) |
+
+- `format_version`은 지금 1. 사이클 13에서 도서관 부분을 실으면 2로 올리고, 옛 앱은 다른 판 파일을 반영하지 않음(지금 코드가 이미 거절) (dev, 2026-10-12)
+- 시퀀스 값 = `CASE WHEN is_called THEN last_value ELSE last_value - 1 END`. IDENTITY 시퀀스 값은 덤프·복원으로 그대로 넘어감(복원 뒤 `setval` 없음) [확정] (dev 프로토타입 1)
 
 ### 정리 규칙을 바꿀 때 — [확정] (사용자 제안, 2026-10-11: "이렇게 해줘"), ADR-0069
 
@@ -341,7 +348,7 @@ erDiagram
 - 정리 규칙 판 번호는 두지 않음: 책·사람·소장 표는 다시 가져오면 통째로 새로 만들어지고, 국가서지는 원문을 남기므로 규칙과 상관없음
 - dev 가져오기 절차(`docs/maintenance/3-import.md` 12절)에 위 표를 적음 — 구현됨 (사이클 08, AC-16)
 
-## 스키마 `collection` (소유: `collection` 모듈) — 구현됨 (사이클 07), 사이클 08 변경 구현됨 (사이클 08), 사이클 11 칸 설계됨(미구현, 사이클 11)
+## 스키마 `collection` (소유: `collection` 모듈) — 구현됨 (사이클 07), 사이클 08 변경 구현됨 (사이클 08), 사이클 11 칸 구현됨 (사이클 11, 중간 회고 2026-10-12)
 
 수집 DB 도서관 번호와 서비스 도서관 번호의 짝, 그리고 가져오기 기록입니다(ADR-0052, ADR-0060). 사이클 08부터 국가서지 TTL에서 뽑은 원문과 그 파일 지문도 둡니다(ADR-0069, 구현됨 (사이클 08)). 다른 모듈 표에는 FK를 두지 않고 번호만 둡니다. 짝 줄은 Liquibase seed(CSV, 번호 명시)로 넣습니다.
 
@@ -371,8 +378,8 @@ erDiagram
     text status "사이클 08, SUCCEEDED 또는 FAILED"
     text failure_reason "사이클 08, FAILED일 때만"
     text failure_detail "사이클 08"
-    uuid export_id "사이클 11, NULL 허용 (설계됨)"
-    timestamptz exported_at "사이클 11, NULL 허용 (설계됨)"
+    uuid export_id "사이클 11, NULL 허용 (구현됨)"
+    timestamptz exported_at "사이클 11, NULL 허용 (구현됨)"
   }
   NATIONAL_BIBLIOGRAPHY_RECORD {
     bigint id PK
@@ -414,7 +421,7 @@ erDiagram
 - 등록 도서관은 같은 번호끼리 짝(59·131 포함), 후보 도서관은 서비스 새 번호(281~2674)와 짝, 2,674줄 [확정] (ADR-0052, dev 구현 확인, 2026-10-05)
 - 사이클 08: 교보 대여·혼합 11곳(서비스 번호 2664~2674)의 짝 줄을 `002-collection-link.csv`에서 지움 → 짝 줄이 11줄 줄어듦 (구현됨 (사이클 08), ADR-0067). 수집 DB의 교보 대여·혼합 230곳은 `crawl_skip`(받지 않음) 표시 — 수집기 명령이 1곳에 약 50초라 24곳 뒤에는 같은 UPDATE를 한 트랜잭션으로 실행 (dev) [확정] (사용자 승인, 2026-10-11)
 - Liquibase: `collection/001-collection-schema.yaml`, `collection/002-collection-seed-candidates.yaml` + `002-collection-link.csv` (위 "Liquibase 파일" 목록). 사이클 08: `collection/003-import-period-and-timings.yaml`(changeset 둘: 수집 기간·단계별 시간, 상태·실패 칸), `collection/004-national-bibliography.yaml` [확정] (dev 구현 확인, 2026-10-11; 설계 [안]의 `004`·`005`와 번호가 다름)
-- 사이클 11 (설계됨(미구현, 사이클 11)): changeset `collection/005-import-export.yaml` [안] — `catalog_import`에 `export_id`·`exported_at`과 CHECK. 번호는 인계 때 dev의 마지막 `collection` 번호를 보고 정함(지금 004까지). `failure_reason` `mismatch`는 changeset 없음
+- 사이클 11 (구현됨 (사이클 11, 중간 회고 2026-10-12)): changeset `collection/005-import-export.yaml`(id `collection-005-import-export`, 제약 `catalog_import_export_check`) — `catalog_import`에 `export_id`·`exported_at`과 CHECK. 번호는 인계 때 dev의 마지막 `collection` 번호를 보고 정함(지금 004까지). `failure_reason` `mismatch`는 changeset 없음
 - `collection`은 `library.library`를 읽지 않고, 짝 맞춘 서비스 도서관이 켜졌는지와 사이트 주소는 `LibraryCatalog.enabledLibraryRefs()`로 확인합니다 [확정] (dev 구현 확인, 2026-10-05)
 - 가져오기 기록에 사본의 수집 기간을 더함 [확정] (사용자: "이거 넣어주는 것으로 해", 2026-10-05) — `collected_from`·`collected_to` (위 표), 구현됨 (사이클 08)
 
@@ -631,7 +638,7 @@ erDiagram
 | `ranking_month.fetched_at` | timestamptz | NOT NULL | 출처 줄 "받은 날" | [확정] |
 | `ranking_category (target_month, category_code)` | date, text | PK, FK `ranking_month` ON DELETE CASCADE | `ALL` 또는 20자리 사이트 ID | [확정] |
 | `ranking_category.sales_copies` | bigint | `ALL`이면 NULL, 아니면 `>= 0` | 판매 부수 | [확정] |
-| `ranking_category.display_order` | smallint | CHECK 0..14 (설계됨: 배포 전이라 `popular/001`을 그 자리에서 고침, 사이클 11 0단계에서 dev가 함, ADR-0080; 지금 dev 코드는 0..16), UNIQUE `ranking_category_target_month_display_order_key (target_month, display_order)` | 계산한 순서. 지금 값은 0~14, 옛 달(16분류로 받은 달)은 빈칸이 있을 수 있음 | [확정] (CHECK를 0..14로 좁히면 2026-09 줄이 어긋나 그대로 둠 — dev 제안, 회고 결정 페이지에서 확인) |
+| `ranking_category.display_order` | smallint | CHECK 0..14 (구현됨: 배포 전이라 `popular/001`을 그 자리에서 고침, 사이클 11 0단계, ADR-0080. 로컬 `db`는 2026-09의 178·1991 분류를 지우고 0~14로 다시 매김, 체크섬 NULL 뒤 새 체크섬), UNIQUE `ranking_category_target_month_display_order_key (target_month, display_order)` | 계산한 순서. 지금 값은 0~14, 옛 달(16분류로 받은 달)은 빈칸이 있을 수 있음 | [확정] (CHECK를 0..14로 좁히면 2026-09 줄이 어긋나 그대로 둠 — dev 제안, 회고 결정 페이지에서 확인) |
 | `ranking_entry (target_month, category_code, rank)` | | PK, FK `ranking_category` ON DELETE CASCADE, `rank` 1..50 | | [확정] |
 | `ranking_entry.isbn13` | text | NULL, CHECK `^97[89][0-9]{10}$` | 비었거나 틀리면 NULL → 흐림 | [확정] (설계 #10) |
 | `ranking_entry.title` | text | NOT NULL | | [확정] |
@@ -726,16 +733,14 @@ erDiagram
 | 사이클 08 웹과 `AppLayout` 변경 순서 | dev 회고 때 |
 | ~~표 크기~~ | 해결: 실측 표지 808장 11MB, 중간값 14KB (dev 받기 시험, 2026-10-12) |
 
-## 확인 필요 (사이클 11)
+## 확인 필요 (사이클 11) — 결과 (dev 중간 전달, 2026-10-12)
 
-`docs/cycles/11-separate-import/design-delta.md` "확인 필요"에서 연 줄.
-
-| 항목 | 방법 |
+| 항목 | 결과 |
 |---|---|
-| `pg_dump -n catalog_next`로 IDENTITY 시퀀스 값이 넘어가는지 | 공식 문서로는 들어감(`docs/cycles/11-separate-import/research.md` 11절). 프로토타입: 작은 표로 덤프·복원 후 `last_value` 비교 (dev 1단계) |
-| `wsl --exec docker compose exec -T` 파이프로 `-Fc` 바이너리가 깨지지 않는지 | 프로토타입: 체크섬 비교. 깨지면 bind mount / `docker cp` |
-| 컨테이너 안 도구가 암호 없이 로컬 소켓으로 붙는지 | 프로토타입 (dev) |
-| Java가 죽었을 때 컨테이너 안 `pg_restore`가 계속 도는지(AC-13) | 프로토타입: `PGAPPNAME` + `pg_stat_activity` |
-| 덤프 크기, 복원 시간, 운영 디스크 최대, 상한 1GB에서 색인 시간(AC-14) | dev 측정 |
-| `sql` 방식 사슬 반복 수·시간·임시 표 디스크, 43분 안 | dev 측정 |
-| 비교(`count(*)` 약 1,770만 줄 등) 시간 | dev 측정 |
+| `pg_dump -n catalog_next`로 IDENTITY 시퀀스 값이 넘어가는지 | 넘어감 (프로토타입 1, AC-2·AC-6) [확정] |
+| `wsl --exec docker compose exec -T` 파이프로 `-Fc` 바이너리가 깨지지 않는지 | 깨지지 않음, 양방향 SHA-256 같음. 표준 입출력으로 주고받음(bind mount·`docker cp` 안 씀) [확정] |
+| 컨테이너 안 도구가 암호 없이 로컬 소켓으로 붙는지 | 됨(이미지 `pg_hba` `local all all trust`). 운영 DB가 다른 이미지면 배포 때 다시 확인 [확인 필요: 배포 사이클] |
+| Java가 죽었을 때 컨테이너 안 `pg_restore`가 계속 도는지(AC-13) | Java가 입력을 직접 쓰면 입력이 끝나 롤백. 시작 때 남은 복원 세션은 끝냄 [확정] |
+| 덤프 크기, 복원 시간, 운영 디스크 최대, 상한 1GB에서 색인 시간(AC-14) | 606MB, 복원 65초, 운영 역할 DB 최대 17.4GB(시작 9.0GB), 색인 2분 30초, `OOMKilled` 없음 [확정] (새 사본 2026-10-12 01:35) |
+| `sql` 방식 사슬 반복 수·시간·임시 표 디스크, 43분 안 | 시험 데이터: ② 6~14번, ③④ 1~2번, 3,000단위 사슬 12번, 상한 1000번. 실데이터는 11단계 측정 중 [확인 필요: dev 측정] |
+| 비교(`count(*)` 약 1,770만 줄 등) 시간 | `compare` 3.2초 [확정] |

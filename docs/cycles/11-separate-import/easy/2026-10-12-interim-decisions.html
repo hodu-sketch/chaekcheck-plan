@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 11 중간 전달</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.card h3.t{font-size:21px;margin:26px 0 8px}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font-size:15px;line-height:1.55;margin:8px 0 6px;word-break:normal}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+pre .cm{color:var(--muted)} pre .hl{background:var(--warn-bg);color:var(--warn);font-weight:700}
+.src{color:var(--muted);font-size:15px;margin:14px 0 0}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+.fig{overflow-x:auto;margin:8px 0 4px}
+.fig svg{width:100%;min-width:640px;height:auto;display:block}
+.mine{border:1px dashed var(--warn);background:var(--warn-bg);border-radius:8px;padding:10px 14px;font-size:18px;margin:10px 0}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0}
+.pc>div{border-radius:10px;padding:12px 16px;font-size:18px}
+.pc .p{background:var(--ok-bg)} .pc .c{background:var(--no-bg)}
+.pc h4{margin:0 0 6px;font-size:18px}
+.pc ul{margin:0;padding-left:20px}
+.pc li{margin:0 0 8px}
+@media (max-width:640px){.pc{grid-template-columns:1fr} body{font-size:18px} .lead{font-size:24px}}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">사이클 11은 "가져오기 따로 하기"가 실데이터로 다 통과했고,<br>세 묶는 방식도 만들었습니다. 측정만 남았습니다.</p>
+<p class="sub">근거: dev <code>docs/plan-feedback.md</code> "# 사이클 11" 중간 전달(2828~2968행, 커밋 <code>ac26ee2</code>). 측정(11단계)은 같은 PC에서 하나씩 돌려 10~12시간 걸릴 예정입니다. 정할 것은 셋입니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>무엇이 끝났나</h2>
+<div class="gist ok">내 PC에서 가져와 파일로 내보내고, 운영 역할 DB에 반영하는 흐름이 새 수집 사본으로 끝까지 됐습니다. 확인 항목 13개가 모두 통과했습니다.</div>
+<figure>
+<svg viewBox="0 0 860 170" role="img" aria-label="내보내기, 반영, 마저 하기의 걸린 시간">
+<g font-family="Noto Sans KR, sans-serif">
+<rect x="10" y="20" width="250" height="90" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+<text x="135" y="52" text-anchor="middle" font-size="19" font-weight="700" fill="var(--accent)">내 PC: 내보내기</text>
+<text x="135" y="80" text-anchor="middle" font-size="16" fill="var(--text)">약 26분 43초</text>
+<text x="135" y="100" text-anchor="middle" font-size="15" fill="var(--muted)">파일 606MB</text>
+<path d="M262 65h40" stroke="var(--muted)" stroke-width="2"/><path d="M296 59l7 6-7 6" fill="none" stroke="var(--muted)" stroke-width="2"/>
+<rect x="305" y="20" width="250" height="90" rx="10" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/>
+<text x="430" y="52" text-anchor="middle" font-size="19" font-weight="700" fill="var(--ok)">운영 역할 DB: 반영</text>
+<text x="430" y="80" text-anchor="middle" font-size="16" fill="var(--text)">4분 35초, 메모리 상한 1GB</text>
+<text x="430" y="100" text-anchor="middle" font-size="15" fill="var(--muted)">바꿔 끼우기 0.08초</text>
+<path d="M557 65h40" stroke="var(--muted)" stroke-width="2"/><path d="M591 59l7 6-7 6" fill="none" stroke="var(--muted)" stroke-width="2"/>
+<rect x="600" y="20" width="250" height="90" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+<text x="725" y="52" text-anchor="middle" font-size="19" font-weight="700" fill="var(--accent)">내 PC: 마저 하기</text>
+<text x="725" y="80" text-anchor="middle" font-size="16" fill="var(--text)">1분 28초</text>
+<text x="725" y="100" text-anchor="middle" font-size="15" fill="var(--muted)">두 DB가 같아짐</text>
+<text x="10" y="150" font-size="15" fill="var(--muted)">반영 중 검색 194번: 실패 0, 가장 느린 것 1.5초, 바꿔 끼운 순간 0.3초대</text>
+</g>
+</svg>
+<figcaption>운영 역할 DB는 같은 PC에 띄운 DB 하나(메모리 상한 1GB)입니다. 실제 운영 서버 배포는 이 사이클 밖입니다.</figcaption>
+</figure>
+<ul class="ic">
+<li><div><b>두 DB가 같은지 비교</b>: 도서관 주소 하나, 짝 표 한 줄, 옛 파일, 표 칸 하나를 일부러 바꿔 보니 모두 반영을 시작하지 않고 "어디가 다른지"를 남겼습니다.</div></li>
+<li><div><b>중간에 죽었을 때</b>: 복원 도중이나 마저 하기 도중 프로그램을 강제로 꺼도 검색은 멈추지 않았고, 다시 돌리면 끝까지 갔습니다.</div></li>
+<li><div><b>도서관 411(새 주소)</b>: 이번 사본에서 빠지지 않고 들어왔습니다.</div></li>
+<li><div><b>책 번호</b>: 새 사본으로 가져오니 1,615,124권은 옛 번호를 이어 썼고, 4,544권은 새 번호, 1개 번호는 사라졌습니다(합쳐짐). 책 번호 잇기(사이클 07)가 다른 사본에서 처음으로 돈 결과입니다.</div></li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>설계와 달라진 것</h2>
+<div class="gist ok">다섯 가지 모두 인계서가 "dev가 코드에 맞춰 바꿔도 되고 알리기만 하면 된다"고 한 범위입니다. 사용자가 정할 것은 없습니다.</div>
+<div class="tw"><table>
+<tr><th>설계</th><th>지금</th><th>왜</th></tr>
+<tr><td>설정 둘(덤프 명령, 복원 명령)</td><td>설정 하나(<code>pg-command</code>)</td><td>도구 이름을 앱이 붙여서 둘이 늘 같음</td></tr>
+<tr><td>반영 파일의 작은 표(<code>load_manifest</code>)를 읽음</td><td>같은 내용을 표 설명(COMMENT)에도 넣어 목차만 읽음</td><td>파일 끝에 있어 600MB를 다 훑어야 했음 → 1초 안</td></tr>
+<tr><td>기다리는 새 표 확인은 읽기 뒤</td><td>처음에 확인하는 기능 하나 더함</td><td>10분 넘게 읽은 뒤에야 멈추지 않게</td></tr>
+<tr><td>표 구조 해시는 메모 칸에</td><td>따로 된 칸</td><td><code>catalog</code>가 메모를 해석하지 않게</td></tr>
+<tr><td>(없음)</td><td>반영·지우기 시작 때 남은 복원 세션을 끝냄</td><td>시험해 보니 입력 넘기는 방법에 따라 복원이 죽지 않고 커밋될 수 있었음</td></tr>
+</table></div>
+<p class="alt">사이클 11 회고 때 <code>docs/current/</code>에 이대로 반영합니다.</p>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>정할 것</h2>
+
+<div class="item">
+<h3>[안] dev가 적은 "사이클 13 때 지킬 것" 세 가지를 사이클 13 plan 세션에 보낼 글로 만듭니다</h3>
+<p>dev가 사이클 13 알림에 답하며 적은 것: ① 바꿔 끼우기가 새 스키마를 통째로 지우지 않아서(CASCADE 없음), 반영 파일에 도서관 표를 더 실으면 바꿔 끼우기 전에 지워야 함 ② 반영 파일에서 표 하나만 읽어도 파일 전체를 훑으므로(600MB면 수 초~수십 초), 도서관 부분이 작으면 목차(COMMENT)에 싣는 방법이 있음 ③ 지금 두 DB 비교의 도서관 해시는 켜진 도서관의 번호·주소·화면 종류뿐이고 가입 규칙은 비교에 없음. 반영 파일 형식에는 형식 번호(지금 1)가 이미 있어, 도서관 부분을 실으면 2로 올리고 옛 앱은 거절합니다.</p>
+<p class="alt">다른 선택: 사이클 13 plan 세션이 dev 기록을 직접 읽게 둡니다. 놓칠 수 있습니다.</p>
+<p>추천: 글을 만들어 드립니다.</p>
+</div>
+
+<div class="item">
+<h3>[안] 사이클 11 회고는 측정이 끝난 뒤 한 번에 하고, 지금은 사이클 12에 바로 쓰이는 숫자만 적어 둡니다</h3>
+<p>지금 적을 것: 새 사본의 단계별 책 수(7,666,094 → 7,345,534 → 6,665,999 → 1,619,668)와 책 번호 결과(이어 씀 1,615,124 / 새 4,544 / 사라짐 1)를 <code>same-book-isbn.md</code>에 둡니다. 사이클 12에서 규칙을 바꾼 뒤와 비교하는 기준이 됩니다.</p>
+<p class="alt">다른 선택: 지금 중간 회고를 따로 씁니다. 측정 결과가 들어오면 다시 고쳐야 합니다.</p>
+<p>추천: 측정 뒤 한 번에.</p>
+</div>
+
+<div class="item">
+<h3>[안] 측정에서 compact와 sql이 둘 다 결과 비교를 통과하지 못하면, 사이클 12에서도 current를 지우지 않습니다</h3>
+<p>앞서 "사이클 12에서 current를 지우고 compact·sql만 남김"으로 정했습니다. 그런데 사이클 11 규칙은 "다른 책이 한 권이라도 나오면 그 방식은 쓰지 않음"이라, 두 방식이 모두 떨어지면 쓸 수 있는 방식이 current뿐입니다. 그때는 current를 남기고 새 규칙도 current에 넣습니다. 하나라도 통과하면 정한 대로 current를 지웁니다.</p>
+<p class="alt">다른 선택: 그 경우가 생기면 그때 다시 여쭙니다.</p>
+<p>추천: 조건을 지금 적어 둡니다. 측정 결과를 보고 고를 기본 방식 페이지는 측정이 끝나면 따로 드립니다.</p>
+</div>
+</section>
+
+<p class="foot">이 글은 요약이며 근거는 원본에 있습니다. 원본: dev <code>docs/plan-feedback.md</code> 2828~2968행, plan <code>docs/cycles/11-separate-import/spec.md</code>, <code>docs/adr/0079-grouping-modes-same-result.md</code>.</p>
+</main>
+</body>
+</html>

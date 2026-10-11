@@ -85,7 +85,7 @@ flowchart TB
 - 사이클 08 (구현됨 (사이클 08)): 모듈 사이 의존 방향은 바뀌지 않습니다(`collection → catalog, library`, `availability → catalog, library`, `catalog → library → region`). 새 이벤트 없음 [확정] (설계 결정 2026-10-11). Modulith `components.puml`(2026-10-11)과 같음: Collection→Catalog·Library, Catalog→Library, Library→Region, Availability→Library·Catalog, Mylibrary→Auth·Library·Region. `catalog :: normalize`도 그대로이고, 국가서지 원문도 가져올 때마다 이 규칙으로 다듬습니다(ADR-0069). DB 메모리 값(`shared_buffers`·`effective_cache_size`·`work_mem`)은 dev `compose.yaml`의 `db` `command:`에 환경 변수 기본값으로, Java 힙 상한은 실행 설정의 `-Xmx`로 둡니다 [확정] 자리 (ADR-0066). 값(로컬 PC 기준, dev 측정 2026-10-11): DB `shared_buffers` 64MB, `effective_cache_size` 768MB, `work_mem` 4MB, 컨테이너 상한 권장 1GB(compose에는 두지 않음), 서비스 힙 512MB(`bootRun` 기본 `-Xmx512m`), 가져오기 `-PbootRunXmx=6g`(측정 중, AC-12) [확정] (사용자 승인, 2026-10-11). 운영 서버가 정해지면 다시 잼(backlog)
 - 사이클 09 — 구현됨 (사이클 09): 모듈 관계 변화 없음(`availability` → `library`는 이미 있음), 새 이벤트 없음. 분류 값은 `library` → (`GET /api/v1/libraries`) → 웹, `library` → `SearchTarget` → `availability` → (스트림 `targets.libraries[]`) → 웹으로 감. 업체·대출 방식은 도서관 수집 결과를 dev seed 생성 스크립트(`build_candidate_seed.py` + `name_overrides.tsv`)가 changeset으로 넣음 (ADR-0071·0076). Modulith `components.puml`(2026-10-12)과 같음: Collection→Catalog·Library, Catalog→Library, Library→Region, Availability→Library·Catalog, Mylibrary→Auth·Library·Region (회고, `docs/cycles/09-library-naming/retro.md`)
 - 사이클 10 — 구현됨 (사이클 10) (ADR-0073): 새 모듈 `popular` → `catalog`(`BookLookup.byIsbn13`), `popular` → `library`(`LibraryCatalog.planSearch`). `catalog`·`library`는 `popular`를 모름, 고리 없음, 새 이벤트 없음. `@ApplicationModule(allowedDependencies = {"catalog", "library"})` [확정]. dev `module-popular.puml`(2026-10-12)과 같음. 바깥: `popular` → 출판유통통합전산망(`bnk.kpipa.or.kr`, 매달). S14는 새 API 없이 `catalog`(`GET /api/v1/books/{bookId}`)와 `availability`(소장 스트림 `holdingLimit=3`)를 부름
-- 사이클 11 — 설계됨(미구현, 사이클 11) (ADR-0078·0079): 모듈 관계 변화 없음(`collection → catalog, library` 그대로), 새 모듈·새 이벤트·새 REST 없음. 내 PC와 운영 DB 사이는 모듈 호출이 아니라 `pg_dump -Fc` 파일 하나로 이음(아래 "가져오기 따로 하기" 그림). `catalog`는 `collection`을 모르고, `collection`은 `catalog` 표를 읽지 않음 [확정] (설계 결정, 2026-10-12)
+- 사이클 11 — 구현됨 (사이클 11, 중간 회고 2026-10-12) (ADR-0078·0079): 모듈 관계 변화 없음(dev `./gradlew build`의 ModularityTests·DocumentationTests 통과, 모듈 의존 변화 없음)(`collection → catalog, library` 그대로), 새 모듈·새 이벤트·새 REST 없음. 내 PC와 운영 DB 사이는 모듈 호출이 아니라 `pg_dump -Fc` 파일 하나로 이음(아래 "가져오기 따로 하기" 그림). `catalog`는 `collection`을 모르고, `collection`은 `catalog` 표를 읽지 않음 [확정] (설계 결정, 2026-10-12)
 
 - 의존 방향: `catalog → library → region`, `availability → catalog, library`. 순환 없음. `Documenter` `components.puml`(2026-09-30)과 같음
 - 사이클 07 (구현됨 (사이클 07), ADR-0060): `collection → catalog → library → region`, `collection → library`(`LibraryCatalog`만, `library` 표는 읽지 않음). `catalog`·`library`는 `collection`을 모릅니다. 고리 없음, 새 이벤트 없음. 가져오기는 사이클 04~06의 `catalog` importer에서 `collection`으로 옮겼습니다(ADR-0031의 "가져오기는 `catalog` 안"을 ADR-0060이 바꿈). `catalog`의 제목 다듬기 규칙은 한 벌만 두고 `collection`이 named interface `catalog :: normalize`로 빌려 씁니다. `Documenter` `components.puml`(2026-10-05)과 같음: Collection→Catalog·Library, Catalog→Library, Library→Region, Availability→Library·Catalog, Mylibrary→Auth(uses, listens to)·Library·Region. 새 공개 타입: `JoinSurvey`, `LendingModel`(`library`), `CatalogLoad`(`catalog`) [확정] (dev 구현 확인, 2026-10-05)
@@ -130,7 +130,7 @@ flowchart TB
   - 표지 정책 [확정] (사용자 승인, 2026-10-12, handoff C10, `docs/cycles/10-popular-books/easy/2026-10-12-cover-copyright.html`): 작은 그림(`s_`)만 받아 폭 200px JPEG로 줄여 게시하고 큰 그림·확대 보기는 만들지 않음 (ADR-0081). S12 `/about`에 "인기 도서 순위·표지는 출판유통통합전산망 자료, 표지 게시를 원하지 않는 권리자는 [연락처]로" 문구(연락처는 배포 때, `TODO(확인 필요)`). 요청이 오면 그 표지를 지워 제목 글자로(방법은 운영 메모)
   - 배포: CSP 바꾸지 않음(표지가 우리 주소) [확정] (ADR-0075)
 
-### 가져오기 따로 하기: 내 PC와 운영 DB — 설계됨(미구현, 사이클 11)
+### 가져오기 따로 하기: 내 PC와 운영 DB — 구현됨 (사이클 11, 중간 회고 2026-10-12). 묶는 방식 셋(`current` = `BookGrouping`, `compact` = `CompactGrouping`, `sql` = `SqlGrouping`, 공통 인터페이스 `BookGrouper`)도 구현됨, 기본값 고르기는 측정(11단계) 뒤
 
 같은 앱을 두 DB에 모드만 바꿔 돌립니다. 내 PC는 `export`로 새 표까지 만들어 파일 하나로 내보내고, 운영 역할 DB(이 사이클은 같은 PC의 compose 서비스 `db-ops`, 포트 5434)는 `apply`로 비교한 뒤 복원·바꿔 끼웁니다. 운영이 성공하면 내 PC는 `finish`, 실패하면 `discard` (ADR-0078). 흐름은 `flows.md` 흐름 27~29.
 
@@ -463,7 +463,7 @@ classDiagram
 - 받기 판단 `shouldFetch(today)` (Asia/Seoul, 서버 켜질 때와 매일 05:00): ① 저장된 달 없으면 받음 ② 대상 = 지난달 ③ 그 달이 다음 달 3일 00:00 뒤에 저장됐으면 안 받음 ④ 3일 이후 그 달 실패가 2번이면 안 받음 ⑤ 오늘이 3일 이후면 받음 [확정] (설계 #7~#9, spec R1-2·R1-3·R1-6). 흐름은 `flows.md` 흐름 24
 - 화면용 값 `available`(그 책의 `libraryIds`가 계획 도서관과 겹침)은 요청마다 계산하고 캐시하지 않습니다 [확정] (ADR-0074, 설계 후속 #3)
 
-### 가져오기 따로 하기 도메인 모델 — 설계됨(미구현, 사이클 11)
+### 가져오기 따로 하기 도메인 모델 — 구현됨 (사이클 11, 중간 회고 2026-10-12). 실제 이름: `catalog.internal.PgTools`·`Manifests`, `collection…importer.ImportTransfer`·`DatabaseFingerprint`·`DryRunDump`, `CatalogLoad`에 `hasWaitingExport()` 추가, `discardPrepared()`는 enum, `Baseline` 안에 `columnsHash`
 
 ```mermaid
 classDiagram
