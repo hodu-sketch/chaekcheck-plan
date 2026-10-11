@@ -13,3 +13,4 @@
 | [2026-10-12-design-delta.html](2026-10-12-design-delta.html) | 설계 문서 한 장 요약: 만드는 것, 운영자 순서, 먼저 시험할 것, 다음 단계(인계서는 사이클 10 뒤) | `../design-delta.md` | 없음 (2개 승인) |
 | [2026-10-12-review-decisions.html](2026-10-12-review-decisions.html) | 설계 검토 결과: finish 실패 처리, 번호 비교는 바깥 스크립트, 바로 고친 것 8 | `../design-delta.md` | 없음 (2개 승인, #1은 질문에 답한 뒤) |
 | [2026-10-12-handoff-review.html](2026-10-12-handoff-review.html) | 인계서 초안 검토: 12단계 순서, finish 색인 메모리, 옛 사본 범위, 넘기기(바꿔 넣기는 사이클 10 뒤) | `../handoff.md` | 없음 (3개 승인) |
+| [2026-10-12-close-check.html](2026-10-12-close-check.html) | 마무리 점검: 스킬 여덟 개 단계 대조(사이클 10 회고·사이클 11), 고친 것 넷, flow.md 확정, 커밋·푸시 | 스킬 `.claude/skills/*` | 없음 (2개 승인) |

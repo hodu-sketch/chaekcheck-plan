@@ -1,6 +1,6 @@
 # ADR-0077: 인기 도서는 전자책이 거의 없는 다섯 분류를 받지 않는다
 
-Status: Accepted
+Status: Superseded by 0080
 Date: 2026-10-11
 Cycle: 10-popular-books
 Supersedes: 없음 (ADR-0072의 받는 범위 "1단계 21분류 + 전체"를 "16분류 + 전체"로 바꾸고, ADR-0074·0075의 숫자를 바로잡음)

@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 10 회고</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+svg{max-width:100%;height:auto;display:block}
+.mock{border:2px dashed var(--line);border-radius:12px;padding:14px;margin:10px 0;font-size:17px}
+.row{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;background:var(--card);flex-wrap:wrap}
+.tag{font-size:14px;border-radius:6px;padding:0 6px;background:var(--code-bg);color:var(--muted)}
+.okt{color:var(--ok);font-weight:500}.mut{color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">사이클 10 회고: 정할 것 5개</p>
+<p class="sub">dev가 인계서 0~8단계를 모두 마쳤고 수용 기준 21개가 모두 통과했습니다. 개발 중 사용자가 바꾼 것이 몇 가지 있어 ADR 두 개를 새로 쓰고, dev가 제안한 값 두 개를 확인하고, 사이클 11로 넘어갑니다. 회고 원문: <code>../retro.md</code> (2026-10-12)</p>
+
+<section class="card">
+<h2><span class="num">1</span>무엇이 계획대로 됐고 무엇이 달라졌나</h2>
+<div class="fig">
+<svg viewBox="0 0 820 210" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <rect x="20" y="20" width="380" height="170" rx="12" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/>
+  <text x="36" y="48" font-size="17" font-weight="700" fill="var(--text)">계획대로</text>
+  <g font-size="14" fill="var(--text)">
+  <text x="36" y="76">새 모듈 popular (표 다섯, API 둘), 모듈 관계 그대로</text>
+  <text x="36" y="100">받기 34건 모두 성공, 간격 2초 이상</text>
+  <text x="36" y="124">API p95 20~27ms (기준 1초)</text>
+  <text x="36" y="148">ISBN 일치 34.6% (시안 27.8%보다 높음)</text>
+  <text x="36" y="172">수용 기준 AC-1~21 모두 통과</text>
+  </g>
+  <rect x="420" y="20" width="380" height="170" rx="12" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="2"/>
+  <text x="436" y="48" font-size="17" font-weight="700" fill="var(--text)">사용자 결정으로 달라짐</text>
+  <g font-size="14" fill="var(--text)">
+  <text x="436" y="76">분류: 언어·기술·공학도 뺌 → 14분류</text>
+  <text x="436" y="100">표지: 폭 200px JPEG로 줄여 저장</text>
+  <text x="436" y="124">User-Agent: book search service</text>
+  <text x="436" y="148">문구: 내 도서관 → 검색하는 도서관</text>
+  <text x="436" y="172">ⓘ·◀▶: 밝은 둥근 네모(앱 전체)</text>
+  </g>
+</svg>
+</div>
+<p class="cap">달라진 것은 모두 개발 중 사용자가 정한 것이고, 말씀은 회고 원문 "달라진 것과 이유" 표에 그대로 옮겼습니다. 화면 디자인 다듬기는 사소한 일이라 회고 밖에 둡니다(사용자 말씀). <code>docs/current/</code>는 코드와 맞게 고치는 중입니다(분류 14개, 표지, User-Agent, 문구, 요청 30건).</p>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>ADR 두 개 (승인된 ADR은 고치지 않는 규칙이라 새로 써서 대체)</h2>
+<div class="item"><h3><span class="no">1</span>ADR-0080 "인기 도서는 일곱 분류를 받지 않고 '전체' + 14분류만" (ADR-0077을 대체)을 Accepted로 쓴다 [안]</h3>
+<p>만화·어린이·청소년·기타·의학·스포츠에 언어·기술·공학을 더해 뺍니다. 한 달 요청 34 → 30건, 책 850 → 750권. 이유 칸: "'언어' 랑 '기술공학'도 빼주라"(까닭은 이유 미확인). 받기 시험에서 언어 12권, 기술·공학 6권이 맞았다는 숫자는 배경에 적었습니다. 초안: <code>../adr-draft-0080.md</code></p>
+<p class="rec">추천: 승인.</p></div>
+<div class="item"><h3><span class="no">2</span>ADR-0081 "표지는 미리 받아 폭 200px JPEG로 줄여 저장하고 우리 서버가 넘겨준다" (ADR-0075를 대체)를 Accepted로 쓴다 [안]</h3>
+<p>미리 받기·우리 주소·두 달 보관은 그대로이고, 저장 방식만 바뀝니다. 표지 응답 상한 50MB, 넓힌 경로 규칙(<code>isbn</code>·<code>onix</code>·<code>old</code>·<code>trans</code> 폴더)도 담습니다. 이유 칸: "표지 크기를 일원화했으면 하는데", "좀 작아도 괜찮아 오히려 최대한 작은게 좋아", "상한 여유롭게 50MB로 하던가", "넓힌 규칙 그대로". 결과: 808장 약 11MB(한 장 중간 14KB). 초안: <code>../adr-draft-0081.md</code></p>
+<p class="rec">추천: 승인.</p></div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>dev가 제안한 값 두 개</h2>
+<div class="item"><h3><span class="no">3</span>표지를 풀었을 때 1,600만 화소를 넘으면 풀지 않고 실패로 센다(dev 제안 그대로) [안]</h3>
+<p>파일은 작아도 풀면 큰 그림이 서비스 힙(512MB)을 채우는 것을 막는 장치입니다. 1,600만 화소는 풀었을 때 약 64MB이고, 작은 표지는 약 50만 화소라 실제 표지에는 걸리지 않습니다. 걸린 책은 제목 글자로 보입니다.</p>
+<p class="alt"><b>다른 선택:</b> 상한 없음 — 아주 큰 그림 하나가 힙을 크게 쓸 수 있습니다.</p>
+<p class="rec">추천: 그대로.</p></div>
+<div class="item"><h3><span class="no">4</span><code>display_order</code> CHECK는 0..16 그대로 둔다(값은 이제 0~14, dev 제안) [안]</h3>
+<p>이미 적용된 changeset이라 좁히려면 새 changeset이 필요하고, 17분류로 저장된 2026-09 줄이 새 범위에 걸립니다. 실제 값은 0~14만 들어가고, 옛 달은 빠진 분류 자리가 비어 보일 뿐입니다.</p>
+<p class="alt"><b>다른 선택:</b> 새 changeset으로 0..14로 좁히고 옛 달 줄을 정리 — 일은 늘지만 범위가 딱 맞음.</p>
+<p class="rec">추천: 그대로.</p></div>
+<div class="chg"><b>질문 "맥락 설명 자세히"에 대한 답</b>
+<p><b><code>display_order</code>가 뭔가:</b> 인기 도서 화면에 분류를 보이는 순서 번호입니다. 달마다 분류 한 줄씩 저장되고(<code>popular.ranking_category</code> 표), "전체"가 0번, 나머지는 그달 판매 부수가 큰 순으로 1, 2, 3 …을 받습니다.</p>
+<p><b>CHECK가 뭔가:</b> DB가 "이 칸에는 이 범위의 값만 들어올 수 있다"고 스스로 막는 규칙입니다. 지금 규칙은 "0부터 16까지"입니다. 16분류 + 전체(17개)로 설계했기 때문입니다.</p>
+<div class="fig">
+<svg viewBox="0 0 820 230" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, sans-serif">
+  <text x="20" y="22" font-size="15" font-weight="700" fill="var(--text)">DB 규칙(CHECK): 0 ~ 16만 허용</text>
+  <rect x="20" y="32" width="680" height="16" rx="4" fill="var(--accent-bg)" stroke="var(--accent)"/>
+  <g font-size="12" fill="var(--muted)"><text x="20" y="64">0</text><text x="410" y="64">10</text><text x="684" y="64">16</text></g>
+  <text x="20" y="96" font-size="14" font-weight="700" fill="var(--text)">2026-09 (로컬, 이미 저장됨): 17줄 = 0~16</text>
+  <g>
+  <rect x="20" y="104" width="680" height="24" rx="3" fill="var(--warn-bg)" stroke="var(--warn)"/>
+  <rect x="620" y="104" width="80" height="24" fill="var(--warn)"/>
+  </g>
+  <text x="560" y="146" font-size="12" fill="var(--warn)">15·16번 줄이 있음</text>
+  <text x="20" y="176" font-size="14" font-weight="700" fill="var(--text)">2026-10부터 (14분류): 15줄 = 0~14</text>
+  <rect x="20" y="184" width="600" height="24" rx="3" fill="var(--ok-bg)" stroke="var(--ok)"/>
+</svg>
+</div>
+<p class="cap">그림 길이는 0~16 눈금에 맞춘 것입니다(한 칸 = 번호 하나).</p>
+<ul>
+<li class="ic"><span><b>왜 범위가 남게 됐나:</b> 개발 중에 언어·기술·공학을 빼서(결정 #1) 분류가 14개가 됐습니다. 그래서 앞으로 들어오는 값은 0~14뿐인데, 규칙은 0~16 그대로입니다. 들어오는 값이 규칙 안에 있으니 동작에는 문제가 없습니다.</span></li>
+<li class="ic"><span><b>왜 바로 좁히지 않나:</b> 규칙은 이미 DB에 적용된 Liquibase 파일(<code>popular/001</code>)에 들어 있습니다. 적용된 파일은 고치지 않는 규칙(고치면 Liquibase가 체크섬 오류로 막음)이라, 좁히려면 새 파일(changeset)을 더해야 합니다. 그런데 로컬 DB에는 받기 시험 때 17분류로 저장한 2026-09 줄(15·16번 포함)이 있어서, 0~14로 좁히는 순간 그 줄들이 규칙에 걸립니다. 좁히려면 먼저 옛 달 줄을 지우거나 번호를 다시 매겨야 합니다.</span></li>
+<li class="ic"><span><b>옛 달은 화면에 어떻게 보이나:</b> 화면은 지금 분류 목록(14개)에 있는 것만 보이고, 저장된 순서 그대로 씁니다. 2026-09는 언어·기술·공학 자리(4번, 14번)가 비어 보일 뿐 순서는 맞습니다. 그 두 분류의 순위 줄은 DB에 남지만 보이지 않습니다.</span></li>
+<li class="ic"><span><b>운영에서는:</b> 운영 DB는 아직 없으니, 첫 배포 때는 처음부터 14분류로 받습니다. 그때도 규칙 0~16은 넉넉할 뿐 문제가 되지 않습니다. 첫 배포 직전 seed·changeset을 정리할 때(백로그) 0~14로 좁히는 것을 함께 볼 수 있습니다.</span></li>
+</ul>
+<p><b>정리:</b> "그대로"는 규칙이 조금 넉넉한 상태를 받아들이는 것이고 동작·화면에는 영향이 없습니다. "좁히기"는 새 changeset + 옛 달 줄 정리라는 일이 생기고, 얻는 것은 "규칙이 실제와 딱 맞음"입니다.</p>
+<p class="cap">근거: dev <code>docs/plan-feedback.md</code> 사이클 10 "사용자 결정: 언어·기술·공학도 뺌"(2613·2614행), <code>PopularCache.java</code> 102행(저장된 순서 그대로, 목록에 있는 분류만), <code>popular/001-popular-schema.yaml</code> 80행.</p>
+</div>
+
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>사이클 11로 넘기기</h2>
+<div class="item"><h3><span class="no">5</span>이 회고를 닫고, 사이클 11 인계서를 <code>docs/current/handoff.md</code>에 바꿔 넣으며 <code>docs/current/</code>에 사이클 11 설계를 "설계됨(미구현)"으로 합친다 [안]</h3>
+<p>사이클 10 코드를 보니 사이클 11 인계서의 전제(모듈 방향, <code>JdbcCatalogLoad</code> 위치, 마지막 changeset <code>popular/001</code>)가 그대로입니다. 인계서에는 이미 사이클 10에서 알게 된 것(가져오기 프로필에서 인기 도서 받기 꺼짐, 테스트 DB 연결 한도)을 넣어 두었습니다. 바꿔 넣으면 dev 세션이 사이클 11 인계서를 읽게 됩니다.</p>
+<p class="alt"><b>다른 선택:</b> 인기 도서 디자인 다듬기가 끝난 뒤에 바꿔 넣기 — dev 쪽 작업과 겹치지 않지만 사이클 11 시작이 늦어집니다. 사이클 11 인계서는 "사이클 10 커밋 뒤 시작"을 조건으로 두고 있어, 디자인 작업이 커밋된 뒤 시작하면 됩니다.</p>
+<p class="rec">추천: 지금 바꿔 넣음.</p></div>
+</section>
+
+<p class="foot">근거: <code>../retro.md</code>, dev <code>docs/plan-feedback.md</code> "# 사이클 10", dev 코드 대조(2026-10-12), ADR-0075·0077.</p>
+</main>
+</body>
+</html>

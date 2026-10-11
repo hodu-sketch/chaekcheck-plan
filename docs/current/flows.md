@@ -4,7 +4,9 @@
 
 사이클 09 cycle-close (2026-10-11): 흐름 23(도서관 이름과 분류: 이름·분류 changeset, 화면에 분류 보이기, 새 후보 도서관을 넣을 때)을 더하고 "화면 공통"에 분류 표시를 적음 — 구현됨 (사이클 09). 근거 `docs/cycles/09-library-naming/design-delta.md` "주요 흐름", flow.md, ADR-0071·0076.
 사이클 09 회고 (2026-10-12): dev 보고(`plan-feedback.md` "# 사이클 09", AC-1~9 통과)와 대조해 흐름 23과 화면 공통의 사이클 09 부분을 구현됨으로 바꿈(그림 모양은 그대로). Modulith `components.puml`(2026-10-12) 대조 결과 모듈 관계 그대로. 달라진 점: `library/014-library-classification.yaml` [확정] changeSet 하나, 이름 UPDATE만 `splitStatements: false`, 대출 방식은 규칙 + 번호, 같은 이름 여러 줄의 업체 순서는 한글 가나다순(교보 → 북큐브 → 알라딘 → 자체 → 통합 포털 → YES24). 근거 `docs/cycles/09-library-naming/retro.md`.
-사이클 10 cycle-close (2026-10-12): 흐름 24(인기 도서 매달 받기, 실패 포함)와 받기 상태, 흐름 25(인기 도서 화면 S13 열기), 흐름 26(가운데 창 S14 열기, `holdingLimit=3`)을 더하고 "화면 공통"에 사이클 10을 적음 — 설계됨(미구현, 사이클 10). 근거 `docs/cycles/10-popular-books/design-delta.md` "구조 그림", flow.md, ADR-0072~0075·0077.
+사이클 10 cycle-close (2026-10-12): 흐름 24(인기 도서 매달 받기, 실패 포함)와 받기 상태, 흐름 25(인기 도서 화면 S13 열기), 흐름 26(가운데 창 S14 열기, `holdingLimit=3`)을 더하고 "화면 공통"에 사이클 10을 적음 — 구현됨 (사이클 10). 근거 `docs/cycles/10-popular-books/design-delta.md` "구조 그림", flow.md, ADR-0072~0075·0077, ADR-0080·ADR-0081.
+사이클 10 회고 (2026-10-12): 구현 대조, 분류 14개·표지 200px JPEG·User-Agent·문구 반영 (`docs/cycles/10-popular-books/retro.md`). 흐름 24 그림을 구현에 맞춤(세션 GET 한 번, 표지 줄이기, 캐시 알림 두 번).
+사이클 11 cycle-close (2026-10-12): 가져오기 따로 하기(export·apply·finish·discard, load_manifest, db-ops) + 묶는 방식 current·compact·sql — 설계됨(미구현, 사이클 11). 흐름 27(내보내기), 28(반영, 다름·실패 포함), 29(마저 바꿔 끼우기·지우기)와 "내 PC의 `catalog_next` 상태"를 더함. 흐름 20(`in-place`)은 그대로. 근거 `docs/cycles/11-separate-import/design-delta.md` "구조 그림", spec.md, ADR-0078·0079.
 사이클 08 cycle-close (2026-10-11): 흐름 20(가져오기: 새 표에 쓰고 바꿔 끼우기), 21(검색 계획과 책 화면 소장 읽기), 22(막혔을 때 429·503)를 더하고, 흐름 6·16과 "화면 공통"에 바뀌는 점을 적음 — 구현됨 (사이클 08). 근거 `docs/cycles/08-polish-swap-memory/design-delta.md` "주요 흐름"(흐름 A~C), ADR-0065~0070.
 사이클 08 회고 (2026-10-11): dev 보고(`plan-feedback.md` "# 사이클 08")와 대조해 흐름 20~22와 화면 공통을 구현됨으로 바꾸고 달라진 점(넓은 줄 두 번 쓰기, 실패 기록 칸, S2 그대로·돌아가기는 S8·S9·S10만, "정렬 없음 ⓘ"은 검색 줄, 이름 찾기 가운뎃점 무시)과 측정값을 적음. 흐름 21 그림의 "지금은 …" 두 곳을 "사이클 07까지는 …"으로 고침. 가져오기 힙(AC-12)·색인 단계 중단(AC-9 둘째)·국가서지 재사용 시간(AC-15)은 측정 중 [확인 필요]. 근거 `docs/cycles/08-polish-swap-memory/retro.md`.
 
@@ -676,6 +678,7 @@ sequenceDiagram
 - 결과(가져오기 #2, 2026-10-11, dev 측정): 검색이 기다린 시간 0.33초(#1 지금 방식 9분 37초), 전체 약 41분, 가져오는 동안 검색 p95 560ms·5xx 0, 디스크 최대 19.1GiB(시작 8.5GiB). 가져오기 힙 `-PbootRunXmx=6g`로 끝까지 가는지는 측정 중 [확인 필요] (AC-12)
 - 바꿔 끼운 뒤 옛 화면의 요청: 같은 소장은 옛 번호 그대로라 정상, 빠진 소장은 `holding_not_found`, 빠진 책은 `book_not_found` (ADR-0070)
 - 정리 규칙을 바꿀 때 서비스를 다시 켤지는 `data-model.md` "정리 규칙을 바꿀 때" (ADR-0069)
+- 사이클 11 — 설계됨(미구현, 사이클 11): 이 흐름은 가져오기 모드 `in-place`(기본)입니다. 내 PC에서 만들어 운영 DB에 파일로 옮기는 모드는 흐름 27~29 (ADR-0078). 이 흐름도 내 PC에 운영 반영을 기다리는 새 표가 있으면 시작하지 않음 (스펙 R-A7)
 
 ## 흐름 21: 검색 계획과 책 화면 소장 읽기 — 구현됨 (사이클 08)
 
@@ -787,15 +790,15 @@ sequenceDiagram
 
 - 배포 뒤에는 seed 파일을 다시 쓰지 않고 바뀐 것만 changeset으로 냄 [확정] (seed 고치는 방식, `data-model.md` "이름 고침"). 사이클 09 구현은 `--changes-only <db-state.tsv>`로 목록만 냈고, 순번 2 이상이 나오면 종료 코드 3 [확정] (dev 구현 확인, 2026-10-12). 수집이 업체를 따로 적는 자리 [확인 필요: 수집 세션] (스크립트에는 빈 자리 `COLLECTION_VENDORS = {}`)
 
-## 흐름 24: 인기 도서 매달 받기 (실패 포함) — 설계됨(미구현, 사이클 10)
+## 흐름 24: 인기 도서 매달 받기 (실패 포함) — 구현됨 (사이클 10)
 
-ADR-0072(출처: 출판유통통합전산망 공개 통계 화면), ADR-0073(`popular` 모듈), ADR-0075(표지 미리 받기·최근 두 달 보관), ADR-0077(16분류). 표는 `data-model.md` 스키마 `popular`, 판단 규칙은 `module-map.md` "`popular` 도메인 모델".
+ADR-0072(출처: 출판유통통합전산망 공개 통계 화면), ADR-0073(`popular` 모듈), ADR-0075(표지 미리 받기·최근 두 달 보관), ADR-0077(분류 줄이기), ADR-0080·0081 (초안, 사용자 확인 대기: 14분류, 표지 200px JPEG). 표는 `data-model.md` 스키마 `popular`, 판단 규칙은 `module-map.md` "`popular` 도메인 모델".
 
 ```mermaid
 sequenceDiagram
   autonumber
   participant T as 예약(매일 05:00 KST) / 서버 시작
-  participant J as popular 받기 실행기(단일 스레드)
+  participant J as popular 받기 실행기(단일 스레드 popular-fetch)
   participant DB as popular 스키마
   participant K as kpipa
   participant C as 공용 캐시
@@ -804,23 +807,24 @@ sequenceDiagram
   alt 받지 않음
     J-->>T: 건너뜀
   else 받음
-    J->>K: GET 순위 화면 → JSESSIONID + m_sCsrf
-    loop 17개 분류(전체 + 16), 2초 간격
+    J->>K: GET 순위 화면 (한 번) → JSESSIONID + m_sCsrf
+    loop 15개 분류(전체 + 14), 2초 간격
       J->>K: POST /adiStatsCtgSaleRank/search
     end
-    J->>K: GET 판매량 화면 → 토큰
-    loop 16개 분류, 2초 간격
+    loop 14개 분류, 2초 간격 (같은 토큰)
       J->>K: POST /adiStatsCtgSaleCnt/search
     end
-    alt 검증 통과 (각 50권, 부수 16건)
+    alt 검증 통과 (각 50권, 부수 14건)
       J->>DB: 한 트랜잭션: fetch_run SUCCEEDED(끝난 시각 = 지금) 넣고, 그 달 지우고 month·category·entry 넣기
+      J->>C: 새로 고침 알림 (순위)
       loop 새 표지만, 2초 간격
-        J->>K: GET /files/isbn/…/s_{id}.jpg
+        J->>K: GET /files/(폴더)/…/s_(이름)
+        J->>J: 폭 200px JPEG로 줄이기 (못 읽거나 화소 상한 넘으면 실패)
         J->>DB: cover 넣기 (실패는 건너뜀)
       end
       J->>DB: 최근 두 달에 안 쓰인 cover 지우기
       J->>DB: 그 fetch_run의 cover_fetched_count·cover_failed_count만 UPDATE
-      J->>C: 바로 새로 고침
+      J->>C: 새로 고침 알림 (표지)
     else 거절·형식 바뀜·50권 미만·네트워크
       J->>DB: fetch_run FAILED(reason, detail)
       J-->>J: log.error, 앞 달 그대로, 다음 날 05:00 다시
@@ -828,10 +832,10 @@ sequenceDiagram
   end
 ```
 
-- 판단 `shouldFetch(today)` (Asia/Seoul, 서버 켜질 때 `ApplicationReadyEvent`와 매일 05:00): ① 저장된 달 없으면 받음 ② 대상 = 지난달 ③ 그 달이 다음 달 3일 00:00 뒤에 저장됐으면 안 받음 ④ 3일 이후 그 달 실패가 2번이면 안 받음 ⑤ 오늘이 3일 이후면 받음 [확정] (설계 #7~#9, spec R1-2·R1-3·R1-6)
+- 판단 `shouldFetch(today)` (Asia/Seoul, 서버 켜질 때 `ApplicationReadyEvent`와 매일 05:00, 둘 다 단일 스레드 `popular-fetch`에서 돌고 실행 중이면 겹쳐 시작하지 않음): ① 저장된 달 없으면 받음 ② 대상 = 지난달 ③ 그 달이 다음 달 3일 00:00 뒤에 저장됐으면 안 받음 ④ 3일 이후 그 달 실패가 2번이면 안 받음 ⑤ 오늘이 3일 이후면 받음 [확정] (설계 #7~#9, spec R1-2·R1-3·R1-6)
 - 받기 기록 쓰는 순서: 성공이면 `fetch_run` `SUCCEEDED`를 순위와 같은 트랜잭션에서 넣고 표지 수는 나중에 UPDATE, 실패면 `FAILED` 줄만 [확정] (사용자 승인, 2026-10-12, 인계 전 결정 #1). 표지 받는 중에 서버가 꺼져도 순위와 성공 기록은 남음
-- 요청: 세션 GET 1~2 + 순위 POST 17 + 판매 부수 POST 16, 한 번에 35건 이하(AC-12), 2초 이상 간격, User-Agent `chaekcheck (+<서비스 주소>)` [확정]. 순위 화면 토큰이 판매량 화면에도 통함(세션 GET 한 번이면 34건) (조사 2026-10-11)
-- 표지: 새 경로만, 2초 간격, 첫 달 최대 850건(약 28분), 실패한 표지만 건너뜀(그달 순위는 성공) [확정] (ADR-0075·0077)
+- 요청: 세션 GET 1 + 순위 POST 15 + 판매 부수 POST 14 = 한 달 30건(판매량 화면 GET 없음, 순위 화면 토큰이 판매량 POST에도 통함), 앞 요청이 끝난 때부터 2초 간격, User-Agent `book search service` [확정] (사용자: "chaekcheck 빼고 '도서 검색 서비스'라고만 해주라", 자바 `HttpClient`가 한글 헤더 값을 거절해 영어; 배포 때 `(+<서비스 주소>)`를 붙임, backlog). 화면·POST 응답 본문 1MB 넘으면 `format_changed` (dev 받기 시험 2026-10-12: 요청 34건(분류 줄이기 전) 모두 200, 가장 짧은 간격 2000ms)
+- 표지: 새 경로만(경로 규칙 `/files/<영문 소문자 폴더>/…/s_<이름>`, 폴더 `isbn`·`onix`·`old`·`trans`), 2초 간격, 첫 달 최대 750건, 받은 그림마다 폭 200px JPEG로 줄여 저장(더 좁으면 그 폭, 투명한 곳은 흰색). 응답 본문 50MB 넘음·못 읽음·16,000,000화소 넘음은 표지 실패로 세고 그 표지만 건너뜀(그달 순위는 성공) [확정] (ADR-0075·0077, ADR-0081; 화소 상한 값은 [확정] (dev 제안 → 사용자 승인, 2026-10-12, 회고 결정 #3)). 실측 808장 11MB, 중간값 14KB, 표지 받기 약 27분 (dev, 2026-10-12)
 - 실패 이유 `failure_reason`: `session_failed`·`request_rejected`·`format_changed`·`too_few_books`·`network_error` [확정] (설계 #12)
 - 게시 허락은 답을 기다리지 않고 배포 [확정] (사용자, 2026-10-12). 답이 오면 출처 문구·표지 사용을 그 답에 맞춤
 
@@ -855,7 +859,7 @@ stateDiagram-v2
 - 순위가 하나도 없을 때는 이 규칙과 별개로 켜질 때 받고, 실패하면 받을 때까지 매일 05:00에 다시 받는다 [확정]. 첫 배포가 1~2일이면 받은 뒤 3일에 한 번 더 받아 바꾼다 [확정]
 - 그림은 design-delta "받기 상태"와 같고 상태 이름만 영문 id + 한글 표시로 적음
 
-## 흐름 25: 인기 도서 화면 열기 (S13) — 설계됨(미구현, 사이클 10)
+## 흐름 25: 인기 도서 화면 열기 (S13) — 구현됨 (사이클 10)
 
 ```mermaid
 sequenceDiagram
@@ -872,19 +876,20 @@ sequenceDiagram
     P-->>W: 200 month=null, categories=[] → "아직 인기 도서를 준비하고 있어요"
   else 있음
     P->>P: available = libraryIds ∩ 계획 ≠ ∅ (요청마다, 캐시 안 함)
-    P-->>W: 200 분류 17개 × 50권 {rank, title, coverUrl, bookId, available}
+    P-->>W: 200 분류 15개 × 50권 {rank, title, coverUrl, bookId, available}
   end
   W->>P: GET covers/{coverId} (브라우저가 오래 저장)
   Note over W: 그림이 안 열리면 제목 글자, available=false면 흐림
 ```
 
 - 계획 파라미터는 웹이 브라우저에 저장한 검색 기준으로 만듦(`BookPage`와 같은 방식, AC-7). 검색 기준을 바꾸면 있음/흐림이 바뀜
-- 공용 캐시는 10분마다, 새 달 저장 직후 바로 새로 고침. 이용자별 겹침 계산은 캐시하지 않음 [확정] (ADR-0074)
-- 표지 응답 `Cache-Control: public, max-age=2592000, immutable`(30일), 없으면 404 `cover_not_found` → 제목 글자 [확정] (`api.md` "인기 도서")
+- 공용 캐시는 10분마다(`chaekcheck.popular.cache.refresh-interval` 10m), 받기의 새로 고침 알림(순위 저장 뒤, 표지 수 UPDATE 뒤) 때 새로 고침. 이용자별 겹침 계산은 캐시하지 않음 [확정] (ADR-0074)
+- 표지 응답은 폭 200px JPEG(`image/jpeg`), `Cache-Control: public, max-age=2592000, immutable`(30일), 없으면 404 `cover_not_found` → 제목 글자 [확정] (`api.md` "인기 도서")
 - 흐린 책(`available=false`)을 누르면 S15 신청 안내, 있는 책은 S14(흐름 26) [확정] (R6-1, R6-9)
 - 오류(요청 실패)면 "인기 도서를 불러오지 못했어요. 잠시 뒤에 다시 해 주세요." [확정] (flow S13)
+- 응답 117KB / gzip 21KB, p95 19.7~27.4ms (dev 측정, 2026-10-12)
 
-## 흐름 26: 가운데 창 열기 (S14, 앞의 3곳만 확인) — 설계됨(미구현, 사이클 10)
+## 흐름 26: 가운데 창 열기 (S14, 앞의 3곳만 확인) — 구현됨 (사이클 10)
 
 ```mermaid
 sequenceDiagram
@@ -898,14 +903,148 @@ sequenceDiagram
   else 200
     C-->>W: 제목·지은이·출판사(우리 값)
     W->>A: SSE book-availabilities/stream (holdingLimit=3: 계획 순서 앞 3곳만)
-    A-->>W: 도서관별 결과 / 실패
+    A-->>W: 도서관별 결과 / 실패 (스트림 통째 실패면 안내 문구)
     W->>W: 그 3곳을 대출 가능·구독형 → 대출 중(예약 적은 순) → 실패 순으로
   end
 ```
 
-- 새 API 없이 지금 API를 씀. `holdingLimit` [안 이름] 동작은 [확정] (사용자: "가. 앞의 3곳만 확인 이걸로 해줘 api좀 손봐줘", 2026-10-12, `docs/cycles/10-popular-books/easy/2026-10-12-handoff-review.html` #1). 없으면 대출 현황 스트림은 지금과 같음 (`api.md`)
-- 표지는 격자에서 누른 그 `coverUrl`(없으면 제목 글자). 그 밖의 오류·끊김은 S3과 같은 오류 문구 [확정] (사용자 승인, 2026-10-12, 인계 전 결정 #4). 줄 모양·상태 글은 S3 줄과 같음(사이클 09 분류 표시 포함)
+- 새 API 없이 지금 API를 씀. `holdingLimit` 이름·동작 [확정] (이름·검증 순서 dev 구현 확인, 2026-10-12) (사용자: "가. 앞의 3곳만 확인 이걸로 해줘 api좀 손봐줘", 2026-10-12, `docs/cycles/10-popular-books/easy/2026-10-12-handoff-review.html` #1). 없으면 대출 현황 스트림은 지금과 같음 (`api.md`)
+- 창 안 안내 "검색하는 도서관 중 앞의 3곳", 첫 묶음만 씀. 스트림이 통째로 실패하면 "대출 정보를 확인하지 못했어요. 잠시 뒤 다시 시도해 주세요." [확정] (사용자 "이대로", 2026-10-12). 표지는 격자에서 누른 그 `coverUrl`(없으면 제목 글자). 그 밖의 오류·끊김은 S3과 같은 오류 문구 [확정] (사용자 승인, 2026-10-12, 인계 전 결정 #4). 줄 모양·상태 글은 S3 줄과 같음(사이클 09 분류 표시 포함)
 - [책 검색 >>] → S3 `/books/{bookId}`, 뒤로 가기 → S13 보던 분류·쪽·스크롤 자리 [확정] (flow). 도서관 줄 → 그 도서관 사이트 책 페이지 새 창
+
+## 흐름 27: 가져오기 내보내기 (내 PC) — 설계됨(미구현, 사이클 11)
+
+가져오기를 내 PC에서 끝까지 돌려 `catalog_next`를 만들고, 그것을 `pg_dump -Fc` 파일 하나로 내보냅니다. 내 PC `catalog`는 그대로이고 새 표는 운영 반영을 기다리며 남습니다(ADR-0078). 운영 반영을 기다리는 새 표가 있으면 시작하지 않습니다(스펙 R-A7). 묶는 방식은 `grouping`으로 고릅니다(ADR-0079). 표·칸은 `data-model.md` "따로 하기".
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor Op as 운영자
+  participant Col as collection (export)
+  participant Cat as catalog
+  participant DB as 내 PC DB
+  participant Tool as pg_dump 18
+  Op->>Col: sqlite-path, ttl-path, file, grouping
+  Col->>Cat: prepare(source, loader)
+  Cat->>DB: catalog_next.load_manifest 있나?
+  alt 기다리는 새 표 있음
+    Cat-->>Op: 멈춤 "먼저 finish 또는 discard" (DB 그대로)
+  else 없음 / 죽고 남은 것
+    Cat->>DB: catalog_next 지움, 임시 표 COPY, 번호 잇기, 쓰기
+    Col->>Cat: export(file, notes: 기록·도서관 해시·연결표 해시)
+    Cat->>DB: load_manifest 한 줄 (export_id, 기준값, 표 구조 해시, notes)
+    Cat->>Tool: pg_dump -Fc -n catalog_next -O -x → file.part
+    alt 덤프 성공, export_id 맞음
+      Cat->>Cat: file.part → file
+      Cat-->>Op: 파일 하나, catalog_next 남음 (기록 줄 없음)
+    else 실패
+      Cat->>DB: catalog_next 지움
+      Col->>DB: catalog_import FAILED error
+    end
+  end
+```
+
+- 모드 값 `export`·`grouping` 자리 [확정] (설계 #3), 메서드·설정 이름 [안]. `step_seconds` 키 `dump`·`export` [안]
+- 기준값 6개는 내보낼 때 내 PC `catalog`(마지막 반영분)의 값 [확정] (설계 #2)
+
+## 흐름 28: 가져오기 반영 (운영 역할 DB, 다름·실패 포함) — 설계됨(미구현, 사이클 11)
+
+운영 역할 DB(이 사이클은 같은 PC의 `db-ops`, 포트 5434)에서 파일을 받아, 먼저 파일 속 `load_manifest`만 읽어 두 DB가 같은지 봅니다. 다르면 운영 표에 손대지 않고 `mismatch`를 남깁니다. 같으면 복원 → 색인·제약 → 통계 → 바꿔 끼우기(흐름 20의 ③~⑤, ADR-0065 그대로)입니다(ADR-0078, 스펙 R-A3·R-A4).
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor Op as 운영자
+  participant Col as collection (apply)
+  participant Cat as catalog
+  participant DB as 운영 DB (5434)
+  participant Tool as pg_restore 18
+  participant Web as 검색 요청
+  Op->>Col: file
+  Col->>Cat: readManifest(file)
+  Cat->>Tool: pg_restore -a -n catalog_next -t load_manifest -f -
+  Tool-->>Cat: manifest 한 줄
+  Col->>Col: 도서관 해시, 연결표 해시 (자기 DB)
+  Col->>Cat: baseline() (catalog가 계산: 이 DB catalog의 기준값 6개 + 네 표 칸 구조 해시)
+  alt 하나라도 다름
+    Col->>DB: catalog_import FAILED mismatch (무엇이 다른지)
+    Note over DB,Web: catalog 그대로, 검색은 옛 표
+  else 모두 같음
+    Col->>Cat: apply(file)
+    Cat->>DB: 기준값 다시 확인, 남은 catalog_next 지움
+    Cat->>Tool: pg_restore --single-transaction --exit-on-error -O -x
+    Cat->>DB: export_id 확인, load_manifest 지움
+    Cat->>DB: 색인·제약 (운영 정의, maintenance_work_mem 256MB), VACUUM (ANALYZE)
+    Web->>DB: 검색 (옛 표)
+    Cat->>DB: swap (lock_timeout 2초, 10초 뒤 다시, 최대 5번)
+    alt 복원·색인·통계 실패
+      Cat->>DB: catalog_next 지움
+      Col->>DB: FAILED error
+    else 잠금 5번 실패
+      Cat->>DB: catalog_next 지움
+      Col->>DB: FAILED lock_not_acquired
+    else 바꿔 끼움
+      Col->>DB: SUCCEEDED 한 줄 (내 PC 기록 + compare·restore·index·analyze·swap·apply, export_id)
+    end
+  end
+```
+
+- 비교 항목 [확정] (스펙 R-A3, 설계 #2), 계산식 [안]: 도서관 해시, 연결표 해시, `book`·`holding` 줄 수·가장 큰 번호·시퀀스 값, 네 표 칸 구조 해시 (`data-model.md` "따로 하기")
+- 반영 연결의 `maintenance_work_mem` 256MB, 서버 기본 64MB 그대로 [확정] (사용자 승인, 2026-10-12; 설계 #12). 반영 동안 검색 기다림 1초 안·5xx 0 (스펙 AC-3)
+- 도중에 죽으면 빈 `catalog_next`가 남고 다음 반영이 시작할 때 지움, 또는 그 DB에서 `discard` [확정] (스펙 상태별 동작, AC-5·AC-13)
+
+## 흐름 29: 마저 바꿔 끼우기 / 지우기 (내 PC) — 설계됨(미구현, 사이클 11)
+
+운영 반영이 성공하면 내 PC도 남겨 둔 새 표로 바꿔 끼워(`finish`) 두 DB의 기준값을 다시 같게 맞춥니다. 운영 반영이 실패했거나 어느 DB에든 빈 `catalog_next`가 남았으면 `discard`로 지웁니다(ADR-0078, 스펙 R-A2·R-A8·R-A10).
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor Op as 운영자
+  participant Col as collection (finish / discard)
+  participant Cat as catalog
+  participant DB as 내 PC DB
+  Op->>Col: finish, file (운영 반영 성공 뒤)
+  Col->>Cat: finishPrepared(file)
+  Cat->>DB: load_manifest.export_id·기준값이 파일과 같나?
+  alt 다름 / catalog_next 없음
+    Cat-->>Op: 멈춤, DB 그대로 ("같은 파일을 내 PC에 apply"로 되살림)
+  else 같음
+    Cat->>DB: (다시 돌릴 때) 만들다 만 색인·제약 지움
+    Cat->>DB: 색인·제약, VACUUM (ANALYZE)
+    alt 색인·통계 실패
+      Cat-->>Op: 실패, load_manifest 그대로 (기다림 유지 → finish 다시)
+    else 성공
+      Cat->>DB: swap 한 트랜잭션: load_manifest 지움 + 옛 표 지움 + catalog로 옮김
+      Col->>DB: SUCCEEDED 한 줄 (export_id)
+    end
+  end
+  Op->>Col: discard (운영 반영 실패, 또는 어느 DB든 남은 빈 표)
+  Col->>Cat: discardPrepared()
+  Cat->>DB: DROP SCHEMA IF EXISTS catalog_next CASCADE (기록 없음)
+```
+
+- `finish`는 `load_manifest`를 swap 트랜잭션 안에서 지움. 그 전에 실패하면 기다림 상태가 남고, 다시 돌리면 만들다 만 색인·제약부터 지움 [확정] (사용자 승인, 2026-10-12, `docs/cycles/11-separate-import/easy/2026-10-12-review-decisions.html` #1) (스펙 R-A10, AC-15)
+- 내 PC `finish`의 `maintenance_work_mem`은 1GB [확정] (사용자 승인, 2026-10-12, `docs/cycles/11-separate-import/easy/2026-10-12-handoff-review.html` #1)
+- `step_seconds` 키 마저 `index`·`analyze`·`swap`·`finish` (`index`·`analyze`·`swap` [확정], `finish` [안])
+
+### 내 PC의 `catalog_next` 상태 — 설계됨(미구현, 사이클 11)
+
+```mermaid
+stateDiagram-v2
+  [*] --> 없음
+  없음 --> 쓰는중: export / in-place 시작
+  쓰는중 --> 기다림: 파일 만듦 (load_manifest 있음)
+  쓰는중 --> 없음: 실패 → 지움 / in-place 성공 (catalog로)
+  쓰는중 --> 죽고남음: 프로세스·DB 죽음
+  죽고남음 --> 쓰는중: 다음 시작이 지움
+  죽고남음 --> 없음: discard
+  기다림 --> 없음: finish 성공 (catalog로) / discard
+  기다림 --> 기다림: finish 중 색인·통계 실패 → finish 다시
+  기다림 --> 기다림: 다른 export·in-place → 멈춤
+```
+
+- "기다림"은 `load_manifest`가 있는 `catalog_next`, "죽고남음"은 `load_manifest`가 없는 남은 `catalog_next` [확정] (스펙 R-A7, ADR-0078)
 
 ## 화면 공통: 안내 줄과 검색 결과 머리 — 구현됨 (사이클 06 마무리, 2026-10-05)
 
@@ -922,4 +1061,4 @@ sequenceDiagram
 - 사이클 08 (구현됨 (사이클 08)): `mobileSiteDiffers`인 도서관은 폭 640px 이하에서 결과 카드 이름 아래(바로 보기·직접 찾기·책 화면 줄)·가입 정보 창 "도서관 첫 화면"·"전자도서관에서 가입 안내 보기" 링크 옆에 YES24 폰 안내 [확정] 자리, 문구 "폰에서는 사이트가 다른 화면을 보여요. PC에서 열어 주세요" [확정] (사용자: 인계서 안 그대로, dev 세션 2026-10-11). 빠진 책은 "책을 찾을 수 없어요" 아래 "도서관 목록을 새로 받으면서 빠진 책일 수 있어요. 다시 검색해 주세요.", 빠진 소장은 책 화면 그 도서관 줄에 "이 도서관 목록에서 빠졌어요" [확정] (ADR-0070). 브라우저 `chaekcheck.searchSettings.v1`에서 정렬·완전 일치·역할을 쓰지 않고 남아 있으면 읽을 때 지움 [확정] (spec R1)
 - 사이클 08 (구현됨 (사이클 08)): 폰 설정 창은 바텀 시트 유지 [확정] (사용자 승인, 2026-10-11, `docs/cycles/08-polish-swap-memory/easy/2026-10-11-final-decisions.html`) (되돌림 `PHONE_SETTINGS_SHEET = false`). 폰 직접 찾기의 흐린 "정렬 없음 ⓘ"은 **검색 줄 끝**("N곳" 옆) — 처음 둔 결과 위 도구줄이 폰에서 숨겨져 옮김 (dev 12단계), 설계 자리("검색줄 둘째 줄 오른쪽 끝")와 같음. 돌아가기("← 돌아가기")와 ⓘ는 **S8·S9·S10만**, **S2(지역 고르기 창)는 바꾸지 않음** [확정] (사용자: "A. 그대로", dev 세션 2026-10-11; S2는 [저장]을 눌러야 저장되어 "즉시 저장" 안내가 맞지 않음). S10 ⓘ 문구 "고르는 즉시 이 브라우저에 저장돼요"(로그인 전)/"고르는 즉시 계정에 저장돼요"(로그인 뒤) [확정] (사용자, dev 세션 2026-10-11). S10 이름 찾기는 공백과 함께 가운뎃점(·)도 무시 [확정] (사용자 승인, 2026-10-11). 글꼴은 줄인 파일("Chaekcheck Barun")을 먼저 쓰고 드문 음절이 있을 때만 원래 나눔바른고딕을 받음
 - 사이클 09 — 구현됨 (사이클 09) (ADR-0071·0076, 흐름 23): 도서관 이름은 기관 이름만 보이고, 결과 카드(S1·S3)는 모든 폭에서 이름 다음 줄에 "교보 · 소장", S10 세 목록은 "이름 · 업체 · 대출 방식"(폰은 이름 아래 줄), 순번 2 이상이면 "· N번째 사이트". 요약 줄·지역 가져오기 창·직접 찾기 결과 이름 나열·가입 정보 창은 이름만. 분류 값이 없으면 이름만 [확정]. 교보 구독형 중 대여 9곳 가운데 8곳은 이름의 "(구독)"이 빠지고 분류가 "대여"로 보임 [확정] (spec R3). S10 이름 찾기에서 같은 이름 여러 줄은 업체 글자 한글 가나다순(교보 → 북큐브 → 알라딘 → 자체 → 통합 포털 → YES24), 같은 이름·같은 업체는 순번 순 [확정] (사용자 승인, 2026-10-12, `docs/cycles/09-library-naming/easy/2026-10-12-retro-decisions.html` #1)
-- 사이클 10 — 설계됨(미구현, 사이클 10) (흐름 24~26, `module-map.md` "사이클 10 웹"): 머리에 "인기 도서" 링크(로고 오른쪽·로그인 왼쪽, S8·S9 제외), 로고 옆 설명 글 "전자도서관 대출 가능 확인"은 모든 폭에서 지움 [확정]. 폰에서 아래에서 올라오는 창 넷(S13c 분류 목록, S13i 도움말, S14 가운데 창, S15 신청 안내)은 손잡이 끌어내리기·ⓧ·바깥으로 닫히고 사이클 08 검색 설정 바텀 시트와 같은 부품 [확정] (사용자, 2026-10-11) [안 — 부품 나누기는 dev가 정함]. 표지는 작은 그림만, 큰 그림·확대 보기 없음, S12 `/about`에 표지 게시 중단 요청 안내(연락처는 배포 때) [확정] (handoff C10)
+- 사이클 10 — 구현됨 (사이클 10) (흐름 24~26, `module-map.md` "사이클 10 웹"): 머리에 "인기 도서" 링크(로고 바로 옆, S8·S9·`/terms`·`/privacy` 제외) [확정] (사용자: "로고 바로 옆 (지금 구현)", 2026-10-12), 로고 옆 설명 글 "전자도서관 대출 가능 확인"은 모든 폭에서 지움 [확정]. 폰에서 아래에서 올라오는 창 넷(S13c 분류 목록, S13i 도움말, S14 가운데 창, S15 신청 안내)은 손잡이 끌어내리기·ⓧ·바깥으로 닫히고 사이클 08 검색 설정 바텀 시트와 같은 공용 부품 `BottomSheet`(끌어내리기 80px, 폰 뒤로 가기는 창만 닫음, `useBackToClose`) [확정] (사용자, 2026-10-11; 이름 dev 구현 확인, 2026-10-12). ⓘ 말풍선은 앱 전체에서 밝은 둥근 네모 [확정] (사용자, 2026-10-12). 흐린 책 안내는 "검색하는 도서관"으로 씀(S13i "흐린 책은 검색하는 도서관에 전자책이 없어요", S15 두 줄) [확정]. 표지는 작은 그림을 폭 200px JPEG로 줄여서만, 큰 그림·확대 보기 없음, S12 `/about`에 표지 게시 중단 요청 안내(연락처는 배포 때) [확정] (handoff C10)

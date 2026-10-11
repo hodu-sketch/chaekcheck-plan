@@ -3,7 +3,7 @@
 - 승인: [확정] (사용자 승인, 2026-10-12, `easy/2026-10-12-handoff-review.html` #3). plan이 사이클 폴더(`docs/cycles/11-separate-import/handoff.md`)에 둡니다. `docs/current/handoff.md`에 바꿔 넣는 것은 사이클 10 개발 결과를 본 뒤입니다.
 - **시작 조건** [확정] (scope, design-delta 상태 줄, 사용자 승인 2026-10-12 `easy/2026-10-12-design-delta.html` #2)
   - 사이클 10 dev(인기 도서)가 **끝나고 커밋된 뒤에** 시작합니다. 작업 폴더, 로컬 DB(`db` 5432, `db-test` 5433)가 같고 worktree는 따로 만들지 않습니다.
-  - plan은 사이클 10 개발 결과를 검토한 뒤에 이 인계서를 `docs/current/handoff.md`에 바꿔 넣고 `docs/current/`를 고칩니다. **이 초안을 쓴 2026-10-12에는 아직 바꿔 넣지 않았습니다.** dev `CLAUDE.md`가 불러오는 인계서가 이 문서로 바뀌기 전에는 시작하지 않습니다.
+  - plan이 사이클 10 회고(2026-10-12, `docs/cycles/10-popular-books/retro.md`)를 마치고 이 인계서를 `docs/current/handoff.md`에 바꿔 넣었으며, `docs/current/`에 사이클 11을 "설계됨(미구현, 사이클 11)"으로 합쳤습니다 [확정] (사용자 승인, 2026-10-12, `docs/cycles/10-popular-books/easy/2026-10-12-retro-decisions.html` #5). 인기 도서 화면 디자인 다듬기는 사이클 밖이고, 그 작업이 커밋된 뒤 시작합니다.
   - `collection` changeset 번호는 시작할 때 dev의 마지막 `collection` changeset을 보고 정합니다. plan이 2026-10-12에 읽었을 때는 `collection/004-national-bibliography.yaml`까지 있었으므로 지금 기준 다음 번호는 005입니다.
 
 - **사이클 10 결과에서 이 사이클에 닿는 것** (dev `docs/plan-feedback.md` `# 사이클 10`, plan 확인 2026-10-12. 사이클 10 회고 때 다시 맞춤)
@@ -68,7 +68,7 @@
   - `collection`은 `catalog` 표를 직접 읽지 않습니다. 기준값 6개와 표 구조 해시는 `catalog`가 `baseline()`·`Manifest`로 돌려줍니다.
   - 도서관 해시는 공개 API `LibraryCatalog.enabledLibraryRefs()`로 만듭니다. 번호 비교 도구(`compare_grouping.py`)는 앱 밖에서 psql로 읽습니다.
 - **C2. Liquibase는 새 파일만** [확정]
-  - 이미 적용된 changeset은 고치지 않습니다. 로컬 `db`·`db-test`는 초기화하지 않습니다.
+  - 이미 적용된 changeset은 고치지 않습니다. 로컬 `db`·`db-test`는 초기화하지 않습니다. **예외 한 가지**: 0단계의 `popular/001` `display_order` CHECK 고침(사이클 10 후속) [확정] (사용자 제안, 2026-10-12, 사이클 10 회고 결정 #4: "아직 실제 서비스로 배포 안 되었으니까 liquibase 기존 changeset고치고 너가 알아서 changelog-sync든 아니면 새로 설치하든 뭐든 해")
   - `failure_reason`에는 값 CHECK가 없으므로(`collection/003-import-period-and-timings.yaml` 30-42행) `mismatch`를 더하는 데 changeset이 필요 없습니다.
   - `catalog_next.load_manifest`는 실행 중에만 생기는 표이고 Liquibase 대상이 아닙니다.
 - **C3. 반영은 운영 서비스와 같은 앱 판으로** [확정] (architect-proposal 결정 6)
@@ -99,8 +99,8 @@
 ## 개발 시작 전 확인
 
 ### dev가 확인할 것
-- [ ] 사이클 10 dev 변경이 커밋되었는지 봅니다(`git status` 깨끗, `popular/001` 포함). plan이 2026-10-12에 읽었을 때 `plan-feedback.md` `# 사이클 10`은 8단계 전이었습니다.
-- [ ] `docs/current/handoff.md`가 이 인계서로 바뀌었는지 봅니다(시작 조건).
+- [ ] 사이클 10 dev 변경(디자인 다듬기 포함)이 커밋되었는지 봅니다(`git status` 깨끗, `popular/001` 포함). plan 회고 때(2026-10-12) `# 사이클 10`은 8단계까지 끝, 디자인 다듬기 진행 중이었습니다.
+- [x] `docs/current/handoff.md`가 이 인계서로 바뀜(2026-10-12).
 - [ ] base package는 `com.chaekcheck`입니다(dev `CLAUDE.md`, `build.gradle` 7행). 고치는 패키지는 `com.chaekcheck.catalog`와 `com.chaekcheck.collection.internal.importer`입니다.
 - [ ] 마지막 `collection` changeset 번호와 master 맨 끝 include를 봅니다. plan이 읽었을 때는 `collection/004-national-bibliography.yaml`이었고, master 맨 끝은 `popular/001-popular-schema.yaml`(81-84행)이었습니다. 새 파일은 그다음 번호(지금이면 `collection/005-import-export.yaml` [안 이름])로 하고, master 맨 끝에 `# cycle 11` 주석과 함께 둡니다.
 - [ ] 디스크 여유를 봅니다 [확인 필요: dev 측정].
@@ -122,9 +122,16 @@
 
 A(1~7단계)를 먼저 끝내고 B(8~11단계)로 갑니다 [확정] (scope "순서"). 각 단계는 따로 빌드·테스트할 수 있습니다.
 
-### 0단계: 시작 확인 (코드 변경 없음, 의존: 없음)
+### 0단계: 시작 확인과 사이클 10 후속 (의존: 없음)
 
 1. 위 "dev가 확인할 것"을 모두 확인합니다. `./gradlew build`가 지금 그대로 통과하는지 봅니다(기준선).
+   - 위험: 낮음
+2. **사이클 10 후속: `display_order` CHECK를 0..14로** [확정] (사용자 제안, 2026-10-12, 사이클 10 회고 결정 #4: "아직 실제 서비스로 배포 안 되었으니까 liquibase 기존 changeset고치고 너가 알아서 changelog-sync든 아니면 새로 설치하든 뭐든 해") (ADR-0080, plan 사이클 10 회고)
+   - `backend/src/main/resources/db/changelog/popular/001-popular-schema.yaml`의 `ranking_category_display_order_check`를 `0..16` → `0..14`로 **그 자리에서** 고칩니다(아직 배포 전). 주석에 사이클 10 회고·ADR-0080을 적습니다.
+   - 로컬 `db`: (1) 2026-09에서 언어(`00000000000000000178`)·기술·공학(`00000000000000001991`)의 `ranking_category`·`ranking_entry` 줄을 지우고, 남은 분류의 `display_order`를 지금 `CategoryOrder` 규칙(전체 0, 판매 부수 큰 순, 같으면 사이트 ID 순)으로 0~14로 다시 매깁니다. (2) 제약을 SQL로 `DROP`·`ADD`해 0..14로 바꿉니다. (3) 그 changeset의 `databasechangelog.md5sum`을 `NULL`로 둡니다(다음 시작 때 Liquibase가 새 체크섬을 씀). 체크섬만 비우면 changeset이 다시 돌지 않으므로 (2)가 필요합니다. 근거: "Set the checksum to null for the row … The next update writes the correct checksum" (https://docs.liquibase.com/concepts/changelogs/changeset-checksums.html , 확인 2026-10-12)
+   - 진짜 사이트를 다시 부르는 방법(인기 도서 표를 비우고 다시 받기)은 쓰지 않습니다 [안]. dev가 다른 방법(DB를 새로 만들기 등)이 낫다고 보면 사용자에게 묻고 보고합니다.
+   - `db-test`는 tmpfs라 새로 만들어질 때 고친 changeset이 그대로 적용됩니다. 테스트 `PopularBooksApiTests.listsLeftOutLaterAreNotShown`처럼 17분류 옛 달을 흉내 내는 테스트는 0~14 안의 값으로 바꿉니다.
+   - 확인: `./gradlew build` 통과, 로컬 앱이 체크섬 오류 없이 켜짐, 인기 도서 2026-09가 14분류로 보임. `# 사이클 11` 절에 결과를 적습니다.
    - 위험: 낮음
 
 ### 1단계: 프로토타입 (앱 코드 변경 없음, 의존: 0단계)

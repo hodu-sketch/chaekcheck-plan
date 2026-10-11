@@ -1,6 +1,6 @@
 # ADR-0075: 표지는 순위 출처의 것을 매달 미리 받아 우리 서버가 넘겨준다
 
-Status: Accepted
+Status: Superseded by 0081
 Date: 2026-10-11
 Cycle: 10-popular-books
 Supersedes: 없음

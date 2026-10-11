@@ -1,6 +1,6 @@
 # 참고 문서 색인 — 다음에 개발·설계·관리할 때 볼 문서
 
-작성 2026-10-01, 고침 2026-10-04(정기 작업 문서, 3-1절 가져오기·검색), 2026-10-05(사이클 07 회고: 가져오기는 `collection` 모듈·dev `3-import.md`, 코드 위치, 꺼진 도서관), 2026-10-11(사이클 08 cycle-close: 도서관 이름 고침, 교보 대여·혼합 제외, 가져오기 바꿔 끼우기·시간 줄이기 방향, 정리 규칙을 바꿀 때, ADR-0065~0070), 2026-10-11(사이클 09 cycle-close: 도서관 이름은 기관 이름만, 업체·대출 방식·순번 분류, ADR-0071·0076). 사이클과 상관없이 계속 쓰는 문서들을 주제별로 모았습니다. 사이클 문서(`docs/cycles/NN-*/`)는 그 사이클의 기록이고, 여기 적힌 것은 "지금 어떻게 하는가"를 아는 데 필요한 문서입니다. 문서를 새로 만들거나 원본이 바뀌면 이 색인을 고칩니다.
+작성 2026-10-01, 고침 2026-10-04(정기 작업 문서, 3-1절 가져오기·검색), 2026-10-05(사이클 07 회고: 가져오기는 `collection` 모듈·dev `3-import.md`, 코드 위치, 꺼진 도서관), 2026-10-11(사이클 08 cycle-close: 도서관 이름 고침, 교보 대여·혼합 제외, 가져오기 바꿔 끼우기·시간 줄이기 방향, 정리 규칙을 바꿀 때, ADR-0065~0070), 2026-10-11(사이클 09 cycle-close: 도서관 이름은 기관 이름만, 업체·대출 방식·순번 분류, ADR-0071·0076), 2026-10-12(사이클 10 회고: 인기 도서 분류 14개·표지 200px JPEG, ADR-0080·0081; 사이클 11 cycle-close: 가져오기 따로 하기(내 PC 내보내기 → 운영 반영)·묶는 방식 셋, ADR-0078·0079, EC2 크기·서버 메모리 설명). 사이클과 상관없이 계속 쓰는 문서들을 주제별로 모았습니다. 사이클 문서(`docs/cycles/NN-*/`)는 그 사이클의 기록이고, 여기 적힌 것은 "지금 어떻게 하는가"를 아는 데 필요한 문서입니다. 문서를 새로 만들거나 원본이 바뀌면 이 색인을 고칩니다.
 
 원칙 [확정] (사용자, 2026-10-01, dev C2-U-7 답): **절차의 원본은 dev `docs/library-maintenance.md`**, **조사 기록과 근거 수치는 plan**. 둘이 어긋나면 dev 절차가 최신입니다. 정기 유지보수 절차(도서관 목록 확인, 책 목록 수집, 가져오기)와 수집기 코드는 dev `docs/maintenance/`·`scripts/crawl/`로 모읍니다 (ADR-0047, 2026-10-04). **문서(A)는 2026-10-04 dev가 옮김**: 절차는 dev `docs/maintenance/` (`README.md` 순서, `1-libraries.md`, `2-crawl.md`, `platforms.md`, `3-import.md`). 수집기 코드(B)와 도서관 정보 도구(C)는 전체 수집이 끝난 뒤. 요청서 `docs/research/maintenance/dev-move-request.md`
 
@@ -11,7 +11,7 @@
 | `CLAUDE.md` (plan) | 사이클 진행 방식, 현재 사이클 |
 | `docs/backlog.md` | 아직 사이클에 안 들어간 것, 다음 순서(맨 위 "2026-10-01 정리"), 미룬 것 |
 | `docs/current/` (`module-map.md`, `data-model.md`, `api.md`, `flows.md`, `handoff.md`) | 지금 설계 전체. `handoff.md`는 현재 인계서(사이클 04) |
-| `docs/adr/README.md` | 결정 목록 (ADR-0001~0070, 2026-10-11) |
+| `docs/adr/README.md` | 결정 목록 (ADR-0001~0081, 2026-10-12) |
 | dev `docs/plan-feedback.md` | dev가 개발 중 바꾼 것·측정·질문. 사이클별 절(`# 사이클 04`는 702행~). **다음 회고의 입력** |
 | dev `CLAUDE.md` | 스택·모듈 규칙 (plan에서 다시 적지 않음) |
 | `docs/research/maintenance/collection-areas.md` | 수집 일 나눔(① 도서관 정보 ② 도서관-책 ③ 가져오기)과 섞인 도구 옮기기 [확정] (2026-10-04) |
@@ -86,6 +86,11 @@
 | plan `docs/adr/0065-import-write-new-tables-then-swap.md`, `0070-holding-id-carry-over-and-gone-notice.md` | 가져오기는 새 표(`catalog_next`)에 쓰고 바꿔 끼움(색인 나중에, 짧은 잠금), 같은 소장은 옛 소장 번호를 잇고 빠진 책·소장은 따로 알림(`book_not_found` 문구, `holding_not_found`) | 확정 (2026-10-11), 설계됨(미구현, 사이클 08) |
 | plan `docs/current/data-model.md` `catalog` 절 "가져오기: 새 표에 쓰고 바꿔 끼우기", `flows.md` 흐름 20 | 바꿔 끼우기 순서, `lock_timeout`·다시 시도, 실패 때 처리, 단계별 시간 `step_seconds`, 바꿔 끼우는 표 목록 | 설계됨(미구현, 사이클 08) |
 | plan `docs/adr/0066-memory-reduction-structure.md`, `flows.md` 흐름 21 | 메모리 줄이기: 계획에 들어갈 도서관만·그 도서관 소장만 읽기, 캐시 통계·상한, DB 메모리 값은 `compose.yaml`, 재는 도구(`jcmd`, PostgreSQL 통계) | 확정 (2026-10-11), 설계됨(미구현, 사이클 08) |
+| plan `docs/cycles/11-separate-import/` (`design-delta.md`, `spec.md`, `research.md`) | **가져오기 따로 하기 (사이클 11)**: 내 PC에서 가져와 `catalog_next`를 `pg_dump -Fc` 파일 하나로 내보내고(`export`), 운영 DB에서 두 DB 비교 뒤 복원·색인·바꿔 끼우기(`apply`), 내 PC 마저 바꿔 끼우기·지우기(`finish`·`discard`), 묶는 방식 `current`·`compact`·`sql`과 결과 비교·측정. `research.md`: `pg_dump`·`pg_restore`(9·11절)와 메모리·Java 옵션(10절) 공식 문서 사실 | 설계됨(미구현, 사이클 11) |
+| plan `docs/adr/0078-separate-import-export-apply.md`, `0079-grouping-modes-same-result.md` | 가져오기는 내 PC에서 하고 운영 DB에는 파일 하나로 옮겨 바꿔 끼움(모드 다섯, 기다리는 새 표 보호, `mismatch`), 책 묶기 세 방식을 설정으로 고르고 결과가 번호까지 같아야 씀 | 확정 (2026-10-12), 설계됨(미구현, 사이클 11) |
+| plan `docs/current/data-model.md` `catalog` 절 "따로 하기", `flows.md` 흐름 27~29·"내 PC의 `catalog_next` 상태" | 모드별 할 일 표, 비교 항목, `load_manifest` 칸, `catalog_import.export_id`·`exported_at`, 색인 메모리(운영 반영 256MB, 내 PC 1GB), 운영 역할 DB `db-ops`(포트 5434, `mem_limit` 1GB) | 설계됨(미구현, 사이클 11) |
+| plan `docs/research/deploy/easy/2026-10-12-memory-kinds.html`, `docs/research/deploy/aws-layout.md` 6절 | 서버 메모리 종류 쉬운 설명(힙, `shared_buffers`, `maintenance_work_mem`, 컨테이너 상한), 가져오기를 따로 할 때 EC2 크기 | 2026-10-12 |
+| dev `docs/maintenance/3-import.md` (사이클 11에 고침 예정) | 가져오기 절차 원본에 내보내기·반영·마저·지우기 절차와 `step_seconds` 새 키를 더함(인계서) | 설계됨(미구현, 사이클 11) |
 
 ## 4. 책 분류·정리·묶기 (정리 규칙, ISBN, 같은 책, 저자, 자료 종류)
 
