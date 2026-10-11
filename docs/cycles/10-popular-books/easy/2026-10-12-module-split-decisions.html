@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>모듈 둘로 나누기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+svg{max-width:100%;height:auto;display:block}
+.mock{border:2px dashed var(--line);border-radius:12px;padding:14px;margin:10px 0;font-size:17px}
+.row{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;background:var(--card);flex-wrap:wrap}
+.tag{font-size:14px;border-radius:6px;padding:0 6px;background:var(--code-bg);color:var(--muted)}
+.okt{color:var(--ok);font-weight:500}.mut{color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">인기 도서를 "모으기" 모듈과 "보여 주기" 모듈로 나눌 때 정할 것 4가지입니다.</p>
+<p class="sub">정하신 것: 같은 서버 안에서 모듈만 둘로 (2026-10-12). 승인된 ADR-0073("<code>popular</code> 한 모듈")을 새 ADR로 바꾸고, 설계·인계서·현재 설계 문서를 고친 뒤 dev를 시작합니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>나눈 모양</h2>
+<div class="gist">모으기 모듈이 받기·예약·표 5개·표지를 맡고, 보여 주기 모듈이 공용 캐시와 API를 맡습니다. 보여 주기는 모으기의 "읽기용 창구"로만 데이터를 읽고, 새 달을 저장하면 모으기가 알림을 보냅니다.</div>
+<svg viewBox="0 0 640 260" role="img" aria-label="두 모듈로 나눈 구조">
+<defs><marker id="d1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+<rect x="10" y="10" width="160" height="48" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="22" y="32" font-size="13" font-weight="700" fill="var(--text)">웹 (S13·S14)</text><text x="22" y="49" font-size="11" fill="var(--muted)">GET /api/v1/popular-books</text>
+<rect x="10" y="100" width="200" height="74" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="22" y="122" font-size="13" font-weight="700" fill="var(--text)">popular (보여 주기)</text><text x="22" y="142" font-size="12" fill="var(--text)">공용 캐시 · API 2개</text><text x="22" y="160" font-size="11" fill="var(--muted)">표 없음</text>
+<rect x="290" y="100" width="210" height="74" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="302" y="122" font-size="13" font-weight="700" fill="var(--text)">popularfetch (모으기)</text><text x="302" y="142" font-size="12" fill="var(--text)">받기 · 예약 · 저장 · 표지</text><text x="302" y="160" font-size="11" fill="var(--muted)">표 5개 소유</text>
+<rect x="540" y="110" width="90" height="54" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="548" y="132" font-size="12" font-weight="700" fill="var(--text)">출판유통</text><text x="548" y="150" font-size="12" font-weight="700" fill="var(--text)">통합전산망</text>
+<rect x="10" y="210" width="130" height="40" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="22" y="235" font-size="12" font-weight="700" fill="var(--text)">catalog · library</text>
+<line x1="90" y1="58" x2="90" y2="98" stroke="var(--muted)" marker-end="url(#d1)"/>
+<line x1="210" y1="125" x2="288" y2="125" stroke="var(--muted)" marker-end="url(#d1)"/><text x="214" y="117" font-size="11" fill="var(--text)">읽기 창구</text>
+<line x1="290" y1="152" x2="212" y2="152" stroke="var(--accent)" stroke-dasharray="5 4" marker-end="url(#d1)"/><text x="214" y="168" font-size="11" fill="var(--accent)">알림(새 달 저장)</text>
+<line x1="500" y1="137" x2="538" y2="137" stroke="var(--muted)" marker-end="url(#d1)"/>
+<line x1="80" y1="174" x2="80" y2="208" stroke="var(--muted)" marker-end="url(#d1)"/>
+</svg>
+<p class="cap">실선은 "부른다", 점선은 "알린다(이벤트)". 보여 주기는 모으기의 표를 직접 읽지 않습니다.</p>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>정할 것</h2>
+
+<div class="item"><h3><span class="no">1</span>모듈 이름: 모으기 <code>popularfetch</code>, 보여 주기 <code>popular</code> [안]</h3>
+<p>예: 패키지 <code>com.chaekcheck.popularfetch</code>와 <code>com.chaekcheck.popular</code>. Java 패키지 이름에는 붙임표(-)를 쓸 수 없어 붙여 씁니다. 화면용 API 주소(<code>/api/v1/popular-books</code>)는 그대로입니다.</p>
+<p class="alt"><b>다른 선택</b> <code>popularcollect</code>·<code>bestseller</code> 등: 원하시는 이름이 있으면 "기타"에 적어 주세요.</p>
+<p class="rec">추천: <code>popularfetch</code> + <code>popular</code>.</p></div>
+
+<div class="item"><h3><span class="no">2</span>표 5개는 모으기가 가지고, DB 칸 묶음(스키마) 이름은 <code>popular</code> 그대로 [안]</h3>
+<p>예: <code>fetch_run</code>·<code>ranking_month</code>·<code>ranking_category</code>·<code>ranking_entry</code>·<code>cover</code>는 <code>popularfetch</code>만 쓰고 읽습니다. 스키마 이름까지 바꾸면 이미 정한 표 이름 규칙과 설계 문서를 더 많이 고쳐야 합니다.</p>
+<p class="alt"><b>다른 선택</b> 스키마도 <code>popularfetch</code>로: 모듈 = 스키마로 맞춰지지만 이름이 길어집니다.</p>
+<p class="rec">추천: 스키마 <code>popular</code> 그대로.</p></div>
+
+<div class="item"><h3><span class="no">3</span>잇는 방법: 보여 주기는 모으기의 읽기 창구(공개 Java API)로 읽고, 모으기는 새 달·표지 저장이 끝나면 알림(이벤트)을 보냄 [안]</h3>
+<p>예: 모으기에 공개 인터페이스 <code>PopularRankings</code> [안 이름] — "최근 달 순위 한 벌 주기", "표지 그림 주기". 새 달을 저장하거나 표지 받기가 끝나면 <code>PopularRankingsUpdated</code> [안 이름] 이벤트를 보내고, 보여 주기가 받아 공용 캐시를 바로 새로 고칩니다. 10분마다 새로 고치는 것은 그대로입니다(책 목록 가져오기 반영용).</p>
+<p class="alt"><b>다른 선택</b> 알림 없이 10분마다만: 새 달이 최대 10분 늦게 보이지만 이벤트가 필요 없습니다.</p>
+<p class="rec">추천: 읽기 창구 + 알림. 같은 서버 안의 알림이라 지금 서비스의 이벤트 방식(<code>AccountDeleted</code>와 같은 꼴)을 그대로 씁니다.</p></div>
+
+<div class="item"><h3><span class="no">4</span>ADR-0078 "인기 도서는 모으기·보여 주기 두 모듈로" 를 쓰고 ADR-0073을 대체로 표시 [안]</h3>
+<p>예: ADR-0073의 상태를 "Superseded by 0078"로 바꾸고, 새 ADR에 위 1~3과 의존 방향(<code>popular</code> → <code>popularfetch</code>·<code>catalog</code>·<code>library</code>, <code>popularfetch</code>는 다른 모듈에 기대지 않음)을 적습니다. 이유는 "같은 서버 안에서 모듈만 둘로"(2026-10-12)를 옮기고, 까닭은 [이유 미확인]으로 둡니다.</p>
+<p class="rec">추천: 씀(승인 = Accepted로 기록). 승인되면 설계·인계서·현재 설계 문서를 고쳐 커밋하고, 그다음 dev를 시작하시면 됩니다.</p></div>
+</section>
+
+<p class="foot">원본: <code>design-delta.md</code>, ADR-0073, 설계 한눈에 페이지의 결정(나. 같은 서버 안에서 모듈만 둘로, 2026-10-12).</p>
+</main>
+</body>
+</html>
