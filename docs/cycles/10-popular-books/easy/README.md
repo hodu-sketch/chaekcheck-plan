@@ -14,3 +14,4 @@
 | [2026-10-11-adr-drafts.html](2026-10-11-adr-drafts.html) | ADR 초안 4개: 0072 출처, 0073 새 모듈 popular, 0074 볼 때 ISBN 맞추기·공용 캐시, 0075 표지 미리 받아 넘겨주기 | `../architect-proposal.md`, 결정 페이지들 | 없음 (4개 승인, Accepted로 씀) |
 | [design-delta-original.html](design-delta-original.html) | design-delta.md 원본, 그림 7개 포함 | `../design-delta.md` | 설명 |
 | [2026-10-11-design-delta.html](2026-10-11-design-delta.html) | 설계 문서 한 장 요약(만드는 것, 표), 남은 작은 값 다섯: 시간 제한, 표지 칸 이름, 표지 응답 30일·404, 코드 위치는 dev, 마무리로 감 | `../design-delta.md` | 없음 (1~4 승인, 5는 인계서를 08·09 결과 뒤로) |
+| [2026-10-11-cycle08-align-decisions.html](2026-10-11-cycle08-align-decisions.html) | 사이클 08 중간 요약과 맞추기: 폰 창은 08 결정을 따름, 아래 창 닫는 방법 08과 같게, 개발 때 잴 기준 | `../scope.md` | 없음 (1은 "인기 도서는 별개"로, 2·3 승인) |
