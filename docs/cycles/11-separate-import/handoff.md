@@ -6,6 +6,12 @@
   - plan은 사이클 10 개발 결과를 검토한 뒤에 이 인계서를 `docs/current/handoff.md`에 바꿔 넣고 `docs/current/`를 고칩니다. **이 초안을 쓴 2026-10-12에는 아직 바꿔 넣지 않았습니다.** dev `CLAUDE.md`가 불러오는 인계서가 이 문서로 바뀌기 전에는 시작하지 않습니다.
   - `collection` changeset 번호는 시작할 때 dev의 마지막 `collection` changeset을 보고 정합니다. plan이 2026-10-12에 읽었을 때는 `collection/004-national-bibliography.yaml`까지 있었으므로 지금 기준 다음 번호는 005입니다.
 
+- **사이클 10 결과에서 이 사이클에 닿는 것** (dev `docs/plan-feedback.md` `# 사이클 10`, plan 확인 2026-10-12. 사이클 10 회고 때 다시 맞춤)
+  - 인기 도서 받기는 `collection-import` 프로필에서 꺼짐(`application-collection-import.yml` 14-15행). 그래서 `export`·`apply`·`finish`·`discard`는 진짜 사이트를 부르지 않음. 다만 7단계에서 `db-ops`에 붙여 띄우는 서비스(기본 프로필)는 로컬 `.env`의 `CHAEKCHECK_POPULAR_FETCH_ENABLED=false`를 그대로 써야 함(기본값은 true라 켜지면 시작 받기가 진짜 사이트를 부름)
+  - db-test 연결 한도 100에 테스트 문맥 수가 걸림(문맥마다 연결 4개, 사이클 10에서 "too many clients"). 새 테스트 클래스(`CatalogTransferTests`, `CatalogImportModesTests` 등)는 기존 설정과 같은 문맥을 쓰거나 `@DirtiesContext`로 닫음
+  - `popular`는 `catalog.BookLookup.byIsbn13`으로 책 번호를 찾고 공용 캐시를 10분마다 새로 고침. `catalog` 표를 외래 키로 가리키지 않으므로 바꿔 끼우기의 바깥 외래 키 검사에 걸리지 않음. 바꿔 끼운 뒤 새로 생기거나 사라진 책 번호는 다음 캐시 새로 고침(최대 10분)까지 인기 도서에 늦게 보일 수 있음(받아들임, 이번에 고치지 않음)
+  - master changelog 맨 끝은 `popular/001-popular-schema.yaml`. 사이클 10 디자인 다듬기가 아직 진행 중이라 그 뒤 번호·줄 번호는 시작 때 다시 봄
+
 ## 요약
 
 가져오기를 내 PC에서 끝까지 돌립니다. 그렇게 만든 `catalog_next` 네 표와 작은 표 `load_manifest`를 `pg_dump -Fc` 파일 하나에 담아 운영 역할 DB(같은 PC의 `db-ops`, 5434, `mem_limit` 1GB)로 옮기고, 사이클 08의 바꿔 끼우기로 반영합니다(A). 이어서 책 묶기를 `current`·`compact`·`sql` 세 방식으로 만들어 설정으로 고르게 합니다. 세 방식의 결과가 책·소장 번호까지 같은지 확인하고, 여섯 관점에서 방식마다 두 번 잽니다(B). 화면과 REST API는 바뀌지 않고, 새 모듈과 새 이벤트도 없습니다.
