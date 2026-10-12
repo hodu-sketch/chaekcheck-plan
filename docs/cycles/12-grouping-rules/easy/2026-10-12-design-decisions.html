@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 12 설계 제안</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.gist.ok{background:var(--ok-bg)}.gist.warn{background:var(--warn-bg)}.gist.no{background:var(--no-bg)}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.tw{overflow-x:auto}
+ul.ic{list-style:none;margin:0;padding:0}
+ul.ic li{display:flex;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
+ul.ic li:first-child{border-top:none}
+ul.ic svg{flex:0 0 28px;width:28px;height:28px;margin-top:4px;stroke:var(--accent);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.s{display:block;color:var(--muted);font-size:17px}
+h4{font-size:19px;margin:18px 0 4px;color:var(--muted)}
+.tag{font-size:15px;font-weight:700;border-radius:6px;padding:1px 7px;white-space:nowrap}
+.t-ok{background:var(--ok-bg);color:var(--ok)}.t-warn{background:var(--warn-bg);color:var(--warn)}.t-no{background:var(--no-bg);color:var(--no)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">설계 제안이 나왔습니다.<br>표·API·화면은 안 바뀌고, 가져오기 안의 묶기 코드만 바뀝니다.</p>
+<p class="sub">원본: <code>docs/cycles/12-grouping-rules/architect-proposal.md</code>. 정할 것은 아래 번호대로 대화에 답해 주세요. 맨 위는 물어보신 "dev 먼저 시작" 답입니다.</p>
+
+<section class="card">
+<h2><span class="num">0</span>dev는 사이클 11 측정 전에 시작할 수 있나요</h2>
+<div class="gist ok">네, 코드와 테스트는 지금 시작할 수 있습니다. 실데이터로 돌려 보는 것과 current를 지우는 것만 측정 뒤로 미룹니다.</div>
+<ul class="ic">
+<li><div><b>지금 해도 되는 것</b>: 새 규칙 코드(compact·sql 둘 다), 단위·계약 테스트, 비교 도구. 새 규칙은 두 방식에 똑같이 넣으니, 어느 쪽이 기본이 되든 상관없습니다.</div></li>
+<li><div><b>측정 뒤로 미룰 것</b>: ① 실데이터 dry run·가져오기 — 같은 PC에서 측정이 돌고 있어 함께 돌리면 측정 시간이 틀어집니다. ② current 지우기 — compact·sql이 결과 비교를 통과하는지 측정에서 나옵니다. ③ 측정 중인 코드를 바꾸지 않도록 별도 작업 폴더(worktree)에서 합니다.</div></li>
+<li><div>그래서 처음에 적은 "dev 개발은 측정 뒤"(spec R8-3)를 "코드는 지금, 실데이터와 current 지우기는 측정 뒤"로 바꾸자고 제안합니다(질문 1).</div></li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="num">1</span>판이 다른 책 나누기 (결정 2)</h2>
+<figure>
+<svg viewBox="0 0 860 220" role="img" aria-label="같은 제목 묶음 안에서 ISBN으로 나누기">
+<g font-family="Noto Sans KR, sans-serif">
+<rect x="10" y="80" width="200" height="60" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+<text x="110" y="106" text-anchor="middle" font-size="16" fill="var(--text)">제목·저자·출판사가</text>
+<text x="110" y="128" text-anchor="middle" font-size="16" fill="var(--text)">같은 책들</text>
+<path d="M212 110h40" stroke="var(--muted)" stroke-width="2"/><path d="M246 104l7 6-7 6" fill="none" stroke="var(--muted)" stroke-width="2"/>
+<rect x="255" y="80" width="190" height="60" rx="10" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="2"/>
+<text x="350" y="106" text-anchor="middle" font-size="16" fill="var(--warn)">ISBN이 몇 개?</text>
+<text x="350" y="128" text-anchor="middle" font-size="14" fill="var(--warn)">(판이 몇 개)</text>
+<path d="M447 100l60-50" stroke="var(--muted)" stroke-width="2"/>
+<path d="M447 120l60 50" stroke="var(--muted)" stroke-width="2"/>
+<rect x="510" y="20" width="340" height="56" rx="10" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="2"/>
+<text x="680" y="44" text-anchor="middle" font-size="15" fill="var(--ok)">0~1개: 모두 한 줄</text>
+<text x="680" y="64" text-anchor="middle" font-size="13" fill="var(--muted)">(지금과 같음)</text>
+<rect x="510" y="140" width="340" height="66" rx="10" fill="var(--no-bg)" stroke="var(--no)" stroke-width="2"/>
+<text x="680" y="164" text-anchor="middle" font-size="15" fill="var(--no)">2개 이상: 판마다 한 줄</text>
+<text x="680" y="188" text-anchor="middle" font-size="13" fill="var(--text)">ISBN 모르는 책은 따로 한 줄</text>
+</g>
+</svg>
+<figcaption>예: 「상법총칙 상행위」 2014·2020년 판은 두 줄, 어느 판인지 모르는 YES24 책은 세 번째 줄.</figcaption>
+</figure>
+<p><b>추천</b>: 이 방식(먼저 모으고, 안에서 ISBN으로 나눔). 다른 선택(합칠 때 하나씩 비교)은 처리 순서에 따라 ISBN 모르는 책이 아무 판에나 붙어서, 정해 주신 "따로 둠"을 지킬 수 없습니다.</p>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>그 밖에 고를 것</h2>
+<ul class="ic">
+<li><div><b>규칙 둘 곳</b> (결정 1) — 추천: 가져오기(<code>collection</code>) 안. 검색 코드를 건드리지 않아 서비스 재시작이 필요 없습니다. 다른 선택: 검색과 함께 쓰는 정리 코드(<code>catalog</code>)에 — 검색이 안 쓰는 규칙이 공개 기능으로 늘어납니다.</div></li>
+<li><div><b>이용 안내 꼬리</b> (결정 3) — 추천: "(PC만 열람 가능)" 같은 목록에 든 꼬리는 제목 비교에서도 뗌. 그러면 「제목(PC만 열람 가능)」과 「제목」이 한 줄이 됩니다. 앞서 정한 "본제목으로 비교"를 조금 넓히는 것입니다. 다른 선택: 권 표시에서만 뗌 — 두 책이 계속 따로입니다.</div></li>
+<li><div><b>비교 도구</b> (결정 4) — 추천: dry run에서만 켜는 "사이클 07 도서관 빼기" 설정, 그리고 비교 스크립트에 "합쳐진 책·나뉜 책 목록" 기능 추가. 다른 선택: 수집 DB를 복사해 지우기(수 GB 복사).</div></li>
+<li><div><b>내부 정리</b> (결정 5·6) — 추천: current를 흉내 내던 표본 순서 코드를 지우고, 로그에만 숫자 둘(ISBN 때문에 안 합친 수, "기타" 때문에 안 합친 수)을 더함.</div></li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>세부 질문</h2>
+<ul class="ic">
+<li><div><b>ISBN 모르는 책이 여럿</b>일 때 그들끼리는 한 줄로 합칠까요 — 추천: 합침(어느 판인지 모르는 같은 책끼리).</div></li>
+<li><div><b>첫 저자가 "기타"이고 뒤에 실명</b>이 있으면 — 추천: 다음 저자를 씀.</div></li>
+<li><div><b>로마 숫자(Ⅰ·Ⅱ)·한자 숫자("제일권")</b>를 권 표시에 넣을지 — 추천: dev가 dry run 표본을 보여 준 뒤 정함.</div></li>
+</ul>
+</section>
+
+<p class="foot">이 글은 요약이며 근거는 원본에 있습니다. 원본: <code>docs/cycles/12-grouping-rules/architect-proposal.md</code>.</p>
+</main>
+</body>
+</html>
