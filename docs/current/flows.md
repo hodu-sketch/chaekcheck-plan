@@ -7,6 +7,7 @@
 사이클 10 cycle-close (2026-10-12): 흐름 24(인기 도서 매달 받기, 실패 포함)와 받기 상태, 흐름 25(인기 도서 화면 S13 열기), 흐름 26(가운데 창 S14 열기, `holdingLimit=3`)을 더하고 "화면 공통"에 사이클 10을 적음 — 구현됨 (사이클 10). 근거 `docs/cycles/10-popular-books/design-delta.md` "구조 그림", flow.md, ADR-0072~0075·0077, ADR-0080·ADR-0081.
 사이클 10 회고 (2026-10-12): 구현 대조, 분류 14개·표지 200px JPEG·User-Agent·문구 반영 (`docs/cycles/10-popular-books/retro.md`). 흐름 24 그림을 구현에 맞춤(세션 GET 한 번, 표지 줄이기, 캐시 알림 두 번).
 사이클 11 cycle-close (2026-10-12): 가져오기 따로 하기(export·apply·finish·discard, load_manifest, db-ops) + 묶는 방식 current·compact·sql — 설계됨(미구현, 사이클 11). 흐름 27(내보내기), 28(반영, 다름·실패 포함), 29(마저 바꿔 끼우기·지우기)와 "내 PC의 `catalog_next` 상태"를 더함. 흐름 20(`in-place`)은 그대로. 근거 `docs/cycles/11-separate-import/design-delta.md` "구조 그림", spec.md, ADR-0078·0079.
+사이클 12 (2026-10-12, 사이클 11 dev 진행 중에 미리 한 plan): 책 묶기 네 번째 단계 규칙 — 설계됨(미구현, 사이클 12). 근거 `docs/cycles/12-grouping-rules/design-delta.md`, ADR-0082.
 사이클 08 cycle-close (2026-10-11): 흐름 20(가져오기: 새 표에 쓰고 바꿔 끼우기), 21(검색 계획과 책 화면 소장 읽기), 22(막혔을 때 429·503)를 더하고, 흐름 6·16과 "화면 공통"에 바뀌는 점을 적음 — 구현됨 (사이클 08). 근거 `docs/cycles/08-polish-swap-memory/design-delta.md` "주요 흐름"(흐름 A~C), ADR-0065~0070.
 사이클 08 회고 (2026-10-11): dev 보고(`plan-feedback.md` "# 사이클 08")와 대조해 흐름 20~22와 화면 공통을 구현됨으로 바꾸고 달라진 점(넓은 줄 두 번 쓰기, 실패 기록 칸, S2 그대로·돌아가기는 S8·S9·S10만, "정렬 없음 ⓘ"은 검색 줄, 이름 찾기 가운뎃점 무시)과 측정값을 적음. 흐름 21 그림의 "지금은 …" 두 곳을 "사이클 07까지는 …"으로 고침. 가져오기 힙(AC-12)·색인 단계 중단(AC-9 둘째)·국가서지 재사용 시간(AC-15)은 측정 중 [확인 필요]. 근거 `docs/cycles/08-polish-swap-memory/retro.md`.
 
@@ -1071,3 +1072,56 @@ stateDiagram-v2
 - 사이클 08 (구현됨 (사이클 08)): 폰 설정 창은 바텀 시트 유지 [확정] (사용자 승인, 2026-10-11, `docs/cycles/08-polish-swap-memory/easy/2026-10-11-final-decisions.html`) (되돌림 `PHONE_SETTINGS_SHEET = false`). 폰 직접 찾기의 흐린 "정렬 없음 ⓘ"은 **검색 줄 끝**("N곳" 옆) — 처음 둔 결과 위 도구줄이 폰에서 숨겨져 옮김 (dev 12단계), 설계 자리("검색줄 둘째 줄 오른쪽 끝")와 같음. 돌아가기("← 돌아가기")와 ⓘ는 **S8·S9·S10만**, **S2(지역 고르기 창)는 바꾸지 않음** [확정] (사용자: "A. 그대로", dev 세션 2026-10-11; S2는 [저장]을 눌러야 저장되어 "즉시 저장" 안내가 맞지 않음). S10 ⓘ 문구 "고르는 즉시 이 브라우저에 저장돼요"(로그인 전)/"고르는 즉시 계정에 저장돼요"(로그인 뒤) [확정] (사용자, dev 세션 2026-10-11). S10 이름 찾기는 공백과 함께 가운뎃점(·)도 무시 [확정] (사용자 승인, 2026-10-11). 글꼴은 줄인 파일("Chaekcheck Barun")을 먼저 쓰고 드문 음절이 있을 때만 원래 나눔바른고딕을 받음
 - 사이클 09 — 구현됨 (사이클 09) (ADR-0071·0076, 흐름 23): 도서관 이름은 기관 이름만 보이고, 결과 카드(S1·S3)는 모든 폭에서 이름 다음 줄에 "교보 · 소장", S10 세 목록은 "이름 · 업체 · 대출 방식"(폰은 이름 아래 줄), 순번 2 이상이면 "· N번째 사이트". 요약 줄·지역 가져오기 창·직접 찾기 결과 이름 나열·가입 정보 창은 이름만. 분류 값이 없으면 이름만 [확정]. 교보 구독형 중 대여 9곳 가운데 8곳은 이름의 "(구독)"이 빠지고 분류가 "대여"로 보임 [확정] (spec R3). S10 이름 찾기에서 같은 이름 여러 줄은 업체 글자 한글 가나다순(교보 → 북큐브 → 알라딘 → 자체 → 통합 포털 → YES24), 같은 이름·같은 업체는 순번 순 [확정] (사용자 승인, 2026-10-12, `docs/cycles/09-library-naming/easy/2026-10-12-retro-decisions.html` #1)
 - 사이클 10 — 구현됨 (사이클 10) (흐름 24~26, `module-map.md` "사이클 10 웹"): 머리에 "인기 도서" 링크(로고 바로 옆, S8·S9·`/terms`·`/privacy` 제외) [확정] (사용자: "로고 바로 옆 (지금 구현)", 2026-10-12), 로고 옆 설명 글 "전자도서관 대출 가능 확인"은 모든 폭에서 지움 [확정]. 폰에서 아래에서 올라오는 창 넷(S13c 분류 목록, S13i 도움말, S14 가운데 창, S15 신청 안내)은 손잡이 끌어내리기·ⓧ·바깥으로 닫히고 사이클 08 검색 설정 바텀 시트와 같은 공용 부품 `BottomSheet`(끌어내리기 80px, 폰 뒤로 가기는 창만 닫음, `useBackToClose`) [확정] (사용자, 2026-10-11; 이름 dev 구현 확인, 2026-10-12). ⓘ 말풍선은 앱 전체에서 밝은 둥근 네모 [확정] (사용자, 2026-10-12). 흐린 책 안내는 "검색하는 도서관"으로 씀(S13i "흐린 책은 검색하는 도서관에 전자책이 없어요", S15 두 줄) [확정]. 표지는 작은 그림을 폭 200px JPEG로 줄여서만, 큰 그림·확대 보기 없음, S12 `/about`에 표지 게시 중단 요청 안내(연락처는 배포 때) [확정] (handoff C10)
+
+## 흐름 30: 가져오기의 네 번째 묶기 단계 (같은 키 안에서 ISBN으로 나누기) — 설계됨(미구현, 사이클 12)
+
+ADR-0082, 규칙 `docs/cycles/12-grouping-rules/spec.md` R1~R4. 흐름 20·27의 "묶기" 안에서 일어남.
+
+```mermaid
+sequenceDiagram
+  participant I as CatalogImporter
+  participant S as SqlGrouping
+  participant K as SameTextKey (Java)
+  participant P as PostgreSQL 임시 표
+  I->>S: mergeSameText(report)
+  S->>P: 묶음마다 대표 제목·저자·출판사 읽기
+  loop 묶음마다
+    S->>K: sameTextKey(title, author, publisher)
+    K-->>S: key 또는 null (자리 채움·저자 없음)
+  end
+  S->>P: COPY grp_text(label, key)
+  S->>P: ISBN 붙이기, key별 ISBN 수로 mergeKey
+  S->>P: mergeKey마다 min(label) → 간선 → 라벨 전파
+  alt 반복 상한을 넘음
+    S-->>I: 예외
+    I->>I: FAILED 기록, 옛 catalog 그대로
+  else 정상
+    S-->>I: 단계별 책 수, 카운터
+  end
+```
+
+```mermaid
+flowchart TD
+  A["같은 key의 묶음들"] --> B{"서로 다른 ISBN 수"}
+  B -->|"0 또는 1"| C["모두 한 책"]
+  B -->|"2 이상"| D["ISBN 있는 묶음은 각자 한 책"]
+  B -->|"2 이상"| E["ISBN 없는 묶음끼리 한 책"]
+```
+
+## 흐름 31: 묶기 규칙 비교 (dev dry run, 새로 넣은 도서관 이어 붙음·번호·두 방식) — 설계됨(미구현, 사이클 12)
+
+```mermaid
+sequenceDiagram
+  participant D as dev
+  participant A as 가져오기 dry run
+  participant C as compare_grouping.py
+  D->>A: 새 규칙, 사이클 07 도서관 뺌 (dry run 전용 설정)
+  D->>A: 새 규칙, 전체
+  D->>C: regroup 뺀 결과 vs 전체 결과
+  C-->>D: 새 도서관 때문에 합쳐진 기존 책 목록 (R5)
+  D->>C: regroup 서비스 DB 지금 번호 vs 새 규칙 결과
+  C-->>D: 나뉜 책·합쳐진 책 목록 → 표본 10권 (R7-3)
+  D->>C: dryrun / ids-compare compact vs sql
+  C-->>D: 다른 책 0권 (R8-2, AC-6)
+```
+

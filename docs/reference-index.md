@@ -99,6 +99,7 @@
 | plan `docs/research/ebook-catalog/search-and-normalization.md` 4절 | 정리 규칙: 저자 나누기·역할(4.1, 사이클 04 규칙 반영), 제목·본제목(4.2), 출판사(4.3), 출판일·대표값(4.4), **자료 종류(4.6, 2026-10-01 추가)** | 2026-10-01 갱신 |
 | plan `docs/research/ebook-catalog/search-and-normalization.md` 3절 | 검색 저장소 비교, pg_bigm 측정, `shared_preload_libraries` 필요 [확정] | 갱신 |
 | plan `docs/research/ebook-catalog/same-book-isbn.md` 5절 | **묶기 ①②③④ 구현 기준**(번호 체계, 국가서지 모호 규칙, ④ 정리한 전체 제목+저자+출판사), 5.1 dry run 수치, 5.2 대표값, 5.3 재작업 시 확인할 것 | 2026-10-01 갱신 |
+| plan `docs/research/ebook-catalog/same-book-isbn.md` 5.4~5.6절, `docs/cycles/12-grouping-rules/`(spec R1~R8, design-delta), ADR-0082 | **사이클 12 묶기 규칙 변경**: 표본 조사(판이 다른 책 3,079권, 부제 차이 44,461묶음, 자리 채움 값), 방향 결정, ④ 새 키(본제목 + 권 표시, ISBN으로 나누기, 자리 채움 값 없음) | 2026-10-12, 설계됨(미구현) |
 | plan `docs/research/ebook-catalog/same-book-isbn.md` 3·4절 | 교보식 코드 → 종이책 ISBN 규칙, 국가서지 파일, ISBN 서지정보 API 시험·사용법·국립중앙도서관 API 종류(4.4~4.6). API는 지금 쓰지 않기로 함(1절, 2026-10-03) | 확정/확인 필요 혼재 |
 | dev `docs/library-maintenance.md` 4-11, `scripts/library/check_code_spaces.py` | **책 번호 체계 점검** 절차와 기준값 표. 도서관 목록 확인 때마다 [확정] | 최신 |
 | dev `catalog/normalize/{CatalogText,Contributors,Isbn,PublishedDates}.java`(named interface `normalize`), `collection/internal/importer/{BookGrouping,NationalBibliography,CatalogImporter}.java` (사이클 07에 옮김) | 규칙의 실제 코드. 문서와 코드가 다르면 코드가 실제 동작 | 구현 (사이클 07 위치) |

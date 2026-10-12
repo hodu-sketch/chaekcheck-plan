@@ -20,7 +20,7 @@ Do not plan or design the whole product up front. One cycle takes one small feat
 5. `/adr <title>` — record each decision as it is made
 6. `/cycle-close` — review (`design-reviewer`), update `docs/current/`, write the handoff (`planner`)
 
-Current cycle: docs/cycles/12-grouping-rules (plan done ahead while cycle 11 dev measurement is still running; cycle 11 final retro not done yet)
+Current cycle: none (last: docs/cycles/12-grouping-rules, handed off ahead in the cycle folder only; dev works in a separate worktree while cycle 11 measurement runs. docs/current/handoff.md is still cycle 11)
 
 ## Documents
 

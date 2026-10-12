@@ -5,6 +5,22 @@
 - `catalog`(정리 함수 `normalize`, 번호 잇기 `CatalogLoad`, 검색) 변경 없음 → ADR-0069 표의 "묶기·대표값·날짜 규칙을 고침: 새 코드로 가져오기 → 바꿔 끼우기, 서비스는 그대로"
 - dev 진행: 코드·테스트·비교 도구는 사이클 11 측정 전에 별도 작업 폴더에서 시작, 실데이터 실행과 `current` 지우기는 측정 뒤 [확정] (spec R8-3)
 
+## 세부 결정 (2026-10-12, 모두 [확정] (사용자 승인 "전부 승인", 2026-10-12, `easy/2026-10-12-design-decisions.html`))
+
+| 번호 | 내용 | 기록 |
+|---|---|---|
+| 결정 1 | 새 ④ 규칙은 `collection` 안(`SameTextKey`) | ADR-0082 |
+| 결정 2 | 같은 키로 모은 뒤 ISBN으로 나눔 | ADR-0082 |
+| 결정 3 | 꼬리 목록에 든 이용 안내 꼬리는 비교 제목 끝에서도 뗌 (권 표시에서만 떼는 안은 미채택) | ADR-0082, spec R3-1 |
+| 결정 4-1 | dry run에서만 켜는 "사이클 07 도서관 빼기" 설정, 진짜 가져오기에서 켜면 시작 안 함 | 여기 (도구 설정, ADR 대상 아님) |
+| 결정 4-2 | `compare_grouping.py regroup` | 여기 |
+| 결정 5 | "출판일 2년 차이" 표본 순서를 단순화, `current` 흉내 코드 지움 | 여기 |
+| 결정 6 | 로그 전용 카운터 둘 (사용자 승인, 이유 [이유 미확인]; AC에는 필요 없음) | 여기 |
+| 세부 7 | ISBN 둘 이상인 키에서 ISBN 없는 묶음끼리는 한 책 | spec R1-3 |
+| 세부 8 | 첫 저자가 자리 채움이면 다음 저자 | spec R2-4 |
+| 세부 9 | 로마·한자 숫자 권 표시는 dev 표본 뒤 결정 | 확인 필요 |
+| 시작 시점 | 코드·테스트는 사이클 11 측정 전 별도 worktree, 실데이터·`current` 지우기는 측정 뒤 | spec R8-3 |
+
 ## 구조 그림
 
 ### 모듈 구성도
@@ -122,7 +138,7 @@ classDiagram
 | `collection` | 변경 | 네 번째 묶기 단계 규칙, 비교 도구 | 변경 없음 | 없음 | 변경 없음 (`collection.catalog_import` 칸 그대로) |
 | `catalog` | 변경 없음 | — | — | — | — |
 
-### `collection` 안 변경 [안 이름]
+### `collection` 안 변경 (이름은 모두 [안], dev가 코드에 맞춰 바꿀 수 있음)
 
 - 새 패키지 내부 클래스 `SameTextKey` + `BookGrouper.sameTextKey(title, authorRaw, publisherRaw)` (결정 1). `BookGrouper.key`·`firstAuthor`(③ 공유)는 그대로
   - 키 = 비교 제목 + 권 표시 + 첫 저자 + 출판사. 하나라도 없으면 null(합치지 않음)
@@ -139,7 +155,7 @@ classDiagram
 - `BookGrouping`(`current`)과 설정값 `current`를 지움 — 측정 뒤, 조건부 (R8-1)
 - "출판일 2년 넘게 차이" 표본 순서를 "합친 책의 첫 묶음 순"으로 바꾸고 `current` 흉내 코드(`MapShape`, `hashMapOrder`)를 지움 (결정 5)
 - `ImportReport` 로그 전용 카운터 둘: R1로 합치지 않은 묶음 수, R2로 키가 없어진 묶음 수 (결정 6). 표·`ImportTransfer`에는 넣지 않음
-- dry run 전용 설정 "사이클 07 도서관 빼기"(수집 번호 100001 이상 = `CollectedCatalog.Library.candidate()`, 진짜 가져오기에서 켜면 시작하지 않음) (결정 4-1). 설정 이름은 dev가 `chaekcheck.collection.import.*`에 맞춰 정함
+- dry run 전용 설정 "사이클 07 도서관 빼기"(수집 번호 100001 이상 = `CollectedCatalog.Library.candidate()` [확인 필요: 사이클 07의 2,394곳과 같은지], 진짜 가져오기에서 켜면 시작하지 않음) (결정 4-1). 설정 이름은 dev가 `chaekcheck.collection.import.*`에 맞춰 정함
 - `scripts/catalog/compare_grouping.py regroup <A> <B>`: (도서관, 책 코드)로 맞대어 합쳐짐·나뉨 수와 목록(제목·저자·출판사·ISBN·A쪽 책 번호). A와 B는 같은 사본으로 만듦 (결정 4-2)
 
 ## 데이터
@@ -181,6 +197,7 @@ erDiagram
 - 단위 `SameTextKeyTests`: spec R3-4 예 여섯, 앞 시리즈 숫자(「[100분 고전 013] 논어」 = 「논어」), "전면개정"/"개정", "01"="1", R2 목록(대소문자·공백 무시; "작자미상"·"편집부"·출판사 "북큐브"는 글자 그대로), 첫 저자 "기타" → 다음 저자, 꼬리 목록, "편"만 있으면 키 없음
 - 계약 `BookGrouperContractTests`(compact·sql 둘 다): R1 → 2권, R1-3 A(ISBN1)·B(없음)·C(ISBN2) → 3권, A·B1·B2·C → B1·B2 한 권(4권 아닌 3권), ISBN 하나 + 없음 → 1권, "기타" → 따로, 부제만 다름 → 1권, 권 다름 → 따로, 단계별 수와 새 카운터
 - `SqlGroupingTests`: 같은 키 안 ISBN 0·1·2개에서 `mergeKey`가 Java 규칙과 같음
+- 더 넣을 것(검토 반영): ③ 국가서지에서 붙인 ISBN도 R1의 ISBN으로 셈(계약), 자리 채움 값이 `book_contributor`·검색 표시에는 그대로 남음(R2-3, 가져오기 시험), "사이클 07 도서관 빼기" 설정을 진짜 가져오기에서 켜면 시작하지 않음(단위), 표본 순서 변경(계약), `compare_grouping.py regroup`은 작은 샘플 두 개로 합쳐짐·나뉨이 나오는 스크립트 시험, AC-8은 바꾸기 전후 두 `catalog_import` 줄의 `book_count`를 `plan-feedback`에 적음
 - 실데이터(측정 뒤): 같은 사본으로 compact·sql dry run → `compare_grouping.py dryrun` 다른 줄 0, `ids-compare` 0 (AC-6); `regroup`으로 R5·R7-3 목록 (AC-7); 가져온 뒤 AC-1~AC-5 화면
 
 ## 결정 기록

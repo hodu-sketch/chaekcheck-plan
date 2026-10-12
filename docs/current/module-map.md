@@ -7,6 +7,7 @@
 사이클 10 cycle-close (2026-10-12): 인기 도서 — 새 모듈 `popular`(출판유통통합전산망 순위·판매 부수·표지를 매달 받아 저장, 공용 캐시, `GET /api/v1/popular-books`·`…/covers/{coverId}`), `catalog`(+`BookLookup.byIsbn13`), `availability`(소장 스트림 `holdingLimit`), 웹(S13 `/popular`, S14 가운데 창, S15 신청 안내, 머리 "인기 도서" 링크, 설명 글 지움) — 구현됨 (사이클 10). 새 이벤트 없음. 새 의존 `popular → catalog, library`. 근거 `docs/cycles/10-popular-books/design-delta.md`, spec.md, flow.md, ADR-0072~0075·0077, ADR-0080·ADR-0081.
 사이클 10 회고 (2026-10-12): 구현 대조, 분류 14개·표지 200px JPEG·User-Agent·문구 반영 (`docs/cycles/10-popular-books/retro.md`). 모듈 관계는 설계 그대로(`popular` → `catalog`·`library`, 이벤트 없음; dev `popular/package-info.java`, `module-popular.puml`).
 사이클 11 cycle-close (2026-10-12): 가져오기 따로 하기(export·apply·finish·discard, load_manifest, db-ops) + 묶는 방식 current·compact·sql — 설계됨(미구현, 사이클 11). `catalog`(`CatalogLoad` 단계 메서드 7개, `Manifest`·`Baseline`, reason `mismatch`, 안쪽 `PgTools`), `collection`(모드·묶는 방식 설정, 두 DB 비교, 기록 이음). 새 모듈·새 이벤트·새 REST 없음, 모듈 의존 방향 그대로(`collection → catalog, library`). 근거 `docs/cycles/11-separate-import/design-delta.md`, spec.md, ADR-0078·0079. 이름은 따로 적지 않으면 [안].
+사이클 12 (2026-10-12, 사이클 11 dev 진행 중에 미리 한 plan): 책 묶기 네 번째 단계 규칙 — 설계됨(미구현, 사이클 12). 근거 `docs/cycles/12-grouping-rules/design-delta.md`, ADR-0082.
 사이클 08 cycle-close (2026-10-11): 다듬기 + 가져오기 바꿔 끼우기 + 메모리 줄이기 — `catalog`(새 표에 쓰고 바꿔 끼우기, 소장 번호 잇기, 계획 도서관 소장만 읽기), `collection`(국가서지 원문 남기기, 수집 기간·단계별 시간), `library`(`mobileSiteDiffers`, 계획에 들어갈 도서관만 읽기, `updated_at` 트리거, 교보 대여·혼합 11곳 뺌, 이름 고침), `region`(`updated_at` 트리거), `availability`(캐시 통계·상한, 503 `Retry-After`, 응답 본문 복사 줄임, `holding_not_found`), 웹 — 구현됨 (사이클 08). 모듈 의존 방향·이벤트는 그대로. 근거 `docs/cycles/08-polish-swap-memory/design-delta.md`, ADR-0065~0070. 이름·숫자는 따로 적지 않으면 [안].
 사이클 08 회고 (2026-10-11): dev 보고(`plan-feedback.md` "# 사이클 08")와 Modulith `components.puml`로 대조함 — 모듈 관계는 이 문서와 같고 바뀌지 않음. 달라진 점: 가져오기 기록에 상태·실패 칸, `step_seconds` 키가 늘어남, 캐시 상한은 두 캐시 모두 1,000 그대로(ADR-0006 값 변경 없음), S2는 바꾸지 않고 돌아가기·ⓘ는 S8·S9·S10만, 폰 직접 찾기 "정렬 없음 ⓘ"은 검색 줄, S10 이름 찾기는 가운뎃점(·)도 무시. 메모리 값은 로컬 PC 기준(운영 서버에서 다시 잼). 가져오기 힙(AC-12)·색인 단계 중단(AC-9 둘째)·국가서지 재사용 시간(AC-15)은 측정 중 [확인 필요]. 근거 `docs/cycles/08-polish-swap-memory/retro.md`.
 
@@ -518,3 +519,58 @@ classDiagram
 ## 관련 ADR
 
 ADR-0001 모듈 경계, ADR-0006 캐시, ADR-0009 검색 필드, ADR-0010 호출 간격, ADR-0011 조회 서비스, ADR-0013 자격 모델, ADR-0014 묶음 검색 API, ADR-0015 조회 계약, ADR-0016 adapter, ADR-0017 도서관 한 줄 = 이용 단위, ADR-0018 제목 비교 키, ADR-0019 판정·전달 인터페이스, ADR-0020 바쁜 호스트 건너뛰기, ADR-0021 본 서비스 여러 대 대비, ADR-0022 도서관 TLS 호환, ADR-0023 화면 종류 세대 번호, ADR-0025 검색 조건 이름 있는 파라미터, ADR-0026 포털 저자·출판사 거르기, ADR-0027 방문 가입 필터와 순서, ADR-0028 catalog 모듈, ADR-0029 상세 페이지 조회, ADR-0030 책 검색 API와 소장 스트림, ADR-0031 가져오기와 정리 코드, ADR-0032 PostgreSQL + pg_bigm·사람별 표, ADR-0033 웹 주소 여러 조건, ADR-0034 전자책 목록 저장, ADR-0036 auth·member 모듈(ADR-0048로 대체됨), ADR-0037 검색 모듈은 회원을 모름(`member`는 `mylibrary`로 읽음, `libraryIds` 상한 20 [확정] (사용자, 2026-10-04)), ADR-0038 JWT 로그인 유지, ADR-0039 로그인 수단 표, ADR-0040 로그인 임시 값, ADR-0041 계정 삭제 이벤트, ADR-0042 같은 출처와 인증 주소, ADR-0043 재인증, ADR-0044 보안 설정 소유, ADR-0045 결과 코드, ADR-0046 로그인 기능 켜고 끄기, ADR-0048 `mylibrary` 모듈(ADR-0036 대체), ADR-0049 내 도서관 목록과 저장 API, ADR-0050 직접 추가 도서관은 맨 앞·자격 규칙의 예외, ADR-0051 계정 줄 잠금과 이벤트 다시 처리, ADR-0052 후보 도서관 새 번호와 `collection` 짝 표(ADR-0060으로 넓힘), ADR-0053 미조사 도서관은 직접 추가했을 때만, ADR-0054 모든 서비스 도서관의 책을 나눠 읽어 가져오기, ADR-0055 책마다 도서관 번호 목록 미리 계산, ADR-0056 북큐브·알라딘 adapter와 북큐브 대여형·교보 소장형 판정, ADR-0057 로그인 전 직접 추가와 묶음 옮기기(ADR-0049 보완), ADR-0058 도서관 목록 통째로 + 응답 압축(ADR-0049 전환 조건 정리), ADR-0059 도서관 로고, ADR-0060 가져오기는 `collection`, 제목 다듬기 규칙은 `catalog`에 한 벌(ADR-0031 위치 바꿈), ADR-0065 가져오기는 새 표에 쓰고 바꿔 끼운다(국가서지 부분은 ADR-0069, 소장 번호 부분은 ADR-0070이 바꿈), ADR-0066 메모리를 줄이는 구조, ADR-0067 교보 대여·혼합 도서관은 받지도 넣지도 않는다, ADR-0068 고친 시각은 DB가 적는다, ADR-0069 국가서지는 원문을 남기고 정리 규칙을 바꿀 때는 상황별로 다시 가져온다, ADR-0070 같은 소장은 옛 소장 번호를 잇고 빠진 책·소장은 따로 알린다, ADR-0071 도서관 이름에는 기관 이름만, 업체·대출 방식은 분류로, ADR-0076 도서관 분류 값은 API로 보내고 화면이 글자를 만듦·이름은 번호로 고치는 changeset·이름 찾기는 화면에서, ADR-0072 인기 도서 출처는 출판유통통합전산망 공개 통계 화면, ADR-0073 새 모듈 `popular`, ADR-0074 순위 책과 우리 책은 볼 때 ISBN으로 맞추고 책 정보는 공용 캐시, ADR-0075 표지는 매달 미리 받아 우리 서버가 넘겨줌·최근 두 달 보관, ADR-0077 전자책이 거의 없는 다섯 분류를 받지 않음(전체 + 16분류, 언어·기술·공학도 빼는 ADR-0080이 대체 예정 → 전체 + 14분류), ADR-0081 표지를 폭 200px JPEG로 줄여 저장(ADR-0075를 대체 예정, 받은 그대로 저장하던 것을 바꿈), ADR-0078 가져오기는 내 PC에서 하고 운영 DB에는 파일 하나로 옮겨 바꿔 끼운다, ADR-0079 책 묶기는 세 방식(current·compact·sql)을 설정으로 고르고 결과가 번호까지 같아야 쓴다
+
+### 책 묶기 네 번째 단계 — 설계됨(미구현, 사이클 12)
+
+ADR-0082, `docs/cycles/12-grouping-rules/design-delta.md`. 모듈 관계·공개 API·이벤트·표 변경 없음. `collection` 안에 패키지 내부 `SameTextKey`[안]를 두고 `compact`·`sql`이 같은 함수를 부름. ③이 쓰는 `BookGrouper.key`·`firstAuthor`와 `catalog`의 정리 함수·검색은 그대로. 측정 뒤 `current`(`BookGrouping`)는 지움(둘 다 결과 비교를 통과 못 하면 남김, ADR-0079 덧붙임).
+
+```mermaid
+flowchart TB
+  subgraph collection["collection (바뀜)"]
+    CI[CatalogImporter] --> BG{{BookGrouper}}
+    BG --> CG[CompactGrouping]
+    BG --> SG[SqlGrouping]
+    CG --> SK["SameTextKey (새, 패키지 내부)"]
+    SG --> SK
+    NB["NationalBibliography ③"] --> KEY["BookGrouper.key / firstAuthor (그대로)"]
+    CG --> KEY
+    SG --> KEY
+    CUR["BookGrouping = current (지움*)"]
+  end
+  subgraph catalog["catalog (그대로)"]
+    N["normalize: CatalogText, Contributors"]
+    CL["CatalogLoad 번호 잇기"]
+  end
+  SK --> N
+  CI --> CL
+```
+
+```mermaid
+classDiagram
+  class Group {
+    representativeTitle
+    representativeAuthor
+    representativePublisher
+    isbnAtStep4Start
+  }
+  class SameTextKey {
+    comparisonTitle
+    volumeMarks
+    firstAuthorExact
+    publisherNorm
+  }
+  class VolumeMarks {
+    numbers
+    upperMiddleLower
+    editionWords
+  }
+  class Bucket {
+    distinctIsbnCount
+  }
+  class Book
+  Group "1" --> "0..1" SameTextKey : 없으면 합치지 않음
+  SameTextKey "1" --> "1" VolumeMarks
+  Bucket "1" --> "1..*" Group
+  Bucket "1" --> "1..*" Book : 나누기 결과
+```
+
