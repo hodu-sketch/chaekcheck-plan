@@ -20,7 +20,7 @@ Do not plan or design the whole product up front. One cycle takes one small feat
 5. `/adr <title>` — record each decision as it is made
 6. `/cycle-close` — review (`design-reviewer`), update `docs/current/`, write the handoff (`planner`)
 
-Current cycle: none (last: docs/cycles/13-crawler-to-dev, handed off ahead in the cycle folder only, one-line note in docs/current/handoff.md; dev steps 1-8 run now in a separate worktree with its own DB compose project, alongside 12; real-data step and merge after 11 and 12); also docs/cycles/12-grouping-rules and docs/cycles/14-librarian-picks handed off ahead (cycle folders only; dev order 11 → 12 → 13 → 14). docs/current/handoff.md is still cycle 11
+Current cycle: none (last: docs/cycles/13-crawler-to-dev, handed off ahead in the cycle folder only, one-line note in docs/current/handoff.md; dev steps 1-8 run now in a separate worktree with its own DB compose project, alongside 12; real-data step and merge after 11 and 12); also docs/cycles/12-grouping-rules and docs/cycles/14-librarian-picks handed off ahead (cycle folders only; dev order 11 → 12 → 13; 14 now runs in parallel in its own worktree ../chaekcheck-dev-c14, docker project chaekcheck-c14, ports 5452/5453/8082/5176). docs/current/handoff.md is still cycle 11
 
 ## Documents
 

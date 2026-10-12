@@ -1,6 +1,6 @@
 # 개발 인계서: 사이클 11 가져오기 따로 하기 + 가져오기 힙 줄이기
 
-> **알림 (2026-10-12, 사이클 14 미리 함)**: plan이 사이클 14(인기 도서 → 사서추천도서, 국립중앙도서관 Open API, 새 모듈 `picks`, `popular` 지움)를 미리 설계·인계했습니다. **사이클 12·13 개발이 끝나고 커밋된 뒤에** 시작하세요. 인계서: plan `docs/cycles/14-librarian-picks/handoff.md` (`../chaekcheck-plan/docs/cycles/14-librarian-picks/handoff.md`)
+> **알림 (2026-10-12, 사이클 14 미리 함)**: plan이 사이클 14(인기 도서 → 사서추천도서, 국립중앙도서관 Open API, 새 모듈 `picks`, `popular` 지움)를 미리 설계·인계했습니다. **따로 만든 worktree `../chaekcheck-dev-c14`와 따로 켠 DB(docker 프로젝트 `chaekcheck-c14`, 5452·5453, 서버 8082, 웹 5176)에서 지금 개발**합니다. 원래 `chaekcheck` 프로젝트와 원래 폴더 `.env`는 건드리지 않습니다. 인계서: plan `docs/cycles/14-librarian-picks/handoff.md` (`../chaekcheck-plan/docs/cycles/14-librarian-picks/handoff.md`)
 
 > **알림 (2026-10-12, 사이클 13 미리 함)**: plan이 사이클 13(수집기 dev로 갈아타기 + 새 도서관 넣기 명령 `library-insert`, `library`의 `LibraryRegistry`, 반영 파일 판 2, `/about` 가입 조사 기준일 한 줄)을 미리 설계·인계했습니다. **사이클 12와 나란히 따로 뺀 작업 폴더와 따로 띄운 DB 묶음(`chaekcheck-13`, 포트 5442~5444)에서 1~8단계**를 하고, 실데이터·main 합치기는 11·12가 합쳐진 뒤입니다. 사이클 14는 13 뒤입니다. 인계서: plan `docs/cycles/13-crawler-to-dev/handoff.md` (`../chaekcheck-plan/docs/cycles/13-crawler-to-dev/handoff.md`)
 

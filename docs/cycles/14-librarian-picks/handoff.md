@@ -1,11 +1,17 @@
 # 개발 인계서: 사이클 14 인기 도서 → 사서추천도서 (출처 바꾸기)
 
 - 승인: [확정] (사용자 "승인", 2026-10-12, 인계서 검토 — ADR-0092와 함께)
-- **시작 조건** [확정] (사용자: "1로 하고 공용 인계서에 cycle14미리 했다고 아주 간단하게만 알려줘 그리고 이 사이클의 인계서 문서 링크 걸고", 2026-10-12)
-  - dev는 사이클 12(책 묶기 기준)와 사이클 13(수집기 → dev) **개발이 끝나고 커밋된 뒤에** 사이클 14를 시작합니다. 작업 폴더·로컬 DB(`db` 5432, `db-test` 5433)는 같고 worktree는 따로 만들지 않습니다.
-  - 이 인계서는 plan `docs/cycles/14-librarian-picks/handoff.md`에만 있습니다. `docs/current/handoff.md`에는 알림 한 줄과 링크만 둡니다.
-  - 사이클 12·13이 `catalog` 코드와 changelog master를 바꿀 수 있으므로 시작할 때 master 맨 끝 include와 `catalog` 코드(`BookLookup`, `JdbcBookLookup`, `catalog/normalize/*`)를 다시 봅니다. plan 읽기(2026-10-12): master 맨 끝 `collection/005-import-export.yaml`(85-88행), `popular/001-popular-schema.yaml`은 81-84행.
-
+- **시작 조건** [확정] (사용자 승인, 2026-10-12, `easy/2026-10-12-worktree-decisions.html` #1~#4 — 처음 정한 "12·13 뒤에, worktree 따로 안 만듦"을 바꿈)
+  - **지금 바로, 따로 만든 git worktree·브랜치와 따로 켠 DB에서** 개발합니다. 사이클 11 측정, 사이클 12·13 작업 폴더의 파일·브랜치·커밋 안 한 변경은 건드리지 않습니다.
+  - worktree 폴더 `../chaekcheck-dev-c14`, 브랜치 `cycle-14-librarian-picks`, 시작 커밋은 dev 기본 브랜치의 지금 최신 커밋 [확정]
+  - **docker는 프로젝트 이름을 따로**: worktree에서 docker 명령은 늘 `docker compose -p chaekcheck-c14 …`(프로젝트 이름 순서는 `-p` → `COMPOSE_PROJECT_NAME` → 파일의 `name:`, https://docs.docker.com/compose/how-tos/project-name/ 2026-10-12 확인). 켜기·끄기 전에 `docker compose ls`로 프로젝트를 확인. **원래 프로젝트 `chaekcheck`은 켜고 끄지 않습니다** [확정]
+  - worktree `.env`(git 밖, 새로 만듦): `DB_PORT=5452`, `TEST_DB_PORT=5453`, 그 밖의 DB 이름·계정은 원래 `.env`와 같게, `CHAEKCHECK_PICKS_FETCH_ENABLED=false`, 인증키 `CHAEKCHECK_PICKS_NLK_API_KEY`는 **사용자가 직접**. 서버 8082(실행할 때 `--server.port=8082` 등, 방법은 dev가 정함 [안]), 웹 5176 + `API_PROXY_TARGET=http://localhost:8082` [확정 번호] (번호는 사이클 13 `chaekcheck-13` 5442~5444와 겹치지 않게 바꿈, 사용자 승인 2026-10-12, `easy/2026-10-12-worktree-ports-decisions.html`). **원래 폴더 `.env`는 건드리지 않음**(특히 `CHAEKCHECK_POPULAR_FETCH_ENABLED=false` 줄)
+  - 새 `db`(5452)에는 원래 서비스 DB를 **한 번 복사**합니다(약 8.5~10GB). 사이클 11의 `pg_dump -Fc` 방법을 쓰고, 원래 DB는 읽기만. **사이클 11 측정 라운드가 쉬는 때에 사용자에게 알리고** 합니다 [확정]. 처음 켤 때 `docker volume ls`로 저장 공간이 `chaekcheck-c14` 쪽에 따로 생겼는지 확인 [확인 필요: 프로토타입 — 공식 문서에서 확인 못 함]
+  - 시험 DB(5453)는 tmpfs라 메모리를 씀 → 다 쓰면 `-p chaekcheck-c14`로 끔
+  - 아래 단계에서 "로컬 `db`·`db-test`"는 모두 **이 worktree의 5452·5453**을 뜻합니다(0단계 정리, 1단계 측정, 7단계 받기 시험 포함)
+  - **합치기** [확정]: 12·13이 먼저 기본 브랜치에 들어가면 이 브랜치를 그 위로 rebase하고 작은 충돌(master 끝줄, `AboutPage.tsx` 문단, `ModularityTests`·`AuthEnabledSecurityTests`, `docs/plan-feedback.md` 끝)을 풉니다. 13이 새로 만든 `application-library-insert.yml`의 `chaekcheck.popular.*` 줄도 이때 지웁니다. 14가 먼저 끝나면 반대로 13이 rebase합니다. 합친 뒤 원래 `db`·`db-test`(5432·5433)에서 0단계 DB 정리를 한 번 더 합니다(원래 DB에는 아직 `popular` 표가 있음)
+  - 이 인계서는 plan `docs/cycles/14-librarian-picks/handoff.md`에만 있습니다. `docs/current/handoff.md`에는 알림 한 줄과 링크만 둡니다
+  - 시작할 때 master 맨 끝 include와 `catalog` 코드(`BookLookup`, `JdbcBookLookup`, `catalog/normalize/*`)를 봅니다. plan 읽기(2026-10-12): master 맨 끝 `collection/005-import-export.yaml`(85-88행), `popular/001-popular-schema.yaml`은 81-84행
 ## 요약
 
 국립중앙도서관 사서추천도서를 새 모듈 `picks`가 받습니다.
@@ -98,7 +104,7 @@
 ## 개발 시작 전 확인
 
 ### dev가 확인할 것
-- [ ] 사이클 12·13 dev 변경이 커밋되었는지(`git status` 깨끗). 아니면 사용자에게 물어 정리
+- [ ] worktree를 만든 시작 커밋을 `# 사이클 14` 절에 적음. 원래 폴더의 `git status`·브랜치는 건드리지 않음
 - [ ] base package `com.chaekcheck`, 새 모듈 패키지 `com.chaekcheck.picks` [확정]
 - [ ] master 맨 끝 include(plan 읽기: `collection/005-import-export.yaml`). 12·13이 더한 것이 있으면 그 뒤에 `# cycle 14` 주석과 `picks/001` [안 위치]
 - [ ] `catalog` 공개 API·`normalize`가 12·13 뒤 어떤 모양인지: `BookLookup`, `IsbnBook`, `JdbcBookLookup`, `CatalogText`(`titleNorm`, `mainTitleNorm`, `nameExact`), `Contributors.parse`, `Isbn.toIsbn13`. 사이클 12가 `title_norm`·`book_contributor.name_exact`의 뜻을 바꿨으면 1단계 전에 보고

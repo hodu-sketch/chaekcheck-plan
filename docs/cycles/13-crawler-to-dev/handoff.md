@@ -9,7 +9,7 @@
   - 새 DB는 비어서 시작하고 Liquibase가 표·도서관 seed를 만듭니다. 그래서 2단계 칸 이름은 파일 고침만으로 되고, 이 DB에는 "로컬 DB 맞추기" SQL이 필요 없습니다
   - **지금 할 것: 1~8단계.** 9단계(실데이터: 6곳 넣기, 운영 흉내 반영), 10단계 마지막 대조, main에 합치기는 **사이클 11·12가 main에 합쳐진 뒤** 그 위로 옮겨서(rebase) 합니다. 그때 12와 겹치는 파일(아래 표)의 충돌을 풀고, 12·11이 쓰던 `db`·`db-ops`에 "로컬 DB 맞추기" SQL을 돌립니다
   - 데이터 폴더(수집 DB)는 하나라 1단계 수집(여주대 빈 곳 채우기) 동안 다른 수집은 돌리지 않습니다
-- 사이클 14(사서추천도서, plan `docs/cycles/14-librarian-picks/handoff.md`)는 이 사이클이 끝나고 커밋된 뒤에 시작합니다
+- 사이클 14(사서추천도서, plan `docs/cycles/14-librarian-picks/handoff.md`)는 **따로 만든 worktree(`../chaekcheck-dev-c14`)와 따로 켠 DB(docker 프로젝트 `chaekcheck-c14`, 5452·5453, 서버 8082, 웹 5176)에서 지금 함께 개발합니다** (사용자 승인, 2026-10-12, plan `docs/cycles/14-librarian-picks/easy/2026-10-12-worktree-decisions.html`). 먼저 끝난 쪽이 기본 브랜치에 들어가고 다른 쪽이 rebase합니다. 13은 `chaekcheck-c14` 프로젝트를 켜고 끄지 않습니다
 - 작업은 dev 저장소(`chaekcheck-dev`)에서 합니다. 수집 데이터 폴더는 `C:\Users\yujun\Documents\Claude\Projects\chaekcheck-data`(git 밖)이고, 수집 DB `ebook-catalog.sqlite`(약 16.5GB)와 `snapshots\`가 있습니다. 로컬 DB(`db` 5432, `db-test` 5433, `db-ops` 5434)는 앞 사이클과 같이 씁니다
 - 수집은 이번 사이클 내내 **집 PC**에서 합니다. 클라우드·프록시는 backlog입니다 [확정] (scope 포함 4)
 - **사이클 13 개발이 끝난 뒤부터 수집·도서관 넣기는 dev 쪽 별도 "수집" 세션에서 돌립니다.** plan은 조사·원칙·결정만 합니다. 개발 세션과 섞지 않고, 수집 도중 코드가 바뀌지 않게 개발이 쉬는 때 돌리거나 따로 작업 폴더를 씁니다 [확정] (사용자 승인, 2026-10-12, `easy/2026-10-12-where-to-crawl.html`)

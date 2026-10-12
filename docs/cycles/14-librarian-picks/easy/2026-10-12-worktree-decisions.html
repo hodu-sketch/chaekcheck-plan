@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사서추천도서 따로 개발하기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+.flow{display:grid;gap:10px;margin:10px 0 16px}.lane{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--card)}.lane b{display:block;margin-bottom:4px}.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{font-size:14px;border-radius:6px;padding:2px 8px;background:var(--code-bg)}.chip.new{background:var(--warn-bg)}.chip.dev{background:var(--ok-bg)}.arrow{text-align:center;color:var(--muted);font-size:18px;line-height:1}
+</style></head>
+<body><main class="doc">
+<p class="lead">사서추천도서(사이클 14)를 따로 떼어 지금 개발할 수 있을까</p>
+<p class="sub">2026-10-12 · 사이클 11·12·13 인계서와 dev 설정 파일(<code>compose.yaml</code>, <code>.env.example</code>, <code>application.yml</code>)을 읽고 정리했습니다</p>
+
+<div class="card">
+<h2><span class="num">0</span>한눈에</h2>
+<div class="gist">코드는 사이클 11·12·13과 거의 안 겹칩니다. 걸리는 건 <b>DB와 docker를 모든 작업 폴더가 같이 쓴다</b>는 점 하나입니다. 그래서 "DB를 어떻게 떼어 놓을까"를 고르면 됩니다.</div>
+<p><b>코드가 겹치는 곳</b> (사이클 13 인계서의 겹침 표 기준)</p>
+<table>
+<tr><th>파일</th><th>겹치는 쪽</th><th>정도</th></tr>
+<tr><td><code>db.changelog-master.yaml</code> 끝줄</td><td>13 (새 파일 두 줄)</td><td>합칠 때 줄 순서만 맞추면 됨</td></tr>
+<tr><td><code>/about</code> 화면 문단</td><td>13 (문단 하나)</td><td>문단 하나씩, 작음</td></tr>
+<tr><td>모듈 검사·로그인 검사 시험 두 개</td><td>13</td><td>작음</td></tr>
+<tr><td>13이 새로 만드는 도서관 넣기 설정 파일</td><td>13</td><td>글자 충돌은 없음. 그 파일에 옛 "인기 도서" 줄이 있어 합친 뒤 14가 지워야 함</td></tr>
+<tr><td>책 목록(<code>catalog</code>) 코드</td><td>12는 쓰기만, 13은 다른 파일</td><td>14는 조회 하나를 더할 뿐이라 파일이 다름</td></tr>
+<tr><td>"인기 도서" 모듈 지우기</td><td>없음</td><td>—</td></tr>
+</table>
+<p><b>같이 쓰는 것 때문에 생기는 문제</b></p>
+<ul>
+<li>dev의 docker 설정 파일에 프로젝트 이름이 <code>chaekcheck</code>로 박혀 있어서, 어느 작업 폴더에서 켜도 <b>같은 DB 상자(컨테이너)</b>를 씁니다. 지금은 사이클 11 측정이 이 DB에서 돌고 있습니다.</li>
+<li>14는 DB에서 옛 "인기 도서" 표를 지우고 새 표를 만들고, 서버를 켜서 진짜 받기 시험도 해야 합니다. 같은 DB에서 하면 측정과 다른 폴더 작업을 건드립니다.</li>
+<li>서버 주소(8080)와 웹 화면 주소(5173·5174)도 같은 번호라 동시에 켜면 부딪힙니다.</li>
+</ul>
+</div>
+
+<div class="card">
+<h2><span class="num">1</span>DB를 어떻게 떼어 놓을까</h2>
+<figure>
+<svg viewBox="0 0 860 300" role="img" aria-label="두 작업 폴더가 서로 다른 DB 상자를 쓰는 그림">
+<g font-family="Noto Sans KR, sans-serif" font-size="15" fill="#1f2328">
+<rect x="20" y="20" width="390" height="260" rx="14" fill="#e7eef6" stroke="#2f5d8a"/>
+<text x="40" y="50" font-weight="700">원래 dev 폴더 (사이클 11·12·13)</text>
+<text x="40" y="74" fill="#5b636e" font-size="13">docker 프로젝트 이름: chaekcheck</text>
+<rect x="40" y="95" width="160" height="70" rx="10" fill="#fff" stroke="#2f5d8a"/><text x="120" y="125" text-anchor="middle">db</text><text x="120" y="147" text-anchor="middle" font-size="13" fill="#5b636e">5432 · 측정 중</text>
+<rect x="225" y="95" width="160" height="70" rx="10" fill="#fff" stroke="#2f5d8a"/><text x="305" y="125" text-anchor="middle">db-test</text><text x="305" y="147" text-anchor="middle" font-size="13" fill="#5b636e">5433</text>
+<text x="40" y="200" font-size="14">서버 8080 · 웹 5173/5174</text>
+<rect x="450" y="20" width="390" height="260" rx="14" fill="#fbf0d9" stroke="#8a5a00"/>
+<text x="470" y="50" font-weight="700">새 작업 폴더 (사이클 14)</text>
+<text x="470" y="74" fill="#5b636e" font-size="13">docker 프로젝트 이름: chaekcheck-c14</text>
+<rect x="470" y="95" width="160" height="70" rx="10" fill="#fff" stroke="#8a5a00"/><text x="550" y="125" text-anchor="middle">db</text><text x="550" y="147" text-anchor="middle" font-size="13" fill="#5b636e">5442 · 복사본</text>
+<rect x="655" y="95" width="160" height="70" rx="10" fill="#fff" stroke="#8a5a00"/><text x="735" y="125" text-anchor="middle">db-test</text><text x="735" y="147" text-anchor="middle" font-size="13" fill="#5b636e">5443</text>
+<text x="470" y="200" font-size="14">서버 8081 · 웹 5175</text>
+<path d="M200 230 C 330 270, 520 270, 550 170" stroke="#5b636e" stroke-dasharray="6 5" fill="none" stroke-width="2"/>
+<text x="300" y="265" font-size="13" fill="#5b636e">한 번 복사 (측정 안 도는 때)</text>
+</g></svg>
+<figcaption>A안 그림: 작업 폴더마다 DB 상자가 따로 있어서 서로 건드리지 않습니다. 번호는 예시입니다.</figcaption>
+</figure>
+
+<div class="item">
+<h3><span class="no">1</span>DB 떼어 놓는 방식 <span class="an">[안]</span></h3>
+<p><b>A안 (추천): docker 프로젝트를 따로 켜고, 지금 DB를 한 번 복사해 씀</b></p>
+<ul>
+<li>새 작업 폴더에서 프로젝트 이름만 바꿔(<code>docker compose -p chaekcheck-c14 …</code>) DB 상자 두 개를 새로 켭니다. DB 주소 번호는 그 폴더의 <code>.env</code>에 따로 적습니다(<code>DB_PORT</code>, <code>TEST_DB_PORT</code> — dev 설정이 이미 이 값을 읽음).</li>
+<li>서비스 DB(약 8.5~10GB)를 한 번 복사해 넣습니다. 사이클 11에서 만든 복사 방법(<code>pg_dump</code> 파일 하나)을 그대로 씁니다.</li>
+<li>좋은 점: 14를 처음부터 끝까지(옛 표 지우기, 서버 켜기, 진짜 받기 시험, 화면 확인) <b>지금</b> 다 할 수 있습니다. 12·13이 끝나면 코드만 합치면 됩니다.</li>
+<li>드는 것: 디스크 약 10GB 더, 복사하는 시간(측정이 안 도는 때에), 명령마다 <code>-p chaekcheck-c14</code>를 빼먹지 않기(빼먹으면 원래 DB를 건드림).</li>
+</ul>
+<p class="alt"><b>B안: 시험용 DB(db-test)만 따로, 진짜 DB는 읽기만</b> — 복사 없이 가볍습니다. 코드와 시험은 지금 다 하고, 1단계 측정은 원래 DB를 읽기만 합니다. 대신 서버 켜기·진짜 받기 시험·화면 확인은 12·13을 합친 뒤로 미뤄야 합니다.</p>
+<p class="alt"><b>C안: 같은 DB 상자 안에 DB 이름만 따로</b> (<code>DB_NAME=chaekcheck_c14</code>) — 새 상자는 없지만, 사이클 11이 <b>그 상자의 메모리를 재는 중</b>이라 측정 값이 섞일 수 있습니다. 데이터도 결국 복사해야 합니다.</p>
+<p class="alt"><b>D안: 따로 떼지 않고 나중에</b> (앞서 대화에서 낸 "지금은 코드만, DB 일은 합친 뒤") — 준비가 가장 적지만 14의 절반이 12·13을 기다립니다.</p>
+</div>
+</div>
+
+<div class="card">
+<h2><span class="num">2</span>A안을 고르면 정할 값</h2>
+<div class="item">
+<h3><span class="no">2</span>이름과 번호 <span class="an">[안]</span></h3>
+<table>
+<tr><th>무엇</th><th>제안</th><th>원래 폴더</th></tr>
+<tr><td>작업 폴더 / 브랜치</td><td><code>../chaekcheck-dev-c14</code> / <code>cycle-14-librarian-picks</code></td><td><code>chaekcheck-dev</code></td></tr>
+<tr><td>docker 프로젝트 이름</td><td><code>chaekcheck-c14</code></td><td><code>chaekcheck</code></td></tr>
+<tr><td>DB / 시험 DB 번호</td><td>5442 / 5443</td><td>5432 / 5433 (사이클 11 운영 역할 DB 5434)</td></tr>
+<tr><td>서버 / 웹 화면 번호</td><td>8081 / 5175 (웹이 서버를 찾는 주소는 <code>API_PROXY_TARGET</code>으로)</td><td>8080 / 5173·5174</td></tr>
+<tr><td>시작 커밋</td><td>dev 기본 브랜치의 지금 최신 커밋</td><td>—</td></tr>
+</table>
+<p class="note">원래 폴더의 <code>.env</code>는 건드리지 않습니다(특히 옛 "인기 도서 받기 끄기" 줄은 그대로 둬야 원래 폴더 서버가 출판유통통합전산망을 부르지 않음). 새 폴더에 <code>.env</code>를 따로 만들고, 사서추천 인증키도 거기에만 넣습니다.</p>
+</div>
+<div class="item">
+<h3><span class="no">3</span>안전장치 <span class="an">[안]</span></h3>
+<ul>
+<li>새 폴더에서 docker 명령을 칠 때는 늘 <code>-p chaekcheck-c14</code>를 붙이고, 켜기·끄기 전에 <code>docker compose ls</code>로 어느 프로젝트인지 봅니다. <b>원래 프로젝트(<code>chaekcheck</code>)는 켜고 끄지 않습니다.</b></li>
+<li>복사는 사이클 11 측정 라운드가 쉬는 때에, 사용자에게 알리고 합니다(원래 DB를 읽기만 함).</li>
+<li>새 상자 셋을 더 켜면 PC 메모리를 더 씁니다. 시험 DB는 메모리에 올라가는 방식(tmpfs)이라 다 쓰면 끕니다.</li>
+</ul>
+</div>
+</div>
+
+<div class="card">
+<h2><span class="num">3</span>합치는 순서와 문서 고치기</h2>
+<div class="item">
+<h3><span class="no">4</span>합치는 순서 <span class="an">[안]</span></h3>
+<p>12·13이 먼저 끝나 기본 브랜치에 들어가면, 14 브랜치를 그 위로 옮기고(rebase) 위 표의 작은 충돌을 풉니다. 13이 새로 만든 설정 파일의 옛 "인기 도서" 줄도 이때 지웁니다. 14가 먼저 끝나면 반대로 13이 그 위로 옮깁니다 — 어느 쪽이든 충돌은 같은 몇 줄입니다.</p>
+<p>그러려면 plan 문서 두 곳을 고칩니다: 14 인계서의 시작 조건("12·13 뒤, 작업 폴더 따로 안 만듦" → 이 페이지에서 고른 방식), 13 인계서의 "14는 13 뒤" 문장. dev에 보낼 메시지도 다시 만듭니다.</p>
+</div>
+</div>
+
+<div class="card">
+<h2><span class="num">4</span>근거</h2>
+<ul>
+<li>dev <code>compose.yaml</code>: 맨 위 <code>name: chaekcheck</code>, DB 번호는 <code>${DB_PORT:-5432}</code>·<code>${TEST_DB_PORT:-5433}</code>, 시험 DB는 tmpfs (2026-10-12 읽음)</li>
+<li>dev <code>application.yml</code>: 저장소 맨 위 <code>.env</code>를 읽음(<code>optional:file:../.env</code>), DB 주소의 번호는 <code>DB_PORT</code>, 시험은 <code>TEST_DB_PORT</code>. 웹 <code>vite.config.ts</code>: 서버 주소는 <code>API_PROXY_TARGET</code> (2026-10-12 읽음)</li>
+<li>Docker 공식 문서 "Specify a project name": 이름을 정하는 순서는 <code>-p</code> → <code>COMPOSE_PROJECT_NAME</code> → 파일의 <code>name:</code> → 폴더 이름. 프로젝트 이름으로 환경을 서로 떼어 놓음 (https://docs.docker.com/compose/how-tos/project-name/, 2026-10-12 확인)</li>
+<li>Docker 공식 문서 "Pre-defined environment variables": 프로젝트 이름이 컨테이너 이름 앞에 붙음 (https://docs.docker.com/compose/how-tos/environment-variables/envvars/, 2026-10-12 확인). <code>.env</code>에 <code>COMPOSE_PROJECT_NAME</code>을 적어도 되는지는 그 문서에 분명한 문장이 없어 <b>확인 못 함</b> → 그래서 <code>-p</code>를 늘 붙이는 쪽으로 제안</li>
+<li>저장 공간(볼륨) 이름에도 프로젝트 이름이 붙어 따로 생기는지는 공식 문서에서 <b>확인 못 함</b> → 처음 켤 때 <code>docker volume ls</code>로 확인</li>
+<li>서비스 DB 크기 약 8.5GiB(dev 측정 2026-10-11, <code>docs/research/deploy/aws-layout.md</code>), 9,812MB(사이클 07 회고)</li>
+</ul>
+</div>
+<p class="foot">원본: 사이클 11·12·13·14 인계서, 13 설계 문서의 "겹치는 곳" 절</p>
+</main></body></html>
