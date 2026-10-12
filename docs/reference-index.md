@@ -1,6 +1,6 @@
 # 참고 문서 색인 — 다음에 개발·설계·관리할 때 볼 문서
 
-작성 2026-10-01, 고침 2026-10-04(정기 작업 문서, 3-1절 가져오기·검색), 2026-10-05(사이클 07 회고: 가져오기는 `collection` 모듈·dev `3-import.md`, 코드 위치, 꺼진 도서관), 2026-10-11(사이클 08 cycle-close: 도서관 이름 고침, 교보 대여·혼합 제외, 가져오기 바꿔 끼우기·시간 줄이기 방향, 정리 규칙을 바꿀 때, ADR-0065~0070), 2026-10-11(사이클 09 cycle-close: 도서관 이름은 기관 이름만, 업체·대출 방식·순번 분류, ADR-0071·0076), 2026-10-12(사이클 10 회고: 인기 도서 분류 14개·표지 200px JPEG, ADR-0080·0081; 사이클 11 cycle-close: 가져오기 따로 하기(내 PC 내보내기 → 운영 반영)·묶는 방식 셋, ADR-0078·0079, EC2 크기·서버 메모리 설명). 사이클과 상관없이 계속 쓰는 문서들을 주제별로 모았습니다. 사이클 문서(`docs/cycles/NN-*/`)는 그 사이클의 기록이고, 여기 적힌 것은 "지금 어떻게 하는가"를 아는 데 필요한 문서입니다. 문서를 새로 만들거나 원본이 바뀌면 이 색인을 고칩니다.
+작성 2026-10-01, 고침 2026-10-04(정기 작업 문서, 3-1절 가져오기·검색), 2026-10-05(사이클 07 회고: 가져오기는 `collection` 모듈·dev `3-import.md`, 코드 위치, 꺼진 도서관), 2026-10-11(사이클 08 cycle-close: 도서관 이름 고침, 교보 대여·혼합 제외, 가져오기 바꿔 끼우기·시간 줄이기 방향, 정리 규칙을 바꿀 때, ADR-0065~0070), 2026-10-11(사이클 09 cycle-close: 도서관 이름은 기관 이름만, 업체·대출 방식·순번 분류, ADR-0071·0076), 2026-10-12(사이클 10 회고: 인기 도서 분류 14개·표지 200px JPEG, ADR-0080·0081; 사이클 11 cycle-close: 가져오기 따로 하기(내 PC 내보내기 → 운영 반영)·묶는 방식 셋, ADR-0078·0079, EC2 크기·서버 메모리 설명), 2026-10-12(사이클 13 cycle-close: 새 도서관은 seed 대신 `collection` 넣기 명령, 사람이 정한 도서관 규칙은 dev `scripts/library/rules/` TSV, 수집기 원본은 dev `scripts/crawl/`, AWS 서울 수집 조사, ADR-0083~0088·0093). 사이클과 상관없이 계속 쓰는 문서들을 주제별로 모았습니다. 사이클 문서(`docs/cycles/NN-*/`)는 그 사이클의 기록이고, 여기 적힌 것은 "지금 어떻게 하는가"를 아는 데 필요한 문서입니다. 문서를 새로 만들거나 원본이 바뀌면 이 색인을 고칩니다.
 
 원칙 [확정] (사용자, 2026-10-01, dev C2-U-7 답): **절차의 원본은 dev `docs/library-maintenance.md`**, **조사 기록과 근거 수치는 plan**. 둘이 어긋나면 dev 절차가 최신입니다. 정기 유지보수 절차(도서관 목록 확인, 책 목록 수집, 가져오기)와 수집기 코드는 dev `docs/maintenance/`·`scripts/crawl/`로 모읍니다 (ADR-0047, 2026-10-04). **문서(A)는 2026-10-04 dev가 옮김**: 절차는 dev `docs/maintenance/` (`README.md` 순서, `1-libraries.md`, `2-crawl.md`, `platforms.md`, `3-import.md`). 수집기 코드(B)와 도서관 정보 도구(C)는 전체 수집이 끝난 뒤. 요청서 `docs/research/maintenance/dev-move-request.md`
 
@@ -11,16 +11,16 @@
 | `CLAUDE.md` (plan) | 사이클 진행 방식, 현재 사이클 |
 | `docs/backlog.md` | 아직 사이클에 안 들어간 것, 다음 순서(맨 위 "2026-10-01 정리"), 미룬 것 |
 | `docs/current/` (`module-map.md`, `data-model.md`, `api.md`, `flows.md`, `handoff.md`) | 지금 설계 전체. `handoff.md`는 현재 인계서(사이클 04) |
-| `docs/adr/README.md` | 결정 목록 (ADR-0001~0081, 2026-10-12) |
+| `docs/adr/README.md` | 결정 목록 (ADR-0001~0093, 2026-10-12) |
 | dev `docs/plan-feedback.md` | dev가 개발 중 바꾼 것·측정·질문. 사이클별 절(`# 사이클 04`는 702행~). **다음 회고의 입력** |
 | dev `CLAUDE.md` | 스택·모듈 규칙 (plan에서 다시 적지 않음) |
 | `docs/research/maintenance/collection-areas.md` | 수집 일 나눔(① 도서관 정보 ② 도서관-책 ③ 가져오기)과 섞인 도구 옮기기 [확정] (2026-10-04) |
-| `docs/research/collection/1-libraries.md` | **수집 두 갈래 정리 (2026-10-05)** ① 도서관 수집: 후보 찾기·확인·같은 사이트 거르기·넣기(seed), 가입 조건, 구독형 규칙·마감 확인, 로고. 받는 것/내놓는 것/원칙/결정, 절차 원본은 dev `docs/maintenance/1-libraries.md` |
+| `docs/research/collection/1-libraries.md` | **수집 두 갈래 정리 (2026-10-05)** ① 도서관 수집: 후보 찾기·확인·같은 사이트 거르기·넣기(seed — 사이클 13부터는 `collection` 넣기 명령, ADR-0084), 가입 조건, 구독형 규칙·마감 확인, 로고. 받는 것/내놓는 것/원칙/결정, 절차 원본은 dev `docs/maintenance/1-libraries.md` |
 | `docs/research/collection/2-books.md` | **수집 두 갈래 정리 (2026-10-05)** ② 도서관의 책 수집: 전체·신간 수집, 이어 받기, 호출 예의(IP 줄, 병렬 정도, `--host-slots`). 받는 것/내놓는 것/원칙/결정, 절차 원본은 dev `docs/maintenance/2-crawl.md`·`platforms.md`. 다음 단계 가져오기는 `collection` 모듈(ADR-0060) |
 | `docs/research/maintenance/periodic-tasks.md` | **정기 유지보수 작업 초안 (원본은 dev `docs/maintenance/README.md`)** (2026-10-04): ① 서비스 도서관 목록 확인 → ② 책 목록 수집 → ③ 서비스 DB로 가져오기 → ④ (자동) 검색·대출 조회. 단계마다 주기 [안], 절차 원본 위치, 실행 명령, 확인할 숫자. 웹러브 북스 기관을 서비스로 옮기는 순서(5절) |
 | `docs/cycles/NN-<slug>/easy/README.md` (지금은 `docs/cycles/05-login-account/easy/`) | 쉬운 설명 페이지(HTML) 모음과 목록. 사이클별로 둠. 사용자가 상황을 빠르게 파악할 때 봄. 요약이므로 값의 원본은 각 문서 |
 
-수집 일은 셋으로 나눕니다 [확정] (사용자, 2026-10-04, `docs/research/maintenance/collection-areas.md`): **① 도서관 정보**(아래 1·2절, 구독 규칙·마감 포함) / **② 도서관-책**(3절) / **③ 가져오기**(3-1절, 정리·묶기 4절). 도서관 목록은 둘: **등록 도서관**(서비스 DB, 278곳, 검색에 나옴) / **후보 도서관**(수집 DB 번호 100001~, 2,738곳, 아직 검색에 안 나옴) [확정] (사용자, 2026-10-04).
+수집 일은 셋으로 나눕니다 [확정] (사용자, 2026-10-04, `docs/research/maintenance/collection-areas.md`): **① 도서관 정보**(아래 1·2절, 구독 규칙·마감 포함) / **② 도서관-책**(3절) / **③ 가져오기**(3-1절, 정리·묶기 4절). 도서관 목록은 둘: **등록 도서관**(서비스 DB, 278곳, 검색에 나옴) / **후보 도서관**(수집 DB 번호 100001~, 2,738곳, 아직 검색에 안 나옴) [확정] (사용자, 2026-10-04). 지금은 둘 다 서비스 DB에 있음: 사이클 06까지 있던 도서관(번호 1~280)과 사이클 07에서 넣은 2,394곳(서비스 번호 281~2674). 그 뒤 새로 찾은 곳은 사이클 13부터 `collection` 넣기 명령으로 넣음 — 설계됨(미구현, 사이클 13) (ADR-0084).
 
 ## 1. ① 도서관 정보: 목록 수집 (어디서 목록을 얻고, 살아 있는지 확인하고, 넣고 끄는가)
 
@@ -37,6 +37,9 @@
 | plan `docs/current/data-model.md` `library` 절 "도서관 이름과 분류", `docs/adr/0071-library-name-and-classification.md`, `docs/adr/0076-library-classification-api-and-rename.md` | **도서관 이름 규칙 (사이클 09)**: 이름에는 기관 정식 이름만(끝의 업체·대출 방식 괄호 없음), 모든 도서관에 업체(`vendor`, 도서관 수집이 정함)·대출 방식(`lending_model`, 통합 포털만 비움), 겹침은 (이름, 업체, 대출 방식, 순번) UNIQUE, 겹치면 seed 생성 스크립트가 순번을 붙이고 목록으로 보임. 대출 방식 채우는 규칙, 이름은 번호로 고치는 changeset | 설계됨(미구현, 사이클 09) |
 | plan `docs/adr/0067-exclude-kyobo-rental-mixed.md` | 교보 대여·혼합 도서관은 받지도 넣지도 않음(230곳, 이미 넣은 11곳 2664~2674는 seed에서 빼 지움), seed 규칙 "교보 대여·혼합은 넣지 않음" | 확정 (2026-10-11) |
 | plan `docs/adr/0068-updated-at-by-db-trigger.md` | 도서관·지역 표를 고칠 때 `updated_at`은 DB 트리거가 적음(모듈마다 함수). 직접 SQL로 고쳐도 적힘 | 확정 (2026-10-11), 설계됨(미구현, 사이클 08) |
+| plan `docs/cycles/13-crawler-to-dev/` (`design-delta.md`, `spec.md`, `flow.md`), `docs/current/module-map.md` `collection` 줄·"도서관 넣기 명령과 수집기", `flows.md` 흐름 32·33, `docs/adr/0083`~`0086`, `0087`, `0093` | **새 도서관 넣기 (사이클 13)**: seed 대신 `collection` 명령(프로필 `library-insert`, 미리 보기 → 보고서 파일 → 넣기, 종료 코드, 넣기 실행 기록 `library_insert_run`), `library`의 `LibraryRegistry`(`add`·`nextId`·`listAll`), 운영 반영 판 2(`notes.libraryPart`, 도서관 → 비교 → 책), 가입 조건 조사 기준일 하나 + `/about` 공지(`GET /api/v1/join-surveys/latest`). 앞으로 도서관 seed changeset을 만들지 않음(ADR-0084) | 설계됨(미구현, 사이클 13, 사이클 12 뒤에 개발) |
+| plan `docs/cycles/13-crawler-to-dev/research.md` | **도서관 넣기 명령 사전 조사 (2026-10-12)**: 지금 넣기 스크립트(`build_candidate_seed.py`)가 읽는 것·코드에 박힌 사람 결정·순서·옮길 때 조심할 것(1절), 재시작 없이 넣으려면 backend 모듈(2절), Liquibase seed와 섞일 때(3절), 사이클 11과 만나는 곳(4절), 수집 세션이 미리 한 것(6절) | 2026-10-12 (조사 기록) |
+| dev `scripts/library/rules/` (TSV 규칙 + `join_surveyed_on.txt` + 순번 2 허용 목록), `docs/adr/0085-library-rules-tsv-in-dev.md` | **사람이 정한 도서관 규칙의 원본 (사이클 13부터)**: 이름 고침, 같은 사이트, 체험용·운영 중단, 같은 호스트지만 남김, 가입 범위 덮어쓰기. 지역은 번호로 미리 풀어 둠(도우미 스크립트). 넣기 명령이 읽음 | 설계됨(미구현, 사이클 13) |
 
 ## 2. ① 도서관 정보: 분류·한도 (화면 종류, 가입 자격, 지역, 조회 순서, 구독 규칙·마감)
 
@@ -67,7 +70,9 @@
 | plan `docs/research/ebook-catalog/easy/` | 쉬운 설명: `2026-10-04-platform-servers.html`(플랫폼 타입별 서버 구조), `2026-10-04-crawl-method-now.html`(지금 수집 방법: 사이트 분류, 도메인과 IP) | 2026-10-04 |
 | plan `docs/research/ebook-catalog/platforms.md` | **플랫폼별 크롤링 방법**: 검색·전체 목록 URL, 한 쪽 크기, 줄 선택자, 상세 URL, 오디오북 구분, 사이트별 예외(교보·교보 구독형·YES24·통합 포털·강남구·북큐브·알라딘) | 수집 세션이 관리, 2026-10-01 |
 | plan `docs/research/ebook-catalog/research.md` | 수집 조사(범위, 법적 검토 3절, 항목 4·5절) | 기록 |
-| `chaekcheck-data/README.md`, `scripts/crawl_catalog.py`, `ebook-catalog.sqlite` | 수집기 코드와 수집 DB(두 저장소 밖) | [확인 필요: 이 색인에서 내용 확인 안 함] |
+| `chaekcheck-data/README.md`, `scripts/crawl_catalog.py`, `ebook-catalog.sqlite` | 수집기 코드와 수집 DB(두 저장소 밖). 사이클 13부터 수집기 원본은 dev `scripts/crawl/`이고, 데이터 폴더의 옛 `scripts\`·`resume.cmd`는 `_old-scripts-2026-10-12`로 옮겨 보관(지우지 않음) (ADR-0088). 수집 DB는 그대로 데이터 폴더 | [확인 필요: 이 색인에서 내용 확인 안 함] |
+| dev `scripts/crawl/` (`crawl_catalog.py`), plan `docs/research/maintenance/crawler-move.md`, `docs/adr/0088-crawler-switch-to-dev.md` | **수집기 원본 (사이클 13부터)**: 데이터 폴더 수집기를 dev로 갈아타기(옮기기 결정 1~7 [확정], `vendor` 칸·`migrate`, 빈 곳 채우기 명령 [안: `refill-pubdt`], 첫 시험 여주대 102084), 옛 코드 보관, 도서관 넣기 담당. ADR-0047을 이어서 옮기기를 끝냄 | 설계됨(미구현, 사이클 13) |
+| plan `docs/research/deploy/aws-crawl.md` (+ `easy/2026-10-12-aws-crawl.html`) | **AWS 서울에서 책 수집 (사이클 13 조사)**: CloudShell 서울 시험(1절), AWS 서울 수집 서버 두 안·사본을 내 PC로·Windows → Linux(2절), C안 Claude 클라우드 + AWS 서울 프록시와 시험할 것(4절, 클라우드 세션 오래 돌기 50분 시험 포함), 플랜 B 국내 저가 서버에 우리 프록시(5절). 원칙: 나가는 IP는 우리 국내 서버 고정 IP만(`crawl-method.md` 1절). 프록시 수집·대출 조회와 클라우드에서 오래 돌리기는 다음 사이클로 미룸(backlog "국내 IP 프록시로 수집·대출 조회"), 지금은 PC에서 수집 | 2026-10-12 (조사, 다음 사이클 후보) |
 | dev `collection/internal/importer/CollectedCatalog.java` (사이클 07에 `catalog/internal/importer/`에서 옮김) | 가져올 때 제외 규칙(오디오북·동영상북, 소리·영상 파일 `kind_sound_video`, 서비스에 없는 도서관, 빠진 책, http 아닌 주소, 사이트 불일치(호스트·경로·쿼리 비교, `sameSite`), 제목 없음)과 상세 주소를 서비스 주소의 scheme·포트로 옮겨 쓰기(`onOrigin`) | 구현 (사이클 07) |
 
 ## 3-1. ③ 가져오기와 서비스 검색 (받은 책 목록을 서비스 DB로, 서비스 검색·대출 조회)
@@ -131,7 +136,7 @@
 - 판단 못 한 2곳(김해시청, 충북도청): dev `library-site-issues.md` 4절
 - 꺼 둔 2곳(id 59, 131) 2027-01 재개 확인: dev `library-maintenance.md` 6-2. 사이클 07에 더 끈 3곳(135 전라북도교육청통합도서관, 2194 장안대학교 (YES24), 2198 성균관대학교 (YES24)): dev `library/010-library-disabled.yaml`, `library-site-issues.md` 9절
 - 기관 이름이 바뀐 곳(대학 통합·교명 변경 등)과 흡수된 학교 사이트 6~7곳(428, 429, 769, 2257, 607, 895, 1002): `docs/research/library-join/name-changes-2026-10-10.md` 2절, 이름 고침 목록 dev `scripts/library/name_overrides.tsv` [안 경로]. 사이클 09에서 607 말고 6곳을 고침(설계됨(미구현, 사이클 09), `docs/cycles/09-library-naming/spec.md` R1-10)
-- 도서관 업체·대출 방식·순번(사이클 09): 새 도서관을 넣을 때 seed 생성 스크립트가 화면 종류 대응표·교보 probe·북큐브 전체 권수로 채우고 순번 2 이상 목록을 보임. 규칙은 `docs/current/data-model.md` "도서관 이름과 분류"·seed 절, 절차 원본은 dev `library-maintenance.md`(1-1절 `name`, 4-5절, 이름 고침 절을 사이클 09에서 고침)
+- 도서관 업체·대출 방식·순번(사이클 09): 새 도서관을 넣을 때 seed 생성 스크립트가 화면 종류 대응표·교보 probe·북큐브 전체 권수로 채우고 순번 2 이상 목록을 보임. 사이클 13부터는 seed를 만들지 않고 `collection` 넣기 명령이 같은 규칙으로 채움(설계됨(미구현, 사이클 13), ADR-0084). 규칙은 `docs/current/data-model.md` "도서관 이름과 분류"·seed 절, 절차 원본은 dev `library-maintenance.md`(1-1절 `name`, 4-5절, 이름 고침 절을 사이클 09에서 고침)
 - 리다이렉트로 호스트까지 바뀐 도서관(411)과 사이트 제목이 다른 기관인 곳 약 10곳, YES24 모바일판 13곳: dev `library-site-issues.md` 10절, plan `docs/cycles/07-candidate-libraries/retro.md` "새로 알게 된 제약"
 - 도서관 사이트 연결에만 믿는 최상위 기관(OISTE WISeKey Global Root GB CA)과 중간 인증서: dev `tls/library-roots/` (ADR-0061, ADR-0022 보완)
 - 중간 인증서 만료 2027-05-21(GlobalSign AlphaSSL), 2027-11-02(Thawte): dev `library-site-issues.md` 3절
@@ -143,9 +148,11 @@
 - **책 번호 체계 점검**(`check_code_spaces.py` → 4-11 기준값과 비교. 크게 바뀌거나 새 화면 종류면 사용자에게): dev 4-11
 - 읽는 코드 없는 화면 7종: dev `library-site-issues.md`, `backlog.md`
 - 정기 재조사 주기 미정: dev 4-9, `backlog.md` "운영·인프라"
+- **새 도서관 넣기 (사이클 13부터, 설계됨(미구현))**: 수집 사본을 만든 뒤 `library-insert` 미리 보기 → 보고서(새 곳·바뀐 곳·사라진 곳·같은 호스트 의심·순번 2 이상) 확인, 의심·바뀐 곳·사라진 곳이 있으면 사용자에게 물음 → 보고서 번호로 넣기 → 다음 가져오기 `export` → 운영 `apply`(판 2, 도서관 → 비교 → 책). 규칙은 dev `scripts/library/rules/` TSV를 고침(seed changeset을 만들지 않음). 가입 조건을 새로 조사하면 `join_surveyed_on.txt` 날짜를 바꿈(`/about` 공지 한 줄에 보임): `flows.md` 흐름 32·33, ADR-0084·0085·0087
 
 ### 책 수집 (수집 다시 돌릴 때)
 
+- 수집기는 dev `scripts/crawl/`을 씀(사이클 13부터, 데이터 폴더 옛 코드는 `_old-scripts-2026-10-12` 보관): ADR-0088, `docs/research/maintenance/crawler-move.md`. 클라우드·AWS 서울·국내 프록시로 돌리는 방법은 `docs/research/deploy/aws-crawl.md`(다음 사이클 후보)
 - 받지 않는 도서관 4곳(국회 44, 전북교육청 135, 군포 261, 김천 269)과 문제별 대처: `crawl-runbook.md` 5-1·6절, `catalog-refresh.md` 변경 기록
 - 전체 성공 기록 없는 도서관 12곳(어느 곳인지 목록 없음): `catalog-refresh.md` 4절
 - 수집 순위 ①~④ 진행 상태(④ 웹러브 북스 기관은 2026-10-03 시작, 교보 대여·혼합형 243곳 제외): `crawl-runbook.md` 1·2·8절. 교보 대여·혼합은 수집도 서비스도 하지 않음(230곳, 받지 않음 표시만): `collection-by-vendor-2026-10-09.md` 4절, ADR-0067

@@ -96,3 +96,4 @@
 | [ADR-0090](0090-picks-match-isbn-then-title-author-in-cache.md) | 사서추천 책은 공용 캐시를 만들 때 ISBN, 안 되면 본제목 + 첫 저자로 맞춤(`catalog` 새 조회), 여럿이면 가진 도서관 많은 책 (ADR-0074를 대체) | Accepted | 2026-10-12 | 14 |
 | [ADR-0091](0091-picks-cover-nlk-resize-200px.md) | 사서추천 표지는 국립중앙도서관 표지를 받아 200px JPEG로 줄여 우리 서버가 넘겨줌, 우리 전자책 표지는 이번에 안 씀 (ADR-0081을 대체) | Accepted | 2026-10-12 | 14 |
 | [ADR-0092](0092-picks-fetch-retry-daily-and-catch-up.md) | 사서추천 받기는 실패하면 성공할 때까지 매일 다시, 마지막 성공이 7일보다 오래되면 따라잡음 (ADR-0089의 "다음 날 한 번 더"를 바꿈) | Accepted | 2026-10-12 | 14 |
+| [ADR-0093](0093-library-insert-read-and-apply-run-record.md) | 넣기 명령은 `LibraryRegistry.listAll()`로 서비스 도서관 전체를 보고, 운영 반영은 넣기 실행 기록 줄도 옮김, 기준일 경로 `/api/v1/join-surveys/latest` (ADR-0083·0084·0086·0087 보완) | Accepted | 2026-10-12 | 13 (12보다 미리) |

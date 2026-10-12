@@ -9,6 +9,7 @@
 사이클 11 cycle-close (2026-10-12): 가져오기 따로 하기(export·apply·finish·discard, load_manifest, db-ops) + 묶는 방식 current·compact·sql — 설계됨(미구현, 사이클 11). 흐름 27(내보내기), 28(반영, 다름·실패 포함), 29(마저 바꿔 끼우기·지우기)와 "내 PC의 `catalog_next` 상태"를 더함. 흐름 20(`in-place`)은 그대로. 근거 `docs/cycles/11-separate-import/design-delta.md` "구조 그림", spec.md, ADR-0078·0079.
 사이클 12 (2026-10-12, 사이클 11 dev 진행 중에 미리 한 plan): 책 묶기 네 번째 단계 규칙 — 설계됨(미구현, 사이클 12). 근거 `docs/cycles/12-grouping-rules/design-delta.md`, ADR-0082.
 사이클 14 cycle-close (2026-10-12): 인기 도서 → 사서추천도서 — 흐름 24를 "사서추천도서 받기 (주 1회, 실패 포함)"와 "받기 판단 상태"로, 흐름 25를 "사서추천도서 화면 열기와 공용 캐시 (S13)"로 바꾸고(사이클 10 인기 도서 매달 받기·화면 열기는 지움), 흐름 26(S14)·"화면 공통"에 바뀌는 점을 적음 — 설계됨(미구현, 사이클 14). 근거 `docs/cycles/14-librarian-picks/design-delta.md` "구조 그림", flow.md, ADR-0089·0090·0091.
+사이클 13 cycle-close (2026-10-12, 사이클 12와 나란히 미리 한 plan, 사이클 12 뒤에 개발): 새 도서관 넣기 — 흐름 32(넣기 미리 보기 → 넣기, 내 PC)와 흐름 33(운영 반영 판 2: 도서관 → 비교 → 책)을 더하고, "화면 공통"에 S12 `/about` 가입 조사 기준일 한 줄을 적음. 흐름 16·23-3의 seed로 넣기는 사이클 07~09 방식으로 남김 — 설계됨(미구현, 사이클 13). 근거 `docs/cycles/13-crawler-to-dev/design-delta.md` "구조 그림", flow.md, ADR-0083~0088·0093.
 사이클 08 cycle-close (2026-10-11): 흐름 20(가져오기: 새 표에 쓰고 바꿔 끼우기), 21(검색 계획과 책 화면 소장 읽기), 22(막혔을 때 429·503)를 더하고, 흐름 6·16과 "화면 공통"에 바뀌는 점을 적음 — 구현됨 (사이클 08). 근거 `docs/cycles/08-polish-swap-memory/design-delta.md` "주요 흐름"(흐름 A~C), ADR-0065~0070.
 사이클 08 회고 (2026-10-11): dev 보고(`plan-feedback.md` "# 사이클 08")와 대조해 흐름 20~22와 화면 공통을 구현됨으로 바꾸고 달라진 점(넓은 줄 두 번 쓰기, 실패 기록 칸, S2 그대로·돌아가기는 S8·S9·S10만, "정렬 없음 ⓘ"은 검색 줄, 이름 찾기 가운뎃점 무시)과 측정값을 적음. 흐름 21 그림의 "지금은 …" 두 곳을 "사이클 07까지는 …"으로 고침. 가져오기 힙(AC-12)·색인 단계 중단(AC-9 둘째)·국가서지 재사용 시간(AC-15)은 측정 중 [확인 필요]. 근거 `docs/cycles/08-polish-swap-memory/retro.md`.
 
@@ -525,9 +526,9 @@ sequenceDiagram
 - listener가 실패한 기록은 재시작 때 다시 처리합니다(`republish-outstanding-events-on-restart: true` [확정]). 실패(`FAILED`) 기록도 다시 처리합니다 — 확인함 (dev, 2026-10-04): 공식 문서는 상태별 동작을 적지 않아 Spring Modulith 2.1.1 jar를 확인함. `JdbcEventPublicationRepositoryV2`가 `COMPLETION_DATE IS NULL OR STATUS != 'COMPLETED'`인 기록을 다시 처리하고, 시험 `mylibrary/AccountDeletedRepublishTests`(실제 잠금 시간 초과로 `FAILED`를 만든 뒤 재시작 → 두 표·발행 기록 0)로 확인.
 - 알고 받아들인 것(dev 리뷰): 로그인 기능을 끈 동안 남은 `AccountDeleted` 기록은 listener도 꺼져 있어 처리되지 않고, 다시 켜고 재시작하면 처리됩니다.
 
-## 흐름 16: 후보 도서관 넣기와 가져오기 (배포 전 한 번) — 구현됨 (사이클 07)
+## 흐름 16: 사이클 07 도서관 2,394곳 넣기와 가져오기 (배포 전 한 번) — 구현됨 (사이클 07)
 
-후보 도서관 줄과 짝 줄은 Liquibase seed로 넣고, 가져오기는 `collection`이 짝 표로 모든 서비스 도서관의 책을 사본에서 두 번 읽어 `catalog`의 `CatalogLoad.replaceAll(source, loader)` 콜백 세션으로 표를 통째로 바꿉니다(ADR-0052, 0054, 0055, 0060). 흐름 8(사이클 04 importer)을 대신합니다.
+사이클 07에서 넣은 도서관 2,394곳(서비스 번호 281~2674)의 줄과 짝 줄은 Liquibase seed로 넣고, 가져오기는 `collection`이 짝 표로 모든 서비스 도서관의 책을 사본에서 두 번 읽어 `catalog`의 `CatalogLoad.replaceAll(source, loader)` 콜백 세션으로 표를 통째로 바꿉니다(ADR-0052, 0054, 0055, 0060). 흐름 8(사이클 04 importer)을 대신합니다. 사이클 13부터 새 도서관은 seed가 아니라 `collection` 넣기 명령으로 넣습니다(흐름 32, ADR-0084) — 설계됨(미구현, 사이클 13).
 
 ```mermaid
 sequenceDiagram
@@ -537,7 +538,7 @@ sequenceDiagram
   participant COL as collection (프로필 collection-import)
   participant CAT as catalog
   participant DB as 서비스 DB
-  DEVS->>SNAP: 후보 도서관 읽기 (전체 수집 끝남, 같은 사이트 8곳·체험용 4곳·시험용 6곳 제외)
+  DEVS->>SNAP: 넣을 도서관 읽기 (수집 번호 100001 이상, 전체 수집 끝남, 같은 사이트 8곳·체험용 4곳·시험용 6곳 제외)
   DEVS->>DEVS: 최종 주소 확인 (리다이렉트 뒤 https, 248곳)
   DEVS-->>LQ: seed CSV (library 줄, 짝 줄, 가입 규칙 줄)
   LQ->>DB: 서버 시작 때 changelog 적용
@@ -566,7 +567,7 @@ sequenceDiagram
 - 알려진 빈틈: 리다이렉트로 호스트까지 바뀐 411(`ebook2.ezville.net` → `gsenc.bookcube.biz`)은 안전장치에 걸려 소장 64,461줄이 빠짐. 사이클 08에 수집 DB 주소를 고치고 다시 수집함(2026-10-11) → 서비스에는 다음 사본·가져오기 때 들어옴 [확인 필요] (다음 가져오기에서 확인)
 - 사이클 08 (구현됨 (사이클 08), ADR-0065·0069·0070): 위 그림의 "한 트랜잭션, 임시 표 → 표 비우고 옮김(검색은 기다림)"과 커밋 뒤 `VACUUM`은 사이클 07 코드 모양입니다. 사이클 08부터 `replaceAll`은 새 표(`catalog_next`)에 쓰고 바꿔 끼우며, 국가서지는 남긴 원문을 다시 쓰고, 같은 소장은 옛 소장 번호를 잇습니다(흐름 20). 교보 대여·혼합 11곳(2664~2674)은 seed와 짝 표에서 빠짐(ADR-0067)
 
-## 흐름 17: 로그인 전 직접 추가한 후보 도서관으로 검색 — 구현됨 (사이클 07)
+## 흐름 17: 로그인 전 직접 추가한 도서관(사이클 07에서 넣은 곳)으로 검색 — 구현됨 (사이클 07)
 
 ```mermaid
 sequenceDiagram
@@ -596,7 +597,7 @@ sequenceDiagram
 ```
 
 - 로그인 전(로그인 기능이 꺼져 있어도) S10(`/my-libraries`)도 열리고, 직접 추가는 브라우저 키 `chaekcheck.chosenLibraries.v1` [확정] (dev 구현 확인, 2026-10-05)에 저장합니다 [확정] (ADR-0057). 이름 찾기에서 이미 추가한 곳은 "직접 추가함"(흐리게, 누를 수 없음), 없으면 "찾는 도서관이 없어요". S10 도서관 찾기는 `GET /api/v1/libraries`를 통째로 받아 화면에서 거릅니다(두 글자 이상, 앞 글자 맞는 것 먼저·가나다순, 20곳씩) [확정] (ADR-0058)
-- 후보 도서관 이름을 누르면 열리는 가입 정보 창 맨 위에 가입 조사 상태별 안내가 있습니다 [확정] (ADR-0053). `joinSurvey`가 `SURVEYED`가 아니면 안내 문구 + (가입 방법·주의가 있으면 그것) + [도서관 첫 화면](`homepageUrl`)
+- 사이클 07에서 넣은 도서관 이름을 누르면 열리는 가입 정보 창 맨 위에 가입 조사 상태별 안내가 있습니다 [확정] (ADR-0053). `joinSurvey`가 `SURVEYED`가 아니면 안내 문구 + (가입 방법·주의가 있으면 그것) + [도서관 첫 화면](`homepageUrl`)
 - 북큐브 사이트 그림의 "/xml/productView/?num=" 주소는 서비스 도서관 주소(https 최종 주소)의 scheme·포트로 옮겨 쓴 상세 주소에서 만듭니다(강동대학교 북큐브가 검색되지 않던 원인, 사이클 07 고침)
 
 ## 흐름 18: 직접 추가하지 않은 이용자 — 구현됨 (사이클 07)
@@ -607,11 +608,11 @@ sequenceDiagram
   participant L as library
   participant A as availability
   W->>L: planSearch(libraryIds 없음)
-  L-->>W: 계획에 미조사 도서관 없음 (등록 도서관·조사된 후보 공공도서관만)
+  L-->>W: 계획에 미조사 도서관 없음 (번호 1~280 도서관·가입 조건을 조사한 공공도서관만)
   Note over A: 미조사 도서관 사이트로 요청 없음 (AC-4)
 ```
 
-- 가입 조사 상태가 `MEMBERS_ONLY`·`NOT_SURVEYED`이고 직접 추가가 아니면 계획에서 뺍니다("전체 도서관"이어도) [확정] (ADR-0053). dev 확인값: 직접 추가 없이 `scope=all` 계획 385곳(`SURVEYED` 368 + `NOT_FOUND` 17, 278 + 조사된 후보 107), 구성원용·종류 모름 0곳, 그 사이트 요청 0건(AC-4). 3곳을 끈 뒤의 수는 다시 세지 않음
+- 가입 조사 상태가 `MEMBERS_ONLY`·`NOT_SURVEYED`이고 직접 추가가 아니면 계획에서 뺍니다("전체 도서관"이어도) [확정] (ADR-0053). dev 확인값: 직접 추가 없이 `scope=all` 계획 385곳(`SURVEYED` 368 + `NOT_FOUND` 17, 278 + 사이클 07에서 넣은 곳 중 가입 조건을 조사한 107), 구성원용·종류 모름 0곳, 그 사이트 요청 0건(AC-4). 3곳을 끈 뒤의 수는 다시 세지 않음
 - AC-15 문장 (회고에서 바꿈) [확정] (사용자 제안, 2026-10-05: "이렇게 해줘"): "로그인하지 않고 직접 추가한 도서관도 없는 사람의 검색은 가입 조사를 한 공공도서관(지금 385곳)만 찾는다. 학교·대학·회사·기관처럼 구성원만 쓰는 도서관과 종류를 모르는 도서관은 찾지 않고, 그 사이트에 요청도 보내지 않는다." 처음 문장("이 사이클 전과 같다")은 ADR-0053과 함께 지킬 수 없었음
 - 사이클 07 전부터 있던 도서관(278곳)만 쓰는 이용자: 검색 대상(278·114·31곳, 순서 같음)과 소장 (도서관, 책 코드) 집합은 같고(새로 뺀 교보 "동영상" 391줄만 차이), 책 목록은 사이클 07에 넣은 도서관의 책이 같은 책 묶기에 함께 들어가 묶음이 합쳐져 57개 응답 중 38개가 다름(권수 0~2.5% 감소, 대표 제목·순서 바뀜) — 받아들임 [확정] (사용자 승인, 2026-10-05, 회고 질문 #5. Q1 "책 순서는 같음"을 바꿈)
 
@@ -773,7 +774,7 @@ sequenceDiagram
 - 스트림 경로는 `/api/v1/ebook-searches/stream`(직접 찾기)과 `/api/v1/book-availabilities/stream`(대출 현황)이고 두 곳의 `targets` 이벤트에 세 칸이 실림 (`api.md`). design-delta 그림의 `GET /api/v1/books/search/stream`은 이 두 스트림을 줄여 적은 것
 - 통합 포털은 `lendingModel`이 null이라 "통합 포털"만 보임. 검색·소장 판정 동작은 바뀌지 않음 [확정] (spec R3)
 
-### 23-3. 새 후보 도서관을 넣을 때 (seed 생성 스크립트)
+### 23-3. 새 도서관을 넣을 때 (seed 생성 스크립트, 사이클 09까지)
 
 ```mermaid
 sequenceDiagram
@@ -783,7 +784,7 @@ sequenceDiagram
   S->>C: 화면 종류, 대출 방식 근거 읽기
   S->>S: vendor = 수집이 적은 값, 없으면 VENDORS 대응표
   S->>S: lending_model 규칙 (교보 probe, 북큐브 전체 권수, 포털 NULL, 나머지 OWNED)
-  S->>O: 이름 고침 적용 (등록·후보 모두, 메모리에서)
+  S->>O: 이름 고침 적용 (번호 1~280과 그 뒤 모두, 메모리에서)
   S->>S: (이름, vendor, lending_model) 묶음마다 서비스 번호 순 order_no
   alt order_no 2 이상
     S-->>S: (id, order_no) 목록 출력 → dev가 changeset
@@ -791,6 +792,7 @@ sequenceDiagram
 ```
 
 - 배포 뒤에는 seed 파일을 다시 쓰지 않고 바뀐 것만 changeset으로 냄 [확정] (seed 고치는 방식, `data-model.md` "이름 고침"). 사이클 09 구현은 `--changes-only <db-state.tsv>`로 목록만 냈고, 순번 2 이상이 나오면 종료 코드 3 [확정] (dev 구현 확인, 2026-10-12). 수집이 업체를 따로 적는 자리 [확인 필요: 수집 세션] (스크립트에는 빈 자리 `COLLECTION_VENDORS = {}`)
+- 사이클 13 — 설계됨(미구현, 사이클 13) (ADR-0084·0085): 이 스크립트(이름 [안] `build_library_seed.py`)는 더 seed를 만들지 않고, 같은 고르기·값 정하기 규칙을 `collection` 넣기 명령이 씀(흐름 32). 옛 스크립트는 결과 비교(AC-6)용으로 남김. 이름 고침 목록 등 사람이 정한 규칙은 dev `scripts/library/rules/` TSV
 
 ## 흐름 24: 사서추천도서 받기 (주 1회, 실패하면 성공할 때까지 매일) — 설계됨(미구현, 사이클 14)
 
@@ -1080,6 +1082,7 @@ stateDiagram-v2
 - 사이클 09 — 구현됨 (사이클 09) (ADR-0071·0076, 흐름 23): 도서관 이름은 기관 이름만 보이고, 결과 카드(S1·S3)는 모든 폭에서 이름 다음 줄에 "교보 · 소장", S10 세 목록은 "이름 · 업체 · 대출 방식"(폰은 이름 아래 줄), 순번 2 이상이면 "· N번째 사이트". 요약 줄·지역 가져오기 창·직접 찾기 결과 이름 나열·가입 정보 창은 이름만. 분류 값이 없으면 이름만 [확정]. 교보 구독형 중 대여 9곳 가운데 8곳은 이름의 "(구독)"이 빠지고 분류가 "대여"로 보임 [확정] (spec R3). S10 이름 찾기에서 같은 이름 여러 줄은 업체 글자 한글 가나다순(교보 → 북큐브 → 알라딘 → 자체 → 통합 포털 → YES24), 같은 이름·같은 업체는 순번 순 [확정] (사용자 승인, 2026-10-12, `docs/cycles/09-library-naming/easy/2026-10-12-retro-decisions.html` #1)
 - 사이클 10 — 구현됨 (사이클 10) (흐름 24~26, `module-map.md` "사이클 10 웹"): 머리에 "인기 도서" 링크(로고 바로 옆, S8·S9·`/terms`·`/privacy` 제외) [확정] (사용자: "로고 바로 옆 (지금 구현)", 2026-10-12), 로고 옆 설명 글 "전자도서관 대출 가능 확인"은 모든 폭에서 지움 [확정]. 폰에서 아래에서 올라오는 창 넷(S13c 분류 목록, S13i 도움말, S14 가운데 창, S15 신청 안내)은 손잡이 끌어내리기·ⓧ·바깥으로 닫히고 사이클 08 검색 설정 바텀 시트와 같은 공용 부품 `BottomSheet`(끌어내리기 80px, 폰 뒤로 가기는 창만 닫음, `useBackToClose`) [확정] (사용자, 2026-10-11; 이름 dev 구현 확인, 2026-10-12). ⓘ 말풍선은 앱 전체에서 밝은 둥근 네모 [확정] (사용자, 2026-10-12). 흐린 책 안내는 "검색하는 도서관"으로 씀(S13i "흐린 책은 검색하는 도서관에 전자책이 없어요", S15 두 줄) [확정]. 표지는 작은 그림을 폭 200px JPEG로 줄여서만, 큰 그림·확대 보기 없음, S12 `/about`에 표지 게시 중단 요청 안내(연락처는 배포 때) [확정] (handoff C10)
 - 사이클 14 — 설계됨(미구현, 사이클 14) (흐름 24~26, `module-map.md` "사이클 10·14 웹"): 머리 링크 "인기 도서" → "사서추천도서"(자리 그대로), S13 경로 `/picks`, 순위 칩 없음, 카드 머리 "1 - 9 / 10", "? 추천 기준 보기", 도움말·출처 줄·S14 추천 줄·S12 `/about` 문구가 바뀜. 표지는 국립중앙도서관 표지를 200px JPEG로 줄여서만 [확정] (flow, ADR-0091). 바텀 시트·ⓘ 말풍선·S15는 그대로
+- 사이클 13 — 설계됨(미구현, 사이클 13) (흐름 32·33, `docs/cycles/13-crawler-to-dev/flow.md` S12, ADR-0087·0093): S12 `/about` 첫 문단("책첵은 …") 바로 아래, 제휴 안내 문단 위에 "가입 조건은 {YYYY}년 {M}월에 조사한 내용입니다." 한 줄 [확정] (자리·문구, 사용자 승인 2026-10-12). 날짜는 `GET /api/v1/join-surveys/latest`의 `surveyedOn`(넣기 실행 기록의 최신 가입 조건 조사 기준일)을 "YYYY년 M월"로. 로딩 중에는 그 줄 자리를 비우고(나머지 글은 바로 보임), 기준일이 없거나(`null`) 오류면 줄을 보이지 않음 [확정] (사용자 승인, 2026-10-12). 태블릿·폰은 지금 S12와 같은 흰 카드 한 열. 사이클 14와 맞춘 문단 순서 [안]: ① 첫 문단 → ② 가입 조사 기준일 줄(사이클 13) → ③ 사서추천도서 자료 문단(사이클 14) → ④ "각 도서관의 로고와 이름은 … 제휴·후원 관계가 없습니다" → ⑤ 로고 내림 요청 문단. 그 밖의 화면은 그대로: 새로 넣은 도서관(예: 여주대학교 교보·YES24)은 S10 이름 찾기에 나오고, 소속 전용(`MEMBERS_ONLY`)이면 직접 추가한 사람의 검색에만 들어가며(ADR-0053) 책은 다음 가져오기 뒤에 보임. 1215는 "한화S&C"로 보임
 
 ## 흐름 30: 가져오기의 네 번째 묶기 단계 (같은 키 안에서 ISBN으로 나누기) — 설계됨(미구현, 사이클 12)
 
@@ -1133,3 +1136,75 @@ sequenceDiagram
   C-->>D: 다른 책 0권 (R8-2, AC-6)
 ```
 
+## 흐름 32: 새 도서관 넣기 — 미리 보기 → 넣기 (내 PC) — 설계됨(미구현, 사이클 13)
+
+ADR-0083(`LibraryRegistry`), ADR-0084(넣기 명령), ADR-0085(규칙 TSV), ADR-0087(기준일), ADR-0093(`listAll`). 사이클 12와 나란히 미리 설계했고 사이클 12 뒤에 개발합니다. 명령·설정·종료 코드는 `module-map.md` `collection` 줄, 표는 `data-model.md` `library_insert_run`.
+
+```mermaid
+sequenceDiagram
+  actor O as 운영자(Claude)
+  participant C as collection 넣기 명령
+  participant R as 규칙 폴더
+  participant S as 수집 DB 사본
+  participant L as library LibraryRegistry
+  participant D as 서비스 DB
+  O->>C: mode=preview
+  C->>R: TSV·기준일 읽기
+  alt 규칙 오류
+    C-->>O: 종료 1, 보고서 없음
+  end
+  C->>S: 도서관·책 코드 읽기
+  C->>L: listAll() 서비스 도서관 전체(꺼진 곳 포함)
+  C->>D: 짝 표 collection_link 읽기
+  C-->>O: 보고서 파일(번호 abc123…) + 개수, 의심 있으면 종료 2·3
+  O->>O: 의심·바뀐 곳·사라진 곳 있으면 사용자에게 물음
+  O->>C: mode=insert, report-id
+  C->>C: 다시 계산, 보고서와 비교
+  alt 다름
+    C-->>O: 종료 4, 넣지 않음
+  end
+  C->>D: BEGIN, pg_advisory_xact_lock
+  C->>L: add(새 도서관 + 가입 규칙)
+  L->>D: INSERT library·eligibility_rule, IDENTITY 올림
+  C->>D: INSERT collection_link, library_insert_run SUCCEEDED
+  C->>D: COMMIT (제약 위반이면 ROLLBACK 뒤 FAILED 줄)
+  C-->>O: 넣은 수, 보고서 번호
+```
+
+- 운영자 흐름(`docs/cycles/13-crawler-to-dev/flow.md` 1절): 수집기 갈아타기 준비(dev `scripts/crawl/`, 옛 코드 `_old-scripts-2026-10-12`) → 첫 실행(여주대 102084 빈 곳 채우기) → 사본 만들기 → 넣기 미리 보기 → Claude가 보고서 확인(의심·바뀐 곳·사라진 곳이 있으면 사용자에게) → 넣기 → 다음 가져오기·운영 반영(흐름 27·33)
+- 같은 보고서로 다시 넣으면 0곳(부분 UNIQUE `report_id WHERE status = 'SUCCEEDED'`, AC-8) [안]
+
+## 흐름 33: 운영 반영 판 2 — 도서관 → 비교 → 책 — 설계됨(미구현, 사이클 13)
+
+ADR-0086(반영 파일 판 2), ADR-0093(실행 기록 줄도 옮김). 흐름 27·28(사이클 11 내보내기·반영)에 도서관 부분이 앞에 붙습니다.
+
+```mermaid
+sequenceDiagram
+  participant P as 내 PC export
+  participant F as 반영 파일
+  participant A as 운영 apply
+  participant L as library LibraryRegistry
+  participant D as 운영 DB
+  P->>F: catalog_next + load_manifest(notes.libraryPart, 판 2)
+  A->>F: load_manifest만 읽기
+  alt 판이 2가 아님
+    A-->>A: 거절
+  end
+  A->>D: BEGIN
+  A->>L: add(운영에 없는 도서관만)
+  alt 도서관 부분 실패
+    A->>D: ROLLBACK, 반영 시작 안 함
+  end
+  A->>D: collection_link·성공한 넣기 실행 기록 줄 (같은 report_id 있으면 건너뜀)
+  A->>D: 지문 비교(도서관·짝 해시)
+  alt 다름
+    A->>D: ROLLBACK, mismatch 기록
+  else 같음
+    A->>D: COMMIT
+    A->>D: 복원·색인·바꿔 끼우기 (사이클 11 그대로)
+  end
+```
+
+- 도서관 부분을 커밋한 뒤 책 바꿔 끼우기가 실패(`lock_not_acquired` 등)하면 도서관은 들어간 채 남음. 다시 돌리면 같은 줄은 건너뛰므로 안전 (ADR-0086)
+- 1215 이름 고침 changeset(`library/015-library-name-1215.yaml` [안])은 운영 역할 DB에도 판 2 반영 전에 적용돼 있어야 도서관 해시가 맞음
+- 판 2 배포 때 내 PC에 판 1 내보내기가 기다리면 `finish`가 거절됨 → 배포 전 `finish`·`discard` [확인 필요: 절차 문서]

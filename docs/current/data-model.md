@@ -9,6 +9,7 @@
 사이클 11 cycle-close (2026-10-12): 가져오기 따로 하기(export·apply·finish·discard, load_manifest, db-ops) + 묶는 방식 current·compact·sql — 설계됨(미구현, 사이클 11). `collection.catalog_import` 칸 `export_id`·`exported_at`과 CHECK, `failure_reason` 값 `mismatch`(changeset 없음), `step_seconds` 새 키, 실행 중에만 있는 `catalog_next.load_manifest`(Liquibase 아님), dev compose `db-ops`. 새 스키마·새 색인 없음. 근거 `docs/cycles/11-separate-import/design-delta.md` "데이터", spec.md, ADR-0078·0079. 이름·번호는 따로 적지 않으면 [안].
 사이클 12 (2026-10-12, 사이클 11 dev 진행 중에 미리 한 plan): 책 묶기 네 번째 단계 규칙 — 설계됨(미구현, 사이클 12). 근거 `docs/cycles/12-grouping-rules/design-delta.md`, ADR-0082.
 사이클 14 cycle-close (2026-10-12): 스키마 `popular`(사이클 10, 구현됨·배포 전)를 지우고 새 스키마 `picks`(`fetch_run`, `pick`, `cover`) — 설계됨(미구현, 사이클 14). changelog `picks/001-picks-schema.yaml`, `popular/001-popular-schema.yaml`은 지움(배포 전 규칙), 로컬 `db`·`db-test`에서 `DROP SCHEMA popular CASCADE`와 `databasechangelog`의 `popular-001-%` 줄 지움. 다른 모듈 표는 바뀌지 않음(`catalog.book`과는 ISBN·제목+저자 값으로만 맞춤). 근거 `docs/cycles/14-librarian-picks/design-delta.md` "데이터", ADR-0089·0090·0091.
+사이클 13 cycle-close (2026-10-12, 사이클 12와 나란히 미리 한 plan, 사이클 12 뒤에 개발): 수집기 dev로 갈아타기 + 새 도서관 넣기 명령 — 새 표 `collection.library_insert_run`(넣기 실행 기록), `collection.catalog_import.candidate_library_count` → `other_library_count` 이름 바꿈(배포 전 규칙으로 `collection/001`을 고치고 로컬 `db`·`db-ops`는 이름 바꾸기 SQL + 체크섬 비우기로 맞춤(데이터 유지, 사용자 선택 2026-10-12)), `library.library` 1215 이름 고침 changeset, 반영 파일 판 2(`load_manifest.notes.libraryPart`, 새 표 없음), 앞으로 도서관 seed changeset을 만들지 않음 — 설계됨(미구현, 사이클 13). `library` 칸 변경 없음. 근거 `docs/cycles/13-crawler-to-dev/design-delta.md` "데이터", ADR-0083~0087·0093. 이름·번호는 따로 적지 않으면 [안](dev가 바꿀 수 있음).
 사이클 08 cycle-close (2026-10-11): `catalog` 가져오기를 새 표(`catalog_next`)에 쓰고 바꿔 끼우기, 소장 번호 잇기, `collection.catalog_import` 칸 추가, `collection.national_bibliography_record`·`national_bibliography_source`, `library.library.mobile_site_differs`, 도서관 이름 고침 changeset, `library`·`region` `updated_at` 트리거, 교보 대여·혼합 11곳 seed에서 뺌, 정리 규칙을 바꿀 때의 순서 — 구현됨 (사이클 08). 근거 `docs/cycles/08-polish-swap-memory/design-delta.md` "데이터"·"정리 규칙을 바꿀 때"·"이름 고치기", ADR-0065~0070. 이름·숫자는 따로 적지 않으면 [안].
 사이클 08 회고 (2026-10-11): dev Liquibase(`collection/003`·`004`, `library/011`~`013`, `region/003`)와 dev `plan-feedback.md` "# 사이클 08"로 대조함. 달라진 점: 국가서지 원문은 ISBN마다 한 줄, `step_seconds` 키가 늘어남, 가져오기 기록에 `status`·`failure_reason`·`failure_detail`, 넓은 줄은 임시 표와 `catalog_next`에 두 번 씀, 파일 번호가 설계 [안]과 다름, 이름 고침은 `library/013`. 가져오기 힙(AC-12), 국가서지 원문 재사용 시간(AC-15), 색인 단계 중단(AC-9 둘째 경우)은 측정 중 [확인 필요]. 근거 `docs/cycles/08-polish-swap-memory/retro.md`.
 
@@ -22,15 +23,21 @@
 
 - Liquibase 파일: `region/001-region-schema.yaml`, `region/002-region-seed.yaml`(+CSV), `region/900-region-test-abolished.yaml`(context `test-data`), `library/001-library-schema.yaml`, `library/002-library-seed.yaml`, `library/003-library-seed-cycle02.yaml`, `004-library-seed-kyobo.yaml`, `005-library-seed-yes24.yaml`, `006-library-seed-moved.yaml`(각각 CSV `loadData`)
 - 사이클 07 Liquibase (구현됨 (사이클 07)): 처음에 새 파일 7개로 넣고 대조한 뒤, 배포 전(`PRE_DEPLOYMENT` 동안) 스키마 changeset을 모듈의 첫 파일로 접음 — `library/007` → `library/001`(`join_survey`, `lending_model`, `join_method` NULL 허용 + CHECK, 화면 종류 둘), `catalog/002`·`003` → `catalog/001`(`book.library_ids`와 GIN, `catalog.catalog_import` 표·`catalog_library_snapshot.import_id` 없앰), `collection/003` → `collection/001`(책 번호 셈 칸). seed 파일은 그대로 [확정] (인계서 C8, 합치기 [확정]. 접는 방식은 [이유 미확인: dev가 정함]). 지금 master 순서(사이클 07 부분): `library/008` → `collection/001` → `collection/002` → `library/009` → `library/010` [확정] (dev 구현 확인, 2026-10-05)
-  - `library/008-library-seed-candidates.yaml` + CSV(`008-library-candidates.csv` 후보 도서관 줄, `008-eligibility-rule-candidates.csv` 가입 규칙 줄) — IDENTITY 맞춤. 등록 도서관 `lending_model`(C6)은 이 파일의 두 번째 changeset UPDATE
+  - `library/008-library-seed-candidates.yaml` + CSV(`008-library-candidates.csv` 사이클 07에서 넣은 2,394곳 줄, `008-eligibility-rule-candidates.csv` 가입 규칙 줄) — IDENTITY 맞춤. 번호 1~280 도서관의 `lending_model`(C6)은 이 파일의 두 번째 changeset UPDATE
   - `collection/001-collection-schema.yaml`: 스키마 `collection`, `collection.collection_link`, 가져오기 기록 `collection.catalog_import` [확정] (dev 구현 확인, 2026-10-05)
-  - `collection/002-collection-seed-candidates.yaml` + `002-collection-link.csv`(짝: 등록 도서관 같은 번호 짝 + 후보 도서관 짝). 등록 도서관 짝도 `library.library`를 읽지 않고 CSV 줄로 적음(다른 모듈 표를 읽지 않기 위해) [확정] (dev 구현 확인, 2026-10-05)
+  - `collection/002-collection-seed-candidates.yaml` + `002-collection-link.csv`(짝: 번호 1~280 도서관의 같은 번호 짝 + 사이클 07에서 넣은 2,394곳의 짝). 번호 1~280 짝도 `library.library`를 읽지 않고 CSV 줄로 적음(다른 모듈 표를 읽지 않기 위해) [확정] (dev 구현 확인, 2026-10-05)
   - `library/009-library-logos.yaml` + `009-library-logos.csv`: 로고 칸 둘 + `logo_file` 값(임시 표 `library.logo_seed`에 `loadData` → UPDATE → 표 지움) [확정] (dev 구현 확인, 2026-10-05)
   - `library/010-library-disabled.yaml`: 135 전라북도교육청통합도서관, 2194 장안대학교 (YES24), 2198 성균관대학교 (YES24)를 `enabled = false` [확정] (사용자 승인, 2026-10-05, 17단계)
   - 합칠 때 대조 규칙 [확정] (사용자 제안, 2026-10-05): 둘 다 있으면 합치고 다른 점은 목록으로 보고, 새 파일에만 있으면 넣고, **옛 파일에만 있으면 지우지 않고** dev가 그 사이트 첫 화면을 열어 확인 → 열리지 않거나 바뀌었으면 `enabled = false` 제안 목록을 사용자에게 보여 주고 사용자가 정함 (ADR 없음, 사이클 07 design-delta "데이터"에만 기록). 대조 결과: 이름·화면 종류·주소 다른 곳 0, 옛 파일에만 있는 곳 2(59·131, 이미 꺼짐, 그대로 둠)
   - 지역 seed `region/002`에 증평군(4311) 추가, 전남광주통합특별시 `short_name` "전남광주" [확정] (사용자 결정, 2026-10-05, 배포 전 규칙으로 고침)
 - 사이클 08 Liquibase (구현됨 (사이클 08)), 새 파일로 더함. 파일 이름은 dev가 정함 [확정] (dev 구현 확인, 2026-10-11; 설계 [안]의 `collection/004`·`005`, `library/011`·`012`·`013` 번호와 다름): `collection/003-import-period-and-timings.yaml`(changeset `collection-003-import-period-and-timings`: 수집 기간·단계별 시간, `collection-003-import-status`: 상태·실패 칸), `collection/004-national-bibliography.yaml`(두 표), `library/011-updated-at-trigger.sql`, `region/003-updated-at-trigger.sql`(master에서 이번 사이클 다른 changeset보다 앞), `library/012-library-mobile-site-differs.yaml`(칸 + 13곳 UPDATE), `library/013-library-name-overrides.yaml`(이름 고침 UPDATE). 트리거 파일은 dev `CLAUDE.md` 규칙대로 formatted SQL: 첫 줄 `--liquibase formatted sql`, `splitStatements:false`, `CREATE OR REPLACE`, `runOnChange:true` [확정] (사용자 승인, 2026-10-11, 설계 검토)
   - 교보 대여·혼합 11곳(2664~2674): `PRE_DEPLOYMENT`가 남아 있으므로 `library/008-library-candidates.csv`와 `collection/002-collection-link.csv`에서 그 줄을 지우고 로컬 `db`·`db-test`를 초기화해 다시 적용 [확정] (사용자: "그냥 DB에서 삭제", 2026-10-10; ADR-0067). 이유: 아직 다른 사용자에게 배포되지 않음 (사용자: "이거 다른 사용자들에게 배포 안 되었어. 그냥 DB에서 삭제", 2026-10-10)
+- 사이클 13 Liquibase — 설계됨(미구현, 사이클 13) (`docs/cycles/13-crawler-to-dev/design-delta.md` "데이터"):
+  - `collection/001-collection-schema.yaml`: 칸 `candidate_library_count` → `other_library_count`, 제약 `catalog_import_candidate_library_count_check` → `catalog_import_other_library_count_check` 이름만 직접 고침(49·50행). 배포 전 규칙(`PRE_DEPLOYMENT`)으로 기존 파일을 고치므로 체크섬이 바뀜 → 고침 방식 [확정] (사용자 선택 "기존 파일을 고침", 2026-10-12, 사이클 14와 같은 방식). 로컬 `db`·`db-ops`는 같은 이름 바꾸기 SQL + `databasechangelog.md5sum` NULL로 데이터를 지키며 맞춤(dev 세션이 함), `db-test`는 다시 띄움 [확정] (사용자 선택 "가벼운 방법", 2026-10-12). 이번 사이클에서 기존 파일을 고치는 것은 이 하나
+  - `collection/006-library-insert-run.yaml`: 새 표 `collection.library_insert_run`만 [안: 번호는 dev의 마지막 파일 다음]
+  - `library/015-library-name-1215.yaml`: 1215 이름 고침 [안]. 운영 역할 DB에도 판 2 반영 **전에** 적용돼 있어야 도서관 해시가 맞음
+  - master(`db.changelog-master.yaml`) 끝줄은 사이클 13(`collection/006`, `library/015`)과 사이클 14(`popular/001` → `picks/001`)가 함께 손댐. 번호는 겹치지 않지만 병합 때 끝줄 순서를 확인
+  - 앞으로 도서관 seed changeset을 만들지 않음 — 새 도서관은 `collection` 넣기 명령으로 [확정] (ADR-0084)
 - CHECK, 부분 인덱스, `UNIQUE NULLS NOT DISTINCT`는 Liquibase OSS YAML이 지원하지 않아 changeset 안의 `sql`로 만듦
 - **배포 전 규칙** [확정] (사용자, 2026-09-28): dev의 `db/changelog/PRE_DEPLOYMENT` 파일이 있는 동안에는 이미 적용된 changeset도 고칠 수 있습니다(로컬 DB를 지우고 다시 적용). 첫 배포 때 이 파일을 지우고, 그 뒤로는 새 파일만 더합니다. 그래서 사이클 02 스키마 변경은 `library/001`에 합쳐져 있습니다
 
@@ -92,11 +99,11 @@ erDiagram
 | name | text | NOT NULL. 사이클 09: UNIQUE `library_name_key`를 지우고 (이름, 업체, 대출 방식, 순번) 조합 UNIQUE `library_classification_key`로 바꿈 — 구현됨 (사이클 09) [확정] (ADR-0071) | 기관 정식 이름만. 이름 끝의 업체·대출 방식 괄호((YES24), (교보), (북큐브), (알라딘), (구독), (구독형), (소장), (소장형), (대여), "(교보, 호스트)" 꼴)는 두지 않고, 기관 이름의 일부인 괄호((주), (임직원) 등)는 남김 (spec R1). 같은 기관의 여러 사이트는 이름이 아니라 `vendor`·`lending_model`·`order_no`로 구분 — 구현됨 (사이클 09) [확정] (ADR-0071). (사이클 08까지: 같은 기관의 여러 사이트는 "(구독)", "(YES24)", "(교보)" 등을 이름에 붙여 구분, 이름 UNIQUE) |
 | library_type | text | NOT NULL DEFAULT 'EBOOK', CHECK IN ('EBOOK') | 종류. 실물 도서관 사이클에 `PHYSICAL` 추가 |
 | platform_type | text | NULL, CHECK IN ('KYOBO_V1','KYOBO_SUBSCRIPTION_V1','YES24_V1','YES24_V2','YES24_V3','ELIB_PORTAL_V1','GANGNAM_V1') — 사이클 07: `BOOKCUBE_FX`, `ALADIN_V1` 추가(9개) [확정] (ADR-0056), 구현됨 (사이클 07) | 화면 종류 (ADR-0016, 세대 번호 ADR-0023) |
-| base_url | text | NULL, UNIQUE | adapter가 경로를 붙이는 사이트 루트(리다이렉트 뒤 최종 주소). 교보·YES24·구독형·강남구는 origin, 포털은 `…/elib`, 강원교육청 포털은 `?menu_idx=2`까지. 사이클 07 후보 도서관도 리다이렉트를 따라간 https 최종 주소(248곳을 수집 DB 주소에서 바꿈) [확정] (사용자 요청, 2026-10-05) |
+| base_url | text | NULL, UNIQUE | adapter가 경로를 붙이는 사이트 루트(리다이렉트 뒤 최종 주소). 교보·YES24·구독형·강남구는 origin, 포털은 `…/elib`, 강원교육청 포털은 `?menu_idx=2`까지. 사이클 07에서 넣은 2,394곳도 리다이렉트를 따라간 https 최종 주소(248곳을 수집 DB 주소에서 바꿈) [확정] (사용자 요청, 2026-10-05) |
 | eligibility_summary | text | NULL | 자격 문구 |
 | extra_condition_text | text | NULL | 판정 못 하는 자격 문구 (예: "책이음 회원 가입 가능"). 참고 글로만 보이고 가입 판정·"가입 가능한 곳" 범위에 영향 없음 (C3-U-2) |
 | visit_required | boolean | NOT NULL DEFAULT false | 방문 가입. 전자책 이용에 도서관 방문이 필요하면 true. 원문이 전자책 회원 등급을 따로 말하지 않고 가입 절차에 방문 단계만 있어도 true (C3-U-1). "방문 없이 가입" 필터(`visit=none`)와 무리 안 순서(맨 뒤)에 쓰임 (ADR-0027) |
-| join_method | text | 사이클 07부터 NULL 허용 + CHECK `library_join_method_check`(`join_survey <> 'SURVEYED' OR join_method IS NOT NULL`) [확정], 구현됨 (사이클 07) | 가입 방법 한 줄. 전자책 기준으로 적음 (종이책 회원증 절차만 적으면 `visit_required`와 어긋남, C3-U-1). 조사하지 않은 후보 도서관(`MEMBERS_ONLY`·`NOT_SURVEYED`)은 NULL |
+| join_method | text | 사이클 07부터 NULL 허용 + CHECK `library_join_method_check`(`join_survey <> 'SURVEYED' OR join_method IS NOT NULL`) [확정], 구현됨 (사이클 07) | 가입 방법 한 줄. 전자책 기준으로 적음 (종이책 회원증 절차만 적으면 `visit_required`와 어긋남, C3-U-1). 가입 조건을 조사하지 않은 곳(`MEMBERS_ONLY`·`NOT_SURVEYED`, 사이클 07부터 넣은 곳)은 NULL |
 | join_url | text | NULL | 가입·자격 안내 페이지. 없으면 링크 없이 글자만 (C2-U-4) |
 | join_caution | text | NULL | "주의" 문구. 가입 판정·필터는 바꾸지 않고, 같은 그룹 안 순서에서 뒤로 (C2-U-11) |
 | join_notice | text | NULL | "안내" 문구(누구를 위한 도서관인지). 판정·필터·정렬에 영향 없음 (C2-U-15) |
@@ -105,7 +112,7 @@ erDiagram
 | holdings_counted_on | date | NULL | 조사일. `holdings_count`와 둘 다 있거나 둘 다 없음 |
 | deferred | boolean | NOT NULL DEFAULT false | 판정 없는 포털 후순위 (경북·전북) |
 | enabled | boolean | NOT NULL DEFAULT true | 사용 여부. 운영자가 SQL로 변경. 사이클 07에 135·2194·2198을 끔(`library/010`) |
-| join_survey | text | NOT NULL DEFAULT 'SURVEYED', CONSTRAINT `library_join_survey_check` CHECK IN ('SURVEYED','NOT_FOUND','MEMBERS_ONLY','NOT_SURVEYED') | 가입 조사 상태(Java enum `JoinSurvey`). `MEMBERS_ONLY`·`NOT_SURVEYED`는 직접 추가일 때만 계획에, API 등급 `UNSURVEYED`. 후보: `MEMBERS_ONLY` 2,252, `SURVEYED` 90, `NOT_SURVEYED` 35, `NOT_FOUND` 17 (dev 1단계 셈). 구현됨 (사이클 07). 태그: [확정] (ADR-0053), 값 이름 [확정] (dev 구현 확인, 2026-10-05) |
+| join_survey | text | NOT NULL DEFAULT 'SURVEYED', CONSTRAINT `library_join_survey_check` CHECK IN ('SURVEYED','NOT_FOUND','MEMBERS_ONLY','NOT_SURVEYED') | 가입 조사 상태(Java enum `JoinSurvey`). `MEMBERS_ONLY`·`NOT_SURVEYED`는 직접 추가일 때만 계획에, API 등급 `UNSURVEYED`. 사이클 07에서 넣은 2,394곳: `MEMBERS_ONLY` 2,252, `SURVEYED` 90, `NOT_SURVEYED` 35, `NOT_FOUND` 17 (dev 1단계 셈). 구현됨 (사이클 07). 태그: [확정] (ADR-0053), 값 이름 [확정] (dev 구현 확인, 2026-10-05) |
 | lending_model | text | NULL, CONSTRAINT `library_lending_model_check` CHECK IN ('OWNED','SUBSCRIPTION','MIXED','RENTAL') | 교보 구독형 화면 기관의 소장·구독·혼합·대여(Java enum `LendingModel`). NULL이면 지금 규칙(화면 종류로 판정). 값 출처: 수집 세션 `kyobo-institutions-probe-2026-10-03.tsv` `library_model`(값이 소장·혼합·대여 셋뿐이라 `SUBSCRIPTION`을 받은 곳은 없음). 쓰는 곳: 소장 스트림에서 `OWNED`면 상세 쪽을 읽음(목록 판정은 줄마다 숫자 유무로, 이 값을 보지 않음). 구현됨 (사이클 07). 태그: [확정] (사용자 승인, 2026-10-05, 설계 검토). **사이클 09 — 구현됨 (사이클 09)**: 통합 포털(`vendor = 'PORTAL'`) 말고 모든 도서관에 값을 둠, 새 CHECK `library_lending_model_required_check ((vendor = 'PORTAL') = (lending_model IS NULL))` [확정] (사용자 승인, 2026-10-11). `vendor`가 NULL(실물 도서관)이면 식이 NULL이라 통과. 채우는 규칙은 아래 "도서관 이름과 분류". 검색·소장 판정 동작은 바뀌지 않음(대출 방식으로 갈리는 곳은 교보 구독형 && `!= OWNED` 하나이고, 교보 구독형에 `OWNED`를 새로 넣는 곳은 없음) [확정] (dev 코드 확인, `docs/cycles/09-library-naming/research.md` 2절). 화면 표시(업체 · 대출 방식)와 겹침 확인에도 씀. 014 적용 뒤(2,663줄): `OWNED` 2,634, `SUBSCRIPTION` 11, `RENTAL` 9, `MIXED` 2, NULL 7(통합 포털) — 포털 말고 NULL 0 [확정] (dev 측정, 2026-10-12, `docs/cycles/09-library-naming/retro.md`) |
 | vendor | text | NULL 허용, CONSTRAINT `library_vendor_check` CHECK IN ('KYOBO','YES24','BOOKCUBE','ALADIN','PORTAL','IN_HOUSE'), CONSTRAINT `library_vendor_required_check` (`library_type <> 'EBOOK' OR vendor IS NOT NULL`) — 지금 `library_type`은 EBOOK뿐이라 늘 필수, 실물 도서관 사이클에서 다시 봄 | 업체(Java enum `Vendor`). 사이클 09 — 구현됨 (사이클 09). 도서관 수집이 정한 사실로 보고 seed 생성 스크립트가 씀, DB는 허용 값만 확인 [확정] (ADR-0071; DB가 화면 종류에서 계산하는 안은 미승인, 사용자: "역할 분리"). 지금은 화면 종류 대응표로 정함: `KYOBO_V1`·`KYOBO_SUBSCRIPTION_V1` → `KYOBO`, `YES24_V1~V3` → `YES24`, `BOOKCUBE_FX` → `BOOKCUBE`, `ALADIN_V1` → `ALADIN`, `ELIB_PORTAL_V1` → `PORTAL`, `GANGNAM_V1` → `IN_HOUSE` [확정] (spec R2). 교보 일반과 교보 구독형은 같은 `KYOBO`. 태그: 칸·값 [확정] (사용자 승인, 2026-10-11, `docs/cycles/09-library-naming/easy/2026-10-11-design-delta-review.html`), 필수 CHECK [확정] (사용자 승인, 2026-10-11, `easy/2026-10-11-review-decisions.html`). 014 적용 뒤: `KYOBO` 1,642, `YES24` 547, `BOOKCUBE` 441, `ALADIN` 25, `PORTAL` 7, `IN_HOUSE` 1, NULL 0 [확정] (dev 측정, 2026-10-12). 대응표와 다른 업체 0곳 |
 | order_no | integer | NOT NULL DEFAULT 1, CONSTRAINT `library_order_no_check` CHECK (`order_no >= 1`) | 같은 (이름, 업체, 대출 방식) 묶음 안의 순번. 보통 1, 같은 묶음이 또 들어오면 seed 생성 스크립트가 서비스 번호 순으로 2, 3을 붙이고 목록으로 보여 줌. 사이트 이름을 확인하면 이름을 고치고 1로 되돌림 (spec R4-4). 지금은 모두 1 (014 적용 뒤 순번 2 이상 0곳 [확정], dev 측정 2026-10-12). 사이클 09 — 구현됨 (사이클 09). 태그: [확정] (사용자 승인, 2026-10-11) |
@@ -123,6 +130,7 @@ erDiagram
   - seed를 다시 만드는 방식 [확정] (사용자 승인, 2026-10-11, `docs/cycles/08-polish-swap-memory/easy/2026-10-11-midpoint-decisions.html`): 첫 배포 전까지는 번호로 UPDATE하는 changeset을 더함 → 첫 배포 바로 전에 seed를 한 번 다시 만듦 → 배포 뒤에는 seed를 고정하고 바뀐 것은 새 changeset으로 냄. 배경: seed CSV를 다시 만들면 이미 적용된 `loadData`의 checksum이 바뀜 (dev 설명; Liquibase는 적용된 changeset이 바뀌면 checksum 오류, https://docs.liquibase.com/concepts/changelogs/attributes/runonchange.html 확인 2026-10-11)
 - 이번 괄호 떼기(사이클 09)는 한 번만 하는 예외이고, 그 뒤에는 "한 번 정한 이름은 바꾸지 않음"(예외: 공식 개명·틀린 이름, 이름 고침 목록)을 지킴 [확정] (ADR-0071, spec R1-5)
 - 도서관을 찾고·넣고·끄는 절차는 dev `docs/library-maintenance.md`에 있습니다 (C2-U-7). plan `collection-method.md`와 겹침. **절차의 원본 = dev `library-maintenance.md`, 조사 기록·근거 = plan** [확정] (사용자, 2026-10-01. `docs/reference-index.md`). dev `plan-feedback.md` C2-U-7에 대한 답은 다음 인계서로 전달
+- 사이클 13 — 설계됨(미구현, 사이클 13) (ADR-0083·0084·0093): 칸 변경 없음. 새 도서관 줄과 가입 규칙 줄은 seed가 아니라 `library`의 공개 `LibraryRegistry.add`(`collection` 넣기 명령이 부름)로 들어가고, 번호는 부르는 쪽이 정함(`id`가 `GENERATED BY DEFAULT AS IDENTITY`라 직접 넣을 수 있음, 넣은 뒤 `setval(pg_get_serial_sequence('library.library','id'), GREATEST(max(id), 시퀀스 값))` [안]). 같은 번호가 있으면 실패, 값 검사는 이 표의 CHECK·UNIQUE. 넣기 비교용 읽기 `LibraryRegistry.listAll()`(꺼진 곳 포함, `collection`은 이 표를 읽지 않음). 1215 `name` `한화S&amp;C` → `한화S&C` [확정] (사전 결정 8), changeset `library/015-library-name-1215.yaml` [안]
 
 ### 도서관 이름과 분류 — 구현됨 (사이클 09)
 
@@ -156,7 +164,7 @@ ADR-0071(이름에는 기관 이름만, 업체·대출 방식은 분류로), ADR
 | `KYOBO_V1`, `YES24_V1~V3`, `ALADIN_V1`, `GANGNAM_V1` | `OWNED` (화면에 보유·대출·예약 권수가 보임) | [확정] |
 | `BOOKCUBE_FX` 중 목록 XML 전체 권수(`totalVolume`)가 0이고 책이 있는 곳: 339·380·386·705 | `SUBSCRIPTION` | 규칙 [확정], 번호 339·380·386·705 [확정] (dev가 `bookcube-volume-2026-10-11.tsv` + `collection_link`로 다시 맞춤, 2026-10-12) |
 | 나머지 `BOOKCUBE_FX` (응답 없음·책 0종 5곳 포함, 다음 수집 때 다시 봄) | `OWNED` | [확정] |
-| `KYOBO_SUBSCRIPTION_V1` 중 비어 있는 등록 도서관 59, 131, 140, 275, 276, 277, 278 | `SUBSCRIPTION` (지금도 구독으로 동작, 동작 그대로) | [확정] |
+| `KYOBO_SUBSCRIPTION_V1` 중 비어 있는 번호 1~280 도서관 59, 131, 140, 275, 276, 277, 278 | `SUBSCRIPTION` (지금도 구독으로 동작, 동작 그대로) | [확정] |
 | `KYOBO_SUBSCRIPTION_V1` 중 값이 있는 곳 | 그대로 (수집 세션 probe) | [확정] (사이클 07) |
 | `ELIB_PORTAL_V1` (7곳) | NULL 그대로 | [확정] |
 
@@ -180,7 +188,7 @@ ADR-0071(이름에는 기관 이름만, 업체·대출 방식은 분류로), ADR
 - CHECK: REGION이면 scope_region_id만, INSTITUTION이면 scope_institution_id만, NATIONWIDE이면 둘 다 없음
 - UNIQUE NULLS NOT DISTINCT `(library_id, basis, scope_type, scope_region_id, scope_institution_id)`, INDEX `(library_id)`
 - **규칙이 없는 도서관 = 자격 미확인** (ADR-0013). 규칙이 SCHOOL/AFFILIATION뿐인 도서관은 "지역 규칙 있음"과 같이 봄 (지역 없음 → `QUALIFIED`)
-- 사이클 07 (구현됨 (사이클 07)): 이 규칙은 `join_survey = 'SURVEYED'`·`'NOT_FOUND'` 도서관에 그대로 적용합니다. `MEMBERS_ONLY`·`NOT_SURVEYED`는 규칙 줄이 없어도 "자격 미확인"으로 전체 검색에 넣지 않고 직접 추가했을 때만 넣습니다 [확정] (ADR-0053, ADR-0013 보완). 조사된 후보 공공도서관(`public-join-2026-10-05.tsv`, `decision` 칸)은 `SURVEYED` + 이 표에 규칙 줄을 seed로 넣음 [확정]. 넣은 규칙 253줄(증평군 추가 뒤) [확정] (dev 구현 확인, 2026-10-05). 기관 소속 규칙(`AFFILIATION` + `INSTITUTION`)은 기관 표가 없어 쓰지 않음 → 대구학생전자도서관(100049)은 `MEMBERS_ONLY` [확정] (사용자 결정 "구성원용으로", 2026-10-05)
+- 사이클 07 (구현됨 (사이클 07)): 이 규칙은 `join_survey = 'SURVEYED'`·`'NOT_FOUND'` 도서관에 그대로 적용합니다. `MEMBERS_ONLY`·`NOT_SURVEYED`는 규칙 줄이 없어도 "자격 미확인"으로 전체 검색에 넣지 않고 직접 추가했을 때만 넣습니다 [확정] (ADR-0053, ADR-0013 보완). 사이클 07에서 넣은 곳 중 가입 조건을 조사한 공공도서관(`public-join-2026-10-05.tsv`, `decision` 칸)은 `SURVEYED` + 이 표에 규칙 줄을 seed로 넣음 [확정]. 넣은 규칙 253줄(증평군 추가 뒤) [확정] (dev 구현 확인, 2026-10-05). 기관 소속 규칙(`AFFILIATION` + `INSTITUTION`)은 기관 표가 없어 쓰지 않음 → 대구학생전자도서관(100049)은 `MEMBERS_ONLY` [확정] (사용자 결정 "구성원용으로", 2026-10-05)
 
 ## 스키마 `catalog` (소유: `catalog` 모듈) — 구현됨(사이클 04), 사이클 07 변경 구현됨 (사이클 07), 사이클 08 바꿔 끼우기 구현됨 (사이클 08)
 
@@ -245,7 +253,7 @@ erDiagram
 - 사이클 07: `library_ids` + GIN, `catalog_import` 표·`import_id` 없앰을 `catalog/001`에 접음(처음 `catalog/002`·`003`으로 넣은 뒤 17단계에 합침) — 구현됨 (사이클 07)
 - 가져오기 범위 [확정]: `removed_at IS NULL`, 오디오북·동영상북만 제외(`EBOOK`·`KIDS_BOOK`·`UNKNOWN`·`PAPER` 모두 넣음, 사용자 2026-09-30), 서비스 `library`와 id·`base_url`이 같은 도서관. 꺼진 59·131번은 대조에서 빠짐
 - 사이클 07에서 가져오기 범위가 바뀌었습니다 (구현됨 (사이클 07), ADR-0054가 사이클 04 범위 결정을 바꿈):
-  - 도서관 찾기: `collection.collection_link` 짝 표로 수집 번호 → 서비스 번호. 짝 있는 **모든 서비스 도서관**(등록 + 후보)의 책을 옮김. 사이트 검사는 안전장치(호스트·경로·쿼리 비교, http/https·포트 차이 허용, 다르면 `library_base_url_mismatch`), 짝 없음·꺼짐은 `library_not_in_service`로 셈 [확정] (D5, 비교 방식은 인계서 C10을 바꿈, 사용자 요청 2026-10-05). 알려진 빈틈: 리다이렉트로 호스트까지 바뀐 411(`ebook2.ezville.net` → `gsenc.bookcube.biz`)은 안전장치에 걸려 소장 64,461줄이 빠짐. 사이클 08에 수집 DB 주소를 새 주소로 고치고 다시 수집함(2026-10-11 22:54 전체 성공, 64,461줄 모두 새 호스트 `detail_url`) → 서비스에는 다음 사본·가져오기 때 들어옴 [확인 필요] (다음 가져오기에서 `library_base_url_mismatch`가 0인지 확인)
+  - 도서관 찾기: `collection.collection_link` 짝 표로 수집 번호 → 서비스 번호. 짝 있는 **모든 서비스 도서관**(번호 1~280 + 사이클 07에서 넣은 2,394곳)의 책을 옮김. 사이트 검사는 안전장치(호스트·경로·쿼리 비교, http/https·포트 차이 허용, 다르면 `library_base_url_mismatch`), 짝 없음·꺼짐은 `library_not_in_service`로 셈 [확정] (D5, 비교 방식은 인계서 C10을 바꿈, 사용자 요청 2026-10-05). 알려진 빈틈: 리다이렉트로 호스트까지 바뀐 411(`ebook2.ezville.net` → `gsenc.bookcube.biz`)은 안전장치에 걸려 소장 64,461줄이 빠짐. 사이클 08에 수집 DB 주소를 새 주소로 고치고 다시 수집함(2026-10-11 22:54 전체 성공, 64,461줄 모두 새 호스트 `detail_url`) → 서비스에는 다음 사본·가져오기 때 들어옴 [확인 필요] (다음 가져오기에서 `library_base_url_mismatch`가 0인지 확인)
   - 나눠 읽기: 사본을 같은 SQLite 읽기 트랜잭션에서 두 번 읽음(첫 번째는 같은 책 코드 묶음마다 값별 줄 수만 셈, 두 번째에 줄마다 소장을 바로 COPY). 묶음 크기 설정 없음 [확정] (dev 구현 확인, 2026-10-05)
   - 제외: 지금 규칙 + 북큐브 `content_kind` `book/wma`·`book/vod`·`book/wmv`, 교보 `동영상` → 새 이유 `kind_sound_video` [확정] (Q2, 이름 dev 구현 확인, 2026-10-05)
   - 날짜: 8자리 `YYYYMMDD`(실제 날짜만) 읽음. 설정 `chaekcheck.collection.import.placeholder-date-libraries`(값 `100555`, 수집 번호) 도서관의 1950년 이전 날짜는 NULL [확정] (D6, 설정 이름 dev 구현 확인, 2026-10-05)
@@ -351,9 +359,9 @@ erDiagram
 - 정리 규칙 판 번호는 두지 않음: 책·사람·소장 표는 다시 가져오면 통째로 새로 만들어지고, 국가서지는 원문을 남기므로 규칙과 상관없음
 - dev 가져오기 절차(`docs/maintenance/3-import.md` 12절)에 위 표를 적음 — 구현됨 (사이클 08, AC-16)
 
-## 스키마 `collection` (소유: `collection` 모듈) — 구현됨 (사이클 07), 사이클 08 변경 구현됨 (사이클 08), 사이클 11 칸 구현됨 (사이클 11, 중간 회고 2026-10-12)
+## 스키마 `collection` (소유: `collection` 모듈) — 구현됨 (사이클 07), 사이클 08 변경 구현됨 (사이클 08), 사이클 11 칸 구현됨 (사이클 11, 중간 회고 2026-10-12), 사이클 13 변경 설계됨(미구현, 사이클 13)
 
-수집 DB 도서관 번호와 서비스 도서관 번호의 짝, 그리고 가져오기 기록입니다(ADR-0052, ADR-0060). 사이클 08부터 국가서지 TTL에서 뽑은 원문과 그 파일 지문도 둡니다(ADR-0069, 구현됨 (사이클 08)). 다른 모듈 표에는 FK를 두지 않고 번호만 둡니다. 짝 줄은 Liquibase seed(CSV, 번호 명시)로 넣습니다.
+수집 DB 도서관 번호와 서비스 도서관 번호의 짝, 그리고 가져오기 기록입니다(ADR-0052, ADR-0060). 사이클 08부터 국가서지 TTL에서 뽑은 원문과 그 파일 지문도 둡니다(ADR-0069, 구현됨 (사이클 08)). 다른 모듈 표에는 FK를 두지 않고 번호만 둡니다. 사이클 07까지의 짝 줄은 Liquibase seed(CSV, 번호 명시)로 넣었고, 사이클 13부터 새 짝 줄은 넣기 명령이 새 도서관과 같은 트랜잭션에서 넣고 넣기 실행 기록(`library_insert_run`)을 남깁니다 — 설계됨(미구현, 사이클 13) (ADR-0084).
 
 ```mermaid
 erDiagram
@@ -370,7 +378,7 @@ erDiagram
     int holding_count
     int skipped_count
     int registered_library_count
-    int candidate_library_count
+    int other_library_count "사이클 13에 candidate_library_count에서 이름 바꿈 (설계됨)"
     jsonb skipped_by_reason
     int kept_book_id_count
     int new_book_id_count
@@ -395,8 +403,20 @@ erDiagram
     text source_fingerprint "TTL 파일 이름·크기·고친 시각"
     timestamptz built_at
   }
+  LIBRARY_INSERT_RUN {
+    bigint id PK
+    text report_id "사이클 13, 설계됨"
+    timestamptz ran_at
+    text snapshot
+    int inserted_count
+    date join_surveyed_on
+    text status "SUCCEEDED 또는 FAILED"
+    text failure_detail
+    jsonb payload
+  }
   COLLECTION_LINK }o..|| LIBRARY : "library_id (번호만, FK 없음)"
   NATIONAL_BIBLIOGRAPHY_SOURCE ||..o{ NATIONAL_BIBLIOGRAPHY_RECORD : "이 파일에서 뽑은 원문 (FK 없음)"
+  LIBRARY_INSERT_RUN ||..o{ COLLECTION_LINK : "payload에 넣은 짝 (FK 없음, 사이클 13)"
 ```
 
 | 테이블.컬럼 | 타입 | 제약 | 설명 | 상태 태그 |
@@ -408,7 +428,7 @@ erDiagram
 | `catalog_import.source` | text | NOT NULL | 예: 사본 파일 이름 | |
 | `catalog_import.imported_at` | timestamptz | NOT NULL | | |
 | `catalog_import.book_count`, `holding_count`, `skipped_count` | integer | NOT NULL, CHECK ≥ 0 | 요약(옛 `catalog.catalog_import`와 같은 칸) | |
-| `catalog_import.registered_library_count`, `candidate_library_count` | integer | NOT NULL, CHECK ≥ 0 | 가져온 등록·후보 도서관 수(AC-11) | [확정] (dev 구현 확인, 2026-10-05) |
+| `catalog_import.registered_library_count`, `other_library_count` | integer | NOT NULL, CHECK ≥ 0 (`other_library_count`의 제약 `catalog_import_other_library_count_check`) | 가져온 도서관 수: 사이클 06까지 있던 도서관 / 그 밖의 도서관(사이클 07부터 넣은 곳)(AC-11). **사이클 13 — 설계됨(미구현, 사이클 13)**: `candidate_library_count` → `other_library_count`, 제약 `catalog_import_candidate_library_count_check` → `catalog_import_other_library_count_check`("후보" 이름 없애기, 사이클 13 AC-11). 기존 `collection/001-collection-schema.yaml` 49·50행을 직접 고침(배포 전 `PRE_DEPLOYMENT` 동안 dev 규칙, 사이클 14와 같은 방식) → 로컬 `db`·`db-ops`는 데이터를 지키며 같은 이름 바꾸기 SQL + `databasechangelog.md5sum` NULL로 맞춤(dev 세션이 함, `db-test`는 다시 띄움) [확정] (사용자 선택 "가벼운 방법", 2026-10-12). Java `ImportReport.candidateLibraries`·`ImportRecords`와 그 시험의 칸 이름도 바꿈 | 칸 [확정] (dev 구현 확인, 2026-10-05). 바꿈 [확정] (설계 결정 4), 방식 [확정] (사용자 선택 "기존 파일을 고침", 2026-10-12, cycle-close 검토), 새 이름 [안] |
 | `catalog_import.skipped_by_reason` | jsonb | NOT NULL | 이유별 건너뛴 줄, 예 `{"library_not_in_service": 123, ...}` | [확정] (dev 구현 확인, 2026-10-05) |
 | `catalog_import.kept_book_id_count`, `new_book_id_count`, `dropped_book_id_count` | integer | NOT NULL DEFAULT 0, CHECK ≥ 0 | 책 번호 잇기 셈(옛 번호를 이은 책, 새 번호 책, 지금 어느 책에도 없는 옛 번호) | [확정] (dev 구현 확인, 2026-10-05) |
 | `catalog_import.collected_from`, `collected_to` | timestamptz | NULL 허용(옛 줄) | 그 가져오기에 들어간 도서관 수집 시각(`collected_at`)의 최솟값·최댓값. 건너뛴 도서관은 뺌(스냅숏에 넣는 것과 같은 목록). 실데이터 2026-09-29 15:27:09Z ~ 2026-10-04 22:22:55Z (AC-7). 구현됨 (사이클 08) | 칸 [확정] (사용자 승인, 2026-10-11), 이름 [확정] (dev 구현 확인, 2026-10-11). 근거: ADR 없음, 사용자 결정 (사이클 08 scope 7, "이거 넣어주는 것으로 해", 2026-10-05) |
@@ -420,12 +440,24 @@ erDiagram
 | `catalog_import.exported_at` | timestamptz | NULL 허용. CHECK `(export_id IS NULL) = (exported_at IS NULL)` | 그 파일을 내보낸 시각(`load_manifest.exported_at`). 설계됨(미구현, 사이클 11) | 칸·뜻 [확정] (설계 #7), 이름·제약 이름 [안] |
 | `national_bibliography_record` | 표 | 없음(가져오기만 읽음) | 국가서지 TTL(Turtle, https://www.w3.org/TR/turtle/ 확인 2026-10-11)에서 뽑은 원문. 칸: `id` bigint 기본 키 `national_bibliography_record_pkey`, `isbn13` text NOT NULL(13자리), `title_raw` text NOT NULL, `author_raw` text NULL, `publisher_raw` text NULL. 색인 없음(가져오기가 처음부터 끝까지 읽기만 함) [확정] (사용자 승인, 2026-10-11, 설계 검토). **한 기록에 ISBN이 여럿이면 ISBN마다 한 줄**(`isbn13`은 13자리 유지) — 같은 키에 다른 ISBN이 둘 오므로 지금 규칙대로 "애매함"이 되어 결과는 같음 (dev). ISBN이나 제목이 없는 기록은 남기지 않음. 3,999,211줄(ISBN별), TTL을 풀며 쓰는 데 7분 55초 (dev 측정, 2026-10-11). 다듬지 않은 값이라 정리 규칙이 바뀌어도 그대로 씀. 가져올 때마다 지금 규칙으로 다듬어 키 → ISBN을 만듦. 구현됨 (사이클 08) (`collection/004-national-bibliography.yaml`, 코드 `NationalBibliographyStore`). 표에서 다시 읽는 시간(AC-15)은 측정 중 [확인 필요] | ISBN마다 한 줄 [확정] (사용자 승인, 2026-10-11, `easy/2026-10-11-midpoint-decisions.html`; 이유 [이유 미확인]). 남기기 [확정] (사용자 승인, 2026-10-10), 원문으로 [확정] (`catalog` 절 "정리 규칙을 바꿀 때"), 이름 [확정] (dev 구현 확인, 2026-10-11). 근거: ADR-0065(결과 남기기) → ADR-0069(원문으로) | 남기기 [확정] (사용자 승인, 2026-10-10), 원문으로 [확정] (`catalog` 절 "정리 규칙을 바꿀 때"), 이름 [안]. 근거: ADR-0065(결과 남기기) → ADR-0069(원문으로) |
 | `national_bibliography_source` | 표 (한 줄) | — | 원문을 뽑은 파일: `source_fingerprint` text NOT NULL, `built_at` timestamptz NOT NULL. 지문은 TTL 파일마다 `상대경로\|크기\|고친 시각(Instant)`을 경로 순으로 `;`로 이은 글자(TTL 20개) [확정] (dev 구현 확인, 2026-10-11; 설계는 "파일 이름 + 크기 + 고친 시각을 `\|`로"). 항상 한 줄. 지문이 같으면 원문을 다시 쓰고, 다르면 ① 지문 줄 지우고 커밋 → ② (한 트랜잭션) 원문 표 TRUNCATE + COPY + 지문 줄 INSERT → 커밋. 중간에 멈추면 지문이 없어 다음 가져오기가 처음부터 다시 풂 [확정] (사용자 승인, 2026-10-11, 설계 검토; 순서는 `NationalBibliographyTests`로 확인). 구현됨 (사이클 08) | 표로 남김 [확정] (사용자 승인, 2026-10-11), 이름 [확정] (dev 구현 확인, 2026-10-11). 근거: ADR-0069 |
+| `library_insert_run.id` | bigint | PK, IDENTITY | 새 도서관 넣기 실행마다 한 줄(지우지 않음). 설계됨(미구현, 사이클 13) | 표 [확정] (scope 도서관 날짜 3), 이름 [안] |
+| `library_insert_run.report_id` | text | NOT NULL, CHECK `^[0-9a-f]{12}$` | 보고서 번호 | [안] |
+| `library_insert_run.ran_at` | timestamptz | NOT NULL DEFAULT now() | | [안] |
+| `library_insert_run.snapshot` | text | NOT NULL | 수집 사본 파일 이름 | [안] |
+| `library_insert_run.inserted_count` | integer | NOT NULL, CHECK ≥ 0 | 넣은 도서관 수 | [안] |
+| `library_insert_run.join_surveyed_on` | date | NULL 허용 | 가입 조건 조사 기준일(규칙 폴더 날짜 파일). 성공한 줄 중 최신 값을 `GET /api/v1/join-surveys/latest`가 돌려줌 | 뜻 [확정] (ADR-0087), 이름 [안] |
+| `library_insert_run.status` | text | NOT NULL, CHECK IN ('SUCCEEDED','FAILED') | | [안] |
+| `library_insert_run.failure_detail` | text | NULL. CHECK `(status = 'FAILED') = (failure_detail IS NOT NULL)` | 실패 설명 | [안] |
+| `library_insert_run.payload` | jsonb | NOT NULL | 넣은 도서관·가입 규칙·짝 줄 그대로. `export`가 `load_manifest.notes.libraryPart`로 실음(ADR-0086) | [안] |
+| `library_insert_run` 부분 UNIQUE | — | `UNIQUE (report_id) WHERE status = 'SUCCEEDED'` | 같은 보고서로 두 번 넣지 않음 | [안] |
 
-- 등록 도서관은 같은 번호끼리 짝(59·131 포함), 후보 도서관은 서비스 새 번호(281~2674)와 짝, 2,674줄 [확정] (ADR-0052, dev 구현 확인, 2026-10-05)
+- 번호 1~280 도서관은 같은 번호끼리 짝(59·131 포함), 사이클 07에서 넣은 2,394곳은 서비스 새 번호(281~2674)와 짝, 2,674줄 [확정] (ADR-0052, dev 구현 확인, 2026-10-05)
+- 사이클 13 — 설계됨(미구현, 사이클 13) (ADR-0084·0086·0093): 넣기(`insert`)는 한 트랜잭션(`pg_advisory_xact_lock`)에서 `library.library`·`eligibility_rule`(`LibraryRegistry.add`) → `collection_link` → `library_insert_run` SUCCEEDED 줄, 제약 위반이면 ROLLBACK 뒤 FAILED 줄. 운영 반영(`apply`)은 파일의 `notes.libraryPart`에서 운영에 없는 도서관·짝 줄·성공한 실행 기록 줄을 넣음(같은 `report_id`의 성공 줄이 있으면 건너뜀) — 그래서 운영 DB에서도 기준일 API가 값을 냄. 반영 파일 판 2는 `load_manifest.notes.libraryPart` = 성공한 넣기 실행 기록의 `payload` 모음 [안: 키 이름], 새 표 없음. 흐름은 `flows.md` 흐름 32·33
 - 사이클 08: 교보 대여·혼합 11곳(서비스 번호 2664~2674)의 짝 줄을 `002-collection-link.csv`에서 지움 → 짝 줄이 11줄 줄어듦 (구현됨 (사이클 08), ADR-0067). 수집 DB의 교보 대여·혼합 230곳은 `crawl_skip`(받지 않음) 표시 — 수집기 명령이 1곳에 약 50초라 24곳 뒤에는 같은 UPDATE를 한 트랜잭션으로 실행 (dev) [확정] (사용자 승인, 2026-10-11)
 - Liquibase: `collection/001-collection-schema.yaml`, `collection/002-collection-seed-candidates.yaml` + `002-collection-link.csv` (위 "Liquibase 파일" 목록). 사이클 08: `collection/003-import-period-and-timings.yaml`(changeset 둘: 수집 기간·단계별 시간, 상태·실패 칸), `collection/004-national-bibliography.yaml` [확정] (dev 구현 확인, 2026-10-11; 설계 [안]의 `004`·`005`와 번호가 다름)
 - 사이클 11 (구현됨 (사이클 11, 중간 회고 2026-10-12)): changeset `collection/005-import-export.yaml`(id `collection-005-import-export`, 제약 `catalog_import_export_check`) — `catalog_import`에 `export_id`·`exported_at`과 CHECK. 번호는 인계 때 dev의 마지막 `collection` 번호를 보고 정함(지금 004까지). `failure_reason` `mismatch`는 changeset 없음
-- `collection`은 `library.library`를 읽지 않고, 짝 맞춘 서비스 도서관이 켜졌는지와 사이트 주소는 `LibraryCatalog.enabledLibraryRefs()`로 확인합니다 [확정] (dev 구현 확인, 2026-10-05)
+- 사이클 13 Liquibase — 설계됨(미구현, 사이클 13): `collection/006-library-insert-run.yaml`(새 표) [안], `collection/001` 칸·제약 이름 고침(위 "Liquibase 파일" 사이클 13 줄)
+- `collection`은 `library.library`를 읽지 않고, 짝 맞춘 서비스 도서관이 켜졌는지와 사이트 주소는 `LibraryCatalog.enabledLibraryRefs()`로 확인합니다 [확정] (dev 구현 확인, 2026-10-05). 사이클 13 넣기 비교는 `LibraryRegistry.listAll()`로 서비스 도서관 전체(꺼진 곳 포함)를 봄 — 설계됨(미구현, 사이클 13) [확정] (ADR-0093)
 - 가져오기 기록에 사본의 수집 기간을 더함 [확정] (사용자: "이거 넣어주는 것으로 해", 2026-10-05) — `collected_from`·`collected_to` (위 표), 구현됨 (사이클 08)
 
 ## 스키마 `auth` (소유: `auth` 모듈), `modulith` (발행 저장소) — 구현됨(사이클 05, 2026-10-04 retro 반영)
@@ -651,18 +683,19 @@ erDiagram
   - `004`: 교보 공식 목록(구독형 포함), 인증서 불완전 24곳, 이름에 "도서관"이 없는 공공도서관 17곳 등 (id ~205)
   - `005`: YES24 66곳 (id 206–271)
   - `006`: 새 주소를 찾은 9곳 (id 272–280)
-  - 사이클 07 `library/008`: 후보 도서관 2,394곳 (id 281~2674), `library/009`: 로고 198곳, `library/010`: 135·2194·2198 끔 — 구현됨 (사이클 07). seed 도서관 2,674곳, `GET /api/v1/libraries` 측정 때 켜진 곳 2,672곳(그 뒤 `library/010`으로 3곳을 더 끔)
-  - 사이클 08 (구현됨 (사이클 08)): 교보 대여·혼합 11곳(id 2664~2674)을 `library/008-library-candidates.csv`에서 지움(배포 전 규칙으로 기존 seed를 고치고 로컬 DB 초기화, `build_candidate_seed.py` 규칙 `kyobo_rental_mixed`, diff는 두 CSV의 22줄). 번호는 다시 쓰지 않음. 그 도서관을 직접 추가한 계정·브라우저의 번호는 꺼진 도서관처럼 건너뜀(사이클 06 규칙) [확정] (ADR-0067). 소장 −2,669,217, 책 −2,320 (사이클 07 2회차 대비, dev 측정). `library/011-updated-at-trigger.sql`: 트리거, `library/012-library-mobile-site-differs.yaml`: `mobile_site_differs` 13곳, `library/013-library-name-overrides.yaml`: 이름 고침 8곳 UPDATE [확정] (dev 구현 확인, 2026-10-11)
+  - 사이클 07 `library/008`: 사이클 07에서 넣은 도서관 2,394곳 (id 281~2674), `library/009`: 로고 198곳, `library/010`: 135·2194·2198 끔 — 구현됨 (사이클 07). seed 도서관 2,674곳, `GET /api/v1/libraries` 측정 때 켜진 곳 2,672곳(그 뒤 `library/010`으로 3곳을 더 끔)
+  - 사이클 08 (구현됨 (사이클 08)): 교보 대여·혼합 11곳(id 2664~2674)을 `library/008-library-candidates.csv`에서 지움(배포 전 규칙으로 기존 seed를 고치고 로컬 `db`·`db-ops`는 이름 바꾸기 SQL + 체크섬 비우기로 맞춤(데이터 유지, 사용자 선택 2026-10-12), `build_candidate_seed.py` 규칙 `kyobo_rental_mixed`, diff는 두 CSV의 22줄). 번호는 다시 쓰지 않음. 그 도서관을 직접 추가한 계정·브라우저의 번호는 꺼진 도서관처럼 건너뜀(사이클 06 규칙) [확정] (ADR-0067). 소장 −2,669,217, 책 −2,320 (사이클 07 2회차 대비, dev 측정). `library/011-updated-at-trigger.sql`: 트리거, `library/012-library-mobile-site-differs.yaml`: `mobile_site_differs` 13곳, `library/013-library-name-overrides.yaml`: 이름 고침 8곳 UPDATE [확정] (dev 구현 확인, 2026-10-11)
   - 사이클 09 — 구현됨 (사이클 09): `library/014-library-classification.yaml` [확정] (changeSet 하나 `library-014-classification-2026-10-11`, dev 구현 확인, 2026-10-12): 이름 UNIQUE 지움, 이름 UPDATE(괄호 떼기 등, 위 "도서관 이름과 분류"), `vendor`·`order_no` 칸, `lending_model` 채움, CHECK 셋, UNIQUE `library_classification_key`
-- 사이클 07 후보 도서관 seed 규칙 [확정] (ADR-0052, ADR-0053, `architect-proposal.md` D3) — 구현됨 (사이클 07). 스크립트 dev `scripts/library/build_candidate_seed.py`(테스트 `test_build_candidate_seed.py`, 같은 입력이면 같은 출력)
-  - 후보: 수집 번호 ≥ 100001, `crawl_skip` 없음, `last_full_success_at` 있음. 교보 대여·혼합(교보 구독형 플랫폼 서버의 대여·혼합 기관)은 넣지 않음 [확정] (ADR-0067, 사이클 08 seed 규칙, 구현됨 (사이클 08)). 체험용·운영 중단 4곳(삼각산 북라이브, 대구동구안심 북큐브, 순창 북라이브, 양평 북큐브) 제외 (사용자, 2026-10-05). 시험용 6곳은 넣지 않음 (사용자 승인, 2026-10-05, 설계 검토). 등록 도서관과 책 번호 목록이 같고 상세 주소가 포트만 다른 8곳 제외, 같은 기관의 다른 북큐브 사이트 6곳은 넣음 [확정] (사용자 결정 "① 8곳만 빼기", 2026-10-05). 스크립트는 읽어 본 쌍을 `SAME_HOST_KEPT`에 두고 새로 걸리는 같은 호스트 쌍이 있으면 종료 코드 2로 멈춤
-  - 새 번호: 지금 최대(280) 다음부터("마지막 번호 다음", 두 번 돌려도 같고 새 후보 1곳만 다음 번호를 받는지 테스트로 확인) [확정] (dev 구현 확인, 2026-10-05). 이름이 겹치면 `이름 (북큐브|교보|YES24|알라딘)`, 그래도 겹치면 `이름 (라벨, 호스트)` (사이클 08까지). 사이클 09부터 — 구현됨 (사이클 09) [확정] (ADR-0071, 설계 결정 3번): 이름에 라벨을 붙이지 않음(`LABELS`·`name_candidates()`를 지움). `vendor`는 수집이 따로 적은 값이 있으면 그 값, 없으면 화면 종류 대응표(`VENDORS`, 한 곳) [확정] (수집이 따로 적는 자리는 [확인 필요: 수집 세션]); `lending_model`은 교보 probe, 북큐브 전체 권수 결과, 포털 NULL, 나머지 `OWNED`; 이름 고침 목록을 등록 도서관(번호 280 이하)에도 메모리 속 이름에 적용; 겹침 열쇠는 (이름, 업체, 대출 방식, 순번)이고 같은 (이름, 업체, 대출 방식) 묶음은 서비스 번호 순으로 `order_no`(`assign_order_no()`), 2 이상은 목록 출력하고 종료 코드 3(사람이 사이트 이름 확인) [확정] (dev 구현 확인, 2026-10-12). 사이클 09 구현의 실행 방법 [확정] (dev 구현 확인, 2026-10-12): 다섯째 위치 인자 `<bookcube-volume.tsv>`(dev `scripts/library/bookcube-volume-2026-10-11.tsv`, 북큐브 전체 권수), 옵션 `--changes-only <db-state.tsv>`(seed CSV 셋을 바꾸지 않고 바뀔 줄 목록만 냄, 옛 이름은 DB 상태 파일에서 읽음). 이번 사이클은 `--changes-only`로만 돌림, `vendor`·`order_no`는 아직 seed 칸이 아님(첫 배포 직전 seed 정리 때) [확정] (seed 고치는 방식, 사이클 08). 수집이 업체를 따로 적는 자리는 스크립트에 빈 자리 `COLLECTION_VENDORS = {}`와 `TODO(확인 필요)`만 (`build_candidate_seed.py:96-98`) [확인 필요: 수집 세션]. 처음 정한 이름은 다음 seed에서 바꾸지 않음. 예외: 공식 개명·틀린 이름은 이름 고침 목록에 있을 때만 고치고 번호는 유지 [확정] (사용자 승인, 2026-10-05; 사이클 08 scope 4) — 위 `library` 절 "이름 고침", 구현됨 (사이클 08). seed를 다시 만드는 방식(첫 배포 전·직전·뒤)도 그 절
+  - 사이클 13 — 설계됨(미구현, 사이클 13) (ADR-0084): **앞으로 도서관 seed changeset을 만들지 않음** [확정]. 새 도서관은 `collection` 넣기 명령(미리 보기 → 보고서 → 넣기)으로 넣고, 사람이 정한 규칙(이름 고침, 같은 사이트, 같은 호스트지만 남김, 가입 범위 등)은 dev `scripts/library/rules/` TSV(ADR-0085). 이미 적용된 seed 파일(`library/002`~`010`, `collection/002`)은 그대로. `library/015-library-name-1215.yaml`: 1215 `한화S&amp;C` → `한화S&C` [확정] (사전 결정 8), 파일 이름 [안]. 2026-10-12 사본 기준 새로 넣을 곳 6곳(여주대 두 곳 등, ADR-0084 배경)
+- 사이클 07 도서관 2,394곳 seed 규칙 [확정] (ADR-0052, ADR-0053, `architect-proposal.md` D3) — 구현됨 (사이클 07). 스크립트 dev `scripts/library/build_candidate_seed.py`(테스트 `test_build_candidate_seed.py`, 같은 입력이면 같은 출력)
+  - 넣는 곳: 수집 번호 ≥ 100001, `crawl_skip` 없음, `last_full_success_at` 있음. 교보 대여·혼합(교보 구독형 플랫폼 서버의 대여·혼합 기관)은 넣지 않음 [확정] (ADR-0067, 사이클 08 seed 규칙, 구현됨 (사이클 08)). 체험용·운영 중단 4곳(삼각산 북라이브, 대구동구안심 북큐브, 순창 북라이브, 양평 북큐브) 제외 (사용자, 2026-10-05). 시험용 6곳은 넣지 않음 (사용자 승인, 2026-10-05, 설계 검토). 번호 1~280 도서관과 책 번호 목록이 같고 상세 주소가 포트만 다른 8곳 제외, 같은 기관의 다른 북큐브 사이트 6곳은 넣음 [확정] (사용자 결정 "① 8곳만 빼기", 2026-10-05). 스크립트는 읽어 본 쌍을 `SAME_HOST_KEPT`에 두고 새로 걸리는 같은 호스트 쌍이 있으면 종료 코드 2로 멈춤
+  - 새 번호: 지금 최대(280) 다음부터("마지막 번호 다음", 두 번 돌려도 같고 새 곳 1곳만 다음 번호를 받는지 테스트로 확인) [확정] (dev 구현 확인, 2026-10-05). 이름이 겹치면 `이름 (북큐브|교보|YES24|알라딘)`, 그래도 겹치면 `이름 (라벨, 호스트)` (사이클 08까지). 사이클 09부터 — 구현됨 (사이클 09) [확정] (ADR-0071, 설계 결정 3번): 이름에 라벨을 붙이지 않음(`LABELS`·`name_candidates()`를 지움). `vendor`는 수집이 따로 적은 값이 있으면 그 값, 없으면 화면 종류 대응표(`VENDORS`, 한 곳) [확정] (수집이 따로 적는 자리는 [확인 필요: 수집 세션]); `lending_model`은 교보 probe, 북큐브 전체 권수 결과, 포털 NULL, 나머지 `OWNED`; 이름 고침 목록을 번호 280 이하 도서관에도 메모리 속 이름에 적용; 겹침 열쇠는 (이름, 업체, 대출 방식, 순번)이고 같은 (이름, 업체, 대출 방식) 묶음은 서비스 번호 순으로 `order_no`(`assign_order_no()`), 2 이상은 목록 출력하고 종료 코드 3(사람이 사이트 이름 확인) [확정] (dev 구현 확인, 2026-10-12). 사이클 09 구현의 실행 방법 [확정] (dev 구현 확인, 2026-10-12): 다섯째 위치 인자 `<bookcube-volume.tsv>`(dev `scripts/library/bookcube-volume-2026-10-11.tsv`, 북큐브 전체 권수), 옵션 `--changes-only <db-state.tsv>`(seed CSV 셋을 바꾸지 않고 바뀔 줄 목록만 냄, 옛 이름은 DB 상태 파일에서 읽음). 이번 사이클은 `--changes-only`로만 돌림, `vendor`·`order_no`는 아직 seed 칸이 아님(첫 배포 직전 seed 정리 때) [확정] (seed 고치는 방식, 사이클 08). 수집이 업체를 따로 적는 자리는 스크립트에 빈 자리 `COLLECTION_VENDORS = {}`와 `TODO(확인 필요)`만 (`build_candidate_seed.py:96-98`) [확인 필요: 수집 세션]. 처음 정한 이름은 다음 seed에서 바꾸지 않음. 예외: 공식 개명·틀린 이름은 이름 고침 목록에 있을 때만 고치고 번호는 유지 [확정] (사용자 승인, 2026-10-05; 사이클 08 scope 4) — 위 `library` 절 "이름 고침", 구현됨 (사이클 08). seed를 다시 만드는 방식(첫 배포 전·직전·뒤)도 그 절
   - `homepage_url = base_url`, `holdings_count = NULL`, `enabled = true`. `base_url`은 리다이렉트를 따라간 https 최종 주소(248곳, `scripts/library/CheckFinalOrigins.java` → `final-origins.tsv`) [확정] (사용자 요청, 2026-10-05)
-  - `lending_model`(후보): OWNED 1,182, MIXED 8, RENTAL 3, NULL 1,201. 등록 도서관 16곳: OWNED 5, MIXED 2, RENTAL 9 (dev 1단계 셈). 사이클 09에서 통합 포털 말고 NULL을 모두 채움(위 "도서관 이름과 분류") — 구현됨 (사이클 09)
-  - 가입: 조사된 후보 공공도서관(`public-join-2026-10-05.tsv`)은 `SURVEYED` + 가입 규칙 줄 + `join_method`·`visit_required`·`join_caution`·`extra_condition_text`(책이음 9곳). 원문 못 찾은 곳은 `NOT_FOUND` + 규칙 없음. 종류 표(`candidate-kinds-2026-10-05.tsv`)의 초·중·고·대학·회사·정부·공공기관·단체·아파트는 `MEMBERS_ONLY`, 모름은 `NOT_SURVEYED`, 둘 다 `join_method = NULL`
+  - `lending_model`(사이클 07에서 넣은 곳): OWNED 1,182, MIXED 8, RENTAL 3, NULL 1,201. 번호 1~280 중 16곳: OWNED 5, MIXED 2, RENTAL 9 (dev 1단계 셈). 사이클 09에서 통합 포털 말고 NULL을 모두 채움(위 "도서관 이름과 분류") — 구현됨 (사이클 09)
+  - 가입: 가입 조건을 조사한 공공도서관(`public-join-2026-10-05.tsv`)은 `SURVEYED` + 가입 규칙 줄 + `join_method`·`visit_required`·`join_caution`·`extra_condition_text`(책이음 9곳). 원문 못 찾은 곳은 `NOT_FOUND` + 규칙 없음. 종류 표(`candidate-kinds-2026-10-05.tsv`)의 초·중·고·대학·회사·정부·공공기관·단체·아파트는 `MEMBERS_ONLY`, 모름은 `NOT_SURVEYED`, 둘 다 `join_method = NULL`
   - dev 규칙 "자격 조사 없이 도서관 추가 금지"의 예외: `MEMBERS_ONLY`·`NOT_SURVEYED` 곳(약 2,500곳)은 ADR-0053대로 조사 상태 표시로 넣음 [확정] (사용자 승인, 2026-10-05, 설계 검토)
 - 자격 규칙은 원문을 확인한 값만 넣음. 조사 기록은 dev `docs/library-research/*.tsv`, 사용자가 나중에 확인할 항목은 dev `docs/library-maintenance.md` 14절
-- 도서관 ID는 seed에서 직접 넣고 IDENTITY는 마지막 seed 다음부터 시작
+- 도서관 ID는 seed에서 직접 넣고 IDENTITY는 마지막 seed 다음부터 시작. 사이클 13부터는 넣기 명령이 번호를 정해 `LibraryRegistry.add`로 넣고 시퀀스를 올림 — 설계됨(미구현, 사이클 13) (ADR-0083)
 - 지역: 2026-07-01 법정동 코드(`jscode20260701`) 기준 시도 16개, 시군구 232개 [확정] (시군구 234개 중 도 출장소 2개 제외). 세종특별자치시는 시군구 행 하나(`3601`)를 둠. 사이클 07: 그 파일에서 빠져 있던 증평군(충북)을 `4311`(충북의 다른 번호 뒤, 코드 순서가 아님)로 추가해 시군구 233개 [확정] (사용자 결정, 2026-10-05)
 - 지역 ID 규칙 [확정] (사용자, 2026-09-27): 시도 2자리 = 법정동 코드 앞 두 자리, 시군구 4자리 = 시도 ID + 법정동 코드 순서(01, 02, …). 번호는 다시 쓰지 않고, 소속은 `parent_id`로만 판단. 일반구·읍면동을 넣게 되면 상위 ID 뒤에 자리를 붙임
 - 시험용 폐지 데이터 (context `test-data`): 시도 90, 9001 → 1116 (REPLACED), 9002 → 1114·1116 (SPLIT), 9003 → 9004 → 1101 (연쇄)
@@ -728,6 +761,18 @@ erDiagram
 | Open API 하루 호출 한도 | 공식 문서 확인 (주 1~2건이라 막지 않음) |
 | 제목+저자 조회 52권 시간, dev DB에서 맞는 비율(수집 DB 측정 32/52) | 프로토타입 (dev, 개발 때). 무거우면 캐시 새로 고침 간격만 늘림 |
 | 같은 달 같은 등록일·`recomNo` 글자 순이 사서가 올린 순서와 맞는지 | API 호출 시험 (웹 목록 순서와 비교) |
+
+## 확인 필요 (사이클 13)
+
+`docs/cycles/13-crawler-to-dev/design-delta.md` "확인 필요"에서 연 줄 중 데이터에 걸린 것.
+
+| 항목 | 방법 |
+|---|---|
+| 새 곳의 최종 주소가 `final_origins`에 없을 때 `base_url` | 프로토타입 (dev 구현 때 수집 DB 값으로 대체할지) |
+| "바뀐 곳" 비교에 최종 주소·이름 바꾸기를 먼저 적용해야 소음이 없음 | 프로토타입 (2026-10-12 사본 기대값: 바뀐 곳 0) |
+| `load_manifest` COMMENT가 길어져도 `Manifests.parse`가 맞게 읽는지 | 프로토타입 (dev 시험) |
+| 판 2 배포 때 내 PC에 판 1 내보내기가 기다리면 `finish` 거절 | 절차 문서에 "배포 전 finish·discard" |
+| 기준일을 날짜 파일 대신 조사 파일 날짜 칸에서 뽑을지 | 사용자에게 질문 (다음 가입 조사 때) |
 
 ## 확인 필요 (사이클 11) — 결과 (dev 중간 전달, 2026-10-12)
 

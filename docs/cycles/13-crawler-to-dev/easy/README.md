@@ -5,3 +5,7 @@
 | [2026-10-12-research-questions.html](2026-10-12-research-questions.html) | 사이클 13 사전 조사와 미리 정할 것 8가지(도서관 넣기 명령, seed와의 관계, 사람이 정한 값 위치, 미리 보기, 사이클 11과 맞추기, 수집기 언어, HTML 글자) | `../research.md` | 없음. 8개 모두 승인 (2026-10-12) → `../scope.md` 사전 결정 |
 | [2026-10-12-library-dates-decisions.html](2026-10-12-library-dates-decisions.html) | 도서관마다 조사·수집 날짜를 남길지(사이클 12 세션이 넘긴 질문, backlog 206행) | `../scope.md` | 없음 (2026-10-12): 1 미승인(도서관마다 칸 없이 최신 조사일만 따로), 2 미승인(화면에 안 보이고 공지로), 3 승인 |
 | [2026-10-12-flow.html](2026-10-12-flow.html) | 사이클 13 화면 흐름 그림(운영자 흐름, 웹 흐름, S12 PC·태블릿·폰) | `../flow.md` | 없음 (4개 모두 승인, 2026-10-12) |
+| [2026-10-12-design-delta.html](2026-10-12-design-delta.html) | 설계 그림 5개(검토 반영) | `../design-delta.md` | 없음 (ADR-0083~0088, 0093) |
+| [2026-10-12-current-merged.html](2026-10-12-current-merged.html) | docs/current에 합친 모듈 그림 | `docs/current/module-map.md` | 없음 |
+| [2026-10-12-cycle-close.html](2026-10-12-cycle-close.html) | 사이클 13 마무리 요약과 커밋 | `../handoff.md` | 1 (커밋·푸시) |
+| [2026-10-12-where-to-crawl.html](2026-10-12-where-to-crawl.html) | 수집을 plan이 아니라 dev에서 할지 (마무리 페이지 질문의 답) | `../handoff.md` | 없음 (승인, 2026-10-12) |
