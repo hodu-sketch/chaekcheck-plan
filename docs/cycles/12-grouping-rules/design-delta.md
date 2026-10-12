@@ -185,7 +185,7 @@ erDiagram
 
 ## 결정 기록
 
-- ADR-0082 네 번째 묶기 단계: 본제목 + 권 표시로 비교, ISBN이 다르면 나눔, 자리 채움 값은 없음으로 — `collection` 안에 둠 (Proposed, 사용자 승인 대기)
+- [ADR-0082](../../adr/0082-grouping-step4-main-title-volume-isbn-split.md) 네 번째 묶기 단계: 본제목 + 권 표시로 비교, ISBN이 다르면 나눔, 자리 채움 값은 없음으로 — `collection` 안에 둠 — Accepted (사용자 승인, 2026-10-12)
 - ADR-0079 덧붙임(사이클 12에서 `compact`·`sql` 둘 다에 새 규칙, `current` 지움, 조건)
 
 ## 확인 필요

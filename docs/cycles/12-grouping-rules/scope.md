@@ -6,6 +6,8 @@
 
 ## 앞 사이클 (11) 상태와 미결
 
+- **미리 한 plan** (사용자: "cycle11의 dev가 진행중인데 cycle12 plan미리 한 거라고 노트만해놔", 2026-10-12): 사이클 11 dev(11단계 측정)가 진행 중일 때 사이클 12 plan(scope·spec·flow·design-delta·ADR-0082)을 미리 함. 사이클 11 최종 회고와 `docs/current/handoff.md` 교체는 아직
+
 - 사이클 11은 dev가 측정(11단계) 중. 끝난 부분(A 가져오기 따로 하기 전부, B 세 묶는 방식 구현)은 중간 회고 `../11-separate-import/retro.md`(2026-10-12, 근거 dev `plan-feedback.md` "# 사이클 11" 중간 전달 `ac26ee2`)와 `docs/current/`에 반영함
 - **미결 (사이클 11 최종 회고 때)** [확인 필요]
   - 11단계 측정 결과: 세 방식(`current`·`compact`·`sql`) × 여섯 관점 × 두 번, 결과 비교(다른 책 0권인지), 옛 사본 한 번

@@ -85,3 +85,10 @@
 | [ADR-0079](0079-grouping-modes-same-result.md) | 책 묶기는 세 방식(current·compact·sql)을 설정으로 고르고 결과가 번호까지 같아야 씀, 묶기 규칙은 그대로. 덧붙임: 사이클 12에서 compact·sql 둘 다 남기고 current는 지움 | Accepted | 2026-10-12 | 11 |
 | [ADR-0081](0081-popular-cover-resize-200px-jpeg.md) | 표지는 미리 받아 폭 200px JPEG로 줄여 저장하고 우리 서버가 넘겨줌, 표지 본문 상한 50MB, 경로 폴더 여럿, 1,600만 화소 상한 (ADR-0075를 대체) | Accepted | 2026-10-12 | 10 |
 | [ADR-0080](0080-popular-fourteen-categories.md) | 인기 도서는 일곱 분류(만화·어린이·청소년·기타·의학·스포츠·언어·기술·공학)를 받지 않고 "전체" + 14분류, 요청 30건·750권, display_order CHECK 0..14 (ADR-0077을 대체) | Accepted | 2026-10-12 | 10 |
+| [ADR-0083](0083-library-registry-add.md) | `library`에 공개 기능 "도서관 더하기"(`LibraryRegistry`), 번호는 부르는 쪽이 정하고 부르는 쪽 트랜잭션 안에서만 ("Java never saves a library"를 바꿈) | Accepted | 2026-10-12 | 13 (12보다 미리) |
+| [ADR-0084](0084-library-insert-command.md) | 새 도서관은 `collection` 명령으로 미리 보기 → 보고서 → 넣기, 서비스 DB 전체와 비교, seed로 번호를 넣지 않음 (ADR-0052 seed 부분을 바꿈) | Accepted | 2026-10-12 | 13 (12보다 미리) |
+| [ADR-0085](0085-library-rules-tsv-in-dev.md) | 사람이 정한 도서관 규칙은 dev git `scripts/library/rules/` TSV, 지역은 번호로 미리 풂 | Accepted | 2026-10-12 | 13 (12보다 미리) |
+| [ADR-0086](0086-apply-file-v2-library-part.md) | 반영 파일 판 2: 새 도서관을 `load_manifest.notes`에 싣고 운영은 도서관 → 비교 → 책 (ADR-0078을 이어서) | Accepted | 2026-10-12 | 13 (12보다 미리) |
+| [ADR-0087](0087-join-survey-date-notice.md) | 가입 조건 조사 기준일은 하나만(날짜 파일 → 넣기 실행 기록), `/about` 공지 한 줄, 도서관마다 날짜 칸 없음 | Accepted | 2026-10-12 | 13 (12보다 미리) |
+| [ADR-0088](0088-crawler-switch-to-dev.md) | 수집은 dev `scripts/crawl/`로 갈아타고 옛 코드는 보관 폴더에 백업, 지우지 않음 (ADR-0047을 이어서) | Accepted | 2026-10-12 | 13 (12보다 미리) |
+| [ADR-0082](0082-grouping-step4-main-title-volume-isbn-split.md) | 네 번째 묶기 단계: 본제목 + 권 표시로 비교, ISBN 다르면 나눔, 자리 채움 값은 없음, `collection` 안 (ADR-0035 ④ 부분을 바꿈) | Accepted | 2026-10-12 | 12 |
