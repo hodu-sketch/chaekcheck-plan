@@ -260,7 +260,7 @@ erDiagram
 
 ## 사이클 11·12·14와 겹치는 곳
 
-- 순서 [안]: 사이클 11 마무리(측정·회고) → 12 → 13 → 14. 13은 12 위에 얹음
+- 순서: 13의 1~8단계는 12와 나란히 따로 뺀 작업 폴더와 따로 띄운 DB 묶음(`chaekcheck-13`)에서, 실데이터·main 합치기는 11·12가 합쳐진 뒤 그 위로 옮겨서. 14는 13 뒤 [확정] (사용자 승인, 2026-10-12, `easy/2026-10-12-separate-db.html`)
 - 사이클 11: 13은 11의 export/apply 코드(`ImportTransfer`, `Manifests`, `CatalogImportRunner` 모드)를 고침. 11의 회고가 아직 없으므로 13 시작 때 11 코드가 확정됐는지 봄
 - 사이클 12: `CatalogImportRunner`(`GROUPINGS`)·`ImportReport`(로그 카운터)를 고침. 13도 `CatalogImportRunner`(apply 순서: 도서관 → 비교 → 책), `ImportTransfer`(`notes.libraryPart`), `ImportReport`·`ImportRecords`(칸 이름), 그 시험(`CatalogImporterTests`, `CatalogImportRecordTests`)을 고침 → 이 파일들에서 병합 충돌 가능
 - 사이클 14: `AboutPage.tsx`(문단 순서는 API 절), master changelog 끝줄. `catalog`는 13이 `FORMAT_VERSION`·`notes`만, 14가 `BookLookup.byTitleAndAuthor`를 더해 파일이 다름. `popular` 삭제는 13과 무관

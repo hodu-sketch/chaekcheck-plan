@@ -2,7 +2,7 @@
 
 > **알림 (2026-10-12, 사이클 14 미리 함)**: plan이 사이클 14(인기 도서 → 사서추천도서, 국립중앙도서관 Open API, 새 모듈 `picks`, `popular` 지움)를 미리 설계·인계했습니다. **사이클 12·13 개발이 끝나고 커밋된 뒤에** 시작하세요. 인계서: plan `docs/cycles/14-librarian-picks/handoff.md` (`../chaekcheck-plan/docs/cycles/14-librarian-picks/handoff.md`)
 
-> **알림 (2026-10-12, 사이클 13 미리 함)**: plan이 사이클 13(수집기 dev로 갈아타기 + 새 도서관 넣기 명령 `library-insert`, `library`의 `LibraryRegistry`, 반영 파일 판 2, `/about` 가입 조사 기준일 한 줄)을 미리 설계·인계했습니다. **사이클 11·12 개발이 끝나고 커밋된 뒤에** 시작하고, 사이클 14는 13 뒤입니다. 인계서: plan `docs/cycles/13-crawler-to-dev/handoff.md` (`../chaekcheck-plan/docs/cycles/13-crawler-to-dev/handoff.md`)
+> **알림 (2026-10-12, 사이클 13 미리 함)**: plan이 사이클 13(수집기 dev로 갈아타기 + 새 도서관 넣기 명령 `library-insert`, `library`의 `LibraryRegistry`, 반영 파일 판 2, `/about` 가입 조사 기준일 한 줄)을 미리 설계·인계했습니다. **사이클 12와 나란히 따로 뺀 작업 폴더와 따로 띄운 DB 묶음(`chaekcheck-13`, 포트 5442~5444)에서 1~8단계**를 하고, 실데이터·main 합치기는 11·12가 합쳐진 뒤입니다. 사이클 14는 13 뒤입니다. 인계서: plan `docs/cycles/13-crawler-to-dev/handoff.md` (`../chaekcheck-plan/docs/cycles/13-crawler-to-dev/handoff.md`)
 
 > **알림 (2026-10-12)**: 사이클 12(책 묶기 기준 다시 보기) 인계서는 plan `docs/cycles/12-grouping-rules/handoff.md`에 따로 있습니다. 사이클 12는 별도 worktree에서 진행합니다. 사이클 11 작업은 이 인계서대로 계속하면 됩니다.
 

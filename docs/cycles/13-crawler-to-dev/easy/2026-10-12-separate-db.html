@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DB 포트 따로</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+.flow{display:grid;gap:10px;margin:10px 0 16px}.lane{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--card)}.lane b{display:block;margin-bottom:4px}.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{font-size:14px;border-radius:6px;padding:2px 8px;background:var(--code-bg)}.chip.new{background:var(--warn-bg)}.chip.dev{background:var(--ok-bg)}.arrow{text-align:center;color:var(--muted);font-size:18px;line-height:1}
+</style>
+<style>.phone{width:270px}.mock{border:3px solid var(--muted);border-radius:14px;background:var(--bg);padding:14px;font-size:13px;line-height:1.5}.mock h4{margin:0 0 8px;font-size:15px}.mock p{margin:6px 0}.new{background:var(--warn-bg);border-radius:6px;padding:4px 6px}</style><style>.sc{overflow-x:auto;border:1px solid var(--line);border-radius:10px;padding:8px;background:#fff}.sc svg{display:block}.steps td:first-child{white-space:nowrap;font-weight:700}</style></head><body><main class="doc"><p class="lead">DB를 포트만 다르게 새로 열면 되지 않나?</p>
+<p class="sub">질문: "db말이야 이거 어짜피 새로 포트 다르게 해서 열면 되는 거 아니야?" — 맞아요. 앞 페이지의 DB 걱정은 이걸로 풀려요.</p>
+<section class="card"><h2><span class="num">1</span>답: 네, 됩니다. 한 가지만 같이 바꿔야 해요</h2><ul>
+<li>dev 설정이 이미 포트를 바꿀 수 있게 되어 있어요. <code>compose.yaml</code>의 DB 포트가 <code>${DB_PORT:-5432}</code>·<code>${TEST_DB_PORT:-5433}</code>·<code>${OPS_DB_PORT:-5434}</code>이고, 앱도 <code>application.yml</code>·<code>application-test.yml</code>에서 같은 값을 읽어요(dev 파일 확인, 2026-10-12).</li>
+<li><b>같이 바꿀 것: 묶음 이름(compose 프로젝트 이름).</b> <code>compose.yaml</code>에 <code>name: chaekcheck</code>가 박혀 있어서, 포트만 바꾸고 같은 이름으로 띄우면 12가 쓰는 컨테이너·저장 공간을 그대로 다시 써요. 13 작업 폴더에서는 <code>docker compose -p chaekcheck-13 up</code>처럼 다른 이름을 주면 따로 생겨요. <code>-p</code>가 파일 속 <code>name</code>보다 먼저예요 (Docker 공식 문서 https://docs.docker.com/compose/how-tos/project-name/ , 확인 못 함: 이 세션에서 열어 보지 않음 → 띄울 때 <code>docker compose ls</code>로 두 묶음이 따로 보이는지 확인).</li>
+<li>새 DB는 비어서 시작해요. 앱을 켜면 Liquibase가 표와 도서관 seed를 만들어 줘요. 13의 1~8단계와 시험에는 이걸로 충분해요.</li>
+<li>안 풀리는 것: <b>12와 같은 파일을 고치는 것</b>은 그대로예요(ImportReport, CollectedCatalog 등). 13을 12가 합쳐진 뒤 그 위로 옮길 때 충돌을 손으로 풀어야 해요. 대부분 이름 바꾸기라 크지 않아요.</li>
+<li>9단계(실제 책이 든 DB로 6곳 넣고 운영 흉내 DB에 반영)는 책 160만 권이 필요해요. 빈 새 DB에서 하려면 가져오기를 한 번 돌려야 해서(약 33분, 힙 6GB), 11·12를 합친 뒤에 하는 편이 나아요.</li></ul></section>
+<section class="card"><h2><span class="num">2</span>다시 정할 것</h2>
+<p>[안] 13 작업 폴더는 <b>DB 묶음을 따로</b>(이름 <code>chaekcheck-13</code>, 포트 5442·5443·5444, 작업 폴더의 <code>.env</code>)로 띄우고 <b>1~8단계를 지금 나란히</b> 해요. 9단계(실데이터)와 10단계 마지막 대조, 그리고 main에 합치기는 11·12가 합쳐진 뒤 그 위로 옮겨서 해요. 인계서 시작 조건을 이렇게 고쳐요.</p>
+<p class="note">앞 페이지의 "1·3·4단계만 먼저"는 이 안을 고르면 필요 없어요(미승인으로 처리할게요). 포트 번호는 예시예요.</p></section></main></body></html>

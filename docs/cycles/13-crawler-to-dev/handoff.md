@@ -4,9 +4,11 @@
 
 ## 시작 조건
 
-- 사이클 13은 plan에서 **미리** 설계한 것입니다(ADR-0083~0088·0093 머리 표시). 아래 둘이 **끝나고 커밋된 뒤에** 시작합니다 [확정] (scope, design-delta "사이클 11·12·14와 겹치는 곳")
-  1. 사이클 11(가져오기 따로 하기): 측정(11단계)과 dev `docs/plan-feedback.md` `# 사이클 11` 마무리
-  2. 사이클 12(책 묶기 기준): plan `docs/cycles/12-grouping-rules/handoff.md`
+- 사이클 13은 plan에서 **미리** 설계한 것입니다(ADR-0083~0088·0093 머리 표시). **사이클 12 개발과 나란히, 따로 뺀 작업 폴더(git worktree)에서** 진행합니다 [확정] (사용자 승인, 2026-10-12, `easy/2026-10-12-separate-db.html`)
+  - **DB 묶음을 따로** 띄웁니다: 작업 폴더의 `.env`에 `DB_PORT=5442`, `TEST_DB_PORT=5443`, `OPS_DB_PORT=5444`(예시), compose 프로젝트 이름은 `docker compose -p chaekcheck-13 …`(`compose.yaml`의 `name: chaekcheck`보다 `-p`가 먼저). 띄운 뒤 `docker compose ls`로 12의 `chaekcheck`와 따로 보이는지 확인. 12·11이 쓰는 5432·5433·5434 DB는 건드리지 않습니다
+  - 새 DB는 비어서 시작하고 Liquibase가 표·도서관 seed를 만듭니다. 그래서 2단계 칸 이름은 파일 고침만으로 되고, 이 DB에는 "로컬 DB 맞추기" SQL이 필요 없습니다
+  - **지금 할 것: 1~8단계.** 9단계(실데이터: 6곳 넣기, 운영 흉내 반영), 10단계 마지막 대조, main에 합치기는 **사이클 11·12가 main에 합쳐진 뒤** 그 위로 옮겨서(rebase) 합니다. 그때 12와 겹치는 파일(아래 표)의 충돌을 풀고, 12·11이 쓰던 `db`·`db-ops`에 "로컬 DB 맞추기" SQL을 돌립니다
+  - 데이터 폴더(수집 DB)는 하나라 1단계 수집(여주대 빈 곳 채우기) 동안 다른 수집은 돌리지 않습니다
 - 사이클 14(사서추천도서, plan `docs/cycles/14-librarian-picks/handoff.md`)는 이 사이클이 끝나고 커밋된 뒤에 시작합니다
 - 작업은 dev 저장소(`chaekcheck-dev`)에서 합니다. 수집 데이터 폴더는 `C:\Users\yujun\Documents\Claude\Projects\chaekcheck-data`(git 밖)이고, 수집 DB `ebook-catalog.sqlite`(약 16.5GB)와 `snapshots\`가 있습니다. 로컬 DB(`db` 5432, `db-test` 5433, `db-ops` 5434)는 앞 사이클과 같이 씁니다
 - 수집은 이번 사이클 내내 **집 PC**에서 합니다. 클라우드·프록시는 backlog입니다 [확정] (scope 포함 4)
@@ -60,7 +62,7 @@
 ## 개발 시작 전 확인
 
 ### dev가 확인할 것
-- [ ] 사이클 11·12가 커밋되었고 `git status`가 깨끗한지. 아니면 사용자에게 물음
+- [ ] 13용 작업 폴더(worktree)와 따로 띄운 DB 묶음(`chaekcheck-13`)을 만듦. main에 합칠 때는 사이클 11·12가 커밋·합쳐졌는지 봄
 - [ ] base package `com.chaekcheck`(dev `CLAUDE.md`). 고칠 패키지: `com.chaekcheck.library`, `com.chaekcheck.library.internal`, `com.chaekcheck.collection.internal.importer`, `com.chaekcheck.catalog.internal`. 새로: `com.chaekcheck.collection.internal.libraryinsert`, `com.chaekcheck.collection.internal.web` [안]
 - [ ] master 끝줄과 모듈별 마지막 번호. plan 읽기(2026-10-12) 기준 master 끝은 `collection/005-import-export.yaml`(85-88행), `collection` 005, `library` 014 → 새 파일 `collection/006-library-insert-run.yaml`, `library/015-library-name-1215.yaml` [안]. 사이클 11·12가 더 넣었으면 그다음 번호
 - [ ] `PRE_DEPLOYMENT` 표지(`backend/src/main/resources/db/changelog/PRE_DEPLOYMENT`)가 아직 있는지. 없으면 `collection/001`을 그 자리에서 고칠 수 없으므로 멈추고 사용자에게 물음
@@ -137,7 +139,7 @@
 
 #### 로컬 DB 맞추기 [확정] (사용자 선택 "가벼운 방법", "이름도 니가 바꿔줘", 2026-10-12)
 - 데이터(가져온 책, 국가서지 저장 표, 사이클 11 측정 결과)를 지키는 가벼운 방법으로 함. **dev 세션(Claude)이 직접 돌림**, 사용자가 손으로 할 일 없음
-- 1번(파일 고침)과 **같은 때에** `db`와 `db-ops`(5434) 각각에서 한 트랜잭션으로:
+- **main에 합치는 때에** `db`와 `db-ops`(5434) 각각에서 한 트랜잭션으로:
 
 ```sql
 BEGIN;
@@ -148,7 +150,7 @@ COMMIT;
 ```
 - `databasechangelog`가 있는 스키마는 dev Liquibase 설정을 보고 맞춤. `md5sum`이 NULL이면 다음 Liquibase 실행 때 새 값으로 다시 채움 [확인 필요: 앱을 켜서 체크섬 오류 없이 지나가는지 확인]
 - 새 이름은 [안](dev가 바꾸면 SQL도 같이)
-- 미리 하지 않음: 2단계 전에 이름만 바꾸면 지금 코드(`candidate_library_count`를 씀)와 사이클 11 측정이 깨짐
+- 미리 하지 않음: 합치기 전에 이름만 바꾸면 지금 코드(`candidate_library_count`를 씀)와 사이클 11 측정이 깨짐. **13 작업 폴더의 따로 띄운 DB에는 필요 없고, main에 합칠 때 `db`·`db-ops`(5432·5434)에 돌림**
 - `db-test`는 컨테이너를 다시 띄움(tmpfs)
 
 ### 3단계: `library` 공개 API `LibraryRegistry` (의존: 2단계)

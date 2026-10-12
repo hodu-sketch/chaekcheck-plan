@@ -9,3 +9,5 @@
 | [2026-10-12-current-merged.html](2026-10-12-current-merged.html) | docs/current에 합친 모듈 그림 | `docs/current/module-map.md` | 없음 |
 | [2026-10-12-cycle-close.html](2026-10-12-cycle-close.html) | 사이클 13 마무리 요약과 커밋 | `../handoff.md` | 1 (커밋·푸시) |
 | [2026-10-12-where-to-crawl.html](2026-10-12-where-to-crawl.html) | 수집을 plan이 아니라 dev에서 할지 (마무리 페이지 질문의 답) | `../handoff.md` | 없음 (승인, 2026-10-12) |
+| [2026-10-12-parallel-worktree.html](2026-10-12-parallel-worktree.html) | 13을 12와 나란히 따로 작업 폴더에서 할지 | `../handoff.md` | 없음: "1·3·4만 먼저"는 다음 페이지 안으로 바뀜 (2026-10-12) |
+| [2026-10-12-separate-db.html](2026-10-12-separate-db.html) | DB를 포트·묶음 이름 따로 열어 13을 나란히 (앞 페이지 질문의 답) | `../handoff.md` | 없음 (승인, 2026-10-12) |
