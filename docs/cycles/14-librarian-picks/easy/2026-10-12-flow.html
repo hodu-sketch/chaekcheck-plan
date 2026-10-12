@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>사서추천도서 화면 흐름</title>
+<style>
+:root{--bg:#fff;--fg:#1d1d1f;--mut:#6b6b70;--line:#d4d4d8;--box:#f4f4f6;--acc:#5b4bd6;--new:#fff4d6}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Malgun Gothic","Apple SD Gothic Neo",sans-serif;line-height:1.6}
+main{max-width:900px;margin:0 auto;padding:24px 16px 48px}
+h1{font-size:22px;margin:0 0 4px}h2{font-size:17px;margin:28px 0 8px}
+p.s{color:var(--mut);margin:0 0 16px;font-size:14px}
+.wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;padding:12px;background:#fafafa}
+svg text{font-family:"Malgun Gothic","Apple SD Gothic Neo",sans-serif}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:640px){.grid{grid-template-columns:1fr}}
+.card{border:1px solid var(--line);border-radius:12px;padding:14px}
+.card h3{margin:0 0 8px;font-size:15px}
+.cv{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0}
+.cv div{aspect-ratio:2/3;border-radius:6px;background:#c9c3f0;position:relative}
+.cv div.dim{opacity:.35}
+.chip{position:absolute;top:4px;left:4px;width:18px;height:18px;border-radius:50%;background:var(--acc);color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center}
+.chip.w{background:#fff;color:#333}
+ul{padding-left:20px;margin:6px 0}li{margin:2px 0}
+.tag{display:inline-block;font-size:12px;padding:0 6px;border-radius:6px;background:var(--box);color:var(--mut)}
+.tag.a{background:var(--new);color:#7a5a00}
+</style></head><body><main>
+<h1>사서추천도서 화면 흐름</h1>
+<p class="s">사이클 14 · 2026-10-12 · 새 화면은 없고, 지금 "인기 도서" 화면의 이름·분류·표지·문구가 바뀝니다.</p>
+
+<h2>화면이 이어지는 길</h2>
+<div class="wrap">
+<svg viewBox="0 0 860 300" width="860" height="300" role="img" aria-label="화면 흐름">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#888"/></marker></defs>
+<g font-size="13" fill="#1d1d1f">
+<rect x="10" y="125" width="130" height="50" rx="10" fill="#fff4d6" stroke="#c9a400"/><text x="75" y="146" text-anchor="middle">머리</text><text x="75" y="164" text-anchor="middle" font-size="12">"사서추천도서" 링크</text>
+<rect x="190" y="125" width="150" height="50" rx="10" fill="#ece9ff" stroke="#5b4bd6"/><text x="265" y="146" text-anchor="middle">S13 사서추천도서</text><text x="265" y="164" text-anchor="middle" font-size="12">/picks</text>
+<rect x="400" y="20" width="160" height="44" rx="10" fill="#f4f4f6" stroke="#bbb"/><text x="480" y="46" text-anchor="middle">S13c 분류 목록</text>
+<rect x="620" y="20" width="160" height="44" rx="10" fill="#f4f4f6" stroke="#bbb"/><text x="700" y="46" text-anchor="middle">S13i 도움말</text>
+<rect x="400" y="128" width="160" height="44" rx="10" fill="#f4f4f6" stroke="#bbb"/><text x="480" y="154" text-anchor="middle">S14 가운데 창</text>
+<rect x="400" y="236" width="160" height="44" rx="10" fill="#f4f4f6" stroke="#bbb"/><text x="480" y="262" text-anchor="middle">S15 신청 안내</text>
+<rect x="620" y="110" width="160" height="40" rx="10" fill="#f4f4f6" stroke="#bbb"/><text x="700" y="135" text-anchor="middle">S3 책 화면</text>
+<rect x="620" y="166" width="160" height="40" rx="10" fill="#f4f4f6" stroke="#bbb"/><text x="700" y="191" text-anchor="middle">도서관 사이트(새 창)</text>
+</g>
+<g stroke="#888" fill="none" stroke-width="1.5" marker-end="url(#ar)">
+<path d="M140,150H186"/><path d="M340,140L398,50"/><path d="M560,42H616"/><path d="M340,150H396"/><path d="M340,160L398,252"/><path d="M560,145L616,132"/><path d="M560,156L616,184"/>
+</g>
+<g font-size="11" fill="#6b6b70">
+<text x="345" y="88">분류 ▾</text><text x="565" y="34">? 추천 기준 보기</text><text x="343" y="143">전자책 있는 책</text><text x="345" y="222">흐린 책</text><text x="566" y="124">책 검색 &gt;&gt;</text><text x="566" y="182">도서관 줄</text>
+</g>
+</svg></div>
+
+<h2>카드가 이렇게 바뀝니다</h2>
+<div class="grid">
+<div class="card"><h3>지금 (인기 도서)</h3>
+<b>소설</b> <span class="tag">1 - 9위 / 50</span>
+<div class="cv"><div><span class="chip">1</span></div><div class="dim"><span class="chip w">2</span></div><div><span class="chip">3</span></div><div class="dim"><span class="chip w">4</span></div><div><span class="chip">5</span></div><div><span class="chip">6</span></div><div class="dim"><span class="chip w">7</span></div><div><span class="chip">8</span></div><div class="dim"><span class="chip w">9</span></div></div>
+<p class="s">출처: 출판유통통합전산망 …</p></div>
+<div class="card"><h3>바뀐 뒤 (사서추천도서)</h3>
+<b>문학</b> <span class="tag a">1 - 9 / 10</span>
+<div class="cv"><div></div><div class="dim"></div><div></div><div class="dim"></div><div></div><div></div><div class="dim"></div><div></div><div></div></div>
+<p class="s">출처: 국립중앙도서관 사서추천도서 (공공누리 제1유형) · 10월 12일 받음</p></div>
+</div>
+<ul>
+<li>순위 칩이 없어지고, "있음/없음"은 흐림 하나로만 보입니다 <span class="tag">확정</span></li>
+<li>분류: 전체 → 문학 → 인문 → 사회 → 자연 → 테마. 책이 없는 분류는 숨김 <span class="tag">확정</span></li>
+<li>표지: 우리 전자책 표지 → 국립중앙도서관 표지 → 제목 글자 <span class="tag">확정</span></li>
+<li>가운데 창 제목 아래 "2026년 10월 사서추천 · 문학" <span class="tag">확정</span></li>
+</ul>
+</main></body></html>

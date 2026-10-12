@@ -1,6 +1,6 @@
 # ADR-0072: 인기 도서 출처는 출판유통통합전산망 공개 통계 화면
 
-Status: Accepted
+Status: Superseded by 0089
 Date: 2026-10-11
 Cycle: 10-popular-books
 Supersedes: 없음

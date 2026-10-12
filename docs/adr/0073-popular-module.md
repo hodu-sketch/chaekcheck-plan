@@ -1,6 +1,6 @@
 # ADR-0073: 인기 도서는 새 모듈 popular가 받기·저장·API를 맡는다
 
-Status: Accepted
+Status: Superseded by 0089
 Date: 2026-10-11
 Cycle: 10-popular-books
 Supersedes: 없음

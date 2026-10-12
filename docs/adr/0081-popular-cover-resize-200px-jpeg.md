@@ -1,6 +1,6 @@
 # ADR-0081: 표지는 미리 받아 폭 200px JPEG로 줄여 저장하고 우리 서버가 넘겨준다
 
-Status: Accepted
+Status: Superseded by 0091
 Date: 2026-10-12
 Cycle: 10-popular-books
 Supersedes: 0075 (미리 받기·우리 주소로 넘겨주기·두 달 보관은 그대로, "작은 표지를 받은 그대로 저장"을 바꿈. 결정은 사이클 10 개발 중 2026-10-12)

@@ -75,16 +75,16 @@
 | [ADR-0069](0069-national-bibliography-raw-and-rule-change.md) | 국가서지는 원문을 남기고 매번 다듬음(판 번호 없음), 정리 규칙을 바꿀 때 상황별로 다시 가져옴 (ADR-0065 일부를 바꿈) | Accepted | 2026-10-11 | 08 |
 | [ADR-0070](0070-holding-id-carry-over-and-gone-notice.md) | 같은 소장은 옛 소장 번호를 잇고, 빠진 책·소장은 따로 알림(`holding_not_found`) (ADR-0065 일부를 바꿈) | Accepted | 2026-10-11 | 08 |
 | [ADR-0071](0071-library-name-and-classification.md) | 도서관 이름에는 기관 이름만, 업체·대출 방식은 분류로, (이름, 업체, 대출 방식, 순번) UNIQUE (ADR-0017 일부·사이클 07 seed 이름 규칙을 바꿈) | Accepted | 2026-10-11 | 09 |
-| [ADR-0072](0072-popular-books-source-kpipa.md) | 인기 도서 출처는 출판유통통합전산망 공개 통계 화면(알라딘·정보나루 안 씀) | Accepted | 2026-10-11 | 10 |
-| [ADR-0073](0073-popular-module.md) | 인기 도서는 새 모듈 `popular`가 받기·저장·API를 맡음 | Accepted | 2026-10-11 | 10 |
-| [ADR-0074](0074-popular-isbn-lookup-shared-cache.md) | 순위 책과 우리 책은 볼 때 ISBN으로 맞추고 책 정보는 공용 캐시(10분) | Accepted | 2026-10-11 | 10 |
+| [ADR-0072](0072-popular-books-source-kpipa.md) | 인기 도서 출처는 출판유통통합전산망 공개 통계 화면(알라딘·정보나루 안 씀) | Superseded by 0089 | 2026-10-11 | 10 |
+| [ADR-0073](0073-popular-module.md) | 인기 도서는 새 모듈 `popular`가 받기·저장·API를 맡음 | Superseded by 0089 | 2026-10-11 | 10 |
+| [ADR-0074](0074-popular-isbn-lookup-shared-cache.md) | 순위 책과 우리 책은 볼 때 ISBN으로 맞추고 책 정보는 공용 캐시(10분) | Superseded by 0090 | 2026-10-11 | 10 |
 | [ADR-0075](0075-popular-cover-prefetch-proxy.md) | 표지는 매달 미리 받아 우리 서버가 넘겨줌, 최근 두 달 보관 | Superseded by 0081 | 2026-10-11 | 10 |
 | [ADR-0076](0076-library-classification-api-and-rename.md) | 도서관 분류 값(vendor·lendingModel·orderNo)은 API로 보내고 화면이 글자를 만듦, 이름은 번호로 고치는 changeset(014), 이름 찾기는 화면에서 (ADR-0071을 이어서) | Accepted | 2026-10-11 | 09 |
 | [ADR-0077](0077-popular-drop-sparse-categories.md) | 인기 도서는 전자책이 거의 없는 다섯 분류(만화·어린이·청소년·기타·의학·스포츠)를 받지 않음, ADR-0072 범위·0074·0075 숫자 바로잡음 | Superseded by 0080 | 2026-10-11 | 10 |
 | [ADR-0078](0078-separate-import-export-apply.md) | 가져오기는 내 PC에서 하고 운영 DB에는 파일 하나(pg_dump -Fc, load_manifest)로 옮겨 비교 뒤 바꿔 끼움, 모드 in-place·export·apply·finish·discard (ADR-0065를 이어서) | Accepted | 2026-10-12 | 11 |
 | [ADR-0079](0079-grouping-modes-same-result.md) | 책 묶기는 세 방식(current·compact·sql)을 설정으로 고르고 결과가 번호까지 같아야 씀, 묶기 규칙은 그대로. 덧붙임: 사이클 12에서 compact·sql 둘 다 남기고 current는 지움 | Accepted | 2026-10-12 | 11 |
-| [ADR-0081](0081-popular-cover-resize-200px-jpeg.md) | 표지는 미리 받아 폭 200px JPEG로 줄여 저장하고 우리 서버가 넘겨줌, 표지 본문 상한 50MB, 경로 폴더 여럿, 1,600만 화소 상한 (ADR-0075를 대체) | Accepted | 2026-10-12 | 10 |
-| [ADR-0080](0080-popular-fourteen-categories.md) | 인기 도서는 일곱 분류(만화·어린이·청소년·기타·의학·스포츠·언어·기술·공학)를 받지 않고 "전체" + 14분류, 요청 30건·750권, display_order CHECK 0..14 (ADR-0077을 대체) | Accepted | 2026-10-12 | 10 |
+| [ADR-0081](0081-popular-cover-resize-200px-jpeg.md) | 표지는 미리 받아 폭 200px JPEG로 줄여 저장하고 우리 서버가 넘겨줌, 표지 본문 상한 50MB, 경로 폴더 여럿, 1,600만 화소 상한 (ADR-0075를 대체) | Superseded by 0091 | 2026-10-12 | 10 |
+| [ADR-0080](0080-popular-fourteen-categories.md) | 인기 도서는 일곱 분류(만화·어린이·청소년·기타·의학·스포츠·언어·기술·공학)를 받지 않고 "전체" + 14분류, 요청 30건·750권, display_order CHECK 0..14 (ADR-0077을 대체) | Superseded by 0089 | 2026-10-12 | 10 |
 | [ADR-0083](0083-library-registry-add.md) | `library`에 공개 기능 "도서관 더하기"(`LibraryRegistry`), 번호는 부르는 쪽이 정하고 부르는 쪽 트랜잭션 안에서만 ("Java never saves a library"를 바꿈) | Accepted | 2026-10-12 | 13 (12보다 미리) |
 | [ADR-0084](0084-library-insert-command.md) | 새 도서관은 `collection` 명령으로 미리 보기 → 보고서 → 넣기, 서비스 DB 전체와 비교, seed로 번호를 넣지 않음 (ADR-0052 seed 부분을 바꿈) | Accepted | 2026-10-12 | 13 (12보다 미리) |
 | [ADR-0085](0085-library-rules-tsv-in-dev.md) | 사람이 정한 도서관 규칙은 dev git `scripts/library/rules/` TSV, 지역은 번호로 미리 풂 | Accepted | 2026-10-12 | 13 (12보다 미리) |
@@ -92,3 +92,7 @@
 | [ADR-0087](0087-join-survey-date-notice.md) | 가입 조건 조사 기준일은 하나만(날짜 파일 → 넣기 실행 기록), `/about` 공지 한 줄, 도서관마다 날짜 칸 없음 | Accepted | 2026-10-12 | 13 (12보다 미리) |
 | [ADR-0088](0088-crawler-switch-to-dev.md) | 수집은 dev `scripts/crawl/`로 갈아타고 옛 코드는 보관 폴더에 백업, 지우지 않음 (ADR-0047을 이어서) | Accepted | 2026-10-12 | 13 (12보다 미리) |
 | [ADR-0082](0082-grouping-step4-main-title-volume-isbn-split.md) | 네 번째 묶기 단계: 본제목 + 권 표시로 비교, ISBN 다르면 나눔, 자리 채움 값은 없음, `collection` 안 (ADR-0035 ④ 부분을 바꿈) | Accepted | 2026-10-12 | 12 |
+| [ADR-0089](0089-librarian-picks-source-and-module.md) | 인기 도서를 사서추천도서로: 국립중앙도서관 Open API(주 1회 1건, 최근 추천 6번), 새 모듈 `picks`, `popular`·출판유통통합전산망 코드·changeset 지움 (ADR-0072·0073·0080을 대체) | Accepted | 2026-10-12 | 14 |
+| [ADR-0090](0090-picks-match-isbn-then-title-author-in-cache.md) | 사서추천 책은 공용 캐시를 만들 때 ISBN, 안 되면 본제목 + 첫 저자로 맞춤(`catalog` 새 조회), 여럿이면 가진 도서관 많은 책 (ADR-0074를 대체) | Accepted | 2026-10-12 | 14 |
+| [ADR-0091](0091-picks-cover-nlk-resize-200px.md) | 사서추천 표지는 국립중앙도서관 표지를 받아 200px JPEG로 줄여 우리 서버가 넘겨줌, 우리 전자책 표지는 이번에 안 씀 (ADR-0081을 대체) | Accepted | 2026-10-12 | 14 |
+| [ADR-0092](0092-picks-fetch-retry-daily-and-catch-up.md) | 사서추천 받기는 실패하면 성공할 때까지 매일 다시, 마지막 성공이 7일보다 오래되면 따라잡음 (ADR-0089의 "다음 날 한 번 더"를 바꿈) | Accepted | 2026-10-12 | 14 |

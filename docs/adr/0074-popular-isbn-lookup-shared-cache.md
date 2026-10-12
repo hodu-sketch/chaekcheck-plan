@@ -1,6 +1,6 @@
 # ADR-0074: 순위 책과 우리 책은 저장하지 않고 볼 때 ISBN으로 맞추며, 책 정보는 공용 캐시
 
-Status: Accepted
+Status: Superseded by 0090
 Date: 2026-10-11
 Cycle: 10-popular-books
 Supersedes: 없음 (사이클 10 spec R3-2 처음 글을 바꿈)

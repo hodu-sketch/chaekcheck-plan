@@ -1,6 +1,6 @@
 # ADR-0080: 인기 도서는 일곱 분류를 받지 않고 "전체" + 14분류만 보인다
 
-Status: Accepted
+Status: Superseded by 0089
 Date: 2026-10-12
 Cycle: 10-popular-books
 Supersedes: 0077 (ADR-0077의 다섯 분류에 언어·기술·공학을 더함. 결정은 사이클 10 개발 중 2026-10-12)

@@ -8,6 +8,7 @@
 사이클 10 회고 (2026-10-12): 구현 대조, 분류 14개·표지 200px JPEG·User-Agent·문구 반영 (`docs/cycles/10-popular-books/retro.md`). dev Liquibase `popular/001-popular-schema.yaml`로 제약·색인·changeSet 이름을 대조함.
 사이클 11 cycle-close (2026-10-12): 가져오기 따로 하기(export·apply·finish·discard, load_manifest, db-ops) + 묶는 방식 current·compact·sql — 설계됨(미구현, 사이클 11). `collection.catalog_import` 칸 `export_id`·`exported_at`과 CHECK, `failure_reason` 값 `mismatch`(changeset 없음), `step_seconds` 새 키, 실행 중에만 있는 `catalog_next.load_manifest`(Liquibase 아님), dev compose `db-ops`. 새 스키마·새 색인 없음. 근거 `docs/cycles/11-separate-import/design-delta.md` "데이터", spec.md, ADR-0078·0079. 이름·번호는 따로 적지 않으면 [안].
 사이클 12 (2026-10-12, 사이클 11 dev 진행 중에 미리 한 plan): 책 묶기 네 번째 단계 규칙 — 설계됨(미구현, 사이클 12). 근거 `docs/cycles/12-grouping-rules/design-delta.md`, ADR-0082.
+사이클 14 cycle-close (2026-10-12): 스키마 `popular`(사이클 10, 구현됨·배포 전)를 지우고 새 스키마 `picks`(`fetch_run`, `pick`, `cover`) — 설계됨(미구현, 사이클 14). changelog `picks/001-picks-schema.yaml`, `popular/001-popular-schema.yaml`은 지움(배포 전 규칙), 로컬 `db`·`db-test`에서 `DROP SCHEMA popular CASCADE`와 `databasechangelog`의 `popular-001-%` 줄 지움. 다른 모듈 표는 바뀌지 않음(`catalog.book`과는 ISBN·제목+저자 값으로만 맞춤). 근거 `docs/cycles/14-librarian-picks/design-delta.md` "데이터", ADR-0089·0090·0091.
 사이클 08 cycle-close (2026-10-11): `catalog` 가져오기를 새 표(`catalog_next`)에 쓰고 바꿔 끼우기, 소장 번호 잇기, `collection.catalog_import` 칸 추가, `collection.national_bibliography_record`·`national_bibliography_source`, `library.library.mobile_site_differs`, 도서관 이름 고침 changeset, `library`·`region` `updated_at` 트리거, 교보 대여·혼합 11곳 seed에서 뺌, 정리 규칙을 바꿀 때의 순서 — 구현됨 (사이클 08). 근거 `docs/cycles/08-polish-swap-memory/design-delta.md` "데이터"·"정리 규칙을 바꿀 때"·"이름 고치기", ADR-0065~0070. 이름·숫자는 따로 적지 않으면 [안].
 사이클 08 회고 (2026-10-11): dev Liquibase(`collection/003`·`004`, `library/011`~`013`, `region/003`)와 dev `plan-feedback.md` "# 사이클 08"로 대조함. 달라진 점: 국가서지 원문은 ISBN마다 한 줄, `step_seconds` 키가 늘어남, 가져오기 기록에 `status`·`failure_reason`·`failure_detail`, 넓은 줄은 임시 표와 `catalog_next`에 두 번 씀, 파일 번호가 설계 [안]과 다름, 이름 고침은 `library/013`. 가져오기 힙(AC-12), 국가서지 원문 재사용 시간(AC-15), 색인 단계 중단(AC-9 둘째 경우)은 측정 중 [확인 필요]. 근거 `docs/cycles/08-polish-swap-memory/retro.md`.
 
@@ -45,11 +46,11 @@ erDiagram
   COLLECTION_LINK }o..|| LIBRARY : "library_id (번호만, 다른 모듈, 사이클 07)"
   BOOK ||--o{ HOLDING : "book_id"
   HOLDING }o..|| LIBRARY : "library_id (번호만)"
-  RANKING_ENTRY }o..o| BOOK : "isbn13 값으로만 (FK 없음, 사이클 10)"
+  PICK }o..o| BOOK : "isbn13 또는 제목+저자 값으로만 (FK 없음, 사이클 14)"
 ```
 
 - `COLLECTION_LINK`는 사이클 07에 더한 표입니다(구현됨 (사이클 07)). `BOOK`·`HOLDING`의 자세한 관계는 아래 `catalog` 그림.
-- `RANKING_ENTRY`(스키마 `popular`)는 사이클 10에 더한 표입니다 — 구현됨 (사이클 10). 자세한 것은 아래 `popular` 절.
+- `PICK`(스키마 `picks`)은 사이클 14에 더하는 표입니다 — 설계됨(미구현, 사이클 14). 사이클 10의 `RANKING_ENTRY`(스키마 `popular`)는 지움. 자세한 것은 아래 `picks` 절.
 
 ## 스키마 `region` (소유: `region` 모듈) — 구현됨
 
@@ -568,97 +569,79 @@ erDiagram
 - 넣지 않는 것: 이메일·이름 등. 탈퇴하면 계정 번호도 남지 않음(ADR-0041)
 - JPA 엔티티 없이 `JdbcClient`(사이클 05 `auth`와 같은 방식, `mylibrary/internal/MyLibraryStore`) [확정] (dev 구현 확인, 2026-10-05)
 
-## 스키마 `popular` (소유: `popular` 모듈) — 구현됨 (사이클 10)
+## 스키마 `picks` (소유: `picks` 모듈) — 설계됨(미구현, 사이클 14)
 
-출판유통통합전산망에서 매달 받은 인기 도서 순위·분류 판매 부수·표지와 받기 기록입니다(ADR-0072·0073·0075·0077, ADR-0080·ADR-0081). 스키마 이름 `popular` [확정] (설계 #12). 다른 모듈과 FK·조인이 없고, `catalog`와는 `isbn13` 값으로만 맞춥니다(볼 때 `BookLookup.byIsbn13`, ADR-0074). JPA 엔티티 없이 JdbcClient. 근거 `docs/cycles/10-popular-books/design-delta.md` "데이터".
+국립중앙도서관 사서추천도서 Open API에서 주 1회 받은 최근 6번(추천 연월이 다른 최근 6개 달) 추천 책, 줄인 표지, 받기 기록입니다(ADR-0089·0091). 사이클 10 스키마 `popular`(`fetch_run`, `ranking_month`, `ranking_category`, `ranking_entry`, `cover`, 출판유통통합전산망 순위)를 대체하고 `popular`는 지웁니다 [확정] (ADR-0089). 스키마 이름 `picks`, 표·칸 이름 [확정] (사용자 승인 "이름·값: … 승인", 2026-10-12). 다른 모듈과 FK·조인이 없고, `catalog`와는 값으로만 맞춥니다(공용 캐시를 만들 때 `BookLookup.byIsbn13` → `BookLookup.byTitleAndAuthor`, ADR-0090). JPA 엔티티 없이 JdbcClient. 근거 `docs/cycles/14-librarian-picks/design-delta.md` "데이터".
 
 ```mermaid
 erDiagram
   FETCH_RUN {
     bigint id PK "identity"
-    date target_month "NOT NULL, 1일"
-    text trigger "STARTUP | SCHEDULED"
+    text trigger "STARTUP | SCHEDULED | RETRY | CATCH_UP"
     timestamptz started_at "NOT NULL"
     timestamptz finished_at "NOT NULL"
     text status "SUCCEEDED | FAILED"
     text failure_reason "FAILED일 때만"
-    text failure_detail "NULL"
+    text failure_detail "NULL, 키·URL·본문 없음"
+    boolean changed "SUCCEEDED일 때만"
     int request_count ">= 0"
-    int book_count ">= 0"
+    int received_count ">= 0"
+    int kept_count ">= 0"
     int missing_isbn_count ">= 0"
+    text new_category_codes "NULL, 쉼표로"
     int cover_fetched_count ">= 0"
     int cover_failed_count ">= 0"
   }
-  RANKING_MONTH {
-    date target_month PK "1일"
-    bigint fetch_run_id FK "NOT NULL"
-    timestamptz fetched_at "NOT NULL"
-  }
-  RANKING_CATEGORY {
-    date target_month PK,FK
-    text category_code PK "ALL 또는 사이트 ID"
-    bigint sales_copies "NULL(ALL), >= 0"
-    smallint display_order "CHECK 0..14"
-  }
-  RANKING_ENTRY {
-    date target_month PK,FK
-    text category_code PK,FK
-    smallint rank PK "1..50"
-    text isbn13 "NULL"
+  PICK {
+    text recom_no PK "1~20자리 숫자 글자"
+    text dr_code "NOT NULL, 1~20자"
+    text dr_code_name "NULL"
+    date recom_month "1일"
+    date registered_on "NULL, regdate"
     text title "NOT NULL"
-    text thema "NULL"
-    text cover_path "NULL"
+    text author "NULL"
+    text publisher "NULL"
+    text isbn13 "NULL"
+    text cover_source "NULL"
   }
   COVER {
     bigint id PK "identity"
-    text source_path UK "작은 그림 경로, /로 시작"
-    text content_type "늘 image/jpeg"
+    text source_url UK "https://www.nl.go.kr/afile/…"
+    text content_type "image/jpeg"
     bytea image "폭 200px JPEG"
     int byte_size ">= 0"
     timestamptz fetched_at "NOT NULL"
   }
-  FETCH_RUN ||--o| RANKING_MONTH : "저장한 받기"
-  RANKING_MONTH ||--|{ RANKING_CATEGORY : "ON DELETE CASCADE"
-  RANKING_CATEGORY ||--|{ RANKING_ENTRY : "ON DELETE CASCADE"
-  RANKING_ENTRY }o..o| COVER : "cover_path = source_path (FK 없음)"
+  PICK }o..o| COVER : "cover_source = source_url (FK 없음)"
 ```
 
 | 테이블.컬럼 | 타입 | 제약 | 설명 | 상태 태그 |
 |---|---|---|---|---|
-| `fetch_run.id` | bigint | PK `fetch_run_pkey`, identity | 받기 기록 번호 | [확정] (설계 #3·#12) |
-| `fetch_run.target_month` | date | NOT NULL, CHECK 1일 | 대상 달 | [확정] |
-| `fetch_run.trigger` | text | CHECK `STARTUP`·`SCHEDULED` | 켜질 때 / 예약 | [확정] |
-| `fetch_run.started_at`·`finished_at` | timestamptz | NOT NULL | | [확정] |
+| `fetch_run.trigger` | text | CHECK `STARTUP`·`SCHEDULED`·`RETRY`·`CATCH_UP` | 시작(목록 없음)·월요일·다음 날 다시·따라잡기(마지막 성공이 7일보다 오래됨, 서버 시작 또는 05:00 판단 때) | [확정] (따라잡기: 사용자 "켜질 때 따라잡기 (추천)", 2026-10-12) |
 | `fetch_run.status` | text | CHECK `SUCCEEDED`·`FAILED` | | [확정] |
-| `fetch_run.failure_reason` | text | `FAILED`일 때만 NOT NULL, CHECK `session_failed`·`request_rejected`·`format_changed`·`too_few_books`·`network_error` | | [확정] (설계 #12) |
-| `fetch_run.failure_detail` | text | NULL | 어느 분류·응답 코드 등 | [확정] |
-| `fetch_run.request_count`·`book_count`·`missing_isbn_count` | int | NOT NULL DEFAULT 0, `>= 0` | 요청 수(AC-12, 한 달 30건), 저장한 책 수(한 달 750권), ISBN 빈·틀린 책 수 | [확정] (설계 #10·#11) |
-| `fetch_run.cover_fetched_count`·`cover_failed_count` | int | NOT NULL DEFAULT 0, `>= 0` | 새로 받은 표지 수, 실패 수(못 읽거나 풀었을 때 16,000,000화소를 넘는 그림, 50MB 넘는 응답도 실패) | [확정] (사용자 승인, 2026-10-11, design-delta 확인) |
-| 색인 `fetch_run_target_month_started_at_idx` `(target_month, started_at)` | | | 판단 규칙 | [확정] (dev 구현 확인, 2026-10-12) |
-| `ranking_month.target_month` | date | PK | | [확정] |
-| `ranking_month.fetch_run_id` | bigint | FK `fetch_run(id)`, NOT NULL | 저장한 받기 | [확정] |
-| `ranking_month.fetched_at` | timestamptz | NOT NULL | 출처 줄 "받은 날" | [확정] |
-| `ranking_category (target_month, category_code)` | date, text | PK, FK `ranking_month` ON DELETE CASCADE | `ALL` 또는 20자리 사이트 ID | [확정] |
-| `ranking_category.sales_copies` | bigint | `ALL`이면 NULL, 아니면 `>= 0` | 판매 부수 | [확정] |
-| `ranking_category.display_order` | smallint | CHECK 0..14 (구현됨: 배포 전이라 `popular/001`을 그 자리에서 고침, 사이클 11 0단계, ADR-0080. 로컬 `db`는 2026-09의 178·1991 분류를 지우고 0~14로 다시 매김, 체크섬 NULL 뒤 새 체크섬), UNIQUE `ranking_category_target_month_display_order_key (target_month, display_order)` | 계산한 순서. 지금 값은 0~14, 옛 달(16분류로 받은 달)은 빈칸이 있을 수 있음 | [확정] (CHECK를 0..14로 좁히면 2026-09 줄이 어긋나 그대로 둠 — dev 제안, 회고 결정 페이지에서 확인) |
-| `ranking_entry (target_month, category_code, rank)` | | PK, FK `ranking_category` ON DELETE CASCADE, `rank` 1..50 | | [확정] |
-| `ranking_entry.isbn13` | text | NULL, CHECK `^97[89][0-9]{10}$` | 비었거나 틀리면 NULL → 흐림 | [확정] (설계 #10) |
-| `ranking_entry.title` | text | NOT NULL | | [확정] |
-| `ranking_entry.thema` | text | NULL | 공식 세부분류 | [확정] |
-| `ranking_entry.cover_path` | text | NULL, CHECK `/`로 시작(`ranking_entry_cover_path_check`) | 작은 그림 경로. 코드 규칙은 `/files/<영문 소문자 폴더>/…/s_<이름>`(폴더 `isbn`·`onix`·`old`·`trans`), 규칙에 안 맞으면 NULL | [확정] (설계 후속 #1; 넓힌 규칙은 사용자가 "넓힌 규칙 그대로"를 고름, 2026-10-12, ADR-0081) |
-| `cover.id` | bigint | PK, identity | 화면 주소에 씀 | [확정] (사용자 승인, 2026-10-11, design-delta 확인) |
-| `cover.source_path` | text | NOT NULL, UNIQUE | 같은 경로는 다시 받지 않음 | [확정] (설계 후속 #1) |
-| `cover.content_type` | text | NOT NULL | 늘 `image/jpeg`(줄여 다시 만든 그림) | [확정] (dev 구현 확인, 2026-10-12, ADR-0081) |
-| `cover.image` | bytea | NOT NULL | 폭 200px JPEG(받은 그림이 더 좁으면 그 폭 그대로, 투명한 곳은 흰색). 실측 808장 11MB, 중간값 14KB (dev 받기 시험, 2026-10-12) | [확정] (DB 저장; 줄이기는 사용자: "좀 작아도 괜찮아 오히려 최대한 작은게 좋아", 2026-10-12, ADR-0081) |
-| `cover.byte_size` | int | NOT NULL, `>= 0` | 줄인 뒤 크기 | [확정] (사용자 승인, 2026-10-11, design-delta 확인) |
-| `cover.fetched_at` | timestamptz | NOT NULL | | [확정] (사용자 승인, 2026-10-11, design-delta 확인) |
+| `fetch_run.failure_reason` | text | `FAILED`일 때만 NOT NULL. CHECK `key_missing`·`network_error`·`request_rejected`·`format_changed`·`incomplete`·`no_books` | | [확정] |
+| `fetch_run.failure_detail` | text | NULL | HTTP 상태·API 오류 코드만. 키·요청 URL·응답 본문은 넣지 않음 | [확정] |
+| `fetch_run.changed` | boolean | `(status = 'SUCCEEDED') = (changed IS NOT NULL)` | 목록을 바꿨는지 | [확정] |
+| `fetch_run.new_category_codes` | text | NULL | 모르는 `drCode`가 왔으면 그 코드들 (ADR-0089) | [확정] |
+| `fetch_run` 개수 칸 | int | NOT NULL DEFAULT 0, CHECK >= 0 | 요청·받은·남긴·ISBN 없는·표지 받은·표지 실패 | [확정] |
+| `fetch_run` 색인 | | `(status, started_at)` | 받을지 판단, 출처 줄 "받은 날"(마지막 `SUCCEEDED`의 `finished_at`) | [확정] |
+| `pick.recom_no` | text | PK, CHECK `^[0-9]{1,20}$` | 옛 추천 1~4자리, 최근 20자리 (2026-10-12 시험) | [확정] |
+| `pick.dr_code` | text | NOT NULL, CHECK `length(dr_code) BETWEEN 1 AND 20` | 11·6·5·4·425, 모르는 코드도 받음(모양을 묶지 않아 새 코드에 받기가 막히지 않게) | [확정] (ADR-0089) |
+| `pick.dr_code_name` | text | NULL | API 이름(테마는 빈 값 → NULL). 새 분류 이름에 씀 | [확정] |
+| `pick.recom_month` | date | NOT NULL, CHECK 1일 | `recomYear`·`recomMonth` | [확정] |
+| `pick.registered_on` | date | NULL | `regdate`(`YYYY.MM.DD`). 같은 달 안 정렬(늦은 순) | [확정] |
+| `pick.isbn13` | text | NULL, CHECK `^97[89][0-9]{10}$` | `Isbn.toIsbn13`로 정리, 안 되면 NULL | [확정] |
+| `pick.cover_source` | text | NULL, CHECK `LIKE 'https://www.nl.go.kr/afile/%'` | http → https 바꾼 뒤. 규칙에 안 맞으면 NULL | [확정] |
+| `cover.source_url` | text | NOT NULL UNIQUE | 같은 주소는 다시 받지 않음 | [확정] |
+| `cover.image` | bytea | NOT NULL | 폭 200px JPEG, 품질 0.8 (ADR-0091) | [확정] |
 
-- 분류: 한 달에 15줄(`ALL` + 14분류). 만화·어린이·청소년·기타·의학·스포츠·언어·기술·공학은 받지 않음 [확정] (ADR-0077, ADR-0080). `display_order`는 `ALL` 0, 나머지 14개는 판매 부수 큰 순(같으면 사이트 ID 순)으로 1~14, 받을 때 계산 [확정] (spec R2-2). 분류 사이트 ID·줄인 이름은 표가 아니라 코드 상수 enum `PopularCategory` [확정] (설계 #4)
-- 받기 기록 쓰는 순서 [확정] (사용자 승인, 2026-10-12, 인계 전 결정 #1): 성공이면 받기 기록(`SUCCEEDED`, `finished_at` = 순위 저장 시각)을 순위(달·분류·책)와 **같은 트랜잭션**에서 넣고(그 달을 지우고 `ranking_month`·`ranking_category`·`ranking_entry`를 넣음), 표지 받기가 끝나면 그 줄의 `cover_fetched_count`·`cover_failed_count`만 UPDATE. 실패면 순위 없이 `FAILED` 줄만 넣음. 표지 받는 중에 서버가 꺼져도 순위와 성공 기록은 남고 표지 수는 0
-- 보관·지우기: 순위 표(`ranking_*`)는 지우지 않음 [확정] (spec R1-5). 받기 성공 뒤 최근 두 달 `ranking_entry.cover_path`에 없는 `cover` 줄을 지움 [확정] (설계 후속 #2, ADR-0075)
-- 크기: 한 달 분류 15줄 + 책 750줄, 첫 달 표지 최대 750장. 실측(2026-09, dev 받기 시험 2026-10-12): 표지 808장 11MB, 중간값 14KB [확정]
-- 저자 칸 없음 [확정] (spec 입력과 출력)
-- Liquibase: changelog `db/changelog/popular/001-popular-schema.yaml`, changeSet `popular-001-schema`·`popular-001-fetch-run`·`popular-001-ranking`·`popular-001-cover` [확정] (dev 구현 확인, 2026-10-12), 기존 changeset 수정 없음. 제약 이름은 PostgreSQL 기본 이름 꼴(`<표>_<칸>_check`·`_key`·`_fkey`·`_pkey`). CHECK는 맨 위 규칙대로 changeset 안 `sql`. `updated_at` 칸이 없어 트리거 없음(ADR-0068 대상 아님)
+- 받기가 성공하고 목록이 다르면 `pick`을 지우고 넣기와 `fetch_run`(`SUCCEEDED`, `changed = true`)을 **한 트랜잭션**에서, 같으면 `fetch_run`(`changed = false`)만. 실패면 `FAILED` 줄만 넣고 앞 목록 그대로 [확정] (`flows.md` 흐름 24)
+- 표지: 목록이 바뀐 뒤 저장 안 된 표지만 받아 넣고, 지금 `pick.cover_source`에 없는 `cover` 줄은 지움, 그 뒤 `fetch_run`의 표지 수 UPDATE [확정] (ADR-0091)
+- 다른 모듈과 FK·조인 없음. `catalog`와는 값으로만 맞춤(ADR-0090). 짝은 저장하지 않음(공용 캐시를 만들 때 맞춤)
+- `updated_at` 칸 없음 → 트리거 없음(ADR-0068 대상 아님)
+- 크기: `pick` 52줄 안팎, `cover` 52장 × 10KB대 [안: 추정]
+- 목차·추천 글은 받아도 저장하지 않음 [확정] (spec 비목표)
+- Liquibase: changelog `db/changelog/picks/001-picks-schema.yaml`. `popular/001-popular-schema.yaml`은 지우고 마스터의 include를 바꿈 — 배포 전 규칙으로 기존 changelog를 바꿈 [확정] (ADR-0089, 사이클 10 회고 `display_order` 선례). 로컬 DB(`db`, `db-test`) 정리: `DROP SCHEMA popular CASCADE`; `DELETE FROM databasechangelog WHERE id LIKE 'popular-001-%'`. `catalog` 등 다른 스키마는 그대로(다시 가져오지 않음), 빠뜨리면 표가 남으므로 AC-22로 확인 [확정] (ADR-0089). CHECK는 맨 위 규칙대로 changeset 안 `sql`.
 
 ## seed
 
@@ -721,7 +704,7 @@ erDiagram
 
 ## 확인 필요 (사이클 10)
 
-`docs/cycles/10-popular-books/design-delta.md` "확인 필요"에서 연 줄. 회고(2026-10-12, `docs/cycles/10-popular-books/retro.md`)에서 닫은 줄은 지움 표시.
+`docs/cycles/10-popular-books/design-delta.md` "확인 필요"에서 연 줄. 회고(2026-10-12, `docs/cycles/10-popular-books/retro.md`)에서 닫은 줄은 지움 표시. 사이클 14에서 `popular`(출판유통통합전산망 받기)를 지우므로 아래 남은 줄은 더 확인하지 않음("공용 캐시 메모리"·"표지 응답 시간"은 `picks`에서 같은 방식으로 운영 측정).
 
 | 항목 | 방법 |
 |---|---|
@@ -734,6 +717,17 @@ erDiagram
 | 지난달 값이 들어온 뒤 고쳐지는지(3일 받기) | API 호출 시험 (11-03, 11-10) |
 | 사이클 08 웹과 `AppLayout` 변경 순서 | dev 회고 때 |
 | ~~표 크기~~ | 해결: 실측 표지 808장 11MB, 중간값 14KB (dev 받기 시험, 2026-10-12) |
+
+## 확인 필요 (사이클 14)
+
+`docs/cycles/14-librarian-picks/design-delta.md` "확인 필요"에서 연 줄.
+
+| 항목 | 방법 |
+|---|---|
+| 국립중앙도서관 표지를 저장해 보여 줘도 되는지(공공누리 제1유형이 표지 그림에도 해당하는지) | 공식 문서 확인 (Open API 가이드 파일·이용약관) / 문의 (정보기술기반과 02-590-0727). 배포 전 |
+| Open API 하루 호출 한도 | 공식 문서 확인 (주 1~2건이라 막지 않음) |
+| 제목+저자 조회 52권 시간, dev DB에서 맞는 비율(수집 DB 측정 32/52) | 프로토타입 (dev, 개발 때). 무거우면 캐시 새로 고침 간격만 늘림 |
+| 같은 달 같은 등록일·`recomNo` 글자 순이 사서가 올린 순서와 맞는지 | API 호출 시험 (웹 목록 순서와 비교) |
 
 ## 확인 필요 (사이클 11) — 결과 (dev 중간 전달, 2026-10-12)
 
