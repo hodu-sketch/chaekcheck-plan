@@ -21,12 +21,12 @@
 | R3-3 | 클릭 알림 주소(`/api/v1/library-clicks`)의 IP당 1분 60번 한도는 15가 둠. 15의 화면 행동 알림(사서 추천 보기, 지역·내 도서관 바꾸기)도 이 주소로 와서 같은 한도를 받음 → 17의 "나머지 `/api/`" 한도(R3)는 이 주소에 걸지 않음 | 사이클 15 (2026-10-13) | [확정] |
 | R3-2 | nginx 포트는 서버 바깥으로 열지 않음. 사용자는 터널로만 들어옴 → 누가 `CF-Connecting-IP`를 가짜로 붙여 직접 보내는 것을 막음 | R3-1과 같음, [scope 포함 1](scope.md)(80 닫기) | [확정] (같음) |
 | R4 | 첫 배포 직전 seed 다시 만들기·`PRE_DEPLOYMENT` 지우기, 책 목록은 PC에서 가져와 반영 | `docs/backlog.md` "첫 배포 직전" 줄, ADR-0078, 사이클 11 | [확정] |
-| R5 | 비밀 값은 Parameter Store 또는 Secrets Manager, 서버에는 읽기용 접근 키 한 쌍 | [research 1절](research.md) | [확정: AWS] / 서비스 선택 [안] |
+| R5 | 비밀 값은 Parameter Store 또는 Secrets Manager, 서버에는 읽기용 접근 키 한 쌍 | [research 1절](research.md) | [확정] Parameter Store Standard, 암호화 문자열, 경로 하나 아래(예: `/chaekcheck/prod/…`) (사용자 승인, 2026-10-13, `easy/2026-10-13-spec-decisions.html` #2) |
 | R6 | 카카오 운영 등록(Redirect URI, 웹 도메인, 동의항목), 카카오만 켬 | [research 2절](research.md) | [확정] |
 | R7 | 시행일 = 공개일, 공개일에 16 개발이 끝났는지 확인 | [research 6절](research.md) | [확정] |
 | R8 | 운영 메모리 값 다시 재기 (15 몫 포함). 디스크: Lightsail 4GB 묶음 SSD 80GB에 DB 평소 약 8.5GiB + 반영 때 두 벌(약 16GB) + 백업 2개 + 이미지·로그를 넣고, 15 이용 기록이 1년 몇 GB까지 늘 수 있음(15, 2026-10-13, 운영 뒤 측정) → 디스크 사용량을 Grafana에서 지켜봄 | backlog "배포 사이클" 줄, [research 7절](research.md) | [확정: 잼] |
-| R9 | Prometheus·Grafana·node_exporter 직접, Spring Actuator 지표 | [hosting-options 결정 줄](../../research/deploy/hosting-options.md), [research 5절](research.md) | [확정] / 바깥에서 보는 방법 [안] |
-| R10 | DB 백업 매일 03:00, 내 PC가 내려받음 | [research 7절](research.md), [scope 포함 8](scope.md) | [확정] / 보관 개수 [안] |
+| R9 | Prometheus·Grafana·node_exporter 직접, Spring Actuator 지표 | [hosting-options 결정 줄](../../research/deploy/hosting-options.md), [research 5절](research.md) | [확정] / 바깥에서 보기: 터널에 `grafana.chaekcheck.com`을 더하고 Grafana 로그인(익명 끔)으로 막음, Prometheus·`/actuator/prometheus`는 바깥에 열지 않음 [확정] (사용자 승인, 2026-10-13, #3) |
+| R10 | DB 백업 매일 03:00, 내 PC가 내려받음 | [research 7절](research.md), [scope 포함 8](scope.md) | [확정] / 보관: 서버 최근 2개, 내 PC 최근 7개, 더 오래된 것은 지움 [확정] (사용자 승인, 2026-10-13, #4) |
 | R11 | nginx 접속 기록 14일, 쿼리 문자열 빼고 경로만 | [research 7절](research.md) | [확정] |
 | R12 | 15 기록은 첫 배포 때 꺼짐, 지인 기간 실서버 시험 뒤 지움, 공개일에 켬 | [research 7절](research.md) | [확정] |
 
@@ -59,9 +59,9 @@
 | `chaekcheck.com` 구매 가능 여부 | 사용자가 Cloudflare에서 확인 | 배포 |
 | Lightsail CPU 종류, 한국 데이터센터 IP를 도서관이 받는지 | 서버에서 시험 ([scope 먼저 조사할 것](scope.md)) | 배포 |
 | 정식 터널에서 `CF-Connecting-IP`, 운영 nginx 이미지 realip | 배포 시험 ([research 7절](research.md)) | 배포 |
-| R3 한도 값, R5 서비스 선택, R9 Grafana 보는 방법, R10 백업 보관 개수 | 사용자에게 질문 (설계 때) | 설계 |
+| R3 나머지 `/api/` 한도 값 | 사용자에게 질문 (명세 검토 #1, 질문에 답하는 중) | 설계 |
 | 배포 때 계정에서 옮길 값(AWS 계약 법인, Cloudflare 연락처·쿠키) | 계정 확인 ([research 6절](research.md)) | 공개일 |
 
 ## 판정
 
-- **설계 진행 가능** — 설계를 막는 항목은 R3·R5·R9·R10의 [안] 값뿐이고, 설계 단계에서 함께 정함
+- **설계 진행 가능** — 남은 [안]은 R3 한도 값과 R3-1 네트워크 범위 값이며 설계 단계에서 함께 정할 수 있음

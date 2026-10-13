@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 17 명세 검토</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.card h3.t{font-size:21px;margin:26px 0 8px}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font-size:15px;line-height:1.55;margin:8px 0 6px;word-break:normal}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+pre .cm{color:var(--muted)} pre .hl{background:var(--warn-bg);color:var(--warn);font-weight:700}
+.src{color:var(--muted);font-size:15px;margin:14px 0 0}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+.fig{overflow-x:auto;margin:8px 0 4px}
+.fig svg{width:100%;min-width:640px;height:auto;display:block}
+.mine{border:1px dashed var(--warn);background:var(--warn-bg);border-radius:8px;padding:10px 14px;font-size:18px;margin:10px 0}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0}
+.pc>div{border-radius:10px;padding:12px 16px;font-size:18px}
+.pc .p{background:var(--ok-bg)} .pc .c{background:var(--no-bg)}
+.pc h4{margin:0 0 6px;font-size:18px}
+.pc ul{margin:0;padding-left:20px}
+.pc li{margin:0 0 8px}
+@media (max-width:640px){.pc{grid-template-columns:1fr} body{font-size:18px} .lead{font-size:24px}}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">사이클 17 명세 검토:<br>남은 값 네 가지</p>
+<p class="sub">명세(<code>spec.md</code>)의 규칙 12개 가운데 8개는 이미 정한 값이라 링크만 걸었습니다. 아래 네 가지만 정해 주시면 명세가 끝나고 화면 흐름으로 넘어갑니다. (2026-10-13)</p>
+
+<section class="card">
+<h2><span class="num">1</span>책 검색 목록 같은 나머지 API의 요청 한도</h2>
+<p class="gist">지금은 도서관을 부르는 API에만 IP별 한도가 있습니다. 책 검색 목록, 도서관 목록, 로그인에는 없어서, 누가 스크립트로 계속 부르면 DB가 바빠질 수 있습니다.</p>
+<table>
+<tr><th>API</th><th>지금 한도</th></tr>
+<tr><td>도서관에서 직접 찾기, 대출 현황, 더 보기</td><td>IP마다 2초에 1번, 몰아서 20번, 동시 6개</td></tr>
+<tr><td>클릭 알림 (사이클 15가 더함)</td><td>IP마다 1분에 60번</td></tr>
+<tr><td>책 검색 목록, 도서관 목록, 로그인 등 나머지</td><td>없음</td></tr>
+</table>
+<div class="item">
+<h3><span class="no">1</span>나머지 API에 IP마다 1초에 5번, 몰아서 30번 한도를 둠 [안]</h3>
+<p>사람은 검색하고 결과를 넘기는 정도라 이 한도에 닿지 않을 것으로 봅니다. 화면 하나를 열 때 부르는 API가 몇 개인지는 재 보지 않았습니다. 넘으면 지금과 같은 "잠시 뒤 다시"(429) 응답을 보냅니다.</p>
+<p class="alt"><b>더 느슨하게(1초에 10번):</b> 사람이 걸릴 일이 더 적습니다. 대신 스크립트가 더 많이 부를 수 있습니다.<br><b>두지 않음:</b> 지금 그대로입니다.</p>
+<p class="rec">추천: 1초에 5번, 몰아서 30번. 운영하며 기록을 보고 조정합니다.</p>
+</div>
+<div class="item">
+<h3>질문: 무슨 상황인지 그림으로, "도서관을 부르는 API"가 구체적으로 무슨 기능인지</h3>
+<p class="chg">화면이 우리 서버에 보내는 요청(API)은 두 가지로 나뉩니다. 우리 서버가 받은 뒤 도서관 사이트에 다시 묻는 요청과, 우리 DB만 보고 답하는 요청입니다. 앞의 것에는 이미 한도가 있고, 뒤의 것에는 없습니다. 이 제안은 뒤의 것에 한도를 두자는 것입니다.</p>
+<div class="fig">
+<svg viewBox="0 0 900 360" role="img" aria-label="도서관을 부르는 API와 DB만 보는 API">
+<rect x="20" y="140" width="140" height="70" rx="10" fill="var(--accent-bg)" stroke="var(--accent)"/>
+<text x="90" y="172" text-anchor="middle" font-size="15" fill="var(--text)">화면</text>
+<text x="90" y="194" text-anchor="middle" font-size="12" fill="var(--muted)">(브라우저)</text>
+<rect x="250" y="140" width="170" height="70" rx="10" fill="var(--card)" stroke="var(--line)"/>
+<text x="335" y="172" text-anchor="middle" font-size="15" fill="var(--text)">우리 서버</text>
+<text x="335" y="194" text-anchor="middle" font-size="12" fill="var(--muted)">nginx가 IP마다 셈</text>
+<rect x="520" y="30" width="360" height="130" rx="10" fill="var(--warn-bg)" stroke="var(--warn)"/>
+<text x="700" y="56" text-anchor="middle" font-size="15" font-weight="700" fill="var(--text)">도서관을 부르는 API (한도 있음)</text>
+<text x="540" y="84" font-size="13" fill="var(--text)">· 도서관에서 직접 찾기 (검색 결과가 도서관마다 채워짐)</text>
+<text x="540" y="106" font-size="13" fill="var(--text)">· 책 화면의 대출 현황 (몇 권 중 몇 권 대출 중)</text>
+<text x="540" y="128" font-size="13" fill="var(--text)">· 도서관별 "더 보기"</text>
+<text x="540" y="150" font-size="12" fill="var(--muted)">→ 우리 서버가 도서관 사이트에 다시 물음</text>
+<rect x="520" y="200" width="360" height="130" rx="10" fill="var(--card)" stroke="var(--line)"/>
+<text x="700" y="226" text-anchor="middle" font-size="15" font-weight="700" fill="var(--text)">우리 DB만 보는 API (지금 한도 없음)</text>
+<text x="540" y="254" font-size="13" fill="var(--text)">· 수집한 책 목록 검색 (책 이름·저자로 찾기)</text>
+<text x="540" y="276" font-size="13" fill="var(--text)">· 도서관 목록, 지역 목록, 사서 추천</text>
+<text x="540" y="298" font-size="13" fill="var(--text)">· 로그인, 내 정보, 내 도서관 저장</text>
+<text x="540" y="320" font-size="12" fill="var(--muted)">→ 도서관 사이트에는 묻지 않음</text>
+<line x1="160" y1="175" x2="250" y2="175" stroke="var(--text)" stroke-width="2"/>
+<line x1="420" y1="165" x2="520" y2="95" stroke="var(--warn)" stroke-width="2"/>
+<line x1="420" y1="185" x2="520" y2="265" stroke="var(--text)" stroke-width="2"/>
+</svg>
+</div>
+<p class="cap">오른쪽 위는 2026-10-05에 한도를 둔 것(IP마다 2초에 1번, 몰아서 20번), 오른쪽 아래가 이번에 한도를 두려는 것입니다.</p>
+<h3 class="t">어떤 상황을 막으려는가</h3>
+<ul>
+<li>누가 스크립트로 "책 목록 검색"을 1초에 수십 번씩 계속 부르는 경우입니다. 도서관 사이트는 영향이 없지만, 우리 DB가 검색을 계속 돌리느라 다른 사람의 검색이 느려집니다. 4GB 서버라 여유가 크지 않습니다.</li>
+<li>한도를 두면 그 IP만 "잠시 뒤 다시"(429)를 받고, 다른 사람은 그대로 씁니다.</li>
+<li>보통 사람은 검색하고 결과를 넘기는 정도라 1초에 5번에 닿지 않을 것으로 봅니다. 화면 하나를 열 때 몇 개를 부르는지는 재지 않았습니다.</li>
+<li>클릭 알림(<code>/api/v1/library-clicks</code>)은 사이클 15가 따로 1분 60번 한도를 두므로 여기서 빼고 셉니다.</li>
+</ul>
+<p class="src">근거: dev <code>deploy/nginx/chaekcheck-locations.conf</code>(도서관을 부르는 주소: <code>/api/v1/ebook-searches/stream</code>, <code>/api/v1/book-availabilities/stream</code>, 그 <code>/batches/stream</code>, <code>/api/v1/availability/…</code>), <code>rate-limits.conf</code>. 2026-10-13 읽음.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>비밀 값을 둘 AWS 서비스</h2>
+<p class="gist">둘 다 서울에 있고 암호화해 둡니다. 차이는 값과 기능입니다. 우리처럼 값 몇 개를 서버가 켜질 때 한 번 읽는 용도면 Parameter Store로 충분합니다.</p>
+<table>
+<tr><th></th><th>Parameter Store (Standard)</th><th>Secrets Manager</th></tr>
+<tr><td>값</td><td>저장·조회 무료, 암호 풀기도 월 2만 건까지 무료</td><td>비밀 값 하나에 월 $0.40</td></tr>
+<tr><td>값 크기</td><td>4KB</td><td>64KB</td></tr>
+<tr><td>더 있는 기능</td><td>-</td><td>비밀 값을 정해진 주기로 자동으로 바꾸는 기능</td></tr>
+</table>
+<div class="item">
+<h3><span class="no">2</span>Parameter Store(Standard, 암호화 문자열)에 둠 [안]</h3>
+<p>예: <code>/chaekcheck/prod/KAKAO_CLIENT_SECRET</code>처럼 경로 하나 아래에 모아 두고, 서버가 켜질 때 그 경로를 한 번에 읽어 환경 변수로 넘깁니다. 서버에는 이 경로만 읽을 수 있는 접근 키 한 쌍만 둡니다(Lightsail은 EC2처럼 서버에 권한을 붙이는 방법이 문서에 없음).</p>
+<p class="alt"><b>Secrets Manager:</b> 자동 교체 기능을 써 볼 수 있습니다. 대신 값이 7개면 월 약 $2.8이고, 2주 체험에서 교체 기능을 쓸 일은 적습니다.</p>
+<p class="rec">추천: Parameter Store.</p>
+</div>
+<p class="src">근거: <code>research.md</code> 1절 (AWS 공식 요금·문서, 2026-10-13 확인)</p>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>Grafana를 어디서 볼지</h2>
+<p class="gist">Grafana는 서버 안에서 돕니다. 바깥(내 PC, 휴대폰)에서 보려면 길을 하나 열어야 합니다.</p>
+<div class="item">
+<h3><span class="no">3</span>터널에 <code>grafana.chaekcheck.com</code> 주소를 하나 더 열고, Grafana 로그인으로 막음 [안]</h3>
+<p>휴대폰에서도 바로 볼 수 있습니다. 익명 보기는 끄고 강한 비밀번호의 관리자 계정 하나만 둡니다. Prometheus와 서비스의 지표 주소(<code>/actuator/prometheus</code>)는 바깥에 열지 않습니다.</p>
+<p class="alt"><b>바깥에 열지 않고 SSH로만:</b> 가장 안전합니다. 대신 볼 때마다 내 PC에서 SSH 터널을 열어야 하고, 휴대폰으로는 보기 어렵습니다.</p>
+<p class="rec">추천: <code>grafana.chaekcheck.com</code> + Grafana 로그인.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>DB 백업 파일을 몇 개까지 둘지</h2>
+<p class="gist">매일 03:00에 서버가 덤프를 만들고 내 PC가 내려받는 것은 정했습니다. 남은 것은 몇 개를 남길지입니다.</p>
+<div class="item">
+<h3><span class="no">4</span>서버에는 최근 2개, 내 PC에는 최근 7개를 남기고 더 오래된 것은 지움 [안]</h3>
+<p>서버 디스크를 아끼고, 일주일 안의 어느 날로든 되돌릴 수 있습니다. 덤프 크기는 재지 않았습니다(책 목록을 빼면 작을 것으로 봄).</p>
+<p class="alt"><b>모두 남김:</b> 2주라 쌓여도 많지 않습니다. 대신 지우는 규칙을 나중에 따로 정해야 합니다.</p>
+<p class="rec">추천: 서버 2개, 내 PC 7개.</p>
+</div>
+</section>
+
+<p class="foot">원문: <code>docs/cycles/17-first-deploy/spec.md</code> (R3·R5·R9·R10). 근거: <code>research.md</code> 1·5·7절.</p>
+</main>
+</body>
+</html>
