@@ -326,7 +326,7 @@ POST /api/v1/library-clicks
 |---|---|---|
 | 12·13·14 뒤 검색·책 상세·결과 줄 코드 위치, 도서관 번호 확인 API(13 `listAll`), master changelog 끝 | 12·13·14 회고 | 설계 확정 |
 | 터널에서 `CF-Connecting-IP`가 붙는지 | **조사로 확인됨** (Cloudflare 공식: Tunnel 원 서버는 cloudflared 주소를 보고 HTTP는 `CF-Connecting-IP`로 방문자 IP, spec R5-2) | — |
-| nginx 이미지의 realip 모듈, `set_real_ip_from`에 적을 cloudflared 주소, "Remove visitor IP headers" 꺼짐 | 배포 때 `nginx -V` 한 줄, 지인 기간 시험에서 기록된 IP 확인 | 없음 (설계는 안 막음) |
+| nginx 이미지의 realip 모듈, `set_real_ip_from`에 적을 compose 네트워크 범위(17 R3, 예 `172.30.0.0/24`), "Remove visitor IP headers" 꺼짐 | 배포 때 `nginx -V` 한 줄, 지인 기간 시험에서 기록된 IP 확인 | 없음 (설계는 안 막음) |
 | `SmartLifecycle` 정지 phase와 Hikari 닫힘 순서 | 프로토타입 | 개발 |
 | dev pgjdbc 실제 버전 | 의존성 트리 | 개발 |
 | `id` PK·부분 색인을 둘지 (넣기 비용) | 프로토타입, AC-16 측정 | 개발 |

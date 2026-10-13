@@ -57,3 +57,5 @@
   그러면 `$remote_addr`(= 15가 읽는 `X-Real-IP`, IP별 요청 한도의 기준)가 사용자 IP가 됨
 - 배포 때 확인 한 줄: `nginx -V`에 `--with-http_realip_module`이 있는지 (nginx.org 패키지는 들어 있을 것으로 보임, 추론)
 - 지킬 것: Cloudflare의 "Remove visitor IP headers" 설정은 끈 채로, nginx 포트는 바깥에 직접 열지 않음 (열려 있으면 누구나 `CF-Connecting-IP`를 꾸며 보낼 수 있음)
+
+- 2026-10-13 17 답: Docker에서는 `set_real_ip_from 127.0.0.1`로는 안 되고, compose에서 nginx·cloudflared 네트워크 범위를 직접 정해(예 `172.30.0.0/24`) 그 범위만 믿음. 17 명세 R3 "믿는 주소 범위"에서 정함 — 15 spec R5-2에 반영
