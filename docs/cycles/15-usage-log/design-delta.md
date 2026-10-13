@@ -174,7 +174,7 @@ classDiagram
 
 - `usagelog`: `@ApplicationModule(allowedDependencies = { "library", "auth" })` [확정] ([남은 제안](easy/2026-10-14-remaining-proposals.html) #6, [로그인 판별](easy/2026-10-14-login-status.html) #1). `catalog → usagelog`, `availability → usagelog` 의존이 새로 생김 (순환 없음)
 - 기록 설정 값: `chaekcheck.usagelog.enabled` [확정] ([남은 제안](easy/2026-10-14-remaining-proposals.html) #2), 기본 꺼짐, 공개일에 켬 [확정] (spec R3-6)
-- 요청 하나하나의 도서관 응답은 서버 로그로만 [확정] (spec R6-4). 로그 형식·레벨 [안: 기존 availability 로그에 도서관·출처·결과·시간을 한 줄로], 보관 기간 [확인 필요: 사이클 17]
+- 요청 하나하나의 도서관 응답은 서버 로그로만 [확정] (spec R6-4). 로그 형식·레벨 [안: 기존 availability 로그에 도서관·출처·결과·시간을 한 줄로], 보관 14일 [확정: 17, 2026-10-14]
 
 ## 웹
 
@@ -363,10 +363,9 @@ erDiagram
 |---|---|---|
 | 12·13·14 뒤 검색·책 상세·결과 줄 코드 위치, 도서관 번호 확인 API(13 `listAll`), master changelog 끝, 14 사서 추천 화면 | 12·13·14 회고 | 설계 확정 |
 | nginx 이미지의 realip 모듈, compose 네트워크 범위, Cloudflare "Remove visitor IP headers" 꺼짐 | 배포 때 `nginx -V`, 지인 기간 시험에서 기록된 IP 확인 | 없음 (배포 때) |
-| 백업·서버 로그 보관 기간 | 사이클 17에 질문 ([to-cycle-17.md](to-cycle-17.md) 4차) | 운영 전 |
 | `SmartLifecycle` 정지 phase와 Hikari 닫힘 순서 | 프로토타입 | 개발 |
 | dev pgjdbc 실제 버전 | 의존성 트리 | 개발 |
 | `id` PK·부분 색인을 둘지 (넣기 비용) | 프로토타입, AC-16 측정 | 개발 |
 | 광고 차단으로 빠지는 알림 비율 | 지인 기간 실서버 시험 | 없음 |
 
-- 참고(해결됨): 터널에서 `CF-Connecting-IP`가 붙는지 — Cloudflare 공식 문서로 확인 (spec R5-2). 사이클 17 확정: nginx 접속 기록 14일·쿼리 문자열 뺌, DB 백업 매일 03:00 (04:30 정리와 겹치지 않음)
+- 참고(해결됨): 터널에서 `CF-Connecting-IP`가 붙는지 — Cloudflare 공식 문서로 확인 (spec R5-2). 사이클 17 확정: nginx 접속 기록 14일·쿼리 문자열 뺌, DB 백업 매일 03:00 (04:30 정리와 겹치지 않음)·보관 7일, 서비스 로그 14일 (2026-10-14)
