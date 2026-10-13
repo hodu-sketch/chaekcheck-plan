@@ -170,7 +170,7 @@ classDiagram
 | `catalog` | 변경 | 첫 쪽 검색·다음 쪽·책 상세 성공 뒤 `UsageLog` 호출 (로그인은 모름) | 변경 없음 | 없음 | 변경 없음 |
 | `availability` | 변경 | 직접 찾기 첫 묶음 끝·끊김에 한 번 `recordSearch`, "더 보기"·도서관별 더 보기에 `recordMore`, 모든 도서관 요청(직접 찾기·대출 수 채우기)마다 `recordLibraryResponse` | 변경 없음 | 없음 | 변경 없음 |
 | `auth` | 변경 | 로그인 상태 판별 부품 공개 (켜짐: 쿠키 서명 확인, 만료돼도 로그인함 / 꺼짐: 쿠키를 보지 않고 `login_off`), `access_token` 쿠키 경로 `/api/v1`, 옛 경로 쿠키는 따로 지우지 않음 | `LoginStatusReader` [안: 이름] | 없음 | 변경 없음 |
-| `library` | 변경 없음 | `usagelog`이 도서관 번호 확인에 쓰는 공개 API (13 회고 뒤 `listAll` 등 어느 것을 쓸지 정함) | 기존 | 없음 | — |
+| `library` | 변경 없음 | `usagelog`이 도서관 번호 확인에 쓰는 공개 API (사이클 13에서 `LibraryRegistry.listAll()` 생김, dev main 2026-10-14 확인. 꺼진 도서관도 들어 있는지·어느 것을 쓸지는 13 회고 뒤 정함) | 기존 | 없음 | — |
 
 - `usagelog`: `@ApplicationModule(allowedDependencies = { "library", "auth" })` [확정] ([남은 제안](easy/2026-10-14-remaining-proposals.html) #6, [로그인 판별](easy/2026-10-14-login-status.html) #1). `catalog → usagelog`, `availability → usagelog` 의존이 새로 생김 (순환 없음)
 - 기록 설정 값: `chaekcheck.usagelog.enabled` [확정] ([남은 제안](easy/2026-10-14-remaining-proposals.html) #2), 기본 꺼짐, 공개일에 켬 [확정] (spec R3-6)
@@ -361,7 +361,7 @@ erDiagram
 
 | 항목 | 확인 방법 | 막는 단계 |
 |---|---|---|
-| 12·13·14 뒤 검색·책 상세·결과 줄 코드 위치, 도서관 번호 확인 API(13 `listAll`), master changelog 끝, 14 사서 추천 화면 | 12·13·14 회고 | 설계 확정 |
+| 12·13·14 뒤 검색·책 상세·결과 줄 코드 위치, 도서관 번호 확인 API(13 `LibraryRegistry.listAll()` 있음, 쓸지 확인), master changelog 끝, 14 사서 추천 화면 | 12·13·14 회고 | 설계 확정 |
 | nginx 이미지의 realip 모듈, compose 네트워크 범위, Cloudflare "Remove visitor IP headers" 꺼짐 | 배포 때 `nginx -V`, 지인 기간 시험에서 기록된 IP 확인 | 없음 (배포 때) |
 | `SmartLifecycle` 정지 phase와 Hikari 닫힘 순서 | 프로토타입 | 개발 |
 | dev pgjdbc 실제 버전 | 의존성 트리 | 개발 |

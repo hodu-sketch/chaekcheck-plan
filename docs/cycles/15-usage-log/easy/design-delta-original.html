@@ -54,7 +54,7 @@ a{color:var(--accent)}
 <tr><td><code>catalog</code></td><td>변경</td><td>첫 쪽 검색·다음 쪽·책 상세 성공 뒤 <code>UsageLog</code> 호출 (로그인은 모름)</td><td>변경 없음</td><td>없음</td><td>변경 없음</td></tr>
 <tr><td><code>availability</code></td><td>변경</td><td>직접 찾기 첫 묶음 끝·끊김에 한 번 <code>recordSearch</code>, &quot;더 보기&quot;·도서관별 더 보기에 <code>recordMore</code>, 모든 도서관 요청(직접 찾기·대출 수 채우기)마다 <code>recordLibraryResponse</code></td><td>변경 없음</td><td>없음</td><td>변경 없음</td></tr>
 <tr><td><code>auth</code></td><td>변경</td><td>로그인 상태 판별 부품 공개 (켜짐: 쿠키 서명 확인, 만료돼도 로그인함 / 꺼짐: 쿠키를 보지 않고 <code>login_off</code>), <code>access_token</code> 쿠키 경로 <code>/api/v1</code>, 옛 경로 쿠키는 따로 지우지 않음</td><td><code>LoginStatusReader</code> [안: 이름]</td><td>없음</td><td>변경 없음</td></tr>
-<tr><td><code>library</code></td><td>변경 없음</td><td><code>usagelog</code>이 도서관 번호 확인에 쓰는 공개 API (13 회고 뒤 <code>listAll</code> 등 어느 것을 쓸지 정함)</td><td>기존</td><td>없음</td><td>—</td></tr>
+<tr><td><code>library</code></td><td>변경 없음</td><td><code>usagelog</code>이 도서관 번호 확인에 쓰는 공개 API (사이클 13에서 <code>LibraryRegistry.listAll()</code> 생김, dev main 2026-10-14 확인. 꺼진 도서관도 들어 있는지·어느 것을 쓸지는 13 회고 뒤 정함)</td><td>기존</td><td>없음</td><td>—</td></tr>
 </tbody>
 </table>
 <ul>
@@ -160,7 +160,7 @@ a{color:var(--accent)}
 <tr><th>항목</th><th>확인 방법</th><th>막는 단계</th></tr>
 </thead>
 <tbody>
-<tr><td>12·13·14 뒤 검색·책 상세·결과 줄 코드 위치, 도서관 번호 확인 API(13 <code>listAll</code>), master changelog 끝, 14 사서 추천 화면</td><td>12·13·14 회고</td><td>설계 확정</td></tr>
+<tr><td>12·13·14 뒤 검색·책 상세·결과 줄 코드 위치, 도서관 번호 확인 API(13 <code>LibraryRegistry.listAll()</code> 있음, 쓸지 확인), master changelog 끝, 14 사서 추천 화면</td><td>12·13·14 회고</td><td>설계 확정</td></tr>
 <tr><td>nginx 이미지의 realip 모듈, compose 네트워크 범위, Cloudflare &quot;Remove visitor IP headers&quot; 꺼짐</td><td>배포 때 <code>nginx -V</code>, 지인 기간 시험에서 기록된 IP 확인</td><td>없음 (배포 때)</td></tr>
 <tr><td><code>SmartLifecycle</code> 정지 phase와 Hikari 닫힘 순서</td><td>프로토타입</td><td>개발</td></tr>
 <tr><td>dev pgjdbc 실제 버전</td><td>의존성 트리</td><td>개발</td></tr>
