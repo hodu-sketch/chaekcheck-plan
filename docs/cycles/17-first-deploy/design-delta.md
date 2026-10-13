@@ -122,7 +122,7 @@ sequenceDiagram
 
 - 표·schema·Liquibase 변경 없음 [확정] (architect 확인, 사용자 승인 흐름에서 이견 없음). 사이클 15·16의 Liquibase 병합 순서에 17은 끼지 않음
 - 백업 범위: `pg_dump -Fc -N catalog -N catalog_next` [확정] (#7). 수집 목록은 PC의 마지막 반영 파일이 백업(ADR-0078). 복원은 덤프 → 반영 `apply` 두 단계
-- 운영 DB에 Claude가 SQL을 넣는 길(사이클 16 요청): Tunnel SSH → `docker exec db psql`, `sitecontent` schema 쓰기만 있는 DB 계정, 사용자가 승인한 SQL만 [안]
+- 운영 DB에 Claude가 SQL을 넣는 길(사이클 16 요청): Tunnel SSH → `docker exec db psql`, `sitecontent` schema 쓰기만 있는 DB 계정, 사용자가 승인한 SQL만 [확정] (사용자 승인, 2026-10-14, `easy/2026-10-14-design-delta-review.html` #3)
 
 ## API
 
@@ -148,7 +148,7 @@ sequenceDiagram
 
 | 대상 | 방식 | 제한·키 관리 | 실패 시 동작 | 상태 태그 |
 |---|---|---|---|---|
-| AWS Parameter Store (서울) | `up.sh`가 띄울 때 한 번 읽음 | 읽기 전용 IAM 사용자 접근 키 한 쌍(경로 하나만), Standard 무료 | 멈추고 기존 컨테이너 유지 | [확정] (#2) |
+| AWS Parameter Store (서울) | `up.sh`가 띄울 때 한 번 읽음 | 읽기 전용 IAM 사용자 접근 키 한 쌍(경로 하나만), Standard 무료. 넣는 값: DB 비밀번호, JWT 키, 카카오 키 3개, 터널 토큰, Grafana 관리자 비밀번호(조회 서버 토큰은 꺼 둬서 이번엔 안 넣음). 이름 끝 = 환경 변수 이름(`/chaekcheck/prod/DB_PASSWORD` → `DB_PASSWORD`) | 멈추고 기존 컨테이너 유지 | [확정] (사용자 승인, 2026-10-14, #1) |
 | Cloudflare Tunnel | `cloudflared` 컨테이너, `chaekcheck.com`·`grafana.chaekcheck.com`·SSH 길 | 터널 토큰은 Parameter Store | Error 1033 / 502·504 (flow F4) | [확정] / SSH 길 설정·무료 범위 [확인 필요] |
 | 카카오 로그인 | 지금 그대로, 운영 Redirect URI 등록 | 키는 Parameter Store | 카카오 화면 오류 | [확정] (spec R6) |
 
@@ -170,6 +170,4 @@ sequenceDiagram
 | Cloudflare Tunnel로 SSH 거는 방법과 무료 범위 | 공식 문서 |
 | systemd `OnCalendar`의 `Asia/Seoul` | 서버에서 `systemd-analyze calendar` |
 | Lightsail 사설망 대역과 edge subnet | 서버에서 `ip addr`, `docker network inspect` |
-| 터널 토큰·Grafana 비밀번호·`AUTH_JWT_SECRET`·`KAKAO_ADMIN_KEY`를 모두 SSM에, 이름 규칙(`/chaekcheck/prod/DB_PASSWORD` → `DB_PASSWORD`) | 사용자에게 질문 (이 문서 검토 때) |
-| User-Agent 연락처 `chaekcheck9104@gmail.com` | 사용자에게 질문 (이 문서 검토 때) |
 | 컨테이너별 `mem_limit` 합이 4GB 안인지 | 서버에서 측정 |

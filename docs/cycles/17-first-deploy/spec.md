@@ -1,6 +1,6 @@
 # 기능 명세: 첫 배포 (배포 부분)
 
-- 범위: [`scope.md`](scope.md) 포함 1~9. 포함 10은 이 명세에서 다루지 않음 → [ADR-0095](../../adr/0095-lookup-egress-proxies-per-ip-browser-ua.md)(제안됨)를 따로 다시 정함 (사용자: "응 배포 부분만 먼저 써줘", 2026-10-13)
+- 범위: [`scope.md`](scope.md) 포함 1~10. 포함 10(대출 조회 나가는 길)은 아래 "R13" 절, 기준은 [ADR-0095](../../adr/0095-lookup-egress-proxies-per-ip-browser-ua.md) (사용자 작성, <날짜>)
 - 세부 사실과 출처는 옮기지 않고 링크함: [`research.md`](research.md), [`hosting-options.md`](../../research/deploy/hosting-options.md) 결정 줄, [`aws-layout.md`](../../research/deploy/aws-layout.md), [`db-memory.md`](../../research/deploy/db-memory.md)
 
 ## 사용자 이야기
@@ -18,7 +18,7 @@
 | R2 | `chaekcheck.com`(Cloudflare 구매) + Cloudflare Tunnel, http → https | [scope 포함 2](scope.md), dev `deploy/nginx/tunnel-test.conf` | [확정] |
 | R3 | nginx가 `CF-Connecting-IP`를 사용자 주소로 읽음. 나머지 `/api/`에도 IP별 한도 | [research 7절](research.md), dev `deploy/nginx/rate-limits.conf` | [확정] 나머지 `/api/`(클릭 알림 제외)는 IP마다 1초에 5번, 몰아서 30번(`limit_req` `burst=30 nodelay`), 넘으면 429 (사용자 승인, 2026-10-13, `easy/2026-10-13-spec-decisions.html` #1) |
 | R3-1 | 믿는 주소: Docker에서는 `cloudflared`가 compose 네트워크를 거쳐 nginx에 붙으므로 `127.0.0.1`이 아니라 그 네트워크 주소를 믿음. compose에서 nginx·`cloudflared` 네트워크의 주소 범위를 직접 정하고(예: `172.30.0.0/24`) `real_ip_header CF-Connecting-IP; set_real_ip_from <그 범위>;` 하나만 둠. dev `tunnel-test.conf`의 사설 주소 전체(`10/8`·`172.16/12`·`192.168/16`)는 쓰지 않음 | 사용자 제시 설정(2026-10-13), dev `deploy/nginx/tunnel-test.conf` | [확정: 네트워크 주소를 믿음] (사용자: "그 내용 spec에 반영해줘", 2026-10-13) / 범위 값 [안] |
-| R3-3 | 클릭 알림 주소(`/api/v1/library-clicks`)의 IP당 1분 60번 한도는 15가 둠. 15의 화면 행동 알림(사서 추천 보기, 지역·내 도서관 바꾸기)도 이 주소로 와서 같은 한도를 받음 → 17의 "나머지 `/api/`" 한도(R3)는 이 주소에 걸지 않음 | 사이클 15 (2026-10-13) | [확정] |
+| R3-3 | 클릭·행동 알림 주소(`/api/v1/usage-events`, 2026-10-14 15가 `/api/v1/library-clicks`에서 바꿈)의 IP당 1분 60번 한도는 15가 둠. 15의 화면 행동 알림(사서 추천 보기, 지역·내 도서관 바꾸기)도 이 주소로 와서 같은 한도를 받음 → 17의 "나머지 `/api/`" 한도(R3)는 이 주소에 걸지 않음 | 사이클 15 (2026-10-13) | [확정] |
 | R3-2 | nginx 포트는 서버 바깥으로 열지 않음. 사용자는 터널로만 들어옴 → 누가 `CF-Connecting-IP`를 가짜로 붙여 직접 보내는 것을 막음 | R3-1과 같음, [scope 포함 1](scope.md)(80 닫기) | [확정] (같음) |
 | R4 | 첫 배포 직전 seed 다시 만들기·`PRE_DEPLOYMENT` 지우기, 책 목록은 PC에서 가져와 반영 | `docs/backlog.md` "첫 배포 직전" 줄, ADR-0078, 사이클 11 | [확정] |
 | R5 | 비밀 값은 Parameter Store 또는 Secrets Manager, 서버에는 읽기용 접근 키 한 쌍 | [research 1절](research.md) | [확정] Parameter Store Standard, 암호화 문자열, 경로 하나 아래(예: `/chaekcheck/prod/…`) (사용자 승인, 2026-10-13, `easy/2026-10-13-spec-decisions.html` #2) |
@@ -29,6 +29,33 @@
 | R10 | DB 백업 매일 03:00, 내 PC가 내려받음 | [research 7절](research.md), [scope 포함 8](scope.md) | [확정] / 보관: 서버 최근 2개, 내 PC 최근 7개, 더 오래된 것은 지움 [확정] (사용자 승인, 2026-10-13, #4) |
 | R11 | nginx 접속 기록 14일, 쿼리 문자열 빼고 경로만 | [research 7절](research.md) | [확정] |
 | R12 | 15 기록은 첫 배포 때 꺼짐, 지인 기간 실서버 시험 뒤 지움, 공개일에 켬 | [research 7절](research.md) | [확정] |
+| R12-1 | 로그인 쿠키(`access_token`) 경로가 `/api/v1`로 넓어짐(ADR-0102). nginx는 `/api/`를 그대로 넘기므로 쿠키를 건드리는 설정 없음 | 사이클 15 (2026-10-14) | [확정] |
+
+## R13. 대출 조회 나가는 길 (포함 10, 사용자 작성)
+
+- 기준: [ADR-0095](../../adr/0095-lookup-egress-proxies-per-ip-browser-ua.md) 결정 절
+- 사용자 이야기: <누가> <무엇을> 하고 싶다, <왜>
+
+| # | 규칙 | 상태 |
+|---|---|---|
+| R13-1 | 나가는 길: <ADR-0095 결정 1번째 줄> | [확정] (사용자, <날짜>) |
+| R13-2 | 업체 프록시 상품·인증: <…> | <…> |
+| R13-3 | 도서관 한 곳에 보내는 양: <…> | <…> |
+| R13-4 | 한 IP가 막혔을 때: <…> | <…> |
+| R13-5 | User-Agent: <…> | <…> |
+| R13-6 | 기록 (나간 길·업체): <…> | <…> |
+
+### 수용 기준 (R13)
+- AC-8: <주어진 상황> 할 때 <…> 그러면 <…>
+- AC-9: <…>
+
+### 확인 필요 (R13)
+| 항목 | 확인 방법 | 막는 단계 |
+|---|---|---|
+| 업체 고르기 (한국 고정 IP 상품, 최소 수량, 월 비용) | 공식 페이지 + 사용자 결정 ([research 3절](research.md)) | 설계 |
+| 업체의 "정부 사이트" 제한에 `go.kr` 등 공공 전자도서관이 들어가는지 | 업체 지원팀에 질문 ([research 3절](research.md)) | 설계 |
+| 업체 약관(자동 요청·속도 제한 관련 조항)과 R13-3·R13-4가 맞는지 | 업체 약관 확인 ([research 3절](research.md)) | 설계 |
+| Java에서 인증 프록시 쓰기 (`jdk.http.auth.tunneling.disabledSchemes`) | 프로토타입 ([research 4절](research.md)) | 개발 |
 
 ## 상태별 동작
 
