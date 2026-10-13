@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 15 로그인 판별</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+.flow{display:grid;gap:10px;margin:10px 0 16px}.lane{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--card)}.lane b{display:block;margin-bottom:4px}.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{font-size:14px;border-radius:6px;padding:2px 8px;background:var(--code-bg)}.chip.new{background:var(--warn-bg)}.chip.dev{background:var(--ok-bg)}.arrow{text-align:center;color:var(--muted);font-size:18px;line-height:1}
+</style>
+<style>
+main{max-width:1080px}
+.pick{display:inline-block;font-size:14px;font-weight:700;color:var(--warn);background:var(--warn-bg);border-radius:6px;padding:1px 8px}
+.rec{display:inline-block;font-size:15px;font-weight:700;color:var(--ok);background:var(--ok-bg);border-radius:6px;padding:1px 8px}
+.ex{background:var(--ok-bg);border-radius:10px;padding:12px 16px;margin:10px 0}.ex b{color:var(--ok)}
+.alt{background:var(--code-bg);border-radius:10px;padding:12px 16px}
+.toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px 18px;font-size:18px;margin:6px 0 0;padding:0;list-style:none}
+.toc li{display:flex;gap:8px;align-items:baseline}
+figure{max-width:440px}
+figure svg text{font-family:"Noto Sans KR",system-ui,sans-serif}
+.card>figure{margin-left:auto;margin-right:auto}
+@media (min-width:980px){
+ .item{display:grid;grid-template-columns:minmax(0,1fr) 420px;column-gap:32px;align-items:start}
+ .item>*{grid-column:1}
+ .item>h3{grid-column:1 / -1}
+ .item>figure{grid-column:2;grid-row:2 / span 30;margin-top:4px}
+}
+@media (max-width:600px){body{font-size:18px}.card{padding:20px 16px}.lead{font-size:23px}}
+</style>
+</head>
+<body><main class="doc">
+<p class="lead">로그인 여부를 한곳에서 판별하는 방법,<br>두 가지를 골라 주세요</p>
+<p class="sub">사이클 15 · 2026-10-14 · 말씀: "이 서비스 로그인 한거 안한거 분류되도록 해야 하니까 그거 주의해서 설계해야 해 / 로그인 안 쓰기 설정이 되어 있으면 체크 안 하게 / 이거 코드 안 더러워지도록 … 한 데 모아서 관리하거나 관리하는 부분을 정해서 했으면 해" · 앞 페이지 세 가지(쿠키 경로 <code>/api/v1</code>, 서명 맞으면 로그인함, 검색은 그대로)는 반영했습니다.</p>
+
+<section class="card"><h2><span class="num">1</span>판별을 맡는 곳</h2>
+<div class="gist">로그인 쿠키를 만들고 확인하는 일은 원래 로그인 모듈(<code>auth</code>)이 맡고 있습니다. 그래서 "이 요청이 로그인한 사람인가"를 판별하는 부품 하나를 로그인 모듈이 공개하고, 기록 모듈은 그 부품에 묻기만 하게 하는 것을 추천합니다. 쿠키·토큰을 읽는 코드는 로그인 모듈 밖으로 나가지 않습니다.</div>
+<figure><svg viewBox="0 0 340 290" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="l1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="var(--muted)"/></marker></defs>
+<g font-size="11.5">
+<rect x="10" y="10" width="100" height="44" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="60" y="37" text-anchor="middle" fill="var(--text)">catalog</text>
+<rect x="120" y="10" width="100" height="44" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="170" y="37" text-anchor="middle" fill="var(--text)">availability</text>
+<rect x="230" y="10" width="100" height="44" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="280" y="31" text-anchor="middle" fill="var(--text)">사용 알림</text><text x="280" y="46" text-anchor="middle" font-size="10" fill="var(--muted)">usage-events</text>
+<rect x="90" y="100" width="160" height="50" rx="10" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="1.5"/><text x="170" y="122" text-anchor="middle" font-weight="700" fill="var(--text)">usagelog</text><text x="170" y="140" text-anchor="middle" font-size="10.5" fill="var(--muted)">기록할 때 한 번 물음</text>
+<rect x="90" y="190" width="160" height="60" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/><text x="170" y="212" text-anchor="middle" font-weight="700" fill="var(--text)">auth: 로그인 상태 판별</text><text x="170" y="230" text-anchor="middle" font-size="10.5" fill="var(--muted)">쿠키·서명 확인은 여기만</text><text x="170" y="244" text-anchor="middle" font-size="10.5" fill="var(--muted)">꺼짐이면 확인 안 함</text>
+</g>
+<line x1="60" y1="56" x2="140" y2="96" stroke="var(--muted)" stroke-width="2" marker-end="url(#l1)"/>
+<line x1="170" y1="56" x2="170" y2="96" stroke="var(--muted)" stroke-width="2" marker-end="url(#l1)"/>
+<line x1="280" y1="56" x2="200" y2="96" stroke="var(--muted)" stroke-width="2" marker-end="url(#l1)"/>
+<line x1="170" y1="152" x2="170" y2="186" stroke="var(--accent)" stroke-width="2" marker-end="url(#l1)"/>
+<text x="10" y="282" font-size="11" fill="var(--muted)">검색 모듈은 로그인을 모름. 판별 규칙을 바꿀 때 auth 한 곳만 고침</text>
+</svg><figcaption>판별 규칙(쿠키 읽기, 서명 확인, 만료 처리, 꺼짐 처리)이 로그인 모듈 한곳에 모입니다.</figcaption></figure>
+<div class="item"><h3><span class="no">1</span>로그인 모듈이 "로그인 상태 판별" 부품 하나를 공개하고, 기록 모듈만 그것을 부름 (기록 모듈이 쓸 수 있는 모듈에 auth를 더함) [안]</h3>
+<p><b>이렇게 되면</b>:</p>
+<ul>
+<li>검색 모듈(catalog·availability)은 로그인을 전혀 모르고, 지금처럼 "기록해 줘"만 넘깁니다.</li>
+<li>기록 모듈이 줄을 만들 때 판별 부품에 요청을 넘겨 "로그인함 / 안 함 / 로그인 기능 꺼짐"을 받습니다.</li>
+<li>로그인 기능이 꺼져 있으면, 로그인 모듈은 쿠키를 아예 보지 않는 판별 부품(늘 "꺼짐"을 돌려줌)을 대신 둡니다. 지금도 로그인 모듈은 켜짐/꺼짐에 따라 부품을 바꿔 끼우는 방식을 씁니다(<code>@ConditionalOnAuthEnabled</code>, dev 확인).</li>
+</ul>
+<p><b>앞 결정을 바꾸는 점</b>: 방금 정하신 "기록 모듈은 도서관 모듈만 쓸 수 있게 제한"(#6)에 로그인 모듈을 더합니다(도서관·로그인 둘).</p>
+<p class="alt"><b>다른 선택</b><br>① 로그인 모듈의 필터가 모든 요청에서 판별해 요청에 붙여 두고, 기록 모듈이 읽음 → 모듈 의존은 안 늘지만 "요청에 붙인 값"이라는 숨은 약속이 생기고, 기록하지 않는 요청까지 판별합니다.<br>② 기록 모듈이 쿠키를 직접 읽음 → 판별 규칙이 두 곳(로그인 모듈, 기록 모듈)에 생겨 말씀하신 "한 데 모아서"와 어긋납니다.</p>
+<p><span class="rec">추천</span> 로그인 모듈의 판별 부품 하나</p>
+</div></section>
+
+<section class="card"><h2><span class="num">2</span>기록 칸에 적는 값</h2>
+<div class="item"><h3><span class="no">2</span>로그인 여부 칸은 세 가지: 로그인함 / 안 함 / 로그인 기능 꺼짐 [안]</h3>
+<table><tr><th>상황</th><th>적는 값</th></tr>
+<tr><td>로그인 기능 켜짐 + 우리 서명이 맞는 쿠키 (만료돼도)</td><td>로그인함</td></tr>
+<tr><td>로그인 기능 켜짐 + 쿠키 없음·서명 틀림</td><td>안 함</td></tr>
+<tr><td>로그인 기능 꺼짐 (확인 안 함)</td><td>로그인 기능 꺼짐</td></tr></table>
+<p><b>왜</b>: 통계에서 "로그인 기능이 있던 기간의 비로그인"과 "로그인 기능이 아예 없던 기간"을 섞지 않으려면 따로 적어야 합니다. 앞서 정한 "확인 중이면 모름"은 서버 확인으로 바뀌며 없어집니다.</p>
+<p class="alt"><b>다른 선택</b>: 꺼짐도 "안 함"으로 → 칸이 둘로 단순하지만, 기간을 따로 기억해야 통계를 나눌 수 있습니다.</p>
+<p><span class="rec">추천</span> 세 가지</p>
+</div></section>
+<p class="foot">원본: <code>docs/cycles/15-usage-log/spec.md</code> R1-6, <code>design-delta.md</code>(초안) 모듈 절. 고르시면 ADR(쿠키 범위 변경 + 판별 부품) 초안을 보여 드립니다.</p>
+</main></body></html>
