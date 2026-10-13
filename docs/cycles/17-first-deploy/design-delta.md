@@ -2,6 +2,7 @@
 
 - 근거: [`architect-proposal.md`](architect-proposal.md)(결정 1~8, 사용자 결정 2026-10-13~14), [`spec.md`](spec.md), [`flow.md`](flow.md), [`research.md`](research.md)
 - 이번 슬라이스는 서비스의 모듈 경계·공개 API·표를 바꾸지 않음. 바뀌는 것은 `availability` 안쪽 지표, 운영 프로필, 배포 파일
+- 대출 조회 나가는 길(spec R13)도 이 사이클에 포함(사용자, 2026-10-14). 그 설계는 [ADR-0095](../../adr/0095-lookup-egress-proxies-per-ip-browser-ua.md)이며, 네 선행 조건(업체 고르기·정부 사이트 제한·약관·Java 프록시)을 확인한 뒤 이어 감. 이 문서는 그 부분을 제외한 배포 공통 설계를 담음
 
 ## 구조 그림
 
