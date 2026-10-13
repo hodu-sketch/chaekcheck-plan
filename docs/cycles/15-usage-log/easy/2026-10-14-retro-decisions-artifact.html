@@ -1,0 +1,255 @@
+<title>12·13·14 회고 결정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+.flow{display:grid;gap:10px;margin:10px 0 16px}.lane{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--card)}.lane b{display:block;margin-bottom:4px}.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{font-size:14px;border-radius:6px;padding:2px 8px;background:var(--code-bg)}.chip.new{background:var(--warn-bg)}.chip.dev{background:var(--ok-bg)}.arrow{text-align:center;color:var(--muted);font-size:18px;line-height:1}
+</style><style>
+main{max-width:1080px}
+.pick{display:inline-block;font-size:14px;font-weight:700;color:var(--warn);background:var(--warn-bg);border-radius:6px;padding:1px 8px}
+.rec{display:inline-block;font-size:15px;font-weight:700;color:var(--ok);background:var(--ok-bg);border-radius:6px;padding:1px 8px}
+.ex{background:var(--ok-bg);border-radius:10px;padding:12px 16px;margin:10px 0}.ex b{color:var(--ok)}
+.alt{background:var(--code-bg);border-radius:10px;padding:12px 16px}
+.toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px 18px;font-size:18px;margin:6px 0 0;padding:0;list-style:none}
+.toc li{display:flex;gap:8px;align-items:baseline}
+figure{max-width:440px}
+figure svg text{font-family:"Noto Sans KR",system-ui,sans-serif}
+.card>figure{margin-left:auto;margin-right:auto}
+@media (min-width:980px){
+ .item{display:grid;grid-template-columns:minmax(0,1fr) 420px;column-gap:32px;align-items:start}
+ .item>*{grid-column:1}
+ .item>h3{grid-column:1 / -1}
+ .item>figure{grid-column:2;grid-row:2 / span 30;margin-top:4px}
+}
+@media (max-width:600px){body{font-size:18px}.card{padding:20px 16px}.lead{font-size:23px}}
+</style><style>
+.ctrl{grid-column:1;margin:10px 0 4px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--card);display:grid;gap:8px}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.btns button{font:inherit;font-size:17px;padding:6px 16px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--text);cursor:pointer}
+.btns button:focus-visible,.ctrl textarea:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.btns button.on[data-c="승인"]{background:var(--ok-bg);border-color:var(--ok);color:var(--ok);font-weight:700}
+.btns button.on[data-c="미승인"]{background:var(--no-bg);border-color:var(--no);color:var(--no);font-weight:700}
+.btns button.on[data-c="기타"]{background:var(--warn-bg);border-color:var(--warn);color:var(--warn);font-weight:700}
+.nl{font-size:14px;color:var(--muted)}
+.ctrl textarea{font:inherit;font-size:16px;width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:8px;padding:6px 8px;background:var(--bg);color:var(--text);resize:vertical}
+.st{font-size:14px;color:var(--muted);margin:0}
+.reply{background:var(--accent-bg);border-radius:8px;padding:10px 12px;font-size:17px;white-space:pre-wrap}
+.reply b{display:block;font-size:14px;color:var(--accent);margin-bottom:4px}
+.tally{position:sticky;top:env(safe-area-inset-top,0px);z-index:2;background:var(--bg);border-bottom:1px solid var(--line);padding:8px 0;font-size:16px;color:var(--muted)}
+body{background:var(--bg);color:var(--text);padding-inline:16px}
+</style>
+<main class="doc"><div class="tally" id="tally">고른 것 0</div>
+<p class="lead">dev가 끝낸 사이클 12·13·14를 회고했고,<br>정해 주셔야 할 것을 한 페이지에 모았습니다</p>
+<p class="sub">버튼을 누르면 바로 저장되고, 다시 누르면 바뀝니다. 질문(기타)에는 이 페이지에 답을 달아 드립니다. 2026-10-14 · 근거: 각 사이클의 <code>retro.md</code>(dev <code>docs/plan-feedback.md</code>와 실제 코드 대조), 사이클 15 <code>design-delta.md</code>. 모두 정해지면 사이클 15를 마무리(<code>/cycle-close</code>)하고 결과를 plan 16·17·18 세션에 전합니다.</p>
+<section class="card"><h2><span class="num">1</span>사이클 15 사용 기록을 확정하려면</h2>
+<div class="gist">12·13·14가 합쳐진 dev 코드를 보니 명세와 코드가 어긋나는 곳이 셋 있었습니다. 셋을 정하고 ADR 셋을 확정하면 사이클 15 인계서를 씁니다.</div>
+<div class="item"><h3><span class="no">1</span>도서관 응답 하루 요약의 "건너뜀"은 시작 마감(3초)까지 요청을 보내지 못한 도서관을 셉니다</h3>
+<p class="ex"><b>이렇게 되면</b>: 직접 찾기는 첫 3초 안에 요청을 시작하지 못한 도서관에는 아예 요청을 보내지 않습니다. 이 도서관을 그날 그 도서관의 "건너뜀"에 하나 더합니다. 예: 도서관 40곳을 고른 검색에서 35곳만 시작하면 나머지 5곳이 건너뜀 하나씩. 지금 dev 코드에는 "건너뜀"이라는 결과가 따로 없어서 이 뜻을 정해야 합니다.</p>
+<p class="alt"><b>다른 선택</b>: 건너뜀 칸을 없앰 → 표가 단순해지지만, 너무 많이 골라 요청조차 못 간 도서관이 통계에서 보이지 않습니다.</p>
+<p><span class="rec">추천</span> 시작 마감까지 못 보낸 도서관을 건너뜀으로 셈</p><<div class="ctrl" data-n="1"><div class="btns"><button type="button" data-c="승인">승인</button><button type="button" data-c="미승인">미승인</button><button type="button" data-c="기타">기타</button></div><label class="nl" for="note-1">메모 (미승인 이유, 질문, 제안 — 고른 버튼과 함께 저장)</label><textarea id="note-1" rows="2"></textarea><p class="st" aria-live="polite">아직 고르지 않음</p><div class="reply" hidden></div></div></div><div class="item"><h3><span class="no">2</span>도서관 요청 한 번은 조회 서버를 바꿔 다시 보내도 한 번으로 셉니다</h3>
+<p class="ex"><b>이렇게 되면</b>: dev에는 다시 시도가 없고, 조회 서버 연결이 안 되거나 503이면 다른 조회 서버로 바꿔 보내는 것만 있습니다. 이것을 따로 세지 않고 "도서관에 물어본 한 번"의 결과(성공·실패·시간 초과)와 걸린 시간만 남깁니다. 명세의 "다시 시도도 한 번씩"을 이렇게 고칩니다.</p>
+<p class="alt"><b>다른 선택</b>: 바꿔 보낸 것도 한 번씩 셈 → 조회 서버 문제가 보이지만, 그 숫자는 도서관이 아니라 조회 서버 사정이라 도서관별 요약이 흐려집니다. 조회 서버 바꿈은 지금도 서버 로그에 남습니다.</p>
+<p><span class="rec">추천</span> 한 번으로 셈</p><<div class="ctrl" data-n="2"><div class="btns"><button type="button" data-c="승인">승인</button><button type="button" data-c="미승인">미승인</button><button type="button" data-c="기타">기타</button></div><label class="nl" for="note-2">메모 (미승인 이유, 질문, 제안 — 고른 버튼과 함께 저장)</label><textarea id="note-2" rows="2"></textarea><p class="st" aria-live="polite">아직 고르지 않음</p><div class="reply" hidden></div></div></div><div class="item"><h3><span class="no">3</span>사용 알림의 도서관 번호는 서비스에 켜진 도서관만 정상으로 봅니다</h3>
+<p class="ex"><b>이렇게 되면</b>: 화면은 켜진 도서관의 링크만 보여 줍니다. 그래서 꺼진 도서관 번호로 온 클릭 알림은 화면에서 나올 수 없는 값으로 보고 이상한 값 기록(<code>unknown_library</code>, 30일)에 남깁니다. 확인에는 <code>library</code> 모듈의 "켜진 도서관 목록"을 씁니다.</p>
+<p class="alt"><b>다른 선택</b>: 꺼진 도서관도 정상 → 사이클 13의 전체 목록(<code>listAll</code>)을 쓰면 되지만, 화면에 없는 도서관 클릭이 정상 기록에 섞입니다.</p>
+<p><span class="rec">추천</span> 켜진 도서관만 정상</p><<div class="ctrl" data-n="3"><div class="btns"><button type="button" data-c="승인">승인</button><button type="button" data-c="미승인">미승인</button><button type="button" data-c="기타">기타</button></div><label class="nl" for="note-3">메모 (미승인 이유, 질문, 제안 — 고른 버튼과 함께 저장)</label><textarea id="note-3" rows="2"></textarea><p class="st" aria-live="polite">아직 고르지 않음</p><div class="reply" hidden></div></div></div><div class="item"><h3><span class="no">4</span>ADR-0096(무엇을·얼마나 남기나), ADR-0097(<code>usagelog</code> 모듈과 쓰는 방법, 운영 장치), ADR-0102(로그인 쿠키 경로 <code>/api/v1</code>과 로그인 판별 부품)을 확정(Accepted)합니다</h3>
+<p class="ex"><b>이렇게 되면</b>: 셋 다 지금까지 페이지에서 정하신 내용과 오늘 정리(백업 7일, CSRF 검사 주소, 기록 켜기 설정·04:30·로봇 거절)를 담고 있습니다. 확정하면 더는 고치지 않고, 바꿀 일이 생기면 새 ADR을 씁니다. <code>/cycle-close</code>는 ADR이 모두 확정이어야 진행됩니다.</p>
+<p class="alt"><b>다른 선택</b>: 제안 상태로 둠 → 사이클 15를 마무리할 수 없습니다.</p>
+<p><span class="rec">추천</span> 셋 다 확정</p><<div class="ctrl" data-n="4"><div class="btns"><button type="button" data-c="승인">승인</button><button type="button" data-c="미승인">미승인</button><button type="button" data-c="기타">기타</button></div><label class="nl" for="note-4">메모 (미승인 이유, 질문, 제안 — 고른 버튼과 함께 저장)</label><textarea id="note-4" rows="2"></textarea><p class="st" aria-live="polite">아직 고르지 않음</p><div class="reply" hidden></div></div></div><div class="item"><h3><span class="no">5</span>nginx 화면 주소 목록에 <code>/picks</code>가 빠진 것은 사이클 17에 알려 배포 설정에서 고치게 합니다</h3>
+<p class="ex"><b>이렇게 되면</b>: 지금 dev의 nginx는 정해 둔 화면 주소(<code>/search</code>, <code>/about</code> 등)만 화면 파일로 돌려주는데 <code>/picks</code>가 없습니다. 배포한 뒤 사서 추천 주소를 바로 열거나 새로고침하면 404가 날 수 있습니다(<code>deploy/nginx/chaekcheck-locations.conf:90</code>). nginx 배포 설정은 사이클 17이 고치고 있어 거기에 넣습니다.</p>
+<p class="alt"><b>다른 선택</b>: dev에 바로 고치게 함 → 빠르지만 사이클 밖 수정이 됩니다.</p>
+<p><span class="rec">추천</span> 사이클 17에 알림</p><<div class="ctrl" data-n="5"><div class="btns"><button type="button" data-c="승인">승인</button><button type="button" data-c="미승인">미승인</button><button type="button" data-c="기타">기타</button></div><label class="nl" for="note-5">메모 (미승인 이유, 질문, 제안 — 고른 버튼과 함께 저장)</label><textarea id="note-5" rows="2"></textarea><p class="st" aria-live="polite">아직 고르지 않음</p><div class="reply" hidden></div></div></div></section>
+<section class="card"><h2><span class="num">2</span>사이클 12 책 묶기 기준</h2>
+<div class="gist">실데이터에 세 번 반영했고 완료 기준 8개 중 6개 통과, 1개는 화면 확인만 남음, 1개(AC-3)는 저자 표기 문제로 못 합침. 결과: 책 1,619,668 → 1,563,167권, 사라진 책 번호 0.</div>
+<div class="item"><h3><span class="no">6</span>AC-3(「백만장자 마인드」 한 줄 모음) 미통과를 받아들이고, 꺾쇠 저자 표기 정리는 backlog로 보냅니다</h3>
+<p class="ex"><b>이렇게 되면</b>: 「&lt;김정은&gt;,&lt;김지혜&gt; 저」처럼 저자를 꺾쇠로 쓴 책은 첫 저자가 달라 보여 합쳐지지 않습니다. 표본에서 이 표기로 놓친 합침이 2,944권이었습니다. 고치려면 글자 정리 규칙(검색에도 쓰임)을 바꿔야 해서 따로 합니다.</p>
+<p class="alt"><b>다른 선택</b>: 사이클 17 배포 전에 고침 → 같은 책이 더 합쳐지지만 검색까지 확인할 곳이 커집니다.</p>
+<p><span class="rec">추천</span> 받아들이고 backlog로</p><<div class="ctrl" data-n="6"><div class="btns"><button type="button" data-c="승인">승인</button><button type="button" data-c="미승인">미승인</button><button type="button" data-c="기타">기타</button></div><label class="nl" for="note-6">메모 (미승인 이유, 질문, 제안 — 고른 버튼과 함께 저장)</label><textarea id="note-6" rows="2"></textarea><p class="st" aria-live="polite">아직 고르지 않음</p><div class="reply" hidden></div></div></div><div class="item"><h3><span class="no">7</span>AC-1(판이 다른 책 나누기)을 통과로 보고, 2015·2020년 판 화면 확인은 다음 새 사본 가져오기 때 합니다</h3>
+<p class="ex"><b>이렇게 되면</b>: 규칙은 시험과 실데이터 나뉨 7,525권으로 확인됐지만, 지금 사본에 그 두 판이 없어 화면에서 볼 수 없었습니다.</p>
+<p class="alt"><b>다른 선택</b>: 미통과로 둠 → 지금 사본으로는 더 할 방법이 없습니다.</p>
+<p><span class="rec">추천</span> 통과로 보고 다음 가져오기 때 화면 확인</p><<div class="ctrl" data-n="7"><div class="btns"><button type="button" data-c="승인">승인</button><button type="button" data-c="미승인">미승인</button><button type="button" data-c="기타">기타</button></div><label class="nl" for="note-7">메모 (미승인 이유, 질문, 제안 — 고른 버튼과 함께 저장)</label><textarea id="note-7" rows="2"></textarea><p class="st" aria-live="polite">아직 고르지 않음</p><div class="reply" hidden></div></div></div><div class="item"><h3><span class="no">8</span>ADR 새로 하나: 책 묶는 방식 셋(<code>compact</code>·<code>objects</code>·<code>sql</code>)을 모두 남기고 기본은 <code>compact</code>, 옛 방식 이름은 <code>current</code>에서 <code>objects</code>로</h3>
+<p class="ex"><b>이렇게 되면</b>: ADR-0079 덧붙임의 "<code>current</code>는 사이클 12에서 지운다"를 이 ADR이 바꿉니다. 세 방식은 실데이터에서 책·소장 번호까지 같았습니다(사이클 11 최종 결과). 이유는 사용자 말 "다른 방법들도 구현에 남겨둬"(dev 기록).</p>
+<p class="alt"><b>다른 선택</b>: 기록하지 않음 → ADR-0079와 실제 코드가 다르게 남습니다.</p>
+<p><span class="rec">추천</span> 초안대로 쓰고 확정</p><<div class="ctrl" data-n="8"><div class="btns"><button type="button" data-c="승인">승인</button><button type="button" data-c="미승인">미승인</button><button type="button" data-c="기타">기타</button></div><label class="nl" for="note-8">메모 (미승인 이유, 질문, 제안 — 고른 버튼과 함께 저장)</label><textarea id="note-8" rows="2"></textarea><p class="st" aria-live="polite">아직 고르지 않음</p><div class="reply" hidden></div></div></div><div class="item"><h3><span class="no">9</span>ADR 새로 하나: 네 번째 묶기 단계 보완 — 본제목이 첫 저자 이름이면 전체 제목으로, 부제는 같은 도서관이 두 부제를 따로 가질 때만 나눔, 긴 부제의 숫자는 권·판처럼 보이는 것만</h3>
+<p class="ex"><b>이렇게 되면</b>: ADR-0082를 보완합니다. 예: 「김동인 - 감자」처럼 본제목이 저자 이름인 책 2,776권이 168권으로 잘못 합쳐진 것을 이 규칙으로 고쳤습니다. 부제를 무조건 나누면 같은 책 약 3,100권이 갈라져 쓰지 않았습니다. 꼬리 문구 넷, 로마·한자 숫자도 권 표시로 셉니다. 판 표시·ISBN이 없는 다른 판은 나누지 않습니다.</p>
+<p class="alt"><b>다른 선택</b>: 기록하지 않음 → 지금 규칙이 ADR에 없고 조사 문서(<code>same-book-isbn.md</code> 5.7)에만 남습니다.</p>
+<p><span class="rec">추천</span> 초안대로 쓰고 확정</p><<div class="ctrl" data-n="9"><div class="btns"><button type="button" data-c="승인">승인</button><button type="button" data-c="미승인">미승인</button><button type="button" data-c="기타">기타</button></div><label class="nl" for="note-9">메모 (미승인 이유, 질문, 제안 — 고른 버튼과 함께 저장)</label><textarea id="note-9" rows="2"></textarea><p class="st" aria-live="polite">아직 고르지 않음</p><div class="reply" hidden></div></div></div><div class="item"><h3><span class="no">10</span>R5 표본 판정을 받아들입니다: 목록 데이터로 본 16권 + 사이트에서 직접 본 의심 4권</h3>
+<p class="ex"><b>이렇게 되면</b>: 합쳐진 책 표본 20권 중 잘못 합친 것은 1권(약 5%)이었고, 규칙을 더하지 않기로 이미 정하셨습니다.</p>
+<p class="alt"><b>다른 선택</b>: 16권도 사이트에서 다시 봄 → 더 확실하지만 시간이 듭니다.</p>
+<p><span class="rec">추천</span> 받아들임</p><<div class="ctrl" data-n="10"><div class="btns"><button type="button" data-c="승인">승인</button><button type="button" data-c="미승인">미승인</button><button type="button" data-c="기타">기타</button></div><label class="nl" for="note-10">메모 (미승인 이유, 질문, 제안 — 고른 버튼과 함께 저장)</label><textarea id="note-10" rows="2"></textarea><p class="st" aria-live="polite">아직 고르지 않음</p><div class="reply" hidden></div></div></div></section>
+<section class="card"><h2><span class="num">3</span>사이클 12: 문서 정리와 찾은 오류</h2>
+<div class="gist">사이클 12 문서를 어떻게 남길지와, 회고 중 dev 기록에서 찾은 검색 오류입니다.</div>
+<div class="item"><h3><span class="no">11</span>사이클 12의 명세·설계 본문은 그때 기록으로 두고 맨 위에 "회고에서 바뀜" 한 줄만 붙입니다</h3>
+<p class="ex"><b>이렇게 되면</b>: 지금 규칙은 <code>same-book-isbn.md</code> 5.7절과 <code>docs/current</code>에서 봅니다. 도서관 수 2,394 → 2,381곳(사이클 08에서 뺀 11곳, 꺼진 2곳)도 주석으로 붙입니다.</p>
+<p class="alt"><b>다른 선택</b>: 본문을 지금 규칙으로 고침 → 한 곳에서 읽기 쉽지만 결정 당시 기록이 사라집니다.</p>
+<p><span class="rec">추천</span> 기록으로 두고 한 줄 붙임</p><<div class="ctrl" data-n="11"><div class="btns"><button type="button" data-c="승인">승인</button><button type="button" data-c="미승인">미승인</button><button type="button" data-c="기타">기타</button></div><label class="nl" for="note-11">메모 (미승인 이유, 질문, 제안 — 고른 버튼과 함께 저장)</label><textarea id="note-11" rows="2"></textarea><p class="st" aria-live="polite">아직 고르지 않음</p><div class="reply" hidden></div></div></div><div class="item"><h3><span class="no">12</span><code>exact=title</code> 검색 500 오류는 사이클 17(첫 배포) 전에 고칠 것으로 backlog 맨 위에 둡니다</h3>
+<p class="ex"><b>이렇게 되면</b>: 예: 「묘왕동주 1」을 "제목 완전 일치"로 찾으면 서버 오류(500)가 납니다. 사이클 12와 무관해 dev가 별도 작업으로 넘겼습니다(사이클 12 <code>retro.md</code>). 배포 전에 고치면 사람들이 오류 화면을 보지 않습니다.</p>
+<p class="alt"><b>다른 선택</b>: 두고 배포 → 일이 늘지 않지만 완전 일치 검색 일부가 오류로 보입니다.</p>
+<p><span class="rec">추천</span> 배포 전 고칠 것으로</p><<div class="ctrl" data-n="12"><div class="btns"><button type="button" data-c="승인">승인</button><button type="button" data-c="미승인">미승인</button><button type="button" data-c="기타">기타</button></div><label class="nl" for="note-12">메모 (미승인 이유, 질문, 제안 — 고른 버튼과 함께 저장)</label><textarea id="note-12" rows="2"></textarea><p class="st" aria-live="polite">아직 고르지 않음</p><div class="reply" hidden></div></div></div></section>
+<section class="card"><h2><span class="num">4</span>사이클 13 수집기 갈아타기와 도서관 넣기 명령: 이름과 설정</h2>
+<div class="gist">완료 기준 AC-2~12 통과, AC-1(여주대 다시 채우기)은 "여주대는 빼자"로 뺌. 새 도서관 6곳(2675~2680)이 넣기 명령으로 들어갔습니다.</div>
+<div class="item"><h3><span class="no">13</span>plan 지금 문서의 "후보 도서관"을 dev와 같게 "수집 목록에서 찾은 도서관"으로 바꿉니다</h3>
+<p class="ex"><b>이렇게 되면</b>: <code>reference-index.md</code> 등 지금 기준 문서만 바꾸고, 지난 사이클 기록과 ADR 제목은 그대로 둡니다.</p>
+<p class="alt"><b>다른 선택</b>: 그대로 둠 → 말이 짧지만 dev와 plan이 다른 말을 씁니다.</p>
+<p><span class="rec">추천</span> 바꿈</p><<div class="ctrl" data-n="13"><div class="btns"><button type="button" data-c="승인">승인</button><button type="button" data-c="미승인">미승인</button><button type="button" data-c="기타">기타</button></div><label class="nl" for="note-13">메모 (미승인 이유, 질문, 제안 — 고른 버튼과 함께 저장)</label><textarea id="note-13" rows="2"></textarea><p class="st" aria-live="polite">아직 고르지 않음</p><div class="reply" hidden></div></div></div><div class="item"><h3><span class="no">14</span>사이클 12의 시험용 설정 이름 <code>exclude-candidate-libraries</code>는 다음에 가져오기 코드를 고치는 dev 일 때 함께 바꿉니다</h3>
+<p class="ex"><b>이렇게 되면</b>: "후보"가 들어간 이름이 하나 남아 있습니다. 따로 일을 만들지 않고, 가져오기 코드를 고칠 때(예: 사이클 18) 같이 바꿉니다.</p>
+<p class="alt"><b>다른 선택</b>: 시험용이라 그대로 둠 → 일이 없지만 이름 하나가 다르게 남습니다.</p>
+<p><span class="rec">추천</span> 다음 가져오기 일 때 바꿈</p><<div class="ctrl" data-n="14"><div class="btns"><button type="button" data-c="승인">승인</button><button type="button" data-c="미승인">미승인</button><button type="button" data-c="기타">기타</button></div><label class="nl" for="note-14">메모 (미승인 이유, 질문, 제안 — 고른 버튼과 함께 저장)</label><textarea id="note-14" rows="2"></textarea><p class="st" aria-live="polite">아직 고르지 않음</p><div class="reply" hidden></div></div></div><div class="item"><h3><span class="no">15</span>ADR 새로 하나: 도서관 넣기 명령 보탬 — 새 곳은 최종 주소 줄 필수, 확인한 사라진 곳은 <code>gone_known.tsv</code>, 번호는 <code>nextId()</code>(2675)부터, 종료 코드 5, 운영 반영은 같은 번호가 다른 도서관이면 멈춤</h3>
+<p class="ex"><b>이렇게 되면</b>: dev가 실데이터에서 만난 경우를 규칙으로 넣은 것입니다. 국회도서관(44)·군포시(261)·김천시립(269)은 서비스에 켠 채 수집하지 않는 곳으로 <code>gone_known.tsv</code>에 적었습니다(사용자 "확인하고 빼줘 파일로 적어줘"). 번호 규칙·종료 코드 5 등은 dev가 정해 이유 칸이 [이유 미확인]입니다.</p>
+<p class="alt"><b>다른 선택</b>: 기록하지 않음 → 확정된 ADR-0084·0085·0086과 실제 명령이 다르게 남습니다.</p>
+<p><span class="rec">추천</span> 초안대로 쓰고 확정</p><<div class="ctrl" data-n="15"><div class="btns"><button type="button" data-c="승인">승인</button><button type="button" data-c="미승인">미승인</button><button type="button" data-c="기타">기타</button></div><label class="nl" for="note-15">메모 (미승인 이유, 질문, 제안 — 고른 버튼과 함께 저장)</label><textarea id="note-15" rows="2"></textarea><p class="st" aria-live="polite">아직 고르지 않음</p><div class="reply" hidden></div></div></div><div class="item"><h3><span class="no">16</span>작업 폴더에서 시험할 때 원래 시험 DB에 붙는 문제(<code>TEST_PG_COMMAND</code>)를 backlog의 dev 도구 일로 적습니다</h3>
+<p class="ex"><b>이렇게 되면</b>: 나란히 작업할 때 시험이 다른 작업의 DB를 건드리지 않게, 시험 도우미가 작업 폴더의 DB 묶음 이름을 읽게 하는 작은 일입니다.</p>
+<p class="alt"><b>다른 선택</b>: 적지 않음 → 다음 나란히 작업에서 같은 실수가 날 수 있습니다.</p>
+<p><span class="rec">추천</span> backlog에 적음</p><<div class="ctrl" data-n="16"><div class="btns"><button type="button" data-c="승인">승인</button><button type="button" data-c="미승인">미승인</button><button type="button" data-c="기타">기타</button></div><label class="nl" for="note-16">메모 (미승인 이유, 질문, 제안 — 고른 버튼과 함께 저장)</label><textarea id="note-16" rows="2"></textarea><p class="st" aria-live="polite">아직 고르지 않음</p><div class="reply" hidden></div></div></div></section>
+<section class="card"><h2><span class="num">5</span>사이클 13: 운영과 남은 데이터</h2>
+<div class="gist">서비스 운영에 닿는 셋과 기록 파일 하나입니다.</div>
+<div class="item"><h3><span class="no">17</span>서비스에 있는 교보 구독형 도서관의 책 목록은 따로 정하지 않고 backlog "교보 구독형 서버를 다른 우리 IP에서 다시 받기"(ADR-0094)로 다룹니다</h3>
+<p class="ex"><b>이렇게 되면</b>: 사이클 13부터 수집기가 교보 구독형 서버(<code>*.dkyobobook.co.kr</code>)에 요청하지 않아 이 도서관들의 책 목록이 다시 수집되지 않습니다. 그 일이 시작될 때까지 10월 7일 전 목록을 씁니다. ADR-0094(제안 상태) 배경에 이 사실 한 문장을 더합니다.</p>
+<p class="alt"><b>다른 선택</b>: 지금 따로 정함 → 결정이 둘로 나뉩니다.</p>
+<p><span class="rec">추천</span> ADR-0094 일로 다룸</p><<div class="ctrl" data-n="17"><div class="btns"><button type="button" data-c="승인">승인</button><button type="button" data-c="미승인">미승인</button><button type="button" data-c="기타">기타</button></div><label class="nl" for="note-17">메모 (미승인 이유, 질문, 제안 — 고른 버튼과 함께 저장)</label><textarea id="note-17" rows="2"></textarea><p class="st" aria-live="polite">아직 고르지 않음</p><div class="reply" hidden></div></div></div><div class="item"><h3><span class="no">18</span>응답이 약 5.2초인 2677 여주대(YES24)·2679 경운대는 지금 그대로 두고, 운영 뒤 사용 기록(사이클 15 도서관 응답 요약)으로 실패가 잦으면 정합니다</h3>
+<p class="ex"><b>이렇게 되면</b>: 서비스의 도서관 읽기 제한이 5초라 두 곳은 "확인 실패"로 보일 수 있습니다. 사이클 15가 켜지면 두 곳의 시간 초과 수가 매일 쌓여 판단 근거가 됩니다.</p>
+<p class="alt"><b>다른 선택</b>: 읽기 제한을 6초로 → 두 곳은 보이지만 모든 도서관의 느린 실패가 1초 늦게 끝납니다.</p>
+<p><span class="rec">추천</span> 그대로 두고 기록으로 판단</p><<div class="ctrl" data-n="18"><div class="btns"><button type="button" data-c="승인">승인</button><button type="button" data-c="미승인">미승인</button><button type="button" data-c="기타">기타</button></div><label class="nl" for="note-18">메모 (미승인 이유, 질문, 제안 — 고른 버튼과 함께 저장)</label><textarea id="note-18" rows="2"></textarea><p class="st" aria-live="polite">아직 고르지 않음</p><div class="reply" hidden></div></div></div><div class="item"><h3><span class="no">19</span>여주대 빈 곳 채우기(약 30시간)는 이번에 하지 않고, PC가 오래 비는 날 수집 세션에서 여쭙니다</h3>
+<p class="ex"><b>이렇게 되면</b>: PC를 30시간 묶지 않습니다. 그동안 여주대 YES24(2677) 목록의 빈 곳이 남습니다.</p>
+<p class="alt"><b>다른 선택</b>: 지금 돌림 → 목록이 채워지지만 PC를 오래 씁니다.</p>
+<p><span class="rec">추천</span> 이번에는 안 함</p><<div class="ctrl" data-n="19"><div class="btns"><button type="button" data-c="승인">승인</button><button type="button" data-c="미승인">미승인</button><button type="button" data-c="기타">기타</button></div><label class="nl" for="note-19">메모 (미승인 이유, 질문, 제안 — 고른 버튼과 함께 저장)</label><textarea id="note-19" rows="2"></textarea><p class="st" aria-live="polite">아직 고르지 않음</p><div class="reply" hidden></div></div></div><div class="item"><h3><span class="no">20</span>사이클 11 운영 흉내 반영 기록 10줄은 dev의 git 밖 백업 파일(<code>data/cycle13/…sql</code>)을 근거로 두고 지우지 않습니다</h3>
+<p class="ex"><b>이렇게 되면</b>: 사이클 13 작업 중 운영 흉내 DB를 다시 복사하며 기록이 그 파일에만 남았습니다. 사이클 11 최종 회고가 이 파일을 근거로 적었습니다.</p>
+<p class="alt"><b>다른 선택</b>: 지움 → 측정 기록 근거가 사라집니다.</p>
+<p><span class="rec">추천</span> 지우지 않음</p><<div class="ctrl" data-n="20"><div class="btns"><button type="button" data-c="승인">승인</button><button type="button" data-c="미승인">미승인</button><button type="button" data-c="기타">기타</button></div><label class="nl" for="note-20">메모 (미승인 이유, 질문, 제안 — 고른 버튼과 함께 저장)</label><textarea id="note-20" rows="2"></textarea><p class="st" aria-live="polite">아직 고르지 않음</p><div class="reply" hidden></div></div></div></section>
+<section class="card"><h2><span class="num">6</span>사이클 14 사서추천도서</h2>
+<div class="gist">완료 기준 모두 통과, 사용자 폰 확인 "지금 맘에 들어". dev가 원래 DB의 <code>popular</code> 기록까지 정리했습니다.</div>
+<div class="item"><h3><span class="no">21</span>사서추천 범위를 "최근 12번(2년), 요청 기간 3년, 새 도움말 문구"로 확정하고 새 ADR을 씁니다(ADR-0089의 범위 부분을 바꿈)</h3>
+<p class="ex"><b>이렇게 되면</b>: 12번은 정하신 값입니다(분야당 18권, 전체 108권). 요청 기간 3년은 dev가 "12번째 추천이 범위 밖으로 빠질 수 있어서" 바꾼 것으로, 응답이 1.56MB → 2.51MB로 커지지만(상한 10MB 안, 받기 한 번에 요청 1건) 12번이 늘 다 들어옵니다. 사이클 14 문서는 이미 이 값으로 맞췄습니다.</p>
+<p class="alt"><b>다른 선택</b>: 요청 기간을 2년으로 되돌림 → 받는 날에 따라 11번만 보일 수 있습니다.</p>
+<p><span class="rec">추천</span> 12번·3년으로 확정, ADR 씀</p><<div class="ctrl" data-n="21"><div class="btns"><button type="button" data-c="승인">승인</button><button type="button" data-c="미승인">미승인</button><button type="button" data-c="기타">기타</button></div><label class="nl" for="note-21">메모 (미승인 이유, 질문, 제안 — 고른 버튼과 함께 저장)</label><textarea id="note-21" rows="2"></textarea><p class="st" aria-live="polite">아직 고르지 않음</p><div class="reply" hidden></div></div></div><div class="item"><h3><span class="no">22</span>같은 달 안 책 순서는 지금처럼 "나중에 등록된 책 먼저"로 둡니다</h3>
+<p class="ex"><b>이렇게 되면</b>: 국립중앙도서관 웹 목록은 같은 달 안을 사서가 정한 순서로 보여 주는데, 우리 순서는 그것과 거의 거꾸로입니다. 지금은 분야가 이미 섞여 보입니다.</p>
+<p class="alt"><b>다른 선택</b>: 웹 순서를 따름 → 국립중앙도서관과 같게 보이지만 응답 순서를 저장할 칸과 정렬을 바꾸는 일이 생깁니다(배포 전이라 표를 고칠 수는 있음).</p>
+<p><span class="rec">추천</span> 지금 순서 유지</p><<div class="ctrl" data-n="22"><div class="btns"><button type="button" data-c="승인">승인</button><button type="button" data-c="미승인">미승인</button><button type="button" data-c="기타">기타</button></div><label class="nl" for="note-22">메모 (미승인 이유, 질문, 제안 — 고른 버튼과 함께 저장)</label><textarea id="note-22" rows="2"></textarea><p class="st" aria-live="polite">아직 고르지 않음</p><div class="reply" hidden></div></div></div><div class="item"><h3><span class="no">23</span>배포 전 할 일 넷을 사이클 17 체크리스트에 넣습니다: 표지 이용 조건 확인, 권리자 연락처, User-Agent에 서비스 주소, 인증키 새로 받기</h3>
+<p class="ex"><b>이렇게 되면</b>: ① 표지는 국립중앙도서관 Open API 이용안내·공공누리 표기를 한 번 보고(따로 문의하지 않음) 내림 요청이 오면 그 표지를 지웁니다. ② 연락처는 로고 내림 요청과 같은 서비스 연락처 하나. ③ 요청에 붙는 User-Agent에 서비스 주소를 넣습니다. ④ 인증키는 대화에 적힌 지금 키를 개발용으로만 쓰고, 운영 키는 새로 받아 운영 비밀값에만 둡니다.</p>
+<p class="alt"><b>다른 선택</b>: 넣지 않음 → 배포가 빠르지만 대화에 남은 키를 운영에 쓰게 됩니다.</p>
+<p><span class="rec">추천</span> 사이클 17 체크리스트에 넣음</p><<div class="ctrl" data-n="23"><div class="btns"><button type="button" data-c="승인">승인</button><button type="button" data-c="미승인">미승인</button><button type="button" data-c="기타">기타</button></div><label class="nl" for="note-23">메모 (미승인 이유, 질문, 제안 — 고른 버튼과 함께 저장)</label><textarea id="note-23" rows="2"></textarea><p class="st" aria-live="polite">아직 고르지 않음</p><div class="reply" hidden></div></div></div><div class="item"><h3><span class="no">24</span>없는 주소 화면(예: 옛 <code>/popular</code>로 들어왔을 때)은 backlog에 넣고 첫 배포 전 작은 일로 합니다</h3>
+<p class="ex"><b>이렇게 되면</b>: 지금 없는 주소는 빈 화면입니다. "없는 주소예요 + 처음으로" 화면 하나를 만듭니다. 배포 전이라 바깥에 옛 링크는 아직 없습니다.</p>
+<p class="alt"><b>다른 선택</b>: 배포 뒤에 함 → 잘못 친 주소가 빈 화면으로 보입니다.</p>
+<p><span class="rec">추천</span> backlog, 배포 전</p><<div class="ctrl" data-n="24"><div class="btns"><button type="button" data-c="승인">승인</button><button type="button" data-c="미승인">미승인</button><button type="button" data-c="기타">기타</button></div><label class="nl" for="note-24">메모 (미승인 이유, 질문, 제안 — 고른 버튼과 함께 저장)</label><textarea id="note-24" rows="2"></textarea><p class="st" aria-live="polite">아직 고르지 않음</p><div class="reply" hidden></div></div></div></section>
+<section class="card"><h2><span class="num">7</span>사이클 11 남은 측정 데이터</h2>
+<div class="gist">사이클 11 최종 회고에서 남은 질문 하나입니다.</div>
+<div class="item"><h3><span class="no">25</span>dev PC에 남은 사이클 11 측정 데이터 약 14GB(작업 폴더 둘, 운영 흉내 DB 볼륨 약 9GB, 결과 파일 약 4GB, 덤프 1.2GB)를 다음 dev 세션에서 지웁니다</h3>
+<p class="ex"><b>이렇게 되면</b>: dev가 git 밖 파일이라 지워도 된다고 적었습니다(dev <code>plan-feedback.md</code> 3106~3111행). 측정 결과는 회고에 숫자로 남았습니다. 위 사이클 13의 백업 파일(<code>data/cycle13/</code>)은 지우지 않습니다. plan은 dev 파일을 지울 수 없어 dev 세션에 전합니다.</p>
+<p class="alt"><b>다른 선택</b>: 그대로 둠 → 디스크 약 14GB를 계속 씁니다.</p>
+<p><span class="rec">추천</span> 다음 dev 세션에서 지움</p><<div class="ctrl" data-n="25"><div class="btns"><button type="button" data-c="승인">승인</button><button type="button" data-c="미승인">미승인</button><button type="button" data-c="기타">기타</button></div><label class="nl" for="note-25">메모 (미승인 이유, 질문, 제안 — 고른 버튼과 함께 저장)</label><textarea id="note-25" rows="2"></textarea><p class="st" aria-live="polite">아직 고르지 않음</p><div class="reply" hidden></div></div></div></section>
+<p class="foot">원본: <code>docs/cycles/11-separate-import/retro.md</code>, <code>12-grouping-rules/retro.md</code>, <code>13-crawler-to-dev/retro.md</code>, <code>14-librarian-picks/retro.md</code>, <code>15-usage-log/design-delta.md</code>. 이 페이지는 요약이며 근거는 원본에 있습니다.</p>
+</main>
+<script>
+(function(){
+  var ctrls=[].slice.call(document.querySelectorAll('.ctrl'));
+  var tally=document.getElementById('tally');
+  var state={};
+  function count(){var k=Object.keys(state).filter(function(n){return state[n]&&state[n].choice;}).length;tally.textContent='고른 것 '+k+' / '+ctrls.length;}
+  function paint(c,d){
+    c.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',!!d&&b.dataset.c===d.choice);});
+    var st=c.querySelector('.st');
+    st.textContent=d&&d.choice?('저장됨: '+d.choice+(d.note?' (메모 있음)':'')):'아직 고르지 않음';
+  }
+  function boot(){
+    count();
+    claude.use('db').then(function(db){
+      if(!db){tally.textContent='저장 기능을 쓸 수 없는 화면입니다. 이 페이지는 읽기만 됩니다.';ctrls.forEach(function(c){c.querySelectorAll('button,textarea').forEach(function(e){e.disabled=true;});});return;}
+      var col=db.collection('decisions');
+      col.onSnapshot(function(snap){
+        snap.docs.forEach(function(doc){
+          var d=doc.data();state[doc.id]=d;
+          var c=document.querySelector('.ctrl[data-n="'+doc.id+'"]');
+          if(!c)return;paint(c,d);
+          var ta=c.querySelector('textarea');
+          if(d.note&&document.activeElement!==ta&&!ta.value)ta.value=d.note;
+        });count();
+      },function(){tally.textContent='저장된 선택을 불러오지 못했습니다. 새로고침해 주세요.';});
+      db.collection('replies').onSnapshot(function(snap){
+        snap.docs.forEach(function(doc){
+          var c=document.querySelector('.ctrl[data-n="'+doc.id+'"]');if(!c)return;
+          var r=c.querySelector('.reply');var d=doc.data()||{};
+          r.textContent='';var b=document.createElement('b');b.textContent='답 ('+(d.at||'')+')';r.appendChild(b);
+          r.appendChild(document.createTextNode(d.text||''));r.hidden=!d.text;
+        });
+      });
+      ctrls.forEach(function(c){
+        var n=c.dataset.n;
+        c.querySelectorAll('button').forEach(function(b){
+          b.addEventListener('click',function(){
+            var note=c.querySelector('textarea').value.trim();
+            var title=c.parentNode.querySelector('h3').textContent.replace(/^\d+/,'').trim();
+            var body={choice:b.dataset.c,note:note,title:title,at:new Date().toISOString()};
+            var st=c.querySelector('.st');st.textContent='저장하는 중…';
+            col.doc(n).set(body).then(function(){state[n]=body;paint(c,body);count();})
+              .catch(function(e){st.textContent='저장하지 못했습니다'+(e&&e.code==='permission_denied'?' (쓰기 권한 없음)':'')+'. 다시 눌러 주세요.';});
+          });
+        });
+      });
+    });
+  }
+  boot();
+})();
+</script>

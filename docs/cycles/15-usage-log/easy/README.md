@@ -22,3 +22,5 @@
 | [2026-10-14-adr-0102-draft.html](2026-10-14-adr-0102-draft.html) | ADR-0102 초안 (쿠키 경로 /api/v1, 로그인 상태 판별 부품) | `docs/adr/0102` | 결정됨: 승인, Proposed로 씀 (2026-10-14) |
 | [2026-10-14-verify-decisions.html](2026-10-14-verify-decisions.html) | 문서 검증에서 나온 네 가지: IP로 30일 이어 보기, 이상한 값 기록 범위, 백업과 IP 30일, 옛 경로 쿠키 | 사이클 15 문서 전체 | 결정됨 (2026-10-14): #1~#3 승인, #4 기타 → 옛 경로 쿠키 지우는 코드 넣지 않음 |
 | [flow-original.html](flow-original.html) | flow.md 원문 + 그림(기록이 생기는 곳) | `../flow.md` | 결정됨 (원문 보기용) |
+| [2026-10-14-retro-decisions.html](2026-10-14-retro-decisions.html) | 사이클 12·13·14 회고와 사이클 15 확정에 필요한 결정 25개 (캔버스용) | `../../11-separate-import/retro.md`, `../../12-grouping-rules/retro.md`, `../../13-crawler-to-dev/retro.md`, `../../14-librarian-picks/retro.md`, `../design-delta.md` | 결정 기다림 |
+| [2026-10-14-retro-decisions-artifact.html](2026-10-14-retro-decisions-artifact.html) | 같은 페이지의 밖에서 고르는 판 (claude.ai 비공개 페이지 https://claude.ai/artifact/Utz6xDxCzCYCjGoFXyTFTw 에 올린 원본, 고른 것은 그 페이지에 저장됨) | 위와 같음 | 결정 기다림 |
