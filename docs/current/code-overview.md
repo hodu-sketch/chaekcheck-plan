@@ -302,7 +302,7 @@ classDiagram
     CatalogImporter --> LibraryCatalog : 다른 모듈
 ```
 
-- 가져오기 단계(그림에서는 `CatalogImporter` 하나로 줄임): `CollectedCatalog.read()`(수집 SQLite 읽기) → `BookGrouping.byCodes()`(같은 책 묶기) → `NationalBibliography.lookup()`(국가서지 ISBN 찾기, 선택) → `BookGrouping.mergeSameText()` → `CatalogWriter.write()`(COPY 로 표 통째로 바꾸기). 정리 함수는 `catalog.internal.normalize`(`CatalogText`, `Contributors`, `Isbn`, `PublishedDates`). [확정]
+- 가져오기 단계(그림에서는 `CatalogImporter` 하나로 줄임): `CollectedCatalog.read()`(수집 SQLite 읽기) → `BookGrouper.groupByCodes()`(같은 책 묶기; 사이클 11부터 설정 `grouping`으로 `CompactGrouping` 기본·`BookGrouping`(`objects`)·`SqlGrouping`) → `NationalBibliography.lookup()`(국가서지 ISBN 찾기, 선택) → `BookGrouper.mergeSameText()`(④, 사이클 12부터 `SameTextKey`·`SubtitleParts`) → `CatalogWriter.write()`(COPY 로 표 통째로 바꾸기). 정리 함수는 `catalog.internal.normalize`(`CatalogText`, `Contributors`, `Isbn`, `PublishedDates`). [확정] (2026-10-14 사이클 11·12 회고 때 이름만 고침, 그림은 2026-10-04 그대로)
 - 가져오기는 `catalog-import` 프로필로 앱을 띄울 때만 한 번 돌고 앱이 끝납니다. 평소 서버에서는 돌지 않습니다. [확정]
 - 요청 흐름: `GET /api/v1/books?title=…` → `BookSearchController` 가 `LibraryCatalog.planSearch()` 로 "검색할 도서관 목록"을 먼저 받고 → `PgBigmBookSearch.search(query, plan)` 가 그 도서관들에 있는 책만 골라 페이지로 돌려줍니다. `GET /api/v1/books/{bookId}` 는 책 한 권과 그 책을 가진 도서관 목록을 줍니다. `availability` 는 `CatalogHoldings.holdingsOf()` 로 "이 책은 어느 도서관의 어떤 상세 페이지에 있나"를 받습니다. [확정]
 

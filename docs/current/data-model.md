@@ -6,10 +6,14 @@
 사이클 09 회고 (2026-10-12): dev 보고(`plan-feedback.md` "# 사이클 09", AC-1~9 통과)와 dev Liquibase `library/014-library-classification.yaml`로 대조해 사이클 09 변경을 구현됨으로 바꿈. Modulith `components.puml`(2026-10-12) 대조 결과 모듈 관계 그대로. 달라진 점·확정된 값: changeSet 하나 `library-014-classification-2026-10-11`, 이름 UPDATE 289줄(`splitStatements: false`), 대출 방식은 화면 종류 규칙 + 번호, 014 뒤 셈(업체·대출 방식), 북큐브 구독 339·380·386·705, `name_overrides.tsv` 295줄, seed 스크립트 `--changes-only`·다섯째 인자·종료 코드 3. 근거 `docs/cycles/09-library-naming/retro.md`.
 사이클 10 cycle-close (2026-10-12): 새 스키마 `popular`(`fetch_run`, `ranking_month`, `ranking_category`, `ranking_entry`, `cover`) — 구현됨 (사이클 10). 다른 모듈 표는 바뀌지 않음(`catalog.book`은 `isbn13` 값으로만 맞춤). 근거 `docs/cycles/10-popular-books/design-delta.md` "데이터", ADR-0073~0075·0077, ADR-0080·ADR-0081.
 사이클 10 회고 (2026-10-12): 구현 대조, 분류 14개·표지 200px JPEG·User-Agent·문구 반영 (`docs/cycles/10-popular-books/retro.md`). dev Liquibase `popular/001-popular-schema.yaml`로 제약·색인·changeSet 이름을 대조함.
-사이클 11 cycle-close (2026-10-12): 가져오기 따로 하기(export·apply·finish·discard, load_manifest, db-ops) + 묶는 방식 current·compact·sql — 설계됨(미구현, 사이클 11). `collection.catalog_import` 칸 `export_id`·`exported_at`과 CHECK, `failure_reason` 값 `mismatch`(changeset 없음), `step_seconds` 새 키, 실행 중에만 있는 `catalog_next.load_manifest`(Liquibase 아님), dev compose `db-ops`. 새 스키마·새 색인 없음. 근거 `docs/cycles/11-separate-import/design-delta.md` "데이터", spec.md, ADR-0078·0079. 이름·번호는 따로 적지 않으면 [안].
-사이클 12 (2026-10-12, 사이클 11 dev 진행 중에 미리 한 plan): 책 묶기 네 번째 단계 규칙 — 설계됨(미구현, 사이클 12). 근거 `docs/cycles/12-grouping-rules/design-delta.md`, ADR-0082.
+사이클 11 cycle-close (2026-10-12): 가져오기 따로 하기(export·apply·finish·discard, load_manifest, db-ops) + 묶는 방식 compact(기본)·objects(옛 이름 current)·sql — 구현됨 (사이클 11, 회고 2026-10-14). `collection.catalog_import` 칸 `export_id`·`exported_at`과 CHECK, `failure_reason` 값 `mismatch`(changeset 없음), `step_seconds` 새 키, 실행 중에만 있는 `catalog_next.load_manifest`(Liquibase 아님), dev compose `db-ops`. 새 스키마·새 색인 없음. 근거 `docs/cycles/11-separate-import/design-delta.md` "데이터", spec.md, ADR-0078·0079. 이름·번호는 따로 적지 않으면 [안].
+사이클 12 (2026-10-12, 사이클 11 dev 진행 중에 미리 한 plan): 책 묶기 네 번째 단계 규칙 — 구현됨 (사이클 12, 회고 2026-10-14). 근거 `docs/cycles/12-grouping-rules/design-delta.md`, ADR-0082, ADR-NNNN-b.
+사이클 11 최종·사이클 12 회고 (2026-10-14): 표·Liquibase 변경 없음(사이클 12). 서비스 DB 책 1,619,668 → 1,563,167(가져오기 기록 9번, 소장 17,778,801 그대로), 묶는 방식 기본 `compact`·옛 이름 `objects`, 가져오기 힙 값, `sql` 측정 결과. 회고 `docs/cycles/11-separate-import/retro.md` "최종 회고", `docs/cycles/12-grouping-rules/retro.md`.
 사이클 14 cycle-close (2026-10-12): 스키마 `popular`(사이클 10, 구현됨·배포 전)를 지우고 새 스키마 `picks`(`fetch_run`, `pick`, `cover`) — 설계됨(미구현, 사이클 14). changelog `picks/001-picks-schema.yaml`, `popular/001-popular-schema.yaml`은 지움(배포 전 규칙), 로컬 `db`·`db-test`에서 `DROP SCHEMA popular CASCADE`와 `databasechangelog`의 `popular-001-%` 줄 지움. 다른 모듈 표는 바뀌지 않음(`catalog.book`과는 ISBN·제목+저자 값으로만 맞춤). 근거 `docs/cycles/14-librarian-picks/design-delta.md` "데이터", ADR-0089·0090·0091.
-사이클 13 cycle-close (2026-10-12, 사이클 12와 나란히 미리 한 plan, 사이클 12 뒤에 개발): 수집기 dev로 갈아타기 + 새 도서관 넣기 명령 — 새 표 `collection.library_insert_run`(넣기 실행 기록), `collection.catalog_import.candidate_library_count` → `other_library_count` 이름 바꿈(배포 전 규칙으로 `collection/001`을 고치고 로컬 `db`·`db-ops`는 이름 바꾸기 SQL + 체크섬 비우기로 맞춤(데이터 유지, 사용자 선택 2026-10-12)), `library.library` 1215 이름 고침 changeset, 반영 파일 판 2(`load_manifest.notes.libraryPart`, 새 표 없음), 앞으로 도서관 seed changeset을 만들지 않음 — 설계됨(미구현, 사이클 13). `library` 칸 변경 없음. 근거 `docs/cycles/13-crawler-to-dev/design-delta.md` "데이터", ADR-0083~0087·0093. 이름·번호는 따로 적지 않으면 [안](dev가 바꿀 수 있음).
+사이클 14 회고 (2026-10-14): 스키마 `picks` 구현됨 — dev `db/changelog/picks/001-picks-schema.yaml`(changeset `picks-001-schema`·`picks-001-fetch-run`·`picks-001-pick`·`picks-001-cover`), 칸·제약·색인이 설계와 같음. 스키마 `popular`는 changeset·14 worktree DB·원래 `db`·`db-test`에서 지움(원래 DB는 사용자 승인 뒤). 범위 최근 12번으로 크기 실측 반영 (`docs/cycles/14-librarian-picks/retro.md`).
+사이클 13 회고 반영 (2026-10-14): `collection.library_insert_run`, `other_library_count` 이름 바꿈, `library/015` 1215 이름, 반영 파일 판 2 — 구현됨 (사이클 13, 회고 2026-10-14). 새 도서관 6곳(서비스 번호 2675~2680)을 넣기 명령으로 넣음. 근거 `docs/cycles/13-crawler-to-dev/retro.md`, dev Liquibase `collection/001`(52·53행)·`collection/006`·`library/015`.
+
+사이클 13 cycle-close (2026-10-12, 사이클 12와 나란히 미리 한 plan, 사이클 12 뒤에 개발): 수집기 dev로 갈아타기 + 새 도서관 넣기 명령 — 새 표 `collection.library_insert_run`(넣기 실행 기록), `collection.catalog_import.candidate_library_count` → `other_library_count` 이름 바꿈(배포 전 규칙으로 `collection/001`을 고치고 로컬 `db`·`db-ops`는 이름 바꾸기 SQL + 체크섬 비우기로 맞춤(데이터 유지, 사용자 선택 2026-10-12)), `library.library` 1215 이름 고침 changeset, 반영 파일 판 2(`load_manifest.notes.libraryPart`, 새 표 없음), 앞으로 도서관 seed changeset을 만들지 않음 — 구현됨 (사이클 13, 회고 2026-10-14). `library` 칸 변경 없음. 근거 `docs/cycles/13-crawler-to-dev/design-delta.md` "데이터", ADR-0083~0087·0093. 이름·번호는 따로 적지 않으면 [안](dev가 바꿀 수 있음).
 사이클 08 cycle-close (2026-10-11): `catalog` 가져오기를 새 표(`catalog_next`)에 쓰고 바꿔 끼우기, 소장 번호 잇기, `collection.catalog_import` 칸 추가, `collection.national_bibliography_record`·`national_bibliography_source`, `library.library.mobile_site_differs`, 도서관 이름 고침 changeset, `library`·`region` `updated_at` 트리거, 교보 대여·혼합 11곳 seed에서 뺌, 정리 규칙을 바꿀 때의 순서 — 구현됨 (사이클 08). 근거 `docs/cycles/08-polish-swap-memory/design-delta.md` "데이터"·"정리 규칙을 바꿀 때"·"이름 고치기", ADR-0065~0070. 이름·숫자는 따로 적지 않으면 [안].
 사이클 08 회고 (2026-10-11): dev Liquibase(`collection/003`·`004`, `library/011`~`013`, `region/003`)와 dev `plan-feedback.md` "# 사이클 08"로 대조함. 달라진 점: 국가서지 원문은 ISBN마다 한 줄, `step_seconds` 키가 늘어남, 가져오기 기록에 `status`·`failure_reason`·`failure_detail`, 넓은 줄은 임시 표와 `catalog_next`에 두 번 씀, 파일 번호가 설계 [안]과 다름, 이름 고침은 `library/013`. 가져오기 힙(AC-12), 국가서지 원문 재사용 시간(AC-15), 색인 단계 중단(AC-9 둘째 경우)은 측정 중 [확인 필요]. 근거 `docs/cycles/08-polish-swap-memory/retro.md`.
 
@@ -32,11 +36,11 @@
   - 지역 seed `region/002`에 증평군(4311) 추가, 전남광주통합특별시 `short_name` "전남광주" [확정] (사용자 결정, 2026-10-05, 배포 전 규칙으로 고침)
 - 사이클 08 Liquibase (구현됨 (사이클 08)), 새 파일로 더함. 파일 이름은 dev가 정함 [확정] (dev 구현 확인, 2026-10-11; 설계 [안]의 `collection/004`·`005`, `library/011`·`012`·`013` 번호와 다름): `collection/003-import-period-and-timings.yaml`(changeset `collection-003-import-period-and-timings`: 수집 기간·단계별 시간, `collection-003-import-status`: 상태·실패 칸), `collection/004-national-bibliography.yaml`(두 표), `library/011-updated-at-trigger.sql`, `region/003-updated-at-trigger.sql`(master에서 이번 사이클 다른 changeset보다 앞), `library/012-library-mobile-site-differs.yaml`(칸 + 13곳 UPDATE), `library/013-library-name-overrides.yaml`(이름 고침 UPDATE). 트리거 파일은 dev `CLAUDE.md` 규칙대로 formatted SQL: 첫 줄 `--liquibase formatted sql`, `splitStatements:false`, `CREATE OR REPLACE`, `runOnChange:true` [확정] (사용자 승인, 2026-10-11, 설계 검토)
   - 교보 대여·혼합 11곳(2664~2674): `PRE_DEPLOYMENT`가 남아 있으므로 `library/008-library-candidates.csv`와 `collection/002-collection-link.csv`에서 그 줄을 지우고 로컬 `db`·`db-test`를 초기화해 다시 적용 [확정] (사용자: "그냥 DB에서 삭제", 2026-10-10; ADR-0067). 이유: 아직 다른 사용자에게 배포되지 않음 (사용자: "이거 다른 사용자들에게 배포 안 되었어. 그냥 DB에서 삭제", 2026-10-10)
-- 사이클 13 Liquibase — 설계됨(미구현, 사이클 13) (`docs/cycles/13-crawler-to-dev/design-delta.md` "데이터"):
-  - `collection/001-collection-schema.yaml`: 칸 `candidate_library_count` → `other_library_count`, 제약 `catalog_import_candidate_library_count_check` → `catalog_import_other_library_count_check` 이름만 직접 고침(49·50행). 배포 전 규칙(`PRE_DEPLOYMENT`)으로 기존 파일을 고치므로 체크섬이 바뀜 → 고침 방식 [확정] (사용자 선택 "기존 파일을 고침", 2026-10-12, 사이클 14와 같은 방식). 로컬 `db`·`db-ops`는 같은 이름 바꾸기 SQL + `databasechangelog.md5sum` NULL로 데이터를 지키며 맞춤(dev 세션이 함), `db-test`는 다시 띄움 [확정] (사용자 선택 "가벼운 방법", 2026-10-12). 이번 사이클에서 기존 파일을 고치는 것은 이 하나
-  - `collection/006-library-insert-run.yaml`: 새 표 `collection.library_insert_run`만 [안: 번호는 dev의 마지막 파일 다음]
-  - `library/015-library-name-1215.yaml`: 1215 이름 고침 [안]. 운영 역할 DB에도 판 2 반영 **전에** 적용돼 있어야 도서관 해시가 맞음
-  - master(`db.changelog-master.yaml`) 끝줄은 사이클 13(`collection/006`, `library/015`)과 사이클 14(`popular/001` → `picks/001`)가 함께 손댐. 번호는 겹치지 않지만 병합 때 끝줄 순서를 확인
+- 사이클 13 Liquibase — 구현됨 (사이클 13, 회고 2026-10-14) (`docs/cycles/13-crawler-to-dev/design-delta.md` "데이터"):
+  - `collection/001-collection-schema.yaml`: 칸 `candidate_library_count` → `other_library_count`, 제약 `catalog_import_candidate_library_count_check` → `catalog_import_other_library_count_check` 이름만 직접 고침(설명 주석이 붙어 지금 52·53행, `collection/001-collection-schema.yaml:36-53`). 배포 전 규칙(`PRE_DEPLOYMENT`)으로 기존 파일을 고치므로 체크섬이 바뀜 → 고침 방식 [확정] (사용자 선택 "기존 파일을 고침", 2026-10-12, 사이클 14와 같은 방식). 로컬 `db`·`db-ops`는 같은 이름 바꾸기 SQL + `databasechangelog.md5sum` NULL로 데이터를 지키며 맞춤(dev 세션이 함), `db-test`는 다시 띄움 [확정] (사용자 선택 "가벼운 방법", 2026-10-12). 이번 사이클에서 기존 파일을 고치는 것은 이 하나
+  - `collection/006-library-insert-run.yaml`(changeset id `collection-006-library-insert-run`): 새 표 `collection.library_insert_run`만 [확정] (dev 구현 확인, 2026-10-14)
+  - `library/015-library-name-1215.yaml`: 1215 이름 고침 [확정] (dev 구현 확인, 2026-10-14). 운영 역할 DB에도 판 2 반영 **전에** 적용돼 있어야 도서관 해시가 맞음
+  - master(`db.changelog-master.yaml`) 끝줄은 사이클 13(`collection/006`, `library/015`)과 사이클 14(`popular/001` → `picks/001`)가 함께 손댐 — 합친 결과(실제 끝): `# cycle 13` 주석 아래 `library/015` → `collection/006`, 그 뒤 `# cycle 14: librarian picks (ADR-0089)` + `picks/001-picks-schema.yaml` (dev master 92~94행) [확정] (dev 구현 확인, 2026-10-14)
   - 앞으로 도서관 seed changeset을 만들지 않음 — 새 도서관은 `collection` 넣기 명령으로 [확정] (ADR-0084)
 - CHECK, 부분 인덱스, `UNIQUE NULLS NOT DISTINCT`는 Liquibase OSS YAML이 지원하지 않아 changeset 안의 `sql`로 만듦
 - **배포 전 규칙** [확정] (사용자, 2026-09-28): dev의 `db/changelog/PRE_DEPLOYMENT` 파일이 있는 동안에는 이미 적용된 changeset도 고칠 수 있습니다(로컬 DB를 지우고 다시 적용). 첫 배포 때 이 파일을 지우고, 그 뒤로는 새 파일만 더합니다. 그래서 사이클 02 스키마 변경은 `library/001`에 합쳐져 있습니다
@@ -57,7 +61,7 @@ erDiagram
 ```
 
 - `COLLECTION_LINK`는 사이클 07에 더한 표입니다(구현됨 (사이클 07)). `BOOK`·`HOLDING`의 자세한 관계는 아래 `catalog` 그림.
-- `PICK`(스키마 `picks`)은 사이클 14에 더하는 표입니다 — 설계됨(미구현, 사이클 14). 사이클 10의 `RANKING_ENTRY`(스키마 `popular`)는 지움. 자세한 것은 아래 `picks` 절.
+- `PICK`(스키마 `picks`)은 사이클 14에 더한 표입니다 — 구현됨 (사이클 14). 사이클 10의 `RANKING_ENTRY`(스키마 `popular`)는 지움 — 구현됨 (사이클 14). 자세한 것은 아래 `picks` 절.
 
 ## 스키마 `region` (소유: `region` 모듈) — 구현됨
 
@@ -130,7 +134,7 @@ erDiagram
   - seed를 다시 만드는 방식 [확정] (사용자 승인, 2026-10-11, `docs/cycles/08-polish-swap-memory/easy/2026-10-11-midpoint-decisions.html`): 첫 배포 전까지는 번호로 UPDATE하는 changeset을 더함 → 첫 배포 바로 전에 seed를 한 번 다시 만듦 → 배포 뒤에는 seed를 고정하고 바뀐 것은 새 changeset으로 냄. 배경: seed CSV를 다시 만들면 이미 적용된 `loadData`의 checksum이 바뀜 (dev 설명; Liquibase는 적용된 changeset이 바뀌면 checksum 오류, https://docs.liquibase.com/concepts/changelogs/attributes/runonchange.html 확인 2026-10-11)
 - 이번 괄호 떼기(사이클 09)는 한 번만 하는 예외이고, 그 뒤에는 "한 번 정한 이름은 바꾸지 않음"(예외: 공식 개명·틀린 이름, 이름 고침 목록)을 지킴 [확정] (ADR-0071, spec R1-5)
 - 도서관을 찾고·넣고·끄는 절차는 dev `docs/library-maintenance.md`에 있습니다 (C2-U-7). plan `collection-method.md`와 겹침. **절차의 원본 = dev `library-maintenance.md`, 조사 기록·근거 = plan** [확정] (사용자, 2026-10-01. `docs/reference-index.md`). dev `plan-feedback.md` C2-U-7에 대한 답은 다음 인계서로 전달
-- 사이클 13 — 설계됨(미구현, 사이클 13) (ADR-0083·0084·0093): 칸 변경 없음. 새 도서관 줄과 가입 규칙 줄은 seed가 아니라 `library`의 공개 `LibraryRegistry.add`(`collection` 넣기 명령이 부름)로 들어가고, 번호는 부르는 쪽이 정함(`id`가 `GENERATED BY DEFAULT AS IDENTITY`라 직접 넣을 수 있음, 넣은 뒤 `setval(pg_get_serial_sequence('library.library','id'), GREATEST(max(id), 시퀀스 값))` [안]). 같은 번호가 있으면 실패, 값 검사는 이 표의 CHECK·UNIQUE. 넣기 비교용 읽기 `LibraryRegistry.listAll()`(꺼진 곳 포함, `collection`은 이 표를 읽지 않음). 1215 `name` `한화S&amp;C` → `한화S&C` [확정] (사전 결정 8), changeset `library/015-library-name-1215.yaml` [안]
+- 사이클 13 — 구현됨 (사이클 13, 회고 2026-10-14) (ADR-0083·0084·0093): 칸 변경 없음. 새 도서관 줄과 가입 규칙 줄은 seed가 아니라 `library`의 공개 `LibraryRegistry.add`(`collection` 넣기 명령이 부름)로 들어가고, 번호는 부르는 쪽이 정함(`id`가 `GENERATED BY DEFAULT AS IDENTITY`라 직접 넣을 수 있음, 넣은 뒤 `setval(pg_get_serial_sequence('library.library','id'), GREATEST(max(id), 시퀀스 값))` [확정] (dev 구현 확인, `JdbcLibraryRegistry.java:81-82`)). 같은 번호가 있으면 실패, 값 검사는 이 표의 CHECK·UNIQUE. 넣기 비교용 읽기 `LibraryRegistry.listAll()`(꺼진 곳 포함, 화면 종류 `platform_type` 포함, `collection`은 이 표를 읽지 않음). 1215 `name` `한화S&amp;C` → `한화S&C` [확정] (사전 결정 8), changeset `library/015-library-name-1215.yaml` [확정] (dev 구현 확인, 2026-10-14)
 
 ### 도서관 이름과 분류 — 구현됨 (사이클 09)
 
@@ -262,10 +266,11 @@ erDiagram
   - 쓴 뒤 `VACUUM (ANALYZE)` [확정] (D7). 사이클 08부터는 바꿔 끼우기 전에 `catalog_next`에 (구현됨 (사이클 08))
   - 실제 양(2026-10-05, 17단계 다시 가져오기): 읽음 22,051,238줄, 책 1,617,445, 소장 20,383,882, DB 9,812MB, 시간 36분 43초(2회차 40분 36초, 그동안 검색이 기다림), JVM 기본 최대 힙 8,096MB에서 끝남 [확정] (dev 측정)
 - 묶기 [확정]: ① 같은 플랫폼 코드(번호 체계: 교보·교보 구독형·YES24 V1~V3는 공유, 포털·강남구는 도서관 안) ② 교보식 코드 → 종이책 ISBN ③ 국가서지 ISBN (정리한 본제목·대표 저자·출판사로 하나만 맞을 때) ④ 정리한 전체 제목 + 대표 저자 + 정리한 출판사 (개발 중 사용자 결정, 2026-09-30). 규칙·수치는 `docs/research/ebook-catalog/same-book-isbn.md` 5절
-  - 사이클 12 — 설계됨(미구현, 사이클 12) (ADR-0082): ④를 "비교 제목(본제목에서 목록에 든 이용 안내 꼬리 뗌) + 권 표시(숫자·상중하·판 낱말) + 첫 저자 + 출판사"로 비교. 같은 키 안 ISBN이 둘 이상이면 판마다 따로, ISBN 없는 묶음끼리 한 책. 저자 "기타"·"unknown", 출판사 "기타"·"미상"·"unknown"은 값 없음(첫 저자가 자리 채움이면 다음 저자). 표·칸 변경 없음, 기록은 기존 `catalog_import`의 `book_count`·`kept/new/dropped_book_id_count`. 규칙 `docs/cycles/12-grouping-rules/spec.md` R1~R4
+  - 사이클 12 — 구현됨 (사이클 12, 회고 2026-10-14) (ADR-0082, ADR-NNNN-b): ④를 "비교 제목 + 권 표시 + 첫 저자 + 출판사"로 비교 [확정]. 비교 제목 = 본제목에서 꼬리 넷(`(PC만 열람 가능)`, `(스마트 패드 전용)`, `(잠 못 이루는 밤을 위해)`, `(한국인이 가장 좋아하는 단편소설)`)을 끝에서 떼고 숫자 앞의 0을 뗀 것, 본제목이 첫 저자 이름이면 전체 제목. 권 표시 = 본제목·짧은 부제 조각(공백 빼고 8자 이하)의 모든 숫자 + 긴 조각의 권·판처럼 보이는 숫자 + 권 자리의 로마·한자 숫자, 상·중·하, 판 낱말 11개. 같은 키 안 ISBN이 둘 이상이면 판마다 따로(ISBN 없는 묶음끼리 한 책), 부제가 둘 이상이면 같은 도서관이 서로 다른 부제를 따로 가질 때만 나눔(`SubtitleParts`). 저자 "기타"·"unknown", 출판사 "기타"·"미상"·"unknown"은 값 없음(첫 저자가 자리 채움이면 다음 저자). 판 표시·ISBN 없는 다른 판은 지금처럼 합쳐짐(받아들인 위험, 사용자: "규칙 더하지 않음 (Recommended)", 2026-10-14). 표·칸 변경 없음, 기록은 기존 `catalog_import`의 `book_count`·`kept/new/dropped_book_id_count`
+  - 실제 양 (2026-10-14, 같은 사본 `ebook-catalog-2026-10-12-0135.sqlite`, `compact`, 가져오기 기록 9번) [확정] (dev 측정, `plan-feedback.md` 3479행): 책 1,563,167(사이클 11 1,619,668), 사람 1,740,854, 소장 17,778,801. 번호(8번 대비) 이어 씀 1,550,778 / 새 12,389 / 사라짐 0, 사이클 12 전 대비 합쳐짐 67,129·나뉨 10,932. 확정 규칙 dry run에서 ISBN으로 나뉨 7,529, 자리 채움으로 키 없음 60,672, 부제로 나뉨 12,389. 규칙 원본 `docs/research/ebook-catalog/same-book-isbn.md` 5.7절
 - 국가서지 파일 위치: dev 저장소 안 `data/nlk/` (git 제외, 사용자 결정 2026-09-30). 인계서 [안]은 저장소 밖이었음. 사이클 08부터 TTL에서 뽑은 원문은 `collection.national_bibliography_record`에 남김(아래 `collection` 절, ADR-0069)
 
-### 가져오기: 새 표에 쓰고 바꿔 끼우기 — 구현됨 (사이클 08), 따로 하기(내보내기·반영·마저·지우기)는 구현됨 (사이클 11, 중간 회고 2026-10-12)
+### 가져오기: 새 표에 쓰고 바꿔 끼우기 — 구현됨 (사이클 08), 따로 하기(내보내기·반영·마저·지우기)는 구현됨 (사이클 11, 회고 2026-10-14)
 
 ADR-0065(가져오기는 새 표에 쓰고 바꿔 끼운다), ADR-0070(소장 번호 잇기), ADR-0062(책 번호 잇기 유지). 흐름 그림은 `flows.md` 흐름 20. 절차는 dev `docs/maintenance/3-import.md` 8~12절.
 
@@ -280,10 +285,10 @@ ADR-0065(가져오기는 새 표에 쓰고 바꿔 끼운다), ADR-0070(소장 �
 - 단계별 시간은 `collection.catalog_import.step_seconds`에 남김(키는 아래 `collection` 절). 먼저 쓰기 단계 안의 시간을 나눠 잰 뒤 가장 느린 곳만 더 고침 [확정] (ADR-0065). 가져오기 #2에서 가장 긴 것은 첫 읽기 `read` 826초와 두 번째 읽기 `holdings_read` 514초, 읽기 방식은 이번에 바꾸지 않음 (dev)
 - 메모리 설정 (ADR-0066): PostgreSQL `shared_buffers`·`effective_cache_size`·`work_mem`은 dev `compose.yaml`의 `db` `command:`에 `-c 이름=${환경 변수:-기본값}` [확정] 자리 (사용자 승인, 2026-10-11). 컨테이너 `mem_limit`, `shm_size: 128mb`는 측정 단계에서만, 커밋하지 않음 [확정] (사용자 승인, 2026-10-11). 측정 순서·멈추는 기준은 `docs/cycles/08-polish-swap-memory/research.md` 7절(첫 쪽 1초 안 + 기준 대비 20% 안) [확정] (사용자 승인, 2026-10-06)
   - 값 — 구현됨 (사이클 08), 모두 로컬 PC(WSL2, 32GB) 기준 (dev 측정 2026-10-11): compose 기본값 `shared_buffers` 64MB, `effective_cache_size` 768MB, `work_mem` 4MB (`.env.example` 같음), 컨테이너 상한은 권장 1GB로 적기만 함, 서비스 힙 512MB(`backend/build.gradle` `bootRun` 기본 `-Xmx512m`, 속성 `-PbootRunXmx`로 바꿈) [확정] (사용자: DB는 "한 단계 여유롭게 하고 운영 서버에서는 다시 재도록 남겨줘", 서비스 힙 "512MB (권장)", 2026-10-11). 운영 서버가 정해지면 같은 도구(dev `scripts/catalog/measure_round.py`, 상한 단계는 페이지 캐시를 비우고)로 다시 잼 → backlog [확정] (사용자 승인, 2026-10-11)
-  - 가져오기 힙: `-PbootRunXmx=6g`(dev `3-import.md`). 4GB는 첫 읽기에서 멈춤(첫 읽기가 값별 줄 수를 모두 들고 있음, 살아 있는 데이터 4,066MB). 6GB로 끝까지 가는지는 측정 중(AC-12) [확인 필요]
+  - 가져오기 힙: 사이클 08 방식(지금 `objects`)은 `-PbootRunXmx=6g`, 4GB는 첫 읽기에서 멈춤(살아 있는 데이터 4,066MB). 사이클 11부터 기본 `compact`는 2GB, `sql`은 1GB에서 끝까지 [확정] (dev 측정, `plan-feedback.md` 3022~3048행). 사이클 12 새 규칙 뒤 `objects`는 살아 있는 데이터 약 5,751MB라 `-PbootRunXmx=8g` 권장 [확정] (dev `plan-feedback.md` 3402행, `3-import.md` 38행)
   - 서비스 힙 512MB는 동시 검색이 많을 때(응답 본문 최대 4MB × 100) 여유가 작음 (dev) [확인 필요] (실제 이용 기록으로 보거나 본문 상한을 낮출지 사용자에게 질문)
 
-#### 따로 하기: 내 PC에서 만들고 운영 DB에는 파일로 — 구현됨 (사이클 11, 중간 회고 2026-10-12) — AC-1~AC-7·AC-11~AC-15 실데이터 통과(dev `plan-feedback.md` "# 사이클 11" 중간 전달(2828~2968행, `ac26ee2`))
+#### 따로 하기: 내 PC에서 만들고 운영 DB에는 파일로 — 구현됨 (사이클 11, 회고 2026-10-14) — AC-1~AC-7·AC-11~AC-15 실데이터 통과(dev `plan-feedback.md` "# 사이클 11" 중간 전달(2828~2968행, `ac26ee2`))
 
 ADR-0078. 흐름 그림은 `flows.md` 흐름 27(내보내기)·28(반영)·29(마저 바꿔 끼우기·지우기)과 "내 PC의 `catalog_next` 상태". 위 순서 ①~⑤를 모드에 따라 두 DB에 나눠 돌립니다. 모드 `in-place`(기본)는 위 순서 그대로입니다.
 
@@ -332,7 +337,7 @@ erDiagram
   CATALOG_IMPORT }o..o| LOAD_MANIFEST : "export_id (파일로만 이어짐, FK 없음)"
 ```
 
-`catalog_next.load_manifest` — 실행 중에만 있는 한 줄 표, Liquibase 아님 (구현됨 (사이클 11, 중간 회고 2026-10-12), 같은 줄을 `row_to_json`으로 표 COMMENT에도 넣음). 내보낼 때 만들고, 반영·마저 때 복원 뒤 지움. 표 [확정] (설계 #1), 칸 이름 [안].
+`catalog_next.load_manifest` — 실행 중에만 있는 한 줄 표, Liquibase 아님 (구현됨 (사이클 11, 회고 2026-10-14), 같은 줄을 `row_to_json`으로 표 COMMENT에도 넣음). 내보낼 때 만들고, 반영·마저 때 복원 뒤 지움. 표 [확정] (설계 #1), 칸 이름 [안].
 
 | 칸 | 타입 | 설명 |
 |---|---|---|
@@ -344,7 +349,7 @@ erDiagram
 | `columns_hash` | text | 네 표의 (표, 칸, 타입) 목록 SHA-256. 구현에서 `notes` 밖 칸으로 뺌(`catalog`가 `notes`를 해석하지 않게, `Baseline` 레코드 안에서 `equals` 하나로 비교) |
 | `notes` | jsonb | 도서관·연결표 해시, 내 PC 가져오기 기록(`catalog`는 해석하지 않음) |
 
-- `format_version`은 지금 1. 사이클 13에서 도서관 부분을 실으면 2로 올리고, 옛 앱은 다른 판 파일을 반영하지 않음(지금 코드가 이미 거절) (dev, 2026-10-12)
+- `format_version`은 2 (사이클 13, `JdbcCatalogLoad.java:76` `FORMAT_VERSION = 2`). `notes.libraryPart`에 새 도서관 부분을 실음. 옛 앱은 다른 판 파일을 반영하지 않음 [확정] (dev 구현 확인, 2026-10-14). 4만 자 넘는 `notes`도 `Manifests.parse`가 그대로 읽음(`ManifestsTests`)
 - 시퀀스 값 = `CASE WHEN is_called THEN last_value ELSE last_value - 1 END`. IDENTITY 시퀀스 값은 덤프·복원으로 그대로 넘어감(복원 뒤 `setval` 없음) [확정] (dev 프로토타입 1)
 
 ### 정리 규칙을 바꿀 때 — [확정] (사용자 제안, 2026-10-11: "이렇게 해줘"), ADR-0069
@@ -359,9 +364,9 @@ erDiagram
 - 정리 규칙 판 번호는 두지 않음: 책·사람·소장 표는 다시 가져오면 통째로 새로 만들어지고, 국가서지는 원문을 남기므로 규칙과 상관없음
 - dev 가져오기 절차(`docs/maintenance/3-import.md` 12절)에 위 표를 적음 — 구현됨 (사이클 08, AC-16)
 
-## 스키마 `collection` (소유: `collection` 모듈) — 구현됨 (사이클 07), 사이클 08 변경 구현됨 (사이클 08), 사이클 11 칸 구현됨 (사이클 11, 중간 회고 2026-10-12), 사이클 13 변경 설계됨(미구현, 사이클 13)
+## 스키마 `collection` (소유: `collection` 모듈) — 구현됨 (사이클 07), 사이클 08 변경 구현됨 (사이클 08), 사이클 11 칸 구현됨 (사이클 11, 회고 2026-10-14), 사이클 13 변경 구현됨 (사이클 13, 회고 2026-10-14)
 
-수집 DB 도서관 번호와 서비스 도서관 번호의 짝, 그리고 가져오기 기록입니다(ADR-0052, ADR-0060). 사이클 08부터 국가서지 TTL에서 뽑은 원문과 그 파일 지문도 둡니다(ADR-0069, 구현됨 (사이클 08)). 다른 모듈 표에는 FK를 두지 않고 번호만 둡니다. 사이클 07까지의 짝 줄은 Liquibase seed(CSV, 번호 명시)로 넣었고, 사이클 13부터 새 짝 줄은 넣기 명령이 새 도서관과 같은 트랜잭션에서 넣고 넣기 실행 기록(`library_insert_run`)을 남깁니다 — 설계됨(미구현, 사이클 13) (ADR-0084).
+수집 DB 도서관 번호와 서비스 도서관 번호의 짝, 그리고 가져오기 기록입니다(ADR-0052, ADR-0060). 사이클 08부터 국가서지 TTL에서 뽑은 원문과 그 파일 지문도 둡니다(ADR-0069, 구현됨 (사이클 08)). 다른 모듈 표에는 FK를 두지 않고 번호만 둡니다. 사이클 07까지의 짝 줄은 Liquibase seed(CSV, 번호 명시)로 넣었고, 사이클 13부터 새 짝 줄은 넣기 명령이 새 도서관과 같은 트랜잭션에서 넣고 넣기 실행 기록(`library_insert_run`)을 남깁니다 — 구현됨 (사이클 13, 회고 2026-10-14) (ADR-0084).
 
 ```mermaid
 erDiagram
@@ -378,7 +383,7 @@ erDiagram
     int holding_count
     int skipped_count
     int registered_library_count
-    int other_library_count "사이클 13에 candidate_library_count에서 이름 바꿈 (설계됨)"
+    int other_library_count "사이클 13에 candidate_library_count에서 이름 바꿈 (구현됨)"
     jsonb skipped_by_reason
     int kept_book_id_count
     int new_book_id_count
@@ -405,7 +410,7 @@ erDiagram
   }
   LIBRARY_INSERT_RUN {
     bigint id PK
-    text report_id "사이클 13, 설계됨"
+    text report_id "사이클 13, 구현됨"
     timestamptz ran_at
     text snapshot
     int inserted_count
@@ -428,36 +433,36 @@ erDiagram
 | `catalog_import.source` | text | NOT NULL | 예: 사본 파일 이름 | |
 | `catalog_import.imported_at` | timestamptz | NOT NULL | | |
 | `catalog_import.book_count`, `holding_count`, `skipped_count` | integer | NOT NULL, CHECK ≥ 0 | 요약(옛 `catalog.catalog_import`와 같은 칸) | |
-| `catalog_import.registered_library_count`, `other_library_count` | integer | NOT NULL, CHECK ≥ 0 (`other_library_count`의 제약 `catalog_import_other_library_count_check`) | 가져온 도서관 수: 사이클 06까지 있던 도서관 / 그 밖의 도서관(사이클 07부터 넣은 곳)(AC-11). **사이클 13 — 설계됨(미구현, 사이클 13)**: `candidate_library_count` → `other_library_count`, 제약 `catalog_import_candidate_library_count_check` → `catalog_import_other_library_count_check`("후보" 이름 없애기, 사이클 13 AC-11). 기존 `collection/001-collection-schema.yaml` 49·50행을 직접 고침(배포 전 `PRE_DEPLOYMENT` 동안 dev 규칙, 사이클 14와 같은 방식) → 로컬 `db`·`db-ops`는 데이터를 지키며 같은 이름 바꾸기 SQL + `databasechangelog.md5sum` NULL로 맞춤(dev 세션이 함, `db-test`는 다시 띄움) [확정] (사용자 선택 "가벼운 방법", 2026-10-12). Java `ImportReport.candidateLibraries`·`ImportRecords`와 그 시험의 칸 이름도 바꿈 | 칸 [확정] (dev 구현 확인, 2026-10-05). 바꿈 [확정] (설계 결정 4), 방식 [확정] (사용자 선택 "기존 파일을 고침", 2026-10-12, cycle-close 검토), 새 이름 [안] |
+| `catalog_import.registered_library_count`, `other_library_count` | integer | NOT NULL, CHECK ≥ 0 (`other_library_count`의 제약 `catalog_import_other_library_count_check`) | 가져온 도서관 수: 사이클 06까지 있던 도서관 / 그 밖의 도서관(사이클 07부터 넣은 곳)(AC-11). **사이클 13 — 구현됨 (사이클 13, 회고 2026-10-14)**: `candidate_library_count` → `other_library_count`, 제약 `catalog_import_candidate_library_count_check` → `catalog_import_other_library_count_check`("후보" 이름 없애기, 사이클 13 AC-11). 기존 `collection/001-collection-schema.yaml`을 직접 고침(지금 52·53행)(배포 전 `PRE_DEPLOYMENT` 동안 dev 규칙, 사이클 14와 같은 방식) → 로컬 `db`·`db-ops`는 데이터를 지키며 같은 이름 바꾸기 SQL + `databasechangelog.md5sum` NULL로 맞춤(dev 세션이 함, `db-test`는 다시 띄움) [확정] (사용자 선택 "가벼운 방법", 2026-10-12). Java `ImportReport`·`ImportRecords`·`Notes`의 `otherLibraries`와 그 시험의 칸 이름도 바꿈. 로컬 `db` 맞추기 SQL은 dev `docs/maintenance/3-import.md` 13-5 (데이터 그대로, 9단계에서 확인) | 칸 [확정] (dev 구현 확인, 2026-10-05). 바꿈 [확정] (설계 결정 4), 방식 [확정] (사용자 선택 "기존 파일을 고침", 2026-10-12, cycle-close 검토), 새 이름 [확정] (dev 구현 확인, 2026-10-14) |
 | `catalog_import.skipped_by_reason` | jsonb | NOT NULL | 이유별 건너뛴 줄, 예 `{"library_not_in_service": 123, ...}` | [확정] (dev 구현 확인, 2026-10-05) |
 | `catalog_import.kept_book_id_count`, `new_book_id_count`, `dropped_book_id_count` | integer | NOT NULL DEFAULT 0, CHECK ≥ 0 | 책 번호 잇기 셈(옛 번호를 이은 책, 새 번호 책, 지금 어느 책에도 없는 옛 번호) | [확정] (dev 구현 확인, 2026-10-05) |
 | `catalog_import.collected_from`, `collected_to` | timestamptz | NULL 허용(옛 줄) | 그 가져오기에 들어간 도서관 수집 시각(`collected_at`)의 최솟값·최댓값. 건너뛴 도서관은 뺌(스냅숏에 넣는 것과 같은 목록). 실데이터 2026-09-29 15:27:09Z ~ 2026-10-04 22:22:55Z (AC-7). 구현됨 (사이클 08) | 칸 [확정] (사용자 승인, 2026-10-11), 이름 [확정] (dev 구현 확인, 2026-10-11). 근거: ADR 없음, 사용자 결정 (사이클 08 scope 7, "이거 넣어주는 것으로 해", 2026-10-05) |
-| `catalog_import.step_seconds` | jsonb | NOT NULL DEFAULT `'{}'` | 단계별 시간(초, 숫자, 순서 유지; 공개 `CatalogLoad.Result`의 `steps`). 키 [확정] (dev 구현 확인, 2026-10-11; 늘어난 키 받아들임 [확정] (사용자 승인, 2026-10-11, `docs/cycles/08-polish-swap-memory/easy/2026-10-11-midpoint-decisions.html`)), 읽는 법은 dev `3-import.md` 10절: 앞부분 `read`(첫 읽기), `group`(코드로 묶기), `nb`(국가서지 원문 읽기 또는 TTL 풀기), `normalize`(원문 다듬어 키 만들기), `same_text`(같은 글 묶기); 쓰기 `books_copy`(책·사람 임시 표 COPY), `holdings_read`(두 번째 읽기에서 COPY를 뺀 시간), `holdings_copy`, `match`(책·소장 번호 잇기 맞대기); 옛 방식(사이클 07 쓰기)만 `move`(TRUNCATE~커밋 = 검색이 멈춘 시간)·`vacuum`; 새 방식(바꿔 끼우기)만 `write`(`catalog_next`에 쓰기), `index`(색인·제약), `analyze`(`VACUUM (ANALYZE)`), `swap`(바꿔 끼우기); 마지막 `load`(`replaceAll` 전체). 가져오기 #2 값(초): read 826, group 12, nb 475, normalize 46, same_text 126, books_copy 45, holdings_read 514, holdings_copy 22, match 139, write 147, index 99, analyze 43, swap 0.33, load 1,010 (dev 측정, 2026-10-11). 구현됨 (사이클 08). **사이클 11 새 키 — 설계됨(미구현, 사이클 11)**: 내보내기 `dump`·`export`, 반영 `compare`·`restore`·`index`·`analyze`·`swap`·`apply`, 마저 `index`·`analyze`·`swap`·`finish`, `sql` 방식 `rows_copy`. 운영 반영 줄에는 내 PC 기록(단계 시간 포함)과 반영 단계 시간을 한 줄로 [확정] (스펙 R-A5). `restore`·`index`·`analyze`·`swap` [확정], 나머지 [안] | 칸 [확정] (dev 구현 확인, 2026-10-11). 근거: ADR-0065("먼저 쓰기 단계 안의 시간을 나눠 잰 뒤") |
+| `catalog_import.step_seconds` | jsonb | NOT NULL DEFAULT `'{}'` | 단계별 시간(초, 숫자, 순서 유지; 공개 `CatalogLoad.Result`의 `steps`). 키 [확정] (dev 구현 확인, 2026-10-11; 늘어난 키 받아들임 [확정] (사용자 승인, 2026-10-11, `docs/cycles/08-polish-swap-memory/easy/2026-10-11-midpoint-decisions.html`)), 읽는 법은 dev `3-import.md` 10절: 앞부분 `read`(첫 읽기), `group`(코드로 묶기), `nb`(국가서지 원문 읽기 또는 TTL 풀기), `normalize`(원문 다듬어 키 만들기), `same_text`(같은 글 묶기); 쓰기 `books_copy`(책·사람 임시 표 COPY), `holdings_read`(두 번째 읽기에서 COPY를 뺀 시간), `holdings_copy`, `match`(책·소장 번호 잇기 맞대기); 옛 방식(사이클 07 쓰기)만 `move`(TRUNCATE~커밋 = 검색이 멈춘 시간)·`vacuum`; 새 방식(바꿔 끼우기)만 `write`(`catalog_next`에 쓰기), `index`(색인·제약), `analyze`(`VACUUM (ANALYZE)`), `swap`(바꿔 끼우기); 마지막 `load`(`replaceAll` 전체). 가져오기 #2 값(초): read 826, group 12, nb 475, normalize 46, same_text 126, books_copy 45, holdings_read 514, holdings_copy 22, match 139, write 147, index 99, analyze 43, swap 0.33, load 1,010 (dev 측정, 2026-10-11). 구현됨 (사이클 08). **사이클 11 새 키 — 구현됨 (사이클 11, 회고 2026-10-14)**: 내보내기 `dump`·`export`, 반영 `compare`·`restore`·`index`·`analyze`·`swap`·`apply`, 마저 `index`·`analyze`·`swap`·`finish`, `sql` 방식 `rows_copy`. 운영 반영 줄에는 내 PC 기록(단계 시간 포함)과 반영 단계 시간을 한 줄로 [확정] (스펙 R-A5). `restore`·`index`·`analyze`·`swap` [확정], 나머지 [안] | 칸 [확정] (dev 구현 확인, 2026-10-11). 근거: ADR-0065("먼저 쓰기 단계 안의 시간을 나눠 잰 뒤") |
 | `catalog_import.status` | text | NOT NULL DEFAULT 'SUCCEEDED', CONSTRAINT `catalog_import_status_check` CHECK IN ('SUCCEEDED','FAILED') | 가져오기 결과. 바꿔 끼우기 전에 실패해도 줄을 남기고(옛 표 그대로), 그때까지 센 숫자를 둠. 구현됨 (사이클 08) | [확정] (dev 구현 확인, 2026-10-11; 받아들임 [확정] (사용자 승인, 2026-10-11, 같은 결정 페이지)). 설계에 없던 칸, 이유 [이유 미확인] |
-| `catalog_import.failure_reason` | text | NULL. CONSTRAINT `catalog_import_failure_check` CHECK `(status = 'FAILED') = (failure_reason IS NOT NULL)` | 실패 이유: `lock_not_acquired`(잠금 5번 다 못 얻음), `outside_foreign_key`(다른 표가 catalog 표를 외래 키로 가리킴), `error`(그 밖). 공개 API 예외 `CatalogLoad.NotSwappedException(reason)`. 구현됨 (사이클 08). 사이클 11: 값 `mismatch`(반영 전 두 DB 비교가 다름, `failure_detail`에 무엇이 다른지) — 값 CHECK가 없어 changeset 없음 [확정] (dev `003-import-period-and-timings.yaml` 30-42행 확인, 2026-10-12), 설계됨(미구현, 사이클 11) | [확정] (dev 구현 확인, 2026-10-11; 받아들임 [확정] (사용자 승인, 2026-10-11)) |
+| `catalog_import.failure_reason` | text | NULL. CONSTRAINT `catalog_import_failure_check` CHECK `(status = 'FAILED') = (failure_reason IS NOT NULL)` | 실패 이유: `lock_not_acquired`(잠금 5번 다 못 얻음), `outside_foreign_key`(다른 표가 catalog 표를 외래 키로 가리킴), `error`(그 밖). 공개 API 예외 `CatalogLoad.NotSwappedException(reason)`. 구현됨 (사이클 08). 사이클 11: 값 `mismatch`(반영 전 두 DB 비교가 다름, `failure_detail`에 무엇이 다른지) — 값 CHECK가 없어 changeset 없음 [확정] (dev `003-import-period-and-timings.yaml` 30-42행 확인, 2026-10-12), 구현됨 (사이클 11, 회고 2026-10-14) | [확정] (dev 구현 확인, 2026-10-11; 받아들임 [확정] (사용자 승인, 2026-10-11)) |
 | `catalog_import.failure_detail` | text | NULL | 실패 설명 글. 구현됨 (사이클 08) | [확정] (dev 구현 확인, 2026-10-11) |
-| `catalog_import.export_id` | uuid | NULL 허용(내보내기를 거치지 않은 줄) | 반영(`apply`)·마저(`finish`) 줄이 받은 파일의 `load_manifest.export_id`. 한 내보내기에 운영 반영 한 줄 + 내 PC `finish` 한 줄을 이음. 설계됨(미구현, 사이클 11) | 칸·뜻 [확정] (설계 #7), 이름 [안]. 근거 ADR-0078 |
-| `catalog_import.exported_at` | timestamptz | NULL 허용. CHECK `(export_id IS NULL) = (exported_at IS NULL)` | 그 파일을 내보낸 시각(`load_manifest.exported_at`). 설계됨(미구현, 사이클 11) | 칸·뜻 [확정] (설계 #7), 이름·제약 이름 [안] |
+| `catalog_import.export_id` | uuid | NULL 허용(내보내기를 거치지 않은 줄) | 반영(`apply`)·마저(`finish`) 줄이 받은 파일의 `load_manifest.export_id`. 한 내보내기에 운영 반영 한 줄 + 내 PC `finish` 한 줄을 이음. 구현됨 (사이클 11, 회고 2026-10-14) | 칸·뜻 [확정] (설계 #7), 이름 [안]. 근거 ADR-0078 |
+| `catalog_import.exported_at` | timestamptz | NULL 허용. CHECK `(export_id IS NULL) = (exported_at IS NULL)` | 그 파일을 내보낸 시각(`load_manifest.exported_at`). 구현됨 (사이클 11, 회고 2026-10-14) | 칸·뜻 [확정] (설계 #7), 이름·제약 이름 [안] |
 | `national_bibliography_record` | 표 | 없음(가져오기만 읽음) | 국가서지 TTL(Turtle, https://www.w3.org/TR/turtle/ 확인 2026-10-11)에서 뽑은 원문. 칸: `id` bigint 기본 키 `national_bibliography_record_pkey`, `isbn13` text NOT NULL(13자리), `title_raw` text NOT NULL, `author_raw` text NULL, `publisher_raw` text NULL. 색인 없음(가져오기가 처음부터 끝까지 읽기만 함) [확정] (사용자 승인, 2026-10-11, 설계 검토). **한 기록에 ISBN이 여럿이면 ISBN마다 한 줄**(`isbn13`은 13자리 유지) — 같은 키에 다른 ISBN이 둘 오므로 지금 규칙대로 "애매함"이 되어 결과는 같음 (dev). ISBN이나 제목이 없는 기록은 남기지 않음. 3,999,211줄(ISBN별), TTL을 풀며 쓰는 데 7분 55초 (dev 측정, 2026-10-11). 다듬지 않은 값이라 정리 규칙이 바뀌어도 그대로 씀. 가져올 때마다 지금 규칙으로 다듬어 키 → ISBN을 만듦. 구현됨 (사이클 08) (`collection/004-national-bibliography.yaml`, 코드 `NationalBibliographyStore`). 표에서 다시 읽는 시간(AC-15)은 측정 중 [확인 필요] | ISBN마다 한 줄 [확정] (사용자 승인, 2026-10-11, `easy/2026-10-11-midpoint-decisions.html`; 이유 [이유 미확인]). 남기기 [확정] (사용자 승인, 2026-10-10), 원문으로 [확정] (`catalog` 절 "정리 규칙을 바꿀 때"), 이름 [확정] (dev 구현 확인, 2026-10-11). 근거: ADR-0065(결과 남기기) → ADR-0069(원문으로) | 남기기 [확정] (사용자 승인, 2026-10-10), 원문으로 [확정] (`catalog` 절 "정리 규칙을 바꿀 때"), 이름 [안]. 근거: ADR-0065(결과 남기기) → ADR-0069(원문으로) |
 | `national_bibliography_source` | 표 (한 줄) | — | 원문을 뽑은 파일: `source_fingerprint` text NOT NULL, `built_at` timestamptz NOT NULL. 지문은 TTL 파일마다 `상대경로\|크기\|고친 시각(Instant)`을 경로 순으로 `;`로 이은 글자(TTL 20개) [확정] (dev 구현 확인, 2026-10-11; 설계는 "파일 이름 + 크기 + 고친 시각을 `\|`로"). 항상 한 줄. 지문이 같으면 원문을 다시 쓰고, 다르면 ① 지문 줄 지우고 커밋 → ② (한 트랜잭션) 원문 표 TRUNCATE + COPY + 지문 줄 INSERT → 커밋. 중간에 멈추면 지문이 없어 다음 가져오기가 처음부터 다시 풂 [확정] (사용자 승인, 2026-10-11, 설계 검토; 순서는 `NationalBibliographyTests`로 확인). 구현됨 (사이클 08) | 표로 남김 [확정] (사용자 승인, 2026-10-11), 이름 [확정] (dev 구현 확인, 2026-10-11). 근거: ADR-0069 |
-| `library_insert_run.id` | bigint | PK, IDENTITY | 새 도서관 넣기 실행마다 한 줄(지우지 않음). 설계됨(미구현, 사이클 13) | 표 [확정] (scope 도서관 날짜 3), 이름 [안] |
-| `library_insert_run.report_id` | text | NOT NULL, CHECK `^[0-9a-f]{12}$` | 보고서 번호 | [안] |
-| `library_insert_run.ran_at` | timestamptz | NOT NULL DEFAULT now() | | [안] |
-| `library_insert_run.snapshot` | text | NOT NULL | 수집 사본 파일 이름 | [안] |
-| `library_insert_run.inserted_count` | integer | NOT NULL, CHECK ≥ 0 | 넣은 도서관 수 | [안] |
-| `library_insert_run.join_surveyed_on` | date | NULL 허용 | 가입 조건 조사 기준일(규칙 폴더 날짜 파일). 성공한 줄 중 최신 값을 `GET /api/v1/join-surveys/latest`가 돌려줌 | 뜻 [확정] (ADR-0087), 이름 [안] |
-| `library_insert_run.status` | text | NOT NULL, CHECK IN ('SUCCEEDED','FAILED') | | [안] |
-| `library_insert_run.failure_detail` | text | NULL. CHECK `(status = 'FAILED') = (failure_detail IS NOT NULL)` | 실패 설명 | [안] |
-| `library_insert_run.payload` | jsonb | NOT NULL | 넣은 도서관·가입 규칙·짝 줄 그대로. `export`가 `load_manifest.notes.libraryPart`로 실음(ADR-0086) | [안] |
-| `library_insert_run` 부분 UNIQUE | — | `UNIQUE (report_id) WHERE status = 'SUCCEEDED'` | 같은 보고서로 두 번 넣지 않음 | [안] |
+| `library_insert_run.id` | bigint | PK, IDENTITY | 새 도서관 넣기 실행마다 한 줄(지우지 않음). 넣을 곳 0이면 줄 없음. 구현됨 (사이클 13, 회고 2026-10-14) | 표 [확정] (scope 도서관 날짜 3), 이름 [확정] (dev 구현 확인, 2026-10-14) |
+| `library_insert_run.report_id` | text | NOT NULL, CHECK `^[0-9a-f]{12}$` | 보고서 번호 | [확정] (dev 구현 확인, 2026-10-14) |
+| `library_insert_run.ran_at` | timestamptz | NOT NULL DEFAULT now() | | [확정] (dev 구현 확인, 2026-10-14) |
+| `library_insert_run.snapshot` | text | NOT NULL | 수집 사본 파일 이름 | [확정] (dev 구현 확인, 2026-10-14) |
+| `library_insert_run.inserted_count` | integer | NOT NULL, CHECK ≥ 0 | 넣은 도서관 수 | [확정] (dev 구현 확인, 2026-10-14) |
+| `library_insert_run.join_surveyed_on` | date | NULL 허용 | 가입 조건 조사 기준일(규칙 폴더 날짜 파일). 성공한 줄 중 최신 값을 `GET /api/v1/join-surveys/latest`가 돌려줌 (최신 = 최댓값) | 뜻 [확정] (ADR-0087), 이름 [확정] (dev 구현 확인, 2026-10-14) |
+| `library_insert_run.status` | text | NOT NULL, CHECK IN ('SUCCEEDED','FAILED') | | [확정] (dev 구현 확인, 2026-10-14) |
+| `library_insert_run.failure_detail` | text | NULL. CHECK `(status = 'FAILED') = (failure_detail IS NOT NULL)` | 실패 설명 | [확정] (dev 구현 확인, 2026-10-14) |
+| `library_insert_run.payload` | jsonb | NOT NULL | 넣은 도서관·가입 규칙·짝 줄 그대로. `export`가 `load_manifest.notes.libraryPart`로 실음(ADR-0086) | [확정] (dev 구현 확인, 2026-10-14) |
+| `library_insert_run` 부분 UNIQUE | — | 색인 `library_insert_run_report_id_succeeded_key` = `UNIQUE (report_id) WHERE status = 'SUCCEEDED'` | 같은 보고서로 두 번 넣지 않음 | [확정] (dev 구현 확인, `collection/006-library-insert-run.yaml:33-34`) |
 
-- 번호 1~280 도서관은 같은 번호끼리 짝(59·131 포함), 사이클 07에서 넣은 2,394곳은 서비스 새 번호(281~2674)와 짝, 2,674줄 [확정] (ADR-0052, dev 구현 확인, 2026-10-05)
-- 사이클 13 — 설계됨(미구현, 사이클 13) (ADR-0084·0086·0093): 넣기(`insert`)는 한 트랜잭션(`pg_advisory_xact_lock`)에서 `library.library`·`eligibility_rule`(`LibraryRegistry.add`) → `collection_link` → `library_insert_run` SUCCEEDED 줄, 제약 위반이면 ROLLBACK 뒤 FAILED 줄. 운영 반영(`apply`)은 파일의 `notes.libraryPart`에서 운영에 없는 도서관·짝 줄·성공한 실행 기록 줄을 넣음(같은 `report_id`의 성공 줄이 있으면 건너뜀) — 그래서 운영 DB에서도 기준일 API가 값을 냄. 반영 파일 판 2는 `load_manifest.notes.libraryPart` = 성공한 넣기 실행 기록의 `payload` 모음 [안: 키 이름], 새 표 없음. 흐름은 `flows.md` 흐름 32·33
+- 번호 1~280 도서관은 같은 번호끼리 짝(59·131 포함), 사이클 07에서 넣은 2,394곳은 서비스 새 번호(281~2674)와 짝, 2,674줄 [확정] (ADR-0052, dev 구현 확인, 2026-10-05). 2026-10-13 서비스 DB의 사이클 07 도서관 짝은 2,383줄(켜짐 2,381, 꺼짐 2): 2664~2674 11곳은 사이클 08에서 뺌(ADR-0067), 2194·2198은 `library/010`으로 꺼짐 [확정] (dev `plan-feedback.md` 3408~3412행)
+- 사이클 13 — 구현됨 (사이클 13, 회고 2026-10-14) (ADR-0084·0086·0093): 넣기(`insert`)는 한 트랜잭션(`pg_advisory_xact_lock`)에서 `library.library`·`eligibility_rule`(`LibraryRegistry.add`) → `collection_link` → `library_insert_run` SUCCEEDED 줄, 제약 위반이면 ROLLBACK 뒤 FAILED 줄(종료 5). 잠금 뒤 `nextId()`가 보고서 첫 번호와 다르면 넣지 않음(종료 4). 운영 반영(`apply`)은 파일의 `notes.libraryPart`에서 운영에 없는 도서관·짝 줄·성공한 실행 기록 줄을 넣음(같은 `report_id`의 성공 줄이 있으면 건너뜀. 이미 있는 번호가 다른 도서관이거나 짝이 다른 도서관을 가리키면 멈춤: 롤백, `catalog_import` `FAILED`·`error`·`library part: …`) — 그래서 운영 DB에서도 기준일 API가 값을 냄. 반영 파일 판 2는 `load_manifest.notes.libraryPart` = 성공한 넣기 실행 기록 전부(`reportId`·`ranAt`·`snapshot`·`insertedCount`·`joinSurveyedOn`·`payload`) [확정] (dev 구현 확인, 2026-10-14), 새 표 없음. 9단계 운영 흉내: 도서관 부분 1.0초(실행 기록 1, 도서관 6, 짝 6), `mismatch` 없음. 흐름은 `flows.md` 흐름 32·33
 - 사이클 08: 교보 대여·혼합 11곳(서비스 번호 2664~2674)의 짝 줄을 `002-collection-link.csv`에서 지움 → 짝 줄이 11줄 줄어듦 (구현됨 (사이클 08), ADR-0067). 수집 DB의 교보 대여·혼합 230곳은 `crawl_skip`(받지 않음) 표시 — 수집기 명령이 1곳에 약 50초라 24곳 뒤에는 같은 UPDATE를 한 트랜잭션으로 실행 (dev) [확정] (사용자 승인, 2026-10-11)
 - Liquibase: `collection/001-collection-schema.yaml`, `collection/002-collection-seed-candidates.yaml` + `002-collection-link.csv` (위 "Liquibase 파일" 목록). 사이클 08: `collection/003-import-period-and-timings.yaml`(changeset 둘: 수집 기간·단계별 시간, 상태·실패 칸), `collection/004-national-bibliography.yaml` [확정] (dev 구현 확인, 2026-10-11; 설계 [안]의 `004`·`005`와 번호가 다름)
-- 사이클 11 (구현됨 (사이클 11, 중간 회고 2026-10-12)): changeset `collection/005-import-export.yaml`(id `collection-005-import-export`, 제약 `catalog_import_export_check`) — `catalog_import`에 `export_id`·`exported_at`과 CHECK. 번호는 인계 때 dev의 마지막 `collection` 번호를 보고 정함(지금 004까지). `failure_reason` `mismatch`는 changeset 없음
-- 사이클 13 Liquibase — 설계됨(미구현, 사이클 13): `collection/006-library-insert-run.yaml`(새 표) [안], `collection/001` 칸·제약 이름 고침(위 "Liquibase 파일" 사이클 13 줄)
-- `collection`은 `library.library`를 읽지 않고, 짝 맞춘 서비스 도서관이 켜졌는지와 사이트 주소는 `LibraryCatalog.enabledLibraryRefs()`로 확인합니다 [확정] (dev 구현 확인, 2026-10-05). 사이클 13 넣기 비교는 `LibraryRegistry.listAll()`로 서비스 도서관 전체(꺼진 곳 포함)를 봄 — 설계됨(미구현, 사이클 13) [확정] (ADR-0093)
+- 사이클 11 (구현됨 (사이클 11, 회고 2026-10-14)): changeset `collection/005-import-export.yaml`(id `collection-005-import-export`, 제약 `catalog_import_export_check`) — `catalog_import`에 `export_id`·`exported_at`과 CHECK. 번호는 인계 때 dev의 마지막 `collection` 번호를 보고 정함(지금 004까지). `failure_reason` `mismatch`는 changeset 없음
+- 사이클 13 Liquibase — 구현됨 (사이클 13, 회고 2026-10-14): `collection/006-library-insert-run.yaml`(새 표) [확정] (dev 구현 확인, 2026-10-14), `collection/001` 칸·제약 이름 고침(위 "Liquibase 파일" 사이클 13 줄)
+- `collection`은 `library.library`를 읽지 않고, 짝 맞춘 서비스 도서관이 켜졌는지와 사이트 주소는 `LibraryCatalog.enabledLibraryRefs()`로 확인합니다 [확정] (dev 구현 확인, 2026-10-05). 사이클 13 넣기 비교는 `LibraryRegistry.listAll()`로 서비스 도서관 전체(꺼진 곳 포함)를 봄 — 구현됨 (사이클 13, 회고 2026-10-14) [확정] (ADR-0093)
 - 가져오기 기록에 사본의 수집 기간을 더함 [확정] (사용자: "이거 넣어주는 것으로 해", 2026-10-05) — `collected_from`·`collected_to` (위 표), 구현됨 (사이클 08)
 
 ## 스키마 `auth` (소유: `auth` 모듈), `modulith` (발행 저장소) — 구현됨(사이클 05, 2026-10-04 retro 반영)
@@ -601,9 +606,9 @@ erDiagram
 - 넣지 않는 것: 이메일·이름 등. 탈퇴하면 계정 번호도 남지 않음(ADR-0041)
 - JPA 엔티티 없이 `JdbcClient`(사이클 05 `auth`와 같은 방식, `mylibrary/internal/MyLibraryStore`) [확정] (dev 구현 확인, 2026-10-05)
 
-## 스키마 `picks` (소유: `picks` 모듈) — 설계됨(미구현, 사이클 14)
+## 스키마 `picks` (소유: `picks` 모듈) — 구현됨 (사이클 14, 회고 2026-10-14)
 
-국립중앙도서관 사서추천도서 Open API에서 주 1회 받은 최근 6번(추천 연월이 다른 최근 6개 달) 추천 책, 줄인 표지, 받기 기록입니다(ADR-0089·0091). 사이클 10 스키마 `popular`(`fetch_run`, `ranking_month`, `ranking_category`, `ranking_entry`, `cover`, 출판유통통합전산망 순위)를 대체하고 `popular`는 지웁니다 [확정] (ADR-0089). 스키마 이름 `picks`, 표·칸 이름 [확정] (사용자 승인 "이름·값: … 승인", 2026-10-12). 다른 모듈과 FK·조인이 없고, `catalog`와는 값으로만 맞춥니다(공용 캐시를 만들 때 `BookLookup.byIsbn13` → `BookLookup.byTitleAndAuthor`, ADR-0090). JPA 엔티티 없이 JdbcClient. 근거 `docs/cycles/14-librarian-picks/design-delta.md` "데이터".
+국립중앙도서관 사서추천도서 Open API에서 주 1회 받은 최근 12번(추천 연월이 다른 최근 12개 달, 약 2년) 추천 책 [확정] (사용자 결정, dev 2026-10-14; 처음 6번, ADR-NNNN), 줄인 표지, 받기 기록입니다(ADR-0089·0091). 사이클 10 스키마 `popular`(`fetch_run`, `ranking_month`, `ranking_category`, `ranking_entry`, `cover`, 출판유통통합전산망 순위)를 대체하고 `popular`는 지웠습니다 [확정] (ADR-0089) — 구현됨 (사이클 14). 스키마 이름 `picks`, 표·칸 이름 [확정] (사용자 승인 "이름·값: … 승인", 2026-10-12). 다른 모듈과 FK·조인이 없고, `catalog`와는 값으로만 맞춥니다(공용 캐시를 만들 때 `BookLookup.byIsbn13` → `BookLookup.byTitleAndAuthor`, ADR-0090). JPA 엔티티 없이 JdbcClient. 근거 `docs/cycles/14-librarian-picks/design-delta.md` "데이터".
 
 ```mermaid
 erDiagram
@@ -649,7 +654,7 @@ erDiagram
 
 | 테이블.컬럼 | 타입 | 제약 | 설명 | 상태 태그 |
 |---|---|---|---|---|
-| `fetch_run.trigger` | text | CHECK `STARTUP`·`SCHEDULED`·`RETRY`·`CATCH_UP` | 시작(목록 없음)·월요일·다음 날 다시·따라잡기(마지막 성공이 7일보다 오래됨, 서버 시작 또는 05:00 판단 때) | [확정] (따라잡기: 사용자 "켜질 때 따라잡기 (추천)", 2026-10-12) |
+| `fetch_run.trigger` | text | CHECK `STARTUP`·`SCHEDULED`·`RETRY`·`CATCH_UP` | 시작(목록 없음)·월요일·실패 뒤 매일 다시(ADR-0092, 05:00에만)·따라잡기(마지막 성공이 7일보다 오래됨, 서버 시작 또는 05:00 판단 때; 05:00에 목록이 없을 때도 `CATCH_UP` — dev [안], `FetchDecision.java`) | [확정] (따라잡기: 사용자 "켜질 때 따라잡기 (추천)", 2026-10-12) |
 | `fetch_run.status` | text | CHECK `SUCCEEDED`·`FAILED` | | [확정] |
 | `fetch_run.failure_reason` | text | `FAILED`일 때만 NOT NULL. CHECK `key_missing`·`network_error`·`request_rejected`·`format_changed`·`incomplete`·`no_books` | | [확정] |
 | `fetch_run.failure_detail` | text | NULL | HTTP 상태·API 오류 코드만. 키·요청 URL·응답 본문은 넣지 않음 | [확정] |
@@ -671,9 +676,9 @@ erDiagram
 - 표지: 목록이 바뀐 뒤 저장 안 된 표지만 받아 넣고, 지금 `pick.cover_source`에 없는 `cover` 줄은 지움, 그 뒤 `fetch_run`의 표지 수 UPDATE [확정] (ADR-0091)
 - 다른 모듈과 FK·조인 없음. `catalog`와는 값으로만 맞춤(ADR-0090). 짝은 저장하지 않음(공용 캐시를 만들 때 맞춤)
 - `updated_at` 칸 없음 → 트리거 없음(ADR-0068 대상 아님)
-- 크기: `pick` 52줄 안팎, `cover` 52장 × 10KB대 [안: 추정]
+- 크기: `pick` 108줄(범위 12번), `cover` 108장 1,285,929바이트(장당 4,158~22,290바이트) [확정] (dev 받기 시험 실측, 2026-10-14). `fetch_run` 한 번 받기에 `request_count` 109(목록 1 + 표지 108), `received_count` 163(3년 범위) / `kept_count` 108
 - 목차·추천 글은 받아도 저장하지 않음 [확정] (spec 비목표)
-- Liquibase: changelog `db/changelog/picks/001-picks-schema.yaml`. `popular/001-popular-schema.yaml`은 지우고 마스터의 include를 바꿈 — 배포 전 규칙으로 기존 changelog를 바꿈 [확정] (ADR-0089, 사이클 10 회고 `display_order` 선례). 로컬 DB(`db`, `db-test`) 정리: `DROP SCHEMA popular CASCADE`; `DELETE FROM databasechangelog WHERE id LIKE 'popular-001-%'`. `catalog` 등 다른 스키마는 그대로(다시 가져오지 않음), 빠뜨리면 표가 남으므로 AC-22로 확인 [확정] (ADR-0089). CHECK는 맨 위 규칙대로 changeset 안 `sql`.
+- Liquibase: changelog `db/changelog/picks/001-picks-schema.yaml`. `popular/001-popular-schema.yaml`은 지우고 마스터의 include를 바꿈 — 배포 전 규칙으로 기존 changelog를 바꿈 [확정] (ADR-0089, 사이클 10 회고 `display_order` 선례). 로컬 DB(`db`, `db-test`) 정리: `DROP SCHEMA popular CASCADE`; `DELETE FROM databasechangelog WHERE id LIKE 'popular-001-%'`. `catalog` 등 다른 스키마는 그대로(다시 가져오지 않음), 빠뜨리면 표가 남으므로 AC-22로 확인 [확정] (ADR-0089). CHECK는 맨 위 규칙대로 changeset 안 `sql`. 구현됨 (사이클 14): `popular/001` 파일 없음, master 92~94행에 `picks/001`. 로컬 정리 끝남(14 worktree 5452·5453, 원래 5432·5433은 합친 뒤 사용자 승인으로, 2026-10-14, AC-22). changelog 머리 주석(1~2행)은 아직 "latest six recommendation months" — 동작과 무관, dev에 알릴 것
 
 ## seed
 
@@ -686,7 +691,7 @@ erDiagram
   - 사이클 07 `library/008`: 사이클 07에서 넣은 도서관 2,394곳 (id 281~2674), `library/009`: 로고 198곳, `library/010`: 135·2194·2198 끔 — 구현됨 (사이클 07). seed 도서관 2,674곳, `GET /api/v1/libraries` 측정 때 켜진 곳 2,672곳(그 뒤 `library/010`으로 3곳을 더 끔)
   - 사이클 08 (구현됨 (사이클 08)): 교보 대여·혼합 11곳(id 2664~2674)을 `library/008-library-candidates.csv`에서 지움(배포 전 규칙으로 기존 seed를 고치고 로컬 `db`·`db-ops`는 이름 바꾸기 SQL + 체크섬 비우기로 맞춤(데이터 유지, 사용자 선택 2026-10-12), `build_candidate_seed.py` 규칙 `kyobo_rental_mixed`, diff는 두 CSV의 22줄). 번호는 다시 쓰지 않음. 그 도서관을 직접 추가한 계정·브라우저의 번호는 꺼진 도서관처럼 건너뜀(사이클 06 규칙) [확정] (ADR-0067). 소장 −2,669,217, 책 −2,320 (사이클 07 2회차 대비, dev 측정). `library/011-updated-at-trigger.sql`: 트리거, `library/012-library-mobile-site-differs.yaml`: `mobile_site_differs` 13곳, `library/013-library-name-overrides.yaml`: 이름 고침 8곳 UPDATE [확정] (dev 구현 확인, 2026-10-11)
   - 사이클 09 — 구현됨 (사이클 09): `library/014-library-classification.yaml` [확정] (changeSet 하나 `library-014-classification-2026-10-11`, dev 구현 확인, 2026-10-12): 이름 UNIQUE 지움, 이름 UPDATE(괄호 떼기 등, 위 "도서관 이름과 분류"), `vendor`·`order_no` 칸, `lending_model` 채움, CHECK 셋, UNIQUE `library_classification_key`
-  - 사이클 13 — 설계됨(미구현, 사이클 13) (ADR-0084): **앞으로 도서관 seed changeset을 만들지 않음** [확정]. 새 도서관은 `collection` 넣기 명령(미리 보기 → 보고서 → 넣기)으로 넣고, 사람이 정한 규칙(이름 고침, 같은 사이트, 같은 호스트지만 남김, 가입 범위 등)은 dev `scripts/library/rules/` TSV(ADR-0085). 이미 적용된 seed 파일(`library/002`~`010`, `collection/002`)은 그대로. `library/015-library-name-1215.yaml`: 1215 `한화S&amp;C` → `한화S&C` [확정] (사전 결정 8), 파일 이름 [안]. 2026-10-12 사본 기준 새로 넣을 곳 6곳(여주대 두 곳 등, ADR-0084 배경)
+  - 사이클 13 — 구현됨 (사이클 13, 회고 2026-10-14) (ADR-0084): **앞으로 도서관 seed changeset을 만들지 않음** [확정]. 새 도서관은 `collection` 넣기 명령(미리 보기 → 보고서 → 넣기)으로 넣고, 사람이 정한 규칙(이름 고침, 같은 사이트, 같은 호스트지만 남김, 가입 범위 등)은 dev `scripts/library/rules/` TSV(ADR-0085). 이미 적용된 seed 파일(`library/002`~`010`, `collection/002`)은 그대로. `library/015-library-name-1215.yaml`: 1215 `한화S&amp;C` → `한화S&C` [확정] (사전 결정 8), 파일 이름 [확정] (dev 구현 확인, 2026-10-14). 2026-10-12 사본(보고서 `1af0721e4a3e`)으로 넣은 6곳: 2675 여주대학교(교보, 수집 100584) · 2676 한국선원복지고용센터(102029) · 2677 여주대학교(YES24, 102084) · 2678 김천대학교(102092) · 2679 경운대학교(102101) · 2680 천상중학교(102171), 모두 순번 1, `MEMBERS_ONLY`, 규칙 줄 없음 [확정] (dev 9단계, 2026-10-14. 102029 종류는 사용자: "이대로 넣기", 2026-10-12)
 - 사이클 07 도서관 2,394곳 seed 규칙 [확정] (ADR-0052, ADR-0053, `architect-proposal.md` D3) — 구현됨 (사이클 07). 스크립트 dev `scripts/library/build_candidate_seed.py`(테스트 `test_build_candidate_seed.py`, 같은 입력이면 같은 출력)
   - 넣는 곳: 수집 번호 ≥ 100001, `crawl_skip` 없음, `last_full_success_at` 있음. 교보 대여·혼합(교보 구독형 플랫폼 서버의 대여·혼합 기관)은 넣지 않음 [확정] (ADR-0067, 사이클 08 seed 규칙, 구현됨 (사이클 08)). 체험용·운영 중단 4곳(삼각산 북라이브, 대구동구안심 북큐브, 순창 북라이브, 양평 북큐브) 제외 (사용자, 2026-10-05). 시험용 6곳은 넣지 않음 (사용자 승인, 2026-10-05, 설계 검토). 번호 1~280 도서관과 책 번호 목록이 같고 상세 주소가 포트만 다른 8곳 제외, 같은 기관의 다른 북큐브 사이트 6곳은 넣음 [확정] (사용자 결정 "① 8곳만 빼기", 2026-10-05). 스크립트는 읽어 본 쌍을 `SAME_HOST_KEPT`에 두고 새로 걸리는 같은 호스트 쌍이 있으면 종료 코드 2로 멈춤
   - 새 번호: 지금 최대(280) 다음부터("마지막 번호 다음", 두 번 돌려도 같고 새 곳 1곳만 다음 번호를 받는지 테스트로 확인) [확정] (dev 구현 확인, 2026-10-05). 이름이 겹치면 `이름 (북큐브|교보|YES24|알라딘)`, 그래도 겹치면 `이름 (라벨, 호스트)` (사이클 08까지). 사이클 09부터 — 구현됨 (사이클 09) [확정] (ADR-0071, 설계 결정 3번): 이름에 라벨을 붙이지 않음(`LABELS`·`name_candidates()`를 지움). `vendor`는 수집이 따로 적은 값이 있으면 그 값, 없으면 화면 종류 대응표(`VENDORS`, 한 곳) [확정] (수집이 따로 적는 자리는 [확인 필요: 수집 세션]); `lending_model`은 교보 probe, 북큐브 전체 권수 결과, 포털 NULL, 나머지 `OWNED`; 이름 고침 목록을 번호 280 이하 도서관에도 메모리 속 이름에 적용; 겹침 열쇠는 (이름, 업체, 대출 방식, 순번)이고 같은 (이름, 업체, 대출 방식) 묶음은 서비스 번호 순으로 `order_no`(`assign_order_no()`), 2 이상은 목록 출력하고 종료 코드 3(사람이 사이트 이름 확인) [확정] (dev 구현 확인, 2026-10-12). 사이클 09 구현의 실행 방법 [확정] (dev 구현 확인, 2026-10-12): 다섯째 위치 인자 `<bookcube-volume.tsv>`(dev `scripts/library/bookcube-volume-2026-10-11.tsv`, 북큐브 전체 권수), 옵션 `--changes-only <db-state.tsv>`(seed CSV 셋을 바꾸지 않고 바뀔 줄 목록만 냄, 옛 이름은 DB 상태 파일에서 읽음). 이번 사이클은 `--changes-only`로만 돌림, `vendor`·`order_no`는 아직 seed 칸이 아님(첫 배포 직전 seed 정리 때) [확정] (seed 고치는 방식, 사이클 08). 수집이 업체를 따로 적는 자리는 스크립트에 빈 자리 `COLLECTION_VENDORS = {}`와 `TODO(확인 필요)`만 (`build_candidate_seed.py:96-98`) [확인 필요: 수집 세션]. 처음 정한 이름은 다음 seed에서 바꾸지 않음. 예외: 공식 개명·틀린 이름은 이름 고침 목록에 있을 때만 고치고 번호는 유지 [확정] (사용자 승인, 2026-10-05; 사이클 08 scope 4) — 위 `library` 절 "이름 고침", 구현됨 (사이클 08). seed를 다시 만드는 방식(첫 배포 전·직전·뒤)도 그 절
@@ -695,7 +700,7 @@ erDiagram
   - 가입: 가입 조건을 조사한 공공도서관(`public-join-2026-10-05.tsv`)은 `SURVEYED` + 가입 규칙 줄 + `join_method`·`visit_required`·`join_caution`·`extra_condition_text`(책이음 9곳). 원문 못 찾은 곳은 `NOT_FOUND` + 규칙 없음. 종류 표(`candidate-kinds-2026-10-05.tsv`)의 초·중·고·대학·회사·정부·공공기관·단체·아파트는 `MEMBERS_ONLY`, 모름은 `NOT_SURVEYED`, 둘 다 `join_method = NULL`
   - dev 규칙 "자격 조사 없이 도서관 추가 금지"의 예외: `MEMBERS_ONLY`·`NOT_SURVEYED` 곳(약 2,500곳)은 ADR-0053대로 조사 상태 표시로 넣음 [확정] (사용자 승인, 2026-10-05, 설계 검토)
 - 자격 규칙은 원문을 확인한 값만 넣음. 조사 기록은 dev `docs/library-research/*.tsv`, 사용자가 나중에 확인할 항목은 dev `docs/library-maintenance.md` 14절
-- 도서관 ID는 seed에서 직접 넣고 IDENTITY는 마지막 seed 다음부터 시작. 사이클 13부터는 넣기 명령이 번호를 정해 `LibraryRegistry.add`로 넣고 시퀀스를 올림 — 설계됨(미구현, 사이클 13) (ADR-0083)
+- 도서관 ID는 seed에서 직접 넣고 IDENTITY는 마지막 seed 다음부터 시작. 사이클 13부터는 넣기 명령이 번호를 정해 `LibraryRegistry.add`로 넣고 시퀀스를 올림. 첫 번호는 `nextId()` = `GREATEST(max(id)+1, IDENTITY 다음 값)`이라 `library/008`의 `RESTART WITH 2675` 때문에 2675(2664~2674는 비워 둠, ADR-0067). 옛 스크립트 `build_library_seed.py`도 같은 규칙으로 고침 [확정] (dev 구현 확인, 2026-10-14) — 구현됨 (사이클 13, 회고 2026-10-14) (ADR-0083)
 - 지역: 2026-07-01 법정동 코드(`jscode20260701`) 기준 시도 16개, 시군구 232개 [확정] (시군구 234개 중 도 출장소 2개 제외). 세종특별자치시는 시군구 행 하나(`3601`)를 둠. 사이클 07: 그 파일에서 빠져 있던 증평군(충북)을 `4311`(충북의 다른 번호 뒤, 코드 순서가 아님)로 추가해 시군구 233개 [확정] (사용자 결정, 2026-10-05)
 - 지역 ID 규칙 [확정] (사용자, 2026-09-27): 시도 2자리 = 법정동 코드 앞 두 자리, 시군구 4자리 = 시도 ID + 법정동 코드 순서(01, 02, …). 번호는 다시 쓰지 않고, 소속은 `parent_id`로만 판단. 일반구·읍면동을 넣게 되면 상위 ID 뒤에 자리를 붙임
 - 시험용 폐지 데이터 (context `test-data`): 시도 90, 9001 → 1116 (REPLACED), 9002 → 1114·1116 (SPLIT), 9003 → 9004 → 1101 (연쇄)
@@ -757,10 +762,12 @@ erDiagram
 
 | 항목 | 방법 |
 |---|---|
-| 국립중앙도서관 표지를 저장해 보여 줘도 되는지(공공누리 제1유형이 표지 그림에도 해당하는지) | 공식 문서 확인 (Open API 가이드 파일·이용약관) / 문의 (정보기술기반과 02-590-0727). 배포 전 |
-| Open API 하루 호출 한도 | 공식 문서 확인 (주 1~2건이라 막지 않음) |
-| 제목+저자 조회 52권 시간, dev DB에서 맞는 비율(수집 DB 측정 32/52) | 프로토타입 (dev, 개발 때). 무거우면 캐시 새로 고침 간격만 늘림 |
-| 같은 달 같은 등록일·`recomNo` 글자 순이 사서가 올린 순서와 맞는지 | API 호출 시험 (웹 목록 순서와 비교) |
+| 국립중앙도서관 표지를 저장해 보여 줘도 되는지(공공누리 제1유형이 표지 그림에도 해당하는지) | 공식 문서 확인 (Open API 가이드 파일·이용약관) / 문의 (정보기술기반과 02-590-0727). 배포 전. 개발 중 확인 못 함, 코드에 `TODO(확인 필요)`(dev `FetchJob.fetchCovers`, `AboutPage.tsx` 42행) → 회고 질문 3(사이클 17 배포 체크리스트) |
+| Open API 하루 호출 한도 | 공식 문서 확인 (주 1~2건이라 막지 않음). 개발 중 문서 확인 못 함, 하루 1건만 불러 거절·오류 없음 (dev, 2026-10-14) |
+| ~~제목+저자 조회 52권 시간, dev DB에서 맞는 비율(수집 DB 측정 32/52)~~ | 해결: 52건 73~87ms, 맞음 ① 30 / ①이나 ② 33 of 52(서비스 DB 복사본), 12번(108권) 캐시 72 / 108, 캐시 새로 고침 53~114ms (dev, 2026-10-14) |
+| ~~같은 달 같은 등록일·`recomNo` 글자 순이 사서가 올린 순서와 맞는지~~ | 해결(맞지 않음): 웹 목록 순서 = API 응답 순서, 같은 달 안은 등록일순도 `recomNo`순도 아닌 사서의 배치. 우리 순서와 거의 거꾸로 (dev 웹 1쪽 확인, 2026-10-14) → 회고 질문 2 |
+| 국립중앙도서관 API 오류 응답 모양 | 운영에서 만나면 기록하고 규칙 손봄(지금 오류 요소 이름 `*error*`·`err_code`·`result_code`는 짐작) |
+| 공용 캐시 메모리 | 운영 측정 (추정 수백 KB 안쪽 [안: 추정, 측정 아님], dev 2026-10-14) |
 
 ## 확인 필요 (사이클 13)
 
@@ -774,7 +781,7 @@ erDiagram
 | 판 2 배포 때 내 PC에 판 1 내보내기가 기다리면 `finish` 거절 | 절차 문서에 "배포 전 finish·discard" |
 | 기준일을 날짜 파일 대신 조사 파일 날짜 칸에서 뽑을지 | 사용자에게 질문 (다음 가입 조사 때) |
 
-## 확인 필요 (사이클 11) — 결과 (dev 중간 전달, 2026-10-12)
+## 확인 필요 (사이클 11) — 결과 (dev 최종 전달 2026-10-12 18:40, 회고 2026-10-14)
 
 | 항목 | 결과 |
 |---|---|
@@ -783,5 +790,5 @@ erDiagram
 | 컨테이너 안 도구가 암호 없이 로컬 소켓으로 붙는지 | 됨(이미지 `pg_hba` `local all all trust`). 운영 DB가 다른 이미지면 배포 때 다시 확인 [확인 필요: 배포 사이클] |
 | Java가 죽었을 때 컨테이너 안 `pg_restore`가 계속 도는지(AC-13) | Java가 입력을 직접 쓰면 입력이 끝나 롤백. 시작 때 남은 복원 세션은 끝냄 [확정] |
 | 덤프 크기, 복원 시간, 운영 디스크 최대, 상한 1GB에서 색인 시간(AC-14) | 606MB, 복원 65초, 운영 역할 DB 최대 17.4GB(시작 9.0GB), 색인 2분 30초, `OOMKilled` 없음 [확정] (새 사본 2026-10-12 01:35) |
-| `sql` 방식 사슬 반복 수·시간·임시 표 디스크, 43분 안 | 시험 데이터: ② 6~14번, ③④ 1~2번, 3,000단위 사슬 12번, 상한 1000번. 실데이터는 11단계 측정 중 [확인 필요: dev 측정] |
+| `sql` 방식 사슬 반복 수·시간·임시 표 디스크, 43분 안 | 실데이터(새 사본) 약 34분(43분 안), 1GB 힙에서 끝까지, 실행마다 임시 쓰기 약 61GB(그중 묶기 약 40GB), DB 최대 약 27GB(시작 약 9GB) [확정] (dev 측정, `plan-feedback.md` 3029·3105행). 실데이터 반복 수는 로그에 없음(시험 데이터: ② 6~14번, ③④ 1~2번, 3,000단위 사슬 12번, 상한 1000번) [확인 필요: 다음에 `sql`로 가져올 때 — 기본이 아니라 급하지 않음] |
 | 비교(`count(*)` 약 1,770만 줄 등) 시간 | `compare` 3.2초 [확정] |
