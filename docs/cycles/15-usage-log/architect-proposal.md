@@ -161,3 +161,13 @@ sequenceDiagram
 | 7 | Boot 4.1 종료 순서 (`SmartLifecycle`, DataSource) | 공식 문서 확인 |
 | 8 | `BookParams`·스트림 컨트롤러가 모르는 쿼리 값을 거절하는지 | dev 코드 확인 |
 | 9 | `id` PK를 둘지 | 프로토타입 |
+
+## 확인 결과 (2026-10-13, 설계 확정 전 미리 풀어 둔 것)
+
+| # | 항목 | 결과 |
+|---|---|---|
+| 8 | 검색 API가 모르는 쿼리 값(`loggedIn`)을 거절하나 | 거절하지 않음, 조용히 무시. `BookSearchController.java:38,45`(`MultiValueMap`), `BookParams.java:167-182`(정한 이름만 꺼냄), `SearchConditionParam.java:33-55`. 같은 규칙을 복사한 `popular/internal/web/PopularPlanParams.java:17`(14에서 `picks`로 바뀜)도 함께 볼 것 |
+| — | 로그인 꺼짐 때 화면 CSRF 코드 | `web/src/api/auth.ts` `send()`(공개 안 됨)는 쿠키가 없으면 `GET /api/v1/auth/csrf-token`을 먼저 부르는데, 로그인이 꺼지면 이 주소가 없어(`CsrfTokenController.java:17-19` `@ConditionalOnAuthEnabled`, `AuthDisabledTests.java:45`) 404로 예외 → 클릭 알림이 안 나감. 그래서 클릭 알림은 "로그인 기능이 켜졌을 때만 표시 받아 오기"로 갈라야 함 [안]. 화면은 `/api/v1/me` 응답(404=`off`)으로 로그인 기능 상태를 앎(`auth.ts:107-117`) |
+| 7 | 정상 종료 때 `SmartLifecycle.stop()`에서 DataSource를 쓸 수 있나 | 보통 종료면 Lifecycle 정지가 destroy보다 먼저라 쓸 수 있음, 단계마다 기본 30초 (https://docs.spring.io/spring-framework/reference/core/beans/factory-nature.html , 확인 2026-10-13). 웹 서버 정지(phase MAX−2048, https://docs.spring.io/spring-boot/api/java/constant-values.html)보다 늦게 멈추도록 phase를 작게 [안: `Integer.MAX_VALUE/2` 이하]. Hikari가 그 뒤 닫힌다는 문장은 Boot 문서에서 못 찾음 [확인 필요: 프로토타입] |
+| 6 | pgjdbc 문장당 바인드 파라미터 상한 | 65,535 (42.4.0부터, https://jdbc.postgresql.org/changelogs/2022-06-09-42.4.0-release/ , 확인 2026-10-13). `batchUpdate`(채택)는 줄마다 따로 바인딩이라 해당 없음, 여러 줄 INSERT를 쓸 때만 행×열 제한. dev의 실제 pgjdbc 버전 [확인 필요: 의존성 트리] |
+| — | 화면이 로그인 상태를 어디서나 아나 | 예. `AuthProvider`가 앱 전체를 감쌈(`main.tsx:31-77`), 상태 `checking/off/signed-out/signed-in`(`features/auth/AuthContext.tsx:9-13,32-50`), `useAuth()`/`useOptionalAuth()`. 첫 응답 전 `checking` 때 일어난 검색의 로그인 여부를 정해야 함 → 결정 페이지 |

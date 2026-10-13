@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 15 확인 결과</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+.flow{display:grid;gap:10px;margin:10px 0 16px}.lane{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--card)}.lane b{display:block;margin-bottom:4px}.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{font-size:14px;border-radius:6px;padding:2px 8px;background:var(--code-bg)}.chip.new{background:var(--warn-bg)}.chip.dev{background:var(--ok-bg)}.arrow{text-align:center;color:var(--muted);font-size:18px;line-height:1}
+</style>
+<style>
+main{max-width:1080px}
+.pick{display:inline-block;font-size:14px;font-weight:700;color:var(--warn);background:var(--warn-bg);border-radius:6px;padding:1px 8px}
+.rec{display:inline-block;font-size:15px;font-weight:700;color:var(--ok);background:var(--ok-bg);border-radius:6px;padding:1px 8px}
+.ex{background:var(--ok-bg);border-radius:10px;padding:12px 16px;margin:10px 0}.ex b{color:var(--ok)}
+.alt{background:var(--code-bg);border-radius:10px;padding:12px 16px}
+.toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px 18px;font-size:18px;margin:6px 0 0;padding:0;list-style:none}
+.toc li{display:flex;gap:8px;align-items:baseline}
+figure{max-width:440px}
+figure svg text{font-family:"Noto Sans KR",system-ui,sans-serif}
+.card>figure{margin-left:auto;margin-right:auto}
+@media (min-width:980px){
+ .item{display:grid;grid-template-columns:minmax(0,1fr) 420px;column-gap:32px;align-items:start}
+ .item>*{grid-column:1}
+ .item>h3{grid-column:1 / -1}
+ .item>figure{grid-column:2;grid-row:2 / span 30;margin-top:4px}
+}
+@media (max-width:600px){body{font-size:18px}.card{padding:20px 16px}.lead{font-size:23px}}
+</style>
+</head>
+<body><main class="doc">
+<p class="lead">미리 확인한 다섯 가지 결과와,<br>새로 정할 것 한 가지입니다</p>
+<p class="sub">사이클 15 · 2026-10-13 · 원본 <code>docs/cycles/15-usage-log/architect-proposal.md</code> "확인 결과"</p>
+
+<section class="card"><h2><span class="num">1</span>확인 결과 (dev 코드·공식 문서)</h2>
+<div class="gist">설계 방향을 바꿔야 할 문제는 없었습니다. 하나(로그인이 꺼졌을 때 클릭 알림)는 만들 때 조심할 점이 생겼고, 하나(로그인 상태를 확인하는 짧은 순간)는 정해 주셔야 합니다.</div>
+<table><tr><th>확인한 것</th><th>결과</th><th>뜻</th></tr>
+<tr><td>검색 주소에 "로그인 여부" 값을 더 붙이면 지금 서버가 거절하나</td><td>거절하지 않고 모르는 값은 무시</td><td>화면을 먼저 고쳐도 서버가 깨지지 않음</td></tr>
+<tr><td>로그인 기능이 꺼졌을 때 화면의 보안 표시 코드</td><td>표시를 받아 오는 주소가 없어 실패 → 지금 코드를 그대로 쓰면 클릭 알림이 안 나감</td><td>화면이 "로그인 기능 꺼짐"이면 표시 없이 바로 보내도록 만들어야 함 (설계에 적음)</td></tr>
+<tr><td>서버를 끌 때 모아 둔 기록을 DB에 넣을 수 있나</td><td>보통 종료면 넣을 수 있음. 웹 요청을 다 받은 뒤 멈추도록 순서를 정하면 됨 (<a href="https://docs.spring.io/spring-framework/reference/core/beans/factory-nature.html">Spring 문서</a>)</td><td>DB 연결이 닫히는 순서는 문서 문장으로 못 찾아 만들 때 시험</td></tr>
+<tr><td>묶어 넣을 때 한 번에 보낼 수 있는 값 개수</td><td>65,535개 (<a href="https://jdbc.postgresql.org/changelogs/2022-06-09-42.4.0-release/">PostgreSQL JDBC</a>)</td><td>고른 방식(batchUpdate)은 줄마다 따로 보내 걱정 없음</td></tr>
+<tr><td>화면이 어느 페이지에서든 로그인 여부를 아나</td><td>앎. 앱 전체가 첫 화면에서 로그인 상태를 물어 들고 있음</td><td>"로그인함/안 함"을 보내는 데 문제 없음. 단 아래 한 가지</td></tr></table>
+</section>
+
+<section class="card"><h2><span class="num">2</span>로그인 상태를 아직 확인 중일 때 한 검색</h2>
+<div class="gist">화면은 처음 열릴 때 서버에 "로그인했나"를 물어보고, 답이 오기 전 아주 짧은 동안은 모르는 상태입니다. 이때 한 검색은 로그인 여부를 "모름"으로 적는 것을 추천합니다.</div>
+<figure><svg viewBox="0 0 340 170" xmlns="http://www.w3.org/2000/svg">
+<line x1="20" y1="70" x2="320" y2="70" stroke="var(--line)" stroke-width="3"/>
+<circle cx="30" cy="70" r="6" fill="var(--accent)"/><circle cx="140" cy="70" r="6" fill="var(--ok)"/>
+<text x="20" y="48" font-size="12" fill="var(--text)">화면 열림</text>
+<text x="140" y="48" text-anchor="middle" font-size="12" fill="var(--ok)">답 옴</text>
+<rect x="34" y="78" width="102" height="22" rx="6" fill="var(--warn-bg)"/><text x="85" y="94" text-anchor="middle" font-size="11.5" fill="var(--warn)">확인 중 → 모름</text>
+<text x="230" y="94" text-anchor="middle" font-size="11.5" fill="var(--text)">로그인함 / 안 함</text>
+<text x="10" y="134" font-size="11.5" fill="var(--muted)">주소를 바로 열어 검색 결과가 바로 뜰 때(공유받은</text>
+<text x="10" y="152" font-size="11.5" fill="var(--muted)">검색 주소 등) 이 짧은 순간에 검색이 나갈 수 있음</text>
+</svg><figcaption>대부분은 사람이 검색어를 치기 전에 답이 와서 "모름"은 드뭅니다.</figcaption></figure>
+<div class="item"><h3><span class="no">1</span>확인 중일 때 한 검색·클릭은 로그인 여부를 "모름"(빈 값)으로 적음 [안]</h3>
+<p><b>이렇게 되면</b>: 로그인 여부 칸은 "함 / 안 함 / 모름" 셋 중 하나가 됩니다. 통계에서 "모름"은 따로 세거나 빼고 볼 수 있습니다. 서버 오류로 로그인 상태를 못 받았을 때도 "모름"입니다.</p>
+<p class="alt"><b>다른 선택</b><br>① "안 함"으로 적음 → 칸이 둘로 단순하지만, 실제로는 로그인한 사람이 "안 함"으로 섞일 수 있습니다.<br>② 답이 올 때까지 검색 기록을 미뤘다가 적음 → 정확하지만 화면 코드가 복잡해집니다.</p>
+<p><span class="rec">추천</span> "모름"으로 적기</p>
+</div>
+</section>
+<p class="foot">이 페이지는 요약이며 근거는 원본 <code>docs/cycles/15-usage-log/architect-proposal.md</code> "확인 결과"에 있습니다.</p>
+</main></body></html>
