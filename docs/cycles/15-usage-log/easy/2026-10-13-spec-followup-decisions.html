@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 15 명세 이어서</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+.flow{display:grid;gap:10px;margin:10px 0 16px}.lane{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--card)}.lane b{display:block;margin-bottom:4px}.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{font-size:14px;border-radius:6px;padding:2px 8px;background:var(--code-bg)}.chip.new{background:var(--warn-bg)}.chip.dev{background:var(--ok-bg)}.arrow{text-align:center;color:var(--muted);font-size:18px;line-height:1}
+</style>
+<style>
+main{max-width:1080px}
+.pick{display:inline-block;font-size:14px;font-weight:700;color:var(--warn);background:var(--warn-bg);border-radius:6px;padding:1px 8px}
+.rec{display:inline-block;font-size:15px;font-weight:700;color:var(--ok);background:var(--ok-bg);border-radius:6px;padding:1px 8px}
+.ex{background:var(--ok-bg);border-radius:10px;padding:12px 16px;margin:10px 0}.ex b{color:var(--ok)}
+.alt{background:var(--code-bg);border-radius:10px;padding:12px 16px}
+.toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px 18px;font-size:18px;margin:6px 0 0;padding:0;list-style:none}
+.toc li{display:flex;gap:8px;align-items:baseline}
+figure{max-width:440px}
+figure svg text{font-family:"Noto Sans KR",system-ui,sans-serif}
+.card>figure{margin-left:auto;margin-right:auto}
+@media (min-width:980px){
+ .item{display:grid;grid-template-columns:minmax(0,1fr) 420px;column-gap:32px;align-items:start}
+ .item>*{grid-column:1}
+ .item>h3{grid-column:1 / -1}
+ .item>figure{grid-column:2;grid-row:2 / span 30;margin-top:4px}
+}
+@media (max-width:600px){body{font-size:18px}.card{padding:20px 16px}.lead{font-size:23px}}
+</style>
+</head>
+<body><main class="doc">
+<p class="lead">남은 두 가지: 이상한 클릭 알림의 IP를 얼마나 둘지,<br>nginx 접속 기록을 어디서 정할지</p>
+<p class="sub">사이클 15 명세 이어서 · 2026-10-13 · 원본 <code>docs/cycles/15-usage-log/spec.md</code></p>
+<section class="card" id="handover"><h2><span class="num">★</span>사이클 16에 전달할 글 (요청하신 것)</h2><div class="gist">아래 글을 그대로 복사해 사이클 16 세션에 붙여 넣으시면 됩니다. 같은 글이 <code>docs/cycles/15-usage-log/to-cycle-16.md</code>에 있습니다. 결정 반영: #1 보관 30일, #2 배포 사이클에서 정함.</div><pre style="white-space:pre-wrap;background:var(--code-bg);border-radius:10px;padding:16px;font-size:16px;line-height:1.6">사이클 16 세션에 전달합니다. 처리방침 초안의 &quot;자동으로 수집하는 정보&quot; 항목에 아래를 반영해 주세요.
+
+1. 서비스 이용 기록 (사이클 15에서 새로 모음)
+   - 검색할 때: 검색어(제목·저자·출판사), 검색 방식(정확히 일치, 옮긴이 등 포함, 정렬, 대출 가능만), 범위(가입할 수 있는 곳만, 방문 조건), 거주 지역, 직장 지역, 고른 도서관, 결과 수, 로그인 여부(예/아니오), 시각 [확정]
+   - 검색 결과에서 도서관 링크를 누를 때: 누른 도서관, 누른 곳(결과 카드·가입 링크·가입 안내·도서관 첫 화면·로고·요약 막대 이름), 화면, 책(화면이 알 때만), 로그인 여부, 시각 [확정]
+   - 모으지 않는 것: 회원 번호, 쿠키 식별값, 브라우저 이름(User-Agent) [확정]. IP는 아래 2에만
+   - 목적: 서비스 이용 통계
+   - 보관: 1년, 지난 것은 서버가 매일 자동으로 지움 [확정: 1년 보관·매일 자동 삭제] / 지우는 시각 매일 04:30 [안: 15 명세 #12 결정 전]
+   - 수집 방법: 검색 요청은 서버가 받을 때, 링크 클릭은 브라우저가 우리 서버에 짧은 알림을 보냄. 쿠키를 쓰지 않음
+
+2. 이상한 클릭 알림 기록 (IP 포함)
+   - 없는 도서관 번호·정하지 않은 값처럼 화면에서 정상적으로 나올 수 없는 클릭 알림이 오면: 시각, IP, 이유, 받은 값 [확정]
+   - 목적: 비정상 요청 확인·차단
+   - 보관: 30일, 지난 것은 매일 자동으로 지움 [확정] (사용자 &quot;30일 보관&quot;, 2026-10-13)
+
+3. 웹 서버 접속 기록 (지금도 있음, 사이클 15 조사에서 발견)
+   - 서버 앞단 nginx가 기본 설정대로 모든 요청의 IP, 시각, 요청 주소(검색어가 든 주소 포함), 브라우저 이름을 접속 기록 파일에 남김 (dev `deploy/nginx/`에 접속 기록 설정 없음, 2026-10-13 확인; https://nginx.org/en/docs/http/ngx_http_log_module.html)
+   - 보관 기간: 아직 정한 곳 없음 → 배포 사이클에서 정함 [확정: 정하는 때] (사용자 승인, 2026-10-13). 처리방침에는 항목으로 미리 넣고 기간은 배포 사이클 뒤 채움
+
+4. 15 명세에서 아직 정하는 중인 것 (정해지면 다시 알림)
+   - 클릭 알림 요청 수 제한(IP당 1분 [안: 60번]) — 넘친 알림은 기록하지 않음
+   - 책 상세 열기 등 다른 행동은 이번에 남기지 않음 [안], 사용자가 기록을 끄는 설정 없음 [안]
+
+모듈·schema 이름: 15는 `usagelog` [안] (16의 `sitecontent` [안]과 겹치지 않음). 둘 다 Liquibase master changelog 끝줄을 고치므로 병합 순서 확인.
+</pre></section>
+<section class="card"><h2><span class="num">0</span>앞 페이지에서 정하신 것 (반영함)</h2>
+<table><tr><th>항목</th><th>정하신 내용</th></tr>
+<tr><td>#4 로봇</td><td>이번 사이클에 robots.txt와 "이름 밝힌 로봇은 직접 찾기에서 거절"만 더함. AWS WAF는 배포 사이클 (spec R1-7·R1-8)</td></tr>
+<tr><td>#5 로그인 여부</td><td>화면이 "로그인함/안 함"을 함께 보내고 서버는 그대로 적음 (spec R1-6)</td></tr>
+<tr><td>#7 이상한 클릭 알림</td><td>조용히 버리지 않고 <b>IP와 함께 따로 남김</b>. 클릭 기록 칸에는 넣지 않음 (spec R2-3)</td></tr></table>
+</section>
+<section class="card"><h2><span class="num">1</span>이상한 클릭 알림 기록을 얼마나 둘까</h2>
+<div class="gist">IP가 들어가는 기록이라 짧게 두는 것을 추천합니다. 7일이면 공격을 알아채고 그 IP를 막기에 충분하고, 지난 것은 매일 새벽 기록 지우기 때 같이 지웁니다.</div>
+<div class="item"><h3><span class="no">1</span>이상한 클릭 알림 기록(IP 포함)은 7일 보관 [안]</h3>
+<figure><svg viewBox="0 0 340 170" xmlns="http://www.w3.org/2000/svg">
+<rect x="10" y="10" width="320" height="64" rx="10" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="1.5"/>
+<text x="22" y="34" font-size="13" font-weight="700" fill="var(--text)">이상한 클릭 알림 한 줄</text>
+<text x="22" y="56" font-size="12" fill="var(--muted)">10-20 21:04 · 1.2.3.4 · 없는 도서관 번호 · 99999</text>
+<line x1="20" y1="110" x2="320" y2="110" stroke="var(--line)" stroke-width="3"/>
+<circle cx="30" cy="110" r="6" fill="var(--warn)"/><circle cx="300" cy="110" r="6" fill="var(--no)"/>
+<text x="20" y="98" font-size="12" fill="var(--text)">10-20 받음</text>
+<text x="320" y="98" text-anchor="end" font-size="12" fill="var(--no)">10-28 04:30 지움</text>
+<text x="10" y="146" font-size="12" fill="var(--muted)">그 사이에 같은 IP가 많이 보이면 nginx에서 막음</text>
+</svg><figcaption>검색·클릭 기록(1년)과 따로, 짧게 둡니다.</figcaption></figure>
+<p><b>이렇게 되면</b>: 없는 도서관 번호 같은 이상한 알림이 오면 시각·IP·이유·받은 값을 한 줄 남깁니다. 7일이 지나면 매일 04:30 기록 지우기(앞 페이지 #12를 고르시면) 때 함께 지웁니다. 처리방침에 "이상한 요청에 한해 IP를 7일 보관"을 적어야 해서 사이클 16에 넘깁니다.</p>
+<p class="alt"><b>다른 선택</b><br>① 30일 → 늦게 알아채도 볼 수 있지만 IP를 더 오래 둡니다.<br>② 검색·클릭과 같이 1년 → 한 규칙으로 단순하지만 IP를 1년 둡니다.</p>
+<p><span class="rec">추천</span> 7일</p>
+</div></section>
+<section class="card"><h2><span class="num">2</span>nginx 접속 기록은 어디서 정할까</h2>
+<div class="gist">dev의 nginx에는 접속 기록 설정이 따로 없어, 기본값대로 모든 요청의 IP·시각·주소(검색어 포함)·브라우저 이름이 남고 보관 기간도 정한 곳이 없습니다 (<a href="https://nginx.org/en/docs/http/ngx_http_log_module.html">nginx 문서</a>, dev 설정 2026-10-13 확인).</div>
+<div class="item"><h3><span class="no">2</span>nginx 접속 기록의 보관 기간은 배포 사이클에서 정하고, 사이클 16에 "IP가 든 접속 기록이 있다"고 알림 [안]</h3>
+<p><b>왜</b>: 서버를 어디에 어떻게 띄우는지(배포)에 따라 기록 파일 위치와 지우는 방법이 달라집니다. 처리방침에는 지금부터 알려 둬야 해서 16에 먼저 넘깁니다.</p>
+<p class="alt"><b>다른 선택</b>: 이번 사이클에서 바로 기간(예: 30일)을 정해 dev에 넘김 → 빨리 정리되지만 배포 구조가 정해지기 전이라 설정 위치가 바뀔 수 있습니다.</p>
+<p><span class="rec">추천</span> 배포 사이클 + 16에 알림</p>
+</div></section>
+<p class="foot">이 페이지는 요약이며 근거는 원본 <code>docs/cycles/15-usage-log/spec.md</code>에 있습니다.</p>
+</main></body></html>

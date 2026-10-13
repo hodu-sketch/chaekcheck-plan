@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 15 ADR 초안</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+.flow{display:grid;gap:10px;margin:10px 0 16px}.lane{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--card)}.lane b{display:block;margin-bottom:4px}.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{font-size:14px;border-radius:6px;padding:2px 8px;background:var(--code-bg)}.chip.new{background:var(--warn-bg)}.chip.dev{background:var(--ok-bg)}.arrow{text-align:center;color:var(--muted);font-size:18px;line-height:1}
+</style>
+<style>
+main{max-width:1080px}
+.pick{display:inline-block;font-size:14px;font-weight:700;color:var(--warn);background:var(--warn-bg);border-radius:6px;padding:1px 8px}
+.rec{display:inline-block;font-size:15px;font-weight:700;color:var(--ok);background:var(--ok-bg);border-radius:6px;padding:1px 8px}
+.ex{background:var(--ok-bg);border-radius:10px;padding:12px 16px;margin:10px 0}.ex b{color:var(--ok)}
+.alt{background:var(--code-bg);border-radius:10px;padding:12px 16px}
+.toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px 18px;font-size:18px;margin:6px 0 0;padding:0;list-style:none}
+.toc li{display:flex;gap:8px;align-items:baseline}
+figure{max-width:440px}
+figure svg text{font-family:"Noto Sans KR",system-ui,sans-serif}
+.card>figure{margin-left:auto;margin-right:auto}
+@media (min-width:980px){
+ .item{display:grid;grid-template-columns:minmax(0,1fr) 420px;column-gap:32px;align-items:start}
+ .item>*{grid-column:1}
+ .item>h3{grid-column:1 / -1}
+ .item>figure{grid-column:2;grid-row:2 / span 30;margin-top:4px}
+}
+@media (max-width:600px){body{font-size:18px}.card{padding:20px 16px}.lead{font-size:23px}}
+</style>
+</head>
+<body><main class="doc">
+<p class="lead">오늘 정하신 것을 결정 기록(ADR) 두 개로 남기려 합니다.<br>초안을 확인해 주세요</p>
+<p class="sub">사이클 15 · 2026-10-13 · 승인하시면 <code>docs/adr/0096-…md</code>, <code>0097-…md</code>로 쓰고 목록에 넣습니다(상태 "제안됨"). 설계 확정(회고 뒤) 때 "확정"으로 바꿉니다.</p>
+
+<section class="card"><h2><span class="num">1</span>ADR-0096: 무엇을, 어디에, 얼마나 남기나</h2>
+<div class="gist">검색·도서관 클릭·책 상세 열기 기록을 지금 쓰는 PostgreSQL의 새 칸에 남깁니다. IP는 30일만, 나머지는 1년 둡니다. 회원 번호·쿠키·브라우저 이름은 남기지 않습니다.</div>
+<figure><svg viewBox="0 0 340 200" xmlns="http://www.w3.org/2000/svg">
+<line x1="20" y1="70" x2="320" y2="70" stroke="var(--line)" stroke-width="3"/>
+<circle cx="30" cy="70" r="6" fill="var(--accent)"/><circle cx="110" cy="70" r="6" fill="var(--warn)"/><circle cx="300" cy="70" r="6" fill="var(--no)"/>
+<text x="20" y="50" font-size="12" fill="var(--text)">기록</text>
+<text x="110" y="50" text-anchor="middle" font-size="12" fill="var(--warn)">30일: IP 비움</text>
+<text x="320" y="50" text-anchor="end" font-size="12" fill="var(--no)">1년: 지움</text>
+<rect x="10" y="100" width="150" height="88" rx="10" fill="var(--ok-bg)"/>
+<text x="20" y="122" font-size="12" font-weight="700" fill="var(--ok)">남김</text>
+<text x="20" y="142" font-size="11.5" fill="var(--text)">검색 조건·지역·도서관</text><text x="20" y="160" font-size="11.5" fill="var(--text)">결과 수·로그인 여부</text><text x="20" y="178" font-size="11.5" fill="var(--text)">IP(30일)</text>
+<rect x="180" y="100" width="150" height="88" rx="10" fill="var(--code-bg)"/>
+<text x="190" y="122" font-size="12" font-weight="700" fill="var(--muted)">안 남김</text>
+<text x="190" y="142" font-size="11.5" fill="var(--text)">회원 번호</text><text x="190" y="160" font-size="11.5" fill="var(--text)">쿠키 식별값</text><text x="190" y="178" font-size="11.5" fill="var(--text)">브라우저 이름</text>
+</svg><figcaption>이상한 클릭 알림은 IP와 함께 따로 30일 둡니다.</figcaption></figure>
+<p><b>바뀐 결정을 밝혀 둡니다</b>: 어제(10-12) 조사에서는 "IP를 남기지 않음"으로 정했고, 오늘 "ip도 기록하려고해"로 바꾸셨습니다. ADR에는 둘 다 적고, 남기지 않는 안은 "채택하지 않은 대안"으로 둡니다.</p>
+<p><b>이유 적는 법</b>: 말씀하신 말만 따옴표로 적었습니다. 저장 장소를 같은 PostgreSQL로 고른 이유와 IP를 남기는 이유는 직접 말씀하신 적이 없어 "[이유 미확인]"으로 두었습니다. 이유를 더 적고 싶으시면 기타에 써 주세요.</p>
+<table><tr><th>대안</th><th>안 고른 이유 (적은 대로)</th></tr>
+<tr><td>JSONL 파일</td><td>[이유 미확인]</td></tr>
+<tr><td>Umami·Google Analytics·S3</td><td>[이유 미확인]</td></tr>
+<tr><td>IP를 남기지 않음 (어제 결정)</td><td>"ip도 기록하려고해"</td></tr></table>
+<div class="item"><h3><span class="no">1</span>ADR-0096 초안대로 씀 [안]</h3>
+<p class="alt">원문 초안 전체는 승인 뒤 <code>docs/adr/0096-usage-log-storage-and-fields.md</code>에 들어갑니다. 감수하는 점으로 "처리방침에 IP를 적어야 함", "IP가 진짜 사용자 IP가 되려면 사이클 17 nginx 설정이 필요함"을 적었습니다.</p>
+</div>
+</section>
+
+<section class="card"><h2><span class="num">2</span>ADR-0097: 서버 안에서 어떻게 남기나</h2>
+<div class="gist">기록만 맡는 새 모듈 usagelog가 받아서 5초마다 묶어 넣고, 도서관 클릭은 화면이 fetch(keepalive)로 보내며 보안 검사(CSRF)를 그대로 받습니다.</div>
+<table><tr><th>정한 것</th><th>이유 (적은 대로)</th></tr>
+<tr><td>새 모듈 usagelog, 공개 창구 직접 호출 (이벤트 안 씀)</td><td>범위 단계 승인, "모듈로 두면 부하가 심해지지 않아?" 질문에 답한 뒤 승인. 이유 자체는 [이유 미확인]</td></tr>
+<tr><td>5초 묶음, 기록만 비동기 커밋, 최대 1만 줄</td><td>DB·메모리 걱정("db가 가장 걱정되는게 … 램에 많이 영향을 줄까?")에 대한 제안 → 승인</td></tr>
+<tr><td>버린 묶음도 기록</td><td>"실패 묶음 버리는거 이것도 기록도 해줘"</td></tr>
+<tr><td>클릭 알림 fetch(keepalive) + CSRF 그대로</td><td>"fetch(keepalive)로 하자"</td></tr>
+<tr><td>표 다섯, batchUpdate, 주소 /api/v1/library-clicks, X-Real-IP</td><td>제안 → 승인, [이유 미확인]</td></tr></table>
+<p><b>감수하는 점</b>: 서버가 갑자기 꺼지면 최대 5초 치가 빠짐, 처음 클릭 때 보안 표시를 받아 오는 요청이 하나 더, Firefox 133 미만에서는 keepalive 없이 보통 요청으로 감.</p>
+<div class="item"><h3><span class="no">2</span>ADR-0097 초안대로 씀 [안]</h3>
+<p class="alt">원문 초안 전체는 승인 뒤 <code>docs/adr/0097-usagelog-module-and-write-path.md</code>에 들어갑니다. 설계는 12·13·14 회고 뒤 코드에 맞춰 확정하므로, 그때 바뀌면 이 ADR을 고치거나 새 ADR로 대신합니다.</p>
+</div>
+</section>
+<p class="foot">원본 초안: 이 세션 작업 폴더의 <code>0096-usage-log-storage-and-fields.md</code>, <code>0097-usagelog-module-and-write-path.md</code> (승인 뒤 <code>docs/adr/</code>로 옮김).</p>
+</main></body></html>

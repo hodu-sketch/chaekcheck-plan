@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 15 설계 대안</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+.flow{display:grid;gap:10px;margin:10px 0 16px}.lane{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--card)}.lane b{display:block;margin-bottom:4px}.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{font-size:14px;border-radius:6px;padding:2px 8px;background:var(--code-bg)}.chip.new{background:var(--warn-bg)}.chip.dev{background:var(--ok-bg)}.arrow{text-align:center;color:var(--muted);font-size:18px;line-height:1}
+</style>
+<style>
+main{max-width:1080px}
+.pick{display:inline-block;font-size:14px;font-weight:700;color:var(--warn);background:var(--warn-bg);border-radius:6px;padding:1px 8px}
+.rec{display:inline-block;font-size:15px;font-weight:700;color:var(--ok);background:var(--ok-bg);border-radius:6px;padding:1px 8px}
+.ex{background:var(--ok-bg);border-radius:10px;padding:12px 16px;margin:10px 0}.ex b{color:var(--ok)}
+.alt{background:var(--code-bg);border-radius:10px;padding:12px 16px}
+.toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px 18px;font-size:18px;margin:6px 0 0;padding:0;list-style:none}
+.toc li{display:flex;gap:8px;align-items:baseline}
+figure{max-width:440px}
+figure svg text{font-family:"Noto Sans KR",system-ui,sans-serif}
+.card>figure{margin-left:auto;margin-right:auto}
+@media (min-width:980px){
+ .item{display:grid;grid-template-columns:minmax(0,1fr) 420px;column-gap:32px;align-items:start}
+ .item>*{grid-column:1}
+ .item>h3{grid-column:1 / -1}
+ .item>figure{grid-column:2;grid-row:2 / span 30;margin-top:4px}
+}
+@media (max-width:600px){body{font-size:18px}.card{padding:20px 16px}.lead{font-size:23px}}
+.item.answer{display:block!important;background:var(--accent-bg);border:2px solid var(--accent);border-radius:14px;padding:18px 20px;margin:14px 0 8px;grid-column:1 / -1}
+.item.answer>h3{color:var(--accent)}
+.item.answer figure{max-width:440px;margin:10px auto}
+@media (min-width:980px){.item>figure{grid-row:3 / span 30!important}}
+</style>
+</head>
+<body><main class="doc">
+<p class="lead">서버 안을 어떻게 만들지, 방향 일곱 가지를 골라 주세요</p>
+<p class="sub">사이클 15 설계 대안 · 2026-10-13 · 원본 <code>docs/cycles/15-usage-log/architect-proposal.md</code> · 여기서 고르신 방향은 12·13·14 회고 뒤 코드에 맞춰 확정하고 인계서를 씁니다.</p>
+
+<div class="jump" style="background:var(--warn-bg);border:2px solid var(--warn);border-radius:12px;padding:12px 16px;margin:0 0 20px;font-weight:500">질문하신 것의 답: <a href="#q-mod">모듈로 두면 부하가 더 심해지나</a> — #1 제목 바로 아래 파란 상자</div>
+<section class="card"><h2><span class="num">0</span>전체 모양</h2>
+<div class="gist">기록만 맡는 새 부분(모듈) <code>usagelog</code>를 하나 만들고, 검색·책 상세를 처리하는 부분이 "기록해 줘"라고 넘기면, 새 부분이 모았다가 5초마다 DB에 넣습니다.</div>
+<figure style="max-width:none"><svg viewBox="0 0 700 360" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="g0" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="var(--muted)"/></marker></defs>
+<g font-size="13">
+<rect x="250" y="10" width="200" height="50" rx="10" fill="var(--card)" stroke="var(--line)" stroke-width="1.5"/><text x="350" y="40" text-anchor="middle" font-weight="700" fill="var(--text)">브라우저 화면</text>
+<rect x="20" y="120" width="190" height="64" rx="10" fill="var(--card)" stroke="var(--line)" stroke-width="1.5"/><text x="115" y="146" text-anchor="middle" font-weight="700" fill="var(--text)">catalog</text><text x="115" y="166" text-anchor="middle" font-size="11.5" fill="var(--muted)">수집 목록 검색 · 책 상세</text>
+<rect x="255" y="120" width="190" height="64" rx="10" fill="var(--card)" stroke="var(--line)" stroke-width="1.5"/><text x="350" y="146" text-anchor="middle" font-weight="700" fill="var(--text)">availability</text><text x="350" y="166" text-anchor="middle" font-size="11.5" fill="var(--muted)">도서관에서 직접 찾기</text>
+<rect x="490" y="120" width="190" height="64" rx="10" fill="var(--card)" stroke="var(--line)" stroke-width="1.5"/><text x="585" y="146" text-anchor="middle" font-weight="700" fill="var(--text)">library</text><text x="585" y="166" text-anchor="middle" font-size="11.5" fill="var(--muted)">도서관 번호 확인</text>
+<rect x="190" y="230" width="320" height="64" rx="12" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="2"/><text x="350" y="256" text-anchor="middle" font-weight="700" fill="var(--text)">usagelog (새 모듈)</text><text x="350" y="276" text-anchor="middle" font-size="11.5" fill="var(--muted)">모으기 · 5초마다 넣기 · 04:30 지우기 · 클릭 알림 주소</text>
+<rect x="250" y="316" width="200" height="38" rx="10" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="1.5"/><text x="350" y="340" text-anchor="middle" font-weight="700" fill="var(--text)">DB schema usagelog</text>
+</g>
+<line x1="300" y1="62" x2="130" y2="116" stroke="var(--muted)" stroke-width="2" marker-end="url(#g0)"/>
+<line x1="350" y1="62" x2="350" y2="116" stroke="var(--muted)" stroke-width="2" marker-end="url(#g0)"/>
+<path d="M440,62 C600,90 560,200 470,226" fill="none" stroke="var(--warn)" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#g0)"/>
+<text x="560" y="82" font-size="11.5" fill="var(--warn)">클릭 알림</text>
+<line x1="130" y1="186" x2="250" y2="228" stroke="var(--muted)" stroke-width="2" marker-end="url(#g0)"/>
+<line x1="350" y1="186" x2="350" y2="226" stroke="var(--muted)" stroke-width="2" marker-end="url(#g0)"/>
+<line x1="470" y1="232" x2="560" y2="188" stroke="var(--muted)" stroke-width="2" marker-end="url(#g0)"/>
+<line x1="350" y1="296" x2="350" y2="312" stroke="var(--muted)" stroke-width="2" marker-end="url(#g0)"/>
+<text x="140" y="214" font-size="11.5" fill="var(--muted)">기록해 줘</text>
+</svg><figcaption>usagelog는 library만 알고, catalog·availability는 usagelog를 압니다. 서로 돌고 도는 의존은 없습니다.</figcaption></figure>
+</section>
+
+<section class="card"><h2><span class="num">1</span>검색 기록을 어떻게 넘기나</h2>
+<div class="item"><h3><span class="no">1</span>usagelog가 공개한 "기록해 줘" 창구를 catalog·availability가 직접 부름 [안]</h3>
+<div class="item answer" id="q-mod"><h3>질문에 대한 답: 따로 모듈로 두면 왔다 갔다 하는 부하가 더 심해지지 않나</h3>
+<div class="gist">심해지지 않습니다. 여기서 "모듈"은 따로 도는 서버가 아니라 <b>같은 프로그램 안의 코드 폴더 구분</b>입니다. 모듈끼리 부르는 것은 같은 프로그램 안의 보통 함수 호출이라 네트워크를 타지 않고, 같은 모듈 안에서 부르는 것과 비용이 같습니다.</div>
+<figure><svg viewBox="0 0 340 250" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="qm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="var(--muted)"/></marker></defs>
+<rect x="10" y="10" width="320" height="150" rx="12" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+<text x="22" y="32" font-size="12.5" font-weight="700" fill="var(--text)">서비스 프로그램 하나 (Java, 메모리 한 덩어리)</text>
+<rect x="24" y="48" width="120" height="44" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="84" y="75" text-anchor="middle" font-size="12" fill="var(--text)">catalog</text>
+<rect x="196" y="48" width="120" height="44" rx="8" fill="var(--card)" stroke="var(--warn)"/><text x="256" y="75" text-anchor="middle" font-size="12" fill="var(--text)">usagelog</text>
+<line x1="146" y1="70" x2="192" y2="70" stroke="var(--ok)" stroke-width="2" marker-end="url(#qm)"/>
+<text x="170" y="112" text-anchor="middle" font-size="11.5" fill="var(--ok)">보통 함수 호출 (같은 메모리)</text>
+<text x="170" y="132" text-anchor="middle" font-size="11.5" fill="var(--muted)">네트워크·변환 없음</text>
+<rect x="10" y="176" width="320" height="64" rx="10" fill="var(--code-bg)"/>
+<text x="22" y="198" font-size="11.5" fill="var(--text)">다른 서버로 나눴다면 (우리는 아님):</text>
+<text x="22" y="218" font-size="11.5" fill="var(--muted)">요청을 글자로 바꿔 네트워크로 보내고 답을 기다림</text>
+<text x="22" y="234" font-size="11.5" fill="var(--muted)">→ 이때는 왔다 갔다 비용이 생김</text>
+</svg><figcaption>모듈 경계는 코드를 정리하는 선이고, 실행할 때는 한 프로그램입니다.</figcaption></figure>
+<p><b>근거</b>: 우리 서비스는 Spring Modulith로 만든 "한 덩어리 프로그램(modular monolith)"입니다 (dev <code>CLAUDE.md</code>). Spring Modulith에서 모듈은 한 프로그램 안의 Java 패키지(코드 폴더)이고, 다른 모듈의 공개된 부분을 부르는 것은 일반 메서드 호출입니다 (<a href="https://docs.spring.io/spring-modulith/reference/fundamentals.html">Spring Modulith 문서</a>, 확인 2026-10-13).</p>
+<table><tr><th>부하가 생기는 경우</th><th>이번 설계</th></tr>
+<tr><td>모듈을 다른 서버로 나눔</td><td>나누지 않음 (같은 프로그램)</td></tr>
+<tr><td>Spring Modulith 이벤트로 넘김 (이벤트마다 DB에 한 줄 적고 지움)</td><td>쓰지 않음, 함수 직접 호출</td></tr>
+<tr><td>호출할 때마다 DB에 씀</td><td>메모리에 넣기만, 5초마다 한 번 DB</td></tr></table>
+<p><b>그래도 따로 두는 이유</b>: 기록 규칙(모으기, 5초 넣기, 30일 IP 비우기, 1년 지우기, 클릭 알림 주소)이 한 폴더에 모여, 검색 코드와 섞이지 않습니다. 나중에 기록을 다른 저장소로 옮길 때 이 폴더만 바꾸면 됩니다. "새 모듈 하나"는 범위 단계에서 이미 승인하신 것입니다(scope #6).</p>
+</div>
+
+<figure><svg viewBox="0 0 340 280" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="g1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="var(--muted)"/></marker></defs>
+<text x="40" y="20" text-anchor="middle" font-size="12" font-weight="700" fill="var(--text)">화면</text>
+<text x="170" y="20" text-anchor="middle" font-size="12" font-weight="700" fill="var(--text)">availability</text>
+<text x="295" y="20" text-anchor="middle" font-size="12" font-weight="700" fill="var(--text)">usagelog</text>
+<line x1="40" y1="28" x2="40" y2="270" stroke="var(--line)" stroke-dasharray="3 3"/><line x1="170" y1="28" x2="170" y2="270" stroke="var(--line)" stroke-dasharray="3 3"/><line x1="295" y1="28" x2="295" y2="270" stroke="var(--line)" stroke-dasharray="3 3"/>
+<line x1="40" y1="50" x2="166" y2="50" stroke="var(--muted)" stroke-width="2" marker-end="url(#g1)"/><text x="46" y="44" font-size="11" fill="var(--text)">직접 찾기 요청</text>
+<line x1="170" y1="84" x2="44" y2="84" stroke="var(--muted)" stroke-width="2" marker-end="url(#g1)"/><text x="60" y="78" font-size="11" fill="var(--text)">첫 묶음 결과</text>
+<rect x="176" y="104" width="160" height="70" rx="8" fill="var(--code-bg)"/>
+<text x="184" y="124" font-size="11" fill="var(--text)">첫 묶음 끝 → 결과 수</text>
+<text x="184" y="144" font-size="11" fill="var(--text)">창 닫음·오류 → 빈 결과 수</text>
+<text x="184" y="164" font-size="11" fill="var(--muted)">둘 중 먼저 온 것 한 번만</text>
+<line x1="170" y1="196" x2="291" y2="196" stroke="var(--warn)" stroke-width="2" marker-end="url(#g1)"/><text x="176" y="190" font-size="11" fill="var(--warn)">기록해 줘</text>
+<text x="300" y="226" text-anchor="end" font-size="11" fill="var(--muted)">메모리에 넣고</text>
+<text x="300" y="242" text-anchor="end" font-size="11" fill="var(--muted)">바로 돌아옴</text>
+</svg><figcaption>결과 수를 아는 곳이 직접 넘기므로 정확합니다. 기록은 메모리에 넣기만 해서 검색이 기다리지 않습니다.</figcaption></figure>
+<p><b>이렇게 되면</b>: 수집 목록 검색(첫 쪽)·책 상세·직접 찾기(첫 묶음 끝)에서 각각 한 줄을 넘깁니다. 이벤트 기능(Spring Modulith 이벤트)을 쓰지 않아 DB 쓰기가 늘지 않습니다.</p>
+<p class="alt"><b>다른 선택</b><br>① usagelog가 들어오는 요청을 가로채 스스로 읽음(필터) → 검색 코드를 안 고치지만, 직접 찾기의 결과 수를 볼 수 없어 명세(결과 수, 끊기면 빈 값)를 못 지킵니다.<br>② catalog·availability가 각자 기록 칸을 가짐 → 모듈 사이 호출은 없지만 모으기·지우기 코드가 세 벌이 되고, catalog 칸은 책 목록을 통째로 바꿔 끼울 때 함께 다뤄져 위험합니다.</p>
+<p><span class="rec">추천</span> 공개 창구 직접 부르기</p>
+</div></section>
+
+<section class="card"><h2><span class="num">2</span>DB 칸 모양</h2>
+<div class="item"><h3><span class="no">2</span>기록 종류마다 표를 따로, 값마다 칸을 따로 (표 다섯) [안]</h3>
+<figure><svg viewBox="0 0 340 330" xmlns="http://www.w3.org/2000/svg">
+<g font-size="11.5">
+<rect x="10" y="10" width="155" height="120" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="1.5"/>
+<text x="20" y="30" font-weight="700" font-size="12.5" fill="var(--text)">search_event</text>
+<text x="20" y="50" fill="var(--muted)">시각 · 종류(목록/직접)</text><text x="20" y="68" fill="var(--muted)">검색어 · 방식 · 범위</text><text x="20" y="86" fill="var(--muted)">지역들 · 도서관들</text><text x="20" y="104" fill="var(--muted)">결과 수 · 로그인 여부</text><text x="20" y="122" fill="var(--warn)">IP (30일 뒤 비움)</text>
+<rect x="175" y="10" width="155" height="120" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="1.5"/>
+<text x="185" y="30" font-weight="700" font-size="12.5" fill="var(--text)">library_click</text>
+<text x="185" y="50" fill="var(--muted)">시각 · 도서관</text><text x="185" y="68" fill="var(--muted)">누른 곳 · 화면</text><text x="185" y="86" fill="var(--muted)">책(있을 때)</text><text x="185" y="104" fill="var(--muted)">로그인 여부</text><text x="185" y="122" fill="var(--warn)">IP (30일 뒤 비움)</text>
+<rect x="10" y="142" width="155" height="102" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="1.5"/>
+<text x="20" y="162" font-weight="700" font-size="12.5" fill="var(--text)">book_view</text>
+<text x="20" y="182" fill="var(--muted)">시각 · 책</text><text x="20" y="200" fill="var(--muted)">지역들 · 도서관들</text><text x="20" y="218" fill="var(--muted)">로그인 여부</text><text x="20" y="236" fill="var(--warn)">IP (30일 뒤 비움)</text>
+<rect x="175" y="142" width="155" height="84" rx="8" fill="var(--card)" stroke="var(--no)" stroke-width="1.5"/>
+<text x="185" y="162" font-weight="700" font-size="12.5" fill="var(--text)">rejected_click</text>
+<text x="185" y="182" fill="var(--muted)">시각 · IP · 이유</text><text x="185" y="200" fill="var(--muted)">받은 값</text><text x="185" y="218" fill="var(--no)">30일 뒤 줄 지움</text>
+<rect x="175" y="238" width="155" height="66" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="1.5"/>
+<text x="185" y="258" font-weight="700" font-size="12.5" fill="var(--text)">dropped_batch</text>
+<text x="185" y="278" fill="var(--muted)">시각 · 줄 수 · 이유</text><text x="185" y="296" fill="var(--muted)">(IP·내용 없음)</text>
+<text x="10" y="272" fill="var(--text)">파란 셋: 1년 보관</text>
+<text x="10" y="292" fill="var(--text)">빨강: 30일 · 회색: 1년</text>
+<text x="10" y="320" fill="var(--muted)">서로 잇는 칸 없음 (검색·클릭 잇지 않기로 함)</text>
+</g>
+</svg><figcaption>칸 이름만 봐도 무엇을 남기는지 보이고, 회원 번호·쿠키 칸이 없다는 것을 표 정의로 확인할 수 있습니다.</figcaption></figure>
+<p><b>이렇게 되면</b>: "어떤 정렬을 많이 쓰나" 같은 통계를 SQL 한 줄로 셀 수 있습니다. 종류 값은 글자 그대로(예: <code>result_card</code>) 두어 사람이 읽기 쉽고, 지역·도서관 목록은 번호 묶음 칸에 둡니다. 표를 달마다 나누는 일(파티션)은 하지 않습니다(1년 1~2GB 어림, 서버 메모리보다 작음).</p>
+<p class="alt"><b>다른 선택</b>: 표 하나에 내용을 통째로(JSON) 넣음 → 모양을 바꾸기 쉽지만 값 검사가 없고 통계 SQL이 길어지며, "IP 칸이 30일 뒤 비는지" 같은 확인이 어려워집니다.</p>
+<p><span class="rec">추천</span> 표 다섯, 칸 나눔</p>
+</div>
+<div class="item"><h3><span class="no">3</span>IP는 같은 줄의 칸으로 두고, 매일 04:30에 30일 지난 줄의 IP 칸을 비움 [안]</h3>
+<p><b>이렇게 되면</b>: 지우기 작업 하나가 ① 30일 지난 IP 칸 비우기 ② 30일 지난 이상한 알림 지우기 ③ 1년 지난 줄 지우기를 차례로 합니다. 하루에 비우는 줄은 30일 전 하루치(수만 줄 어림)라 DB 부담이 작습니다.</p>
+<p class="alt"><b>다른 선택</b>: IP만 따로 표에 두고 30일 뒤 그 표에서 지움 → 칸 비우기(고쳐 쓰기) 대신 지우기라 깔끔하지만, 표가 하나 더 늘고 IP를 볼 때마다 두 표를 맞춰 봐야 합니다.</p>
+<p><span class="rec">추천</span> 같은 줄의 칸</p>
+</div></section>
+
+<section class="card"><h2><span class="num">3</span>넣는 방법과 클릭 알림 주소</h2>
+<div class="item"><h3><span class="no">4</span>5초 묶음은 Spring의 묶어 넣기(JdbcTemplate.batchUpdate)로, 기록용 트랜잭션만 비동기 커밋 [안]</h3>
+<p><b>이렇게 되면</b>: 5초 동안 모인 줄을 한 트랜잭션으로 넣습니다. 지금 서비스가 DB를 다루는 방식(JdbcClient)과 같은 계열이라 새 도구가 없습니다. 처음에는 DB 연결 설정을 바꾸지 않고, 측정(10%·50MB 기준)에서 느리면 그때 연결 설정(<code>reWriteBatchedInserts</code>)을 켭니다.</p>
+<p class="alt"><b>다른 선택</b>: 여러 줄을 한 문장으로 직접 조립 → 가장 빠를 수 있지만 SQL을 만드는 코드가 늘고 한 번에 넣을 수 있는 값 수에 맞춰 나눠야 합니다.</p>
+<p><span class="rec">추천</span> batchUpdate</p>
+</div>
+<div class="item"><h3><span class="no">5</span>클릭 알림 주소는 <code>POST /api/v1/library-clicks</code>, 내용은 JSON, 답은 늘 "받았음(204)" [안]</h3>
+<p><b>이렇게 되면</b>: 화면이 <code>{"libraryId":12,"place":"result_card","screen":"picks","bookId":345,"loggedIn":false}</code> 같은 내용을 fetch(keepalive)로 보냅니다. 보안 표시(CSRF)는 다른 보내기 요청과 같이 붙습니다. nginx가 이 주소에 IP당 1분 60번 제한을 겁니다.</p>
+<p class="alt"><b>다른 선택</b>: 주소 이름을 <code>/api/v1/usage/clicks</code>처럼 기록 쪽 이름으로 → 나중에 다른 기록 주소가 생기면 묶기 쉽지만, 지금은 하나뿐입니다.</p>
+<p><span class="rec">추천</span> /api/v1/library-clicks</p>
+</div></section>
+
+<section class="card"><h2><span class="num">4</span>이름과 IP 읽는 곳</h2>
+<div class="item"><h3><span class="no">6</span>새 모듈과 DB schema 이름은 <code>usagelog</code> [안]</h3>
+<p><b>이렇게 되면</b>: 코드 폴더 <code>com.chaekcheck.usagelog</code>, DB <code>usagelog.search_event</code> 등. 사이클 16의 <code>sitecontent</code>와 겹치지 않습니다. 둘 다 DB 변경 목록 파일 끝줄을 고치므로 합칠 때 순서만 확인합니다.</p>
+<p class="alt"><b>다른 선택</b>: <code>activity</code>, <code>analytics</code> → 뜻이 넓어 나중에 통계 계산까지 이 이름에 들어갈 수 있습니다. 통계는 다음 사이클에서 따로 정합니다.</p>
+<p><span class="rec">추천</span> usagelog</p>
+</div>
+<div class="item"><h3><span class="no">7</span>IP는 nginx가 넘겨주는 X-Real-IP에서 읽고, 사이클 17 배포 설정과 맞춤 [안]</h3>
+<figure><svg viewBox="0 0 340 200" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="g7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="var(--muted)"/></marker></defs>
+<g font-size="11.5">
+<rect x="10" y="10" width="70" height="44" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="45" y="37" text-anchor="middle" fill="var(--text)">사용자</text>
+<rect x="95" y="10" width="75" height="44" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="132" y="30" text-anchor="middle" fill="var(--text)">Cloudflare</text><text x="132" y="46" text-anchor="middle" font-size="10" fill="var(--muted)">CF-Connecting-IP</text>
+<rect x="185" y="10" width="65" height="44" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="217" y="37" text-anchor="middle" fill="var(--text)">nginx</text>
+<rect x="265" y="10" width="65" height="44" rx="8" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="297" y="30" text-anchor="middle" fill="var(--text)">서비스</text><text x="297" y="46" text-anchor="middle" font-size="10" fill="var(--muted)">X-Real-IP</text>
+</g>
+<line x1="82" y1="32" x2="92" y2="32" stroke="var(--muted)" stroke-width="2" marker-end="url(#g7)"/><line x1="172" y1="32" x2="182" y2="32" stroke="var(--muted)" stroke-width="2" marker-end="url(#g7)"/><line x1="252" y1="32" x2="262" y2="32" stroke="var(--muted)" stroke-width="2" marker-end="url(#g7)"/>
+<rect x="10" y="74" width="320" height="50" rx="8" fill="var(--ok-bg)"/><text x="20" y="96" font-size="11.5" fill="var(--text)">17 설정 있음: nginx가 CF-Connecting-IP를 사용자</text><text x="20" y="114" font-size="11.5" fill="var(--text)">주소로 씀 → X-Real-IP = 사용자 IP</text>
+<rect x="10" y="134" width="320" height="56" rx="8" fill="var(--no-bg)"/><text x="20" y="156" font-size="11.5" fill="var(--text)">설정 없음: 모두 터널 주소 하나 → IP 기록이 틀리고</text><text x="20" y="176" font-size="11.5" fill="var(--text)">IP별 요청 수 제한이 모든 사람을 한꺼번에 막음</text>
+</svg><figcaption>사이클 17이 정한 설정(Cloudflare Tunnel, CF-Connecting-IP)과 같은 값을 받습니다.</figcaption></figure>
+<p><b>이렇게 되면</b>: 서비스는 nginx가 이미 붙여 주는 <code>X-Real-IP</code>만 읽습니다. 그 값이 진짜 사용자 IP가 되는 것은 사이클 17의 nginx 설정에 달려 있어, 설계 확정 때 17 설정을 확인합니다.</p>
+<p class="alt"><b>다른 선택</b>: 서비스가 <code>CF-Connecting-IP</code>를 직접 읽음 → nginx 설정과 무관하지만, Cloudflare를 거치지 않는 요청(로컬·시험)에서는 값이 없고, 누구나 이 머리글을 꾸며 보낼 수 있어 nginx에서 정리된 값보다 믿기 어렵습니다.</p>
+<p><span class="rec">추천</span> X-Real-IP + 17과 맞춤</p>
+</div></section>
+
+<section class="card"><h2><span class="num">5</span>회고 뒤에 확인할 것</h2>
+<table><tr><th>사이클</th><th>볼 것</th></tr>
+<tr><td>12 묶기 규칙</td><td>수집 목록 검색 코드·검색 값 읽는 곳이 바뀌었으면 "기록해 줘"를 부를 자리</td></tr>
+<tr><td>13 수집기 이전</td><td>도서관 번호 확인 기준(켜진 도서관만/전체), DB 변경 목록 끝줄</td></tr>
+<tr><td>14 사서 추천</td><td>사서 추천 창의 결과 줄·책 번호, 화면 값 <code>picks</code></td></tr>
+<tr><td>17 첫 배포</td><td>nginx의 CF-Connecting-IP 설정 (#7)</td></tr></table>
+</section>
+<p class="foot">이 페이지는 요약이며 근거는 원본 <code>docs/cycles/15-usage-log/architect-proposal.md</code>에 있습니다.</p>
+</main></body></html>

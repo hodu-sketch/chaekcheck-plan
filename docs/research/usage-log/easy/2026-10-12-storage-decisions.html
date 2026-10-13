@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>기록 저장 결정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+.flow{display:grid;gap:10px;margin:10px 0 16px}.lane{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--card)}.lane b{display:block;margin-bottom:4px}.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{font-size:14px;border-radius:6px;padding:2px 8px;background:var(--code-bg)}.chip.new{background:var(--warn-bg)}.chip.dev{background:var(--ok-bg)}.arrow{text-align:center;color:var(--muted);font-size:18px;line-height:1}
+</style>
+</head>
+<body><main class="doc">
+<p class="lead">검색과 도서관 클릭을 어디에, 무엇을 남길지 다섯 가지를 골라 주세요</p>
+<p class="sub">사이클 15 준비 조사 · 2026-10-12 · 통계는 다음 일이고, 이번에는 기록만 정합니다.</p>
+
+<section class="card"><h2><span class="num">0</span>지금은 아무것도 남지 않습니다</h2>
+<div class="gist">검색도, 도서관으로 넘어가는 클릭도 지금은 어디에도 기록되지 않습니다.</div>
+<ul>
+<li><b>검색</b>: 우리 서버로 요청이 오지만 기록하지 않습니다. 로그인했어도 검색 요청에는 회원 정보가 실리지 않게 되어 있습니다. 로그인 쿠키가 내 정보 주소(<code>/api/v1/me</code>)로만 가기 때문입니다.</li>
+<li><b>도서관으로 넘어가는 클릭</b>: 아래 여섯 곳 모두 새 탭에서 바로 전자도서관으로 갑니다. 우리 서버는 클릭이 있었는지 모릅니다.</li>
+</ul>
+<table><tr><th>누르는 곳</th><th>가는 곳</th></tr>
+<tr><td>결과 카드 전체</td><td>그 책의 전자도서관 페이지 (없으면 그 도서관 검색 페이지)</td></tr>
+<tr><td>도서관 이름 → 가입 링크</td><td>가입 페이지</td></tr>
+<tr><td>"전자도서관에서 가입 안내 보기"</td><td>전자도서관 첫 화면</td></tr>
+<tr><td>"도서관 첫 화면"</td><td>도서관 홈페이지 (조사 안내가 있는 도서관만)</td></tr>
+<tr><td>도서관 로고 (결과 줄, 내 도서관)</td><td>도서관 홈페이지</td></tr>
+<tr><td>도서관 요약 막대의 이름</td><td>도서관 홈페이지</td></tr></table>
+<p class="note">분석 도구(Google Analytics 등)도 없고, 서버는 IP를 저장하지 않습니다 (dev 코드 2026-10-12 확인).</p>
+</section>
+
+<section class="card"><h2><span class="num">1</span>어디에 남길까</h2>
+<div class="gist">지금 쓰는 PostgreSQL 안에 기록용 칸(새 schema)을 하나 더 만드는 것을 추천합니다.</div>
+<figure><svg viewBox="0 0 760 240" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="var(--muted)"/></marker></defs>
+<rect x="10" y="30" width="200" height="80" rx="10" fill="var(--card)" stroke="var(--line)" stroke-width="1.5"/>
+<text x="110" y="64" text-anchor="middle" font-size="16" font-weight="700" fill="var(--text)">사용자 화면</text>
+<text x="110" y="88" text-anchor="middle" font-size="13" fill="var(--muted)">검색 · 도서관 링크</text>
+<rect x="290" y="30" width="200" height="80" rx="10" fill="var(--card)" stroke="var(--line)" stroke-width="1.5"/>
+<text x="390" y="64" text-anchor="middle" font-size="16" font-weight="700" fill="var(--text)">우리 서버</text>
+<text x="390" y="88" text-anchor="middle" font-size="13" fill="var(--muted)">기록 한 줄 남김</text>
+<rect x="560" y="14" width="190" height="210" rx="12" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+<text x="655" y="40" text-anchor="middle" font-size="15" font-weight="700" fill="var(--text)">같은 PostgreSQL</text>
+<rect x="580" y="56" width="150" height="46" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="655" y="84" text-anchor="middle" font-size="13" fill="var(--text)">도서관·책 (지금)</text>
+<rect x="580" y="118" width="150" height="46" rx="8" fill="var(--warn-bg)" stroke="var(--warn)" stroke-dasharray="5 3"/>
+<text x="655" y="146" text-anchor="middle" font-size="13" fill="var(--text)">기록 (새로)</text>
+<line x1="212" y1="56" x2="286" y2="56" stroke="var(--muted)" stroke-width="2" marker-end="url(#a)"/>
+<text x="249" y="48" text-anchor="middle" font-size="13" fill="var(--muted)">검색</text>
+<line x1="492" y1="84" x2="576" y2="138" stroke="var(--muted)" stroke-width="2" marker-end="url(#a)"/>
+<path d="M110,112 L110,190 L390,190 L390,114" fill="none" stroke="var(--muted)" stroke-width="2" marker-end="url(#a)"/>
+<text x="250" y="214" text-anchor="middle" font-size="13" fill="var(--muted)">클릭: "이 도서관 눌렀음"만 따로 알림</text>
+</svg><figcaption>검색과 클릭 모두 우리 서버를 거쳐, 도서관·책이 있는 같은 DB의 새 칸에 쌓입니다.</figcaption></figure>
+<div class="item"><h3><span class="no">1</span>같은 PostgreSQL에 기록 칸을 새로 만듦 [안]</h3>
+<p><b>이렇게 되면</b>: 새로 설치하는 프로그램이 없습니다. 나중에 "어느 지역 도서관이 많이 눌렸나"를 볼 때 기록과 도서관 정보를 한 번에 맞춰 볼 수 있습니다. 지금 모듈마다 칸(schema)을 따로 두는 방식 그대로입니다.</p>
+<p><b>커지면</b>: 기록을 달마다 나눠 두면 오래된 달을 통째로 지울 수 있습니다. 공식 문서는 이 나누기가 표가 서버 메모리(4GB)보다 커질 때쯤 의미가 있다고 해서, 처음에는 나누지 않고 시작해도 됩니다 (<a href="https://www.postgresql.org/docs/current/ddl-partitioning.html">PostgreSQL 공식 문서</a>, 확인 2026-10-12).</p>
+<p class="note">크기 어림: 한 줄 0.3~0.5KB. 하루 1만 건이면 1년에 1~2GB입니다. 이용자 수를 몰라 어림한 값이고, 운영 뒤에 잽니다.</p>
+<p class="alt"><b>다른 선택</b></p>
+<table><tr><th>다른 선택</th><th>드는 것</th></tr>
+<tr><td>Umami(무료 방문 통계 프로그램)를 같은 서버에 설치</td><td>방문 통계 화면이 바로 생기지만 4GB 서버에 프로그램이 하나 더 돕니다. "어떤 조건으로 검색했나"는 결국 따로 만들어야 합니다 (<a href="https://docs.umami.is/docs/install">Umami 문서</a>)</td></tr>
+<tr><td>Google Analytics</td><td>설치가 거의 없지만 기록이 해외로 나가고, 하나하나의 기록은 최대 14개월만 남습니다 (<a href="https://support.google.com/analytics/answer/7667196">Google 도움말</a>). 우리 도서관 정보와 맞춰 보기 어렵습니다</td></tr>
+<tr><td>기록 파일로 남겨 AWS S3에 모으기</td><td>운영 DB와 완전히 떨어지지만, 파일을 옮기는 길을 새로 만들어야 하고 아직 S3를 쓰지 않습니다</td></tr></table>
+<p class="note">PostHog·Plausible 직접 설치는 서버 사양(16GB, ClickHouse)이 맞지 않아 뺐습니다 (<a href="https://posthog.com/docs/self-host">PostHog 문서</a>).</p>
+</div>
+
+<div class="item" id="q1"><h3>질문: DB에 남기는 것과 JSONL 파일로 남기는 것, 무엇이 다르고 DB에 부담이 될까</h3>
+<div class="gist">지금 예상하는 양(하루 수만 줄)이면 DB에 남겨도 검색이 느려지거나 RAM이 눈에 띄게 늘지 않습니다. 단, 검색 요청 안에서 바로 쓰지 말고 모아서 몇 초마다 한 번에 넣어야 합니다. 파일(JSONL)은 DB 부담이 아예 없는 대신, 통계를 낼 때 파일을 읽어 들이는 일이 따로 생깁니다.</div>
+
+<p><b>JSONL이란</b>: 기록 한 건을 JSON 한 줄로 파일 끝에 덧붙이는 형식입니다. 예: <code>{"t":"2026-10-20T21:03","title":"채식주의자","results":12}</code></p>
+
+<p><b>1) 두 방식 비교</b></p>
+<table><tr><th></th><th>DB 기록 칸</th><th>JSONL 파일</th></tr>
+<tr><td>쓰는 곳</td><td>PostgreSQL의 새 칸</td><td>서버 디스크의 기록 파일 (날마다 새 파일)</td></tr>
+<tr><td>DB 부담</td><td>작음 (아래 2번)</td><td>없음</td></tr>
+<tr><td>바로 보기</td><td>SQL 한 줄로 바로, 도서관 정보와 같이</td><td>파일을 읽는 도구(DuckDB)로 보거나 DB에 옮겨 넣어야 함 (<a href="https://duckdb.org/docs/current/data/json/loading_json.html">DuckDB 문서</a>)</td></tr>
+<tr><td>잃을 수 있는 것</td><td>비동기 커밋을 쓰면 서버가 갑자기 꺼질 때 마지막 0.6초 정도 (DB가 깨지지는 않음)</td><td>서버가 갑자기 꺼질 때 파일 끝부분 (얼마나인지 확인 못 함). 서버를 새로 만들면 파일을 따로 옮겨 두지 않은 한 사라짐</td></tr>
+<tr><td>지우기 (1년 보관)</td><td>오래된 줄을 지우는 작업을 정기적으로</td><td>오래된 파일을 지우는 설정 하나 (<a href="https://logback.qos.ch/manual/appenders-rolling.html">Logback 문서</a> <code>maxHistory</code>)</td></tr>
+<tr><td>백업</td><td>DB 백업에 같이 들어가 백업이 조금 커짐</td><td>DB 백업과 별개로 챙겨야 함</td></tr>
+<tr><td>Docker에서</td><td>지금 DB 그대로</td><td>파일이 컨테이너 밖 디스크에 남도록 폴더를 연결해야 함</td></tr>
+<tr><td>형식이 바뀔 때</td><td>칸을 바꾸는 변경 파일(Liquibase)</td><td>옛 파일과 새 파일 모양이 섞임</td></tr></table>
+
+<p><b>2) DB 부담: 트랜잭션·잠금·RAM</b></p>
+<table><tr><th>걱정</th><th>공식 문서로 확인한 것</th></tr>
+<tr><td>검색을 막을까 (잠금)</td><td>기록을 넣을 때 걸리는 잠금과 검색이 거는 잠금은 서로 부딪치지 않습니다. 같은 칸을 읽고 쓰더라도 서로 기다리지 않습니다 (<a href="https://www.postgresql.org/docs/current/explicit-locking.html">PostgreSQL 잠금 문서</a>). 기록은 새 칸이라 책·도서관 칸과 아예 다릅니다</td></tr>
+<tr><td>트랜잭션이 무거울까</td><td>한 줄씩 따로 넣으면 넣을 때마다 디스크 쓰기를 기다립니다. 공식 문서는 여러 줄을 한 트랜잭션으로 묶어 넣으라고 권합니다 (<a href="https://www.postgresql.org/docs/current/populate.html">Populating a Database</a>). 기록용 트랜잭션만 "비동기 커밋"으로 하면 디스크 쓰기를 기다리지 않고, 공식 문서도 이벤트 기록을 이 방식에 맞는 예로 듭니다 (<a href="https://www.postgresql.org/docs/current/wal-async-commit.html">비동기 커밋 문서</a>)</td></tr>
+<tr><td>DB 연결이 모자랄까</td><td>서비스는 DB 연결을 10개까지 씁니다(설정 없음, 기본값) (<a href="https://github.com/brettwooldridge/HikariCP">HikariCP</a>). 몇 초마다 한 번 묶어 넣으면 연결 하나를 아주 잠깐 씁니다. 한 줄씩 검색 요청 안에서 넣으면 사람이 몰릴 때 검색과 연결을 다툽니다</td></tr>
+<tr><td>RAM (DB)</td><td>기록은 표 끝에 붙기만 해서, DB 메모리(공유 버퍼)에는 마지막 몇 쪽만 올라옵니다. 넣기에는 정렬용 메모리(work_mem)가 쓰이지 않는 것으로 보이지만 문서에 직접 적혀 있지는 않아 확인 못 함입니다 (<a href="https://www.postgresql.org/docs/current/runtime-config-resource.html">메모리 설정 문서</a>)</td></tr>
+<tr><td>RAM (서비스)</td><td>모아 두는 동안 서비스 메모리에 둡니다. 1,000줄 × 0.5KB = 약 0.5MB로, 힙 512MB에 비해 작습니다 (어림)</td></tr>
+<tr><td>청소(autovacuum)</td><td>넣기만 하는 칸도 1,000줄 + 20%쯤 쌓일 때마다 DB가 알아서 한 번 정리합니다. 이 정리는 뒤의 정리를 가볍게 만드는 일입니다 (<a href="https://www.postgresql.org/docs/current/runtime-config-autovacuum.html">autovacuum 문서</a>)</td></tr></table>
+
+<figure><svg viewBox="0 0 760 170" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="var(--muted)"/></marker></defs>
+<text x="10" y="24" font-size="14" font-weight="700" fill="var(--text)">한 줄씩 바로 (피함)</text>
+<g fill="var(--no-bg)" stroke="var(--no)"><rect x="200" y="10" width="20" height="20" rx="3"/><rect x="250" y="10" width="20" height="20" rx="3"/><rect x="290" y="10" width="20" height="20" rx="3"/><rect x="360" y="10" width="20" height="20" rx="3"/><rect x="400" y="10" width="20" height="20" rx="3"/><rect x="470" y="10" width="20" height="20" rx="3"/><rect x="530" y="10" width="20" height="20" rx="3"/><rect x="600" y="10" width="20" height="20" rx="3"/></g>
+<text x="200" y="52" font-size="13" fill="var(--muted)">검색마다 DB에 한 번씩, 검색 응답도 그만큼 기다림</text>
+<text x="10" y="104" font-size="14" font-weight="700" fill="var(--text)">모아서 몇 초마다</text>
+<g fill="var(--ok-bg)" stroke="var(--ok)"><rect x="200" y="90" width="14" height="20" rx="3"/><rect x="220" y="90" width="14" height="20" rx="3"/><rect x="240" y="90" width="14" height="20" rx="3"/><rect x="420" y="90" width="14" height="20" rx="3"/><rect x="440" y="90" width="14" height="20" rx="3"/><rect x="460" y="90" width="14" height="20" rx="3"/><rect x="480" y="90" width="14" height="20" rx="3"/></g>
+<line x1="260" y1="100" x2="410" y2="100" stroke="var(--muted)" stroke-dasharray="4 4"/>
+<text x="200" y="134" font-size="13" fill="var(--muted)">서비스 메모리에 모았다가 한 트랜잭션으로, 검색 응답은 기다리지 않음</text>
+</svg><figcaption>같은 기록이라도 한 번에 묶어 넣으면 DB에 가는 횟수가 크게 줄고, 검색 응답과 떨어집니다.</figcaption></figure>
+
+<p><b>3) 지금 서비스에 맞는가</b></p>
+<ul>
+<li>서버 한 대(4GB) 안에 DB가 같이 돕니다. 하루 수만 줄이면 1년에 1~2GB(어림)로, 지금 DB 약 8.5GB에 비해 작습니다.</li>
+<li>다음 일인 통계는 "어느 지역·도서관이 많이 눌렸나"처럼 도서관 정보와 맞춰 보는 것이라 DB 쪽이 쉽습니다.</li>
+<li>서비스의 기존 이벤트 기능(Spring Modulith 이벤트)으로 기록하면 이벤트마다 이벤트 기록 칸에 넣고 지우는 일이 한 번씩 더 생겨, 기록 한 줄에 DB 쓰기가 세 번이 됩니다 (<a href="https://docs.spring.io/spring-modulith/reference/events.html">Spring Modulith 문서</a>). 그래서 이 기능은 쓰지 않는 쪽을 권합니다.</li>
+</ul>
+<div class="item" id="q1b"><h3>질문: Spring Modulith 이벤트가 뭐고, 지금 그걸로 기록하는 게 있나</h3>
+<div class="gist">지금 검색이나 클릭을 기록하는 데 쓰는 곳은 없습니다. 이 기능은 회원 탈퇴 한 곳에서만 씁니다.</div>
+<p><b>무엇인지</b>: 서버 안의 한 부분(모듈)이 "이런 일이 있었다"고 알리면, 다른 부분이 그 알림을 받아 자기 일을 하게 하는 기능입니다. 알림을 놓치지 않도록 DB의 이벤트 기록 칸(<code>event_publication</code>)에 먼저 적어 두고, 받는 쪽이 일을 마치면 그 줄을 지웁니다.</p>
+<p><b>지금 쓰는 곳 (dev 코드 2026-10-12 확인)</b>: 회원 탈퇴 하나뿐입니다.</p>
+<table><tr><th>순서</th><th>하는 일</th></tr>
+<tr><td>1</td><td>로그인 부분(<code>auth</code>)이 회원을 지우고 "회원 탈퇴됨" 알림을 냄</td></tr>
+<tr><td>2</td><td>이벤트 기록 칸에 받을 곳마다 한 줄씩 적음</td></tr>
+<tr><td>3</td><td>내 도서관 부분(<code>mylibrary</code>)이 그 회원의 지역·도서관을 지움, 탈퇴 기록을 서버 로그에 남김</td></tr>
+<tr><td>4</td><td>일이 끝나면 이벤트 기록 칸의 줄을 지움</td></tr></table>
+<p><b>왜 이번 기록에 안 쓰는지</b>: 검색 기록을 이 방식으로 하면 "검색 부분이 알림 → 기록 부분이 받아서 저장"이 됩니다. 검색 한 번마다 이벤트 기록 칸에 적고 지우는 일이 더 생겨, 기록 한 줄을 남기려고 DB에 세 번 쓰게 됩니다. 탈퇴처럼 드물고 꼭 처리돼야 하는 일에는 맞지만, 잦고 몇 줄 빠져도 되는 기록에는 무겁습니다 (<a href="https://docs.spring.io/spring-modulith/reference/events.html">Spring Modulith 문서</a>, 확인 2026-10-12).</p>
+</div>
+<ul>
+<li>기록이 한 번이라도 빠지면 안 되는 일은 아니라서, 서버가 갑자기 꺼질 때 마지막 몇 초가 빠지는 것은 받아들일 수 있다고 봅니다.</li>
+</ul>
+<p><b>정리</b>: 추천은 그대로 DB 기록 칸입니다. 조건은 셋입니다: 검색 응답과 떨어져서 쓰기, 모아서 몇 초마다 한 트랜잭션으로 넣기, 기록용 트랜잭션만 비동기 커밋. DB를 전혀 건드리고 싶지 않으시면 JSONL 파일이 맞고, 그때는 "통계를 낼 때 파일을 DB로 옮겨 넣기"가 사이클 범위에 들어옵니다. 1번 칩에서 고르시면 됩니다. JSONL로 가시려면 기타에 적어 주세요.</p>
+<p class="note">확인 못 한 것: 넣기가 정렬용 메모리를 쓰지 않는지, 파일이 서버가 꺼질 때 얼마나 빠지는지, 칸에 색인이 하나 늘 때 넣기 비용. 사이클에서 시험으로 잽니다. 자세한 근거는 <code>docs/research/usage-log/storage.md</code> 2.6·2.7절.</p>
+</div>
+<div class="item" id="q1c"><h3>질문: 이런 서비스들은 보통 어디에 저장하나 (유명한 곳들)</h3>
+<div class="gist">작게 시작한 분석 서비스들은 PostgreSQL 하나에 남기다가, 느려지면 분석 전용 DB(ClickHouse)로 옮겼습니다. 하루 수천억 건을 다루는 큰 회사들은 대기열(Kafka 등) → 파일 저장소(S3 등) → 분석 창고(BigQuery 등)로 보냅니다. 지금 우리 규모는 앞쪽에 가깝습니다.</div>
+<p><b>1) PostgreSQL로 시작한 분석 서비스</b></p>
+<table><tr><th>서비스</th><th>어떻게 했나</th><th>옮긴 때</th></tr>
+<tr><td>Plausible (방문 통계 서비스)</td><td>PostgreSQL → 2020년 5월 ClickHouse로 옮김</td><td>그래프 하나에 5~6초 걸리고, 큰 고객을 감당 못 하게 됐을 때. 옮긴 뒤 약 0.5초 (<a href="https://plausible.io/blog/may-2020-recap">Plausible 블로그 2020</a>)</td></tr>
+<tr><td>PostHog (제품 분석 서비스)</td><td>Postgres → 기록은 ClickHouse, 회원·설정은 Postgres에 그대로</td><td>"월간 활성 사용자 1만 명을 넘기 어렵다"고 씀. 옮기는 동안 두 DB에 함께 넣음 (<a href="https://posthog.com/blog/clickhouse-announcement">PostHog 블로그 2021</a>)</td></tr>
+<tr><td>Umami (방문 통계 프로그램)</td><td>지금도 PostgreSQL 하나 (공식 안내의 요구 사항)</td><td>— (<a href="https://github.com/umami-software/umami">Umami GitHub</a>)</td></tr>
+<tr><td>Snowplow (행동 기록 수집 도구)</td><td>PostgreSQL 저장도 되지만 "운영에는, 특히 양이 많으면 권하지 않음". 운영은 분석 창고(Snowflake, BigQuery 등)</td><td>— (<a href="https://docs.snowplow.io/docs/pipeline-components-and-applications/loaders-storage-targets/snowplow-postgres-loader/">Snowplow 문서</a>)</td></tr></table>
+<p><b>2) 큰 회사</b></p>
+<table><tr><th>회사</th><th>저장 경로</th><th>규모</th></tr>
+<tr><td>Spotify</td><td>이벤트 서버 → Pub/Sub(대기열) → 파일 저장소(GCS) → BigQuery</td><td>하루 5,000억 건 (2019) (<a href="https://engineering.atspotify.com/2019/11/spotifys-event-delivery-life-in-the-cloud">Spotify 기술 블로그</a>)</td></tr>
+<tr><td>Pinterest</td><td>서버마다 기록 수집기 → Kafka(대기열) → S3</td><td>초당 4,000만 건 이상 (2020) (<a href="https://www.confluent.io/blog/running-kafka-at-scale-at-pinterest/">Pinterest 엔지니어 글</a>)</td></tr>
+<tr><td>GitLab</td><td>Snowplow 직접 운영 → S3</td><td>숫자 없음 (<a href="https://handbook.gitlab.com/handbook/enterprise-data/platform/snowplow/">GitLab 핸드북</a>)</td></tr>
+<tr><td>우아한형제들 (배민)</td><td>2017년: 정한 모양의 JSON으로 쌓음. 2023년: 이벤트 기록 → 1시간마다 Hive(분석 창고). 2024년 추천용: Kafka → MongoDB, 오래된 것은 자동 삭제</td><td>숫자 없음 (<a href="https://techblog.woowahan.com/2536/">2017</a>, <a href="https://techblog.woowahan.com/9935/">2023</a>, <a href="https://techblog.woowahan.com/17383/">2024</a>)</td></tr>
+<tr><td>쏘카</td><td>서버 기록 → Kafka(MSK) → GCS → BigQuery (앱 행동이 아닌 서버 기록)</td><td>늦게 들어오던 시간 1~2시간 → 약 3분 (<a href="https://tech.socar.kr/data/2025/02/26/log-pipeline-revamp">쏘카 기술 블로그 2025</a>)</td></tr></table>
+<p class="note">당근·29CM·Netflix·Airbnb 글은 사이트가 막혀 열지 못해 표에서 뺐습니다(확인 못 함). 토스·카카오·네이버·오늘의집은 행동 기록 저장을 다룬 공식 글을 찾지 못했습니다. 모두 확인 2026-10-12.</p>
+<p><b>우리에게 맞춰 보면</b>: 큰 회사의 대기열·분석 창고는 초당 수백만 건을 받으려는 구조라 지금 우리에게는 과합니다(Kafka는 쓰지 않기로 한 규칙도 있습니다). PostgreSQL로 시작한 서비스들이 옮긴 때는 "그래프 하나에 몇 초씩 걸릴 때", "월간 사용자 1만 명쯤"이었습니다. 그래서 추천은 그대로 같은 PostgreSQL에 남기고, 통계가 느려지는 때가 오면 기록만 분석 전용 저장소로 옮기는 것입니다. 이 순서는 PostHog가 한 것과 같습니다.</p>
+</div>
+<div class="item" id="q1d"><h3>질문: 서버 메모리를 4GB로 할 건데, 기록 때문에 모자라지 않을까</h3>
+<div class="gist">기록을 DB에 남겨도 4GB 안에서 정해 둔 몫은 그대로입니다. DB도 서비스도 상한이 고정이라 기록 때문에 메모리 몫이 늘지 않습니다. 기록이 쓰는 것은 메모리보다 디스크(1년 1~2GB 어림)입니다.</div>
+<figure><svg viewBox="0 0 760 190" xmlns="http://www.w3.org/2000/svg">
+<text x="10" y="22" font-size="14" font-weight="700" fill="var(--text)">t4g.medium 메모리 4GB 나눠 쓰기 (지금 정해 둔 것)</text>
+<rect x="10" y="36" width="190" height="56" fill="var(--accent-bg)" stroke="var(--accent)"/>
+<text x="105" y="60" text-anchor="middle" font-size="13" font-weight="700" fill="var(--text)">서비스 (Java)</text>
+<text x="105" y="80" text-anchor="middle" font-size="12" fill="var(--muted)">힙 상한 512MB · 측정 350MB</text>
+<rect x="200" y="36" width="190" height="56" fill="var(--ok-bg)" stroke="var(--ok)"/>
+<text x="295" y="60" text-anchor="middle" font-size="13" font-weight="700" fill="var(--text)">DB 컨테이너</text>
+<text x="295" y="80" text-anchor="middle" font-size="12" fill="var(--muted)">상한 1GB</text>
+<rect x="390" y="36" width="110" height="56" fill="var(--code-bg)" stroke="var(--line)"/>
+<text x="445" y="60" text-anchor="middle" font-size="13" font-weight="700" fill="var(--text)">조회 서버·OS</text>
+<text x="445" y="80" text-anchor="middle" font-size="12" fill="var(--muted)">재지 않음</text>
+<rect x="500" y="36" width="250" height="56" fill="var(--card)" stroke="var(--line)" stroke-dasharray="5 3"/>
+<text x="625" y="60" text-anchor="middle" font-size="13" font-weight="700" fill="var(--text)">나머지 = 파일 캐시</text>
+<text x="625" y="80" text-anchor="middle" font-size="12" fill="var(--muted)">DB 파일을 메모리에 들고 있는 곳</text>
+<text x="105" y="118" text-anchor="middle" font-size="12" fill="var(--ok)">기록 모으기 약 0.5MB</text>
+<text x="105" y="136" text-anchor="middle" font-size="12" fill="var(--muted)">힙 512MB 안에서</text>
+<text x="295" y="118" text-anchor="middle" font-size="12" fill="var(--ok)">연결 10개·공유 버퍼 64MB</text>
+<text x="295" y="136" text-anchor="middle" font-size="12" fill="var(--muted)">그대로, 늘지 않음</text>
+<text x="625" y="118" text-anchor="middle" font-size="12" fill="var(--warn)">기록 칸의 마지막 몇 쪽이</text>
+<text x="625" y="136" text-anchor="middle" font-size="12" fill="var(--muted)">책·소장 파일과 자리를 조금 나눔</text>
+<text x="10" y="176" font-size="12" fill="var(--muted)">칸 너비는 크기 비율이 아니라 순서만 나타냅니다.</text>
+</svg><figcaption>각 몫의 상한은 그대로이고, 기록이 더하는 것은 아래 줄의 작은 양뿐입니다.</figcaption></figure>
+<table><tr><th>어디</th><th>기록 때문에 달라지는 것</th></tr>
+<tr><td>서비스 (Java)</td><td>몇 초 모으는 동안 약 0.5MB(어림). 힙 상한 512MB는 그대로</td></tr>
+<tr><td>DB 컨테이너</td><td>상한 1GB, 공유 버퍼 64MB, 연결 10개 모두 그대로. 기록 넣기는 이미 있는 연결 하나를 잠깐 씀. DB가 알아서 하는 정리(autovacuum)가 기록 칸에도 가끔 돌지만, 이미 다른 칸에도 도는 것과 같은 몫 안에서 돎</td></tr>
+<tr><td>파일 캐시</td><td>기록은 칸 끝에만 붙어서 최근 몇 쪽만 캐시에 올라옴. 책·소장 파일이 캐시에서 밀려나는 양은 작다고 봄(어림, 사이클에서 잼)</td></tr>
+<tr><td>디스크 (gp3 40GB)</td><td>1년 1~2GB(어림). 반영할 때 책 표가 두 벌(약 16GB)이 되는 순간이 디스크에서 가장 빡빡하므로, 기록 크기를 그 계산에 더해 봄</td></tr></table>
+<p><b>JSONL 파일이면</b>: DB 쪽은 아예 0이지만, 파일에 쓸 때도 운영체제가 파일 캐시를 씁니다. 메모리 면에서는 두 방식 차이가 거의 없습니다(어림).</p>
+<p><b>조심할 것</b>: 메모리가 문제가 되는 것은 기록을 남길 때가 아니라 나중에 통계를 낼 때입니다. 1년 치 기록을 한 번에 훑는 집계는 정렬·묶음용 메모리를 씁니다. 그래서 통계 사이클에서 "하루치씩 미리 합쳐 두기" 같은 방법을 같이 정합니다.</p>
+<p class="note">근거: 메모리 몫 <code>docs/research/deploy/aws-layout.md</code> 6절(서비스 측정은 로컬 PC 기준), PostgreSQL 메모리 설정 (<a href="https://www.postgresql.org/docs/current/runtime-config-resource.html">공식 문서</a>, 확인 2026-10-12). 조회 서버와 OS 몫은 재지 않음. 실제 영향은 사이클에서 기록 켜기 전·후로 <code>docker stats</code>로 잽니다.</p>
+</div>
+</section>
+
+<section class="card"><h2><span class="num">2</span>무엇을 "검색 한 번"으로 셀까</h2>
+<div class="gist">사용자가 검색 버튼을 누른 그 처음 요청만 한 번으로 세는 것을 추천합니다.</div>
+<div class="item"><h3><span class="no">2</span>처음 검색 요청만 한 줄로 남김 [안]</h3>
+<p><b>이렇게 되면</b>: "김영하"로 검색하면 한 줄이 남습니다. 그 뒤에 화면이 알아서 부르는 "다음 묶음", "대출 수 채우기", "다음 쪽"은 남기지 않습니다. 사람이 한 검색 수와 기록 수가 같아집니다.</p>
+<p>검색 입구는 둘입니다: 수집한 책 목록에서 찾기, 도서관에서 직접 찾기. 둘 다 같은 방식으로 셉니다.</p>
+<p class="alt"><b>다른 선택</b>: 다음 쪽·책 상세 보기까지 따로 남김 → 사람이 어디까지 봤는지 알 수 있지만 줄 수가 몇 배로 늘고, 나중에 "검색 한 번"을 다시 골라 세야 합니다.</p>
+</div>
+<div class="item"><h3>승인하며 덧붙이신 것: 검색한 사람의 지역·도서관도 남기기</h3><p>검색할 때마다 화면이 거주 지역, 직장 지역, 고른 도서관, 범위를 이미 서버로 보냅니다. 그래서 회원 번호 없이도 같은 줄에 남길 수 있고, 4번(회원 번호·IP 없이)과 부딪치지 않습니다. 원본 문서에 사용자 말 그대로 적었습니다. 다만 이 셋을 합치면 사람마다 꽤 다를 수 있어, 다른 정보와 합쳐 특정인을 알아볼 수 있게 되는지는 전문가에게 확인할 것으로 남겼습니다.</p></div>
+</section>
+
+<section class="card"><h2><span class="num">3</span>도서관 클릭은 어떻게 알까</h2>
+<div class="gist">링크는 지금처럼 바로 열고, 브라우저가 따로 "이 도서관 눌렀음"을 우리 서버에 보내는 것을 추천합니다.</div>
+<div class="item"><h3><span class="no">3</span>링크는 그대로, 클릭 알림만 따로 보냄 [안]</h3>
+<p><b>이렇게 되면</b>: 사용자가 결과 카드를 누르면 새 탭은 지금처럼 바로 열립니다. 동시에 브라우저가 우리 서버에 짧은 알림을 보냅니다. 브라우저에 있는 <code>sendBeacon</code> 기능을 쓰는데, 이 기능은 화면 이동을 늦추지 않고 페이지가 닫혀도 보냅니다 (<a href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator/sendBeacon">MDN</a>, 확인 2026-10-12).</p>
+<p class="note">광고 차단 프로그램을 쓰는 사람의 클릭은 일부 빠질 수 있습니다 (얼마나 빠지는지는 확인 못 함, 시험 필요).</p>
+<p class="alt"><b>다른 선택</b>: 링크를 우리 서버 주소로 바꿔, 우리 서버를 거쳐 전자도서관으로 보냄 → 빠지는 클릭이 없지만 넘어갈 때 한 번 더 왔다 갔다 하고, 링크에 마우스를 올리면 우리 주소가 보입니다.</p>
+</div>
+</section>
+
+<section class="card"><h2><span class="num">4</span>무엇을 남길까</h2>
+<div class="gist">사람을 알아볼 수 있는 값(회원 번호, IP, 브라우저 식별값)은 빼고, 무엇을 찾았고 어디를 눌렀는지만 남기는 것을 추천합니다.</div>
+<div class="item"><h3><span class="no">4</span>회원 번호·IP·브라우저 식별값 없이 남김 [안]</h3>
+<table><tr><th>남기는 것</th><th>예</th></tr>
+<tr><td>시각</td><td>2026-10-20 21:03</td></tr>
+<tr><td>검색 조건</td><td>제목 "채식주의자", 지역, 고른 도서관, 정렬</td></tr>
+<tr><td>결과 수</td><td>책 12권</td></tr>
+<tr><td>누른 도서관과 누른 곳</td><td>강남구 전자도서관, 결과 카드</td></tr></table>
+<p><b>왜 빼는지</b>: 개인정보 보호법은 그것만으로 사람을 알 수 없어도 "다른 정보와 쉽게 합쳐 알 수 있으면" 개인정보로 봅니다(제2조). 사람을 알아볼 수 없는 정보에는 이 법을 적용하지 않습니다(제58조의2) (<a href="https://www.law.go.kr/법령/개인정보보호법">국가법령정보센터</a>, 확인 2026-10-12). 세 값을 빼면 동의·처리방침 부담이 가장 작습니다.</p>
+<p class="note">검색어 자체에 이름이 들어갈 수는 있습니다(저자 칸에 자기 이름). 동의 창이 필요한지, 처리방침에 적는 것으로 충분한지는 법 조문만으로 정할 수 없어 확인 못 함입니다.</p>
+<p class="alt"><b>다른 선택</b></p>
+<table><tr><th>다른 선택</th><th>드는 것</th></tr>
+<tr><td>회원 번호도 남김</td><td>"내 도서관이 있는 사람은 어떻게 찾나"를 볼 수 있지만 개인정보가 되고, 로그인 쿠키가 검색 주소에도 가도록 바꿔야 합니다</td></tr>
+<tr><td>브라우저 식별값(쿠키)을 남김</td><td>한 사람이 이어서 한 검색을 묶어 볼 수 있지만, 처리방침에 쿠키 설치와 거부 방법을 적어야 합니다(제30조 제1항 제7호)</td></tr></table>
+</div>
+</section>
+
+<section class="card"><h2><span class="num">5</span>얼마나 둘까</h2>
+<div class="gist">원본 기록은 1년 뒤에 지우는 것을 추천합니다.</div>
+<div class="item"><h3><span class="no">5</span>원본 기록은 1년 보관 [안]</h3>
+<p><b>이렇게 되면</b>: 2026년 10월 기록은 2027년 10월에 지웁니다. 1년이면 계절·학기에 따른 변화를 한 바퀴 볼 수 있습니다. 회원 정보도 마지막 로그인 1년 뒤에 지우게 되어 있어 기준이 같아집니다.</p>
+<p>법은 보관 기간이 지나면 바로 지우라고 하고(제21조), 처리방침에 보관 기간을 적게 합니다(제30조).</p>
+<p class="alt"><b>다른 선택</b>: 6개월 → 저장이 절반이지만 1년 비교가 안 됩니다. / 기간 없이 계속 → 개인정보가 아니면 법 부담은 작지만 DB가 계속 커집니다.</p>
+</div>
+</section>
+
+<p class="foot">원본: <code>docs/research/usage-log/storage.md</code> · 확인 못 한 것(동의 필요 여부, IP·쿠키가 개인정보인지, 광고 차단으로 빠지는 비율)은 원본의 확인 필요 표에 있습니다.</p>
+</main></body></html>

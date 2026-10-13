@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 15 범위</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+.flow{display:grid;gap:10px;margin:10px 0 16px}.lane{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--card)}.lane b{display:block;margin-bottom:4px}.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{font-size:14px;border-radius:6px;padding:2px 8px;background:var(--code-bg)}.chip.new{background:var(--warn-bg)}.chip.dev{background:var(--ok-bg)}.arrow{text-align:center;color:var(--muted);font-size:18px;line-height:1}
+</style>
+</head>
+<body><main class="doc">
+<p class="lead">사이클 15 "검색·도서관 클릭 기록"의 범위입니다. 남은 여섯 가지를 골라 주세요</p>
+<p class="sub">2026-10-12 · 원본 <code>docs/cycles/15-usage-log/scope.md</code> · 저장할 곳·남길 것·1년 보관은 앞 조사에서 이미 정했습니다.</p>
+
+<section class="card"><h2><span class="num">0</span>이미 정한 것</h2>
+<div class="gist">아래 다섯 가지는 조사 결정 페이지에서 승인하신 그대로 범위에 넣었습니다.</div>
+<table><tr><th>무엇</th><th>정한 내용</th></tr>
+<tr><td>저장할 곳</td><td>지금 쓰는 PostgreSQL에 기록 칸을 새로 만듦</td></tr>
+<tr><td>검색</td><td>사용자가 검색한 처음 요청만 한 줄. 검색어, 결과 수, 거주·직장 지역, 고른 도서관을 같은 줄에</td></tr>
+<tr><td>도서관 클릭</td><td>링크는 그대로 새 탭으로 열고, "이 도서관 눌렀음"만 따로 우리 서버에 알림. 누르는 곳 여섯 모두</td></tr>
+<tr><td>남기지 않는 것</td><td>회원 번호, IP, 브라우저 식별값</td></tr>
+<tr><td>보관</td><td>1년 지난 기록은 지움</td></tr></table>
+<p class="note">이번에 하지 않는 것: 통계(집계·그래프·운영자 화면), 분석 전용 저장소로 옮기기, 개인정보 처리방침 문구(사이클 16이 씀). 책 상세 열기처럼 검색·클릭 밖의 행동은 다음 단계(명세)에서 넣을지 여쭙니다.</p>
+</section>
+
+<section class="card"><h2><span class="num">1</span>1년 지난 기록은 누가 지우나</h2>
+<div class="gist">서버가 매일 한 번 알아서 지우는 것을 추천합니다.</div>
+<div class="item"><h3><span class="no">1</span>서버가 매일 자동으로 1년 지난 기록을 지움 [안]</h3>
+<p><b>이렇게 되면</b>: 2026년 10월 20일 기록은 2027년 10월 21일 새벽에 서버가 스스로 지웁니다. 사람이 챙길 일이 없습니다. 법은 보관 기간이 지나면 지체 없이 지우라고 합니다(개인정보 보호법 제21조, <a href="https://www.law.go.kr/법령/개인정보보호법">국가법령정보센터</a>, 확인 2026-10-12).</p>
+<p class="alt"><b>다른 선택</b>: 사람이 가끔 명령으로 지움 → 만들 것은 적지만 잊으면 1년이 넘은 기록이 남습니다.</p>
+</div></section>
+
+<section class="card"><h2><span class="num">2</span>기록을 쓰는 방식</h2>
+<div class="gist">앞 조사에서 DB 부담을 줄이려고 말씀드린 방식을 설계의 출발점으로 삼는 것을 추천합니다. 자세한 모양은 설계 단계에서 다시 보여 드립니다.</div>
+<div class="item"><h3><span class="no">2</span>검색 응답과 떨어져서, 몇 초마다 묶어, 기록만 비동기 커밋으로 설계 [안]</h3>
+<table><tr><th>방식</th><th>뜻</th></tr>
+<tr><td>검색 응답과 떨어져서</td><td>검색 결과는 먼저 보내고, 기록은 그 뒤에 따로 씀. 기록이 늦거나 실패해도 검색은 그대로</td></tr>
+<tr><td>몇 초마다 묶어서</td><td>서비스 메모리에 모았다가 한 번에 넣음. DB에 가는 횟수가 줄어듦</td></tr>
+<tr><td>기록만 비동기 커밋</td><td>기록을 넣을 때만 디스크 쓰기를 기다리지 않음. 서버가 갑자기 꺼지면 마지막 1초 안쪽이 빠질 수 있지만 DB는 깨지지 않음 (<a href="https://www.postgresql.org/docs/current/wal-async-commit.html">PostgreSQL 문서</a>)</td></tr>
+<tr><td>Spring Modulith 이벤트는 안 씀</td><td>기록 한 줄에 DB 쓰기가 세 번이 되므로 (회원 탈퇴에만 쓰는 기능)</td></tr></table>
+<p class="alt"><b>다른 선택</b>: 검색할 때마다 바로 한 줄씩 넣음 → 만들기는 가장 쉽지만, 사람이 몰리면 검색과 DB 연결을 다투고 검색 응답이 기록만큼 늦어집니다.</p>
+</div></section>
+
+<section class="card"><h2><span class="num">3</span>다 됐는지 어떻게 확인하나</h2>
+<div class="gist">기록은 화면에 보이지 않으므로, 화면에서 한 행동이 DB에 남는지와 "검색이 느려지지 않았는지"를 확인합니다.</div>
+<div class="item"><h3><span class="no">3</span>기록을 켜기 전·후로 검색 속도와 메모리를 재서 비교 [안]</h3>
+<p><b>이렇게 되면</b>: dev가 같은 검색을 기록 없이, 기록을 켜고 각각 돌려 응답 시간과 서비스·DB 메모리를 적어 줍니다. 4GB 서버 걱정을 숫자로 확인할 수 있습니다. 얼마나 차이 나면 안 되는지는 다음 단계(명세)에서 정합니다.</p>
+<p class="alt"><b>다른 선택</b>: 재지 않고 기록이 남는지만 확인 → 일이 줄지만 메모리·속도 걱정은 운영에 올린 뒤에야 알게 됩니다.</p>
+</div>
+<div class="item"><h3><span class="no">4</span>기록은 SQL이나 Claude 명령으로 봄 (화면 없음) [안]</h3>
+<p><b>이렇게 되면</b>: "어제 검색 기록 10줄 보여 줘" 같은 요청을 Claude가 SQL로 실행해 보여 드립니다. 보는 화면은 통계 사이클에서 만듭니다. 사이클 16의 공지 넣기도 같은 방식입니다.</p>
+<p class="alt"><b>다른 선택</b>: 기록을 보는 간단한 운영자 화면을 이번에 같이 → 로그인한 운영자만 들어오게 하는 권한부터 새로 만들어야 해서 일이 커집니다.</p>
+</div></section>
+
+<section class="card"><h2><span class="num">4</span>언제까지 무엇을 하나</h2>
+<div class="gist">사이클 16과 같은 방식으로, 지금은 명세·화면·설계 대안까지 하고 설계 확정과 인계서는 12·13·14 회고 뒤에 하는 것을 추천합니다.</div>
+<div class="item"><h3><span class="no">5</span>설계 확정과 인계서는 12·13·14 개발이 끝나고 회고한 뒤 [안]</h3>
+<p><b>이렇게 되면</b>: 12·13·14가 검색 코드와 결과 줄을 바꾸는 중이라, 그 결과를 본 뒤에 기록을 어디에 끼울지 확정합니다. 그 전에는 명세(무엇을 남기는지), 검색 로봇·가짜 클릭을 거를지, 설계 대안까지 해 둡니다.</p>
+<p class="alt"><b>다른 선택</b>: 지금 설계를 확정하고 인계서까지 → 빨리 넘길 수 있지만 12·13·14가 바꾼 코드에 맞춰 다시 고칠 수 있습니다.</p>
+</div></section>
+
+<section class="card"><h2><span class="num">5</span>서버 안 어디에 만드나</h2>
+<div class="gist">기록만 맡는 새 부분(모듈)을 하나 만들고, 검색 쪽은 그 부분에 "기록해 줘"라고 넘기기만 하는 것을 추천합니다.</div>
+<figure><svg viewBox="0 0 760 200" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="var(--muted)"/></marker></defs>
+<rect x="10" y="20" width="220" height="60" rx="10" fill="var(--card)" stroke="var(--line)" stroke-width="1.5"/>
+<text x="120" y="46" text-anchor="middle" font-size="14" font-weight="700" fill="var(--text)">수집 목록 검색</text>
+<text x="120" y="66" text-anchor="middle" font-size="12" fill="var(--muted)">catalog (지금 있음)</text>
+<rect x="10" y="110" width="220" height="60" rx="10" fill="var(--card)" stroke="var(--line)" stroke-width="1.5"/>
+<text x="120" y="136" text-anchor="middle" font-size="14" font-weight="700" fill="var(--text)">도서관에서 직접 찾기</text>
+<text x="120" y="156" text-anchor="middle" font-size="12" fill="var(--muted)">availability (지금 있음)</text>
+<rect x="320" y="60" width="200" height="70" rx="10" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="1.5"/>
+<text x="420" y="90" text-anchor="middle" font-size="14" font-weight="700" fill="var(--text)">기록 (새로)</text>
+<text x="420" y="110" text-anchor="middle" font-size="12" fill="var(--muted)">모아서 넣기 · 1년 지우기</text>
+<rect x="600" y="60" width="150" height="70" rx="10" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.5"/>
+<text x="675" y="90" text-anchor="middle" font-size="14" font-weight="700" fill="var(--text)">DB 새 칸</text>
+<text x="675" y="110" text-anchor="middle" font-size="12" fill="var(--muted)">기록만</text>
+<line x1="232" y1="50" x2="316" y2="84" stroke="var(--muted)" stroke-width="2" marker-end="url(#m)"/>
+<line x1="232" y1="140" x2="316" y2="108" stroke="var(--muted)" stroke-width="2" marker-end="url(#m)"/>
+<line x1="522" y1="95" x2="596" y2="95" stroke="var(--muted)" stroke-width="2" marker-end="url(#m)"/>
+<text x="420" y="160" text-anchor="middle" font-size="12" fill="var(--muted)">브라우저의 클릭 알림도 여기로</text>
+</svg><figcaption>검색 두 곳과 브라우저 클릭 알림이 모두 새 "기록" 부분으로 모이고, 그 부분만 DB 새 칸에 씁니다.</figcaption></figure>
+<div class="item"><h3><span class="no">6</span>기록 전용 새 모듈 하나 (이름 예: usagelog) [안]</h3>
+<p><b>이렇게 되면</b>: 기록 칸, 클릭 알림 받는 주소, 모아서 넣기, 1년 지우기가 한곳에 모입니다. 나중에 기록을 다른 저장소로 옮길 때 이 부분만 바꾸면 됩니다. 웹은 결과 줄·로고·요약 막대의 링크에 클릭 알림을 더합니다. 이름과 자세한 모양은 설계 단계에서 대안과 함께 다시 보여 드립니다.</p>
+<p class="alt"><b>다른 선택</b>: 검색 모듈(catalog) 안에 기록 칸을 같이 둠 → 모듈은 안 늘지만, 직접 찾기(availability)와 클릭 기록까지 catalog에 들어가 맡은 일이 섞입니다.</p>
+</div></section>
+
+<section class="card"><h2><span class="num">6</span>다음 단계에서 여쭐 것 (지금 고르지 않음)</h2>
+<ul>
+<li>검색 로봇이나 같은 요청 반복이 기록을 채우지 않게 거를지</li>
+<li>클릭 알림 주소를 아무나 불러 가짜 클릭을 넣지 못하게 할지</li>
+<li>책 상세 열기, 사서 추천 보기도 기록할지</li>
+<li>사이클 16이 처리방침에 쓸 수집 항목 목록 넘기기</li>
+</ul></section>
+
+<p class="foot">원본: <code>docs/cycles/15-usage-log/scope.md</code>, 조사 <code>docs/research/usage-log/storage.md</code></p>
+</main></body></html>
