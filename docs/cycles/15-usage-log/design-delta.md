@@ -1,6 +1,6 @@
 # 설계 변경: 사이클 15 사용자 행동 기록 (검색·책 상세·도서관 클릭)
 
-> **초안 (2026-10-13)**. 2026-10-13 더 남기는 행동(spec R6) 반영: 표 다섯 → 여덟 [안] (`search_more`, `screen_event`, `library_response` 추가), 클릭 알림 주소를 화면 행동 알림으로 넓힘 [안]. 방향은 사용자가 정함(`architect-proposal.md` "고른 방향", ADR-0096·0097 Proposed). 12·13·14 회고에서 실제 코드를 본 뒤, 확정합니다 (IP 값은 Cloudflare 공식 문서로 확인함, 배포 때 `nginx -V`만 남음) [확정: 순서] (scope). 그때까지 아래 이름·숫자 중 따로 적지 않은 것은 [안]
+> **초안 (2026-10-13)**. 2026-10-13 더 남기는 행동(spec R6) 반영: 표 다섯 → 여덟 (`search_more`, `screen_event`, `library_response_daily` 추가), 클릭 알림 주소를 화면 행동 알림으로 넓힘 [안]. 방향은 사용자가 정함(`architect-proposal.md` "고른 방향", ADR-0096·0097 Proposed). 12·13·14 회고에서 실제 코드를 본 뒤, 확정합니다 (IP 값은 Cloudflare 공식 문서로 확인함, 배포 때 `nginx -V`만 남음) [확정: 순서] (scope). 그때까지 아래 이름·숫자 중 따로 적지 않은 것은 [안]
 
 ## 구조 그림
 
@@ -11,13 +11,13 @@ flowchart TB
   web[웹 화면] -->|GET /api/v1/books ?loggedIn| catalog
   web -->|GET /api/v1/books/bookId ?loggedIn| catalog
   web -->|GET /api/v1/ebook-searches/stream ?loggedIn| availability
-  web -->|fetch keepalive POST /api/v1/library-clicks + CSRF| usagelog
+  web -->|fetch keepalive POST /api/v1/usage-events + CSRF| usagelog
   catalog -->|UsageLog.recordSearch / recordBookView| usagelog
   availability -->|UsageLog.recordSearch 첫 묶음 끝·끊김| usagelog
   usagelog -->|비울 때 도서관 번호 확인| library
   web -->|화면 행동 알림: 사서 추천 보기, 지역·내 도서관 바꾸기| usagelog
   catalog -->|UsageLog.recordMore 다음 쪽| usagelog
-  availability -->|UsageLog.recordMore 다음 묶음·더 보기, recordLibraryResponse| usagelog
+  availability -->|UsageLog.recordMore 다음 묶음·더 보기, recordLibraryResponse 직접 찾기·대출 수 채우기 → 하루 요약| usagelog
   usagelog -->|5초마다 1 트랜잭션, 비동기 커밋| db[(schema usagelog)]
   nginx[nginx] -.->|X-Real-IP = 사용자 IP, 17 설정| catalog
   nginx -.->|X-Real-IP| availability
@@ -79,9 +79,9 @@ sequenceDiagram
   W->>W: 링크는 새 탭으로 바로 열림
   alt 로그인 기능 켜짐
     W->>W: XSRF-TOKEN 없으면 받아 옴
-    W->>N: POST /api/v1/library-clicks (JSON, X-XSRF-TOKEN, keepalive)
+    W->>N: POST /api/v1/usage-events (JSON, X-XSRF-TOKEN, keepalive)
   else 로그인 기능 꺼짐
-    W->>N: POST /api/v1/library-clicks (JSON, keepalive, 표시 없음)
+    W->>N: POST /api/v1/usage-events (JSON, keepalive, 표시 없음)
   end
   alt IP당 1분 60번 넘음
     N-->>W: 204 (기록 안 함)
@@ -232,6 +232,11 @@ erDiagram
     text title
     text author
     text publisher
+    text scope
+    text visit
+    bigint_arr residence_region_ids
+    bigint_arr work_region_ids
+    bigint_arr library_ids
     boolean logged_in
     inet client_ip
   }
@@ -239,16 +244,24 @@ erDiagram
     bigint id PK
     timestamptz received_at
     text kind
-    jsonb detail
+    text picks_category
+    bigint book_id
+    bigint_arr residence_region_ids
+    bigint_arr work_region_ids
+    bigint library_id
     boolean logged_in
     inet client_ip
   }
-  LIBRARY_RESPONSE {
-    bigint id PK
-    timestamptz received_at
-    bigint library_id
-    text outcome
-    integer elapsed_ms
+  LIBRARY_RESPONSE_DAILY {
+    date day PK
+    bigint library_id PK
+    text source PK
+    integer ok_count
+    integer failed_count
+    integer timeout_count
+    integer skipped_count
+    integer avg_ms
+    integer max_ms
   }
   DROPPED_BATCH {
     bigint id PK
@@ -280,10 +293,10 @@ erDiagram
 | `search_more.kind` | `text` | CHECK (`direct_next_batch`,`library_more`,`catalog_next_page`) | 더 보기 종류 (R6-1) | [확정] (기록), [안] (값 이름) |
 | `search_more.seq` | `integer` | | 묶음 번호·쪽 번호 | [안] |
 | `search_more.library_id` | `bigint` | 도서관별 더 보기만 | | [안] |
+| `search_more` 조건 칸 | 검색 기록과 같은 조건 칸 전부 (검색 방식·범위·지역·도서관) | | 더 보기 줄만으로 어떤 검색인지 알게 | [확정] (사용자 승인, 2026-10-13, `easy/2026-10-13-more-actions-design.html` #4) |
 | `screen_event.kind` | `text` | CHECK (`picks_list_view`,`picks_book_view`,`region_change`,`my_library_add`,`my_library_remove`) | 화면 행동 (R6-2·R6-3) | [확정] (기록), [안] (값 이름) |
-| `screen_event.detail` | `jsonb` | 종류별 정한 키만 | 분야·책 번호 / 바뀐 지역 번호 / 도서관 번호 (회원 번호 없음) | [안] |
-| `library_response.outcome` | `text` | CHECK (`ok`,`failed`,`timeout`,`skipped`) | 직접 찾기 첫 묶음의 도서관별 결과 (R6-4) | [확정] (기록), [안] (값) |
-| `library_response.elapsed_ms` | `integer` | | 걸린 시간 | [확정] |
+| `screen_event.picks_category`, `book_id`, `residence_region_ids`, `work_region_ids`, `library_id` | 종류별 칸, 맞지 않는 칸은 NULL (CHECK로 검사) | | 분야·책 / 바뀐 지역 / 도서관(넣기·빼기는 kind로) — JSON 칸 없음, 회원 번호 없음 | [확정] (사용자 승인, 2026-10-13, `easy/2026-10-13-more-actions-design.html` #3) |
+| `library_response_daily` | (day, library_id, source) PK, 수 칸 `integer`, 시간 `integer` ms | 서울 날짜 | 도서관마다 하루 한 줄 요약: 성공·실패·시간 초과·건너뜀 수, 평균·가장 긴 시간. 서비스 메모리에서 세다가 5초 묶음 때 `ON CONFLICT … DO UPDATE`로 더함 [안: 방법]. 보관 1년 | [확정] (사용자 제안: "보통은 요청마다 DB에 남기기보다 집계 숫자(횟수·실패·평균 시간)로 모아요 … 이렇게 해줘", 2026-10-13, `easy/2026-10-13-more-actions-design.html` #6) |
 | `dropped_batch.reason` | `text` | CHECK | `db_failure`,`buffer_full` | [안] |
 | 색인 | BRIN `(received_at)` 각 표, `client_ip IS NOT NULL` 부분 색인 [안] | — | 지우기·기간 조회 | [안] |
 
@@ -295,14 +308,15 @@ erDiagram
 
 | 메서드 | 경로 | 설명 | 요청 | 응답 | 에러 |
 |---|---|---|---|---|---|
-| POST | `/api/v1/library-clicks` | 도서관 링크 클릭 알림 (R6-2·R6-3 화면 행동도 같은 주소로 받을지, `/api/v1/usage-events`처럼 이름을 넓힐지 [안] — 설계 확정 때) | JSON (아래) | `204`, 본문 없음 | 로그인 기능 켜짐에서 CSRF 표시 없음·틀림 → `403` (기존 규칙). 값이 틀려도 `204` (rejected_click에 남김). nginx 한도 초과도 `204` |
+| POST | `/api/v1/usage-events` | 화면 행동 알림 하나로 받음: 도서관 클릭, 사서 추천 보기, 지역·내 도서관 바꾸기 (`type`으로 구분) [확정] (사용자 승인, 2026-10-13, `easy/2026-10-13-more-actions-design.html` #1) — 설계 #5의 `/api/v1/usage-events`를 바꿈 | JSON (아래) | `204`, 본문 없음 | 로그인 기능 켜짐에서 CSRF 표시 없음·틀림 → `403` (기존 규칙). 값이 틀려도 `204` (rejected_click에 남김). nginx 한도 초과도 `204` |
 | GET | `/api/v1/books` | (변경) 쿼리에 `loggedIn` 추가 | `loggedIn=true|false`, 없으면 모름 | 변경 없음 | 변경 없음 |
 | GET | `/api/v1/books/{bookId}` | (변경) 같음 | 같음 | 변경 없음 | 변경 없음 |
 | GET | `/api/v1/ebook-searches/stream` | (변경) 같음 | 같음 | 변경 없음 | 변경 없음 |
 
 ```json
-POST /api/v1/library-clicks
-{ "libraryId": 12, "place": "result_card", "screen": "picks", "bookId": 345, "loggedIn": false }
+POST /api/v1/usage-events
+{ "type": "library_click", "libraryId": 12, "place": "result_card", "screen": "picks", "bookId": 345, "loggedIn": false }
+{ "type": "region_change", "residenceRegionIds": [1114], "workRegionIds": [1102], "loggedIn": true }
 ```
 
 - 기존 검색 API는 모르는 쿼리 값을 무시하므로 웹을 먼저 고쳐도 깨지지 않음 (`architect-proposal.md` 확인 결과 #8)
@@ -313,7 +327,7 @@ POST /api/v1/library-clicks
 | 대상 | 방식 | 제한·키 관리 | 실패 시 동작 | 상태 태그 |
 |---|---|---|---|---|
 | 없음 (외부 서비스 호출 없음) | — | — | — | — |
-| nginx (배포 설정) | `X-Real-IP`, `location = /api/v1/library-clicks` IP당 60r/m(넘치면 204), 직접 찾기·대출 조회 location에서 bot·crawler·spider UA 403, `public/robots.txt` | 사이클 17 `CF-Connecting-IP` 설정에 기댐 | 설정 없으면 IP가 모두 cloudflared 주소 | [확정] (값), [확인 필요] (17 설정) |
+| nginx (배포 설정) | `X-Real-IP`, `location = /api/v1/usage-events` IP당 60r/m(넘치면 204), 직접 찾기·대출 조회 location에서 bot·crawler·spider UA 403, `public/robots.txt` | 사이클 17 `CF-Connecting-IP` 설정에 기댐 | 설정 없으면 IP가 모두 cloudflared 주소 | [확정] (값), [확인 필요] (17 설정) |
 
 ## 결정 기록
 

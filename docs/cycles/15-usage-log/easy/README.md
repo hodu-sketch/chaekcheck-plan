@@ -13,3 +13,4 @@
 | [2026-10-13-logging-start.html](2026-10-13-logging-start.html) | 사이클 17 전달 글, 16·17 정리본 반영, 기록 시작 시점 | `../spec.md`, `../to-cycle-17.md` | 결정됨: 승인 (2026-10-13) |
 | [design-delta-original.html](design-delta-original.html) | design-delta.md 초안 원문 + 그림 7개(모듈 구성도, 흐름 4개, 도메인 모델, 표 관계) | `../design-delta.md` | 초안, 회고 뒤 확정 |
 | [2026-10-13-more-actions.html](2026-10-13-more-actions.html) | 더 보기 기록, 더 남길 행동 후보(사서 추천, 지역·내 도서관, 도서관 응답) | `../spec.md` | 결정됨: 4개 모두 승인 (2026-10-13) |
+| [2026-10-13-more-actions-design.html](2026-10-13-more-actions-design.html) | 늘린 기록 설계: 알림 주소 하나, 로그인 뒤 저장 기록 경로, screen_event 칸, search_more 칸, 도서관 응답 범위·보관 | `../design-delta.md` | 결정됨 (2026-10-13): #1~#5 승인(#5에 대출 수 채우기 더함), #6 → 도서관마다 하루 요약 1년 |

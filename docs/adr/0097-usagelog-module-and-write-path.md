@@ -9,7 +9,7 @@ Supersedes: 없음
 ADR-0096의 기록을 남길 때 검색 응답과 DB에 부담을 주지 않아야 한다(사용자: "db가 가장 걱정되는게 db에 부담이 될까 트랜잭션 걱정이야 실제 서비스 되는거에 램에 많이 영향을 줄까?"). 결과 수는 검색을 처리하는 `catalog`·`availability`만 안다. 도서관 링크는 새 탭으로 바로 열려 서버가 클릭을 모르고, 로그인 기능이 켜지면 모든 보내기 요청에 CSRF 표시가 필요하다. 설계는 12·13·14 회고 뒤 코드에 맞춰 확정한다.
 
 ## 결정
-새 모듈 `usagelog`(schema 같은 이름)를 두고, `catalog`·`availability`가 그 공개 창구를 직접 불러 기록을 넘긴다(Spring Modulith 이벤트 안 씀). `usagelog`는 메모리에 모았다가 5초마다 `JdbcTemplate.batchUpdate`로 한 트랜잭션에 넣고, 그 트랜잭션만 비동기 커밋한다(상한 1만 줄, 실패 묶음은 버리고 버린 사실을 기록). 표는 기록 종류마다 나눈다: `search_event`, `library_click`, `book_view`, `rejected_click`, `dropped_batch`, (2026-10-13 덧붙임) `search_more`, `screen_event`, `library_response` [안: 이름]. 도서관 클릭은 화면이 `fetch` keepalive로 `POST /api/v1/library-clicks`(JSON, 늘 204)에 보내며 CSRF 검사는 그대로 받는다. IP는 nginx가 넘기는 `X-Real-IP`에서 읽는다.
+새 모듈 `usagelog`(schema 같은 이름)를 두고, `catalog`·`availability`가 그 공개 창구를 직접 불러 기록을 넘긴다(Spring Modulith 이벤트 안 씀). `usagelog`는 메모리에 모았다가 5초마다 `JdbcTemplate.batchUpdate`로 한 트랜잭션에 넣고, 그 트랜잭션만 비동기 커밋한다(상한 1만 줄, 실패 묶음은 버리고 버린 사실을 기록). 표는 기록 종류마다 나눈다: `search_event`, `library_click`, `book_view`, `rejected_click`, `dropped_batch`, (2026-10-13 덧붙임) `search_more`, `screen_event`, `library_response_daily`(도서관마다 하루 한 줄 요약, 사용자: "보통은 요청마다 DB에 남기기보다 집계 숫자(횟수·실패·평균 시간)로 모아요 … 이렇게 해줘") [안: 이름]. 도서관 클릭은 화면이 `fetch` keepalive로 보내며 (2026-10-13 덧붙임: 클릭·사서 추천 보기·지역/내 도서관 바꾸기를 한 주소 `POST /api/v1/usage-events`로, JSON, 늘 204) CSRF 검사는 그대로 받는다. IP는 nginx가 넘기는 `X-Real-IP`에서 읽는다.
 
 ## 이유 (사용자 발언)
 - 새 모듈: 범위 단계 승인(2026-10-12), 질문 "따로 모듈로 둬야 하나? 모듈로 두면 왔다갔다 더 부하가 심해지지 않아?"에 같은 프로그램 안 함수 호출이라 늘지 않는다고 답한 뒤 승인. 이유 자체는 [이유 미확인]

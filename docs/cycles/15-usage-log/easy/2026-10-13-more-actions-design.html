@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 15 늘린 기록 설계</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+.flow{display:grid;gap:10px;margin:10px 0 16px}.lane{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--card)}.lane b{display:block;margin-bottom:4px}.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{font-size:14px;border-radius:6px;padding:2px 8px;background:var(--code-bg)}.chip.new{background:var(--warn-bg)}.chip.dev{background:var(--ok-bg)}.arrow{text-align:center;color:var(--muted);font-size:18px;line-height:1}
+</style>
+<style>
+main{max-width:1080px}
+.pick{display:inline-block;font-size:14px;font-weight:700;color:var(--warn);background:var(--warn-bg);border-radius:6px;padding:1px 8px}
+.rec{display:inline-block;font-size:15px;font-weight:700;color:var(--ok);background:var(--ok-bg);border-radius:6px;padding:1px 8px}
+.ex{background:var(--ok-bg);border-radius:10px;padding:12px 16px;margin:10px 0}.ex b{color:var(--ok)}
+.alt{background:var(--code-bg);border-radius:10px;padding:12px 16px}
+.toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px 18px;font-size:18px;margin:6px 0 0;padding:0;list-style:none}
+.toc li{display:flex;gap:8px;align-items:baseline}
+figure{max-width:440px}
+figure svg text{font-family:"Noto Sans KR",system-ui,sans-serif}
+.card>figure{margin-left:auto;margin-right:auto}
+@media (min-width:980px){
+ .item{display:grid;grid-template-columns:minmax(0,1fr) 420px;column-gap:32px;align-items:start}
+ .item>*{grid-column:1}
+ .item>h3{grid-column:1 / -1}
+ .item>figure{grid-column:2;grid-row:2 / span 30;margin-top:4px}
+}
+@media (max-width:600px){body{font-size:18px}.card{padding:20px 16px}.lead{font-size:23px}}
+.item.answer{display:block!important;background:var(--accent-bg);border:2px solid var(--accent);border-radius:14px;padding:18px 20px;margin:14px 0 8px;grid-column:1 / -1}
+.item.answer>h3{color:var(--accent)}
+.item.answer figure{max-width:440px;margin:10px auto}
+@media (min-width:980px){.item>figure{grid-row:3 / span 30!important}}
+</style>
+</head>
+<body><main class="doc">
+<p class="lead">늘린 기록(더 보기·사서 추천·지역/내 도서관·도서관 응답)을<br>어떻게 만들지 여섯 가지를 골라 주세요</p>
+<p class="sub">사이클 15 설계 · 2026-10-13 · 원본 <code>docs/cycles/15-usage-log/design-delta.md</code> (초안), <code>spec.md</code> R6 · 늘리기로 하신 뒤 설계에서 정할 것을 제가 묻지 않고 "제안" 표시로만 두었습니다. 죄송합니다.</p>
+
+<div style="background:var(--warn-bg);border:2px solid var(--warn);border-radius:12px;padding:12px 16px;margin:0 0 20px;font-weight:500">질문하신 것의 답: <a href="#a-usual">보통 이렇게까지 기록하나</a> · <a href="#a2">#2 로그인 전/후 저장</a> · <a href="#a6">#6 다른 기록 보관 기간</a> · <a href="#a5b">#5 직접 찾기 말고 도서관 응답</a> · <a href="#a5c">#6 바깥 요청까지 보통 수집하나</a></div>
+<section class="card" id="a-usual"><h2><span class="num">?</span>질문에 대한 답: 보통 서비스에서 이렇게까지 기록하나</h2>
+<div class="gist">네, 남기는 행동의 종류는 보통 수준입니다. Google Analytics는 켜기만 해도 페이지 보기·스크롤·바깥 링크 클릭·사이트 검색 결과 보기 등을 저절로 기록합니다. 우리가 보통보다 더 하는 것은 하나, IP를 30일 남기는 것입니다.</div>
+<table><tr><th>우리가 남기는 것</th><th>Google Analytics 4가 저절로 남기는 것 (향상된 측정)</th></tr>
+<tr><td>검색 (처음 요청)</td><td>사이트 검색 결과 보기 (<code>view_search_results</code>)</td></tr>
+<tr><td>도서관 링크 누르기</td><td>바깥 도메인 링크 클릭 (<code>click</code>, outbound)</td></tr>
+<tr><td>책 상세·사서 추천 보기, 더 보기</td><td>페이지 보기 (<code>page_view</code>, "끌 수 없음"), 스크롤</td></tr>
+<tr><td>지역·내 도서관 바꾸기</td><td>폼 시작·제출 (<code>form_start</code>, <code>form_submit</code>), 그 밖은 직접 정한 이벤트로 흔히 남김</td></tr>
+<tr><td>도서관 응답 결과·시간</td><td>(사용자 행동이 아니라 운영 기록. 서비스가 바깥 사이트 응답을 지켜보는 일은 보통 따로 함)</td></tr></table>
+<p class="note">출처: Google Analytics 도움말 "향상된 측정 이벤트" (<a href="https://support.google.com/analytics/answer/9216061">support.google.com/analytics/answer/9216061</a>, 확인 2026-10-13). 페이지 보기는 "자동으로 수집되며 끌 수 없다"고 적혀 있습니다.</p>
+<p><b>보통보다 더 하는 것: IP</b> — Google Analytics는 EU·스위스·영국 사용자의 IP를 "기록하거나 저장하지 않고" 대략적인 위치를 알아낸 뒤 버린다고 밝힙니다 (<a href="https://support.google.com/analytics/answer/12017362">Google 도움말</a>, 확인 2026-10-13, 다른 지역은 이 페이지에 없음). 우리는 IP를 30일 남기기로 했습니다(이상한 요청 차단, 같은 사람 흐름 보기). 그래서 처리방침에 적고(사이클 16), 30일 뒤 비우는 것입니다.</p>
+<p><b>정리</b>: 남기는 행동의 양은 흔한 수준이라 이대로 가도 됩니다. 아래 여섯 가지는 그 만드는 방법을 고르는 것입니다. 기록을 줄이고 싶으시면 해당 칩에서 미승인으로 알려 주세요.</p>
+</section>
+<section class="card"><h2><span class="num">1</span>화면이 보내는 알림</h2>
+<div class="gist">도서관 클릭에 더해 사서 추천 보기, 지역·내 도서관 바꾸기도 화면이 알림을 보냅니다. 받는 주소를 하나로 합치는 것을 추천합니다. 앞서 정하신 주소 이름(#5 <code>/api/v1/library-clicks</code>)을 바꾸는 안입니다.</div>
+<figure><svg viewBox="0 0 340 230" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="r1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="var(--muted)"/></marker></defs>
+<g font-size="11.5">
+<rect x="10" y="10" width="130" height="34" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="75" y="32" text-anchor="middle" fill="var(--text)">도서관 링크 누름</text>
+<rect x="10" y="54" width="130" height="34" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="75" y="76" text-anchor="middle" fill="var(--text)">사서 추천 보기</text>
+<rect x="10" y="98" width="130" height="34" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="75" y="120" text-anchor="middle" fill="var(--text)">지역 바꾸기</text>
+<rect x="10" y="142" width="130" height="34" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="75" y="164" text-anchor="middle" fill="var(--text)">내 도서관 넣기·빼기</text>
+<rect x="200" y="70" width="130" height="64" rx="10" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="1.5"/><text x="265" y="96" text-anchor="middle" font-weight="700" fill="var(--text)">한 주소</text><text x="265" y="116" text-anchor="middle" font-size="10.5" fill="var(--muted)">/api/v1/usage-events</text>
+</g>
+<line x1="142" y1="27" x2="196" y2="88" stroke="var(--muted)" stroke-width="2" marker-end="url(#r1)"/>
+<line x1="142" y1="71" x2="196" y2="96" stroke="var(--muted)" stroke-width="2" marker-end="url(#r1)"/>
+<line x1="142" y1="115" x2="196" y2="106" stroke="var(--muted)" stroke-width="2" marker-end="url(#r1)"/>
+<line x1="142" y1="159" x2="196" y2="116" stroke="var(--muted)" stroke-width="2" marker-end="url(#r1)"/>
+<text x="10" y="206" font-size="11.5" fill="var(--muted)">내용에 "종류"를 적어 보냄. nginx 한도(IP당 1분 60번)·</text>
+<text x="10" y="222" font-size="11.5" fill="var(--muted)">보안 표시·이상한 값 기록이 한 곳에서 처리됨</text>
+</svg><figcaption>앞으로 남길 행동이 늘어도 주소는 늘지 않습니다.</figcaption></figure>
+<div class="item"><h3><span class="no">1</span>화면 알림은 한 주소 <code>POST /api/v1/usage-events</code>로 받고, 내용에 종류를 적음 (#5의 주소 이름을 바꿈) [안]</h3>
+<p><b>이렇게 되면</b>: <code>{"type":"library_click","libraryId":12,…}</code>, <code>{"type":"region_change",…}</code>처럼 보냅니다. 늘 "받았음(204)"으로 답하는 것과 fetch(keepalive)·CSRF는 그대로입니다. nginx 설정도 주소 하나에만 겁니다.</p>
+<p class="alt"><b>다른 선택</b>: <code>/api/v1/library-clicks</code>는 그대로 두고 <code>/api/v1/screen-events</code>를 더함 → 앞서 정한 이름을 지키지만, 주소마다 nginx 한도·검사를 두 번 둡니다.</p>
+<p><span class="rec">추천</span> 한 주소</p>
+</div>
+<div class="item"><h3><span class="no">2</span>로그인한 뒤의 지역 저장·내 도서관 넣기·빼기도 화면 알림 하나로 기록 (서버 저장 코드는 안 고침) [안]</h3>
+
+<div class="item answer" id="a2"><h3>질문에 대한 답: 지역·내 도서관은 지금 로그인 전/후 어떻게 저장되나</h3>
+<div class="gist">로그인 전에는 브라우저에만 저장되어 서버가 모릅니다. 로그인한 뒤에는 서버에도 저장됩니다. 그래서 "화면 알림 하나"로 하면 두 경우를 같은 길로 기록할 수 있습니다.</div>
+<figure><svg viewBox="0 0 340 300" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="z2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="var(--muted)"/></marker></defs>
+<text x="10" y="20" font-size="12.5" font-weight="700" fill="var(--text)">로그인 전</text>
+<rect x="10" y="30" width="140" height="56" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="80" y="54" text-anchor="middle" font-size="11.5" fill="var(--text)">지역·고른 도서관</text><text x="80" y="72" text-anchor="middle" font-size="10.5" fill="var(--muted)">바꿈</text>
+<line x1="152" y1="58" x2="186" y2="58" stroke="var(--muted)" stroke-width="2" marker-end="url(#z2)"/>
+<rect x="190" y="30" width="140" height="56" rx="8" fill="var(--code-bg)" stroke="var(--line)"/><text x="260" y="54" text-anchor="middle" font-size="11.5" fill="var(--text)">브라우저 저장소</text><text x="260" y="72" text-anchor="middle" font-size="10.5" fill="var(--no)">서버는 모름</text>
+<text x="10" y="128" font-size="12.5" font-weight="700" fill="var(--text)">로그인 뒤</text>
+<rect x="10" y="138" width="140" height="56" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="80" y="162" text-anchor="middle" font-size="11.5" fill="var(--text)">지역·내 도서관</text><text x="80" y="180" text-anchor="middle" font-size="10.5" fill="var(--muted)">바꿈</text>
+<line x1="152" y1="166" x2="186" y2="166" stroke="var(--muted)" stroke-width="2" marker-end="url(#z2)"/>
+<rect x="190" y="138" width="140" height="56" rx="8" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="260" y="160" text-anchor="middle" font-size="11.5" fill="var(--text)">서버 저장</text><text x="260" y="178" text-anchor="middle" font-size="10" fill="var(--muted)">PUT /me/regions 등</text>
+<rect x="10" y="222" width="320" height="66" rx="10" fill="var(--ok-bg)"/>
+<text x="22" y="244" font-size="11.5" fill="var(--text)">추천(화면 알림 하나): 두 경우 모두 화면이 바꾼 순간</text>
+<text x="22" y="262" font-size="11.5" fill="var(--text)">기록 알림을 보냄 → 같은 길, 서버 저장 코드는 그대로</text>
+<text x="22" y="280" font-size="11" fill="var(--muted)">다른 선택: 로그인 뒤만 서버가 저장할 때 직접 기록 (길 둘)</text>
+</svg><figcaption>dev 코드 2026-10-13 확인: 로그인 전 저장은 <code>regionStorage.ts</code>·<code>chosenLibraryStorage.ts</code>(브라우저), 로그인 뒤는 <code>PUT /api/v1/me/regions</code>, <code>PUT·DELETE /api/v1/me/libraries/{id}</code>(서버, <code>mylibrary</code> 모듈).</figcaption></figure>
+<table><tr><th></th><th>화면 알림 하나 (추천)</th><th>로그인 뒤는 서버가 직접</th></tr>
+<tr><td>만들 길</td><td>하나</td><td>둘 (로그인 전 화면 알림 + 로그인 뒤 서버)</td></tr>
+<tr><td>내 도서관 모듈</td><td>안 고침</td><td>기록 모듈을 부르게 고침</td></tr>
+<tr><td>광고 차단 시</td><td>빠질 수 있음</td><td>로그인 뒤는 빠지지 않음</td></tr></table>
+</div>
+
+<p><b>왜 묻나</b>: 로그인한 사람의 지역·내 도서관은 서버에도 저장되므로(<code>PUT /api/v1/me/regions</code>, <code>/api/v1/me/libraries/…</code>, dev 확인), 서버가 저장할 때 직접 기록할 수도 있습니다. 로그인 전 지역은 브라우저에만 저장돼 화면 알림이 필요합니다.</p>
+<p><b>이렇게 되면</b>: 로그인 전후 모두 같은 길(화면 알림)이라 만들 것이 하나입니다. 내 도서관 모듈(<code>mylibrary</code>)은 고치지 않습니다.</p>
+<p class="alt"><b>다른 선택</b>: 로그인한 사람은 서버가 저장할 때 기록 → 광고 차단에도 빠지지 않지만, 내 도서관 모듈이 기록 모듈을 알게 고쳐야 하고(지금 허용된 의존: auth·library·region) 길이 둘이 됩니다.</p>
+<p><span class="rec">추천</span> 화면 알림 하나</p>
+</div>
+</section>
+
+<section class="card"><h2><span class="num">2</span>DB 칸 모양</h2>
+<div class="item"><h3><span class="no">3</span>사서 추천 보기·지역/내 도서관 바꾸기는 표 하나(<code>screen_event</code>)에 종류별 칸을 두고 씀 (JSON 칸 없음) [안]</h3>
+<table><tr><th>종류</th><th>채우는 칸</th></tr>
+<tr><td>사서 추천 목록 보기</td><td>분야</td></tr>
+<tr><td>추천 책 창 열기</td><td>분야, 책 번호</td></tr>
+<tr><td>지역 바꾸기</td><td>거주 지역들, 직장 지역들</td></tr>
+<tr><td>내 도서관 넣기 / 빼기</td><td>도서관 번호, 넣기·빼기</td></tr></table>
+<p><b>이렇게 되면</b>: 앞서 고르신 "값마다 칸을 따로"(설계 #2)를 지키면서 표는 하나만 늘어납니다. 종류에 맞지 않는 칸은 비워 둡니다(DB가 규칙으로 검사).</p>
+<p class="alt"><b>다른 선택</b>: ① 종류마다 표를 따로(셋) → 가장 깔끔하지만 표가 열 개가 됩니다. ② 표 하나 + 내용은 JSON 칸 → 새 종류를 더하기 가장 쉽지만, 앞서 피하기로 한 방식입니다.</p>
+<p><span class="rec">추천</span> 표 하나, 종류별 칸</p>
+</div>
+<div class="item"><h3><span class="no">4</span>더 보기 기록(<code>search_more</code>)에도 검색 기록과 같은 조건 칸을 모두 둠 [안]</h3>
+<p><b>왜</b>: 검색과 더 보기를 잇지 않기로 했으므로(#10), 더 보기 줄만 보고도 "어떤 검색에서 더 보기를 눌렀나"를 알려면 검색어·범위·지역·도서관이 그 줄에 있어야 합니다. 이 값들은 더 보기 요청에도 실려 옵니다.</p>
+<p class="alt"><b>다른 선택</b>: 검색어와 몇 번째만 → 칸이 적지만 지역·범위별로 더 보기를 나눠 볼 수 없습니다.</p>
+<p><span class="rec">추천</span> 같은 조건 칸</p>
+</div>
+</section>
+
+<section class="card"><h2><span class="num">3</span>도서관 응답 기록은 양이 많습니다</h2>
+<div class="gist">직접 찾기 한 번에 도서관마다 한 줄이 생겨, 다른 기록보다 훨씬 빨리 쌓입니다. 범위와 보관 기간을 따로 정하는 것을 추천합니다.</div>
+<figure><svg viewBox="0 0 340 170" xmlns="http://www.w3.org/2000/svg">
+<text x="10" y="20" font-size="12.5" font-weight="700" fill="var(--text)">하루 직접 찾기 1만 번일 때 (어림)</text>
+<text x="10" y="52" font-size="11.5" fill="var(--muted)">검색 기록</text><rect x="90" y="40" width="20" height="16" rx="3" fill="var(--accent)"/><text x="116" y="53" font-size="11.5" fill="var(--text)">1만 줄</text>
+<text x="10" y="82" font-size="11.5" fill="var(--muted)">도서관 응답</text><rect x="90" y="70" width="200" height="16" rx="3" fill="var(--warn)"/><text x="296" y="83" font-size="11.5" fill="var(--text)">수십만</text>
+<text x="10" y="116" font-size="11.5" fill="var(--muted)">한 검색에 도서관을 묶음마다 여러 곳 묻기 때문</text>
+<text x="10" y="134" font-size="11.5" fill="var(--muted)">(한 묶음은 20줄을 찾으면 멈춤, dev 설정)</text>
+<text x="10" y="158" font-size="11" fill="var(--muted)">막대는 비율을 보여 주는 어림, 운영 뒤 측정</text>
+</svg><figcaption>한 줄은 작지만(시각·도서관·결과·시간) 줄 수가 많습니다.</figcaption></figure>
+<div class="item"><h3><span class="no">5</span>도서관 응답은 첫 묶음뿐 아니라 다음 묶음·더 보기까지 모든 도서관 요청을 남김 [안]</h3>
+<div class="item answer" id="a5b"><h3>질문에 대한 답: 직접 찾기 말고도 도서관에 묻는 곳의 응답 기록은?</h3>
+<div class="gist">우리 서버가 도서관 사이트에 묻는 곳은 직접 찾기 말고 하나 더 있습니다: 책 페이지·수집 목록 결과·사서 추천 창에서 "대출 수 채우기". 둘 다 같은 도서관 조회 코드를 지나므로 함께 남기는 것을 추천합니다. 수집기(책 목록 수집)는 서비스가 아니라 따로 도는 프로그램이라 이번 기록에 넣지 않습니다.</div>
+<figure><svg viewBox="0 0 340 250" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="z5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="var(--muted)"/></marker></defs>
+<g font-size="11.5">
+<rect x="10" y="10" width="150" height="50" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="85" y="32" text-anchor="middle" fill="var(--text)">직접 찾기</text><text x="85" y="50" text-anchor="middle" font-size="10.5" fill="var(--muted)">첫·다음 묶음, 더 보기</text>
+<rect x="10" y="74" width="150" height="50" rx="8" fill="var(--card)" stroke="var(--warn)" stroke-width="1.5"/><text x="85" y="96" text-anchor="middle" fill="var(--text)">대출 수 채우기</text><text x="85" y="114" text-anchor="middle" font-size="10.5" fill="var(--muted)">책 페이지·목록·사서 추천</text>
+<rect x="200" y="40" width="130" height="56" rx="10" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="265" y="64" text-anchor="middle" fill="var(--text)">도서관 조회 코드</text><text x="265" y="82" text-anchor="middle" font-size="10.5" fill="var(--muted)">availability 모듈</text>
+<rect x="10" y="150" width="150" height="50" rx="8" fill="var(--code-bg)" stroke="var(--line)" stroke-dasharray="5 4"/><text x="85" y="172" text-anchor="middle" fill="var(--muted)">수집기 (책 목록 수집)</text><text x="85" y="190" text-anchor="middle" font-size="10.5" fill="var(--muted)">따로 도는 프로그램</text>
+</g>
+<line x1="162" y1="35" x2="196" y2="60" stroke="var(--muted)" stroke-width="2" marker-end="url(#z5)"/>
+<line x1="162" y1="99" x2="196" y2="78" stroke="var(--warn)" stroke-width="2" marker-end="url(#z5)"/>
+<text x="10" y="230" font-size="11.5" fill="var(--muted)">두 길 모두 같은 코드를 지나 도서관 사이트에 감</text>
+</svg><figcaption>실선 둘 = 서비스가 도서관에 묻는 길 (이번에 남길 후보), 점선 = 수집기 (자기 실행 기록이 따로 있음).</figcaption></figure>
+<table><tr><th>도서관에 묻는 곳</th><th>지금 결정</th><th>추천</th></tr>
+<tr><td>직접 찾기 (첫·다음 묶음, 도서관별 더 보기)</td><td>남김 (#5 승인)</td><td>그대로</td></tr>
+<tr><td>대출 수 채우기 (책 페이지, 수집 목록 결과, 사서 추천 창)</td><td>빠져 있었음</td><td><b>함께 남김</b> — 같은 표, "어디서 물었나" 칸으로 구분</td></tr>
+<tr><td>수집기의 책 목록 수집</td><td>해당 없음</td><td>남기지 않음 (사이클 13에서 수집기가 dev로 옮겨지며 자기 실행 기록을 가짐)</td></tr></table>
+<p><b>양</b>: 대출 수 채우기는 결과에 보이는 도서관마다 묻기 때문에 도서관 응답 기록이 더 늘어납니다. 그래서 #6의 "90일 보관"이 더 의미가 있습니다.</p>
+<p>이대로 하시려면 #5 칩을 다시 눌러 <b>기타</b>에 "대출 수 채우기도"라고 적어 주세요(또는 채팅으로). 직접 찾기만으로 두셔도 됩니다.</p>
+</div>
+
+<p><b>이렇게 되면</b>: "어느 도서관이 자주 응답하지 않나, 느린가"를 빠짐없이 봅니다(운영 목적). 사람을 알아보는 값은 없습니다.</p>
+<p class="alt"><b>다른 선택</b>: 첫 묶음만 → 양이 줄지만 뒤 묶음에서만 묻는 도서관은 볼 수 없습니다.</p>
+<p><span class="rec">추천</span> 모든 도서관 요청</p>
+</div>
+<div class="item"><h3><span class="no">6</span>도서관 응답 기록은 90일만 보관 (다른 기록은 1년 그대로) [안]</h3>
+<div class="item answer" id="a5c"><h3>질문에 대한 답: 대출 수 채우기 같은 바깥 요청까지 보통 수집하나</h3>
+<div class="gist">바깥 사이트 요청의 성공·실패·걸린 시간을 지켜보는 것은 보통 합니다. 다만 보통은 요청 하나하나를 DB에 남기기보다 "몇 번 성공·실패, 평균 몇 초" 같은 집계 숫자(지표)로 모읍니다. 우리처럼 요청마다 DB에 한 줄 남기는 것은 그보다 자세한 편입니다.</div>
+<table><tr><th>방법</th><th>보통 쓰는 곳</th><th>근거</th></tr>
+<tr><td>집계 지표 (횟수·시간·실패 수)</td><td>대부분의 서비스. Spring Boot도 HTTP 요청 지표를 기본으로 만듦</td><td>Spring Boot는 RestTemplate·WebClient·RestClient 요청을 <code>http.client.requests</code> 지표로 기록 (<a href="https://docs.spring.io/spring-boot/reference/actuator/metrics.html">Spring Boot 문서</a>, 확인 2026-10-13). 사이클 17이 Prometheus를 띄움</td></tr>
+<tr><td>요청마다 한 줄 (지금 고른 것)</td><td>문제 추적이 필요할 때</td><td>—</td></tr></table>
+<p><b>지표로만 하면 생기는 문제</b>: 도서관이 2,400곳이 넘어 "도서관마다" 숫자를 따로 두면 Prometheus 지표가 매우 많아집니다. Prometheus는 사용자 ID처럼 값 종류가 많은 것을 라벨로 쓰지 말라고 안내합니다 (<a href="https://prometheus.io/docs/practices/naming/">Prometheus 문서</a>: "Do not use labels to store dimensions with high cardinality"). 그래서 지표로는 "업체별"까지만 보고, "어느 도서관이"는 DB 기록으로 보는 것이 맞습니다.</p>
+<table><tr><th>안</th><th>"어느 도서관이 자주 실패하나"</th><th>양</th></tr>
+<tr><td>요청마다 한 줄, 90일 (지금 #5·#6)</td><td>볼 수 있음, 요청 하나까지</td><td>가장 많음</td></tr>
+<tr><td>도서관마다 하루 한 줄 요약 (성공·실패·시간 초과 수, 평균·가장 긴 시간), 1년</td><td>볼 수 있음, 하루 단위</td><td>하루 많아야 도서관 수만큼 (수천 줄)</td></tr></table>
+<p><b>제 생각</b>: "어느 도서관이 문제인가"가 목적이면 하루 요약으로도 충분하고, 양이 훨씬 적어 1년을 둘 수 있습니다. 요청 하나하나를 보고 싶은 때는 서버 로그가 있습니다. 지금 #5(요청마다)는 승인하신 상태라, 바꾸시려면 #6 칩의 <b>기타</b>에 "하루 요약으로"라고 적어 주세요. 그대로 두시려면 #6을 승인하시면 됩니다(요청마다, 90일).</p>
+</div>
+
+
+<div class="item answer" id="a6"><h3>질문에 대한 답: 다른 기록의 보관 기간은 어떻게 되나</h3>
+<div class="gist">IP는 어디서든 30일, 나머지 사용 기록은 1년입니다. 도서관 응답만 90일로 짧게 두자는 것이 이 칩입니다.</div>
+<table><tr><th>기록</th><th>보관</th><th>정한 곳</th></tr>
+<tr><td>검색, 책 상세, 도서관 클릭, 더 보기, 사서 추천 보기·지역/내 도서관 바꾸기</td><td>1년 (IP 칸만 30일 뒤 비움)</td><td>명세·ADR-0096 (승인)</td></tr>
+<tr><td>이상한 클릭 알림 (IP 포함)</td><td>30일</td><td>명세 (승인)</td></tr>
+<tr><td>버린 묶음 (시각·줄 수만)</td><td>1년</td><td>명세 (승인)</td></tr>
+<tr><td><b>도서관 응답 결과·시간</b></td><td><b>90일 (이 칩)</b></td><td>지금 고르시는 것</td></tr>
+<tr><td>nginx 접속 기록 (IP·경로, 검색어 없음)</td><td>14일</td><td>사이클 17 확정</td></tr>
+<tr><td>회원 정보 (참고)</td><td>마지막 로그인 1년 뒤 삭제</td><td>기존 (dev 설정)</td></tr></table>
+<figure><svg viewBox="0 0 340 150" xmlns="http://www.w3.org/2000/svg">
+<line x1="20" y1="40" x2="320" y2="40" stroke="var(--line)" stroke-width="3"/>
+<g font-size="11">
+<circle cx="34" cy="40" r="5" fill="var(--muted)"/><text x="34" y="24" text-anchor="middle" fill="var(--muted)">14일</text>
+<circle cx="45" cy="40" r="5" fill="var(--warn)"/><text x="58" y="64" fill="var(--warn)">30일 IP·이상 알림</text>
+<circle cx="94" cy="40" r="6" fill="var(--accent)"/><text x="100" y="84" fill="var(--accent)">90일 도서관 응답</text><line x1="94" y1="46" x2="98" y2="74" stroke="var(--accent)"/>
+<circle cx="310" cy="40" r="6" fill="var(--ok)"/><text x="320" y="24" text-anchor="end" fill="var(--ok)">1년 나머지</text>
+</g>
+<text x="10" y="110" font-size="11.5" fill="var(--muted)">14일 = nginx 접속 기록 (사이클 17)</text>
+<text x="10" y="130" font-size="11.5" fill="var(--muted)">모두 매일 04:30 자동 정리 (nginx는 17 설정)</text>
+</svg><figcaption>눈금 길이는 실제 비율입니다.</figcaption></figure>
+<p class="note">확인할 것 하나: 밤 DB 백업(매일 03:00, 사이클 17)에도 이 기록이 들어갑니다. 백업을 며칠 두는지에 따라 지운 기록이 백업에는 그만큼 더 남습니다. 백업 보관 기간은 17에서 정하므로 확인 필요로 적었습니다.</p>
+</div>
+
+<p><b>이렇게 되면</b>: 사이트가 요즘 응답하는지 보는 데는 최근 몇 달이면 충분하고, 4GB·40GB 서버의 디스크를 아낍니다. 매일 04:30 지우기에서 함께 지웁니다.</p>
+<p class="alt"><b>다른 선택</b>: ① 1년 그대로 → 규칙이 하나지만 가장 큰 표가 1년 쌓입니다. ② 원본은 30일, 하루 도서관별 요약(성공·실패 수, 평균 시간)은 1년 → 오래 볼 수 있지만 요약을 만드는 작업이 하나 더 생깁니다.</p>
+<p><span class="rec">추천</span> 90일</p>
+</div>
+</section>
+<p class="foot">이 페이지는 요약이며 근거는 원본 <code>docs/cycles/15-usage-log/design-delta.md</code>(초안)·<code>spec.md</code> R6에 있습니다. 고르시면 설계 초안·ADR-0097을 고칩니다.</p>
+</main></body></html>
