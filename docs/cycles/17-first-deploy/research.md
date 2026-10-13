@@ -103,3 +103,16 @@ dev 확인 (2026-10-13): Redirect URI는 `AUTH_PUBLIC_BASE_URL` + `/api/v1/auth/
 ### 이름·병합
 
 - 16 새 모듈·schema `sitecontent` [안], 15 `usagelog` [안]. 15·16·17이 Liquibase master changelog 끝줄을 고치면 병합 순서 확인. 17은 표 변경이 없을 것으로 봄 [안] (scope 영향 받을 모듈)
+
+## 7. 사이클 15에서 받은 것 (2026-10-13, 15 세션 글)
+
+| 15가 기대는 것 | 17에서 할 일 | 상태 |
+|---|---|---|
+| 15 서비스는 IP를 nginx가 넘기는 `X-Real-IP`(= nginx `$remote_addr`, dev `deploy/nginx/chaekcheck-locations.conf:17`)에서 읽음. 서비스 쪽 forwarded 설정은 쓰지 않음 | 운영 nginx에 `real_ip_header CF-Connecting-IP` + `set_real_ip_from`(cloudflared가 nginx에 붙는 주소)을 넣음 → `$remote_addr`·`X-Real-IP`가 실제 사용자 IP가 됨 | [확정: 넣음] (scope 포함 3) / 믿는 주소 범위 [안] |
+| `ngx_http_realip_module`이 기본 빌드에 없을 수 있음 (https://nginx.org/en/docs/http/ngx_http_realip_module.html) | dev 공개 시험(2026-10-05, Docker `nginx:stable-alpine`, `tunnel-test.conf`)에서 `real_ip_header CF-Connecting-IP`가 동작해 "nginx 로그에 실제 접속 IP가 찍힘" (dev `plan-feedback.md` 1808~1810행) → 같은 이미지면 모듈 있음. nginx.org 패키지는 "built with all modules that do not require additional libraries" (https://nginx.org/en/linux_packages.html, 확인 2026-10-13). 운영 이미지에서 `nginx -V`로 한 번 더 확인 | [확인 필요: 운영 이미지 `nginx -V`] |
+| 터널을 거쳐도 `CF-Connecting-IP`가 붙는지 | 빠른 터널에서는 붙었음(위 dev 시험). 정식 터널에서 배포 때 시험하고 15에 알림 | [확인 필요: 배포 시험] |
+| 15가 dev에 더할 nginx 설정: `location = /api/v1/library-clicks` IP당 1분 60번(넘치면 기록 안 하고 204), 직접 찾기·대출 조회에서 UA에 bot·crawler·spider면 403, `public/robots.txt`로 `/api/` 금지 | 17의 "나머지 `/api/` IP별 한도"(scope 포함 3)와 같은 파일을 고침 → location 겹침과 순서를 17 설계에서 맞춤. Cloudflare 무료 규칙을 쓰면 nginx 한도와 나누는 방법을 15에 알림 | [안: 17 설계에서] |
+| nginx 접속 기록 보관 기간, 검색어가 든 쿼리 문자열을 접속 기록에서 뺄지 (15의 제안) | scope 포함 9에서 정해 15·16에 알림 | [확인 필요: 사용자에게 질문] |
+| 15 기록 켜기는 설정 값 하나. 첫 배포 때 꺼 두고 처리방침 공개일에 켜는 안 | 15가 정하면 운영 환경 변수(비밀 값과 같은 곳, scope 포함 5)에 넣음 | [안: 15에서] |
+| 15가 더하는 몫: 서비스 메모리 기록 버퍼 최대 1만 줄(약 5MB), DB 연결 추가 없음, 디스크 1년 1~2GB(어림). AC-16을 모니터링을 켠 상태로 잼 | 운영 메모리 값 다시 재기(scope 포함 6)에 함께 넣음 | [안] |
+| 15 기록 지우기 매일 04:30(서울). 지금 04:00 회원 정리, 05:00 사서 추천 받기 | 17의 밤 백업(scope 포함 8) 시각을 이것들과 겹치지 않게 정함 [안: 예 03:00]. 정하면 15에 알림 | [안] |
