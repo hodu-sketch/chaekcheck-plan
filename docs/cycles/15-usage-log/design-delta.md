@@ -8,13 +8,14 @@
 
 ```mermaid
 flowchart TB
-  web[웹 화면] -->|GET /api/v1/books ?loggedIn| catalog
-  web -->|GET /api/v1/books/bookId ?loggedIn| catalog
-  web -->|GET /api/v1/ebook-searches/stream ?loggedIn| availability
+  web[웹 화면] -->|GET /api/v1/books, 쿠키| catalog
+  web -->|GET /api/v1/books/bookId, 쿠키| catalog
+  web -->|GET /api/v1/ebook-searches/stream, 쿠키| availability
   web -->|fetch keepalive POST /api/v1/usage-events + CSRF| usagelog
   catalog -->|UsageLog.recordSearch / recordBookView| usagelog
   availability -->|UsageLog.recordSearch 첫 묶음 끝·끊김| usagelog
   usagelog -->|비울 때 도서관 번호 확인| library
+  usagelog -->|로그인 상태 판별| auth
   web -->|화면 행동 알림: 사서 추천 보기, 지역·내 도서관 바꾸기| usagelog
   catalog -->|UsageLog.recordMore 다음 쪽| usagelog
   availability -->|UsageLog.recordMore 다음 묶음·더 보기, recordLibraryResponse 직접 찾기·대출 수 채우기 → 하루 요약| usagelog
@@ -34,10 +35,11 @@ sequenceDiagram
   participant C as catalog
   participant U as usagelog
   participant D as DB
-  W->>C: GET /api/v1/books?title=…&loggedIn=…
+  W->>C: GET /api/v1/books?title=… (access_token 쿠키 함께)
   C->>C: 검사 (400·422면 기록 없이 끝)
   C-->>W: BookPage (totalCount)
-  C->>U: recordSearch(kind=catalog, 조건, totalCount, loggedIn, ip)
+  C->>U: recordSearch(kind=catalog, 조건, totalCount, 요청)
+  U->>U: auth 로그인 상태 판별(요청) → signed_in / signed_out / login_off
   U->>U: 로봇 이름이면 버림 / 설정 꺼짐이면 버림 / 큐에 넣음
   Note over U,D: 5초마다 묶어서 넣음 (아래 쓰기 흐름)
 ```
@@ -49,7 +51,7 @@ sequenceDiagram
   participant W as 웹
   participant A as availability
   participant U as usagelog
-  W->>A: GET /api/v1/ebook-searches/stream?…&loggedIn=…
+  W->>A: GET /api/v1/ebook-searches/stream?… (쿠키 함께)
   A-->>W: SSE 첫 묶음
   alt 첫 묶음 끝
     A->>U: recordSearch(kind=direct, countedRows)
@@ -124,7 +126,7 @@ classDiagram
     scope, visit
     residenceRegionIds[], workRegionIds[], libraryIds[]
     resultCount?
-    loggedIn? (예/아니오/모름)
+    loginStatus (로그인함/안 함/꺼짐)
     clientIp? (30일)
   }
   class LibraryClick {
@@ -133,14 +135,14 @@ classDiagram
     place (6)
     screen (5)
     bookId?
-    loggedIn?
+    loginStatus
     clientIp? (30일)
   }
   class BookView {
     receivedAt
     bookId
     residenceRegionIds[], workRegionIds[], libraryIds[]
-    loggedIn?
+    loginStatus
     clientIp? (30일)
   }
   class RejectedClick {
@@ -163,7 +165,7 @@ classDiagram
 | 모듈 | 신규/변경 | 책임 | 공개 API | 발행/구독 이벤트 | 소유 테이블 |
 |---|---|---|---|---|---|
 | `usagelog` | 신규 | 기록 받기·모으기·5초 넣기·04:30 지우기·클릭·화면 행동 알림 주소, 로봇·설정 꺼짐 거르기 | `UsageLog` (`recordSearch`, `recordBookView`, `recordMore`, `recordLibraryResponse`), 공개 record [안] | 없음 | `usagelog.*` 다섯 |
-| `catalog` | 변경 | 첫 쪽 검색·책 상세 성공 뒤 `UsageLog` 호출, `loggedIn` 읽기 | 변경 없음 | 없음 | 변경 없음 |
+| `catalog` | 변경 | 첫 쪽 검색·책 상세 성공 뒤 `UsageLog` 호출 (로그인은 모름) | 변경 없음 | 없음 | 변경 없음 |
 | `availability` | 변경 | 직접 찾기 첫 묶음 끝·끊김에 한 번 `UsageLog` 호출 | 변경 없음 | 없음 | 변경 없음 |
 | `auth` | 변경 | 로그인 상태 판별 부품 공개 (켜짐: 쿠키 서명 확인, 만료돼도 로그인함 / 꺼짐: 쿠키를 보지 않고 `login_off`), `access_token` 쿠키 경로 `/api/v1` | `LoginStatusReader` [안: 이름] | 없음 | 변경 없음 |
 | `library` | 변경 없음 | `usagelog`이 도서관 번호 확인에 쓰는 공개 API (13 회고 뒤 `listAll` 등 어느 것을 쓸지 정함) | 기존 | 없음 | — |
@@ -310,17 +312,16 @@ erDiagram
 | 메서드 | 경로 | 설명 | 요청 | 응답 | 에러 |
 |---|---|---|---|---|---|
 | POST | `/api/v1/usage-events` | 화면 행동 알림 하나로 받음: 도서관 클릭, 사서 추천 보기, 지역·내 도서관 바꾸기 (`type`으로 구분) [확정] (사용자 승인, 2026-10-13, `easy/2026-10-13-more-actions-design.html` #1) — 설계 #5의 `/api/v1/usage-events`를 바꿈 | JSON (아래) | `204`, 본문 없음 | 로그인 기능 켜짐에서 CSRF 표시 없음·틀림 → `403` (기존 규칙). 값이 틀려도 `204` (rejected_click에 남김). nginx 한도 초과도 `204` |
-| GET | `/api/v1/books` | (변경) 쿼리에 `loggedIn` 추가 | `loggedIn=true|false`, 없으면 모름 | 변경 없음 | 변경 없음 |
-| GET | `/api/v1/books/{bookId}` | (변경) 같음 | 같음 | 변경 없음 | 변경 없음 |
-| GET | `/api/v1/ebook-searches/stream` | (변경) 같음 | 같음 | 변경 없음 | 변경 없음 |
+| GET | `/api/v1/books` | 변경 없음 (로그인 여부는 쿠키로, ADR-0102) | — | 변경 없음 | 변경 없음 |
+| GET | `/api/v1/books/{bookId}` | 변경 없음 (쿠키) | — | 변경 없음 | 변경 없음 |
+| GET | `/api/v1/ebook-searches/stream` | 변경 없음 (쿠키) | — | 변경 없음 | 변경 없음 |
 
 ```json
 POST /api/v1/usage-events
-{ "type": "library_click", "libraryId": 12, "place": "result_card", "screen": "picks", "bookId": 345, "loggedIn": false }
-{ "type": "region_change", "residenceRegionIds": [1114], "workRegionIds": [1102], "loggedIn": true }
+{ "type": "library_click", "libraryId": 12, "place": "result_card", "screen": "picks", "bookId": 345 }
+{ "type": "region_change", "residenceRegionIds": [1114], "workRegionIds": [1102] }
 ```
 
-- 기존 검색 API는 모르는 쿼리 값을 무시하므로 웹을 먼저 고쳐도 깨지지 않음 (`architect-proposal.md` 확인 결과 #8)
 - (바뀜 2026-10-14) `loggedIn` 쿼리 값은 쓰지 않음. 서버가 로그인 쿠키로 직접 확인 (사용자 #5 미승인). 쿠키 범위 등은 `easy/2026-10-14-login-cookie.html`
 
 ## 외부 연동
