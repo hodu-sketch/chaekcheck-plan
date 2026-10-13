@@ -1,0 +1,282 @@
+<title>사이클 18 범위 결정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.card h3.t{font-size:21px;margin:26px 0 8px}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font-size:15px;line-height:1.55;margin:8px 0 6px;word-break:normal}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+pre .cm{color:var(--muted)} pre .hl{background:var(--warn-bg);color:var(--warn);font-weight:700}
+.src{color:var(--muted);font-size:15px;margin:14px 0 0}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+.fig{overflow-x:auto;margin:8px 0 4px}
+.fig svg{width:100%;min-width:640px;height:auto;display:block}
+.mine{border:1px dashed var(--warn);background:var(--warn-bg);border-radius:8px;padding:10px 14px;font-size:18px;margin:10px 0}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0}
+.pc>div{border-radius:10px;padding:12px 16px;font-size:18px}
+.pc .p{background:var(--ok-bg)} .pc .c{background:var(--no-bg)}
+.pc h4{margin:0 0 6px;font-size:18px}
+.pc ul{margin:0;padding-left:20px}
+.pc li{margin:0 0 8px}
+@media (max-width:640px){.pc{grid-template-columns:1fr} body{font-size:18px} .lead{font-size:24px}}
+
+:root{color-scheme:light}
+body{background:var(--bg);color:var(--text)}
+.chip{display:inline-block;font-size:15px;font-weight:700;color:var(--warn);background:var(--warn-bg);border:1px solid var(--warn);border-radius:999px;padding:0 10px;margin-right:6px;line-height:1.6}
+.chip.done{color:var(--ok);background:var(--ok-bg);border-color:var(--ok)}
+.dec{margin:12px 0 18px;padding:14px 16px;border:1px solid var(--line);border-radius:10px;background:var(--code-bg);display:flex;flex-direction:column;gap:10px}
+.dec .btns{display:flex;flex-wrap:wrap;gap:8px}
+.dec button{font:inherit;font-size:17px;padding:6px 16px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer}
+.dec button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.dec button[aria-pressed="true"][data-c="승인"]{background:var(--ok-bg);border-color:var(--ok);color:var(--ok);font-weight:700}
+.dec button[aria-pressed="true"][data-c="미승인"]{background:var(--no-bg);border-color:var(--no);color:var(--no);font-weight:700}
+.dec button[aria-pressed="true"][data-c="기타"]{background:var(--accent-bg);border-color:var(--accent);color:var(--accent);font-weight:700}
+.dec textarea{font:inherit;font-size:17px;width:100%;min-height:64px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--text);resize:vertical}
+.dec .save{background:var(--accent);color:var(--card);border-color:var(--accent);font-weight:700}
+.dec .st{font-size:15px;color:var(--muted)}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:0 0 24px;font-size:17px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.bar b{font-variant-numeric:tabular-nums}
+</style>
+<main class="doc">
+<div class="bar" id="bar">불러오는 중</div>
+
+<p class="lead">사이클 18:<br>책이 하나도 없거나 덜 모인 도서관 고치기</p>
+<p class="sub">서비스에 켜져 있는데 책이 0권인 도서관 22곳과, 사이트보다 덜 모인 도서관 9곳을 이 사이클에서 다룹니다. 무엇을 할지, 언제 할지, 다른 사이클과 부딪히지 않게 어디서 멈출지 10가지를 정해 주세요. 표는 dev가 2026-10-14에 적은 기록에서 가져왔습니다. (2026-10-14)</p>
+
+<section class="card">
+<h2><span class="num">1</span>지금 무엇이 문제인가</h2>
+<p class="gist">이용자가 "내 도서관"으로 고를 수 있는데, 골라도 책 검색에 한 번도 나오지 않는 도서관이 있습니다.</p>
+<ul>
+<li>켜져 있는데 책이 0권: 22곳. 북큐브 화면 13곳, 교보 구독형 화면 4곳, 교보 소장형 화면 3곳, YES24 화면 2곳</li>
+<li>이 중 국회도서관(사이트에는 17,162권)과 김천시립도서관(7,921권)은 기본 범위 "가입 가능한 곳"에도 들어갑니다. 나머지 20곳은 "전체 도서관"을 골랐을 때만 보입니다</li>
+<li>사이트가 보여 주는 권수보다 덜 모인 곳: 9곳. 가장 낮은 곳은 국회도서관(0 / 17,162), 김천시립도서관(0 / 7,921), 군포시도서관(80 / 1,852)</li>
+</ul>
+<p class="src">출처: dev <code>docs/plan-feedback.md</code> "다음 사이클 후보: 소장이 비었거나 덜 모인 도서관" (2026-10-14, 사이클 12 분포 검사)</p>
+
+<div class="item">
+<h3><span class="no">1</span>이 사이클의 목표 한 문장</h3>
+<p><span class="chip" data-n="1">안 #1</span> "켜져 있는데 책이 없거나 사이트보다 훨씬 덜 모인 도서관마다 원인을 찾아, 다시 모을 수 있는 곳은 다시 모으고 그럴 수 없는 곳은 끄고 이유를 적어서, 이용자가 고른 도서관이 검색에 한 번도 안 나오는 일을 없앤다."</p>
+<p class="alt"><b>다른 선택:</b> 원인 찾기와 기록까지만 하고 고치는 일은 다음 사이클로 미룸 → 이번 사이클이 작아지지만, 이용자에게 보이는 것은 바뀌지 않습니다.</p>
+<p class="rec">추천: 위 문장대로. 고치는 일 대부분이 "다시 수집" 또는 "끄기"라 크지 않습니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>어느 도서관까지 볼지</h2>
+<p class="gist">책이 0권인 22곳과 군포시도서관은 모두 원인을 찾고, 조금 덜 모인 6곳은 "센 날이 달라서인지"만 확인하는 안입니다.</p>
+<table>
+<tr><th>묶음</th><th>곳 수</th><th>이번에 할 일</th></tr>
+<tr><td>켜져 있는데 0권</td><td>22</td><td>모두 원인 찾기</td></tr>
+<tr><td>사이트의 7할도 못 모음</td><td>3 (국회·김천은 위 22곳과 같음 → 새로 더해지는 곳은 군포 1곳)</td><td>원인 찾기</td></tr>
+<tr><td>사이트의 7할 이상 모음</td><td>6 (마포나루 메타버스 0.71, 부산시립시민 0.82, 경상남도대표 0.84, 영광군립 0.87, 순창공공 0.88, 목포시통합 0.90)</td><td>사이트 권수를 센 날과 수집한 날만 비교</td></tr>
+<tr><td>사이트 권수를 모르는 곳</td><td>약 2,400</td><td>하지 않음 (3번)</td></tr>
+</table>
+<div class="item">
+<h3><span class="no">2</span>볼 범위: 0권 22곳 + 군포, 7할 이상 6곳은 날짜만</h3>
+<p><span class="chip" data-n="2">안 #2</span> 위 표대로 합니다. 예: 부산시립시민도서관(5,035 / 6,129)은 사이트 권수를 센 날이 수집한 날보다 몇 주 뒤라면 "그 사이 늘어난 책"으로 보고 더 파지 않습니다.</p>
+<p class="alt"><b>다른 선택:</b> 9곳 모두 0권인 곳처럼 깊게 봄 → 시간이 더 듭니다. 6곳은 다시 수집하면 맞춰질 수도 있지만 확인 못 함. / 0권 22곳만 봄 → 군포(80권만 모임)가 빠집니다.</p>
+<p class="rec">추천: 위 표대로.</p>
+</div>
+<div class="item">
+<h3><span class="no">3</span>사이트 권수를 모르는 약 2,400곳은 이번에 하지 않음</h3>
+<p><span class="chip" data-n="3">안 #3</span> 이 2,400곳은 사이트가 보여 주는 권수를 모아 둔 적이 없어 "덜 모였는지"를 알 수 없습니다. 권수를 모으는 일은 backlog에 적고 이번에는 하지 않습니다.</p>
+<p class="alt"><b>다른 선택:</b> 이번에 권수를 모음 → 2,400곳 사이트를 한 번씩 열어야 해서 이 사이클이 몇 배 커집니다. 화면 종류마다 권수가 보이는 자리도 따로 찾아야 합니다.</p>
+<p class="rec">추천: 이번에는 하지 않음.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>원인을 찾은 뒤 어떻게 할지</h2>
+<p class="gist">원인에 따라 셋 중 하나로 갑니다. 다시 모으거나, 화면 종류를 고쳐 다시 모으거나, 끄고 이유를 적습니다.</p>
+<div class="fig">
+<svg viewBox="0 0 900 300" role="img" aria-label="원인에 따른 처리">
+<rect x="20" y="120" width="170" height="60" rx="10" fill="var(--accent-bg)" stroke="var(--accent)"/>
+<text x="105" y="146" text-anchor="middle" font-size="16" fill="var(--text)">도서관 하나</text>
+<text x="105" y="168" text-anchor="middle" font-size="13" fill="var(--muted)">원인 찾기</text>
+<g font-size="14" fill="var(--text)">
+<rect x="270" y="20" width="250" height="60" rx="10" fill="var(--card)" stroke="var(--line)"/>
+<text x="395" y="46" text-anchor="middle">수집 실패·주소 바뀜</text>
+<text x="395" y="68" text-anchor="middle" fill="var(--muted)">사이트는 살아 있음</text>
+<rect x="270" y="120" width="250" height="60" rx="10" fill="var(--card)" stroke="var(--line)"/>
+<text x="395" y="146" text-anchor="middle">화면 종류가 틀림</text>
+<text x="395" y="168" text-anchor="middle" fill="var(--muted)">예: 교보로 적었는데 북큐브</text>
+<rect x="270" y="220" width="250" height="60" rx="10" fill="var(--card)" stroke="var(--line)"/>
+<text x="395" y="246" text-anchor="middle">닫힘·막힘·전자책 없음</text>
+<text x="395" y="268" text-anchor="middle" fill="var(--muted)">오디오북 전용 포함</text>
+<rect x="600" y="20" width="280" height="60" rx="10" fill="var(--ok-bg)" stroke="var(--ok)"/>
+<text x="740" y="56" text-anchor="middle">다시 수집 → 가져오기</text>
+<rect x="600" y="120" width="280" height="60" rx="10" fill="var(--ok-bg)" stroke="var(--ok)"/>
+<text x="740" y="156" text-anchor="middle">종류 고침 → 다시 수집</text>
+<rect x="600" y="220" width="280" height="60" rx="10" fill="var(--warn-bg)" stroke="var(--warn)"/>
+<text x="740" y="246" text-anchor="middle">서비스에서 끄기</text>
+<text x="740" y="268" text-anchor="middle" fill="var(--muted)">이유를 원문과 함께 기록</text>
+</g>
+<g stroke="var(--text)" stroke-width="2" fill="none">
+<path d="M190 150 L230 150 L230 50 L270 50"/><path d="M190 150 L270 150"/><path d="M230 150 L230 250 L270 250"/>
+<path d="M520 50 L600 50"/><path d="M520 150 L600 150"/><path d="M520 250 L600 250"/>
+</g>
+</svg>
+</div>
+<p class="cap">초록은 책이 다시 보이게 되는 길, 노랑은 도서관이 목록에서 빠지는 길입니다.</p>
+<div class="item">
+<h3><span class="no">4</span>원인별 처리: 다시 수집 / 종류 고쳐 다시 수집 / 끄고 기록</h3>
+<p><span class="chip" data-n="4">안 #4</span> 그림대로 합니다. 끌 때는 dev <code>docs/library-site-issues.md</code>에 사이트 원문(화면에 뜬 글, 응답)과 함께 이유를 적고, 조사 기록은 dev <code>docs/library-maintenance.md</code> 규칙을 따릅니다. 예: 휴맥 오디오북 라이브(721)가 오디오북만 있다면, 우리는 오디오북을 가져오지 않으므로 끄고 "오디오북 전용"이라고 적습니다.</p>
+<p class="alt"><b>다른 선택:</b> 끄지 않고 켜 둔 채 이유만 적음 → 이용자는 여전히 고를 수 있고, 골라도 책이 안 나옵니다.</p>
+<p class="rec">추천: 그림대로.</p>
+</div>
+<div class="item">
+<h3><span class="no">5</span>화면은 바꾸지 않음: 남은 0권 도서관은 끄는 것으로 끝냄</h3>
+<p><span class="chip" data-n="5">안 #5</span> "내 도서관 관리"와 범위 고르기 화면은 그대로 둡니다. 원인을 고친 뒤에도 책이 0권인 곳은 끄기 때문에, 화면에 따로 표시할 일이 없습니다. 도서관을 끈다는 공지(사이클 16의 공지사항)도 하지 않습니다.</p>
+<p class="alt"><b>다른 선택:</b> 켜 둔 채 도서관 이름 옆에 "책 정보 없음"을 표시 → 화면 작업과 PC·태블릿·폰 확인이 더해집니다. / 목록에서만 숨기고 켜 둠 → "켜짐"과 "보임"이 따로 놀아 새 규칙이 하나 생깁니다.</p>
+<p class="rec">추천: 화면은 바꾸지 않음. 표시나 숨기기는 backlog에 적습니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>이미 결정이 있는 도서관</h2>
+<p class="gist">국회도서관·군포시도서관·김천시립도서관 3곳은 사이클 13에서 "수집 목록에서는 빼고, 서비스에서는 켜 둔다"로 정한 곳입니다. 이번에 끄면 그 결정을 바꾸게 됩니다.</p>
+<table>
+<tr><th>도서관</th><th>지금 서비스</th><th>2026-10-12에 다시 열어 본 결과 (사이클 13)</th></tr>
+<tr><td>국회도서관 (44)</td><td>켜짐, 0권</td><td>사이트가 브라우저가 아닌 요청에 빈 화면(19바이트)만 줌. 자동 접근을 막는 것으로 보고 우회하지 않기로 함</td></tr>
+<tr><td>군포시도서관 (261)</td><td>켜짐, 80권</td><td>다른 도서관 사이트(서비스 46번)로 넘어감</td></tr>
+<tr><td>김천시립도서관 (269)</td><td>켜짐, 0권</td><td>연결이 끊김</td></tr>
+</table>
+<p class="src">출처: dev <code>docs/plan-feedback.md</code> "# 사이클 13" 사용자 결정 표 (사용자: "확인하고 빼줘 파일로 적어줘", 2026-10-12)</p>
+<div class="item">
+<h3><span class="no">6</span>국회·군포·김천 3곳을 서비스에서 끔</h3>
+<p><span class="chip" data-n="6">안 #6</span> 세 곳 모두 우리가 책을 모을 수 없는 이유가 이미 확인됐으므로 끕니다. 군포의 80권은 예전에 모은 것입니다. 사이트가 46번 도서관으로 넘어가므로, 46번이 같은 도서관이면 같은 책을 46번에서 보게 됩니다(같은 곳인지는 이번 조사에서 확인).</p>
+<p class="chg">사이클 13의 "서비스에서는 그대로 켜 둠"을 바꾸는 안입니다.</p>
+<p class="alt"><b>다른 선택:</b> 국회도서관만 켜 둠 → "가입 가능한 곳"에 들어가 가입 안내 대상으로는 보이지만, 골라도 책은 계속 안 나옵니다. / 셋 다 켜 둠 → 지금과 같음.</p>
+<p class="rec">추천: 셋 다 끔.</p>
+</div>
+<div class="item">
+<h3><span class="no">7</span>교보 구독형 서버에 있는 곳은 원인만 적고 다시 수집은 하지 않음</h3>
+<p><span class="chip" data-n="7">안 #7</span> 교보 구독형 화면 4곳(성남문화재단 1045, SSAFY 1131, 서울고은초 1620, 청원대길초 2023)은 교보 구독형 서버(<code>*.dkyobobook.co.kr</code>)에 있습니다. 이 서버는 2026-10-07부터 집 IP를 막아, 사이클 13에서 이 서버는 수집하지 않게 했습니다. 이번에는 원인만 적고, 다시 수집은 backlog에 이미 있는 "교보 구독형 서버를 다른 우리 IP에서 다시 받기"에서 합니다. 교보 소장형 화면 3곳(울주 112, 대야분관 168, 국회 44)도 이 서버에 있으면 같게 다룹니다(확인 못 함, 조사 항목).</p>
+<p class="alt"><b>다른 선택:</b> 그 backlog 일을 이 사이클에 넣어 AWS 서울에서 다시 수집 → 사이클 17 첫 배포의 서버를 써야 하고, 사이클 17이 "다음 사이클로" 미룬 일을 가져오는 것이라 이 사이클이 커집니다. / 이 4곳을 끔 → 다른 IP로 다시 받으면 살아날 곳을 미리 지우게 됩니다.</p>
+<p class="rec">추천: 원인만 적고 켜 둔 채 둠. 그 backlog 일이 끝나면 다시 봅니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">5</span>다른 사이클과 부딪히지 않게</h2>
+<p class="gist">이 사이클은 다른 사이클의 파일을 고치지 않고, 다른 사이클이 끝낸 것 위에서만 움직입니다.</p>
+<table>
+<tr><th>사이클</th><th>겹치는 곳</th><th>사이클 18은</th></tr>
+<tr><td>12 책 묶기 (개발 중)</td><td>이 문제를 찾은 곳. 가져오기를 다시 돌림</td><td>묶기 규칙은 건드리지 않고, 12가 들어간 판으로 가져오기만 다시 돌림</td></tr>
+<tr><td>13 수집기 (main에 합치는 중)</td><td>수집기, 위 3곳 결정, 교보 구독형 서버 거름</td><td>13이 main에 들어간 뒤에 개발 시작. 3곳은 6번에서 정함</td></tr>
+<tr><td>14 사서추천도서 (개발 중)</td><td>없음</td><td>—</td></tr>
+<tr><td>15 사용 기록 (계획 중)</td><td>없음</td><td>—</td></tr>
+<tr><td>16 공지·약관 (계획 중)</td><td>없음</td><td>공지 안 함 (5번)</td></tr>
+<tr><td>17 첫 배포 (계획 중)</td><td>운영 DB를 처음 채움, 교보 구독형 서버 다시 수집은 미룸</td><td>운영 반영은 첫 배포 뒤. 교보 구독형 서버 다시 수집은 안 함 (7번)</td></tr>
+</table>
+<div class="fig">
+<svg viewBox="0 0 900 190" role="img" aria-label="사이클 18 진행 순서">
+<g font-size="15" fill="var(--text)">
+<rect x="20" y="30" width="260" height="120" rx="10" fill="var(--accent-bg)" stroke="var(--accent)"/>
+<text x="150" y="60" text-anchor="middle" font-weight="700">지금 (계획, 이 세션)</text>
+<text x="150" y="90" text-anchor="middle">범위 정하기</text>
+<text x="150" y="114" text-anchor="middle">1차 원인 조사 · 명세</text>
+<rect x="320" y="30" width="260" height="120" rx="10" fill="var(--card)" stroke="var(--line)"/>
+<text x="450" y="60" text-anchor="middle" font-weight="700">13이 main에 들어간 뒤</text>
+<text x="450" y="90" text-anchor="middle">다시 수집 · 종류 고침</text>
+<text x="450" y="114" text-anchor="middle">끄기 · 내 PC 가져오기</text>
+<rect x="620" y="30" width="260" height="120" rx="10" fill="var(--card)" stroke="var(--line)"/>
+<text x="750" y="60" text-anchor="middle" font-weight="700">17 첫 배포 뒤</text>
+<text x="750" y="90" text-anchor="middle">운영 서버에 반영</text>
+<text x="750" y="114" text-anchor="middle">0권 도서관 다시 세기</text>
+</g>
+<g stroke="var(--text)" stroke-width="2"><line x1="280" y1="90" x2="320" y2="90"/><line x1="580" y1="90" x2="620" y2="90"/></g>
+</svg>
+</div>
+<p class="cap">가운데와 오른쪽은 dev 작업입니다. 앞 사이클 회고 뒤에 설계를 확정하고 인계서를 씁니다.</p>
+<div class="item">
+<h3><span class="no">8</span>진행 순서: 조사는 지금, 개발은 13 뒤, 운영 반영은 17 첫 배포 뒤</h3>
+<p><span class="chip" data-n="8">안 #8</span> 그림대로 합니다. 운영 서버에는 첫 배포 때 지금 데이터가 그대로 들어가고, 이 사이클의 결과는 그 뒤 보통 반영(내 PC에서 가져와 운영에 반영하는 방법, ADR-0078)으로 들어갑니다.</p>
+<p class="alt"><b>다른 선택:</b> 첫 배포 전에 반영 → 첫 공개 때부터 0권 도서관이 없지만, 사이클 17이 준비하는 운영 DB 채우기와 같은 때에 겹쳐 둘이 서로 기다리게 됩니다.</p>
+<p class="rec">추천: 그림대로.</p>
+</div>
+<div class="item">
+<h3><span class="no">9</span>1차 원인 조사를 이 세션에서 지금 시작</h3>
+<p><span class="chip" data-n="9">안 #9</span> 정해지면 바로 이 세션이 23곳(0권 22곳 + 군포)을 봅니다. 하는 일은 셋입니다. 사이트를 한 번씩 브라우저로 열어 보기(사람 손 속도), 수집 DB의 마지막 성공·실패와 빠진 이유 읽기, 서비스 DB의 주소·화면 종류 읽기. 모두 읽기만 하고 dev 폴더나 DB에는 쓰지 않습니다. 결과는 이 사이클 폴더의 <code>research.md</code>에 도서관마다 한 줄로 적고, dev 기록(<code>library-maintenance.md</code>)에는 인계서로 넘깁니다.</p>
+<p class="alt"><b>다른 선택:</b> 조사도 dev 작업으로 넘김 → 지금 이 세션에서 할 일이 범위 정하기로 끝나고, 원인을 모르는 채로 명세를 써야 합니다.</p>
+<p class="rec">추천: 지금 시작.</p>
+</div>
+<div class="item">
+<h3><span class="no">10</span>사이클 폴더 이름 <code>18-empty-library-holdings</code></h3>
+<p><span class="chip" data-n="10">안 #10</span> "소장이 빈 도서관"이라는 뜻입니다. 덜 모인 곳도 포함하지만 이름은 짧게 둡니다.</p>
+<p class="alt"><b>다른 선택:</b> <code>18-library-holdings-gaps</code>(빈 곳과 덜 모인 곳 둘 다 드러남)</p>
+<p class="rec">추천: <code>18-empty-library-holdings</code>.</p>
+</div>
+</section>
+
+<p class="foot">원문: <code>docs/cycles/18-empty-library-holdings/scope.md</code>. 근거: dev <code>docs/plan-feedback.md</code> (사이클 12 분포 검사 절, 사이클 13 절), 사이클 13·17 <code>scope.md</code>, plan <code>docs/backlog.md</code>.</p>
+
+</main>
+
+<script>
+(function(){
+  const items=[...document.querySelectorAll('.chip')].map(ch=>{
+    const n=+ch.dataset.n; const box=ch.closest('.item')||ch.parentElement;
+    const h=box.querySelector('h3'); const t=(h?h.textContent:'').replace(/^\s*\d+/, '').trim();
+    const d=document.createElement('div'); d.className='dec';
+    d.innerHTML='<div class="btns" role="group" aria-label="안 #'+n+' 결정">'+
+      ['승인','미승인','기타'].map(c=>'<button type="button" data-c="'+c+'" aria-pressed="false">'+c+'</button>').join('')+'</div>'+
+      '<textarea id="note-'+n+'" placeholder="덧붙일 말 (미승인 이유, 질문, 제안)"></textarea>'+
+      '<div class="btns"><button type="button" class="save">저장</button><span class="st" aria-live="polite">아직 고르지 않았습니다</span></div>';
+    box.appendChild(d);
+    const st={n,title:t,chip:ch,el:d,pick:null};
+    d.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{st.pick=b.dataset.c;paint(st);d.querySelector('.st').textContent='"저장"을 눌러야 기록됩니다';});
+    d.querySelector('.save').onclick=()=>save(st);
+    return st;
+  });
+  const bar=document.getElementById('bar');
+  function paint(st){st.el.querySelectorAll('[data-c]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.c===st.pick)));}
+  let db=null; const saved={};
+  function count(){const k=Object.keys(saved).length;bar.innerHTML='고른 것 <b>'+k+' / '+items.length+'</b>'+(db?' · 저장하면 Claude가 읽습니다':' · 저장 기능을 아직 불러오지 못했습니다');}
+  count();
+  async function save(st){
+    const s=st.el.querySelector('.st');
+    if(!st.pick){s.textContent='먼저 승인·미승인·기타 중 하나를 고르세요';return;}
+    if(!db){s.textContent='저장할 수 없습니다. 로그인한 채로 claude.ai에서 열어 주세요';return;}
+    const note=st.el.querySelector('textarea').value.trim();
+    s.textContent='저장하는 중…';
+    try{await db.doc('choices/q'+st.n).set({n:st.n,title:st.title,choice:st.pick,note,savedAt:new Date().toISOString()});s.textContent='저장했습니다';}
+    catch(e){s.textContent='저장하지 못했습니다 ('+(e&&e.code||'오류')+'). 잠시 뒤 다시 눌러 주세요';}
+  }
+  (async()=>{
+    try{db=window.claude&&await window.claude.use('db');}catch(e){db=null;}
+    count(); if(!db) return;
+    db.collection('choices').onSnapshot(snap=>{
+      snap.docs.forEach(doc=>{const v=doc.data();const st=items.find(i=>i.n===v.n);if(!st)return;saved[v.n]=v;
+        if(document.activeElement!==st.el.querySelector('textarea')) st.el.querySelector('textarea').value=v.note||'';
+        st.pick=v.choice;paint(st);st.chip.classList.add('done');st.chip.textContent='안 #'+v.n+' · '+v.choice;
+        st.el.querySelector('.st').textContent='저장됨: '+v.choice+' ('+new Date(v.savedAt).toLocaleString('ko-KR')+')';});
+      count();
+    },()=>{});
+  })();
+})();
+</script>
