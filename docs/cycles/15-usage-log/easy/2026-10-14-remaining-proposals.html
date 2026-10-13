@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 15 남은 제안</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+.flow{display:grid;gap:10px;margin:10px 0 16px}.lane{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--card)}.lane b{display:block;margin-bottom:4px}.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{font-size:14px;border-radius:6px;padding:2px 8px;background:var(--code-bg)}.chip.new{background:var(--warn-bg)}.chip.dev{background:var(--ok-bg)}.arrow{text-align:center;color:var(--muted);font-size:18px;line-height:1}
+</style>
+<style>
+main{max-width:1080px}
+.pick{display:inline-block;font-size:14px;font-weight:700;color:var(--warn);background:var(--warn-bg);border-radius:6px;padding:1px 8px}
+.rec{display:inline-block;font-size:15px;font-weight:700;color:var(--ok);background:var(--ok-bg);border-radius:6px;padding:1px 8px}
+.ex{background:var(--ok-bg);border-radius:10px;padding:12px 16px;margin:10px 0}.ex b{color:var(--ok)}
+.alt{background:var(--code-bg);border-radius:10px;padding:12px 16px}
+.toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px 18px;font-size:18px;margin:6px 0 0;padding:0;list-style:none}
+.toc li{display:flex;gap:8px;align-items:baseline}
+figure{max-width:440px}
+figure svg text{font-family:"Noto Sans KR",system-ui,sans-serif}
+.card>figure{margin-left:auto;margin-right:auto}
+@media (min-width:980px){
+ .item{display:grid;grid-template-columns:minmax(0,1fr) 420px;column-gap:32px;align-items:start}
+ .item>*{grid-column:1}
+ .item>h3{grid-column:1 / -1}
+ .item>figure{grid-column:2;grid-row:2 / span 30;margin-top:4px}
+}
+@media (max-width:600px){body{font-size:18px}.card{padding:20px 16px}.lead{font-size:23px}}
+.item.answer{display:block!important;background:var(--accent-bg);border:2px solid var(--accent);border-radius:14px;padding:18px 20px;margin:14px 0 8px;grid-column:1 / -1}
+.item.answer>h3{color:var(--accent)}
+.item.answer figure{max-width:440px;margin:10px auto}
+@media (min-width:980px){.item>figure{grid-row:3 / span 30!important}}
+</style>
+</head>
+<body><main class="doc">
+<p class="lead">아직 "제안"으로 남아 있는 것 여섯 가지입니다.<br>지금 정해 두면 회고 뒤에는 코드에 맞추기만 하면 됩니다</p>
+<p class="sub">사이클 15 · 2026-10-14 · 원본 <code>docs/cycles/15-usage-log/spec.md</code>, <code>design-delta.md</code>(초안) · 명세·설계에 남은 제안을 모두 훑어 모았습니다.</p>
+
+<div style="background:var(--warn-bg);border:2px solid var(--warn);border-radius:12px;padding:12px 16px;margin:0 0 20px;font-weight:500">질문하신 것의 답: <a href="#a3">#3 시각 색인이 뭔가</a> · <a href="#a5">#5 로그인 여부 조작</a> — 각 항목 제목 바로 아래 파란 상자</div>
+<section class="card"><h2><span class="num">1</span>새로 늘린 기록의 보관 기간</h2>
+<div class="gist">더 보기와 화면 행동(사서 추천 보기, 지역·내 도서관 바꾸기)을 늘릴 때, 보관 기간을 따로 여쭙지 않고 "기존과 같은 규칙"으로 적어 두었습니다.</div>
+<div class="item"><h3><span class="no">1</span>더 보기·화면 행동 기록도 IP 30일, 나머지 1년 (검색·클릭과 같은 규칙) [안]</h3>
+<p><b>이렇게 되면</b>: 모든 사용 기록이 한 규칙이라 지우기 작업이 단순하고, 처리방침에도 한 줄로 적힙니다(16에 이미 이렇게 전함).</p>
+<p class="alt"><b>다른 선택</b>: 화면 행동은 90일 → 양이 많지 않아 줄일 이유가 크지 않고, 규칙이 둘이 됩니다.</p>
+<p><span class="rec">추천</span> 같은 규칙</p>
+</div></section>
+
+<section class="card"><h2><span class="num">2</span>DB에 적힐 값 이름</h2>
+<div class="gist">통계 SQL에서 보게 될 글자 그대로의 값입니다. 사람이 읽기 쉬운 영어 단어로 정했습니다.</div>
+<table><tr><th>칸</th><th>값</th></tr>
+<tr><td>검색 종류</td><td><code>catalog</code>(수집 목록), <code>direct</code>(직접 찾기)</td></tr>
+<tr><td>누른 곳</td><td><code>result_card</code>, <code>join_link</code>, <code>join_guide</code>, <code>home_page</code>, <code>logo</code>, <code>summary_bar</code></td></tr>
+<tr><td>화면</td><td><code>direct_results</code>, <code>catalog_results</code>, <code>book_page</code>, <code>picks</code>, <code>my_libraries</code></td></tr>
+<tr><td>더 보기 종류</td><td><code>direct_next_batch</code>, <code>library_more</code>, <code>catalog_next_page</code></td></tr>
+<tr><td>화면 행동</td><td><code>picks_list_view</code>, <code>picks_book_view</code>, <code>region_change</code>, <code>my_library_add</code>, <code>my_library_remove</code></td></tr>
+<tr><td>도서관 응답 출처</td><td><code>direct_search</code>, <code>holding_fill</code>(대출 수 채우기)</td></tr>
+<tr><td>이상한 알림 이유</td><td><code>unknown_library</code>, <code>invalid_place</code>, <code>invalid_screen</code>, <code>invalid_book_id</code>, <code>malformed</code></td></tr>
+<tr><td>버린 묶음 이유</td><td><code>db_failure</code>, <code>buffer_full</code></td></tr></table>
+<div class="item"><h3><span class="no">2</span>위 값 이름 그대로 씀 (설정 이름 <code>chaekcheck.usagelog.enabled</code>, DB 변경 파일 <code>db/changelog/usagelog/001-usagelog-schema.yaml</code> 포함) [안]</h3>
+<p class="alt"><b>다른 선택</b>: 숫자 코드(1, 2, 3…)로 저장 → 칸이 조금 작지만 SQL로 볼 때마다 뜻을 찾아봐야 합니다.</p>
+<p><span class="rec">추천</span> 글자 그대로</p>
+</div></section>
+
+<section class="card"><h2><span class="num">3</span>칸의 종류(타입)와 색인</h2>
+<div class="item"><h3><span class="no">3</span>지역·도서관 목록은 번호 묶음 칸, IP는 IP 전용 칸, 시각 색인은 작은 BRIN 색인 [안]</h3>
+
+<div class="item answer" id="a3"><h3>질문에 대한 답: 시각 색인이 뭔가</h3>
+<div class="gist">색인은 책 뒤의 "찾아보기"처럼, DB가 원하는 줄을 처음부터 다 읽지 않고 바로 찾게 해 주는 목록입니다. 시각 색인은 "언제 받은 기록인지"로 찾을 때 씁니다. 우리 기록은 매일 04:30에 "1년 지난 줄", "30일 지난 IP"를 찾고, 통계 때 "지난주 기록"을 찾으므로 시각으로 찾는 일이 대부분입니다.</div>
+<figure><svg viewBox="0 0 340 260" xmlns="http://www.w3.org/2000/svg">
+<text x="10" y="18" font-size="12.5" font-weight="700" fill="var(--text)">색인 없음: 1년 치를 처음부터 끝까지 읽음</text>
+<g fill="var(--code-bg)" stroke="var(--line)"><rect x="10" y="28" width="38" height="24"/><rect x="50" y="28" width="38" height="24"/><rect x="90" y="28" width="38" height="24"/><rect x="130" y="28" width="38" height="24"/><rect x="170" y="28" width="38" height="24"/><rect x="210" y="28" width="38" height="24"/><rect x="250" y="28" width="38" height="24"/><rect x="290" y="28" width="38" height="24"/></g>
+<line x1="10" y1="62" x2="326" y2="62" stroke="var(--no)" stroke-width="2"/>
+<text x="10" y="80" font-size="11" fill="var(--no)">전부 읽음 → 느림</text>
+<text x="10" y="112" font-size="12.5" font-weight="700" fill="var(--text)">BRIN 시각 색인: 칸 묶음마다 "가장 이른·늦은 시각"만 적음</text>
+<g font-size="10" fill="var(--text)">
+<rect x="10" y="122" width="78" height="40" rx="4" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="49" y="138" text-anchor="middle">1월 1~10일</text>
+<rect x="90" y="122" width="78" height="40" rx="4" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="129" y="138" text-anchor="middle">1월 11~20일</text>
+<rect x="170" y="122" width="78" height="40" rx="4" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="209" y="138" text-anchor="middle">…</text>
+<rect x="250" y="122" width="78" height="40" rx="4" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="289" y="138" text-anchor="middle">10월 7~13일</text>
+</g>
+<text x="250" y="156" font-size="10" fill="var(--ok)">여기만 읽음</text>
+<text x="10" y="192" font-size="11.5" fill="var(--text)">"지난주 기록" → 날짜가 맞는 묶음만 열어 봄</text>
+<text x="10" y="212" font-size="11.5" fill="var(--muted)">기록이 시간 순서로만 쌓이니 묶음마다 날짜가 겹치지 않음</text>
+<text x="10" y="232" font-size="11.5" fill="var(--muted)">→ 색인이 아주 작음 (보통 색인의 수백분의 1 수준 어림)</text>
+</svg><figcaption>BRIN은 "들어온 순서대로 커지는 날짜" 같은 칸에 맞는 작은 색인입니다 (<a href="https://www.postgresql.org/docs/current/brin.html">PostgreSQL 문서</a>, 확인 2026-10-12).</figcaption></figure>
+<table><tr><th>색인 종류</th><th>크기</th><th>우리 기록에</th></tr>
+<tr><td>BRIN (추천)</td><td>아주 작음 (묶음마다 두 값)</td><td>시간 순서로만 쌓여 잘 맞음. 4GB 서버 메모리·디스크 부담 작음</td></tr>
+<tr><td>보통 색인 (B-tree)</td><td>줄마다 한 칸 → 표만큼 커짐</td><td>정확하지만 넣을 때마다 색인도 고쳐 넣기가 조금 느려짐</td></tr>
+<tr><td>색인 없음</td><td>0</td><td>04:30 지우기·통계 때마다 표 전체를 읽음</td></tr></table>
+<p class="note">"크기 수백분의 1"은 어림이며 실제는 개발 때 잽니다. 이해되셨으면 #3 칩에서 골라 주세요.</p>
+</div>
+
+<table><tr><th>칸</th><th>종류</th><th>왜</th></tr>
+<tr><td>지역들·도서관들</td><td>번호 묶음 (<code>bigint[]</code>)</td><td>한 칸에 여러 번호, 통계 때 풀어서 셈 (<code>unnest</code>)</td></tr>
+<tr><td>IP</td><td>IP 전용 (<code>inet</code>)</td><td>IP 범위로 찾기·검사가 됨</td></tr>
+<tr><td>시각 색인</td><td>BRIN</td><td>시간 순서로만 쌓이는 표에 맞고 색인이 아주 작음 (<a href="https://www.postgresql.org/docs/current/brin.html">PostgreSQL 문서</a>)</td></tr></table>
+<p class="note">줄마다 붙는 번호(id)를 둘지는 넣기 속도를 재 보고 개발 때 정합니다(측정 기준 10%·50MB에 포함).</p>
+<p class="alt"><b>다른 선택</b>: 목록을 글자로(예: "1114,1102") → 단순하지만 통계 때 잘라야 합니다. IP를 글자로 → 범위 검사가 안 됩니다.</p>
+<p><span class="rec">추천</span> 위 종류</p>
+</div></section>
+
+<section class="card"><h2><span class="num">4</span>작은 규칙들</h2>
+<div class="item"><h3><span class="no">4</span>이상한 클릭 알림의 "받은 값"은 2KB를 넘으면 잘라서 남김 [안]</h3>
+<p><b>왜</b>: 누가 아주 큰 값을 보내 DB를 채우는 것을 막습니다. 정상 알림은 수십 바이트입니다.</p>
+<p class="alt"><b>다른 선택</b>: 받은 값을 남기지 않고 이유만 → 가장 안전하지만 무엇이 왔는지 볼 수 없습니다.</p>
+<p><span class="rec">추천</span> 2KB까지</p>
+</div>
+<div class="item"><h3><span class="no">5</span>로그인 여부는 검색 주소 뒤에 값으로 붙여 보냄 (<code>?loggedIn=true</code>) [안]</h3>
+
+<div class="item answer" id="a5"><h3>질문에 대한 답: 로그인 여부 값은 조작할 수 있지 않나</h3>
+<div class="gist">네, 조작할 수 있습니다. 주소 뒤 값이든 머리글이든 화면이 보내는 값은 사용자가 바꿔 보낼 수 있습니다. 다만 이 값은 통계에만 쓰이고 권한에는 전혀 쓰이지 않아, 바꿔도 "로그인 비율" 숫자가 조금 틀어질 뿐입니다. 서버가 직접 확인하게 하려면 로그인 쿠키를 검색 주소에도 보내도록 바꿔야 합니다.</div>
+<table><tr><th>방법</th><th>조작</th><th>드는 것</th></tr>
+<tr><td>화면이 값으로 보냄 (지금 제안, #5)</td><td>가능. 통계 숫자만 틀어짐</td><td>없음</td></tr>
+<tr><td>서버가 로그인 쿠키로 직접 확인</td><td>불가능 (쿠키는 서버가 서명한 토큰)</td><td>로그인 쿠키(<code>access_token</code>)가 지금은 <code>/api/v1/me</code>로만 감. 검색 주소(<code>/api/v1</code> 전체)로 넓혀야 하고, 검색마다 토큰을 확인하는 일이 생김. 사이클 05의 쿠키 범위 결정을 바꿈</td></tr></table>
+<figure><svg viewBox="0 0 340 170" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="z9" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="var(--muted)"/></marker></defs>
+<rect x="10" y="10" width="130" height="50" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="75" y="32" text-anchor="middle" font-size="11.5" fill="var(--text)">loggedIn 값</text><text x="75" y="50" text-anchor="middle" font-size="10.5" fill="var(--muted)">사용자가 바꿀 수 있음</text>
+<line x1="142" y1="35" x2="196" y2="35" stroke="var(--muted)" stroke-width="2" marker-end="url(#z9)"/>
+<rect x="200" y="10" width="130" height="50" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="265" y="32" text-anchor="middle" font-size="11.5" fill="var(--text)">기록 한 칸에만</text><text x="265" y="50" text-anchor="middle" font-size="10.5" fill="var(--muted)">통계용</text>
+<rect x="200" y="80" width="130" height="50" rx="8" fill="var(--code-bg)" stroke="var(--line)"/><text x="265" y="102" text-anchor="middle" font-size="11.5" fill="var(--text)">권한·내 정보</text><text x="265" y="120" text-anchor="middle" font-size="10.5" fill="var(--muted)">쿠키로만 판단 (무관)</text>
+<line x1="142" y1="45" x2="196" y2="98" stroke="var(--no)" stroke-width="2" stroke-dasharray="4 4"/>
+<text x="150" y="88" font-size="14" font-weight="700" fill="var(--no)">×</text>
+<text x="10" y="156" font-size="11" fill="var(--muted)">IP당 1분 60번 한도로 대량 조작도 막힘</text>
+</svg><figcaption>바꿔 보내도 기록의 한 칸이 틀릴 뿐, 다른 사람 정보나 권한에는 닿지 않습니다.</figcaption></figure>
+<p><b>제 생각</b>: 통계용이라 화면이 보내는 값으로 충분하다고 봅니다. 정확한 로그인 비율이 꼭 필요하면 "서버가 쿠키로 확인"을 고르실 수 있고, 그때는 사이클 05의 쿠키 범위 결정을 다시 여쭙니다. 이대로면 #5 승인, 바꾸시려면 #5 기타에 "서버가 확인"이라고 적어 주세요.</p>
+</div>
+
+<p><b>왜</b>: 직접 찾기는 화면이 서버와 연결을 열어 두고 받는 방식(SSE)이라, 이 방식은 머리글을 붙일 수 없습니다. 그래서 주소 뒤 값으로 통일합니다. 지금 서버는 모르는 값을 무시하므로 화면을 먼저 고쳐도 깨지지 않습니다(확인함).</p>
+<p class="alt"><b>다른 선택</b>: 머리글로 보냄 → 주소가 깔끔하지만 직접 찾기에서는 쓸 수 없습니다.</p>
+<p><span class="rec">추천</span> 주소 뒤 값</p>
+</div>
+<div class="item"><h3><span class="no">6</span>기록 모듈은 도서관 모듈만 알도록 제한 [안]</h3>
+<p><b>이렇게 되면</b>: 기록 모듈이 다른 모듈 안쪽을 부르면 자동 검사(Spring Modulith)가 막습니다. 도서관 번호 확인에만 도서관 모듈을 씁니다. 검색 쪽(catalog·availability)이 기록 모듈을 부르는 것은 허용됩니다.</p>
+<p class="alt"><b>다른 선택</b>: 제한을 두지 않음 → 지금 catalog·availability처럼 열어 두지만, 나중에 의존이 늘어도 막히지 않습니다.</p>
+<p><span class="rec">추천</span> 도서관 모듈만</p>
+</div></section>
+<p class="foot">원본: <code>docs/cycles/15-usage-log/spec.md</code> R6, <code>design-delta.md</code>(초안) 모듈·데이터·API 절. 고르시면 둘 다 고칩니다.</p>
+</main></body></html>

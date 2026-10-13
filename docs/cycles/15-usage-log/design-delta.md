@@ -167,8 +167,8 @@ classDiagram
 | `availability` | 변경 | 직접 찾기 첫 묶음 끝·끊김에 한 번 `UsageLog` 호출 | 변경 없음 | 없음 | 변경 없음 |
 | `library` | 변경 없음 | `usagelog`이 도서관 번호 확인에 쓰는 공개 API (13 회고 뒤 `listAll` 등 어느 것을 쓸지 정함) | 기존 | 없음 | — |
 
-- `usagelog`: `@ApplicationModule(allowedDependencies = { "library" })` [안]. `catalog → usagelog`, `availability → usagelog` 의존이 새로 생김 (순환 없음)
-- 기록 설정 값: `chaekcheck.usagelog.enabled` [안], 기본 꺼짐, 공개일에 켬 [확정] (spec)
+- `usagelog`: `@ApplicationModule(allowedDependencies = { "library" })` [확정] (사용자 승인, 2026-10-14, `easy/2026-10-14-remaining-proposals.html` #6). `catalog → usagelog`, `availability → usagelog` 의존이 새로 생김 (순환 없음)
+- 기록 설정 값: `chaekcheck.usagelog.enabled` [확정] (사용자 승인, 2026-10-14, `easy/2026-10-14-remaining-proposals.html` #2), 기본 꺼짐, 공개일에 켬 [확정] (spec)
 
 ## 데이터
 
@@ -275,7 +275,7 @@ erDiagram
 |---|---|---|---|---|
 | 모든 표 `id` | `bigint GENERATED ALWAYS AS IDENTITY` | PK | 지우기를 나눠 할 때 | [안] (뺄지 프로토타입) |
 | `*.received_at` | `timestamptz` | NOT NULL | 서버가 받은 시각 | [확정] (spec) |
-| `search_event.kind` | `text` | CHECK (`catalog`,`direct`) | 검색 종류 | [안] 값 이름 |
+| `search_event.kind` | `text` | CHECK (`catalog`,`direct`) | 검색 종류 | [확정] 값 이름 (사용자 승인, 2026-10-14, `easy/2026-10-14-remaining-proposals.html` #2) |
 | `search_event.title/author/publisher` | `text` | 셋 중 하나 이상 | 서버가 다듬은 검색어, 2~50자 | [확정] (spec #1) |
 | `search_event.exact`, `roles`, `sort` | `boolean`, `text[]`, `text` | 수집 목록만 | 받은 값, 없으면 기본값 | [확정] |
 | `search_event.filter` | `text` | 직접 찾기만 | `all`/`available` | [확정] |
@@ -285,11 +285,11 @@ erDiagram
 | `*.logged_in` | `boolean` | NULL = 모름 | 화면이 보낸 값 | [확정] (#check-results) |
 | `*.client_ip` | `inet` | NULL 가능 | `X-Real-IP`, 30일 뒤 NULL | [확정] (값·기간), [안] (타입) |
 | `library_click.library_id` | `bigint` | NOT NULL, FK 없음 | 확인된 서비스 도서관 번호 | [확정] |
-| `library_click.place` | `text` | CHECK 여섯 값 | `result_card`,`join_link`,`join_guide`,`home_page`,`logo`,`summary_bar` | [안] 값 이름 |
-| `library_click.screen` | `text` | CHECK 다섯 값 | `direct_results`,`catalog_results`,`book_page`,`picks`,`my_libraries` | [안] 값 이름 |
+| `library_click.place` | `text` | CHECK 여섯 값 | `result_card`,`join_link`,`join_guide`,`home_page`,`logo`,`summary_bar` | [확정] 값 이름 (사용자 승인, 2026-10-14, `easy/2026-10-14-remaining-proposals.html` #2) |
+| `library_click.screen` | `text` | CHECK 다섯 값 | `direct_results`,`catalog_results`,`book_page`,`picks`,`my_libraries` | [확정] 값 이름 (사용자 승인, 2026-10-14, `easy/2026-10-14-remaining-proposals.html` #2) |
 | `library_click.book_id`, `book_view.book_id` | `bigint` | FK 없음 | 책 번호 (catalog 번호는 가져오기 때 이어 씀, ADR-0062) | [확정] |
-| `rejected_click.reason` | `text` | CHECK | `unknown_library`,`invalid_place`,`invalid_screen`,`invalid_book_id`,`malformed` | [안] |
-| `rejected_click.raw_values` | `jsonb` | 크기 상한 [안: 2KB 넘으면 잘라 냄] | 받은 값 | [안] |
+| `rejected_click.reason` | `text` | CHECK | `unknown_library`,`invalid_place`,`invalid_screen`,`invalid_book_id`,`malformed` | [확정] (사용자 승인, 2026-10-14, `easy/2026-10-14-remaining-proposals.html` #2) |
+| `rejected_click.raw_values` | `jsonb` | 2KB 넘으면 잘라 냄 | 받은 값 | [확정] (사용자 승인, 2026-10-14, `easy/2026-10-14-remaining-proposals.html` #4) |
 | `search_more.kind` | `text` | CHECK (`direct_next_batch`,`library_more`,`catalog_next_page`) | 더 보기 종류 (R6-1) | [확정] (기록), [안] (값 이름) |
 | `search_more.seq` | `integer` | | 묶음 번호·쪽 번호 | [안] |
 | `search_more.library_id` | `bigint` | 도서관별 더 보기만 | | [안] |
@@ -297,12 +297,12 @@ erDiagram
 | `screen_event.kind` | `text` | CHECK (`picks_list_view`,`picks_book_view`,`region_change`,`my_library_add`,`my_library_remove`) | 화면 행동 (R6-2·R6-3) | [확정] (기록), [안] (값 이름) |
 | `screen_event.picks_category`, `book_id`, `residence_region_ids`, `work_region_ids`, `library_id` | 종류별 칸, 맞지 않는 칸은 NULL (CHECK로 검사) | | 분야·책 / 바뀐 지역 / 도서관(넣기·빼기는 kind로) — JSON 칸 없음, 회원 번호 없음 | [확정] (사용자 승인, 2026-10-13, `easy/2026-10-13-more-actions-design.html` #3) |
 | `library_response_daily` | (day, library_id, source) PK, 수 칸 `integer`, 시간 `integer` ms | 서울 날짜 | 도서관마다 하루 한 줄 요약: 성공·실패·시간 초과·건너뜀 수, 성공 시간 합 `ok_ms_total`·가장 긴 성공 시간 `ok_ms_max`(평균은 볼 때 계산). 서비스 메모리에서 세다가 5초 묶음 때 `ON CONFLICT (day, library_id, source) DO UPDATE SET …count = …count + EXCLUDED…, ok_ms_max = GREATEST(…)`로 더함 [확정: 방법·숫자·세는 단위] (사용자 승인, 2026-10-13, `easy/2026-10-13-summary-method.html`). 보관 1년. 여러 대로 늘릴 때 고려: `docs/research/scaling/in-memory-state.md` | [확정] (사용자 제안: "보통은 요청마다 DB에 남기기보다 집계 숫자(횟수·실패·평균 시간)로 모아요 … 이렇게 해줘", 2026-10-13, `easy/2026-10-13-more-actions-design.html` #6) |
-| `dropped_batch.reason` | `text` | CHECK | `db_failure`,`buffer_full` | [안] |
-| 색인 | BRIN `(received_at)` 각 표, `client_ip IS NOT NULL` 부분 색인 [안] | — | 지우기·기간 조회 | [안] |
+| `dropped_batch.reason` | `text` | CHECK | `db_failure`,`buffer_full` | [확정] (사용자 승인, 2026-10-14, `easy/2026-10-14-remaining-proposals.html` #2) |
+| 색인 | BRIN `(received_at)` 각 표, `client_ip IS NOT NULL` 부분 색인 [안: 부분 색인] | — | 지우기·기간 조회 | [확정] BRIN·`bigint[]`·`inet` (사용자 승인, 2026-10-14, `easy/2026-10-14-remaining-proposals.html` #3) |
 
 - 파티션 없음 [확정: 방향] (ADR-0097)
 - 다른 schema로 FK 없음 (모듈 경계, 번호만 남김)
-- Liquibase: 새 파일 `db/changelog/usagelog/001-usagelog-schema.yaml`을 master 끝에 [안]. 기존 changeset 수정 없음. 사이클 13·16도 master 끝을 고치므로 병합 순서 확인
+- Liquibase: 새 파일 `db/changelog/usagelog/001-usagelog-schema.yaml`을 master 끝에 [확정] (사용자 승인, 2026-10-14, `easy/2026-10-14-remaining-proposals.html` #2). 기존 changeset 수정 없음. 사이클 13·16도 master 끝을 고치므로 병합 순서 확인
 
 ## API
 
@@ -320,7 +320,7 @@ POST /api/v1/usage-events
 ```
 
 - 기존 검색 API는 모르는 쿼리 값을 무시하므로 웹을 먼저 고쳐도 깨지지 않음 (`architect-proposal.md` 확인 결과 #8)
-- `loggedIn`을 헤더가 아니라 쿼리로: SSE(`EventSource`)는 헤더를 넣을 수 없음 [안]
+- (바뀜 2026-10-14) `loggedIn` 쿼리 값은 쓰지 않음. 서버가 로그인 쿠키로 직접 확인 (사용자 #5 미승인). 쿠키 범위 등은 `easy/2026-10-14-login-cookie.html`
 
 ## 외부 연동
 

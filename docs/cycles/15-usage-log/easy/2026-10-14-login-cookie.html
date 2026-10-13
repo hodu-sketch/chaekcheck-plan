@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 15 로그인 쿠키 확인</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+.flow{display:grid;gap:10px;margin:10px 0 16px}.lane{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--card)}.lane b{display:block;margin-bottom:4px}.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{font-size:14px;border-radius:6px;padding:2px 8px;background:var(--code-bg)}.chip.new{background:var(--warn-bg)}.chip.dev{background:var(--ok-bg)}.arrow{text-align:center;color:var(--muted);font-size:18px;line-height:1}
+</style>
+<style>
+main{max-width:1080px}
+.pick{display:inline-block;font-size:14px;font-weight:700;color:var(--warn);background:var(--warn-bg);border-radius:6px;padding:1px 8px}
+.rec{display:inline-block;font-size:15px;font-weight:700;color:var(--ok);background:var(--ok-bg);border-radius:6px;padding:1px 8px}
+.ex{background:var(--ok-bg);border-radius:10px;padding:12px 16px;margin:10px 0}.ex b{color:var(--ok)}
+.alt{background:var(--code-bg);border-radius:10px;padding:12px 16px}
+.toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px 18px;font-size:18px;margin:6px 0 0;padding:0;list-style:none}
+.toc li{display:flex;gap:8px;align-items:baseline}
+figure{max-width:440px}
+figure svg text{font-family:"Noto Sans KR",system-ui,sans-serif}
+.card>figure{margin-left:auto;margin-right:auto}
+@media (min-width:980px){
+ .item{display:grid;grid-template-columns:minmax(0,1fr) 420px;column-gap:32px;align-items:start}
+ .item>*{grid-column:1}
+ .item>h3{grid-column:1 / -1}
+ .item>figure{grid-column:2;grid-row:2 / span 30;margin-top:4px}
+}
+@media (max-width:600px){body{font-size:18px}.card{padding:20px 16px}.lead{font-size:23px}}
+</style>
+</head>
+<body><main class="doc">
+<p class="lead">"서버가 로그인 쿠키로 직접 확인"으로 바꾸면서<br>새로 정할 것 세 가지입니다</p>
+<p class="sub">사이클 15 · 2026-10-14 · 원본 <code>docs/cycles/15-usage-log/spec.md</code> R1-6 · 사이클 05에서 정한 로그인 쿠키 범위를 바꾸는 일이라 ADR을 새로 씁니다.</p>
+
+<section class="card"><h2><span class="num">0</span>지금과 바뀌는 것</h2>
+<div class="gist">지금 로그인 쿠키(<code>access_token</code>, 15분)는 <code>/api/v1/me</code>로 시작하는 주소에만 브라우저가 실어 보냅니다. 검색 주소에도 실리게 넓히고, 서버는 기록할 때만 그 쿠키를 읽습니다. 검색 자체는 계속 로그인 없이 됩니다.</div>
+<figure><svg viewBox="0 0 340 230" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="k0" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="var(--muted)"/></marker></defs>
+<text x="10" y="18" font-size="12.5" font-weight="700" fill="var(--text)">지금 (사이클 05)</text>
+<rect x="10" y="28" width="110" height="40" rx="8" fill="var(--warn-bg)"/><text x="65" y="53" text-anchor="middle" font-size="11.5" fill="var(--text)">로그인 쿠키</text>
+<line x1="122" y1="40" x2="196" y2="40" stroke="var(--ok)" stroke-width="2" marker-end="url(#k0)"/><text x="200" y="44" font-size="11" fill="var(--text)">/api/v1/me… (내 정보)</text>
+<line x1="122" y1="58" x2="196" y2="66" stroke="var(--no)" stroke-width="2" stroke-dasharray="4 4"/><text x="200" y="70" font-size="11" fill="var(--no)">검색 주소 (안 감)</text>
+<text x="10" y="120" font-size="12.5" font-weight="700" fill="var(--text)">바꾼 뒤</text>
+<rect x="10" y="130" width="110" height="40" rx="8" fill="var(--warn-bg)"/><text x="65" y="155" text-anchor="middle" font-size="11.5" fill="var(--text)">로그인 쿠키</text>
+<line x1="122" y1="142" x2="196" y2="142" stroke="var(--ok)" stroke-width="2" marker-end="url(#k0)"/><text x="200" y="146" font-size="11" fill="var(--text)">/api/v1/me… (내 정보)</text>
+<line x1="122" y1="160" x2="196" y2="168" stroke="var(--ok)" stroke-width="2" marker-end="url(#k0)"/><text x="200" y="172" font-size="11" fill="var(--text)">검색·기록 주소 (감)</text>
+<text x="10" y="206" font-size="11" fill="var(--muted)">서버는 검색 때 쿠키를 "기록 칸 채우기"에만 씀.</text>
+<text x="10" y="222" font-size="11" fill="var(--muted)">쿠키가 없거나 틀려도 검색은 그대로 됨.</text>
+</svg><figcaption>dev 확인 2026-10-13: <code>AuthCookies.java:9</code>(경로 <code>/api/v1/me</code>), <code>AccessTokenCookieResolver.java:23-25</code>(보호된 주소에서만 읽음).</figcaption></figure>
+</section>
+
+<section class="card"><h2><span class="num">1</span>쿠키를 어디까지 보낼까</h2>
+<div class="item"><h3><span class="no">1</span>로그인 쿠키 경로를 <code>/api/v1</code>로 넓힘 (모든 API 주소) [안]</h3>
+<p><b>왜 이 범위</b>: 기록할 검색·책 상세·더 보기·사용 알림 주소가 모두 <code>/api/v1/…</code> 아래에 흩어져 있고, 쿠키 경로는 앞부분 하나만 정할 수 있습니다. 화면 파일(HTML·그림) 요청에는 여전히 실리지 않습니다.</p>
+<p><b>안전</b>: 쿠키는 그대로 자바스크립트가 못 읽고(<code>HttpOnly</code>), https에서만(<code>Secure</code>), 다른 사이트에서 시작한 요청에는 대부분 실리지 않습니다(<code>SameSite=Lax</code>). 보내기 요청의 CSRF 검사도 그대로입니다.</p>
+<p class="alt"><b>다른 선택</b>: 경로를 <code>/</code>로 → 모든 요청에 실리지만, 쿠키 이름 앞에 <code>__Host-</code>를 붙이는 추가 보호를 쓸 수 있게 됩니다(사이클 05에서 경로를 좁혀 이 보호를 포기했었음, ADR-0042). 화면 파일 요청에도 쿠키가 실려 조금 낭비입니다.</p>
+<p><span class="rec">추천</span> /api/v1</p>
+</div></section>
+
+<section class="card"><h2><span class="num">2</span>쿠키가 만료됐을 때</h2>
+<div class="gist">로그인 쿠키는 15분짜리라, 로그인한 사람이 한참 검색만 하면 만료된 채로 실려 옵니다. 지금 화면은 내 정보 주소를 부를 때만 새 쿠키를 받아 오기 때문입니다.</div>
+<div class="item"><h3><span class="no">2</span>쿠키의 서명이 맞으면 만료됐어도 "로그인함"으로 적고, 서명이 틀리면 "안 함" [안]</h3>
+<p><b>이렇게 되면</b>: 우리 서버가 서명한 쿠키인지는 만료와 상관없이 확인할 수 있어, "이 사람은 로그인한 사람"이라는 것을 정확히 적습니다. 이 판단은 기록 칸에만 쓰이고 권한에는 쓰이지 않습니다(내 정보 주소는 지금처럼 만료면 거절).</p>
+<p class="alt"><b>다른 선택</b><br>① 만료면 "모름" → 가장 엄격하지만, 로그인한 사람의 검색 상당수가 "모름"이 될 수 있습니다.<br>② 화면이 검색 전에 쿠키를 새로 받아 옴 → 늘 정확하지만, 검색할 때 요청이 하나 더 생깁니다.</p>
+<p><span class="rec">추천</span> 서명 맞으면 로그인함</p>
+</div></section>
+
+<section class="card"><h2><span class="num">3</span>검색에 미치는 영향</h2>
+<div class="item"><h3><span class="no">3</span>검색·책 상세·사용 알림은 계속 로그인 없이 되고, 쿠키 확인 실패는 오류가 아니라 "안 함"으로만 적음 [안]</h3>
+<p><b>이렇게 되면</b>: 쿠키가 없거나 깨졌거나 로그인 기능이 꺼져 있어도 검색 결과는 똑같이 나옵니다. 서버는 검색을 처리하면서 쿠키를 한 번 읽어 기록 칸만 채웁니다. 앞서 정한 "확인 중이면 모름"은 화면이 보내던 값의 규칙이라, 서버 확인으로 바뀌면 없어집니다(서버는 확인 중 상태가 없음).</p>
+<p class="alt"><b>다른 선택</b>: 깨진 쿠키가 오면 401로 거절 → 엄격하지만 검색이 실패할 수 있어 맞지 않습니다.</p>
+<p><span class="rec">추천</span> 검색은 그대로, 기록만</p>
+</div>
+<p class="note">이 세 가지를 고르시면 ADR(쿠키 범위 변경, 사이클 05 결정 일부를 바꿈) 초안을 만들어 보여 드립니다. 사이클 16에는 "로그인 여부를 서버가 쿠키로 확인"으로 바뀐다는 한 줄만 전하면 됩니다(처리방침의 수집 항목은 같음).</p>
+</section>
+<p class="foot">원본: <code>docs/cycles/15-usage-log/spec.md</code> R1-6, <code>docs/current/api.md</code>:196 (쿠키 경로)</p>
+</main></body></html>
