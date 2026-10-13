@@ -31,20 +31,25 @@ flowchart LR
 ### F3 한도를 넘었을 때 (429)
 - 지금 있는 것 (dev `web/src/features/search/blocked.ts`, 사이클 08): 수집 목록 검색(`BookList`), 바로 결과(`InstantResults`), 직접 찾기(`DirectResults`), 대출 현황 묶음·더 보기는 429를 받으면 받은 결과를 그대로 두고 위에 노란 한 줄 "검색을 너무 자주 했어요. 1분쯤 뒤에 다시 해 주세요."를 보임. 다시 시도 버튼은 없음 [확정] (사이클 08)
 - 새로 한도가 걸리는 나머지 API(도서관 목록, 지역 목록, 사서 추천, 내 정보·내 도서관 저장, 로그인 시작)는 429를 받았을 때 화면이 어떻게 보이는지 정한 것이 없음: 이 화면들이 오류를 어떻게 보여 주는지는 확인 못 함 [확인 필요: dev 코드]
-- 제안: 나머지 API가 429를 받으면 그 자리의 지금 오류 표시를 그대로 쓰고, 새 문구는 만들지 않음 [안]. 보통 사람은 1초에 5번·몰아서 30번에 닿지 않으므로(spec R3), 이 상태는 스크립트가 주로 만남
+- 나머지 API가 429를 받으면 그 자리의 지금 오류 표시를 그대로 쓰고, 새 문구는 만들지 않음 [확정] (사용자 승인, 2026-10-13, #1). 보통 사람은 1초에 5번·몰아서 30번에 닿지 않으므로(spec R3), 이 상태는 스크립트가 주로 만남
 
 ### F4 서버나 터널이 멈췄을 때
 - 보이는 것: 우리 화면이 아니라 Cloudflare가 보여 주는 오류 화면(예: 터널이 끊겨 원 서버에 닿지 못함). 문구는 Cloudflare가 정함 [확인 필요: 배포 시험으로 어떤 화면인지 봄]
 - 우리 쪽에서 할 일: Grafana·서버 재시작(spec R1 자동 재시작). 사용자 화면은 만들지 않고 Cloudflare 기본 오류 화면을 씀 [안]
 
+### F4-1 2주 뒤 노트북으로 옮길 때 (사용자 질문, 2026-10-13)
+- 같은 터널에 노트북 `cloudflared`를 함께 붙였다가 Lightsail 쪽을 끔. Cloudflare는 요청을 "geographically closest replica"로 보냄 (https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/configure-tunnels/tunnel-availability/, 확인 2026-10-13)
+- 순서 [안]: ① 노트북에 같은 compose·설정 ② 가입·저장 잠깐 막고 DB 덤프 → 복원 ③ 노트북 `cloudflared` 켬 ④ Lightsail 끔. 검색은 그동안에도 됨
+- 이번 사이클에 미리 해 둘 것 [안]: 구성을 compose 파일과 설정으로만, 옮기는 순서를 운영 문서에, 덤프·복원은 백업과 같은 명령
+
 ### F5 Grafana (운영자만)
 - 들어가는 곳: `https://grafana.chaekcheck.com` (터널에 주소 하나 더함) → Grafana 로그인(익명 끔) [확정] (spec R9)
-- 대시보드에 보이는 것 [안]:
+- 대시보드에 보이는 것 [확정] (사용자 승인, 2026-10-13, `easy/2026-10-13-flow-decisions.html` #3):
   - 서버: CPU, 메모리, 디스크 남은 양 (node_exporter)
   - 서비스: 요청 수, 응답 시간, 오류 수(429·5xx 포함), Java 메모리 (Spring Actuator)
   - 도서관 호출: 차례를 못 받아 포기한 횟수 (`throttle timeout`)
   - DB 컨테이너 메모리
-- 휴대폰에서도 열림. 네 묶음을 대시보드 하나에 두고 배치는 Grafana 기본을 씀, 알림은 두지 않음 [안]
+- 휴대폰에서도 열림. 네 묶음을 대시보드 하나에 두고 배치는 Grafana 기본을 씀, 알림은 두지 않음 [확정] (같음)
 
 ## 상태별 동작 대응
 

@@ -109,6 +109,31 @@ table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,t
 <p class="alt"><b>Cloudflare에 우리 안내 화면을 따로 걸기:</b> "잠시 점검 중" 같은 문구를 보일 수 있습니다. 무료 요금제에서 되는지와 방법은 확인하지 않았습니다.</p>
 <p class="rec">추천: Cloudflare 기본 화면. 2주 체험이라 따로 만들지 않습니다.</p>
 </div>
+<div class="item">
+<h3>질문: 2주 클라우드가 끝나고 옮길 때를 미리 대비해 둘 수 있나요?</h3>
+<p class="chg">네. 이번 구성 자체가 옮기기를 대비한 모양입니다. 도메인·카카오 설정은 그대로 두고 터널을 켜는 기계만 바꾸면 되고, 같은 터널에 두 기계를 잠깐 함께 붙여 끊김을 줄일 수 있습니다. 다만 DB를 옮기는 동안의 가입·저장은 잠깐 막아야 합니다.</p>
+<div class="fig">
+<svg viewBox="0 0 900 230" role="img" aria-label="Lightsail에서 노트북으로 옮기는 순서">
+<g font-size="13" fill="var(--text)">
+<rect x="20" y="40" width="200" height="70" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="120" y="68" text-anchor="middle">① 노트북에 같은 구성</text><text x="120" y="90" text-anchor="middle" font-size="11" fill="var(--muted)">이미지·설정·비밀 값 읽기</text>
+<rect x="240" y="40" width="200" height="70" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="340" y="68" text-anchor="middle">② 가입·저장 잠깐 막고</text><text x="340" y="90" text-anchor="middle" font-size="11" fill="var(--muted)">DB 덤프 → 노트북에 복원</text>
+<rect x="460" y="40" width="200" height="70" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="560" y="68" text-anchor="middle">③ 노트북 cloudflared 켬</text><text x="560" y="90" text-anchor="middle" font-size="11" fill="var(--muted)">같은 터널에 두 기계</text>
+<rect x="680" y="40" width="200" height="70" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="780" y="68" text-anchor="middle">④ Lightsail 쪽 끔</text><text x="780" y="90" text-anchor="middle" font-size="11" fill="var(--muted)">요청은 노트북으로만</text>
+</g>
+<line x1="220" y1="75" x2="240" y2="75" stroke="var(--text)" stroke-width="2"/><line x1="440" y1="75" x2="460" y2="75" stroke="var(--text)" stroke-width="2"/><line x1="660" y1="75" x2="680" y2="75" stroke="var(--text)" stroke-width="2"/>
+<text x="20" y="150" font-size="13" fill="var(--text)">③에서 두 기계가 같은 터널에 붙어 있는 동안, Cloudflare는 요청을 가까운 쪽으로 보냅니다(어느 쪽인지 고를 수 없음).</text>
+<text x="20" y="172" font-size="13" fill="var(--text)">그래서 ②에서 DB를 맞춘 뒤 ③·④를 짧게 이어서 해야, 두 기계의 DB가 갈라지지 않습니다.</text>
+<text x="20" y="204" font-size="13" fill="var(--muted)">끊기는 것은 ②의 짧은 시간(가입·저장만). 검색은 그동안에도 됩니다.</text>
+</svg>
+</div>
+<p class="cap">Cloudflare 문서: 같은 터널에 <code>cloudflared</code>를 여러 대 붙일 수 있고(replica), 요청은 "geographically closest replica"로 감.</p>
+<ul>
+<li><b>이번 사이클에 미리 해 둘 것</b> [안]: 서버 구성을 compose 파일과 설정으로만 만들어 노트북에서 같은 파일로 띄울 수 있게 함, 옮기는 순서(위 ①~④)를 운영 문서에 적어 둠, DB 덤프·복원은 매일 03:00 백업과 같은 명령을 씀</li>
+<li><b>"Cloudflare 자체를 그만 쓸 때"를 말씀하신 것이라면</b>: 그때는 도메인 DNS를 서버 IP로 바로 연결하고, 서버에서 80·443을 열고 인증서(Let's Encrypt)를 받으면 됩니다. Cloudflare에서 산 도메인은 DNS를 Cloudflare에 두어야 해서, 터널만 끄고 DNS 기록을 바꾸는 방식이 됩니다(2026-10-13 조사).</li>
+<li>멈췄을 때 보일 화면(2번)은 이 옮기기와 따로입니다. 옮기기 동안 검색은 계속 되므로 Cloudflare 오류 화면이 보일 일은 적습니다.</li>
+</ul>
+<p class="src">출처: Cloudflare Tunnel replica https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/configure-tunnels/tunnel-availability/ (확인 2026-10-13), Cloudflare Registrar 네임서버 https://developers.cloudflare.com/registrar/faq/ , Let's Encrypt https://letsencrypt.org/about/</p>
+</div>
 </section>
 
 <section class="card">
