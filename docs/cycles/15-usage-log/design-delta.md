@@ -333,6 +333,7 @@ POST /api/v1/usage-events
 ## 결정 기록
 
 - ADR-0096 사용자 행동 기록은 같은 PostgreSQL에, IP 30일·나머지 1년 (Proposed)
+- ADR-0102 액세스 쿠키 경로 `/api/v1`, 로그인 상태 판별은 `auth` 부품 하나 (Proposed)
 - ADR-0097 기록 전용 모듈 `usagelog`, 공개 창구 직접 호출, 5초 묶음·비동기 커밋, fetch keepalive + CSRF (Proposed)
 
 ## 확인 필요

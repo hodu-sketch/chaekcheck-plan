@@ -19,4 +19,4 @@
 | [2026-10-14-remaining-proposals.html](2026-10-14-remaining-proposals.html) | 남은 제안: 새 기록 보관, 값 이름, 칸 종류·색인, 받은 값 상한, loggedIn 보내는 법, 모듈 의존 제한 | `../spec.md`, `../design-delta.md` | 결정됨 (2026-10-14): 5개 승인, #5 미승인 → 서버가 쿠키로 확인 |
 | [2026-10-14-login-cookie.html](2026-10-14-login-cookie.html) | 서버가 로그인 쿠키로 확인: 쿠키 경로, 만료 때, 검색 영향 | `../spec.md` R1-6 | 결정됨: 셋 다 승인 (2026-10-14) |
 | [2026-10-14-login-status.html](2026-10-14-login-status.html) | 로그인 여부 판별을 한곳(auth 부품)에, 칸 값 세 가지 | `../spec.md` R1-6 | 결정됨: 둘 다 승인 (2026-10-14) |
-| [2026-10-14-adr-0102-draft.html](2026-10-14-adr-0102-draft.html) | ADR-0102 초안 (쿠키 경로 /api/v1, 로그인 상태 판별 부품) | 초안 | [안] 1개 |
+| [2026-10-14-adr-0102-draft.html](2026-10-14-adr-0102-draft.html) | ADR-0102 초안 (쿠키 경로 /api/v1, 로그인 상태 판별 부품) | `docs/adr/0102` | 결정됨: 승인, Proposed로 씀 (2026-10-14) |
