@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 17 화면 흐름</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.card h3.t{font-size:21px;margin:26px 0 8px}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font-size:15px;line-height:1.55;margin:8px 0 6px;word-break:normal}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+pre .cm{color:var(--muted)} pre .hl{background:var(--warn-bg);color:var(--warn);font-weight:700}
+.src{color:var(--muted);font-size:15px;margin:14px 0 0}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+.fig{overflow-x:auto;margin:8px 0 4px}
+.fig svg{width:100%;min-width:640px;height:auto;display:block}
+.mine{border:1px dashed var(--warn);background:var(--warn-bg);border-radius:8px;padding:10px 14px;font-size:18px;margin:10px 0}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0}
+.pc>div{border-radius:10px;padding:12px 16px;font-size:18px}
+.pc .p{background:var(--ok-bg)} .pc .c{background:var(--no-bg)}
+.pc h4{margin:0 0 6px;font-size:18px}
+.pc ul{margin:0;padding-left:20px}
+.pc li{margin:0 0 8px}
+@media (max-width:640px){.pc{grid-template-columns:1fr} body{font-size:18px} .lead{font-size:24px}}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">사이클 17 화면 흐름:<br>서비스 화면은 그대로, 새로 생기는 상태 세 가지</p>
+<p class="sub">이번 사이클은 서비스 화면을 바꾸지 않습니다. 공개 주소로 들어오는 길, 한도를 넘었을 때, 서버가 멈췄을 때, 운영자가 보는 Grafana만 정리했습니다. 정할 것은 세 가지입니다. (2026-10-13)</p>
+
+<section class="card">
+<h2><span class="num">1</span>흐름 한 장</h2>
+<p class="gist">사용자는 <code>chaekcheck.com</code>으로 들어와 지금 화면을 그대로 씁니다. 운영자는 <code>grafana.chaekcheck.com</code>으로 따로 들어갑니다.</p>
+<div class="fig">
+<svg viewBox="0 0 900 330" role="img" aria-label="공개 주소, 로그인, 한도, 서버 멈춤, Grafana 흐름">
+<g font-size="13" fill="var(--text)">
+<rect x="20" y="40" width="150" height="50" rx="8" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="95" y="62" text-anchor="middle">사용자 브라우저</text><text x="95" y="80" text-anchor="middle" font-size="11" fill="var(--muted)">휴대폰·PC</text>
+<rect x="230" y="10" width="190" height="44" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="325" y="37" text-anchor="middle">http → https 이동</text>
+<rect x="230" y="76" width="190" height="44" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="325" y="103" text-anchor="middle">지금 서비스 화면 그대로</text>
+<rect x="480" y="10" width="190" height="44" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="575" y="37" text-anchor="middle">카카오 로그인 → 돌아옴</text>
+<rect x="480" y="76" width="190" height="44" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="575" y="97" text-anchor="middle">한도 넘음 (429)</text><text x="575" y="113" text-anchor="middle" font-size="11" fill="var(--muted)">결과는 남고 노란 한 줄</text>
+<rect x="480" y="142" width="190" height="44" rx="8" fill="var(--no-bg)" stroke="var(--no)"/><text x="575" y="163" text-anchor="middle">서버·터널 멈춤</text><text x="575" y="179" text-anchor="middle" font-size="11" fill="var(--muted)">Cloudflare 오류 화면</text>
+<rect x="20" y="240" width="150" height="50" rx="8" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="95" y="270" text-anchor="middle">운영자</text>
+<rect x="230" y="243" width="190" height="44" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="325" y="270" text-anchor="middle">Grafana 로그인</text>
+<rect x="480" y="243" width="190" height="44" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="575" y="270" text-anchor="middle">대시보드</text>
+</g>
+<line x1="170" y1="58" x2="230" y2="32" stroke="var(--text)" stroke-width="2"/>
+<line x1="170" y1="72" x2="230" y2="98" stroke="var(--text)" stroke-width="2"/>
+<line x1="325" y1="54" x2="325" y2="76" stroke="var(--text)" stroke-width="2"/>
+<line x1="420" y1="90" x2="480" y2="32" stroke="var(--text)" stroke-width="2"/>
+<line x1="420" y1="98" x2="480" y2="98" stroke="var(--text)" stroke-width="2"/>
+<line x1="420" y1="106" x2="480" y2="164" stroke="var(--text)" stroke-width="2"/>
+<line x1="170" y1="265" x2="230" y2="265" stroke="var(--text)" stroke-width="2"/>
+<line x1="420" y1="265" x2="480" y2="265" stroke="var(--text)" stroke-width="2"/>
+</svg>
+</div>
+<p class="cap"><code>flow.md</code>의 Mermaid 그림을 같은 내용으로 다시 그린 것입니다.</p>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>한도를 넘었을 때 보이는 것</h2>
+<p class="gist">검색 쪽 화면은 이미 사이클 08에서 정한 안내가 있습니다. 새로 한도가 걸리는 나머지 화면은 지금 오류 표시를 그대로 쓰자는 안입니다.</p>
+<table>
+<tr><th>화면</th><th>429를 받으면</th></tr>
+<tr><td>수집 목록 검색, 바로 결과, 도서관에서 직접 찾기, 대출 현황, 더 보기</td><td>받은 결과는 그대로 두고 위에 노란 한 줄 "검색을 너무 자주 했어요. 1분쯤 뒤에 다시 해 주세요." (이미 있음, 사이클 08)</td></tr>
+<tr><td>도서관 목록, 지역 목록, 사서 추천, 내 정보·내 도서관 저장, 로그인 시작</td><td>정한 것 없음. 이 화면들이 지금 오류를 어떻게 보여 주는지는 확인 못 함</td></tr>
+</table>
+<div class="item">
+<h3><span class="no">1</span>나머지 화면은 429를 받으면 그 자리의 지금 오류 표시를 그대로 쓰고, 새 문구는 만들지 않음 [안]</h3>
+<p>보통 사람은 1초에 5번·몰아서 30번에 닿지 않아서, 이 상태는 주로 스크립트가 만납니다. 그래서 화면을 새로 만들지 않는 안입니다.</p>
+<p class="alt"><b>검색 화면과 같은 노란 안내를 모든 화면에:</b> 사람이 만나도 이유를 알 수 있습니다. 대신 화면 다섯 곳 정도를 고쳐야 합니다.</p>
+<p class="rec">추천: 지금 오류 표시 그대로. dev가 각 화면의 지금 표시를 확인해 알려 주면, 이상하면 그때 고칩니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>서버나 터널이 멈췄을 때</h2>
+<p class="gist">서버가 멈추면 우리 화면이 뜨지 않으므로, 사용자는 Cloudflare가 보여 주는 오류 화면을 봅니다. 어떤 화면인지는 배포 때 일부러 멈춰 보고 확인합니다.</p>
+<div class="item">
+<h3><span class="no">2</span>멈췄을 때 보일 우리 화면은 만들지 않고 Cloudflare 기본 오류 화면을 씀 [안]</h3>
+<p>서버는 다시 켜지면 모두 저절로 다시 뜨게 하고(spec R1), 운영자는 Grafana로 알아챕니다.</p>
+<p class="alt"><b>Cloudflare에 우리 안내 화면을 따로 걸기:</b> "잠시 점검 중" 같은 문구를 보일 수 있습니다. 무료 요금제에서 되는지와 방법은 확인하지 않았습니다.</p>
+<p class="rec">추천: Cloudflare 기본 화면. 2주 체험이라 따로 만들지 않습니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>Grafana에서 볼 것</h2>
+<p class="gist"><code>grafana.chaekcheck.com</code>에 로그인하면 대시보드 하나에서 아래 네 묶음을 봅니다.</p>
+<table>
+<tr><th>묶음</th><th>숫자</th><th>어디서 나오나</th></tr>
+<tr><td>서버</td><td>CPU, 메모리, 디스크 남은 양</td><td>node_exporter</td></tr>
+<tr><td>서비스</td><td>요청 수, 응답 시간, 오류 수(429·5xx), Java 메모리</td><td>Spring Actuator</td></tr>
+<tr><td>도서관 호출</td><td>차례를 못 받아 포기한 횟수</td><td>서비스 로그 <code>throttle timeout</code>을 지표로</td></tr>
+<tr><td>DB</td><td>DB 컨테이너 메모리</td><td>컨테이너 지표 (방법은 설계에서)</td></tr>
+</table>
+<div class="item">
+<h3><span class="no">3</span>위 네 묶음을 대시보드 하나에 두고, 배치는 Grafana 기본을 씀 [안]</h3>
+<p>휴대폰에서도 열립니다. 15일이 지난 숫자는 Prometheus 기본 보관 기간에 따라 지워집니다.</p>
+<p class="alt"><b>알림(메일·메시지)까지:</b> 서버가 버거울 때 바로 알 수 있습니다. 대신 알림 보낼 곳과 기준을 정해야 합니다.</p>
+<p class="rec">추천: 대시보드만. 알림은 운영해 보고 필요하면 backlog로.</p>
+</div>
+</section>
+
+<p class="foot">원문: <code>docs/cycles/17-first-deploy/flow.md</code>. 근거: <code>spec.md</code> R1·R3·R9, dev <code>web/src/features/search/blocked.ts</code>, <code>research.md</code> 5절(Prometheus 보관 15일).</p>
+</main>
+</body>
+</html>
