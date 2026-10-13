@@ -108,6 +108,77 @@ table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,t
 </ul>
 <p class="src">근거: dev <code>deploy/nginx/chaekcheck-locations.conf</code>(도서관을 부르는 주소: <code>/api/v1/ebook-searches/stream</code>, <code>/api/v1/book-availabilities/stream</code>, 그 <code>/batches/stream</code>, <code>/api/v1/availability/…</code>), <code>rate-limits.conf</code>. 2026-10-13 읽음.</p>
 </div>
+<div class="item">
+<h3>질문: "몰아서 30번"은 무엇인가요?</h3>
+<p class="chg">평소에는 1초에 5번까지인데, 화면을 처음 열 때처럼 요청이 한꺼번에 몰리는 순간에는 30번까지 바로 받아 준다는 뜻입니다. 그 30번을 다 쓰면, 그 뒤로는 1초에 5번씩만 다시 채워집니다.</p>
+<div class="fig">
+<svg viewBox="0 0 900 260" role="img" aria-label="한꺼번에 몰린 요청 30번까지 받고 그 뒤 1초에 5번씩">
+<text x="20" y="28" font-size="16" font-weight="700" fill="var(--text)">한 IP가 0초에 요청 40개를 한꺼번에 보내면</text>
+<line x1="80" y1="210" x2="860" y2="210" stroke="var(--muted)"/>
+<g font-size="12" fill="var(--muted)"><text x="80" y="228" text-anchor="middle">0초</text><text x="340" y="228" text-anchor="middle">1초</text><text x="600" y="228" text-anchor="middle">2초</text><text x="860" y="228" text-anchor="end">3초</text></g>
+<rect x="80" y="60" width="40" height="150" fill="var(--ok)"/>
+<text x="130" y="80" font-size="13" fill="var(--text)">처음 30개 + 1개: 바로 처리</text>
+<rect x="80" y="40" width="40" height="20" fill="var(--no)"/>
+<text x="130" y="54" font-size="13" fill="var(--no)">나머지 9개: "잠시 뒤 다시"(429)</text>
+<rect x="320" y="185" width="40" height="25" fill="var(--ok)"/>
+<rect x="580" y="185" width="40" height="25" fill="var(--ok)"/>
+<rect x="840" y="185" width="20" height="25" fill="var(--ok)"/>
+<text x="380" y="180" font-size="13" fill="var(--text)">그 뒤로는 1초에 5개씩 다시 받을 수 있음</text>
+</svg>
+</div>
+<p class="cap">"평균 1초에 5번, 한 번에 몰리는 것은 30번까지"입니다. 30번을 다 쓴 뒤 1초에 5번보다 빨리 보내면 넘친 것만 429를 받습니다. 그림은 설명용 어림이며 nginx가 세는 정확한 방식(밀리초 단위)과는 조금 다를 수 있습니다.</p>
+<ul>
+<li><b>왜 필요한가:</b> 사람이 화면 하나를 열면 화면이 여러 요청을 한꺼번에 보낼 수 있습니다(도서관 목록, 지역 목록, 검색 등). "1초에 5번"만 두면 이 순간에 정상 사용자가 막힐 수 있어서, 잠깐 몰리는 것은 받아 주는 여유를 둡니다.</li>
+<li><b>지금 도서관을 부르는 API도 같은 방식</b>입니다: 2초에 1번, 몰아서 20번(dev <code>rate-limits.conf</code>).</li>
+<li>nginx 공식 문서: <code>burst</code>는 "the maximum burst size", 넘으면 오류로 끝냄. <code>nodelay</code>를 붙이면 몰린 것을 기다리게 하지 않고 바로 처리함 (https://nginx.org/en/docs/http/ngx_http_limit_req_module.html, 확인 2026-10-13)</li>
+</ul>
+</div>
+<div class="item">
+<h3>질문: 계속 빠르게 보내는 IP를 어떻게 구분하나요? (그림과 그래프로)</h3>
+<p class="chg">따로 골라내는 단계는 없습니다. nginx가 IP마다 "밀려 있는 요청 수" 값을 하나 들고, 요청이 오면 1을 더하고 1초에 5씩 뺍니다. 이 값이 30을 넘게 만드는 요청만 막습니다. 그래서 빠르게 보내는 IP만 값이 쌓여 막힙니다.</p>
+<div class="fig">
+<svg viewBox="0 0 900 340" role="img" aria-label="사람과 스크립트의 밀려 있는 요청 수 변화">
+<text x="20" y="28" font-size="16" font-weight="700" fill="var(--text)">IP마다 "밀려 있는 요청 수" (시간에 따라)</text>
+<line x1="80" y1="260" x2="860" y2="260" stroke="var(--muted)"/>
+<line x1="80" y1="50" x2="80" y2="260" stroke="var(--muted)"/>
+<g font-size="12" fill="var(--muted)">
+<text x="70" y="264" text-anchor="end">0</text>
+<text x="70" y="93" text-anchor="end">30</text>
+<text x="80" y="280" text-anchor="middle">0초</text>
+<text x="340" y="280" text-anchor="middle">6초</text>
+<text x="600" y="280" text-anchor="middle">12초</text>
+<text x="860" y="280" text-anchor="end">18초</text>
+</g>
+<line x1="80" y1="89" x2="860" y2="89" stroke="var(--no)" stroke-dasharray="6 4"/>
+<text x="860" y="82" font-size="13" fill="var(--no)" text-anchor="end">30 = 몰아서 받는 한도. 넘게 만드는 요청은 429</text>
+<polyline points="80,260 340,89 600,89 860,260" fill="none" stroke="var(--warn)" stroke-width="3"/>
+<polyline points="80,256 860,256" fill="none" stroke="var(--ok)" stroke-width="3"/>
+<text x="150" y="160" font-size="13" fill="var(--warn)">스크립트 1초에 10번:</text>
+<text x="150" y="178" font-size="13" fill="var(--warn)">매초 10 늘고 5 줄어 5씩 쌓임</text>
+<text x="380" y="118" font-size="13" fill="var(--warn)">30에 닿은 뒤: 1초에 5번만 통과, 5번은 429</text>
+<text x="640" y="160" font-size="13" fill="var(--warn)">12초에 멈춤 → 1초에 5씩 줄어</text>
+<text x="640" y="178" font-size="13" fill="var(--warn)">6초 뒤 다시 0</text>
+<text x="150" y="246" font-size="13" fill="var(--ok)">사람 1초에 1번: 1 늘고 5 줄어 늘 0 근처, 막히지 않음</text>
+<text x="20" y="320" font-size="13" fill="var(--muted)">IP마다 값이 따로라, 스크립트 IP의 값이 쌓여도 사람 IP의 값은 그대로입니다.</text>
+</svg>
+</div>
+<p class="cap">주황선이 스크립트, 초록선이 사람입니다. 빨간 점선(30)에 닿은 IP만 넘친 요청을 429로 받습니다.</p>
+<div class="fig">
+<svg viewBox="0 0 900 200" role="img" aria-label="스크립트의 초마다 통과와 거절 수">
+<text x="20" y="24" font-size="16" font-weight="700" fill="var(--text)">스크립트가 1초에 10번 보낼 때, 초마다 통과·거절</text>
+<g font-size="12" fill="var(--text)">
+<text x="20" y="62">0~6초</text>
+<rect x="120" y="48" width="400" height="22" fill="var(--ok)"/><text x="530" y="64">10번 모두 통과 (값이 30까지 쌓이는 중)</text>
+<text x="20" y="112">6~12초</text>
+<rect x="120" y="98" width="200" height="22" fill="var(--ok)"/><rect x="320" y="98" width="200" height="22" fill="var(--no)"/><text x="530" y="114">5번 통과, 5번 429</text>
+<text x="20" y="162">12초 뒤</text>
+<rect x="120" y="148" width="12" height="22" fill="var(--code-bg)"/><text x="140" y="164">멈춤 → 값이 줄어 6초쯤 뒤 다시 처음처럼</text>
+</g>
+</svg>
+</div>
+<p class="cap">한도 값(1초에 5번, 몰아서 30번)은 1번 제안의 값입니다. 숫자는 설명용 어림이며, nginx는 밀리초 단위로 셉니다.</p>
+<p class="src">근거: nginx <code>limit_req</code> 문서 "leaky bucket" 방식 (https://nginx.org/en/docs/http/ngx_http_limit_req_module.html, 확인 2026-10-13). IP마다 값을 담는 메모리: dev <code>rate-limits.conf</code> 10MB, 약 16만 개 IP.</p>
+</div>
 </section>
 
 <section class="card">

@@ -16,7 +16,7 @@
 |---|---|---|---|
 | R1 | Lightsail 서울 4GB 한 대에 Docker로 띄움 | [hosting-options 결정 줄](../../research/deploy/hosting-options.md), [scope 포함 1](scope.md) | [확정] |
 | R2 | `chaekcheck.com`(Cloudflare 구매) + Cloudflare Tunnel, http → https | [scope 포함 2](scope.md), dev `deploy/nginx/tunnel-test.conf` | [확정] |
-| R3 | nginx가 `CF-Connecting-IP`를 사용자 주소로 읽음. 나머지 `/api/`에도 IP별 한도 | [research 7절](research.md), dev `deploy/nginx/rate-limits.conf` | [확정: 읽음] / 한도 값 [안] |
+| R3 | nginx가 `CF-Connecting-IP`를 사용자 주소로 읽음. 나머지 `/api/`에도 IP별 한도 | [research 7절](research.md), dev `deploy/nginx/rate-limits.conf` | [확정] 나머지 `/api/`(클릭 알림 제외)는 IP마다 1초에 5번, 몰아서 30번(`limit_req` `burst=30 nodelay`), 넘으면 429 (사용자 승인, 2026-10-13, `easy/2026-10-13-spec-decisions.html` #1) |
 | R3-1 | 믿는 주소: Docker에서는 `cloudflared`가 compose 네트워크를 거쳐 nginx에 붙으므로 `127.0.0.1`이 아니라 그 네트워크 주소를 믿음. compose에서 nginx·`cloudflared` 네트워크의 주소 범위를 직접 정하고(예: `172.30.0.0/24`) `real_ip_header CF-Connecting-IP; set_real_ip_from <그 범위>;` 하나만 둠. dev `tunnel-test.conf`의 사설 주소 전체(`10/8`·`172.16/12`·`192.168/16`)는 쓰지 않음 | 사용자 제시 설정(2026-10-13), dev `deploy/nginx/tunnel-test.conf` | [확정: 네트워크 주소를 믿음] (사용자: "그 내용 spec에 반영해줘", 2026-10-13) / 범위 값 [안] |
 | R3-3 | 클릭 알림 주소(`/api/v1/library-clicks`)의 IP당 1분 60번 한도는 15가 둠. 15의 화면 행동 알림(사서 추천 보기, 지역·내 도서관 바꾸기)도 이 주소로 와서 같은 한도를 받음 → 17의 "나머지 `/api/`" 한도(R3)는 이 주소에 걸지 않음 | 사이클 15 (2026-10-13) | [확정] |
 | R3-2 | nginx 포트는 서버 바깥으로 열지 않음. 사용자는 터널로만 들어옴 → 누가 `CF-Connecting-IP`를 가짜로 붙여 직접 보내는 것을 막음 | R3-1과 같음, [scope 포함 1](scope.md)(80 닫기) | [확정] (같음) |
@@ -59,9 +59,8 @@
 | `chaekcheck.com` 구매 가능 여부 | 사용자가 Cloudflare에서 확인 | 배포 |
 | Lightsail CPU 종류, 한국 데이터센터 IP를 도서관이 받는지 | 서버에서 시험 ([scope 먼저 조사할 것](scope.md)) | 배포 |
 | 정식 터널에서 `CF-Connecting-IP`, 운영 nginx 이미지 realip | 배포 시험 ([research 7절](research.md)) | 배포 |
-| R3 나머지 `/api/` 한도 값 | 사용자에게 질문 (명세 검토 #1, 질문에 답하는 중) | 설계 |
 | 배포 때 계정에서 옮길 값(AWS 계약 법인, Cloudflare 연락처·쿠키) | 계정 확인 ([research 6절](research.md)) | 공개일 |
 
 ## 판정
 
-- **설계 진행 가능** — 남은 [안]은 R3 한도 값과 R3-1 네트워크 범위 값이며 설계 단계에서 함께 정할 수 있음
+- **설계 진행 가능** — 남은 [안]은 R3-1 네트워크 범위 값 하나이며 설계 단계에서 정함
