@@ -6,3 +6,4 @@
 | [2026-10-13-spec-decisions.html](2026-10-13-spec-decisions.html) | 명세 남은 값: 나머지 API 요청 한도, 비밀 값 서비스, Grafana 보는 곳, 백업 보관 개수 | `../spec.md` R3·R5·R9·R10 | 결정됨: 4개 승인 (2026-10-13) |
 | [2026-10-13-flow-decisions.html](2026-10-13-flow-decisions.html) | 화면 흐름: 공개 주소·로그인·429·서버 멈춤·Grafana, 나머지 화면 429 표시, 멈춤 화면, Grafana 대시보드 | `../flow.md` | 결정됨: 3개 승인 (2026-10-13) |
 | [2026-10-13-design-decisions.html](2026-10-13-design-decisions.html) | 설계: 네트워크 둘, 비밀 값 스크립트, 포기 횟수 카운터, 지표 포트, 429 exporter, cAdvisor, 백업 범위·가져오기, 조회 서버 꺼 둠, 이미지 옮기기 | `../architect-proposal.md` | 10개 |
+| [2026-10-14-design-delta-review.html](2026-10-14-design-delta-review.html) | 설계 정리(구성도·흐름·바뀌는 것), 비밀 값 범위·이름, User-Agent 연락처, 운영 DB SQL 길, design-delta 확정 + ADR-0103 | `../design-delta.md`, ADR-0103 초안 | 4개 |
