@@ -1,5 +1,7 @@
 # 사이클 16 조사
 
+이 사이클 문서: [scope.md](scope.md) · [spec.md](spec.md) · [flow.md](flow.md) · [design-delta.md](design-delta.md) · [privacy-inputs.md](privacy-inputs.md) · [drafts/](drafts/)
+
 ## 1. 마크다운 그리기 라이브러리 (`react-markdown`)
 
 출처: https://github.com/remarkjs/react-markdown README (확인 2026-10-12)
@@ -7,7 +9,7 @@
 - 기본으로 안전함: `dangerouslySetInnerHTML`을 쓰지 않고, 본문 안의 HTML은 그리지 않고 글자로 내보냄(escape). `skipHtml`을 켜면 HTML을 아예 버림 [확정]
 - HTML을 그리려면 `rehype-raw`를 따로 더해야 함(README: 믿을 수 있는 글일 때만). 우리는 더하지 않음 → dev 규칙 C22(HTML로 그리지 않음)와 맞음 [확정]
 - `allowedElements`로 쓸 태그를 고를 수 있음(예: 제목·문단·목록·굵게·링크만) [확정]
-- 링크 주소는 기본으로 `http`, `https`, `irc`, `ircs`, `mailto`, `xmpp`와 상대 주소만 허용(`defaultUrlTransform`). `javascript:`는 허용 목록에 없음 — README가 따로 적지는 않음 [확정] 허용 목록 / `javascript:` 차단 문장은 확인 못 함
+- 링크 주소는 기본으로 `http`, `https`, `irc`, `ircs`, `mailto`, `xmpp`와 상대 주소만 허용(`defaultUrlTransform`). 허용 목록은 [확정]. `javascript:`는 허용 목록에 없음 — README가 `javascript:` 차단을 따로 적었는지는 확인 못 함
 - 지금 판: `react-markdown@10`, ESM 전용, Node.js 16 이상. 지원하는 React 판은 README에 없음 → dev의 React 판과 맞는지 [확인 필요: dev에서 설치 시험]
 - 표 등 GFM은 `remark-gfm` 플러그인이 있어야 함. 이 사이클에서는 필요 없음 [안]
 - 묶음 크기: README에 숫자 없음 [확인 필요: 설치 뒤 빌드 크기 확인]
@@ -169,6 +171,11 @@
 - Cloudflare 한국 이용자 부속서 https://www.cloudflare.com/privacypolicy/southkorea-addendum/ : Cloudflare 자신의 해외 수탁자 표(회사·나라·항목·"Over the network, upon collection of personal information"). 검색 요약으로만 봄, 원문 표는 직접 열지 않음
 - 맘맘 https://mom-mom.net/policy/overseas-transfer , 삼성SDS https://www.samsungsds.com/kr/notice/1284131_4408.html : Cloudflare 언급 없음(Cloudflare를 쓰는지는 모름)
 
+### 6.5 덧붙임: 다른 서비스도 처리방침에 IP를 적나 (사용자 질문 "보통 다른 방침/공지들도 이래? ... ip쓴다는 것도 명시해?", 확인 2026-10-13)
+- 카카오 https://www.kakao.com/policy/privacy : "2. 개인정보 수집"의 서비스 이용 내역 "IP주소, 쿠키, 방문 및 접속기록, 서비스 부정이용 기록" [확정]
+- 리디 https://policy.ridi.com/legal/privacy : 동의 없이 수집하는 항목 표 "IP주소, 쿠키, 브라우저 종류, 모바일 기기정보(앱 버전, OS 버전, Device ID)", 접속 기록 90일, 문서 15개 절 [확정]
+- 예스24: 가져온 페이지에 본문 없음, 확인 못 함
+
 ## 7. 고정 공지를 어떻게 다루나 (설계 결정 9 질문, 확인 2026-10-13)
 
 (조사 에이전트가 목록 1·2쪽을 실제로 받아 확인한 보고를 옮김)
@@ -194,8 +201,3 @@
 - 제15조①6호: "개인정보처리자의 정당한 이익을 달성하기 위하여 필요한 경우로서 명백하게 정보주체의 권리보다 우선하는 경우. 이 경우 개인정보처리자의 정당한 이익과 상당한 관련이 있고 합리적인 범위를 초과하지 아니하는 경우에 한한다." [확정]
 - 제15조②: 동의를 받을 때 알릴 네 가지(목적, 항목, 보유·이용 기간, 거부할 권리와 불이익), 바꿀 때도 알리고 동의 [확정]
 - 초안에서의 적용(추론, 법률 자문 아님): 이용 기록·접속 기록 = 6호(서비스 이용 통계·비정상 요청 확인), 로그인 쿠키 = 4호(로그인 유지 요청 이행), 회원 정보 = 1호(가입 동의)
-
-### 6.5 덧붙임: 다른 서비스도 처리방침에 IP를 적나 (사용자 질문 "보통 다른 방침/공지들도 이래? ... ip쓴다는 것도 명시해?", 확인 2026-10-13)
-- 카카오 https://www.kakao.com/policy/privacy : "2. 개인정보 수집"의 서비스 이용 내역 "IP주소, 쿠키, 방문 및 접속기록, 서비스 부정이용 기록" [확정]
-- 리디 https://policy.ridi.com/legal/privacy : 동의 없이 수집하는 항목 표 "IP주소, 쿠키, 브라우저 종류, 모바일 기기정보(앱 버전, OS 버전, Device ID)", 접속 기록 90일, 문서 15개 절 [확정]
-- 예스24: 가져온 페이지에 본문 없음, 확인 못 함
