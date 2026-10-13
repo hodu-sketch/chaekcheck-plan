@@ -48,6 +48,7 @@
 | 카카오 운영 등록(사이트 도메인, Redirect URI, 동의 항목) | 공식 문서 확인 + 사용자 콘솔 작업 |
 | 4GB에 서비스·DB·조회 서버·Prometheus·Grafana가 함께 들어가는지 | 서버에서 측정 |
 | Lightsail 서버가 Parameter Store·Secrets Manager를 읽는 방법(Lightsail에는 EC2처럼 서버에 붙이는 권한(IAM 역할)이 있는지, 없으면 접근 키를 어디에 둘지)과 요금 | 공식 문서 확인 |
+| 사이클 16 요청: 국외 이전 근거(로그인 안 한 방문자), Cloudflare 데이터센터 나라, AWS 접근권한, 계약 법인·연락처, Cloudflare 쿠키, 첫 배포 직전 약관 글 바꿔 넣기 | `research.md` 6절 |
 | 업체 프록시 고르기(한국 고정 IP 상품, 최소 수량, 자동 요청 허용 약관, 월 비용) | 공식 페이지 확인 + 사용자에게 질문 |
 
 ## 슬라이스 선택 기록
