@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>대출 조회에 프록시 쓰기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.card h3.t{font-size:21px;margin:26px 0 8px}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font-size:15px;line-height:1.55;margin:8px 0 6px;word-break:normal}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+pre .cm{color:var(--muted)} pre .hl{background:var(--warn-bg);color:var(--warn);font-weight:700}
+.src{color:var(--muted);font-size:15px;margin:14px 0 0}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+.fig{overflow-x:auto;margin:8px 0 4px}
+.fig svg{width:100%;min-width:640px;height:auto;display:block}
+.mine{border:1px dashed var(--warn);background:var(--warn-bg);border-radius:8px;padding:10px 14px;font-size:18px;margin:10px 0}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0}
+.pc>div{border-radius:10px;padding:12px 16px;font-size:18px}
+.pc .p{background:var(--ok-bg)} .pc .c{background:var(--no-bg)}
+.pc h4{margin:0 0 6px;font-size:18px}
+.pc ul{margin:0;padding-left:20px}
+.pc li{margin:0 0 8px}
+@media (max-width:640px){.pc{grid-template-columns:1fr} body{font-size:18px} .lead{font-size:24px}}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">대출 조회에 프록시 쓰기:<br>무엇을 쓰고, 어떻게 나눠 보낼지</p>
+<p class="sub">사용자 말씀(2026-10-13): "조회하는데 프록시를 쓸까 하는데 쓰려면 어떻게 써야 하는지도 좀 알려줘.. 이거 원칙 바꾸는 거고 우리가 여러 사람의 조회를 대신 하는 만큼 프록시를 쓰는게 합당하다고 봐. 어짜피 우리가 안 했으면 다른 사람들도 다 각각요청보냈을건데 대신해주는거자나". 쓰는 방법을 먼저 설명하고, 정할 것을 네 가지로 나눴습니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>우리 구조에서 프록시가 들어가는 자리</h2>
+<p class="gist">이미 있는 조회 서버(fetch-service)가 바로 그 자리입니다. 조회 서버는 본 서비스 대신 도서관 사이트에 요청을 보내고 응답을 돌려주는, 우리가 운영하는 프록시입니다. 조회 서버를 여러 대 두거나, 조회 서버가 업체 프록시를 거쳐 나가게 하면 됩니다.</p>
+<div class="fig">
+<svg viewBox="0 0 900 340" role="img" aria-label="본 서비스, 조회 서버, 나가는 IP, 도서관 사이트">
+<rect x="20" y="130" width="170" height="70" rx="10" fill="var(--accent-bg)" stroke="var(--accent)"/>
+<text x="105" y="160" text-anchor="middle" font-size="16" fill="var(--text)">본 서비스</text>
+<text x="105" y="182" text-anchor="middle" font-size="12" fill="var(--muted)">캐시 · 몇 건 보낼지 셈</text>
+<rect x="270" y="40" width="190" height="60" rx="10" fill="var(--card)" stroke="var(--line)"/>
+<text x="365" y="66" text-anchor="middle" font-size="15" fill="var(--text)">조회 서버 1</text>
+<text x="365" y="86" text-anchor="middle" font-size="12" fill="var(--muted)">고정 IP A</text>
+<rect x="270" y="135" width="190" height="60" rx="10" fill="var(--card)" stroke="var(--line)"/>
+<text x="365" y="161" text-anchor="middle" font-size="15" fill="var(--text)">조회 서버 2</text>
+<text x="365" y="181" text-anchor="middle" font-size="12" fill="var(--muted)">고정 IP B</text>
+<rect x="270" y="230" width="190" height="60" rx="10" fill="var(--card)" stroke="var(--line)" stroke-dasharray="6 4"/>
+<text x="365" y="256" text-anchor="middle" font-size="15" fill="var(--text)">조회 서버 3</text>
+<text x="365" y="276" text-anchor="middle" font-size="12" fill="var(--muted)">업체 프록시를 거쳐 나감</text>
+<rect x="560" y="230" width="140" height="60" rx="10" fill="var(--warn-bg)" stroke="var(--warn)"/>
+<text x="630" y="256" text-anchor="middle" font-size="14" fill="var(--text)">업체 프록시</text>
+<text x="630" y="276" text-anchor="middle" font-size="12" fill="var(--muted)">업체 IP</text>
+<rect x="740" y="120" width="140" height="90" rx="10" fill="var(--ok-bg)" stroke="var(--ok)"/>
+<text x="810" y="160" text-anchor="middle" font-size="15" fill="var(--text)">도서관</text>
+<text x="810" y="182" text-anchor="middle" font-size="15" fill="var(--text)">사이트</text>
+<line x1="190" y1="160" x2="270" y2="70" stroke="var(--text)" stroke-width="2"/>
+<line x1="190" y1="165" x2="270" y2="165" stroke="var(--text)" stroke-width="2"/>
+<line x1="190" y1="170" x2="270" y2="260" stroke="var(--text)" stroke-width="2" stroke-dasharray="6 4"/>
+<line x1="460" y1="70" x2="740" y2="150" stroke="var(--ok)" stroke-width="2"/>
+<line x1="460" y1="165" x2="740" y2="165" stroke="var(--ok)" stroke-width="2"/>
+<line x1="460" y1="260" x2="560" y2="260" stroke="var(--warn)" stroke-width="2" stroke-dasharray="6 4"/>
+<line x1="700" y1="255" x2="740" y2="190" stroke="var(--warn)" stroke-width="2" stroke-dasharray="6 4"/>
+<text x="20" y="325" font-size="14" fill="var(--muted)">도서관 사이트는 맨 끝에서 나간 IP만 봅니다. 조회 서버 1·2는 우리 IP, 3은 업체 IP로 보입니다.</text>
+</svg>
+</div>
+<p class="cap">실선은 우리 서버의 고정 IP로 바로 나가는 길, 점선은 업체 프록시를 한 번 더 거치는 길입니다.</p>
+<h3 class="t">실제로 쓰는 방법</h3>
+<ul>
+<li><b>우리 조회 서버를 늘림:</b> Lightsail $5 묶음(고정 IP 무료)이나 iwinv 1GB(월 5,600원)에 조회 서버를 하나 더 띄웁니다. 본 서비스 설정의 조회 서버 목록(<code>fetch-1</code>, <code>fetch-2</code> …)에 주소를 더합니다. 조회 서버와 본 서비스 사이에는 지금처럼 비밀 값으로 인증합니다.</li>
+<li><b>업체 프록시를 거침:</b> 업체에서 프록시 주소와 아이디·비밀번호를 받습니다. 조회 서버가 도서관에 보내는 요청에 그 프록시를 지정합니다(Java HTTP 클라이언트의 프록시 설정). 비밀번호는 코드가 아니라 서버의 비밀 값으로 둡니다.</li>
+<li><b>공통:</b> 어떤 IP로 나갔는지를 조회 기록에 남겨야, 어느 IP가 막혔는지 알 수 있습니다. 지금 코드에는 프록시 설정이 없으므로 dev가 만들어야 합니다.</li>
+</ul>
+<div class="item">
+<h3>질문: 프록시는 실제로 어떻게 쓰나요? 프록시 쪽에도 서버를 구성해야 하나요?</h3>
+<p class="chg">어떤 프록시냐에 따라 다릅니다. 우리 조회 서버를 늘리는 방식이면 작은 서버를 하나 더 만들어 조회 서버 프로그램을 띄워야 합니다. 업체 프록시를 쓰면 서버는 필요 없고, 받은 주소와 비밀번호를 설정에 넣기만 합니다.</p>
+<h3 class="t">가. 우리 조회 서버를 하나 더 둘 때 (서버 구성 필요)</h3>
+<div class="fig">
+<svg viewBox="0 0 900 200" role="img" aria-label="조회 서버를 하나 더 두는 순서">
+<g font-size="14" fill="var(--text)">
+<rect x="10" y="20" width="160" height="70" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="90" y="48" text-anchor="middle">① 작은 서버 만들기</text><text x="90" y="70" text-anchor="middle" font-size="12" fill="var(--muted)">Lightsail $5, 고정 IP</text>
+<rect x="190" y="20" width="160" height="70" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="270" y="48" text-anchor="middle">② Docker 설치</text><text x="270" y="70" text-anchor="middle" font-size="12" fill="var(--muted)">조회 서버 이미지 받기</text>
+<rect x="370" y="20" width="160" height="70" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="450" y="48" text-anchor="middle">③ 조회 서버 실행</text><text x="450" y="70" text-anchor="middle" font-size="12" fill="var(--muted)">비밀 토큰 · 우리 UA</text>
+<rect x="550" y="20" width="160" height="70" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="630" y="48" text-anchor="middle">④ 문 좁히기</text><text x="630" y="70" text-anchor="middle" font-size="12" fill="var(--muted)">본 서비스만 들어오게</text>
+<rect x="730" y="20" width="160" height="70" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="810" y="48" text-anchor="middle">⑤ 목록에 더하기</text><text x="810" y="70" text-anchor="middle" font-size="12" fill="var(--muted)">본 서비스 설정</text>
+</g>
+<line x1="170" y1="55" x2="190" y2="55" stroke="var(--text)" stroke-width="2"/><line x1="350" y1="55" x2="370" y2="55" stroke="var(--text)" stroke-width="2"/><line x1="530" y1="55" x2="550" y2="55" stroke="var(--text)" stroke-width="2"/><line x1="710" y1="55" x2="730" y2="55" stroke="var(--text)" stroke-width="2"/>
+<text x="10" y="130" font-size="14" fill="var(--text)">조회 서버는 이미 만들어진 프로그램(dev <tspan font-family="monospace">fetch-service/</tspan>)이라, 새로 짤 것은 없고 띄우기만 합니다.</text>
+<text x="10" y="156" font-size="14" fill="var(--text)">이 서버는 데이터베이스가 없고 요청을 전달만 해서, 메모리 0.5~1GB 서버로 될 것으로 봅니다(재지 않음).</text>
+</svg>
+</div>
+<ul>
+<li><b>③에서 넣는 값:</b> 본 서비스와 같은 비밀 토큰(<code>FETCH_SERVICE_TOKEN</code>)과 우리 User-Agent. 조회 서버는 이 토큰이 붙은 요청만 받습니다(dev 설정 <code>X-Fetch-Token</code>).</li>
+<li><b>④가 필요한 이유:</b> 바깥에 열린 조회 서버는 남이 우리 IP로 도서관을 부르는 데 쓸 수 있습니다. 토큰에 더해 본 서비스 서버의 IP에서만 들어오게 방화벽을 좁힙니다. 둘 사이를 암호화할지(HTTPS나 같은 사설망)는 아직 정하지 않았습니다 [확인 필요: dev 설정의 TODO].</li>
+<li><b>⑤:</b> 본 서비스 설정의 조회 서버 목록(<code>fetch-1</code>, <code>fetch-2</code>)에 새 서버 주소를 넣고, 조회 방식을 조회 서버 사용(<code>FETCH_MODE=fetch-service</code>)으로 바꿉니다.</li>
+<li>노트북으로 옮긴 뒤에도 이 작은 서버들은 그대로 둘 수 있습니다. 그러면 노트북 집 IP와 조회 서버 IP가 따로 됩니다.</li>
+</ul>
+<h3 class="t">나. 업체 프록시를 쓸 때 (서버 구성 없음)</h3>
+<ul>
+<li>업체 가입 → 한국 IP 상품을 고르고 결제 → 업체가 프록시 주소(예: <code>호스트:포트</code>)와 아이디·비밀번호를 줍니다.</li>
+<li>우리 조회 서버(또는 본 서비스)가 도서관에 요청을 보낼 때 "이 프록시를 거쳐라"고 설정합니다. 지금 코드에는 이 설정이 없어서 dev가 더해야 합니다(Java HTTP 클라이언트의 프록시 지정).</li>
+<li>아이디·비밀번호는 서버의 비밀 값으로 둡니다.</li>
+<li>업체 약관(크롤링·자동 요청 허용 여부)은 따로 확인해야 합니다 [확인 필요].</li>
+</ul>
+<h3 class="t">다. 수집용으로 조사했던 Squid·tinyproxy와의 차이</h3>
+<p>Squid·tinyproxy는 아무 요청이나 전달하는 일반 프록시입니다. 수집기(파이썬)가 클라우드에서 돌 때 나가는 IP만 바꾸려고 조사했습니다. 서비스의 대출 조회는 이미 우리 조회 서버라는 전용 프로그램이 있으므로, 서비스 쪽에는 가(조회 서버)를 쓰는 것이 자연스럽습니다.</p>
+<p class="src">근거: dev <code>fetch-service/src/main/resources/application.yml</code>(토큰 헤더, 동시 32건, UA), 본 서비스 <code>application.yml</code> availability.fetch(조회 서버 목록, <code>FETCH_MODE</code>), ADR-0011, ADR-0015. 2026-10-13 읽음.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>무엇을 프록시로 쓸지</h2>
+<p class="gist">세 종류가 있습니다. 어느 쪽이든 수집 쪽 원칙(우리 고정 IP만)과 서비스 조회 쪽 원칙이 달라지는지도 함께 정해집니다.</p>
+<table>
+<tr><th>종류</th><th>도서관이 보는 것</th><th>값 (업체 표기)</th><th>지금 원칙과</th></tr>
+<tr><td>우리 조회 서버 여러 대 (각자 고정 IP)</td><td>우리 IP 몇 개</td><td>서버 한 대에 월 $5 또는 5,600원부터</td><td>맞음 (우리 국내 고정 IP)</td></tr>
+<tr><td>업체 데이터센터 고정 IP</td><td>업체 IP 몇 개 (고정)</td><td>Oxylabs 한국 전용 월 $8.25부터</td><td>바뀜 (우리 서버 IP가 아님)</td></tr>
+<tr><td>주거용·IP 바꿔 가는 프록시</td><td>요청마다 다른 가정용 IP</td><td>GB당 약 $2~8</td><td>바뀜 (2026-10-12에 쓰지 않기로 정함)</td></tr>
+</table>
+<div class="item">
+<h3><span class="no">1</span>세 가지 길을 모두 만들어 두고 설정으로 고름: 본 서비스가 직접(프록시 없이 또는 업체 프록시 여러 곳을 거쳐), 조회 서버를 거쳐(조회 서버마다 업체 프록시 여러 곳을 거칠 수 있음) [안]</h3>
+<p class="chg">사용자 말씀(2026-10-13): "아니 다 가능하도록 개발했으면 해 조회 서버를 두는 것도 방법이고 각각의 조회 서버 내에서 업체 프록시 여러개 쓸 수 있고 우리 본 서버에서 조회기능도 있되 업체 프록시 여러개 쓸 수 있는 걸로다가". 바로 앞의 "서버 하나 + 업체 프록시"안을 이 말씀대로 넓혔습니다. 칩을 승인하시면 이 내용으로 적습니다.</p>
+<div class="fig">
+<svg viewBox="0 0 900 330" role="img" aria-label="세 가지 나가는 길">
+<rect x="20" y="130" width="170" height="70" rx="10" fill="var(--accent-bg)" stroke="var(--accent)"/>
+<text x="105" y="160" text-anchor="middle" font-size="15" fill="var(--text)">본 서비스</text>
+<text x="105" y="182" text-anchor="middle" font-size="12" fill="var(--muted)">몇 건 보낼지 셈</text>
+<text x="250" y="40" font-size="14" font-weight="700" fill="var(--text)">길 1: 직접</text>
+<rect x="250" y="50" width="200" height="40" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="350" y="75" text-anchor="middle" font-size="13" fill="var(--text)">서버 자기 IP</text>
+<text x="250" y="125" font-size="14" font-weight="700" fill="var(--text)">길 2: 직접 + 업체 프록시</text>
+<rect x="250" y="135" width="95" height="40" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="297" y="160" text-anchor="middle" font-size="12" fill="var(--text)">업체 A</text>
+<rect x="355" y="135" width="95" height="40" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="402" y="160" text-anchor="middle" font-size="12" fill="var(--text)">업체 B</text>
+<text x="250" y="215" font-size="14" font-weight="700" fill="var(--text)">길 3: 조회 서버</text>
+<rect x="250" y="225" width="200" height="40" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="350" y="250" text-anchor="middle" font-size="13" fill="var(--text)">조회 서버 1, 2 …</text>
+<rect x="480" y="225" width="95" height="40" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="527" y="250" text-anchor="middle" font-size="12" fill="var(--text)">업체 A</text>
+<rect x="585" y="225" width="95" height="40" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="632" y="250" text-anchor="middle" font-size="12" fill="var(--text)">업체 C</text>
+<text x="480" y="285" font-size="12" fill="var(--muted)">조회 서버마다 쓸지 말지, 어느 업체를 쓸지 설정</text>
+<rect x="740" y="130" width="140" height="70" rx="10" fill="var(--ok-bg)" stroke="var(--ok)"/>
+<text x="810" y="170" text-anchor="middle" font-size="15" fill="var(--text)">도서관 사이트</text>
+<line x1="190" y1="155" x2="250" y2="70" stroke="var(--text)" stroke-width="2"/>
+<line x1="190" y1="165" x2="250" y2="155" stroke="var(--text)" stroke-width="2"/>
+<line x1="190" y1="175" x2="250" y2="245" stroke="var(--text)" stroke-width="2"/>
+<line x1="450" y1="70" x2="740" y2="150" stroke="var(--ok)" stroke-width="2"/>
+<line x1="450" y1="155" x2="740" y2="165" stroke="var(--ok)" stroke-width="2"/>
+<line x1="680" y1="245" x2="740" y2="185" stroke="var(--ok)" stroke-width="2"/>
+<line x1="450" y1="245" x2="480" y2="245" stroke="var(--warn)" stroke-width="2" stroke-dasharray="5 4"/>
+<text x="20" y="320" font-size="14" fill="var(--muted)">어느 길로 보낼지, 어느 업체 프록시를 쓸지는 코드가 아니라 설정 파일로 바꿉니다.</text>
+</svg>
+</div>
+<p class="cap">길 1은 지금 있는 것, 길 3의 조회 서버도 지금 있는 것입니다. 새로 만드는 것은 "업체 프록시를 거쳐 보내기"를 본 서비스와 조회 서버 양쪽에 넣는 일입니다.</p>
+<table>
+<tr><th>설정으로 고르는 것</th><th>예</th></tr>
+<tr><td>본 서비스가 직접 부를지, 조회 서버를 거칠지</td><td>지금 있는 <code>FETCH_MODE</code>(<code>direct</code> / <code>fetch-service</code>)</td></tr>
+<tr><td>직접 부를 때 업체 프록시 목록</td><td>없음(자기 IP로) 또는 업체 A·B의 주소·아이디·비밀번호</td></tr>
+<tr><td>조회 서버마다 업체 프록시 목록</td><td>조회 서버 1은 없음, 조회 서버 2는 업체 A·C</td></tr>
+<tr><td>프록시를 고르는 방식</td><td>돌아가며, 멈춘 업체는 잠시 빼기 [안: dev가 정함]</td></tr>
+<tr><td>어떤 IP로 나갔는지 기록</td><td>조회 기록에 길과 업체 이름을 남김</td></tr>
+</table>
+<ul>
+<li><b>몇 건 보낼지는 언제나 본 서비스에서 셈:</b> 어느 길로 나가든 도서관 한 곳이 받는 양은 본 서비스가 정합니다. 그래서 길을 늘려도 도서관 쪽 양이 저절로 늘지 않습니다(2번 제안). 교보 서버는 ADR-0094대로 조회 서버를 쓸 때 조회 서버마다 3건, 평소 한 대만입니다.</li>
+<li><b>바뀌는 이전 결정:</b> 나가는 IP 원칙의 "우리 국내 서버 고정 IP만"이 서비스 대출 조회에 한해 "우리가 빌린 업체 고정 IP까지"로 넓어집니다. ADR-0011(조회 서버 분리)은 그대로 살아 있고, 고를 수 있는 길 하나가 됩니다.</li>
+<li><b>상품:</b> 업체 프록시는 IP가 바뀌지 않는 고정 IP 상품으로 합니다. 예: Oxylabs 한국 전용 데이터센터 월 $8.25부터, ISP 고정 IP당 $1.10~1.50 (업체 표기, 2026-10-12). 최소 구매 수량과 자동 요청 허용 약관은 확인 못 함.</li>
+<li><b>개발 범위:</b> 업체 프록시를 거쳐 보내기(Java HTTP 클라이언트 프록시 설정과 인증)를 본 서비스와 조회 서버에 각각 넣고, 설정 목록과 나간 길 기록을 더합니다. 배포 사이클에서 dev에 넘깁니다.</li>
+</ul>
+<p class="alt"><b>한 가지 길만 만듦(서버 하나 + 업체 프록시):</b> 만들 것이 적습니다. 대신 나중에 조회 서버를 쓰고 싶어지면 그때 다시 만들어야 합니다.<br>
+<b>업체 주거용·IP 바꿔 가는 프록시도 길로 넣음:</b> 설정에 넣을 수는 있게 됩니다. 2026-10-12의 금지와 정반대이고 법 관련 배경 자료(카드 4)의 위험이 가장 크므로, 이 안에서는 고정 IP 상품만 넣습니다.</p>
+<p class="rec">추천: 말씀대로 세 길 모두 + 설정으로 고름, 업체 프록시는 고정 IP 상품만.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>여러 IP로 나눠 보낼 때 도서관 한 곳이 받는 양</h2>
+<p class="gist">IP를 나눌 때 "도서관 한 곳이 받는 양을 그대로 두고 IP만 나눌지", "IP마다 따로 세어 더 많이 보낼지"를 정해야 합니다. 앞의 것은 막힐 위험을 나누고, 뒤의 것은 빨라지지만 도서관 부담이 늘어납니다.</p>
+<div class="fig">
+<svg viewBox="0 0 900 230" role="img" aria-label="합계를 유지할 때와 IP마다 셀 때 도서관이 받는 양">
+<text x="20" y="28" font-size="17" font-weight="700" fill="var(--text)">가. 합계 유지, IP만 나눔</text>
+<rect x="20" y="44" width="120" height="40" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="80" y="70" text-anchor="middle" font-size="14" fill="var(--text)">IP A: 1초에 1건</text>
+<text x="160" y="70" font-size="14" fill="var(--muted)">번갈아</text>
+<rect x="220" y="44" width="120" height="40" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="280" y="70" text-anchor="middle" font-size="14" fill="var(--text)">IP B</text>
+<rect x="560" y="44" width="320" height="40" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="720" y="70" text-anchor="middle" font-size="14" fill="var(--text)">도서관: 지금과 같은 양 (1초 간격)</text>
+<line x1="340" y1="64" x2="560" y2="64" stroke="var(--ok)" stroke-width="2"/>
+<text x="20" y="138" font-size="17" font-weight="700" fill="var(--text)">나. IP마다 따로 셈</text>
+<rect x="20" y="154" width="120" height="40" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="80" y="180" text-anchor="middle" font-size="14" fill="var(--text)">IP A: 1초 1건</text>
+<rect x="220" y="154" width="120" height="40" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="280" y="180" text-anchor="middle" font-size="14" fill="var(--text)">IP B: 1초 1건</text>
+<rect x="560" y="154" width="320" height="40" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="720" y="180" text-anchor="middle" font-size="14" fill="var(--text)">도서관: IP 수만큼 늘어남 (2배)</text>
+<line x1="340" y1="174" x2="560" y2="174" stroke="var(--warn)" stroke-width="2"/>
+</svg>
+</div>
+<p class="cap">IP 두 개로 그린 예입니다. 사용자 말씀대로 사람들이 각자 요청했다면 도서관은 그만큼을 받았을 것입니다. 다만 우리가 모아서 보내면 같은 몫이 짧은 시간에 몰려 갈 수 있습니다.</p>
+<div class="item">
+<h3><span class="no">2</span>도서관 한 곳이 받는 양은 지금 규칙(합계 1초 1건, 교보 서버는 3건)대로 두고, IP만 나눠 보냄 [안]</h3>
+<p>서비스 서버가 도서관마다 몇 건을 보낼지 지금처럼 한 곳에서 세고, 보낼 때 프록시를 돌아가며 고릅니다. 도서관이 받는 양은 그대로라 빨라지지는 않습니다. 대신 IP 하나가 막혀도 나머지로 계속 조회합니다(막힌 IP를 어떻게 다룰지는 3번).</p>
+<p class="alt"><b>IP마다 따로 셈:</b> 프록시마다 각자 1초 1건씩 보내므로, IP 수만큼 빨라지고 몰릴 때 덜 기다립니다. 대신 도서관은 IP 수만큼 더 받습니다. 2026-09-28에 "조회 서버마다 따로 제어하면 도서관 한 곳에 서버 수만큼 동시에 요청이 간다"고 해서 고르지 않았던 방식(ADR-0011 B안)입니다. 교보 서버는 어제 "조회 서버마다 3건, 평소 한 대만"으로 정했는데, 이 방식이면 "평소 한 대만"이 풀려 교보 서버도 IP 수 × 3건을 받게 됩니다.</p>
+<p class="rec">추천: 합계는 그대로, IP만 나눔.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>한 IP가 막혔을 때와 우리 이름</h2>
+<p class="gist">IP가 여러 개가 되면, 하나가 막혔을 때 나머지로 그 사이트에 계속 보낼지를 정해야 합니다. 어제 저장한 ADR-0094는 "그 IP도 막히면 멈추고 묻는다, 세 번째 IP를 찾지 않는다"입니다(아직 제안됨 상태라 고칠 수 있습니다).</p>
+<div class="item">
+<h3><span class="no">3</span>한 IP가 어느 사이트에서 막히면, 그 사이트로 가는 조회를 모든 IP에서 멈추고 사용자에게 물음 [안]</h3>
+<p>예: IP A가 교보 서버에서 막히면 IP B로 옮겨 계속 보내지 않습니다. 교보 서버 도서관은 화면에 "확인 불가"로 나오고, 기록과 알림이 남습니다. 다른 사이트는 두 IP 모두 계속 씁니다.</p>
+<p class="alt"><b>막힌 IP만 빼고 나머지 IP로 계속:</b> 대출 현황이 끊기지 않습니다. 대신 사이트가 우리를 막은 뜻을 다른 IP로 피해 가는 모양이 됩니다. ADR-0094의 "세 번째 IP를 찾지 않는다"와 ADR-0011의 "도서관이 거부할 때는 다른 조회 서버로 넘기지 않는다"를 바꿔야 합니다.</p>
+<p class="rec">추천: 모든 IP에서 멈추고 물음.</p>
+</div>
+<div class="item">
+<h3><span class="no">4</span>어느 IP로 나가든 User-Agent에 우리 서비스 이름을 그대로 둠 [안]</h3>
+<p>지금처럼 <code>chaekcheck/…</code>로 우리를 밝힙니다(2026-09-28 결정, 서비스 주소가 생기면 함께 적음). 도서관은 IP가 달라도 우리라는 것을 알 수 있고, 원하면 이름으로 우리를 막을 수 있습니다.</p>
+<p class="alt"><b>IP마다 다른 이름이나 일반 브라우저 이름:</b> 막히기 어려워집니다. 대신 우리를 숨기는 것이 되어, 사이클 01부터 지킨 "우리를 밝힌다"는 원칙을 버리게 됩니다.</p>
+<p class="rec">추천: 우리 이름 그대로.</p>
+</div>
+<h3 class="t">알고 정하실 것 (법적 판단이 아닌 배경 자료)</h3>
+<ul>
+<li>2022년 대법원 판결(2021도1533, 숙박 앱 크롤링, 무죄)은 접근이 막혔는지를 "보호조치나 이용약관 등 객관적으로 드러난 여러 사정"으로 판단했습니다. 별도 보호조치가 없었다는 점이 무죄 이유 중 하나였습니다.</li>
+<li>IP 차단은 그 보호조치로 읽힐 수 있습니다. 막힌 뒤 다른 IP로 다시 들어간 경우를 직접 다룬 한국 판례는 찾지 못했습니다.</li>
+<li>"여러 사람의 조회를 대신 한다"는 말씀은 서비스의 목적으로 이해합니다. 다만 법원이 이 사정을 어떻게 보는지는 확인하지 못했습니다. 전문가 확인 항목(backlog)에 함께 넣어 두는 것을 제안합니다.</li>
+</ul>
+<p class="src">근거: ADR-0011, ADR-0094(제안됨), <code>docs/research/ebook-catalog/crawl-method.md</code> 1절, 업체 요금은 <code>docs/research/deploy/hosting-options.md</code> 4-2절(공식 페이지, 2026-10-12 확인), 판결문 https://www.scourt.go.kr/sjudge/1652779958317_183238.pdf</p>
+</section>
+
+<p class="foot">정해 주시면 원칙 문서(<code>crawl-method.md</code> 1절)와 ADR-0094 초안을 함께 고치고, dev에 넘길 일(조회 서버 여러 대, 돌아가며 고르기, 나간 IP 기록)을 backlog에 적습니다.</p>
+</main>
+</body>
+</html>

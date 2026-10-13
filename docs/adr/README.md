@@ -97,3 +97,5 @@
 | [ADR-0091](0091-picks-cover-nlk-resize-200px.md) | 사서추천 표지는 국립중앙도서관 표지를 받아 200px JPEG로 줄여 우리 서버가 넘겨줌, 우리 전자책 표지는 이번에 안 씀 (ADR-0081을 대체) | Accepted | 2026-10-12 | 14 |
 | [ADR-0092](0092-picks-fetch-retry-daily-and-catch-up.md) | 사서추천 받기는 실패하면 성공할 때까지 매일 다시, 마지막 성공이 7일보다 오래되면 따라잡음 (ADR-0089의 "다음 날 한 번 더"를 바꿈) | Accepted | 2026-10-12 | 14 |
 | [ADR-0093](0093-library-insert-read-and-apply-run-record.md) | 넣기 명령은 `LibraryRegistry.listAll()`로 서비스 도서관 전체를 보고, 운영 반영은 넣기 실행 기록 줄도 옮김, 기준일 경로 `/api/v1/join-surveys/latest` (ADR-0083·0084·0086·0087 보완) | Accepted | 2026-10-12 | 13 (12보다 미리) |
+| [ADR-0094](0094-blocked-server-other-ip-kyobo-3-per-fetch-server.md) | 우리를 막은 서버에는 막힌 IP에서만 보내지 않고 다른 우리 IP에서 수집 동시 1건·1초, 교보 구독형 서버 서비스 조회는 나가는 IP마다 동시 3건(설정으로 조절)·느려지면 1건·막힘 신호면 멈춤 (ADR-0011 교보 서버 한정 보완, 서비스 조회는 ADR-0095와 함께) | Proposed | 2026-10-13 | 사이클 밖 (배포 조사) |
+| [ADR-0095](0095-lookup-egress-proxies-per-ip-browser-ua.md) | 서비스 대출 조회는 세 나가는 길(직접·업체 고정 IP 프록시·조회 서버)을 설정으로 고르고, 나가는 IP마다 따로 세며, 막힌 IP만 그 사이트에서 멈추고, 일반 브라우저 User-Agent로 보냄 (ADR-0011 일부·사이클 01 UA 식별을 서비스 조회에 한해 바꿈) | Proposed | 2026-10-13 | 사이클 밖 (배포 조사) |

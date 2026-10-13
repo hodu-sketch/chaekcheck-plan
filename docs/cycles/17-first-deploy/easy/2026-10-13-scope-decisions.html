@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 17 범위</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.card h3.t{font-size:21px;margin:26px 0 8px}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font-size:15px;line-height:1.55;margin:8px 0 6px;word-break:normal}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+pre .cm{color:var(--muted)} pre .hl{background:var(--warn-bg);color:var(--warn);font-weight:700}
+.src{color:var(--muted);font-size:15px;margin:14px 0 0}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+.fig{overflow-x:auto;margin:8px 0 4px}
+.fig svg{width:100%;min-width:640px;height:auto;display:block}
+.mine{border:1px dashed var(--warn);background:var(--warn-bg);border-radius:8px;padding:10px 14px;font-size:18px;margin:10px 0}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0}
+.pc>div{border-radius:10px;padding:12px 16px;font-size:18px}
+.pc .p{background:var(--ok-bg)} .pc .c{background:var(--no-bg)}
+.pc h4{margin:0 0 6px;font-size:18px}
+.pc ul{margin:0;padding-left:20px}
+.pc li{margin:0 0 8px}
+@media (max-width:640px){.pc{grid-template-columns:1fr} body{font-size:18px} .lead{font-size:24px}}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">사이클 17 첫 배포:<br>무엇을 이번에 하고, 무엇을 다음으로 미룰지</p>
+<p class="sub">이틀 동안 배포 조사에서 정한 것을 사이클 17의 범위로 옮겼습니다. 하나의 사이클로 보기에는 커서, 이번에는 "공개 주소에서 서비스가 돌아가는 것"까지만 하고 대출 조회 프록시와 노트북 이전은 다음으로 미루는 안입니다. 6가지를 정해 주세요. (2026-10-13)</p>
+
+<section class="card">
+<h2><span class="num">1</span>이번 사이클이 끝나면 생기는 것</h2>
+<p class="gist">휴대폰으로 내 도메인 주소를 열면 지금 집 PC에서 보던 서비스가 그대로 뜨고, 카카오 로그인까지 됩니다. 서버는 Lightsail 서울 한 대이고, 2주 동안 공개합니다.</p>
+<div class="fig">
+<svg viewBox="0 0 900 270" role="img" aria-label="이번 사이클의 운영 구성">
+<rect x="20" y="100" width="130" height="60" rx="10" fill="var(--accent-bg)" stroke="var(--accent)"/>
+<text x="85" y="135" text-anchor="middle" font-size="15" fill="var(--text)">사용자</text>
+<rect x="200" y="90" width="170" height="80" rx="10" fill="var(--card)" stroke="var(--line)"/>
+<text x="285" y="122" text-anchor="middle" font-size="15" fill="var(--text)">Cloudflare</text>
+<text x="285" y="144" text-anchor="middle" font-size="12" fill="var(--muted)">내 도메인 · 인증서</text>
+<rect x="430" y="20" width="450" height="230" rx="12" fill="var(--ok-bg)" stroke="var(--ok)"/>
+<text x="655" y="44" text-anchor="middle" font-size="15" font-weight="700" fill="var(--text)">Lightsail 서울 4GB 한 대</text>
+<g font-size="13" fill="var(--text)">
+<rect x="450" y="60" width="130" height="40" rx="6" fill="var(--card)" stroke="var(--line)"/><text x="515" y="85" text-anchor="middle">cloudflared</text>
+<rect x="600" y="60" width="130" height="40" rx="6" fill="var(--card)" stroke="var(--line)"/><text x="665" y="85" text-anchor="middle">nginx</text>
+<rect x="750" y="60" width="110" height="40" rx="6" fill="var(--card)" stroke="var(--line)"/><text x="805" y="85" text-anchor="middle">서비스</text>
+<rect x="450" y="115" width="130" height="40" rx="6" fill="var(--card)" stroke="var(--line)"/><text x="515" y="140" text-anchor="middle">조회 서버</text>
+<rect x="600" y="115" width="130" height="40" rx="6" fill="var(--card)" stroke="var(--line)"/><text x="665" y="140" text-anchor="middle">PostgreSQL</text>
+<rect x="750" y="115" width="110" height="40" rx="6" fill="var(--card)" stroke="var(--line)"/><text x="805" y="140" text-anchor="middle">백업</text>
+<rect x="450" y="170" width="410" height="40" rx="6" fill="var(--card)" stroke="var(--line)"/><text x="655" y="195" text-anchor="middle">Prometheus · Grafana · node_exporter</text>
+</g>
+<line x1="150" y1="130" x2="200" y2="130" stroke="var(--text)" stroke-width="2"/>
+<line x1="370" y1="130" x2="450" y2="80" stroke="var(--text)" stroke-width="2"/>
+<text x="20" y="262" font-size="13" fill="var(--muted)">대출 조회는 이번에는 서버 자기 고정 IP로만 나갑니다(업체 프록시는 다음 사이클).</text>
+</svg>
+</div>
+<p class="cap">점선이 없는 그림이 이번 사이클입니다. 업체 프록시와 노트북은 그리지 않았습니다.</p>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>이번에 할 것</h2>
+<p class="gist">아홉 가지를 세 묶음으로 나눴습니다. 서버를 세우는 것, 서비스를 운영 상태로 만드는 것, 운영을 지켜보는 것입니다.</p>
+<h3 class="t">서버 세우기</h3>
+<ul>
+<li>Lightsail 서울 4GB 한 대에 nginx·서비스·조회 서버·PostgreSQL을 Docker로 띄움 (정해짐)</li>
+<li>도메인 + Cloudflare Tunnel 연결, 인증서는 Cloudflare (정해짐)</li>
+<li>nginx가 진짜 사용자 IP를 읽게 하고(정해짐), 책 검색 목록 같은 나머지 API에도 IP별 한도를 둠</li>
+</ul>
+<h3 class="t">서비스를 운영 상태로</h3>
+<ul>
+<li>운영 DB 채우기: 첫 배포 직전에 seed를 다시 만들고, 그 뒤로는 DB 변경을 새 파일로만 함. 책 목록은 내 PC에서 가져와 운영 서버에 반영</li>
+<li>비밀 값(카카오 키, DB 비밀번호, 조회 서버 토큰) 둘 곳, 카카오 콘솔에 운영 주소 등록, 약관·처리방침 시행일(사이클 16과 맞춤)</li>
+<li>서비스 주소를 User-Agent와 화면에 채우기, 운영 메모리 값 다시 재기</li>
+</ul>
+<h3 class="t">운영 지켜보기</h3>
+<ul>
+<li>Prometheus·Grafana·node_exporter를 서버에 직접 (정해짐), 서비스가 숫자를 내보내게 Spring 설정 더하기</li>
+<li>하루 한 번 DB 백업을 서버 밖에 둠</li>
+<li>nginx 접속 기록 보관 기간 정하기 (사이클 15·16에서 넘어온 것)</li>
+</ul>
+<div class="item">
+<h3><span class="no">1</span>이번 사이클에 위 아홉 가지를 넣음 [안]</h3>
+<p>대부분 서버와 설정 일이고, 코드는 지표 내보내기·IP별 한도·서비스 주소 정도만 바뀝니다. 표와 API는 바뀌지 않을 것으로 봅니다.</p>
+<p class="alt"><b>모니터링을 빼고 더 작게:</b> 빨리 끝납니다. 대신 2주 동안 서버가 버티는지 숫자로 볼 수 없습니다.<br>
+<b>백업을 빼기:</b> 2주 체험이라 잃어도 다시 가져올 수 있다고 볼 수 있습니다. 대신 그동안 생긴 회원·내 도서관 기록은 되살릴 수 없습니다.</p>
+<p class="rec">추천: 아홉 가지 모두.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>다음으로 미룰 것</h2>
+<p class="gist">오늘 정하신 대출 조회 프록시(ADR-0095)는 개발할 것이 많아 사이클 18로 따로 떼는 안입니다. 이번에는 서버 자기 고정 IP로만 조회합니다.</p>
+<table>
+<tr><th>미룰 것</th><th>이유</th><th>어디로</th></tr>
+<tr><td>대출 조회 나가는 길 세 가지, 업체 프록시, IP마다 따로 세기, 일반 브라우저 User-Agent</td><td>본 서비스와 조회 서버 양쪽에 프록시 거쳐 보내기를 새로 만들어야 하고, 업체 선택·약관 확인이 남음</td><td>사이클 18 후보</td></tr>
+<tr><td>교보 구독형 서버 다시 받기·조회 (ADR-0094)</td><td>집이 아닌 IP가 생긴 뒤에 함. 프록시와 함께 하는 것이 자연스러움</td><td>사이클 18과 함께</td></tr>
+<tr><td>노트북으로 옮기기</td><td>2주 뒤의 일이고, 노트북 사양을 아직 모름</td><td>2주 뒤 따로</td></tr>
+<tr><td>AWS WAF 봇 막기</td><td>Lightsail 앞에는 바로 붙이지 않음. Cloudflare 규칙으로 대신할지 사이클 15와 함께 다시 봄</td><td>backlog</td></tr>
+<tr><td>DB 크기 줄이기, S3·CloudFront·RDS</td><td>2주 체험에는 필요 없음</td><td>backlog</td></tr>
+</table>
+<div class="item">
+<h3><span class="no">2</span>대출 조회 프록시(ADR-0095)와 교보 서버 다시 받기(ADR-0094)는 사이클 18로 미룸 [안]</h3>
+<p>이번 2주 동안 교보 구독형 서버 쪽 대출 현황은 Lightsail 고정 IP로 조회됩니다. 집 IP가 아니므로 막히지 않을 수 있지만, 사이트가 데이터센터 IP를 받아 주는지는 아직 시험하지 않았습니다.</p>
+<p class="alt"><b>이번 사이클에 함께:</b> 공개하자마자 프록시를 씁니다. 대신 개발 범위가 두 배 가까이 되고, 업체 가입·결제·약관 확인을 먼저 해야 합니다.</p>
+<p class="rec">추천: 사이클 18로.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>끝났다고 보는 기준</h2>
+<p class="gist">사용자가 휴대폰으로 직접 확인할 수 있는 다섯 가지입니다.</p>
+<ul>
+<li>휴대폰 데이터망에서 <code>https://내도메인</code>을 열면 검색 결과와 대출 현황이 나온다</li>
+<li>카카오로 로그인하고 내 도서관을 저장할 수 있다</li>
+<li>같은 IP에서 검색을 한도보다 많이 보내면 "잠시 뒤 다시"가 나오고, 다른 사람의 검색은 영향받지 않는다</li>
+<li>Grafana에서 서버 CPU·메모리·응답 시간·"차례를 못 받아 포기한 횟수"를 볼 수 있다</li>
+<li>서버 밖에 전날 DB 백업 파일이 있다</li>
+</ul>
+<div class="item">
+<h3><span class="no">3</span>위 다섯 가지를 완료 기준으로 함 [안]</h3>
+<p class="alt"><b>더 줄이기(앞의 두 가지만):</b> 공개만 확인합니다. 한도·모니터링·백업은 확인하지 않고 끝날 수 있습니다.</p>
+<p class="rec">추천: 다섯 가지.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">5</span>먼저 정해야 하는 것</h2>
+<p class="gist">개발 전에 사용자가 정하거나 직접 해야 하는 것이 셋 있습니다.</p>
+<div class="item">
+<h3><span class="no">4</span>도메인은 <code>chaekcheck.com</code>을 Cloudflare에서 삼 [안]</h3>
+<p>`.com`으로 사기로 한 것은 2026-10-05에 정했습니다. 이름과 살 곳은 아직 정하지 않았습니다. Cloudflare에서 사면 바로 터널에 붙고, 첫해와 다음 해 값이 같습니다(외부 정리 기준 약 $10.46, 결제 화면에서 확인). 이름을 쓸 수 있는지는 확인하지 않았습니다.</p>
+<p class="alt"><b>다른 이름:</b> 기타에 적어 주세요.<br><b>국내 업체에서 삼:</b> 첫해가 조금 싸고(가비아 19,800원), 네임서버를 Cloudflare로 바꾸는 단계가 하나 더 있습니다.</p>
+<p class="rec">추천: chaekcheck.com, Cloudflare.</p>
+</div>
+<div class="item">
+<h3><span class="no">5</span>비밀 값은 서버의 <code>.env</code> 파일(본인만 읽을 수 있게)에 둠 [안]</h3>
+<p>카카오 키, DB 비밀번호, 조회 서버 토큰을 서버 한 곳의 파일에 두고, 그 파일은 서버 사용자만 읽게 합니다. 지금 코드는 환경 변수 이름만 읽으므로 바꿀 것이 없습니다(dev 기록 2026-10-04).</p>
+<p class="alt"><b>AWS Parameter Store·Secrets Manager:</b> 서버 밖에 안전하게 둡니다. 대신 설정이 늘고, 노트북으로 옮기면 다시 바꿔야 합니다.</p>
+<p class="rec">추천: <code>.env</code> 파일. 2주 뒤 노트북에서도 같은 방식.</p>
+</div>
+<div class="item">
+<h3><span class="no">6</span>DB 백업은 하루 한 번 내 PC로 내려받음 [안]</h3>
+<p>서버가 밤에 DB 덤프 파일을 만들고, 내 PC가 받아 둡니다. 책 목록은 내 PC에 원본이 있으므로, 실제로 지켜야 하는 것은 회원·내 도서관·이용 기록입니다.</p>
+<p class="alt"><b>S3에 둠:</b> PC가 꺼져 있어도 쌓입니다. 대신 AWS 요금과 설정이 조금 늡니다(금액은 확인 못 함).</p>
+<p class="rec">추천: 내 PC로.</p>
+</div>
+</section>
+
+<p class="foot">원문: <code>docs/cycles/17-first-deploy/scope.md</code>. 근거: <code>docs/research/deploy/hosting-options.md</code> 결정 줄, ADR-0094·ADR-0095, <code>docs/backlog.md</code>의 "→ 사이클 17" 줄들.</p>
+</main>
+</body>
+</html>

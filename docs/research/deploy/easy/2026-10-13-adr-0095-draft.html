@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ADR-0095 초안</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.card h3.t{font-size:21px;margin:26px 0 8px}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font-size:15px;line-height:1.55;margin:8px 0 6px;word-break:normal}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+pre .cm{color:var(--muted)} pre .hl{background:var(--warn-bg);color:var(--warn);font-weight:700}
+.src{color:var(--muted);font-size:15px;margin:14px 0 0}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+.fig{overflow-x:auto;margin:8px 0 4px}
+.fig svg{width:100%;min-width:640px;height:auto;display:block}
+.mine{border:1px dashed var(--warn);background:var(--warn-bg);border-radius:8px;padding:10px 14px;font-size:18px;margin:10px 0}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0}
+.pc>div{border-radius:10px;padding:12px 16px;font-size:18px}
+.pc .p{background:var(--ok-bg)} .pc .c{background:var(--no-bg)}
+.pc h4{margin:0 0 6px;font-size:18px}
+.pc ul{margin:0;padding-left:20px}
+.pc li{margin:0 0 8px}
+@media (max-width:640px){.pc{grid-template-columns:1fr} body{font-size:18px} .lead{font-size:24px}}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">ADR-0095 초안:<br>서비스 대출 조회가 나가는 길</p>
+<p class="sub">오늘 "대출 조회에 프록시 쓰기"와 "User-Agent" 페이지에서 정하신 다섯 가지를 결정 기록 하나로 묶었습니다. 어제 저장한 ADR-0094(아직 제안됨)의 서비스 조회 부분도 이것에 맞춰 고칩니다. 승인하시면 두 파일을 함께 저장합니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>무엇이 바뀌나</h2>
+<p class="gist">서비스의 대출 조회는 세 가지 길 중 설정으로 고른 길로 나가고, 나가는 IP마다 따로 세며, 막힌 IP만 멈추고, 일반 브라우저처럼 보냅니다. 수집기는 바뀌지 않습니다.</p>
+<table>
+<tr><th></th><th>지금</th><th>바뀐 뒤 (서비스 대출 조회만)</th></tr>
+<tr><td>나가는 길</td><td>본 서비스 직접 또는 조회 서버</td><td>① 직접 ② 직접 + 업체 고정 IP 프록시 여러 곳 ③ 조회 서버(조회 서버마다 업체 프록시 가능). 설정으로 고름</td></tr>
+<tr><td>도서관 한 곳에 보내는 양</td><td>본 서비스 한 곳에서 합쳐 동시 1건·1초</td><td>나가는 IP마다 따로 동시 1건·1초 (교보 구독형 서버는 IP마다 동시 3건)</td></tr>
+<tr><td>한 IP가 막히면</td><td>(ADR-0094 초안) 멈추고 묻고, 세 번째 IP를 찾지 않음</td><td>그 IP만 그 사이트에서 멈추고 다른 IP로 계속</td></tr>
+<tr><td>User-Agent</td><td><code>chaekcheck/0.0.1</code> (우리를 밝힘)</td><td>일반 브라우저와 같은 값, 우리 이름 없음</td></tr>
+<tr><td>수집기</td><td colspan="2">그대로: 우리 고정 IP만, IP마다 1건·1초, 우리 이름을 밝힘</td></tr>
+</table>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>초안 내용</h2>
+<h3 class="t">이유 (사용자 말씀)</h3>
+<ul>
+<li>"우리가 여러 사람의 조회를 대신 하는 만큼 프록시를 쓰는게 합당하다고 봐. 어짜피 우리가 안 했으면 다른 사람들도 다 각각요청보냈을건데 대신해주는거자나"</li>
+<li>"아니 다 가능하도록 개발했으면 해 조회 서버를 두는 것도 방법이고 각각의 조회 서버 내에서 업체 프록시 여러개 쓸 수 있고 우리 본 서버에서 조회기능도 있되 업체 프록시 여러개 쓸 수 있는 걸로다가"</li>
+<li>"각 프록시 ip마다 따로 세는 걸로 해줘"</li>
+<li>"ㄴㄴ 특정 프록시/조회서버ip만 하지 말아"</li>
+<li>"ㄴㄴㄴㄴ 그냥 일반 사용자들 대신하는거니 일반 사용자들처럼"</li>
+<li>업체 프록시는 고정 IP 상품만: 제안 → 승인</li>
+</ul>
+<h3 class="t">고르지 않은 것</h3>
+<table>
+<tr><th>안</th><th>고르지 않은 이유</th></tr>
+<tr><td>우리 조회 서버 여러 대만</td><td>"아니 다 가능하도록 개발했으면 해 …"</td></tr>
+<tr><td>서비스 서버 하나 + 업체 프록시만</td><td>같은 말씀으로 세 길 모두를 고르심</td></tr>
+<tr><td>합계는 유지하고 IP만 나눔</td><td>"각 프록시 ip마다 따로 세는 걸로 해줘"</td></tr>
+<tr><td>한 IP가 막히면 모든 IP에서 멈추고 물음</td><td>"ㄴㄴ 특정 프록시/조회서버ip만 하지 말아"</td></tr>
+<tr><td>우리 이름을 남기고 필요한 곳에만 브라우저 표시</td><td>"ㄴㄴㄴㄴ 그냥 일반 사용자들 대신하는거니 일반 사용자들처럼"</td></tr>
+<tr><td>업체 주거용·IP 바꿔 가는 프록시도 길로</td><td>고정 IP 상품만 넣는 제안을 승인하심</td></tr>
+</table>
+<h3 class="t">감수하는 것</h3>
+<ul>
+<li>사이트가 IP를 막아도 다른 IP와 브라우저 User-Agent로 계속 들어가는 모양이 됩니다. 대법원 2021도1533은 접근 제한을 보호조치·약관 등으로 판단했고, 막힌 뒤 다른 IP로 들어간 경우를 다룬 한국 판례는 찾지 못했습니다. 이 조합을 backlog의 전문가 확인 항목에 더했습니다.</li>
+<li>도서관 한 곳이 받는 양이 IP 수만큼 늘어납니다. 사이클 15가 기대는 "봇이 몰려도 도서관 사이트 하나는 1초에 한 번"이 "IP 수만큼"으로 바뀝니다. 사이클 15 세션에 줄 글에 덧붙여야 합니다.</li>
+<li>업체 프록시 월 비용과 약관(자동 요청 허용 여부)은 확인하지 못했습니다.</li>
+</ul>
+<h3 class="t">바뀌는 이전 결정</h3>
+<ul>
+<li>ADR-0011(2026-09-28): 호출 간격을 본 서비스 한 곳에서 세는 것, 도서관이 거부할 때 다른 조회 서버로 넘기지 않는 것을 서비스 대출 조회에서 바꿉니다. 조회 서버를 두는 것 자체는 길 ③으로 남습니다.</li>
+<li>사이클 01 "서비스를 알 수 있는 User-Agent" [확정]: 서비스 대출 조회에 한해 바꿉니다.</li>
+<li>ADR-0094(제안됨): 결정 둘째 줄의 "서비스 조회는 조회 서버마다 동시 3건, 평소 한 대만"을 "나가는 IP마다 동시 3건(ADR-0095)"으로, 첫째 줄의 "그 IP도 막히면 멈추고 묻는다"를 "수집은 그대로, 서비스 조회는 ADR-0095"로 고칩니다. 교보 수집(동시 1건·1초)과 스스로 줄이기·"확인 불가"는 그대로입니다.</li>
+</ul>
+<h3 class="t">dev에 넘길 것 (배포 사이클)</h3>
+<ul>
+<li>본 서비스와 조회 서버의 업체 프록시 거쳐 보내기와 인증, 프록시·길 설정 목록</li>
+<li>호출 간격을 나가는 IP마다 세기, 막힌 IP만 그 사이트에서 멈추기</li>
+<li>나간 길·업체 기록, User-Agent 값 바꾸기</li>
+</ul>
+<div class="item">
+<h3><span class="no">1</span>이 초안대로 ADR-0095를 저장하고 ADR-0094의 서비스 조회 부분을 고침 (둘 다 처음 상태는 제안됨) [안]</h3>
+<p>승인하시면 두 파일을 저장하고 ADR 목록을 고칩니다. 고칠 곳이 있으면 기타에 적어 주세요.</p>
+</div>
+</section>
+
+<p class="foot">원문: 초안 파일(저장 전), <code>docs/research/deploy/hosting-options.md</code> 결정 줄(2026-10-13), 결정 페이지 <code>2026-10-13-lookup-proxy-decisions.html</code>, <code>2026-10-13-lookup-ua-decisions.html</code>, ADR-0011, ADR-0094.</p>
+</main>
+</body>
+</html>

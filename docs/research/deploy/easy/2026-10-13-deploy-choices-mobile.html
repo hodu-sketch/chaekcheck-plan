@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>배포 전에 고를 것 10가지</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:18px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:640px;margin:0 auto;padding:24px 14px 80px}
+h1,h2,h3{text-wrap:balance;line-height:1.4}
+p,li{text-wrap:pretty}
+.lead{font-size:25px;font-weight:700;margin:0 0 10px}
+.sub{color:var(--muted);font-size:16px;margin:0 0 22px}
+.toc{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:0 0 24px}
+.toc ol{margin:6px 0 0;padding-left:24px}
+.toc li{margin:4px 0;font-size:16px}
+.toc a{color:var(--accent);text-decoration:none}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 16px;margin:0 0 22px}
+.card h2{font-size:21px;margin:0 0 12px;display:flex;gap:10px;align-items:flex-start}
+.num{flex:none;display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;font-size:16px;margin-top:2px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:12px 14px;margin:0 0 16px;font-weight:500}
+h3.t{font-size:18px;margin:22px 0 8px;color:var(--accent)}
+.q{border:2px solid var(--accent);border-radius:12px;padding:12px 14px;margin:18px 0 6px}
+.q .qn{display:inline-block;background:var(--accent);color:#fff;border-radius:6px;padding:0 8px;font-size:14px;font-weight:700;margin-right:6px}
+.q b.qt{font-size:18px}
+.opt{border-left:5px solid var(--line);background:var(--code-bg);border-radius:8px;padding:10px 12px;margin:10px 0}
+.opt.rec{border-left-color:var(--ok);background:var(--ok-bg)}
+.opt.alt{border-left-color:var(--warn);background:var(--warn-bg)}
+.opt.bad{border-left-color:var(--no);background:var(--no-bg)}
+.opt h4{margin:0 0 4px;font-size:17px}
+.opt p{margin:4px 0;font-size:16px}
+.tag{display:inline-block;font-size:13px;font-weight:700;border-radius:6px;padding:0 6px;margin-right:4px;vertical-align:2px}
+.tag.r{background:var(--ok);color:#fff}
+.fig{margin:12px 0 4px}
+.fig svg{width:100%;height:auto;display:block}
+.cap{color:var(--muted);font-size:15px;margin:4px 0 14px}
+.row{display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid var(--line);padding:8px 0;font-size:16px}
+.row:last-child{border-bottom:none}
+.row .k{font-weight:500}
+.row .v{color:var(--muted);text-align:right}
+.list{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:4px 12px;margin:8px 0 12px}
+.icon{display:flex;gap:10px;align-items:flex-start;margin:10px 0}
+.icon svg{flex:none;width:28px;height:28px;margin-top:2px}
+.icon div{font-size:16px}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.82em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.src{color:var(--muted);font-size:13px;margin:10px 0 0;word-break:break-all}
+.note{border:1px dashed var(--warn);background:var(--warn-bg);border-radius:8px;padding:10px 12px;font-size:16px;margin:10px 0}
+.foot{color:var(--muted);font-size:14px;margin-top:30px}
+ul{padding-left:20px;margin:6px 0}
+li{margin:4px 0}
+</style>
+</head>
+<body>
+<main>
+<p class="lead">배포 전에 고를 것 10가지</p>
+<p class="sub">2주 동안 클라우드 서버를 써 보고, 그 뒤 본가 노트북을 서버로 쓰는 계획에 맞춰 정리했습니다. 질문 번호는 이 페이지와 대화창에서 같습니다. 금액과 한도는 각 업체 공식 페이지에서 2026-10-12에 확인했습니다.</p>
+
+<nav class="toc">
+<b>질문 목록</b>
+<ol>
+<li><a href="#c1">2주 동안 쓸 서버 업체</a></li>
+<li><a href="#c2">노트북으로 옮길 때 연결 방법</a></li>
+<li><a href="#c3">화면을 GitHub 연동 무료 호스팅으로 옮길지</a></li>
+<li><a href="#c4">사용자 IP를 nginx가 제대로 보게 할지</a></li>
+<li><a href="#c4">모니터링을 어떻게 할지</a></li>
+<li><a href="#c5">대출 조회의 1초 간격을 그대로 둘지</a></li>
+<li><a href="#c6">교보 서버에 서비스 조회를 다시 보낼지</a></li>
+<li><a href="#c7">교보 서버 수집을 다시 할지</a></li>
+<li><a href="#c7">새 수집 원칙 문장</a></li>
+<li><a href="#c7">수집을 빠르게 하는 방법</a></li>
+</ol>
+</nav>
+
+<!-- 1 -->
+<section class="card" id="c1">
+<h2><span class="num">1</span>2주 동안 쓸 서버 업체</h2>
+<p class="gist">추천은 AWS 서울 EC2 t4g.medium입니다. 2주에 약 $17.3이 듭니다. 돈을 쓰지 않으려면 KT Cloud 신규 쿠폰이 있습니다.</p>
+
+<h3 class="t">어떤 서버가 필요한가</h3>
+<p>이미 정한 크기입니다(2026-10-12 승인). 서버 한 대에 nginx, 우리 서비스, 조회 서버, 데이터베이스를 함께 올립니다.</p>
+<div class="list">
+<div class="row"><span class="k">CPU</span><span class="v">2개</span></div>
+<div class="row"><span class="k">메모리</span><span class="v">4GiB</span></div>
+<div class="row"><span class="k">디스크</span><span class="v">40GB</span></div>
+<div class="row"><span class="k">고정 IP</span><span class="v">1개</span></div>
+<div class="row"><span class="k">위치</span><span class="v">한국</span></div>
+</div>
+<p><b>왜 한국이어야 하나:</b> 우리 서비스는 사용자가 검색할 때마다 도서관 사이트에 그 자리에서 묻습니다. 미국 데이터센터 IP로 시험했을 때 6곳 중 4곳이 대답하지 않았습니다(2026-10-12 시험).</p>
+
+<div class="fig">
+<svg viewBox="0 0 360 150" role="img" aria-label="미국 IP에서는 6곳 중 4곳이 대답하지 않음">
+<text x="10" y="20" font-size="14" fill="var(--text)" font-weight="700">미국 데이터센터 IP로 6곳에 1번씩</text>
+<g font-size="13" fill="var(--text)">
+<rect x="10" y="34" width="105" height="30" rx="6" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="62" y="54" text-anchor="middle">강남구 응답</text>
+<rect x="125" y="34" width="105" height="30" rx="6" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="177" y="54" text-anchor="middle">부산 응답</text>
+<rect x="240" y="34" width="110" height="30" rx="6" fill="var(--no-bg)" stroke="var(--no)"/><text x="295" y="54" text-anchor="middle">강서구 없음</text>
+<rect x="10" y="74" width="105" height="30" rx="6" fill="var(--no-bg)" stroke="var(--no)"/><text x="62" y="94" text-anchor="middle">고흥군 없음</text>
+<rect x="125" y="74" width="105" height="30" rx="6" fill="var(--no-bg)" stroke="var(--no)"/><text x="177" y="94" text-anchor="middle">KB 북큐브 없음</text>
+<rect x="240" y="74" width="110" height="30" rx="6" fill="var(--no-bg)" stroke="var(--no)"/><text x="295" y="94" text-anchor="middle">서정대 없음</text>
+</g>
+<text x="10" y="132" font-size="13" fill="var(--muted)">같은 곳을 집 PC(한국 IP)에서는 잘 받았습니다</text>
+</svg>
+</div>
+<p class="cap">그래서 한국에 서버가 있는 업체만 비교했습니다. 한국 데이터센터 IP를 사이트가 받아 주는지는 아직 시험하지 않았습니다.</p>
+
+<h3 class="t">2주 요금 비교 (서버 + 고정 IP + 디스크)</h3>
+<div class="fig">
+<svg viewBox="0 0 360 230" role="img" aria-label="해외 업체 2주 요금 막대">
+<text x="10" y="18" font-size="14" font-weight="700" fill="var(--text)">해외 업체 (미국 달러)</text>
+<g font-size="13" fill="var(--text)">
+<text x="10" y="48">Oracle 무료</text><rect x="120" y="36" width="4" height="16" fill="var(--ok)"/><text x="130" y="49">$0</text>
+<text x="10" y="78">Vultr</text><rect x="120" y="66" width="82" height="16" fill="var(--accent)"/><text x="208" y="79">약 $9</text>
+<text x="10" y="108">Lightsail</text><rect x="120" y="96" width="99" height="16" fill="var(--accent)"/><text x="225" y="109">약 $11</text>
+<text x="10" y="138">Google</text><rect x="120" y="126" width="144" height="16" fill="var(--accent)"/><text x="270" y="139">약 $16+α</text>
+<text x="10" y="168">AWS EC2</text><rect x="120" y="156" width="156" height="16" fill="var(--ok)"/><text x="282" y="169">약 $17.3</text>
+<text x="10" y="198">Azure</text><rect x="120" y="186" width="157" height="16" fill="var(--accent)"/><text x="283" y="199">약 $17+α</text>
+</g>
+<text x="10" y="224" font-size="12" fill="var(--muted)">+α = 디스크 별도. 나가는 데이터 요금은 뺌</text>
+</svg>
+</div>
+<div class="fig">
+<svg viewBox="0 0 360 230" role="img" aria-label="국내 업체 2주 요금 막대">
+<text x="10" y="18" font-size="14" font-weight="700" fill="var(--text)">국내 업체 (원)</text>
+<g font-size="13" fill="var(--text)">
+<text x="10" y="48">KT 쿠폰</text><rect x="110" y="36" width="4" height="16" fill="var(--ok)"/><text x="120" y="49">0원 (쿠폰)</text>
+<text x="10" y="78">iwinv</text><rect x="110" y="66" width="59" height="16" fill="var(--accent)"/><text x="175" y="79">약 12,460원</text>
+<text x="10" y="108">카카오</text><rect x="110" y="96" width="71" height="16" fill="var(--accent)"/><text x="187" y="109">약 14,900원</text>
+<text x="10" y="138">가비아</text><rect x="110" y="126" width="144" height="16" fill="var(--accent)"/><text x="260" y="139">약 30,400원</text>
+<text x="10" y="168">네이버</text><rect x="110" y="156" width="166" height="16" fill="var(--accent)"/><text x="282" y="169">약 34,900원</text>
+<text x="10" y="198">NHN · KT</text><rect x="110" y="186" width="170" height="16" fill="var(--accent)"/><text x="286" y="199">약 3.5만원</text>
+</g>
+<text x="10" y="224" font-size="12" fill="var(--muted)">카카오는 2023년 공지 값, 지금 값은 확인 못 함</text>
+</svg>
+</div>
+<p class="cap">2주 비용은 어디든 몇만 원 안쪽입니다. 그래서 고르는 기준은 값보다 "이미 정한 준비를 그대로 쓸 수 있는가"입니다.</p>
+
+<h3 class="t">무료로 2주를 버티는 방법</h3>
+<div class="list">
+<div class="row"><span class="k">KT Cloud 신규 쿠폰</span><span class="v">50만원, 3개월, 2vCore 4GB까지</span></div>
+<div class="row"><span class="k">Oracle 무료 서버</span><span class="v">기간 제한 없음, Arm, 서울</span></div>
+<div class="row"><span class="k">네이버 클라우드</span><span class="v">신규 10만원, 3개월</span></div>
+<div class="row"><span class="k">카카오클라우드</span><span class="v">신규 30만원, 기간 확인 못 함</span></div>
+<div class="row"><span class="k">Google / Azure</span><span class="v">$300 90일 / $200 30일</span></div>
+</div>
+
+<div class="q"><span class="qn">질문 1</span><b class="qt">2주 체험 서버를 어디로 할까요?</b>
+<div class="opt rec"><h4><span class="tag r">추천</span>AWS 서울 EC2 t4g.medium</h4><p>이미 정한 크기와 Arm 이미지 시험 계획을 그대로 씁니다. 2주 약 $17.3 = 서버 $14.0 + 디스크 $1.7 + 고정 IP $1.7.</p><p>새 계정이면 크레딧 $100~200이 있지만, 지금 계정은 되찾는 중이라 해당하는지 확인하지 못했습니다.</p></div>
+<div class="opt alt"><h4>KT Cloud 신규 쿠폰</h4><p>같은 크기를 돈 없이 3개월 씁니다. 가입한 지 1개월 안에 쿠폰을 받아야 합니다. 기본 IP 포함 여부와 부가세는 확인하지 못했습니다.</p></div>
+<div class="opt alt"><h4>Oracle 무료 서버</h4><p>메모리 12GB까지 무료이고 기간 제한이 없습니다. Arm 이미지가 꼭 필요하고, 서울에 자리가 없으면 만들 수 없습니다. 7일 동안 거의 쓰지 않으면 회수될 수 있습니다.</p></div>
+<div class="opt alt"><h4>iwinv</h4><p>2주 약 12,460원으로 가장 쌉니다. 하루 단위로 냅니다. AWS를 써 보는 경험은 얻지 못합니다.</p></div>
+</div>
+<p class="src">출처: aws.amazon.com/ec2/pricing, cloud.kt.com/free, oracle.com/cloud/free, iwinv.kr/server/server 외 (원문 <code>hosting-options.md</code> 2절)</p>
+</section>
+
+<!-- 2 -->
+<section class="card" id="c2">
+<h2><span class="num">2</span>노트북으로 옮길 때 연결 방법</h2>
+<p class="gist">클라우드 서버도 Cloudflare Tunnel로 연결하면, 2주 뒤 노트북으로 옮길 때 도메인과 카카오 설정을 그대로 둡니다. 바뀌는 것은 터널을 켜는 기계 하나뿐입니다.</p>
+<p><b>Cloudflare Tunnel</b>은 서버에서 <code>cloudflared</code> 프로그램을 켜 두면, 그 프로그램이 Cloudflare 쪽으로 먼저 연결을 맺는 방식입니다. 사용자가 내 도메인으로 들어오면 Cloudflare가 그 연결을 통해 서버로 넘깁니다. 서버는 바깥에서 들어오는 포트를 열지 않아도 됩니다. 집 PC에서 이미 써 본 방식입니다.</p>
+<div class="fig">
+<svg viewBox="0 0 360 300" role="img" aria-label="2주 뒤 터널을 켜는 기계만 바뀜">
+<text x="10" y="18" font-size="14" font-weight="700" fill="var(--text)">처음 2주</text>
+<rect x="10" y="30" width="80" height="46" rx="8" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="50" y="58" text-anchor="middle" font-size="13" fill="var(--text)">사용자</text>
+<rect x="130" y="30" width="96" height="46" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="178" y="52" text-anchor="middle" font-size="13" fill="var(--text)">Cloudflare</text><text x="178" y="68" text-anchor="middle" font-size="11" fill="var(--muted)">내 도메인</text>
+<rect x="262" y="30" width="88" height="46" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="306" y="52" text-anchor="middle" font-size="13" fill="var(--text)">클라우드</text><text x="306" y="68" text-anchor="middle" font-size="11" fill="var(--muted)">cloudflared</text>
+<line x1="90" y1="53" x2="130" y2="53" stroke="var(--text)" stroke-width="2"/>
+<line x1="226" y1="53" x2="262" y2="53" stroke="var(--warn)" stroke-width="2"/>
+<text x="10" y="128" font-size="14" font-weight="700" fill="var(--text)">옮길 때 하는 일</text>
+<g font-size="13" fill="var(--text)">
+<text x="10" y="152">① 클라우드에서 데이터베이스를 덤프 파일로 뽑음</text>
+<text x="10" y="174">② 노트북에 복원하고 같은 프로그램들을 띄움</text>
+<text x="10" y="196">③ 노트북에서 같은 터널을 켜고 클라우드는 끔</text>
+</g>
+<text x="10" y="230" font-size="14" font-weight="700" fill="var(--text)">그 뒤</text>
+<rect x="10" y="242" width="80" height="46" rx="8" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="50" y="270" text-anchor="middle" font-size="13" fill="var(--text)">사용자</text>
+<rect x="130" y="242" width="96" height="46" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="178" y="264" text-anchor="middle" font-size="13" fill="var(--text)">Cloudflare</text><text x="178" y="280" text-anchor="middle" font-size="11" fill="var(--muted)">그대로</text>
+<rect x="262" y="242" width="88" height="46" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="306" y="264" text-anchor="middle" font-size="13" fill="var(--text)">노트북</text><text x="306" y="280" text-anchor="middle" font-size="11" fill="var(--muted)">cloudflared</text>
+<line x1="90" y1="265" x2="130" y2="265" stroke="var(--text)" stroke-width="2"/>
+<line x1="226" y1="265" x2="262" y2="265" stroke="var(--ok)" stroke-width="2"/>
+</svg>
+</div>
+<p class="cap">사용자와 Cloudflare 쪽은 그대로이고, 오른쪽 기계만 바뀝니다. 카카오에 등록한 돌아올 주소도 도메인 기준이라 바꿀 필요가 없습니다.</p>
+
+<div class="q"><span class="qn">질문 2</span><b class="qt">클라우드 서버도 Cloudflare Tunnel로 연결할까요?</b>
+<div class="opt rec"><h4><span class="tag r">추천</span>터널로 연결</h4><p>옮길 때 DNS, 인증서, 카카오 설정을 건드리지 않습니다. 서버에 80·443 포트를 열지 않아도 됩니다.</p></div>
+<div class="opt alt"><h4>도메인을 서버 IP에 바로 연결</h4><p>서버에서 80·443 포트를 열고 인증서를 따로 설정해야 합니다. 노트북으로 옮길 때 DNS를 다시 바꿔야 하고, 집 인터넷은 IP가 바뀔 수 있습니다.</p></div>
+</div>
+<div class="note">노트북의 CPU 종류(Intel·AMD인지 Arm인지), 메모리, 디스크 크기를 알려 주시면 옮기는 순서에 반영합니다.</div>
+</section>
+
+<!-- 3 -->
+<section class="card" id="c3">
+<h2><span class="num">3</span>화면을 GitHub 연동 무료 호스팅으로 옮길지</h2>
+<p class="gist">지금 구성에서는 얻는 것이 거의 없습니다. Cloudflare가 앞에 있으면 화면 파일은 이미 Cloudflare가 캐시해서 빠르게 내려 줍니다.</p>
+
+<h3 class="t">화면과 API가 같은 주소여야 하는 이유</h3>
+<p>2026-10-04에 정한 규칙입니다. 브라우저는 로그인 쿠키를 그 쿠키를 준 주소로만 보냅니다. 카카오 로그인이 끝나면 카카오가 브라우저를 <code>/api/v1/auth/login/oauth2/code/kakao</code>로 돌려보내는데, 이 주소에서 우리 서버가 받아야 로그인이 끝납니다.</p>
+<div class="fig">
+<svg viewBox="0 0 360 210" role="img" aria-label="같은 주소 아래에서 화면과 API가 나뉨">
+<rect x="10" y="10" width="340" height="40" rx="8" fill="var(--accent-bg)" stroke="var(--accent)"/>
+<text x="180" y="35" text-anchor="middle" font-size="14" fill="var(--text)">브라우저 → https://내도메인</text>
+<line x1="95" y1="50" x2="95" y2="90" stroke="var(--text)" stroke-width="2"/>
+<line x1="265" y1="50" x2="265" y2="90" stroke="var(--text)" stroke-width="2"/>
+<text x="20" y="76" font-size="12" fill="var(--muted)">/, /search …</text>
+<text x="275" y="76" font-size="12" fill="var(--muted)">/api/…</text>
+<rect x="10" y="90" width="170" height="56" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="95" y="114" text-anchor="middle" font-size="13" fill="var(--text)">화면 파일</text>
+<text x="95" y="134" text-anchor="middle" font-size="12" fill="var(--muted)">nginx가 내려 줌</text>
+<rect x="190" y="90" width="160" height="56" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="270" y="114" text-anchor="middle" font-size="13" fill="var(--text)">우리 서비스</text>
+<text x="270" y="134" text-anchor="middle" font-size="12" fill="var(--muted)">로그인·검색·대출</text>
+<text x="10" y="176" font-size="13" fill="var(--text)">주소가 같으니 로그인 쿠키가 /api 요청에 붙고,</text>
+<text x="10" y="196" font-size="13" fill="var(--text)">카카오도 같은 주소의 /api로 돌아옵니다.</text>
+</svg>
+</div>
+<p class="cap">화면만 다른 곳에 올리면, 그곳이 /api 요청을 우리 서버로 넘겨 주는 설정을 따로 만들어야 같은 주소가 유지됩니다.</p>
+
+<h3 class="t">서비스별로 걸리는 점</h3>
+<div class="icon"><svg viewBox="0 0 28 28" fill="none" stroke="var(--accent)" stroke-width="2"><rect x="4" y="6" width="20" height="16" rx="3"/><path d="M4 11h20"/></svg><div><b>Cloudflare Pages / Workers</b><br>/api를 넘기는 함수를 만들어야 하고, 그 요청은 하루 10만 건 무료 한도에서 빠집니다. 설정을 잘못하면 카카오가 돌려보낸 주소에 우리 서버 대신 화면 파일이 나가 로그인이 안 끝납니다.</div></div>
+<div class="icon"><svg viewBox="0 0 28 28" fill="none" stroke="var(--accent)" stroke-width="2"><rect x="4" y="6" width="20" height="16" rx="3"/><path d="M4 11h20"/></svg><div><b>Vercel 무료(Hobby)</b><br>비상업 개인용만 됩니다. 광고, 결제, 판매가 붙으면 약관 위반입니다.</div></div>
+<div class="icon"><svg viewBox="0 0 28 28" fill="none" stroke="var(--accent)" stroke-width="2"><rect x="4" y="6" width="20" height="16" rx="3"/><path d="M4 11h20"/></svg><div><b>Netlify 무료</b><br>우리 서버로 넘긴 요청은 26초 뒤 끊깁니다. 무료 한도를 다 쓰면 사이트 전체가 멈춥니다.</div></div>
+<div class="icon"><svg viewBox="0 0 28 28" fill="none" stroke="var(--accent)" stroke-width="2"><rect x="4" y="6" width="20" height="16" rx="3"/><path d="M4 11h20"/></svg><div><b>GitHub Pages</b><br>/api를 넘기는 기능이 없습니다. 온라인 사업용 무료 호스팅으로 쓰지 말라는 정책이 있습니다.</div></div>
+
+<h3 class="t">Cloudflare가 앞에 있으면 이미 캐시됨</h3>
+<p>Cloudflare는 파일 확장자를 보고 JS, CSS, 글꼴, 그림을 기본으로 캐시합니다. 지금 nginx는 빌드한 화면 파일에 "1년 동안 바뀌지 않음" 표시를 붙여 보내고, 무료 요금제의 Cloudflare는 이 표시를 따릅니다. 그래서 첫 방문자 이후로는 화면 파일이 Cloudflare에서 바로 나갑니다.</p>
+
+<div class="q"><span class="qn">질문 3</span><b class="qt">화면을 어디서 내려 줄까요?</b>
+<div class="opt rec"><h4><span class="tag r">추천</span>지금처럼 서버의 nginx + 앞의 Cloudflare 캐시</h4><p>바꿀 코드나 설정이 없습니다. 화면을 나누는 것은 나중에 S3·CloudFront로 갈 때 함께 생각합니다(2026-10-04 결정과 같음).</p></div>
+<div class="opt alt"><h4>Cloudflare Workers로 화면만 분리</h4><p>PR마다 미리보기 주소가 생기고, 서버가 꺼져도 화면은 뜹니다(검색은 안 됨). /api를 넘기는 함수와 보안 헤더를 새로 만들고 다시 시험해야 합니다.</p></div>
+</div>
+<p class="src">출처: developers.cloudflare.com/cache/concepts/default-cache-behavior, vercel.com/docs/plans/hobby, docs.netlify.com(rewrites-proxies), docs.github.com(GitHub Pages 약관) (원문 3절)</p>
+</section>
+
+<!-- 4 -->
+<section class="card" id="c4">
+<h2><span class="num">4</span>과한 요청 막기와 모니터링</h2>
+<p class="gist">사람마다 요청 한도를 거는 설정은 이미 있습니다. 하지만 터널 뒤에서는 모든 사용자가 같은 주소로 보여서, 한도 하나를 다 같이 쓰게 됩니다. 배포할 때 이것을 고쳐야 합니다.</p>
+
+<h3 class="t">지금 있는 막기 장치</h3>
+<div class="list">
+<div class="row"><span class="k">IP별 요청 한도 (nginx)</span><span class="v">평균 2초에 1번, 몰아서 20번, 동시 6개</span></div>
+<div class="row"><span class="k">넘으면</span><span class="v">"잠시 뒤 다시"(429) 응답</span></div>
+<div class="row"><span class="k">서버 전체 동시 검색</span><span class="v">20개까지, 넘으면 "바쁨"(503)</span></div>
+<div class="row"><span class="k">한도가 없는 곳</span><span class="v">책 목록, 도서관 목록, 로그인</span></div>
+</div>
+<p>IP별 한도는 서버가 도서관 사이트를 대신 불러야 하는 요청에만 걸려 있습니다. 검색 결과의 대출 현황, 도서관별 "더 보기"가 해당합니다. dev가 2026-10-05에 연달아 24번 보내 22번째부터 막히는 것을 확인했습니다.</p>
+
+<h3 class="t">터널 뒤에서 생기는 문제</h3>
+<div class="fig">
+<svg viewBox="0 0 360 220" role="img" aria-label="터널 뒤에서는 nginx가 모든 사용자를 한 주소로 봄">
+<g font-size="12" fill="var(--text)">
+<rect x="10" y="10" width="70" height="28" rx="6" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="45" y="29" text-anchor="middle">사용자 A</text>
+<rect x="10" y="48" width="70" height="28" rx="6" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="45" y="67" text-anchor="middle">사용자 B</text>
+<rect x="10" y="86" width="70" height="28" rx="6" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="45" y="105" text-anchor="middle">사용자 C</text>
+</g>
+<rect x="110" y="40" width="90" height="46" rx="8" fill="var(--card)" stroke="var(--line)"/><text x="155" y="60" text-anchor="middle" font-size="12" fill="var(--text)">Cloudflare</text><text x="155" y="76" text-anchor="middle" font-size="11" fill="var(--muted)">진짜 IP를 앎</text>
+<line x1="80" y1="24" x2="110" y2="55" stroke="var(--muted)"/><line x1="80" y1="62" x2="110" y2="63" stroke="var(--muted)"/><line x1="80" y1="100" x2="110" y2="72" stroke="var(--muted)"/>
+<rect x="230" y="40" width="120" height="46" rx="8" fill="var(--no-bg)" stroke="var(--no)"/><text x="290" y="60" text-anchor="middle" font-size="12" fill="var(--text)">nginx</text><text x="290" y="76" text-anchor="middle" font-size="11" fill="var(--no)">모두 cloudflared로 보임</text>
+<line x1="200" y1="63" x2="230" y2="63" stroke="var(--text)" stroke-width="2"/>
+<text x="10" y="150" font-size="13" fill="var(--text)">고치지 않으면: A, B, C가 한도 하나를 같이 써서</text>
+<text x="10" y="170" font-size="13" fill="var(--text)">셋이 몇 번 검색하면 모두 429를 받습니다.</text>
+<text x="10" y="200" font-size="13" fill="var(--ok)">고치면: nginx가 Cloudflare가 알려 준 IP로 셉니다.</text>
+</svg>
+</div>
+<p class="cap">Cloudflare는 요청마다 <code>CF-Connecting-IP</code>라는 헤더에 진짜 사용자 IP를 적어 보냅니다. 터널을 거칠 때도 이 헤더가 붙는지는 공식 문서에서 확인하지 못해, 배포할 때 시험합니다.</p>
+
+<div class="q"><span class="qn">질문 4</span><b class="qt">배포할 때 nginx가 진짜 사용자 IP를 읽게 설정할까요?</b>
+<div class="opt rec"><h4><span class="tag r">추천</span>nginx에서 CF-Connecting-IP를 사용자 주소로 씀</h4><p>지금 있는 IP별 한도가 사람마다 따로 걸립니다. Cloudflare 무료 규칙을 하나 더할지는 운영해 보고 정합니다.</p></div>
+<div class="opt alt"><h4>Cloudflare 무료 한도 규칙 하나에만 맡김</h4><p>설정은 쉽습니다. 무료 규칙은 1개, IP 기준, 10초 단위뿐이라 동시 연결 수는 막지 못합니다.</p></div>
+</div>
+
+<h3 class="t">모니터링: 서버 상태를 숫자로 보기</h3>
+<p>모니터링은 CPU, 메모리, 응답 시간, 오류 수 같은 서버 상태를 시간 순서로 모아 그래프로 보는 것입니다. 사이클 15의 이용 기록(무엇을 검색했나)과는 다른 것입니다. 지금 우리 서비스에는 상태 숫자를 내보내는 기능이 없습니다. Spring에 의존성 하나와 설정을 더하면 <code>/actuator/prometheus</code> 주소에서 숫자가 나옵니다. 이 주소는 바깥에 보이면 안 됩니다.</p>
+<div class="fig">
+<svg viewBox="0 0 360 250" role="img" aria-label="두 가지 모니터링 구성">
+<text x="10" y="18" font-size="14" font-weight="700" fill="var(--text)">가: 서버에 모두 띄움 (노트북에 맞음)</text>
+<g font-size="11" fill="var(--text)">
+<rect x="10" y="30" width="100" height="44" rx="6" fill="var(--card)" stroke="var(--line)"/><text x="60" y="49" text-anchor="middle">node_exporter</text><text x="60" y="65" text-anchor="middle" fill="var(--muted)">CPU·메모리·디스크</text>
+<rect x="10" y="80" width="100" height="44" rx="6" fill="var(--card)" stroke="var(--line)"/><text x="60" y="99" text-anchor="middle">우리 서비스</text><text x="60" y="115" text-anchor="middle" fill="var(--muted)">응답 시간·오류</text>
+<rect x="140" y="54" width="90" height="44" rx="6" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="185" y="80" text-anchor="middle">Prometheus</text>
+<rect x="260" y="54" width="90" height="44" rx="6" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="305" y="80" text-anchor="middle">Grafana 화면</text>
+</g>
+<line x1="110" y1="52" x2="140" y2="70" stroke="var(--muted)"/><line x1="110" y1="102" x2="140" y2="84" stroke="var(--muted)"/><line x1="230" y1="76" x2="260" y2="76" stroke="var(--muted)"/>
+<text x="10" y="150" font-size="14" font-weight="700" fill="var(--text)">나: Grafana Cloud 무료 (2주에 맞음)</text>
+<g font-size="11" fill="var(--text)">
+<rect x="10" y="162" width="140" height="44" rx="6" fill="var(--card)" stroke="var(--line)"/><text x="80" y="181" text-anchor="middle">서버: 보내는 프로그램만</text><text x="80" y="197" text-anchor="middle" fill="var(--muted)">메모리를 덜 씀</text>
+<rect x="200" y="162" width="150" height="44" rx="6" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="275" y="181" text-anchor="middle">Grafana Cloud</text><text x="275" y="197" text-anchor="middle" fill="var(--muted)">보관·그래프</text>
+</g>
+<line x1="150" y1="184" x2="200" y2="184" stroke="var(--muted)" stroke-width="2"/>
+<text x="10" y="236" font-size="12" fill="var(--muted)">무료: 숫자 종류 1만 개, 14일 보관, 사용자 3명</text>
+</svg>
+</div>
+<p class="cap">4GiB 서버에서는 Prometheus와 Grafana가 서비스와 메모리를 나눠 씁니다. 얼마나 쓰는지는 재 보지 않았습니다.</p>
+
+<div class="q"><span class="qn">질문 5</span><b class="qt">모니터링을 어떻게 할까요?</b>
+<div class="opt rec"><h4><span class="tag r">추천</span>2주는 Grafana Cloud 무료, 노트북에서는 직접 띄움</h4><p>2주 동안은 서버 메모리를 아낍니다. 노트북에서는 원하신 Prometheus, Grafana, node_exporter 구성을 씁니다.</p></div>
+<div class="opt alt"><h4>처음부터 클라우드 서버에 직접 띄움</h4><p>노트북과 같은 구성을 미리 익힙니다. 4GiB 안에서 메모리를 나눠 써야 합니다.</p></div>
+<div class="opt alt"><h4>2주 동안은 모니터링 없이</h4><p>준비할 것이 없습니다. 2주 동안 서버가 버티는지는 숫자로 볼 수 없습니다.</p></div>
+</div>
+<p class="src">출처: developers.cloudflare.com/waf/rate-limiting-rules, developers.cloudflare.com/fundamentals/reference/http-headers, docs.spring.io(actuator metrics), grafana.com/pricing (원문 <code>backlog.md</code> 운영·인프라)</p>
+</section>
+
+<!-- 5 -->
+<section class="card" id="c5">
+<h2><span class="num">5</span>대출 조회의 1초 간격</h2>
+<p class="gist">혼자 쓸 때는 거의 영향이 없습니다. 몇 초 안에 여러 사람이 같은 도서관을 찾으면 줄을 서서 늦어집니다. 교보 구독형 서버는 따로 다룹니다(카드 6).</p>
+
+<h3 class="t">지금 규칙</h3>
+<p>우리 서비스는 도서관 사이트 주소마다 한 번에 1건만 보냅니다. 앞 요청의 응답이 끝나면 1초를 쉬고 다음 요청을 보냅니다. 이 줄은 모든 사용자를 합쳐서 하나입니다. 검색 결과는 묶음이 시작되고 8초 안에, 상세 화면은 30초 안에 답이 와야 합니다. 그때까지 차례가 오지 않으면 그 도서관은 화면에 "확인 못 함"으로 나옵니다. 같은 검색은 3분 동안 저장해 둔 답을 그대로 씁니다.</p>
+<div class="fig">
+<svg viewBox="0 0 360 230" role="img" aria-label="같은 도서관에 네 사람이 몰리면 8초 안에 세 사람까지">
+<text x="10" y="18" font-size="13" font-weight="700" fill="var(--text)">응답 1초인 도서관에 4명이 동시에</text>
+<line x1="60" y1="190" x2="350" y2="190" stroke="var(--muted)"/>
+<g font-size="11" fill="var(--muted)">
+<text x="60" y="206" text-anchor="middle">0초</text><text x="132" y="206" text-anchor="middle">2</text><text x="205" y="206" text-anchor="middle">4</text><text x="277" y="206" text-anchor="middle">6</text><text x="345" y="206" text-anchor="end">8초</text>
+</g>
+<line x1="350" y1="30" x2="350" y2="190" stroke="var(--no)" stroke-dasharray="4 3"/>
+<text x="345" y="224" font-size="11" fill="var(--no)" text-anchor="end">마감</text>
+<g font-size="12" fill="var(--text)">
+<text x="10" y="50">사람 1</text><rect x="60" y="38" width="36" height="16" fill="var(--ok)"/>
+<text x="10" y="84">사람 2</text><rect x="96" y="72" width="36" height="16" fill="var(--code-bg)"/><rect x="132" y="72" width="36" height="16" fill="var(--ok)"/>
+<text x="10" y="118">사람 3</text><rect x="168" y="106" width="36" height="16" fill="var(--code-bg)"/><rect x="204" y="106" width="36" height="16" fill="var(--ok)"/>
+<text x="10" y="152">사람 4</text><rect x="240" y="140" width="36" height="16" fill="var(--code-bg)"/><rect x="276" y="140" width="36" height="16" fill="var(--ok)"/>
+</g>
+<text x="10" y="178" font-size="11" fill="var(--muted)">초록 = 도서관 응답 1초, 회색 = 1초 쉼</text>
+</svg>
+</div>
+<p class="cap">한 사람마다 약 2초씩 밀립니다. 5번째 사람부터는 8초 안에 차례가 오지 않아 "확인 못 함"이 됩니다. 계산값이며 실제로 재 보지는 않았습니다.</p>
+<p><b>혼자 쓸 때 괜찮은 이유:</b> 검색 한 번에 도서관마다 1번씩만 보내고, 도서관마다 주소가 달라서 서로 기다리지 않습니다. 한 번에 5곳씩 동시에 보냅니다.</p>
+<p><b>지금도 확인할 수 있는 것:</b> 차례를 못 받아 포기하면 서비스 로그에 <code>throttle timeout</code>이 남습니다. 모니터링에 이 횟수를 넣으면 얼마나 자주 생기는지 보입니다.</p>
+
+<div class="q"><span class="qn">질문 6</span><b class="qt">일반 도서관의 1초 간격은 어떻게 할까요?</b>
+<div class="opt rec"><h4><span class="tag r">추천</span>처음에는 그대로 두고 포기 횟수를 지켜봄</h4><p>숫자가 늘면 그때 저장 시간 늘리기(지금 3분)나 도서관별 간격 조정을 검토합니다.</p></div>
+<div class="opt alt"><h4>배포 전에 간격을 줄이거나 없앰</h4><p>몰릴 때 덜 기다립니다. 도서관 사이트에 가는 요청이 그만큼 촘촘해집니다. 이 간격은 사이클 01에서 정한 예절 규칙입니다.</p></div>
+</div>
+</section>
+
+<!-- 6 -->
+<section class="card" id="c6">
+<h2><span class="num">6</span>교보 구독형 서버에 서비스 조회를 다시 보낼지</h2>
+<p class="gist">교보 구독형 서버는 2026-10-07부터 집 IP를 막고 있습니다. 클라우드나 노트북의 다른 IP에서 조회를 보내려면 원칙을 바꿔야 합니다. 보낸다면 1초 간격 대신 "이 서버 전체에 동시 5건까지"로 묶자는 제안입니다.</p>
+
+<h3 class="t">이 서버를 쓰는 도서관</h3>
+<div class="list">
+<div class="row"><span class="k">교보 소장형</span><span class="v">1,182곳, 서비스에 있음</span></div>
+<div class="row"><span class="k">공공도서관 구독</span><span class="v">21곳, 서비스에 있음</span></div>
+<div class="row"><span class="k">교보 대여·혼합</span><span class="v">230곳, 넣지 않기로 함</span></div>
+</div>
+<p>세 종류의 차이는 사이트 화면에 권수가 나오는지입니다.</p>
+<div class="fig">
+<svg viewBox="0 0 360 200" role="img" aria-label="소장형은 권수, 구독형은 대출 버튼만">
+<g font-size="12" fill="var(--text)">
+<rect x="10" y="10" width="160" height="80" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="20" y="32" font-weight="700">소장형 화면</text>
+<text x="20" y="56">어떤 책 제목</text>
+<rect x="20" y="64" width="80" height="18" rx="4" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="60" y="77" text-anchor="middle" font-size="11">대출 0/2</text>
+<rect x="190" y="10" width="160" height="80" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="200" y="32" font-weight="700">구독(대여)형 화면</text>
+<text x="200" y="56">어떤 책 제목</text>
+<rect x="200" y="64" width="60" height="18" rx="4" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="230" y="77" text-anchor="middle" font-size="11">대출</text>
+</g>
+<g font-size="12" fill="var(--text)">
+<text x="10" y="118">우리 서비스:</text>
+<text x="10" y="140">· 소장형은 상세 화면을 읽어 숫자를 보여 줌</text>
+<text x="10" y="160">· 구독형은 사이트에 묻지 않고 "구독"으로 표시</text>
+<text x="10" y="180">· 혼합형은 책마다 숫자가 있으면 소장, 없으면 구독</text>
+</g>
+</svg>
+</div>
+<p class="cap">2026-10-07 폰으로 확인하신 화면(한국국제교류재단 "대출 0/2", LG인화원은 버튼만)과 dev 시험(2026-10-05)이 근거입니다.</p>
+
+<h3 class="t">왜 1초 간격으로는 안 되나</h3>
+<p>말씀하신 대로입니다. 이 서버는 평소에도 한 번 답하는 데 4~6초가 걸렸습니다(2026-10-06 기록). 검색 결과는 8초 안에 와야 합니다.</p>
+<div class="fig">
+<svg viewBox="0 0 360 250" role="img" aria-label="응답 5초 서버에서 동시 1건이면 8초 안에 1곳, 동시 5건이면 5곳">
+<line x1="70" y1="215" x2="350" y2="215" stroke="var(--muted)"/>
+<g font-size="11" fill="var(--muted)"><text x="70" y="231" text-anchor="middle">0초</text><text x="175" y="231" text-anchor="middle">3</text><text x="245" y="231" text-anchor="middle">5</text><text x="350" y="231" text-anchor="end">8초</text></g>
+<line x1="350" y1="20" x2="350" y2="215" stroke="var(--no)" stroke-dasharray="4 3"/>
+<text x="10" y="20" font-size="13" font-weight="700" fill="var(--text)">동시 1건 + 1초 간격</text>
+<g font-size="11" fill="var(--text)">
+<text x="10" y="44">도서관 1</text><rect x="70" y="32" width="175" height="16" fill="var(--ok)"/>
+<text x="10" y="68">도서관 2</text><rect x="245" y="56" width="35" height="16" fill="var(--code-bg)"/><rect x="280" y="56" width="70" height="16" fill="var(--no)"/>
+<text x="10" y="92">도서관 3~</text><text x="80" y="92" fill="var(--no)">차례가 안 옴 → 확인 못 함</text>
+</g>
+<text x="10" y="126" font-size="13" font-weight="700" fill="var(--text)">이 서버 전체 동시 5건, 간격 없음</text>
+<g font-size="11" fill="var(--text)">
+<text x="10" y="148">도서관 1~5</text>
+<rect x="70" y="138" width="175" height="10" fill="var(--ok)"/><rect x="70" y="151" width="175" height="10" fill="var(--ok)"/><rect x="70" y="164" width="175" height="10" fill="var(--ok)"/><rect x="70" y="177" width="175" height="10" fill="var(--ok)"/><rect x="70" y="190" width="175" height="10" fill="var(--ok)"/>
+</g>
+</svg>
+</div>
+<p class="cap">응답 5초로 그린 예입니다. 동시 1건이면 8초 안에 1곳만 답이 오고, 동시 5건이면 5곳이 같이 옵니다.</p>
+<p>이 서버를 쓰면서 가입 조건을 조사한 도서관은 22곳입니다(로컬 데이터베이스, 2026-10-12). 소장형 1,206곳은 대부분 학교·기관 구성원용이라, 사용자가 직접 추가하지 않으면 검색 대상에서 빠집니다.</p>
+<p><b>지금 코드의 문제:</b> 서비스는 도서관 주소별로 셉니다. 교보 구독형은 도서관마다 하위 주소가 달라서, 이 서버 하나에 여러 사람 몫이 쌓이면 동시에 최대 100건(검색 하나에 5건 × 동시 검색 20개)까지 갈 수 있습니다. 막혔을 때 우리가 보내던 양은 동시 4건이었습니다.</p>
+
+<div class="q"><span class="qn">질문 7</span><b class="qt">교보 서버에 서비스 조회를 다른 우리 IP에서 다시 보낼까요?</b>
+<div class="opt rec"><h4><span class="tag r">추천</span>보냄. 간격 없이, 모든 사용자 합쳐 이 서버에 동시 5건까지</h4><p>소장형과 공공도서관 구독의 대출 현황이 다시 나옵니다. 5건은 지금 검색 하나가 한꺼번에 보내는 수와 같습니다. 상한을 두는 일은 dev에 넘깁니다.</p></div>
+<div class="opt alt"><h4>보냄. 상한 없이 지금 코드 그대로</h4><p>가장 빠릅니다. 사용자가 몰리면 막혔을 때보다 훨씬 많이 갈 수 있습니다.</p></div>
+<div class="opt alt"><h4>보냄. 상한 2~3건</h4><p>서버 부담이 더 적습니다. "전체 도서관" 검색에서 확인 못 함이 늘어납니다.</p></div>
+<div class="opt bad"><h4>보내지 않음</h4><p>원칙이 그대로 남습니다. 이 서버의 도서관은 대출 현황이 늘 "확인 못 함"입니다.</p></div>
+</div>
+<p>북큐브와 YES24도 공용 서버에 도서관이 여럿 모여 있습니다. 같은 방식을 쓸지는 dev가 서버별로 어떻게 묶이는지 확인한 뒤 정합니다.</p>
+<p class="src">근거: <code>docs/research/ebook-catalog/crawl-runbook.md</code> 8-2-1절, ADR-0067, dev <code>application.yml</code>·<code>InMemoryHostThrottle</code> (원문 <code>hosting-options.md</code> 6절)</p>
+</section>
+
+<!-- 7 -->
+<section class="card" id="c7">
+<h2><span class="num">7</span>수집: 교보 서버, 원칙 문장, 빠르게 하는 방법</h2>
+<p class="gist">수집은 1초 간격을 지켜도 됩니다(사용자 말씀). 프록시를 써도 수집은 빨라지지 않습니다. 빠르게 하려면 받는 양을 줄이는 쪽이 맞습니다.</p>
+
+<h3 class="t">수집기의 간격 규칙</h3>
+<p>수집기는 서버(IP)마다 줄을 하나씩 세웁니다. 한 줄 안에서는 한 번에 1건, 앞 응답이 끝나고 1초 뒤에 다음 요청을 보냅니다. 서로 다른 서버의 줄은 동시에 움직이고, 지금은 40줄을 함께 돌립니다.</p>
+<div class="fig">
+<svg viewBox="0 0 360 170" role="img" aria-label="서버마다 줄이 따로이고 줄끼리는 동시에 움직임">
+<g font-size="11" fill="var(--text)">
+<text x="10" y="30">서버 A 줄</text>
+<rect x="80" y="18" width="40" height="16" fill="var(--ok)"/><rect x="120" y="18" width="20" height="16" fill="var(--code-bg)"/><rect x="140" y="18" width="40" height="16" fill="var(--ok)"/><rect x="180" y="18" width="20" height="16" fill="var(--code-bg)"/><rect x="200" y="18" width="40" height="16" fill="var(--ok)"/>
+<text x="10" y="64">서버 B 줄</text>
+<rect x="80" y="52" width="70" height="16" fill="var(--ok)"/><rect x="150" y="52" width="20" height="16" fill="var(--code-bg)"/><rect x="170" y="52" width="70" height="16" fill="var(--ok)"/><rect x="240" y="52" width="20" height="16" fill="var(--code-bg)"/>
+<text x="10" y="98">서버 C 줄</text>
+<rect x="80" y="86" width="30" height="16" fill="var(--ok)"/><rect x="110" y="86" width="20" height="16" fill="var(--code-bg)"/><rect x="130" y="86" width="30" height="16" fill="var(--ok)"/><rect x="160" y="86" width="20" height="16" fill="var(--code-bg)"/><rect x="180" y="86" width="30" height="16" fill="var(--ok)"/><rect x="210" y="86" width="20" height="16" fill="var(--code-bg)"/><rect x="230" y="86" width="30" height="16" fill="var(--ok)"/>
+<text x="80" y="124" fill="var(--muted)">… 이런 줄이 40개</text>
+</g>
+<text x="10" y="156" font-size="12" fill="var(--muted)">초록 = 응답 받는 시간, 회색 = 1초 쉼</text>
+</svg>
+</div>
+<p class="cap">한 서버에서 받는 속도는 "1 ÷ (응답 시간 + 1초)"로 정해집니다. 프록시는 이 식을 바꾸지 못하고 중간 단계가 하나 늘어 조금 느려집니다.</p>
+
+<h3 class="t">프록시 종류</h3>
+<div class="opt rec"><h4>우리 국내 서버에 직접 올린 프록시</h4><p>우리 서버 한 대의 고정 IP로 내보냅니다. 국내 1GB 서버는 월 5,600원부터입니다. 수집기를 Claude 클라우드(미국)에서 돌릴 때 나가는 IP를 한국으로 맞추는 용도입니다. 원칙에 맞습니다.</p></div>
+<div class="opt alt"><h4>업체에서 빌리는 데이터센터 IP</h4><p>예: Oxylabs 한국 전용 월 $8.25부터. "우리 서버 IP만"이라는 원칙 밖입니다.</p></div>
+<div class="opt bad"><h4>주거용, IP를 바꿔 가는 프록시</h4><p>요청마다 남의 가정용 IP로 바꿉니다. 예: GB당 $2~8. 쓰지 않기로 정했습니다(2026-10-12).</p></div>
+
+<div class="q"><span class="qn">질문 8</span><b class="qt">교보 소장형·공공도서관 구독을 다른 우리 IP에서 다시 받을까요?</b>
+<div class="opt rec"><h4><span class="tag r">추천</span>받음. 이 서버에는 동시 1건, 1초 간격</h4><p>막혔을 때처럼 동시 4건으로 올리지 않습니다. 대여·혼합 230곳은 그대로 받지 않습니다. 지금 수집기는 이 서버로 가는 요청을 일부러 걸러 내므로(사이클 13 인계), 그 부분을 바꾸는 일이 dev에 넘어갑니다.</p></div>
+<div class="opt alt"><h4>서비스 조회만 풀고 수집은 그대로 막음</h4><p>교보 서버에 가는 양이 가장 적습니다. 이 도서관들의 책 목록은 10-07 이전에 받은 것에 머뭅니다.</p></div>
+</div>
+
+<h3 class="t">원칙 문장을 어떻게 바꾸나</h3>
+<div class="list">
+<div class="row"><span class="k">나가는 IP</span><span class="v">우리 국내 서버 고정 IP만 (그대로)</span></div>
+<div class="row"><span class="k">IP를 바꿔 가는·주거용 프록시</span><span class="v">쓰지 않음 (그대로)</span></div>
+<div class="row"><span class="k">막힌 그 IP</span><span class="v">그 서버로 더 보내지 않음</span></div>
+<div class="row"><span class="k">다른 우리 고정 IP</span><span class="v">수집은 동시 1건·1초, 서비스는 서버 전체 동시 상한 안에서</span></div>
+<div class="row"><span class="k">또 막히면</span><span class="v">멈추고 사용자에게 물음, 세 번째 IP는 찾지 않음</span></div>
+</div>
+<div class="note">법적 판단이 아니라 배경 자료입니다. 2022년 대법원 판결(2021도1533, 숙박 앱 크롤링, 무죄)은 접근이 막혔는지를 "보호조치나 이용약관 등"으로 판단했고, 별도 보호조치가 없었다는 점이 무죄 이유 중 하나였습니다. IP 차단은 그 보호조치로 읽힐 수 있습니다. 막힌 뒤 다른 IP로 다시 들어간 경우를 직접 다룬 한국 판례는 찾지 못했습니다. 저작권법 제93조와 부정경쟁방지법의 전문가 확인은 backlog에 남아 있습니다.</div>
+
+<div class="q"><span class="qn">질문 9</span><b class="qt">원칙 문장을 위 표처럼 바꿀까요?</b>
+<div class="opt rec"><h4><span class="tag r">추천</span>새 원칙 문장으로 바꿈</h4><p>다른 사이트가 막혀도 같은 기준을 씁니다. 원칙 문서(<code>crawl-method.md</code> 1절)를 고치고 ADR로 남깁니다.</p></div>
+<div class="opt alt"><h4>교보 서버만 예외로 한 줄 더함</h4><p>지금 원칙 문장은 그대로 둡니다. 다른 사이트가 막히면 그때 다시 정합니다.</p></div>
+</div>
+
+<h3 class="t">수집을 실제로 빠르게 하는 방법</h3>
+<div class="icon"><svg viewBox="0 0 28 28" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M6 14a8 8 0 1 0 3-6"/><path d="M6 4v5h5"/></svg><div><b>바뀐 것만 다시 받기</b><br>매번 전체를 받지 않고 새로 들어온 책만 받습니다. 받는 쪽수가 줄어 효과가 가장 큽니다. "갱신 기능" 계획과 같은 주제입니다.</div></div>
+<div class="icon"><svg viewBox="0 0 28 28" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M4 10h20M4 18h20"/><circle cx="9" cy="10" r="2"/><circle cx="19" cy="18" r="2"/></svg><div><b>연결을 재사용하기</b><br>같은 서버에 보낼 때마다 새로 연결을 맺는 시간을 없앱니다. 지금 수집기는 요청마다 새로 연결하는 것으로 보이며, dev 확인이 필요합니다.</div></div>
+<div class="icon"><svg viewBox="0 0 28 28" fill="none" stroke="var(--accent)" stroke-width="2"><rect x="6" y="4" width="16" height="20" rx="2"/><path d="M10 12h8M10 16h5"/></svg><div><b>압축해서 받기</b><br>사이트가 압축을 지원하면 주고받는 양이 줄어듭니다. 사이트마다 지원하는지 시험이 필요합니다.</div></div>
+
+<div class="q"><span class="qn">질문 10</span><b class="qt">수집 속도는 어떻게 할까요?</b>
+<div class="opt rec"><h4><span class="tag r">추천</span>프록시는 속도용으로 쓰지 않고, 위 세 가지를 수집 개선 후보로 backlog에 적음</h4><p>프록시는 지금 정한 대로 나가는 IP를 한국으로 맞출 때만 씁니다.</p></div>
+<div class="opt alt"><h4>업체 데이터센터 IP를 빌려 씀</h4><p>원칙을 바꾸는 것이라 따로 결정해야 합니다. 속도는 마찬가지로 빨라지지 않습니다.</p></div>
+</div>
+<p class="src">출처: dev <code>scripts/crawl/crawl_catalog.py</code>(간격 규칙), oxylabs.io/pricing, decodo.com/pricing, scourt.go.kr 2021도1533 판결문, RFC 9110·9112 (원문 <code>hosting-options.md</code> 4절)</p>
+</section>
+
+<p class="foot">이 글은 요약이며 근거는 원본에 있습니다: <code>docs/research/deploy/hosting-options.md</code>, <code>docs/research/ebook-catalog/crawl-method.md</code> 1절, <code>crawl-runbook.md</code> 8-2-1절, ADR-0067, <code>docs/backlog.md</code> 운영·인프라. 2026-10-13 정리.</p>
+</main>
+</body>
+</html>

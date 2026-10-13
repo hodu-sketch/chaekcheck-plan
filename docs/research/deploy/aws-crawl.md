@@ -73,7 +73,7 @@ curl -s https://ipinfo.io/json; echo; for u in https://ebook.gangseo.seoul.kr ht
 | `resume.cmd` | `resume.sh`: 같은 인자(동시 서버·서버당·간격), 같은 설정 파일(`queue-by-ip.txt`), 이미 돌면 시작 안 함(`pgrep -f "crawl_catalog.py full"`), 로그 이름 `crawl-YYYY-MM-DD_HHmm.log` |
 | `python -X utf8` | `python3 -X utf8` (Ubuntu 기본 Python 3) + `pip install beautifulsoup4` |
 | 손으로 시작 | systemd 타이머(주 1회 전체 수집) [안]. 정기 실행은 사용자 승인 뒤에만 켬 |
-| `limits-daily.cmd`(교보 구독형 공지 확인) | **AWS에서는 돌리지 않음**: 교보 구독형 서버(`*.dkyobobook.co.kr`)가 우리 IP를 막았으므로 새 IP로 다시 가지 않음 [확정] (프록시 원칙) |
+| `limits-daily.cmd`(교보 구독형 공지 확인) | **AWS에서는 돌리지 않음**: 교보 구독형 서버(`*.dkyobobook.co.kr`)가 우리 IP를 막았으므로 새 IP로 다시 가지 않음 [확정] (프록시 원칙) → (2026-10-13 바뀜) 다른 우리 고정 IP에서는 동시 1건·1초로 소장형·공공도서관 구독을 받음 [확정] (사용자 승인, `crawl-method.md` 1절). 공지 확인 스크립트를 AWS에서 돌릴지는 [확인 필요] |
 | 경로 `\` | `/` (코드는 `pathlib`이라 대부분 그대로일 것 [확인 필요: dev]) |
 
 - 수집기 설정에 "이 서버에서 보내지 않을 호스트" 목록을 두고 `*.dkyobobook.co.kr`를 넣음 [안]
@@ -118,7 +118,7 @@ curl -s https://ipinfo.io/json; echo; for u in https://ebook.gangseo.seoul.kr ht
 | 네이버 클라우드 Micro-g3 | 1 vCPU / 1GB / 10GB | 10,850원 (결제 등록 뒤 1년 서버비 무료) | 약 4,032원/월 별도 | 20GB, 초과 100원/GB | 성능 보장 없음 | 1년간 약 12,000원, 뒤 약 22,900원 |
 | NHN Cloud t2.c1m1 | 1 vCPU / 1GB, 디스크 별도 | 약 17,520원 (시간 24원 × 730) | 약 4,088원/월 별도 | 1GB, 초과 100원/GB. "국제 네트워크 전송량"이 많으면 제한할 수 있음 | | 약 33,800원 |
 | KT Cloud D1 1vCore·1GB | 1 / 1GB / 50GB | 22,500원 | 기본 포함 여부 확인 못 함, 추가 5,000원/월 | 512GB(페이지 안에서 1TB라고도 적힘), 초과 90원/GB | 약정 할인·위약금 | 약 22,500원~ |
-| (AWS) Lightsail 서울 IPv4 묶음 | 2 vCPU / 0.5GB / SSD 20GB | $5 | 붙어 있으면 무료 | 1TB 포함, 초과 $0.126/GB | | $5 |
+| (AWS) Lightsail 서울 IPv4 묶음 | 2 vCPU / 0.5GB / SSD 20GB | $5 | 붙어 있으면 무료 | 1TB 포함, 초과 $0.13/GB (Lightsail FAQ, 2026-10-12 다시 확인. 처음 적은 $0.126은 EC2 값) | | $5 |
 
 - **해외로 나가는 데이터에 주의**: 수집기가 Claude 클라우드(미국 IP)에 있으면 프록시가 받은 HTML을 미국으로 보냄 → 해외 송출. 가비아(해외 50GB 무료 뒤 500원/GB)·NHN(국제 전송 제한 문구)은 맞지 않음. iwinv는 국내·해외 같은 값
 - 약관: 국내 업체 약관에서 프록시·크롤링을 콕 집어 금지한 문구는 찾지 못함. 카페24는 "해외 VPN 서비스" 금지 문구가 있음. 모든 곳에 "과다 트래픽·다른 시스템 방해 시 이용 정지" 일반 조항이 있음 → 예절(IP당 1건·1초)을 지키면 수집 쪽 트래픽은 작을 것으로 봄 [안]

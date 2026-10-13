@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>대출 조회 User-Agent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.card h3.t{font-size:21px;margin:26px 0 8px}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font-size:15px;line-height:1.55;margin:8px 0 6px;word-break:normal}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+pre .cm{color:var(--muted)} pre .hl{background:var(--warn-bg);color:var(--warn);font-weight:700}
+.src{color:var(--muted);font-size:15px;margin:14px 0 0}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+.fig{overflow-x:auto;margin:8px 0 4px}
+.fig svg{width:100%;min-width:640px;height:auto;display:block}
+.mine{border:1px dashed var(--warn);background:var(--warn-bg);border-radius:8px;padding:10px 14px;font-size:18px;margin:10px 0}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0}
+.pc>div{border-radius:10px;padding:12px 16px;font-size:18px}
+.pc .p{background:var(--ok-bg)} .pc .c{background:var(--no-bg)}
+.pc h4{margin:0 0 6px;font-size:18px}
+.pc ul{margin:0;padding-left:20px}
+.pc li{margin:0 0 8px}
+@media (max-width:640px){.pc{grid-template-columns:1fr} body{font-size:18px} .lead{font-size:24px}}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">대출 조회 요청에<br>우리 이름을 붙일지, 일반 브라우저처럼 보낼지</p>
+<p class="sub">사용자 질문(2026-10-13): "그냥 사용자로 하면 안 될가? 그냥 사용자를 대신할 뿐이잖아". 앞 페이지에서 정하신 세 가지(나가는 길 세 개, IP마다 따로 세기, 막힌 IP만 멈추기)는 문서에 적었습니다. 이 페이지는 남은 User-Agent 하나만 다룹니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>User-Agent가 무엇이고 지금 어떻게 돼 있나</h2>
+<p class="gist">User-Agent는 요청마다 붙는 "나는 누구다"라는 이름표입니다. 지금 우리 서비스는 대출 조회 요청에 <code>chaekcheck/0.0.1</code>을 붙여, 도서관 사이트가 우리 서비스라는 것을 알 수 있게 합니다.</p>
+<table>
+<tr><th>보내는 쪽</th><th>지금 이름표</th><th>정한 때</th></tr>
+<tr><td>서비스 대출 조회 (본 서비스, 조회 서버)</td><td><code>chaekcheck/0.0.1</code></td><td>사이클 01: "서비스 이름과 서비스 URL이 들어간 식별 문자열" [확정]</td></tr>
+<tr><td>수집기</td><td><code>Mozilla/5.0 (Windows NT 10.0; Win64; x64) chaekcheck-crawler/0.1 (catalog survey)</code></td><td>앞은 교보 구독형이 PC 화면을 주게 하려고 붙인 브라우저 표시, 뒤는 우리 이름</td></tr>
+</table>
+<p>"그냥 사용자로" 하면, 이름표를 사람이 쓰는 브라우저와 같은 값(예: <code>Mozilla/5.0 … Chrome/…</code>)으로 바꿔 우리 이름을 빼는 것입니다.</p>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>앞에서 정하신 것과 합치면 어떻게 보이나</h2>
+<p class="gist">IP 여러 개, IP마다 따로 세기, 막힌 IP만 빼고 계속하기에 브라우저 이름표까지 더하면, 도서관 사이트는 우리 요청을 "여러 곳에서 오는 보통 사람들"과 구분하기 어려워집니다. 사이트가 우리를 막으려 해도 막을 방법이 거의 없어집니다.</p>
+<div class="fig">
+<svg viewBox="0 0 900 250" role="img" aria-label="도서관 사이트가 보는 모습 비교">
+<text x="20" y="28" font-size="17" font-weight="700" fill="var(--text)">우리 이름 그대로</text>
+<rect x="20" y="40" width="400" height="80" rx="10" fill="var(--ok-bg)" stroke="var(--ok)"/>
+<text x="40" y="70" font-size="14" fill="var(--text)">IP A · chaekcheck</text>
+<text x="40" y="94" font-size="14" fill="var(--text)">IP B · chaekcheck</text>
+<text x="230" y="82" font-size="13" fill="var(--muted)">→ 사이트: "chaekcheck이 여러 IP로 옴"</text>
+<text x="480" y="28" font-size="17" font-weight="700" fill="var(--text)">브라우저 이름표</text>
+<rect x="480" y="40" width="400" height="80" rx="10" fill="var(--warn-bg)" stroke="var(--warn)"/>
+<text x="500" y="70" font-size="14" fill="var(--text)">IP A · Chrome</text>
+<text x="500" y="94" font-size="14" fill="var(--text)">IP B · Chrome</text>
+<text x="660" y="82" font-size="13" fill="var(--muted)">→ 사이트: "사람 여럿"</text>
+<text x="20" y="160" font-size="14" fill="var(--text)">우리 이름이 있으면 사이트는 이름으로 우리를 막거나, 연락해 오거나, 허용 목록에 넣을 수 있습니다.</text>
+<text x="20" y="186" font-size="14" fill="var(--text)">이름이 없으면 사이트가 고를 수 있는 것은 IP를 하나씩 막는 것뿐인데, 막힌 IP만 빼고 계속하기로 했으므로</text>
+<text x="20" y="210" font-size="14" fill="var(--text)">사이트가 우리를 막아도 다른 IP로 계속 들어가게 됩니다.</text>
+</svg>
+</div>
+<p class="cap">같은 요청이라도 이름표에 따라 사이트가 우리를 알아보고 대응할 수 있는지가 달라집니다.</p>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>알고 정하실 것 (법적 판단이 아닌 배경 자료)</h2>
+<p class="gist">말씀대로 서비스는 사람들의 조회를 대신 합니다. 다만 사이트가 우리를 막을 길을 없애는 조합은, 앞서 본 판결의 판단 기준에서 불리하게 읽힐 수 있습니다. 확인한 것과 확인하지 못한 것을 나눠 적습니다.</p>
+<ul>
+<li><b>확인한 것:</b> 대법원 2022. 5. 12. 선고 2021도1533 판결(숙박 앱 크롤링, 무죄)은 접근권한을 정하는 주체를 서비스제공자로 보고, 접근이 제한됐는지를 "보호조치나 이용약관 등 객관적으로 드러난 여러 사정"으로 판단했습니다. 별도 보호조치가 없었다는 점이 무죄 이유 중 하나였습니다. (판결문 https://www.scourt.go.kr/sjudge/1652779958317_183238.pdf)</li>
+<li><b>확인한 것:</b> 정보통신망법 제48조 제1항은 "정당한 접근권한 없이 또는 허용된 접근권한을 넘어" 침입하는 것을 금지합니다. (2차 출처로 봄, law.go.kr 원문 대조는 못 함)</li>
+<li><b>확인하지 못한 것:</b> IP 차단을 다른 IP와 브라우저 이름표로 피해 간 경우를 직접 다룬 한국 판례. "사용자를 대신한다"는 사정을 법원이 어떻게 보는지.</li>
+<li><b>Claude 의견(사실이 아님):</b> 이름표를 숨기는 것은 앞의 세 결정보다 되돌리기 쉬운 결정이지만, 세 결정과 합쳐지면 "사이트가 막아도 계속 들어가는" 모양이 완성됩니다. 그래서 이름표만이라도 우리 이름을 남겨 두는 쪽을 권합니다. 이미 backlog에 있는 저작권법 제93조·부정경쟁방지법 전문가 확인에 이 조합도 함께 묻는 것을 제안합니다.</li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>정할 것</h2>
+<div class="item">
+<h3><span class="no">1</span>대출 조회 요청의 User-Agent는 우리 서비스 이름을 그대로 두고, 필요한 사이트에만 앞에 브라우저 표시를 붙임 (수집기와 같은 방식) [안]</h3>
+<p>예: <code>Mozilla/5.0 (Windows NT 10.0; Win64; x64) chaekcheck/…</code>처럼, 사이트가 PC 화면을 주게 하는 브라우저 표시는 붙이되 뒤에 우리 이름을 남깁니다. 수집기가 교보 구독형 때문에 이미 쓰는 방식입니다. 사이트는 여전히 우리를 알아볼 수 있습니다.</p>
+<p class="alt"><b>말씀하신 대로 일반 브라우저 이름표로:</b> 사이트가 우리를 이름으로 막을 수 없게 됩니다. 앞의 세 결정과 합쳐져 차단을 피해 가는 모양이 되고, 사이클 01부터 정한 "우리를 밝힌다" [확정]을 버리게 됩니다. 위 배경 자료의 위험이 가장 커지는 선택입니다.<br>
+<b>지금 그대로 <code>chaekcheck/0.0.1</code>만:</b> 가장 분명하게 밝힙니다. 일부 사이트가 브라우저 표시가 없으면 다른 화면을 줄 수 있습니다(교보 구독형 사례).</p>
+<p class="rec">추천: 우리 이름을 남기고 필요한 곳에만 브라우저 표시를 앞에 붙임.</p>
+</div>
+</section>
+
+<p class="foot">원문: <code>docs/research/deploy/hosting-options.md</code> 결정 줄(2026-10-13), <code>docs/research/ebook-catalog/crawl-method.md</code> 1절 User-Agent, dev <code>backend/src/main/resources/application.yml</code> user-agent, 앞 페이지 <code>2026-10-13-lookup-proxy-decisions.html</code>.</p>
+</main>
+</body>
+</html>
