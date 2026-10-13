@@ -10,3 +10,4 @@
 | [2026-10-13-design-decisions.html](2026-10-13-design-decisions.html) | 설계 대안: 전체 모양, 기록 넘기기, 표 다섯, IP 칸 비우기, 넣는 방법, 클릭 주소, 이름, IP 읽는 곳 | `../architect-proposal.md` | 결정됨: 7개 모두 승인 (2026-10-13), 확정은 12·13·14 회고 뒤 |
 | [2026-10-13-adr-drafts.html](2026-10-13-adr-drafts.html) | ADR-0096(무엇을·어디에·얼마나), ADR-0097(서버 안 기록 방식) 초안 | `docs/adr/0096`, `0097` | 결정됨: 둘 다 승인, Proposed로 씀 (2026-10-13) |
 | [2026-10-13-check-results.html](2026-10-13-check-results.html) | 설계 전 확인 다섯 가지 결과, 로그인 상태 확인 중일 때 | `../architect-proposal.md` 확인 결과 | 결정됨: 승인 + 로그인 켬/끔 모두 동작 (2026-10-13) |
+| [2026-10-13-logging-start.html](2026-10-13-logging-start.html) | 사이클 17 전달 글, 16·17 정리본 반영, 기록 시작 시점 | `../spec.md`, `../to-cycle-17.md` | 결정됨: 승인 (2026-10-13) |

@@ -1,0 +1,34 @@
+# 사이클 17(첫 배포)에 전달: 사이클 15가 배포에 기대는 것
+
+- 작성: 2026-10-13, 사이클 15 세션(chaekcheck-plan-cycle-15). 근거 `docs/cycles/15-usage-log/spec.md`, `architect-proposal.md`, ADR-0096·0097(제안됨)
+- 15는 아직 개발 전(설계 확정은 12·13·14 회고 뒤). 아래는 15가 들어올 때 배포 설정이 맞춰 줘야 하는 것
+
+---
+
+사이클 17 세션에 전달합니다. 사이클 15(사용자 행동 기록)가 배포 설정에 기대는 것입니다.
+
+1. 사용자 IP (가장 중요)
+   - 15 서비스는 IP를 nginx가 넘기는 `X-Real-IP` 머리글에서 읽음 (dev `deploy/nginx/chaekcheck-locations.conf:17`, 값은 nginx의 `$remote_addr`). 서비스 쪽 forwarded 설정은 쓰지 않음
+   - 그래서 17의 nginx가 `CF-Connecting-IP`를 사용자 주소로 읽게 하는 설정(`real_ip_header CF-Connecting-IP`, `set_real_ip_from` = cloudflared가 nginx에 붙는 주소)이 들어가야 `$remote_addr`·`X-Real-IP`가 실제 사용자 IP가 됨. `ngx_http_realip_module`은 기본 빌드에 없을 수 있음(https://nginx.org/en/docs/http/ngx_http_realip_module.html) → 쓰는 nginx 이미지에 있는지 확인 부탁
+   - 이 설정이 없으면: 15 기록의 IP가 모두 cloudflared 주소 하나가 되고, 지금 있는 "도서관에서 직접 찾기" IP당 1분 30번 제한과 15의 클릭 알림 IP당 1분 60번 제한이 모든 사용자를 한 사람으로 세어 함께 막음
+   - 터널을 거쳐도 `CF-Connecting-IP`가 붙는지 배포 때 시험 결과를 15에 알려 주세요
+
+2. 15가 dev에 더할 nginx 설정 (15 인계서로 들어감, 17 설정과 겹치지 않게)
+   - `location = /api/v1/library-clicks` (POST, 클릭 알림): IP당 1분 60번, 넘치면 기록하지 않고 204
+   - 직접 찾기·대출 조회 location에서 User-Agent에 bot·crawler·spider가 든 요청은 403
+   - 웹 `public/robots.txt`: `/api/` 크롤러 금지
+   - 17이 Cloudflare 무료 요청 한도 규칙을 쓰기로 하면 이 nginx 한도들과 어떻게 나눌지 알려 주세요 (Cloudflare 규칙도 IP 기준)
+
+3. nginx 접속 기록 보관 기간 (17 범위)
+   - nginx 기본 접속 기록에는 IP와 검색어가 든 요청 주소가 함께 남음. 15의 검색 기록(IP 30일)과 따로 노는 기록이라, 기간이 정해지면 15·16에 알려 주세요. 검색어가 든 쿼리 문자열을 접속 기록에서 뺄지도 같이 봐 주시면 좋음 (15의 제안, 결정 아님)
+
+4. 기록 켜기 시점 [확정] (사용자 승인, 2026-10-13)
+   - 15 기록은 서버 설정 값 하나로 켜고 끔. 첫 배포 때는 꺼 둠(배포 설정 환경 변수에 "꺼짐"), 처리방침 공개일에 켬
+   - 첫 배포 뒤 지인 기간에 잠깐 켜서 실서버 시험(터널 거친 IP가 실제 사용자 IP인지, 기록 켜기 전후 속도·메모리) → 끝나면 그 기간 기록을 지우고 다시 끔. 이 시험 때 17의 CF-Connecting-IP 설정을 함께 확인하면 좋음
+
+5. 4GB 서버 몫
+   - 15가 더하는 것: 서비스 메모리에 기록 버퍼 최대 1만 줄(약 5MB), DB 연결 추가 없음, 디스크 1년 1~2GB(어림)
+   - 15의 AC-16(기록 켜기 전후 검색 응답 시간 10% 안, 메모리 50MB 안)은 Prometheus·Grafana·node_exporter를 켠 상태로 재고 그 메모리도 함께 적을 예정
+
+6. 매일 새벽 작업 시각
+   - 15는 매일 04:30(서울)에 기록 지우기(IP 30일 비우기, 1년 지난 줄 지우기)를 돌림. 지금 04:00 회원 정리, 05:00 사서 추천 받기 사이. 17의 백업·점검 작업 시각과 겹치면 알려 주세요
