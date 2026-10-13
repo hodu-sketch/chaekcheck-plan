@@ -17,6 +17,8 @@
 | R1 | Lightsail 서울 4GB 한 대에 Docker로 띄움 | [hosting-options 결정 줄](../../research/deploy/hosting-options.md), [scope 포함 1](scope.md) | [확정] |
 | R2 | `chaekcheck.com`(Cloudflare 구매) + Cloudflare Tunnel, http → https | [scope 포함 2](scope.md), dev `deploy/nginx/tunnel-test.conf` | [확정] |
 | R3 | nginx가 `CF-Connecting-IP`를 사용자 주소로 읽음. 나머지 `/api/`에도 IP별 한도 | [research 7절](research.md), dev `deploy/nginx/rate-limits.conf` | [확정: 읽음] / 한도 값 [안] |
+| R3-1 | 믿는 주소: Docker에서는 `cloudflared`가 compose 네트워크를 거쳐 nginx에 붙으므로 `127.0.0.1`이 아니라 그 네트워크 주소를 믿음. compose에서 nginx·`cloudflared` 네트워크의 주소 범위를 직접 정하고(예: `172.30.0.0/24`) `real_ip_header CF-Connecting-IP; set_real_ip_from <그 범위>;` 하나만 둠. dev `tunnel-test.conf`의 사설 주소 전체(`10/8`·`172.16/12`·`192.168/16`)는 쓰지 않음 | 사용자 제시 설정(2026-10-13), dev `deploy/nginx/tunnel-test.conf` | [확정: 네트워크 주소를 믿음] (사용자: "그 내용 spec에 반영해줘", 2026-10-13) / 범위 값 [안] |
+| R3-2 | nginx 포트는 서버 바깥으로 열지 않음. 사용자는 터널로만 들어옴 → 누가 `CF-Connecting-IP`를 가짜로 붙여 직접 보내는 것을 막음 | R3-1과 같음, [scope 포함 1](scope.md)(80 닫기) | [확정] (같음) |
 | R4 | 첫 배포 직전 seed 다시 만들기·`PRE_DEPLOYMENT` 지우기, 책 목록은 PC에서 가져와 반영 | `docs/backlog.md` "첫 배포 직전" 줄, ADR-0078, 사이클 11 | [확정] |
 | R5 | 비밀 값은 Parameter Store 또는 Secrets Manager, 서버에는 읽기용 접근 키 한 쌍 | [research 1절](research.md) | [확정: AWS] / 서비스 선택 [안] |
 | R6 | 카카오 운영 등록(Redirect URI, 웹 도메인, 동의항목), 카카오만 켬 | [research 2절](research.md) | [확정] |
@@ -41,6 +43,7 @@
 - AC-4: Grafana에서 → CPU·메모리·응답 시간·도서관 호출 포기 횟수가 보인다
 - AC-5: 서버 밖(내 PC)에 → 전날 03:00 DB 백업 파일이 있다
 - AC-6: nginx 접속 기록에 → 쿼리 문자열이 없고, 15일 지난 파일이 없다
+- AC-7: 휴대폰 데이터망으로 검색한 뒤 → nginx 접속 기록에 그 휴대폰의 IP가 찍힌다(compose 네트워크 주소나 `cloudflared` 주소가 아님)
 
 ## 비목표
 
