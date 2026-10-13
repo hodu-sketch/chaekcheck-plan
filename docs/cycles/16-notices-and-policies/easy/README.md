@@ -17,3 +17,4 @@
 | [2026-10-13-drop-decisions.html](2026-10-13-drop-decisions.html) | 빼도 되는 것 셋(공지 숨김 칸, 고정 공지, 다시 동의 칸) — 설계 결정 2·9·11 질문 뒤 바꾼 추천. 승인 = 뺌 | `../architect-proposal.md` | 없음 (2026-10-13): 숨김 칸 둠(미승인, "이전에 기록을 봤으면 해"), 고정 공지 둠(미승인, "보기 어려워"), 다시 동의 칸 뺌(승인) |
 | [design-delta-original.html](design-delta-original.html) | design-delta.md 원본(그림 7개) | `../design-delta.md` | — |
 | [2026-10-13-design-adr-decisions.html](2026-10-13-design-adr-decisions.html) | 설계 정리 그림 + ADR 초안 4개 + 다음 단계 | `../design-delta.md` | 없음 (2026-10-13): ADR 4개 승인(0098~0101, Proposed), 다음 단계 승인(회고 뒤 확정) |
+| [2026-10-13-drafts-review.html](2026-10-13-drafts-review.html) | 처리방침·동의문·이용약관·서비스 안내·첫 공지 초안 검토 | `../drafts/` | 없음 (2026-10-13): 5개 승인(최소판 3차) |
