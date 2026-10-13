@@ -4,4 +4,4 @@
 |---|---|---|---|
 | [2026-10-13-scope-decisions.html](2026-10-13-scope-decisions.html) | 사이클 17 범위: 목표, 포함 9가지, 제외, 완료 기준, 도메인 | `../scope.md` | 결정됨: 6개 (승인 4, 미승인 2 → 대출 조회 프록시 포함, 비밀 값은 Parameter Store·Secrets Manager), 2026-10-13 |
 | [2026-10-13-spec-decisions.html](2026-10-13-spec-decisions.html) | 명세 남은 값: 나머지 API 요청 한도, 비밀 값 서비스, Grafana 보는 곳, 백업 보관 개수 | `../spec.md` R3·R5·R9·R10 | 결정됨: 4개 승인 (2026-10-13) |
-| [2026-10-13-flow-decisions.html](2026-10-13-flow-decisions.html) | 화면 흐름: 공개 주소·로그인·429·서버 멈춤·Grafana, 나머지 화면 429 표시, 멈춤 화면, Grafana 대시보드 | `../flow.md` | 3개 |
+| [2026-10-13-flow-decisions.html](2026-10-13-flow-decisions.html) | 화면 흐름: 공개 주소·로그인·429·서버 멈춤·Grafana, 나머지 화면 429 표시, 멈춤 화면, Grafana 대시보드 | `../flow.md` | 결정됨: 3개 승인 (2026-10-13) |

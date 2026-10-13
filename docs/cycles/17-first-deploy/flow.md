@@ -35,7 +35,7 @@ flowchart LR
 
 ### F4 서버나 터널이 멈췄을 때
 - 보이는 것: 우리 화면이 아니라 Cloudflare가 보여 주는 오류 화면(예: 터널이 끊겨 원 서버에 닿지 못함). 문구는 Cloudflare가 정함 [확인 필요: 배포 시험으로 어떤 화면인지 봄]
-- 우리 쪽에서 할 일: Grafana·서버 재시작(spec R1 자동 재시작). 사용자 화면은 만들지 않고 Cloudflare 기본 오류 화면을 씀 [안]
+- 우리 쪽에서 할 일: Grafana·서버 재시작(spec R1 자동 재시작). 사용자 화면은 만들지 않고 Cloudflare 기본 오류 화면을 씀 [확정] (사용자 승인, 2026-10-13, `easy/2026-10-13-flow-decisions.html` #2). 터널 쪽이 꺼지면 Error 1033, 서버가 답하지 않으면 502·504. 무료 요금제는 이 화면을 바꿀 수 없음(Custom Errors는 유료, https://developers.cloudflare.com/rules/custom-errors/, 확인 2026-10-13)
 
 ### F4-1 2주 뒤 노트북으로 옮길 때 (사용자 질문, 2026-10-13)
 - 같은 터널에 노트북 `cloudflared`를 함께 붙였다가 Lightsail 쪽을 끔. Cloudflare는 요청을 "geographically closest replica"로 보냄 (https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/configure-tunnels/tunnel-availability/, 확인 2026-10-13)
