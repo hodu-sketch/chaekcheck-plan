@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 15 검증 결정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+.flow{display:grid;gap:10px;margin:10px 0 16px}.lane{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--card)}.lane b{display:block;margin-bottom:4px}.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{font-size:14px;border-radius:6px;padding:2px 8px;background:var(--code-bg)}.chip.new{background:var(--warn-bg)}.chip.dev{background:var(--ok-bg)}.arrow{text-align:center;color:var(--muted);font-size:18px;line-height:1}
+</style>
+<style>
+main{max-width:1080px}
+.pick{display:inline-block;font-size:14px;font-weight:700;color:var(--warn);background:var(--warn-bg);border-radius:6px;padding:1px 8px}
+.rec{display:inline-block;font-size:15px;font-weight:700;color:var(--ok);background:var(--ok-bg);border-radius:6px;padding:1px 8px}
+.ex{background:var(--ok-bg);border-radius:10px;padding:12px 16px;margin:10px 0}.ex b{color:var(--ok)}
+.alt{background:var(--code-bg);border-radius:10px;padding:12px 16px}
+.toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px 18px;font-size:18px;margin:6px 0 0;padding:0;list-style:none}
+.toc li{display:flex;gap:8px;align-items:baseline}
+figure{max-width:440px}
+figure svg text{font-family:"Noto Sans KR",system-ui,sans-serif}
+.card>figure{margin-left:auto;margin-right:auto}
+@media (min-width:980px){
+ .item{display:grid;grid-template-columns:minmax(0,1fr) 420px;column-gap:32px;align-items:start}
+ .item>*{grid-column:1}
+ .item>h3{grid-column:1 / -1}
+ .item>figure{grid-column:2;grid-row:2 / span 30;margin-top:4px}
+}
+@media (max-width:600px){body{font-size:18px}.card{padding:20px 16px}.lead{font-size:23px}}
+</style>
+</head>
+<body><main class="doc">
+<p class="lead">문서 검증에서 나온, 정해 주셔야 할 네 가지입니다</p>
+<p class="sub">사이클 15 · 2026-10-14 · 사이클 15 문서 전체(범위·명세·화면 흐름·설계 대안·설계 초안·16/17 전달 글·조사 둘·ADR 셋)를 검증했습니다. 표현만 틀린 곳은 내용을 바꾸지 않고 정리하고 있고, 아래는 내용이 서로 부딪쳐 정해 주셔야 하는 것만 모았습니다.</p>
+
+<section class="card"><h2><span class="num">1</span>IP로 같은 사람의 흐름을 이어 볼까</h2>
+<div class="gist">명세에는 "같은 사람의 검색·클릭을 잇지 않음"이라고 적혀 있는데, ADR-0096에는 IP를 남기는 좋은 점으로 "최근 30일은 IP로 이어 보기"라고 적혀 있습니다. 둘이 부딪칩니다.</div>
+<div class="item"><h3><span class="no">1</span>통계에서 같은 IP의 검색 → 책 상세 → 도서관 클릭을 30일 안에서 이어 보는 것은 허용 (회원·쿠키로 잇는 것은 하지 않음) [안]</h3>
+<p><b>이렇게 되면</b>: 기록끼리 잇는 칸(검색 번호 등)은 만들지 않지만, 통계 SQL에서 같은 IP·가까운 시각의 줄을 묶어 보는 것은 됩니다. IP를 남기기로 하신 목적(같은 사람 흐름 보기, 이상한 요청 막기)과 맞습니다. 30일 뒤 IP가 비면 더는 이을 수 없습니다. 같은 와이파이를 쓰는 여러 사람은 한 사람처럼 보입니다.</p>
+<p class="alt"><b>다른 선택</b>: 이어 보지 않음 → IP는 이상한 요청 막기에만 쓰고, ADR의 "이어 보기" 문구를 지웁니다. 처리방침의 목적도 "부정 이용 방지"로 좁아집니다.</p>
+<p><span class="rec">추천</span> 30일 안에서 IP로 이어 보기 허용</p>
+</div></section>
+
+<section class="card"><h2><span class="num">2</span>사용 알림에 이상한 값이 오면</h2>
+<div class="gist">사용 알림 주소 하나(<code>/api/v1/usage-events</code>)로 도서관 클릭과 화면 행동을 모두 받게 되었는데, 이상한 값을 남기는 이유 칸은 도서관 클릭용 다섯 가지뿐입니다.</div>
+<div class="item"><h3><span class="no">2</span>이상한 값 기록(IP 포함, 30일)을 모든 사용 알림으로 넓히고 이유를 두 개 더함: 알 수 없는 종류(<code>unknown_type</code>), 정하지 않은 값(<code>invalid_value</code>) [안]</h3>
+<p><b>이렇게 되면</b>: 예를 들어 없는 지역 번호로 "지역 바꾸기" 알림이 오면 <code>invalid_value</code>로, 정하지 않은 <code>type</code>이 오면 <code>unknown_type</code>으로 남습니다. 표 이름은 <code>rejected_click</code>에서 <code>rejected_event</code>로 바꿉니다.</p>
+<p class="alt"><b>다른 선택</b>: 화면 행동의 이상한 값은 조용히 버림 → 칸이 그대로지만 도서관 클릭만 막을 근거가 남습니다.</p>
+<p><span class="rec">추천</span> 모든 알림으로 넓힘</p>
+</div></section>
+
+<section class="card"><h2><span class="num">3</span>밤 DB 백업과 "IP 30일"</h2>
+<div class="gist">사이클 17은 매일 03:00에 DB를 백업합니다. 백업에는 IP가 든 기록도 들어가서, 원본에서 30일 뒤 IP를 비워도 백업에는 백업 보관 기간만큼 더 남습니다. 17은 백업을 며칠 두는지 아직 정하지 않았고, 15가 묻지도 않았습니다.</div>
+<div class="item"><h3><span class="no">3</span>사이클 17에 백업 보관 기간을 묻고, 처리방침에는 "백업에는 보관 기간만큼 더 남았다가 지워짐"을 적도록 16에 전함 [안]</h3>
+<p><b>이렇게 되면</b>: 백업을 짧게(예: 7일) 두면 IP는 최대 30+7일 남습니다. 지운 기록이 백업에 남는 것은 흔한 일이라, 처리방침에 그 기간을 밝히는 쪽이 현실적입니다(법은 "지체 없이 파기"를 요구, 제21조 — 백업 처리에 대한 개인정보위 해석은 확인 못 함).</p>
+<p class="alt"><b>다른 선택</b>: 백업할 때 사용 기록 표는 빼고 백업 → 백업에 IP가 안 남지만, 서버가 망가지면 사용 기록을 되살릴 수 없습니다.</p>
+<p><span class="rec">추천</span> 17에 묻고 처리방침에 밝힘</p>
+</div></section>
+
+<section class="card"><h2><span class="num">4</span>로그인 쿠키 경로를 넓힐 때 이미 로그인한 사람</h2>
+<div class="gist">쿠키 경로를 <code>/api/v1/me</code>에서 <code>/api/v1</code>로 바꾸면, 이미 로그인한 사람의 브라우저에는 옛 경로 쿠키가 남아 같은 이름 쿠키 두 개가 함께 올 수 있습니다. 액세스 쿠키는 15분이라 오래가지 않지만, 로그아웃 때 옛 것이 남을 수 있습니다.</div>
+<div class="item"><h3><span class="no">4</span>배포 뒤 한동안 로그아웃·쿠키 새로 받기 때 옛 경로(<code>/api/v1/me</code>) 쿠키도 함께 지우고, 같은 이름이 둘이면 서명이 맞는 것을 씀 [안]</h3>
+<div class="item answer" id="a4" style="background:var(--accent-bg);border:2px solid var(--accent);border-radius:14px;padding:18px 20px;margin:14px 0 8px;grid-column:1 / -1;display:block"><h3 style="color:var(--accent)">질문에 대한 답: 지금 코드의 쿠키는 15분인가</h3>
+<p>네. 로그인 쿠키(<code>access_token</code>)는 15분, 다시 받는 데 쓰는 쿠키(<code>refresh_token</code>)는 30일입니다 (dev <code>backend/src/main/resources/application.yml:104-105</code>, <code>access-token-ttl: 15m</code>, <code>refresh-token-ttl: 30d</code>, 2026-10-14 확인). 그래서 옛 경로 쿠키는 길어야 15분 뒤 저절로 쓸모가 없어집니다.</p>
+<p>말씀대로 "아직 서비스 테스트라서 옛 경로 지우는 코드는 넣지 않음"으로 적었습니다.</p></div>
+
+<p><b>이렇게 되면</b>: 옛 쿠키는 15분 안에 만료되고, 로그아웃할 때 확실히 지워집니다. 지금 가입한 사람은 테스트 한 명뿐이라(사이클 16 기록) 영향은 작습니다.</p>
+<p class="alt"><b>다른 선택</b>: 아무것도 안 함 → 옛 쿠키가 15분 뒤 저절로 만료되니 대부분 괜찮지만, 로그아웃 직후 15분 동안 옛 쿠키가 남을 수 있습니다.</p>
+<p><span class="rec">추천</span> 옛 경로도 함께 지움</p>
+</div></section>
+
+<section class="card"><h2><span class="num">5</span>묻지 않고 고치는 것 (참고)</h2>
+<table><tr><th>찾은 것</th><th>고치는 방법</th></tr>
+<tr><td>앞 결정이 지금 결정처럼 남은 곳 (sendBeacon, library-clicks, 화면이 보내는 로그인 값, "모름", IP 안 남김, 표 다섯, 도서관 응답 요청마다 90일, 사서 추천 보기 안 남김 등)</td><td>최종값만 본문에 두고, 바뀐 것은 "바뀐 이력"으로 옮김</td></tr>
+<tr><td>더 보기 기록의 조건 칸이 그림에서 빠짐</td><td>정하신 "검색 기록과 같은 조건 칸 전부"대로 그림을 고침</td></tr>
+<tr><td>"다음 묶음은 화면이 알아서 부른다"는 설명</td><td>dev 코드 확인: "더 보기"를 눌러야 다음 묶음을 부름(<code>DirectResults.tsx:165</code> → <code>loadNextBatch</code>). 사람의 행동이 맞으므로 설명만 고침</td></tr>
+<tr><td>16 전달 글의 "쿠키를 쓰지 않음"</td><td>틀린 말이 됨(서버가 로그인 쿠키를 읽어 판별). 16에 정정 글을 드림</td></tr>
+<tr><td>빠진 링크, 경로 없이 "17 scope"처럼 쓴 곳, ADR 셋의 결정 페이지 링크</td><td>경로 링크로 바꿈</td></tr>
+<tr><td>17 전달 글에 빠진 질문 (백업·서버 로그 보관 기간)</td><td>위 #3과 함께 17 전달 글에 더함</td></tr></table>
+</section>
+<p class="foot">원본: 사이클 15 문서 전체. 검증 결과의 자세한 목록은 정리하면서 각 문서에 반영합니다.</p>
+</main></body></html>

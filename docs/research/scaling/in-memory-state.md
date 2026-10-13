@@ -57,7 +57,7 @@
 | 04:00 계정 정리 | `auth/internal/cleanup/DailyAccountCleanup.java:65` | 카카오 연결 목록 읽기·unlink·삭제가 겹침 | ShedLock 또는 `pg_try_advisory_lock` | 사이클 05 `handoff.md:732` 한 줄 |
 | 04:00 리프레시 토큰 정리 | `auth/internal/token/RefreshTokenCleanup.java:28` | DELETE 두 번, 해 거의 없음 | 그대로 또는 ShedLock | 같음 |
 | 05:00 사서 추천 받기 (14, `popular` 대체) | 지금 `popular/internal/schedule/FetchScheduler.java:37`, `FetchJob.java:53,73` (`AtomicBoolean`은 JVM 안에서만); 14 `design-delta.md:25,40-44` | 외부 API 두 번, 받기 기록·표지 중복 | advisory lock 또는 ShedLock | backlog "서버가 여러 대가 되면 매달 받기가 겹치지 않게", 사이클 10 `architect-proposal.md:64,174` |
-| 04:30 사용 기록 정리 (15) | 15 `design-delta.md` (IP 30일 비우기, 지난 줄 지우기) | 멱등이라 해는 적지만 일이 두 번 | ShedLock 또는 그대로 | **이 문서가 처음** |
+| 04:30 사용 기록 정리 (15) | `docs/cycles/15-usage-log/design-delta.md` (IP 30일 비우기, 지난 줄 지우기) | 멱등이라 해는 적지만 일이 두 번 | ShedLock 또는 그대로 | **이 문서가 처음** |
 | 운영 반영 (13) | 13 `design-delta.md:54` `pg_advisory_xact_lock` | 이미 DB 잠금 | 그대로 | backlog, `current/handoff.md:104,559` |
 
 ### 2.7 사서 추천 공용 캐시 알림 — 공유하면 좋음
@@ -72,6 +72,8 @@
 | 도서관 응답 하루 요약 | 메모리에서 세어 5초마다 `ON CONFLICT … count + EXCLUDED`, `GREATEST`로 더함 | 서버마다 더해도 합이 맞음 | 그대로 [확정: 방법은 사용자 승인 2026-10-13] |
 | 04:30 정리 | 2.6 | 2.6 | 2.6 |
 | nginx 사용 알림 한도 (IP당 1분 60번) | nginx zone | nginx가 1대면 그대로, 여러 대면 대수 배 | 그대로 (nginx 1대 전제) |
+| 버린 묶음 흔적 (`dropped_batch`) | 실패 사실을 메모리에 들고 있다가 다음 묶음에 씀 | 서버마다 자기 것만 씀 → 맞음 | 그대로 |
+| 기록 켜기 설정 `chaekcheck.usagelog.enabled` | 서버 설정 값 | 서버마다 같은 값으로 배포해야 함 | 배포 설정 하나로 |
 
 ### 2.9 nginx IP별 한도 — nginx가 1대면 그대로
 - 위치: dev `deploy/nginx/rate-limits.conf:15,20`, `chaekcheck-locations.conf:28-31,46-49`; 17 설계 일반 `/api/` 5r/s(17 `architect-proposal.md:69`)

@@ -4,14 +4,14 @@
 |---|---|---|---|
 | [2026-10-12-scope-decisions.html](2026-10-12-scope-decisions.html) | 사이클 15 범위: 이미 정한 것, 지우는 방법, 쓰는 방식, 확인 방법, 순서, 모듈 | `../scope.md` | 결정됨: 6개 모두 승인 (2026-10-12) |
 | [2026-10-12-spec-decisions.html](2026-10-12-spec-decisions.html) | 명세: 검색 기록 칸, 결과 수, 로봇·로그인, 클릭 칸·검사·제한, 모으기·지우기 숫자, 성능 기준, 하지 않는 것 | `../spec.md` | 결정됨 (2026-10-13): 승인 11, 미승인 #7(→IP와 함께 기록)·#14(→책 상세·IP 기록), #8 기타→fetch keepalive |
-| [2026-10-13-spec-followup-decisions.html](2026-10-13-spec-followup-decisions.html) | 명세 이어서: 봇 제한(지금 있는 장치, 막는 방법), 로그인 여부 보내는 법, 이상한 값 기록, nginx 접속 기록 | `../spec.md` | 결정됨: #1 미승인→30일, #2 승인 (2026-10-13) |
+| [2026-10-13-spec-followup-decisions.html](2026-10-13-spec-followup-decisions.html) | 명세 이어서: 봇 제한(지금 있는 장치, 막는 방법), 로그인 여부 보내는 법, 이상한 값 기록, nginx 접속 기록 | `../spec.md` | 결정됨: #1 미승인→30일, #2 승인 (2026-10-13). 로그인 여부 보내는 법은 뒤에 바뀜 → [로그인 판별](2026-10-14-login-status.html) |
 | [2026-10-13-spec-followup2-decisions.html](2026-10-13-spec-followup2-decisions.html) | 명세 이어서 2: IP 범위·보관, 책 상세 열기 기록, 버린 묶음 기록, 기록 끄기 설정 | `../spec.md` R3-3, R5 | 결정됨: 5개 모두 승인 (2026-10-13), 16 전달 글 2차 |
 | [2026-10-13-flow-decisions.html](2026-10-13-flow-decisions.html) | 화면 흐름: 화면별로 기록되는 것, 결과 카드의 알림 위치, 보이지 않는 상태 | `../flow.md` | 결정됨: 승인 (2026-10-13) |
-| [2026-10-13-design-decisions.html](2026-10-13-design-decisions.html) | 설계 대안: 전체 모양, 기록 넘기기, 표 다섯, IP 칸 비우기, 넣는 방법, 클릭 주소, 이름, IP 읽는 곳 | `../architect-proposal.md` | 결정됨: 7개 모두 승인 (2026-10-13), 확정은 12·13·14 회고 뒤 |
+| [2026-10-13-design-decisions.html](2026-10-13-design-decisions.html) | 설계 대안: 전체 모양, 기록 넘기기, 표 다섯, IP 칸 비우기, 넣는 방법, 클릭 주소, 이름, IP 읽는 곳 | `../architect-proposal.md` | 결정됨: 7개 모두 승인 (2026-10-13), 확정은 12·13·14 회고 뒤. 표 다섯·`library-clicks`는 뒤에 바뀜 → [늘린 기록 설계](2026-10-13-more-actions-design.html) |
 | [2026-10-13-adr-drafts.html](2026-10-13-adr-drafts.html) | ADR-0096(무엇을·어디에·얼마나), ADR-0097(서버 안 기록 방식) 초안 | `docs/adr/0096`, `0097` | 결정됨: 둘 다 승인, Proposed로 씀 (2026-10-13) |
-| [2026-10-13-check-results.html](2026-10-13-check-results.html) | 설계 전 확인 다섯 가지 결과, 로그인 상태 확인 중일 때 | `../architect-proposal.md` 확인 결과 | 결정됨: 승인 + 로그인 켬/끔 모두 동작 (2026-10-13) |
+| [2026-10-13-check-results.html](2026-10-13-check-results.html) | 설계 전 확인 다섯 가지 결과, 로그인 상태 확인 중일 때 | `../architect-proposal.md` 확인 결과 | 결정됨: 승인 + 로그인 켬/끔 모두 동작 (2026-10-13). 로그인 "모름"은 뒤에 바뀜 → [로그인 판별](2026-10-14-login-status.html) |
 | [2026-10-13-logging-start.html](2026-10-13-logging-start.html) | 사이클 17 전달 글, 16·17 정리본 반영, 기록 시작 시점 | `../spec.md`, `../to-cycle-17.md` | 결정됨: 승인 (2026-10-13) |
-| [design-delta-original.html](design-delta-original.html) | design-delta.md 초안 원문 + 그림 7개(모듈 구성도, 흐름 4개, 도메인 모델, 표 관계) | `../design-delta.md` | 초안, 회고 뒤 확정 |
+| [design-delta-original.html](design-delta-original.html) | design-delta.md 초안 원문 + 그림 7개(모듈 구성도, 흐름 4개, 도메인 모델, 표 관계) | `../design-delta.md` | 초안 (2026-10-14 정리 반영), 회고 뒤 확정 |
 | [2026-10-13-more-actions.html](2026-10-13-more-actions.html) | 더 보기 기록, 더 남길 행동 후보(사서 추천, 지역·내 도서관, 도서관 응답) | `../spec.md` | 결정됨: 4개 모두 승인 (2026-10-13) |
 | [2026-10-13-more-actions-design.html](2026-10-13-more-actions-design.html) | 늘린 기록 설계: 알림 주소 하나, 로그인 뒤 저장 기록 경로, screen_event 칸, search_more 칸, 도서관 응답 범위·보관 | `../design-delta.md` | 결정됨 (2026-10-13): #1~#5 승인(#5에 대출 수 채우기 더함), #6 → 도서관마다 하루 요약 1년 |
 | [2026-10-13-library-response-summary.html](2026-10-13-library-response-summary.html) | 도서관 응답 하루 요약으로 바꾼 뒤: 요청 하나하나 기록, 요약 보관 기간 | `../spec.md` R6-4 | 결정됨: 둘 다 승인 (2026-10-13) |
@@ -20,3 +20,5 @@
 | [2026-10-14-login-cookie.html](2026-10-14-login-cookie.html) | 서버가 로그인 쿠키로 확인: 쿠키 경로, 만료 때, 검색 영향 | `../spec.md` R1-6 | 결정됨: 셋 다 승인 (2026-10-14) |
 | [2026-10-14-login-status.html](2026-10-14-login-status.html) | 로그인 여부 판별을 한곳(auth 부품)에, 칸 값 세 가지 | `../spec.md` R1-6 | 결정됨: 둘 다 승인 (2026-10-14) |
 | [2026-10-14-adr-0102-draft.html](2026-10-14-adr-0102-draft.html) | ADR-0102 초안 (쿠키 경로 /api/v1, 로그인 상태 판별 부품) | `docs/adr/0102` | 결정됨: 승인, Proposed로 씀 (2026-10-14) |
+| [2026-10-14-verify-decisions.html](2026-10-14-verify-decisions.html) | 문서 검증에서 나온 네 가지: IP로 30일 이어 보기, 이상한 값 기록 범위, 백업과 IP 30일, 옛 경로 쿠키 | 사이클 15 문서 전체 | 결정됨 (2026-10-14): #1~#3 승인, #4 기타 → 옛 경로 쿠키 지우는 코드 넣지 않음 |
+| [flow-original.html](flow-original.html) | flow.md 원문 + 그림(기록이 생기는 곳) | `../flow.md` | 결정됨 (원문 보기용) |

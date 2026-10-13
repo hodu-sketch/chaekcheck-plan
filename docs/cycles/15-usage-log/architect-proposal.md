@@ -1,6 +1,20 @@
 # 설계 대안: 사이클 15 사용자 행동 기록 (architect 제안, 2026-10-13)
 
-> **2026-10-13 명세 결정 뒤 고친 점** (아래 본문보다 이 절이 우선)
+> **이 문서는 2026-10-13에 받은 대안 비교 기록입니다.** 지금 설계는 [design-delta.md](design-delta.md)(초안)와 [spec.md](spec.md)가 기준입니다. 아래 본문의 결정 2 DDL과 결정 4는 그 뒤 결정으로 바뀌어 **폐기**되었고, 그 밖의 바뀐 곳도 아래 "지금 기준" 표에 모았습니다. 결정 기록: [ADR-0096](../../adr/0096-usage-log-storage-and-fields.md), [ADR-0097](../../adr/0097-usagelog-module-and-write-path.md), [ADR-0102](../../adr/0102-access-cookie-api-v1-and-login-status-reader.md)
+
+| 본문에 적힌 것 | 지금 기준 | 근거 |
+|---|---|---|
+| 클릭 알림 `sendBeacon`, `URLSearchParams`, 이 주소만 CSRF 예외 | `fetch` keepalive + JSON, CSRF 그대로 | spec R2-1·R2-4 |
+| 주소 `POST /api/v1/library-clicks` | `POST /api/v1/usage-events` (`type`으로 구분) | spec R2-1, [늘린 기록 설계](easy/2026-10-13-more-actions-design.html) #1 |
+| 웹이 `loggedIn` 쿼리·본문 값으로 로그인 여부를 보냄, 확인 중이면 "모름" | 서버가 `access_token` 쿠키(경로 `/api/v1`)로 판별, `auth`의 판별 부품, `signed_in`/`signed_out`/`login_off` | spec R1-6, ADR-0102 |
+| 표 셋, `logged_in boolean`, IP 칸 없음, `beacon_rejection_daily` | 표 여덟: `search_event`, `book_view`, `search_more`, `library_click`, `screen_event`, `library_response_daily`, `rejected_event`, `dropped_batch`. 모든 사용 기록에 `login_status`, `client_ip`(30일) | design-delta 데이터 절 |
+| 도서관 응답 요청마다 | 도서관마다 하루 요약, 1년 | spec R6-4 |
+| `allowedDependencies = { "library" }` | `{ "library", "auth" }` | [로그인 판별](easy/2026-10-14-login-status.html) #1 |
+| 확인 필요 #1·#2·#3·#5·#8 | 해결됨 (아래 "확인 결과" 절과 spec) | — |
+
+## 고른 방향 기록 (2026-10-13)
+
+> **2026-10-13 명세 결정 뒤 고친 점** (당시 기록 — 지금 기준은 맨 위 표)
 > - 클릭 알림은 `sendBeacon`이 아니라 `fetch` keepalive, CSRF 검사 그대로 (spec R2-1·R2-4) → 결정 4의 CSRF 예외·form 본문 제약이 없어짐. 본문은 JSON(`application/json`) [안], 응답 `204`
 > - IP를 검색·클릭·책 상세 세 기록에 남김, IP 칸만 30일 뒤 비움 (spec R5-2) → 세 표에 `client_ip inet` 칸 [안], 매일 04:30에 `UPDATE … SET client_ip = NULL WHERE received_at < now() - interval '30 days' AND client_ip IS NOT NULL`
 > - 책 상세 열기 기록 (spec R5-1) → 표 `usagelog.book_view(id, received_at, book_id, residence_region_ids, work_region_ids, library_ids, logged_in, client_ip)` [안], `catalog`의 `GET /api/v1/books/{bookId}`에서 `UsageLog.recordBookView(…)`
@@ -9,7 +23,6 @@
 > - IP 값: nginx `X-Real-IP`(=`$remote_addr`). 사이클 17이 nginx에서 `CF-Connecting-IP`를 사용자 주소로 읽게 해야 실제 사용자 IP [확인 필요: 17 설정]
 > - 더 남기는 행동 (spec R6, 2026-10-13 승인): 더 보기 세 종류 → `search_more`, 사서 추천 보기·지역/내 도서관 바꾸기 → `screen_event`(화면 알림), 직접 찾기 도서관별 응답 → `library_response`. `UsageLog.recordMore`·`recordLibraryResponse` 추가 [안]
 > - 로봇: robots.txt(`/api/` 금지) + nginx가 이름 밝힌 로봇을 직접 찾기·대출 조회 location에서 403 (spec R1-7·R1-8). 서버 쪽 로봇 건너뛰기(R1-5)도 그대로
-
 > 결정 기록: ADR-0096(무엇을·어디에·얼마나), ADR-0097(서버 안 기록 방식), 둘 다 Proposed
 >
 > **고른 방향 (2026-10-13, `easy/2026-10-13-design-decisions.html`, 회고 뒤 코드에 맞춰 확정)**
@@ -20,7 +33,6 @@
 > - #5 클릭 알림 주소 `POST /api/v1/library-clicks`, JSON, 204 [확정: 방향] (사용자 승인)
 > - #6 모듈·schema 이름 `usagelog` [확정] (사용자 승인)
 > - #7 IP는 `X-Real-IP`, 사이클 17 설정과 맞춤 [확정: 방향] (사용자 승인)
-
 - 12·13·14 회고 전에 만든 대안입니다. 설계 확정은 회고 뒤 [확정] (scope). 따로 적지 않은 이름·숫자는 모두 [안]
 - 입력: `scope.md`, `spec.md`(2026-10-13 #1~#6 반영), `docs/research/usage-log/storage.md`, 사이클 16 `architect-proposal.md`(모듈 `sitecontent` [안]), dev `BookSearchController.java`, `EbookSearchStreamController.java`, `deploy/nginx/chaekcheck-locations.conf`
 
@@ -34,7 +46,7 @@
 
 - 나중에 분리할 때: A는 `UsageLog` 구현만 HTTP·메시지로 바꾸면 부르는 쪽은 그대로
 
-## 결정 2: 표 모양
+## 결정 2: 표 모양 (DDL은 폐기, 지금은 design-delta)
 
 - **A (추천 [안])**: 표 둘(`search_event`, `library_click`) + 버린 알림 하루 개수 표(`beacon_rejection_daily`). 종류 값은 `text` + `CHECK`(SQL로 바로 읽힘, R4-1), 지역·도서관 목록은 `bigint[]`
 - B: 표 하나 + `jsonb payload` — DDL 없이 모양을 바꾸지만 타입 검사 없음, AC-12를 표 정의로 확인하기 어려움
@@ -89,7 +101,7 @@ CREATE TABLE usagelog.beacon_rejection_daily (
 
 - `TransactionTemplate`: `SET LOCAL synchronous_commit TO OFF` → 두 표 `batchUpdate` → `beacon_rejection_daily` UPSERT → 커밋 한 번. JPA 엔티티 없음(IDENTITY 키는 Hibernate가 묶지 못함)
 
-## 결정 4: 클릭 알림 엔드포인트
+## 결정 4: 클릭 알림 엔드포인트 (폐기: fetch keepalive·usage-events·CSRF 그대로로 바뀜)
 
 - `POST /api/v1/library-clicks` [안], 늘 `204`
 - 본문: **A (추천 [안])** `URLSearchParams`(`application/x-www-form-urlencoded`) → `@RequestParam` / B 문자열 JSON(`text/plain`) → 직접 파싱. `Blob` + `application/json` 가능 여부 [확인 필요: 공식 문서·브라우저 시험]
@@ -149,7 +161,7 @@ sequenceDiagram
 - 13: `LibraryRegistry.listAll()`(꺼진 도서관 포함) → 도서관 번호 확인 기준(켜진 곳만/전체) [확인 필요: 13 회고 뒤 사용자에게 질문], master changelog 끝줄
 - 14: `popular` → `picks`, 사서 추천 창 결과 줄 링크·책 번호, `ResultRow` 변경
 
-## 확인 필요 / 사용자 결정
+## 확인 필요 / 사용자 결정 (2026-10-13 당시, 대부분 해결)
 
 | # | 항목 | 확인 방법 |
 |---|---|---|
