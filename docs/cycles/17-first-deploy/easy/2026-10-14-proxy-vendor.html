@@ -126,13 +126,62 @@ td.cok{background:var(--ok-bg)}td.cwarn{background:var(--warn-bg)}td.cno{backgro
 <section class="card">
 <h2><span class="num">5</span>프록시 말고 VPN은?</h2>
 <p class="gist">VPN은 두 종류로 나눠 봐야 합니다. <b>상용 VPN</b>(NordVPN 같은 가입형)은 우리 용도에 안 맞습니다. <b>직접 세운 VPN</b>(한국 VPS에 WireGuard를 올리는 것)은 되지만, 그것은 사실상 "한국에 우리 조회 서버를 두는 것"(ADR-0095의 ③안)과 같습니다.</p>
+
+<h3 class="t">먼저: VPS와 VPN은 뭐가 다른가</h3>
+<table>
+<tr><th>말</th><th>뜻</th></tr>
+<tr><td><b>VPS</b> (Virtual Private Server)</td><td>한국 데이터센터에서 <b>빌리는 컴퓨터 한 대</b>입니다. 고유 IP가 있고, 우리가 거기에 프로그램(조회 서버·프록시)을 올릴 수 있습니다. — "기계"</td></tr>
+<tr><td><b>VPN</b> (Virtual Private Network)</td><td>내 트래픽을 <b>다른 곳의 IP로 빠져나가게 하는 연결 방법</b>(암호화 터널)입니다. 기계가 아니라 기술입니다. — "방법"</td></tr>
+</table>
+<p>관계: VPN으로 나가려면 "빠져나갈 서버"가 있어야 하고, 그 서버가 보통 VPS입니다. 그래서 <b>"직접 세운 VPN" = 한국 VPS 한 대를 빌려 거기에 VPN 프로그램(WireGuard)을 깔고, 우리 트래픽을 그 VPS로 보내 그 VPS의 한국 IP로 나가게 하는 것</b>입니다. 우리 경우엔 터널까지 갈 것 없이 <b>그 한국 VPS에 조회 서버(또는 프록시)를 바로 올려</b> 거기서 도서관에 요청하면 됩니다. 그게 ADR-0095 ③안입니다. VPN은 그 VPS를 거쳐 나가는 여러 방법 중 하나일 뿐입니다.</p>
+<div class="fig">
+<svg viewBox="0 0 640 170" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="우리 서버에서 한국 VPS를 거쳐 도서관으로 나가는 그림">
+<rect x="10" y="60" width="150" height="50" rx="10" fill="var(--accent-bg)" stroke="var(--accent)"/>
+<text x="85" y="82" text-anchor="middle" font-size="16" fill="var(--text)">우리 서버</text>
+<text x="85" y="102" text-anchor="middle" font-size="13" fill="var(--muted)">(집 노트북·AWS)</text>
+<rect x="245" y="50" width="150" height="70" rx="10" fill="var(--ok-bg)" stroke="var(--ok)"/>
+<text x="320" y="78" text-anchor="middle" font-size="16" fill="var(--text)">한국 VPS</text>
+<text x="320" y="98" text-anchor="middle" font-size="13" fill="var(--muted)">컴퓨터 1대, 한국 IP</text>
+<text x="320" y="113" text-anchor="middle" font-size="12" fill="var(--ok)">여기에 조회 서버/프록시</text>
+<rect x="480" y="60" width="150" height="50" rx="10" fill="var(--warn-bg)" stroke="var(--warn)"/>
+<text x="555" y="82" text-anchor="middle" font-size="16" fill="var(--text)">도서관 사이트</text>
+<text x="555" y="102" text-anchor="middle" font-size="13" fill="var(--muted)">go.kr 등</text>
+<line x1="160" y1="85" x2="243" y2="85" stroke="var(--muted)" stroke-width="2" marker-end="url(#a)"/>
+<text x="201" y="76" text-anchor="middle" font-size="12" fill="var(--muted)">VPN=이 길</text>
+<line x1="395" y1="85" x2="478" y2="85" stroke="var(--muted)" stroke-width="2" marker-end="url(#a)"/>
+<text x="436" y="76" text-anchor="middle" font-size="12" fill="var(--muted)">한국 IP로 나감</text>
+<defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--muted)"/></marker></defs>
+</svg>
+</div>
+<p class="cap">VPS는 가운데 "컴퓨터 한 대", VPN은 왼쪽 "거기로 보내는 길"입니다. 우리는 길(VPN)이 꼭 필요하진 않고, 가운데 VPS에 조회 서버를 올리는 게 ③안입니다.</p>
 <table>
 <tr><th>방식</th><th>우리 용도 적합성</th></tr>
 <tr><td>상용 VPN (NordVPN 등 가입형)</td><td class="cno">기기 전체 트래픽을 한 출구로 보냄 → "도서관 호출만, 나가는 IP마다 따로"가 안 됨. 출구 IP는 보통 공유·수시변경이라 고정 IP 아님. 한국 전용 고정 IP는 거의 없음. 데이터센터 IP라 차단 위험 같음. 자동 수집 금지 약관 많음</td></tr>
 <tr><td>직접 세운 VPN (한국 VPS + WireGuard 등)</td><td class="cwarn">됨. 단 이것은 ADR-0095 ③안(한국에 조회 서버 두기)과 같은 것. 남의 약관에 안 걸리고 통제권이 전부 우리 것, 값 쌈. IP는 데이터센터라 차단 위험은 남고, "나가는 IP마다 따로 세기"는 여전히 앱에서 처리해야 함</td></tr>
 </table>
 <p class="cap">"나가는 IP마다 따로"란: 한 도서관이 어떤 IP를 막으면 그 IP에서만 멈추고 다른 IP로는 계속 조회하는 우리 원칙입니다(ADR-0095). 상용 VPN은 출구가 한 번에 하나라 이 구조를 못 만듭니다.</p>
-<p>정리하면, <b>"프록시 vs VPN"이 아니라 "남의 IP를 빌릴지(프록시 업체) vs 한국 VPS를 우리가 직접 둘지(③안)"의 선택</b>입니다. 직접 VPS를 두면 약관 걱정이 없어지는 대신, VPS 세팅·운영과 그 IP의 차단 위험을 우리가 집니다. 이 둘 중 무엇을 먼저 할지는 사이클 설계에서 ADR-0095의 세 길(①직접 ②프록시 업체 ③조회 서버)을 정할 때 함께 정하면 됩니다. 원하시면 "한국 VPS 직접(③안)을 먼저"를 별도 결정 안으로 올리겠습니다.</p>
+<p>정리하면, <b>"프록시 vs VPN"이 아니라 "남의 IP를 빌릴지(프록시 업체) vs 한국 VPS를 우리가 직접 둘지(③안)"의 선택</b>입니다. 직접 VPS를 두면 약관 걱정이 없어지는 대신, VPS 세팅·운영과 그 IP의 차단 위험을 우리가 집니다.</p>
+<div class="mine"><b>맞습니다 — VPS에 올리는 것이 곧 "조회 서버 따로 두기(③안)"입니다.</b> 비슷한 수고가 아니라 같은 일입니다. VPN은 그 위에 터널을 한 겹 더 씌우는 것일 뿐이라 우리에겐 필요 없습니다. 그래서 실제 선택지는 둘입니다.</div>
+<table>
+<tr><th>선택</th><th>우리가 하는 일</th><th>장단</th></tr>
+<tr><td>② 프록시 업체</td><td class="cok">본 서버가 업체 IP를 빌려 그리로 내보냄. <b>새 기계 운영 없음</b></td><td class="cwarn">약관의 정부 사이트 조항·<code>go.kr</code> 접속 위험, 매달 비용</td></tr>
+<tr><td>③ 한국 VPS = 조회 서버</td><td class="cwarn">한국 VPS 한 대를 더 운영(=조회 서버 따로 두기)</td><td class="cok">남의 약관 없음, 통제권 전부 우리. 대신 기계 하나 더 관리, 그 IP 차단 위험</td></tr>
+</table>
+<p>무엇을 먼저 할지는 사이클 설계에서 ADR-0095의 세 길(①직접 ②프록시 업체 ③조회 서버)을 정할 때 함께 정하면 됩니다. 원하시면 "한국 VPS 직접(③안)을 먼저"를 별도 결정 안으로 올리겠습니다.</p>
+</section>
+
+<section class="card">
+<h2><span class="num">6</span>결정: 프록시 안 씀 · AWS 조회 서버가 막힐 가능성</h2>
+<p class="gist"><b>이번 첫 배포는 프록시 업체를 쓰지 않고, 본 서비스 서버가 직접 조회합니다</b>(ADR-0095 ①안, 사용자 결정 2026-10-14). 위 1~5번의 업체 선택은 나중에 프록시를 붙일 때만 씁니다. 그러면 남는 문제는 하나입니다 — 그 서버가 2주간 AWS 서울에 있으니, 공공도서관이 AWS IP를 막을 수 있습니다.</p>
+<table>
+<tr><th>자료가 말한 대응</th><th>실제로 되는지</th></tr>
+<tr><td>서울 리전(ap-northeast-2) 사용</td><td class="cwarn">지연·법적 위치엔 좋지만, <b>AWS 공인 IP 대역 자체가 "클라우드 IP"로 분류돼 막힐 수 있음</b>. 서울이라고 안전한 게 아님</td></tr>
+<tr><td>Elastic IP를 다른 IP로 교체</td><td class="cwarn">바꿀 수는 있으나 <b>새 IP도 같은 AWS 공개 대역 안</b>이라, 대역 단위로 막으면 효과 없음. IP 하나만 겨냥된 차단일 때만 도움</td></tr>
+<tr><td>가정용 회선(KT·SKT·LGU+) 경유</td><td class="cok">가정용 IP는 "클라우드 IP"로 안 잡혀 가장 유리. <b>우리 계획(2주 뒤 집 노트북으로 이전)이 바로 이것</b></td></tr>
+</table>
+<p>왜 이런가: AWS는 자기 공인 IP 대역을 <b>리전별로 전부 공개</b>합니다(<code>ip-ranges.json</code>). AWS 문서도 "이 정보로 AWS에서 오는 트래픽을 식별할 수 있다"고 적습니다. 그래서 어떤 방화벽이든 AWS 서울 IP인지 가려내 막을 수 있습니다. EIP를 바꿔도 여전히 AWS 대역 안이라, 대역째 막는 곳에는 소용이 없습니다.</p>
+<p class="rec">정리: AWS 2주 구간은 일부 <code>go.kr</code>이 막을 수 있습니다. 집 노트북(가정용 회선)으로 옮기면 그 위험이 줄어, <b>"2주 뒤 집으로" 계획이 차단 대응도 겸합니다.</b> 실제 막히는지는 배포 뒤 도서관별로 시험해 확인합니다(확인 못 한 부분).</p>
+<p class="src">출처: AWS IP 대역 문서 https://docs.aws.amazon.com/vpc/latest/userguide/aws-ip-ranges.html , 대역 파일 https://ip-ranges.amazonaws.com/ip-ranges.json (확인 2026-10-14). 전자정부 지침은 3번 카드 참고.</p>
 </section>
 
 <p class="foot">이 글은 요약이며 근거는 <code>docs/cycles/17-first-deploy/research.md</code> 3·4·10절에 있습니다. 2026-10-14.</p>
