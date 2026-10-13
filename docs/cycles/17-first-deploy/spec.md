@@ -18,12 +18,13 @@
 | R2 | `chaekcheck.com`(Cloudflare 구매) + Cloudflare Tunnel, http → https | [scope 포함 2](scope.md), dev `deploy/nginx/tunnel-test.conf` | [확정] |
 | R3 | nginx가 `CF-Connecting-IP`를 사용자 주소로 읽음. 나머지 `/api/`에도 IP별 한도 | [research 7절](research.md), dev `deploy/nginx/rate-limits.conf` | [확정: 읽음] / 한도 값 [안] |
 | R3-1 | 믿는 주소: Docker에서는 `cloudflared`가 compose 네트워크를 거쳐 nginx에 붙으므로 `127.0.0.1`이 아니라 그 네트워크 주소를 믿음. compose에서 nginx·`cloudflared` 네트워크의 주소 범위를 직접 정하고(예: `172.30.0.0/24`) `real_ip_header CF-Connecting-IP; set_real_ip_from <그 범위>;` 하나만 둠. dev `tunnel-test.conf`의 사설 주소 전체(`10/8`·`172.16/12`·`192.168/16`)는 쓰지 않음 | 사용자 제시 설정(2026-10-13), dev `deploy/nginx/tunnel-test.conf` | [확정: 네트워크 주소를 믿음] (사용자: "그 내용 spec에 반영해줘", 2026-10-13) / 범위 값 [안] |
+| R3-3 | 클릭 알림 주소(`/api/v1/library-clicks`)의 IP당 1분 60번 한도는 15가 둠. 15의 화면 행동 알림(사서 추천 보기, 지역·내 도서관 바꾸기)도 이 주소로 와서 같은 한도를 받음 → 17의 "나머지 `/api/`" 한도(R3)는 이 주소에 걸지 않음 | 사이클 15 (2026-10-13) | [확정] |
 | R3-2 | nginx 포트는 서버 바깥으로 열지 않음. 사용자는 터널로만 들어옴 → 누가 `CF-Connecting-IP`를 가짜로 붙여 직접 보내는 것을 막음 | R3-1과 같음, [scope 포함 1](scope.md)(80 닫기) | [확정] (같음) |
 | R4 | 첫 배포 직전 seed 다시 만들기·`PRE_DEPLOYMENT` 지우기, 책 목록은 PC에서 가져와 반영 | `docs/backlog.md` "첫 배포 직전" 줄, ADR-0078, 사이클 11 | [확정] |
 | R5 | 비밀 값은 Parameter Store 또는 Secrets Manager, 서버에는 읽기용 접근 키 한 쌍 | [research 1절](research.md) | [확정: AWS] / 서비스 선택 [안] |
 | R6 | 카카오 운영 등록(Redirect URI, 웹 도메인, 동의항목), 카카오만 켬 | [research 2절](research.md) | [확정] |
 | R7 | 시행일 = 공개일, 공개일에 16 개발이 끝났는지 확인 | [research 6절](research.md) | [확정] |
-| R8 | 운영 메모리 값 다시 재기 (15 몫 포함) | backlog "배포 사이클" 줄, [research 7절](research.md) | [확정: 잼] |
+| R8 | 운영 메모리 값 다시 재기 (15 몫 포함). 디스크: Lightsail 4GB 묶음 SSD 80GB에 DB 평소 약 8.5GiB + 반영 때 두 벌(약 16GB) + 백업 2개 + 이미지·로그를 넣고, 15 이용 기록이 1년 몇 GB까지 늘 수 있음(15, 2026-10-13, 운영 뒤 측정) → 디스크 사용량을 Grafana에서 지켜봄 | backlog "배포 사이클" 줄, [research 7절](research.md) | [확정: 잼] |
 | R9 | Prometheus·Grafana·node_exporter 직접, Spring Actuator 지표 | [hosting-options 결정 줄](../../research/deploy/hosting-options.md), [research 5절](research.md) | [확정] / 바깥에서 보는 방법 [안] |
 | R10 | DB 백업 매일 03:00, 내 PC가 내려받음 | [research 7절](research.md), [scope 포함 8](scope.md) | [확정] / 보관 개수 [안] |
 | R11 | nginx 접속 기록 14일, 쿼리 문자열 빼고 경로만 | [research 7절](research.md) | [확정] |
