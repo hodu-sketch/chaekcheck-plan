@@ -11,6 +11,6 @@
 | [notice-first.md](notice-first.md) | 첫 공지 "책첵을 시작했어요" | 공지 (`notice`) |
 | [ops-sql.md](ops-sql.md) | 운영 예시 SQL 초안 [안] — 인계서에 옮김, 시험 전 | — |
 
-- 공개 전에 채울 값([확인 필요]): AWS 계약 법인, Cloudflare 연락처·보유 기간·쿠키 여부, DB 백업 보관 기간, 공개일 — [spec.md](../spec.md) 확인 필요 8
+- 공개 전에 채울 값([확인 필요]): AWS 계약 법인, Cloudflare 연락처·보유 기간·쿠키 여부, 공개일 — [spec.md](../spec.md) 확인 필요 8
 - 근거: 법정 항목·지침 [research.md](../research.md) 2·5·6·8절, 다른 사이클에서 받은 값 [privacy-inputs.md](../privacy-inputs.md), 서비스 안내 문구 [ADR-0059](../../../adr/0059-library-logos.md), 약관 변경 [ADR-0101](../../../adr/0101-terms-change-notice-or-reconsent.md)
 - 시행일 `{{공개일}}` = 모르는 사람에게도 공개하는 날 (spec R2-3)
