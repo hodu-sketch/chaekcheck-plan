@@ -145,6 +145,16 @@ table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,t
 </ul>
 </div>
 <div class="item">
+<h3>질문: 노트북으로 옮기면 그냥 .env 파일을 쓰는 건가요?</h3>
+<p class="chg">둘 다 됩니다. 이 방식에서는 컨테이너가 읽는 것이 어차피 서버 안의 env 파일이라, 그 파일을 "Parameter Store에서 받아 만드느냐, 손으로 만들어 두느냐"만 다릅니다. 컨테이너와 compose 쪽은 바꿀 것이 없습니다.</p>
+<table>
+<tr><th>노트북에서</th><th>하는 일</th><th>걸리는 점</th></tr>
+<tr><td>Parameter Store 계속 씀</td><td>노트북에도 접근 키를 두고 같은 <code>up.sh</code> 실행</td><td>AWS 계정을 계속 둬야 함(Parameter Store Standard는 무료). 켤 때 인터넷이 필요</td></tr>
+<tr><td>.env 파일로 바꿈</td><td><code>up.sh</code>가 받던 값을 본인만 읽을 수 있는 파일로 한 번 저장해 두고 그 파일로 띄움</td><td>AWS를 완전히 정리할 수 있음. 값을 바꾸면 파일을 직접 고침</td></tr>
+</table>
+<p class="rec">추천: 이번에는 Parameter Store로 써 보시고(사용자: "해보자 그냥 써보고 싶어"), 노트북으로 옮길 때 AWS를 정리할지에 따라 고르시면 됩니다. <code>up.sh</code>에 "env 파일이 이미 있으면 그것을 쓰는" 선택지를 두어 두면 어느 쪽이든 같은 명령으로 띄웁니다 [제안].</p>
+</div>
+<div class="item">
 <h3><span class="no">3</span>도서관 호출 포기 횟수는 코드에서 직접 셈 (Micrometer 카운터, 포기 이유 두 가지로 나눔) [안]</h3>
 <p>지금 포기하는 길이 둘인데 하나만 로그를 남깁니다. 두 곳 모두에서 숫자를 올리고, 빠진 로그도 더합니다. 도서관마다 따로 세지는 않습니다(수백 곳이라 숫자 종류가 너무 많아짐).</p>
 <p class="alt"><b>로그에서 세기:</b> 코드를 덜 고칠 것 같지만, 로그가 없는 길 때문에 어차피 고쳐야 하고 컨테이너가 늘어납니다.</p>
