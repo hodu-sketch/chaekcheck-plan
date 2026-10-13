@@ -58,7 +58,7 @@
 | 6 | 넣기가 정렬용 메모리를 쓰는지, 색인 비용 | 프로토타입 | [확인 필요] (개발 때) |
 | 7 | 묶어 넣는 방법 | 공식 문서 | 결정됨 → `JdbcTemplate.batchUpdate` (ADR-0097) |
 | 8 | 사이클 16의 schema·모듈 이름과 겹치지 않게 | 16 설계 확인 | 확인됨: 16은 `sitecontent` [안], 15는 `usagelog` |
-| 9 | 사이클 14가 결과 줄·사서 추천 창의 링크를 바꾸는지 | 14 `flow.md`·`design-delta.md` | 확인됨: 결과 줄은 그대로, 화면 이름 popular→picks. 실제 코드는 14 회고 때 다시 봄 |
+| 9 | 사이클 14가 결과 줄·사서 추천 창의 링크를 바꾸는지 | 14 `flow.md`·`design-delta.md` | 확인됨: 결과 줄은 그대로, 화면 이름 popular→picks. 실제 코드 확인함 (2026-10-14, 사서 추천 창은 `PicksBookDialog`가 결과 줄을 씀) |
 
 ## 슬라이스 선택 기록
 
@@ -74,9 +74,9 @@
 
 | 사이클 | 상태 (2026-10-14) | 겹치는 곳 | 이 사이클에서 한 일 |
 |---|---|---|---|
-| 12 grouping-rules | dev 개발 중 | 수집 목록 검색 코드 | 회고 때 기록을 부를 자리 확인 |
-| 13 crawler-to-dev | dev 개발 중 | 도서관 번호 확인 API(`listAll`), Liquibase master 끝줄 | 회고 때 확인 |
-| 14 librarian-picks | dev 개발 중 (`../chaekcheck-dev-c14`) | 사서 추천 창의 결과 줄·도서관 링크, 화면 이름 `picks` | 화면 값 `picks`로 둠, 회고 때 확인 |
+| 12 grouping-rules | dev 끝남, 회고 2026-10-14 | 수집 목록 검색 코드 | 회고 때 기록을 부를 자리 확인 |
+| 13 crawler-to-dev | dev 끝남, 회고 2026-10-14 | 도서관 번호 확인 API(`listAll`), Liquibase master 끝줄 | 회고 때 확인 |
+| 14 librarian-picks | dev 끝남, 회고 2026-10-14 | 사서 추천 창의 결과 줄·도서관 링크, 화면 이름 `picks` | 화면 값 `picks`로 둠, 회고 때 확인 |
 | 16 notices-and-policies | plan (다른 세션) | ① 처리방침에 적을 수집 항목 ② 새 schema(`sitecontent`) ③ ADR 번호 | ① [to-cycle-16.md](to-cycle-16.md)로 전달 ② 이름 겹치지 않음 ③ ADR-0096·0097·0102 |
 | 17 first-deploy | plan (다른 세션) | ① 터널 뒤 사용자 IP(`CF-Connecting-IP` → `X-Real-IP`) ② nginx 한도·로봇 거절 ③ 접속 기록·백업·서버 로그 보관 ④ 4GB 메모리·디스크 | [to-cycle-17.md](to-cycle-17.md)로 전달, 받은 답은 spec "다른 사이클과 주고받은 것". 정리본 [to-cycle15-2026-10-13.md](../../research/deploy/to-cycle15-2026-10-13.md) |
 

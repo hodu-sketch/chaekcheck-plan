@@ -103,7 +103,7 @@ sequenceDiagram
       U->>U: 묶음 버림, 버린 사실을 메모리에 들고 서버 로그
     end
   end
-  Note over U,D: 매일 04:30 서울: 30일 지난 client_ip 비움, 30일 지난 rejected_event 지움, 1년 지난 줄 지움(1만 줄씩)
+  Note over U,D: 매일 04:30 서울: 30일 지난 client_ip 비움, 30일 지난 rejected_event 지움, 1년 지난 줄 지움(1만 줄씩 [안])
 ```
 
 ### 도메인 모델
@@ -169,11 +169,12 @@ classDiagram
 | `usagelog` | 신규 | 기록 받기·모으기·5초 넣기·도서관 응답 집계·04:30 정리·사용 알림 주소, 설정 꺼짐·로봇 거르기 | `UsageLog` (`recordSearch`, `recordBookView`, `recordMore`, `recordLibraryResponse`), 공개 record [안: 이름] | 없음 | `usagelog.*` 여덟 |
 | `catalog` | 변경 | 첫 쪽 검색·다음 쪽·책 상세 성공 뒤 `UsageLog` 호출 (로그인은 모름) | 변경 없음 | 없음 | 변경 없음 |
 | `availability` | 변경 | 직접 찾기 첫 묶음 끝·끊김에 한 번 `recordSearch`, "더 보기"·도서관별 더 보기에 `recordMore`, 모든 도서관 요청(직접 찾기·대출 수 채우기)마다 `recordLibraryResponse` | 변경 없음 | 없음 | 변경 없음 |
-| `auth` | 변경 | 로그인 상태 판별 부품 공개 (켜짐: 쿠키 서명 확인, 만료돼도 로그인함 / 꺼짐: 쿠키를 보지 않고 `login_off`), `access_token` 쿠키 경로 `/api/v1`, 옛 경로 쿠키는 따로 지우지 않음 | `LoginStatusReader` [안: 이름] | 없음 | 변경 없음 |
+| `auth` | 변경 | 로그인 상태 판별 부품 공개 (켜짐: 쿠키 서명 확인, 만료돼도 로그인함 / 꺼짐: 쿠키를 보지 않고 `login_off`), `access_token` 쿠키 경로 `/api/v1`, 옛 경로 쿠키는 따로 지우지 않음, CSRF 보호 주소에 `/api/v1/usage-events` 더함 | `LoginStatusReader` [안: 이름] | 없음 | 변경 없음 |
 | `library` | 변경 없음 | `usagelog`이 도서관 번호 확인에 쓰는 공개 API (사이클 13에서 `LibraryRegistry.listAll()` 생김, dev main 2026-10-14 확인. 꺼진 도서관도 들어 있는지·어느 것을 쓸지는 13 회고 뒤 정함) | 기존 | 없음 | — |
 
 - `usagelog`: `@ApplicationModule(allowedDependencies = { "library", "auth" })` [확정] ([남은 제안](easy/2026-10-14-remaining-proposals.html) #6, [로그인 판별](easy/2026-10-14-login-status.html) #1). `catalog → usagelog`, `availability → usagelog` 의존이 새로 생김 (순환 없음)
 - 기록 설정 값: `chaekcheck.usagelog.enabled` [확정] ([남은 제안](easy/2026-10-14-remaining-proposals.html) #2), 기본 꺼짐, 공개일에 켬 [확정] (spec R3-6)
+- 기록 설정이 꺼져 있으면(`chaekcheck.usagelog.enabled=false`) `UsageLog`의 모든 `record…`가 곧바로 돌아감: 큐·도서관 응답 요약·사용 알림 모두 남기지 않고, 사용 알림 주소는 그대로 204. 부르는 쪽(`catalog`·`availability`)은 설정을 모름 [안]
 - 요청 하나하나의 도서관 응답은 서버 로그로만 [확정] (spec R6-4). 로그 형식·레벨 [안: 기존 availability 로그에 도서관·출처·결과·시간을 한 줄로], 보관 14일 [확정: 17, 2026-10-14]
 
 ## 웹
@@ -182,6 +183,33 @@ classDiagram
 - 클릭 알림을 붙일 곳: 결과 줄(`ResultRow.tsx`), 로고(`LibraryLogo.tsx`, 도서관 번호를 넘겨받게), 요약 막대 이름(`LibrarySummaryBar.tsx`). 결과 줄은 어느 화면인지 넘겨받음 (spec R2-2)
 - 화면 행동 알림을 붙일 곳: 사서 추천 목록·책 창(사이클 14 `picks` 화면), 지역 설정 저장, 내 도서관 넣기·빼기
 - 로그인 여부는 보내지 않음 (서버 판별)
+
+## 부를 자리 (dev main, 2026-10-14 확인: 사이클 12·13·14 합친 뒤)
+
+경로는 `backend/src/main/java/com/chaekcheck/` 또는 `web/src/` 아래. 줄 번호는 확인 때 기준이라 개발 때 다시 봄.
+
+| 기록 | 자리 | 메모 |
+|---|---|---|
+| 수집 목록 검색·다음 쪽 | `catalog/internal/web/BookSearchController.java:37-38` (`GET /api/v1/books`) | 쪽은 `page` 번호(`BookParams.java:74`, 기본 1). `page=1`이면 `recordSearch`(`totalCount` = `PgBigmBookSearch.java:83`), 2 이상이면 `recordMore(catalog_next_page, seq=page)`. 400·422는 `CatalogErrors.java`에서 끝나 기록 없음 |
+| 책 상세 | `BookSearchController.java:44-45` (`GET /api/v1/books/{bookId}`) | 404면 기록 없음 |
+| 직접 찾기 첫 묶음 | `availability/internal/web/EbookSearchStreamController.java:43-48`, 끝: `search/BatchSession.java:167-193` (`finishBatchIfDone`·`finish`) | 끊김은 지금 보내기 실패(`BatchSession.send` `:195-200`, `clientGone`)로만 알고 `SseEmitter`의 `onCompletion`·`onTimeout`·`onError`는 없음. 기록은 세션마다 한 번만: 첫 `batch-done`을 보낸 순간 `recordSearch(countedRows)`, 그 전에 `clientGone`이 되거나 `finish()`·emitter 시간 초과(`streamDuration()+5s`)·오류로 끝나면 `recordSearch(resultCount=null)`. 세션 안 "기록함" 표시 하나로 두 번 남기지 않음 [안]. 보낼 것이 없어 끊김을 모르는 경우도 묶음 마감(8초) 뒤 `finish()`가 `done`을 보내다 알게 되므로 늦어도 그때 남김. 끊긴 뒤에도 이미 보낸 도서관 요청의 응답은 끝날 때 도서관 응답 요약에 셈 (spec R6-4) |
+| 다음 묶음 | `web/EbookBatchStreamController.java:32` (`batchNo` ≥ 2) | `recordMore(direct_next_batch, seq=batchNo)` |
+| 도서관별 더 보기 | `web/LibraryEbookController.java:50-52` | `recordMore(library_more, libraryId, seq=page)`. 이 요청의 도서관 응답(`source=direct_search`)은 `:58` `fetcher.fetch(...)` 앞뒤로 시간을 재고 성공·실패(`UpstreamException`)를 셈 [안] |
+| 도서관 응답 (직접 찾기) | `search/BatchRunner.java:161-174` (`fetchAsync(...).whenComplete`) | 지금 도서관마다 걸린 시간이 없음 → 요청 시작 시각을 잡아 끝날 때 ms 계산 [안]. 결과: 성공 / `UpstreamException.Kind.ERROR` → 실패 / `TIMEOUT`·묶음 마감(`deadlinePassed`) → 시간 초과 |
+| 도서관 응답 (대출 수 채우기) | `BatchRunner.java:225-250` (`startHolding`, `requestedAt` `:234`) | 구독형은 요청 없이 끝나고(`:226-228`), 도서관 주소 밖 상세 주소는 요청 없이 실패(`:230-232`) → 실제 요청이 아니라 세지 않음 [안] |
+| 요청 하나하나 서버 로그 | 지금은 실패만 남김(`BatchSession.java:116`, `HoldingSession.java:104`), `DirectSiteFetcher.java:107`은 도서관 번호 없음 | 위 두 `whenComplete`에서 `library=… source=… result=… ms=…` 한 줄 INFO 더함 [안] |
+| 로그인 상태 | 쿠키 `auth/internal/security/AuthCookies.java:9` (`/api/v1/me` → `/api/v1`), 서명 확인 `SecurityConfiguration.java:105-108` (HS256), 켜고 끄기 `chaekcheck.auth.enabled`(`auth/ConditionalOnAuthEnabled.java`) | 꺼짐이면 `@ConditionalOnAuthEnabled`의 반대로 쿠키를 보지 않는 부품 |
+| 도서관 번호 확인 | `library/LibraryCatalog.java:44` `enabledLibraryRefs()` (켜진 도서관만) | `LibraryRegistry.listAll()`(사이클 13)은 꺼진 도서관도 돌려줌 |
+| 클릭 알림 (웹) | `features/search/ResultRow.tsx`: 카드 `:185-191`, 가입 링크 `:97-101`, 가입 안내 `:106-113`, 도서관 첫 화면 `:62-69`, 로고 `:131`; `components/LibraryLogo.tsx:34-39`; 요약 막대 이름 = `LibrarySummaryBar.tsx`의 `LibraryCell` 첫 화면 링크 `:126-130` (`DirectResults.tsx:122-128`의 `LibraryCountButton` 안) | 화면: 직접 찾기 `DirectResults`, 수집 목록 `InstantResults.tsx:137`, 책 페이지 `features/book/BookPage.tsx:149`, 사서 추천 `features/picks/PicksBookDialog.tsx:163`, 내 도서관 `features/mylibrary/MyLibrariesPage.tsx:253,268`(로고만) |
+| 화면 행동 알림 (웹) | 사서 추천 목록 `features/picks/PicksPage.tsx:317-325`(분야 `category.code`), 책 창 `PicksPage.tsx:355-362`; 지역 저장 `features/region/RegionContext.tsx:113-128`(로그인 전 `regionStorage.ts:32`, 뒤 `putMyRegions`); 내 도서관 `MyLibraryContext.tsx:118-157` | 로그인 전후 같은 자리에서 보냄 |
+| 알림 보내기 (웹) | `api/auth.ts:48` `send`(CSRF 붙임, 403 `csrf_invalid` 한 번 다시), 표시 받기 `GET /api/v1/auth/csrf-token`(`CsrfTokenController.java:27-31`), 꺼짐 판단 `api/auth.ts:111-113` | 사용 알림 공용 함수는 이 `send` 방식을 따르되 `keepalive` [안] |
+| CSRF 검사 범위 | `SecurityConfiguration.java:47-48,75` — 지금 `/api/v1/me/**`만 보호 | `auth`의 보호 주소(`PROTECTED`)에 `/api/v1/usage-events`(POST)를 더함 — 로그인은 요구하지 않고 CSRF만 검사 [안: 방법은 개발 때, 예: CSRF 대상 매처를 따로 둠]. 꺼짐이면 Spring Security가 빠져 검사 없음(`AuthToggleEnvironmentPostProcessor.java:45-56`) |
+| 04:30 정리 | 기존 예: `auth/internal/cleanup/DailyAccountCleanup.java:65` (cron·zone 설정 값) | 같은 방식으로 `chaekcheck.usagelog.cleanup.cron`·`zone` [안: 이름] |
+| Liquibase | `db/changelog/db.changelog-master.yaml` 끝 `:94` `picks/001-picks-schema.yaml` | 규칙: main에 합치는 순서대로 master 끝에 붙임. 15(`usagelog`)와 16(`sitecontent` [안])은 schema가 달라 서로 기대지 않으므로 어느 쪽이 먼저여도 됨. 합칠 때 나중 사이클이 rebase해 자기 줄을 맨 끝으로 옮기고, 이미 다른 DB에 돈 changeset은 고치지 않음 [안] |
+| 모듈 의존 선언 | 예: `picks/package-info.java:20` | `usagelog/package-info.java`에 `allowedDependencies = { "library", "auth" }` |
+| nginx | `deploy/nginx/chaekcheck-locations.conf:17` X-Real-IP, 한도 `rate-limits.conf:15,20`, 직접 찾기 `:27-29`, 대출 조회 `:45`; `robots.txt` 없음(`web/public`) | 새 zone·`location = /api/v1/usage-events`·UA 거절·`web/public/robots.txt` |
+
+- 참고(15 밖, 사이클 14·17에 알림): nginx 화면 주소 목록(`chaekcheck-locations.conf:90`)에 `/picks`가 없어, nginx 뒤에서 `/picks`를 바로 열면 404가 날 수 있음
 
 ## 데이터
 
@@ -325,7 +353,7 @@ erDiagram
 
 | 메서드 | 경로 | 설명 | 요청 | 응답 | 에러 |
 |---|---|---|---|---|---|
-| POST | `/api/v1/usage-events` | 사용 알림 하나로 받음 (`type`으로 구분) [확정] ([늘린 기록 설계](easy/2026-10-13-more-actions-design.html) #1; 처음 [설계](easy/2026-10-13-design-decisions.html) #5의 `/api/v1/library-clicks`를 바꿈) | JSON (아래) | `204`, 본문 없음 | 로그인 기능 켜짐에서 CSRF 표시 없음·틀림 → `403` (기존 규칙). 값이 틀려도 `204` (`rejected_event`). nginx 한도 초과도 `204` |
+| POST | `/api/v1/usage-events` | 사용 알림 하나로 받음 (`type`으로 구분) [확정] ([늘린 기록 설계](easy/2026-10-13-more-actions-design.html) #1; 처음 [설계](easy/2026-10-13-design-decisions.html) #5의 `/api/v1/library-clicks`를 바꿈) | JSON (아래) | `204`, 본문 없음 | 로그인 기능 켜짐에서 CSRF 표시 없음·틀림 → `403` (`auth` CSRF 보호 주소에 이 경로를 더함, 로그인은 요구 안 함). 값이 틀려도 `204` (`rejected_event`). nginx 한도 초과도 `204` |
 | GET | `/api/v1/books`, `/api/v1/books/{bookId}`, `/api/v1/ebook-searches/stream`, `…/batches/stream`, `/api/v1/availability/libraries/{id}/ebooks` | 변경 없음 (로그인 여부는 쿠키로, ADR-0102) | — | 변경 없음 | 변경 없음 |
 
 `type` 값과 칸 [안: JSON 칸 이름]:
@@ -361,11 +389,12 @@ erDiagram
 
 | 항목 | 확인 방법 | 막는 단계 |
 |---|---|---|
-| 12·13·14 뒤 검색·책 상세·결과 줄 코드 위치, 도서관 번호 확인 API(13 `LibraryRegistry.listAll()` 있음, 쓸지 확인), master changelog 끝, 14 사서 추천 화면 | 12·13·14 회고 | 설계 확정 |
+| 도서관 응답의 "건너뜀"이 무엇인지 (dev에는 건너뜀 결과가 없고, 시작 마감(3초)까지 못 보낸 도서관은 요청 자체가 없음), 조회 서버 바꿔 보내기(연결 실패·503)를 한 번으로 셀지 | 사용자에게 질문 (결정 페이지) | 설계 확정 |
+| 도서관 번호 확인에 켜진 도서관만 쓸지 (`enabledLibraryRefs`) | 사용자에게 질문 (결정 페이지) | 설계 확정 |
 | nginx 이미지의 realip 모듈, compose 네트워크 범위, Cloudflare "Remove visitor IP headers" 꺼짐 | 배포 때 `nginx -V`, 지인 기간 시험에서 기록된 IP 확인 | 없음 (배포 때) |
 | `SmartLifecycle` 정지 phase와 Hikari 닫힘 순서 | 프로토타입 | 개발 |
 | dev pgjdbc 실제 버전 | 의존성 트리 | 개발 |
 | `id` PK·부분 색인을 둘지 (넣기 비용) | 프로토타입, AC-16 측정 | 개발 |
 | 광고 차단으로 빠지는 알림 비율 | 지인 기간 실서버 시험 | 없음 |
 
-- 참고(해결됨): 터널에서 `CF-Connecting-IP`가 붙는지 — Cloudflare 공식 문서로 확인 (spec R5-2). 사이클 17 확정: nginx 접속 기록 14일·쿼리 문자열 뺌, DB 백업 매일 03:00 (04:30 정리와 겹치지 않음)·보관 7일, 서비스 로그 14일 (2026-10-14)
+- 참고(해결됨): 12·13·14 뒤 코드 위치는 위 "부를 자리" (2026-10-14). 터널에서 `CF-Connecting-IP`가 붙는지 — Cloudflare 공식 문서로 확인 (spec R5-2). 사이클 17 확정: nginx 접속 기록 14일·쿼리 문자열 뺌, DB 백업 매일 03:00 (04:30 정리와 겹치지 않음)·보관 7일, 서비스 로그 14일 (2026-10-14)

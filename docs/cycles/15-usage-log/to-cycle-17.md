@@ -30,7 +30,7 @@
    - 터널을 거쳐도 `CF-Connecting-IP`가 붙는지 배포 때 시험 결과를 15에 알려 주세요
 
 2. 15가 dev에 더할 nginx 설정 (15 인계서로 들어감, 17 설정과 겹치지 않게)
-   - `location = /api/v1/library-clicks` (POST, 클릭 알림): IP당 1분 60번, 넘치면 기록하지 않고 204
+   - (4차에서 `usage-events`로 바뀜) `location = /api/v1/library-clicks` (POST, 클릭 알림): IP당 1분 60번, 넘치면 기록하지 않고 204
    - 직접 찾기·대출 조회 location에서 User-Agent에 bot·crawler·spider가 든 요청은 403
    - 웹 `public/robots.txt`: `/api/` 크롤러 금지
    - 17이 Cloudflare 무료 요청 한도 규칙을 쓰기로 하면 이 nginx 한도들과 어떻게 나눌지 알려 주세요 (Cloudflare 규칙도 IP 기준)
