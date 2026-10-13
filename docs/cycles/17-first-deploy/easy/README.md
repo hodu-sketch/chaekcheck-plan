@@ -8,3 +8,4 @@
 | [2026-10-13-design-decisions.html](2026-10-13-design-decisions.html) | 설계: 네트워크 둘, 비밀 값 스크립트, 포기 횟수 카운터, 지표 포트, 429 exporter, cAdvisor, 백업 범위·가져오기, 조회 서버 꺼 둠, 이미지 옮기기 | `../architect-proposal.md` | 10개 |
 | [2026-10-14-design-delta-review.html](2026-10-14-design-delta-review.html) | 설계 정리(구성도·흐름·바뀌는 것), 비밀 값 범위·이름, User-Agent 연락처, 운영 DB SQL 길, design-delta 확정 + ADR-0103 | `../design-delta.md`, ADR-0103 초안 | 4개 |
 | [2026-10-14-design-easy.html](2026-10-14-design-easy.html) | 설계 전체를 쉽게: 들어오는 길, 서버 안 구성, 비밀 값, 모니터링, 백업, 요청 한도, 프록시(뒤에) | 사이클 17 전체 | 설명 (결정 없음) |
+| [2026-10-14-proxy-vendor.html](2026-10-14-proxy-vendor.html) | 프록시 업체 고르기: 업체에 먼저 물을 것(go.kr), 업체 비교, 공공기관 접속 공개 자료, 고르는 순서 | `../research.md` 3·4·10절 | 2개 |
