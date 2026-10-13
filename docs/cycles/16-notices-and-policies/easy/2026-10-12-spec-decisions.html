@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>공지·약관 명세 결정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+.flow{display:grid;gap:10px;margin:10px 0 16px}.lane{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--card)}.lane b{display:block;margin-bottom:4px}.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{font-size:14px;border-radius:6px;padding:2px 8px;background:var(--code-bg)}.chip.new{background:var(--warn-bg)}.chip.dev{background:var(--ok-bg)}.arrow{text-align:center;color:var(--muted);font-size:18px;line-height:1}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">사이클 16 명세: 글을 어떻게 넣고,<br>어떻게 보여 줄지</p>
+<p class="sub">공지사항·서비스 안내·이용약관·개인정보 처리방침을 DB에 둘 때의 규칙입니다. 정할 것은 15가지입니다. 법과 개인정보위 지침을 확인한 결과, <b>앞서 정한 것 하나를 바꾸자고 제안</b>합니다(9번, 처리방침은 로그인과 상관없이 보이기).</p>
+
+<section class="card"><h2><span class="num">1</span>무엇을 DB에 두나</h2>
+<div class="gist">네 글에 더해, 가입 화면의 "개인정보 수집·이용 동의문"도 DB에 두기를 추천합니다. 본문은 간단한 서식만 되는 글로 씁니다.</div>
+
+<div class="item"><h3><span class="no">1</span>가입 화면의 수집·이용 동의문도 DB에 두고 버전을 남김 <span class="an">[안]</span></h3>
+<p>dev 코드를 보니, 가입할 때 "어느 버전에 동의했는지" 남는 글은 <b>이용약관</b>과 <b>수집·이용 동의문</b>(가입 화면의 목적·항목·보유 기간·거부할 권리 표) 둘입니다. 처리방침은 동의를 받는 글이 아니라 공개하는 글입니다. 앞서 승인하신 "약관·처리방침 버전"에서 동의 기록과 이어지는 쪽은 사실 동의문이었습니다.</p>
+<p>동의문도 DB에 두면, 동의문을 고칠 때도 배포 없이 새 버전을 넣을 수 있습니다.</p>
+<p class="alt"><b>다른 선택:</b> 동의문은 웹 코드에 둠. 그러면 동의문을 고칠 때마다 배포해야 하고, 버전 날짜만 DB에 두게 되어 글과 버전이 어긋날 수 있습니다.</p>
+<p><b>추천:</b> 동의문도 DB에.</p></div>
+
+<div class="item"><h3><span class="no">2</span>본문은 제목·문단·목록·굵게·링크만 되는 간단한 서식(마크다운) <span class="an">[안]</span></h3>
+<p>예: <code>## 보유 기간</code>이라고 쓰면 소제목이 되고, <code>- 항목</code>이라고 쓰면 목록이 됩니다. 처리방침처럼 소제목이 여러 개인 글도 쓸 수 있습니다.</p>
+<p>화면에 그릴 때는 <code>react-markdown</code>이라는 웹 부품을 씁니다. 이 부품은 본문 안에 HTML이 섞여 있어도 실행하지 않고 글자로 보여 줍니다. 링크는 http·https·mailto 같은 주소만 허용합니다. 출처: react-markdown 공식 설명, https://github.com/remarkjs/react-markdown (2026-10-12 확인).</p>
+<p class="alt"><b>다른 선택:</b> 줄바꿈만 되는 글. 부품이 필요 없지만, 처리방침의 소제목과 목록을 나타낼 수 없습니다.</p>
+<p><b>추천:</b> 간단한 서식.</p></div>
+</section>
+
+<section class="card"><h2><span class="num">2</span>버전 규칙</h2>
+<div class="gist">버전 이름은 날짜입니다. 시행일을 앞날로 넣어 두면 그날부터 바뀝니다.</div>
+<figure>
+<svg viewBox="0 0 860 170" role="img" aria-label="시행일과 지금 버전">
+<line x1="30" y1="80" x2="830" y2="80" stroke="var(--line)" stroke-width="4"/>
+<circle cx="120" cy="80" r="10" fill="var(--accent)"/><text x="60" y="50" font-size="18" fill="var(--text)">10월 4일 버전</text>
+<circle cx="430" cy="80" r="10" fill="var(--ok)"/><text x="380" y="50" font-size="18" fill="var(--text)">오늘 10월 12일</text>
+<circle cx="680" cy="80" r="10" fill="var(--warn)"/><text x="610" y="50" font-size="18" fill="var(--text)">11월 1일 버전</text>
+<text x="40" y="125" font-size="17" fill="var(--muted)">오늘 화면에 보이는 것: 10월 4일 버전</text>
+<text x="500" y="125" font-size="17" fill="var(--muted)">11월 1일부터 저절로 바뀜</text>
+<text x="500" y="152" font-size="17" fill="var(--muted)">(지금 미리 넣어 둠)</text>
+</svg>
+<figcaption>그림: 시행일이 오늘 이전인 버전 중 가장 최근 것이 "지금 버전"입니다.</figcaption>
+</figure>
+
+<div class="item"><h3><span class="no">3</span>버전 이름은 시행일(공지·안내는 게시일), 앞날 시행일로 미리 넣어 두기 가능 <span class="an">[안]</span></h3>
+<p>예: 11월 1일에 바뀔 약관을 10월 25일에 미리 넣어 둡니다. 10월 31일까지는 옛 약관이 보이고 가입도 옛 약관으로 받습니다. 11월 1일부터는 새 약관이 보이고, 가입도 새 약관으로 받습니다. 같은 글에 같은 날짜로 버전 두 개는 넣을 수 없습니다.</p>
+<p class="alt"><b>다른 선택:</b> 넣는 순간 바로 바뀜. 단순하지만, 바뀌기 전에 공지로 미리 알리려면 운영자가 그날 맞춰 넣어야 합니다.</p>
+<p><b>추천:</b> 시행일로 미리 넣어 두기.</p></div>
+
+<div class="item"><h3><span class="no">4</span>처음에는 지금 화면의 글을 그대로 첫 버전으로 넣음 <span class="an">[안]</span></h3>
+<p>약관과 동의문은 지금 버전 이름(2026-10-04)으로 넣습니다. 그래서 테스트로 가입한 계정의 동의 기록이 그대로 맞습니다. 서비스 안내는 사이클 13·14가 더한 문장까지 들어간 화면에서 가져옵니다. 이 문장은 두 사이클 개발이 끝난 뒤 확인합니다. 검토를 마친 문구는 그 뒤에 새 버전으로 넣습니다.</p>
+<p class="alt"><b>다른 선택:</b> 처음부터 검토한 문구만 넣음. 그러면 검토가 끝날 때까지 개발을 마칠 수 없습니다.</p>
+<p><b>추천:</b> 지금 글로 시작.</p></div>
+</section>
+
+<section class="card"><h2><span class="num">3</span>이전 버전 보기</h2>
+<div class="gist">개인정보위 지침이 "이전 버전과 각 버전의 적용 기간을 함께 공개"하라고 합니다. 그래서 목록에 적용 기간을 보이고, 약관·처리방침은 "바뀐 점"을 함께 적기를 추천합니다.</div>
+<p class="note">근거: 개인정보 처리방침 작성지침 2026.4. 개정판, 83쪽("이전 버전을 함께 공개하고 각 버전의 적용 기간을 확인할 수 있게", "중대한 변경은 대조표 등으로 별도 안내") · 13쪽(변경 전후 비교 공개 권장). 개인정보보호위원회, https://www.pipc.go.kr/np/cop/bbs/selectBoardArticle.do?bbsId=BS217&amp;mCode=D010030000&amp;nttId=12018 (2026-10-12 확인). 지침은 법 조문이 아니라 위원회가 지키라고 권하는 문서입니다.</p>
+
+<div class="item"><h3><span class="no">5</span>이전 버전 목록에 적용 기간을 보이고, 옛 글 위에는 "이전 버전입니다" <span class="an">[안]</span></h3>
+<p>예: 목록에 "2026-10-04 ~ 2026-10-31 적용"처럼 나옵니다. 누르면 그 글이 열리고, 위에 "이전 버전입니다 · 지금 버전 보기"가 붙습니다. 옛 글은 주소로 바로 열 수 있어서 공지에 링크를 걸 수 있습니다. 버전이 하나뿐이면 목록을 보이지 않습니다.</p>
+<p class="alt"><b>다른 선택:</b> 날짜만 보이고 기간은 안 보임. 지침이 말하는 "적용 기간"을 이용자가 계산해야 합니다.</p>
+<p><b>추천:</b> 적용 기간을 보이기. 목록을 어디에 어떤 모양으로 둘지(글 안의 날짜 고르기 / 따로 보관 페이지)는 화면 흐름에서 정합니다.</p></div>
+
+<div class="item"><h3><span class="no">6</span>약관·동의문·처리방침의 새 버전에는 사람이 쓴 "바뀐 점"을 함께 넣고 글 위에 보임 <span class="an">[안]</span></h3>
+<p>예: 처리방침 11월 버전 위에 "바뀐 점: 검색 기록을 남기는 항목을 더했습니다"와 바뀌기 전·후 표가 보입니다. 토스도 약관 개정 공지에 바뀌기 전·후 대비표를 싣습니다(조사, <code>research.md</code> 3절).</p>
+<p class="alt"><b>다른 선택:</b> 바뀐 줄을 자동으로 표시(Google의 비교 화면처럼). 만드는 일이 큽니다. / 바뀐 점을 두지 않음. 중대한 변경을 따로 알리라는 지침과 맞지 않습니다.</p>
+<p><b>추천:</b> 사람이 쓴 "바뀐 점".</p></div>
+</section>
+
+<section class="card"><h2><span class="num">4</span>공지사항과 서비스 안내</h2>
+<div class="gist">잘 알려진 서비스의 공지는 거의 모두 "제목 + 날짜" 목록이었습니다(토스, 카카오, 예스24). 작게 시작하기를 추천합니다.</div>
+
+<div class="item"><h3><span class="no">7</span>공지 목록: 최신순, 고정 공지는 맨 위, 분류 없음, 고친 공지는 "고침 날짜", 내릴 때는 숨김 <span class="an">[안]</span></h3>
+<p>예: "서비스 점검 안내"를 고정으로 넣으면 날짜와 상관없이 맨 위에 있습니다. 공지를 고치면 목록에 "고침 2026-11-04"가 붙습니다. 공지를 내리면 지우지 않고 숨김으로 바꿉니다. 숨긴 공지는 목록에도 없고 주소로도 열리지 않습니다.</p>
+<p>조사에서 고친 날을 보여 주는 곳은 찾지 못했습니다. 다만 공지의 이전 기록을 보이게 하신 결정과 맞추려면 고친 공지임을 알려야 해서 넣었습니다. 분류, 검색, 조회수, N 표시는 국립중앙도서관 같은 큰 기관에만 있었습니다.</p>
+<p class="alt"><b>다른 선택:</b> 고정 공지도 뺌(토스처럼 날짜순만). 더 단순하지만, 점검 공지를 위에 붙여 둘 수 없습니다.</p>
+<p><b>추천:</b> 위 규칙. 몇 개씩 보이고 페이지를 어떻게 나눌지는 화면 흐름에서 정합니다.</p></div>
+
+<div class="item"><h3><span class="no">8</span>서비스 안내의 "가입 조건 조사 기준일" 한 줄은 DB 글에 넣지 않고 화면이 자동으로 붙임 <span class="an">[안]</span></h3>
+<p>사이클 13이 넣는 "가입 조건은 2026년 10월에 조사한 내용입니다."는, 도서관 정보를 넣을 때 기록되는 날짜에서 자동으로 만들어집니다. 이 줄을 DB 글 바로 아래에 지금처럼 자동으로 붙입니다. 조사를 다시 하면 운영자가 글을 고치지 않아도 날짜가 바뀝니다.</p>
+<p class="alt"><b>다른 선택:</b> 이 줄도 DB 글에 직접 씀. 조사할 때마다 운영자가 서비스 안내를 고쳐 새 버전을 넣어야 합니다.</p>
+<p><b>추천:</b> 자동으로 붙임.</p></div>
+</section>
+
+<section class="card"><h2><span class="num">5</span>누구에게 보이나<br>(앞서 정한 것을 바꾸는 제안)</h2>
+<div class="gist">처리방침은 로그인 기능이 꺼져 있어도 보이게 바꾸기를 추천합니다. 이용약관은 지금처럼 로그인 기능을 따릅니다.</div>
+<table>
+<tr><th></th><th>로그인 기능 켜짐</th><th>로그인 기능 꺼짐 (지금)</th><th>로그인 기능 꺼짐 (제안)</th></tr>
+<tr><td>공지사항·서비스 안내</td><td>보임</td><td>보임</td><td>보임</td></tr>
+<tr><td>이용약관</td><td>보임</td><td>안 보임</td><td>안 보임</td></tr>
+<tr><td>개인정보 처리방침</td><td>보임</td><td>안 보임</td><td><b>보임</b></td></tr>
+</table>
+<div class="item"><h3><span class="no">9</span>개인정보 처리방침은 로그인 기능과 상관없이 늘 보임 <span class="an">[안]</span></h3>
+<p>사이클 05에서 "로그인 기능이 꺼지면 약관·처리방침 둘 다 안 보임"으로 정했습니다. 이번 대화에서도 "로그인 방침에 따라서 다르게 보여야 하는 거 아니야?"라고 하셨습니다. 그런데 지침을 확인해 보니 처리방침은 사정이 다릅니다. 까닭은 셋입니다.</p>
+<ul>
+<li>개인정보위 작성지침 17쪽은 처리방침을 "로그인 여부와 상관없이" 확인할 수 있어야 하고, 첫 화면에서 바로 찾을 수 있어야 한다고 합니다.</li>
+<li>로그인이 꺼져 있어도 서버 접속 기록에 IP 주소가 남을 수 있습니다. 같은 지침 122쪽은 IP 주소와 이용 기록을 개인정보 항목의 예로 듭니다. IP가 언제나 개인정보라는 공식 해석은 확인 못 함입니다.</li>
+<li>사이클 15가 검색과 클릭 기록을 남기면, 로그인과 상관없이 모으는 기록이 생깁니다.</li>
+</ul>
+<p>법 근거: 개인정보 보호법 제30조②, 시행령 제31조②(홈페이지에 지속적으로 게재). 국가법령정보센터, https://www.law.go.kr/법령/개인정보보호법 (2026-10-12 확인).</p>
+<p class="alt"><b>다른 선택:</b> 지금처럼 둘 다 로그인 기능을 따름. 처리방침을 찾을 수 없는 때가 생겨 지침과 맞지 않습니다.</p>
+<p><b>추천:</b> 처리방침은 늘 보이기.</p></div>
+
+<div class="item"><h3><span class="no">10</span>바닥글의 연락처 주소는 DB가 아니라 웹 코드에 둠 <span class="an">[안]</span></h3>
+<p>바닥글의 "문의 chaekcheck9104@gmail.com"은 거의 바뀌지 않는 값이라 웹 코드에 둡니다. 서비스 안내와 처리방침 안의 주소는 DB 글에 들어갑니다.</p>
+<p class="alt"><b>다른 선택:</b> 바닥글 주소도 DB에서 읽음. 화면마다 서버에 한 번 더 물어야 합니다.</p>
+<p><b>추천:</b> 웹 코드.</p></div>
+</section>
+
+<section class="card"><h2><span class="num">6</span>약관을 바꿀 때와 운영</h2>
+<div class="gist">약관이 바뀌어도 이미 가입한 사람에게 다시 동의를 받지 않고, 공지와 시행일로 알리기를 추천합니다.</div>
+
+<div class="item"><h3><span class="no">11</span>바꿀 때는 다시 동의를 받지 않고, 공지로 알리고 시행일을 앞날로 넣음 <span class="an">[안]</span></h3>
+<p>예: 11월 1일에 약관을 바꾸려면 10월 25일쯤 공지를 올리고, 새 약관을 시행일 11월 1일로 넣어 둡니다. 공지에는 바뀐 점과 옛 약관·새 약관 링크를 넣습니다.</p>
+<ul>
+<li>처리방침은 동의를 받는 글이 아닙니다(작성지침 13쪽).</li>
+<li>약관을 바꾸기 전에 며칠 알려야 한다는 법 조문은 찾지 못했습니다(약관규제법, 전자상거래법). 흔히 보는 "7일 전, 불리하면 30일 전"이 법정 요건인지는 확인 못 함입니다.</li>
+<li>"알린 뒤 반대하지 않으면 동의한 것으로 봄" 같은 조항은 쓰지 않습니다. 약관규제법 제12조제1호는 이런 조항을 원칙적으로 무효로 봅니다.</li>
+</ul>
+<p>수집하는 항목이나 목적이 바뀌어 동의문을 다시 받아야 하는지는 확인 못 함입니다. 그런 변경이 생길 때 다시 조사합니다. 근거 자세히: <code>research.md</code> 2.4·2.5절.</p>
+<p class="alt"><b>다른 선택:</b> 바뀌면 로그인한 사람에게 다시 동의 화면을 보임. 만드는 일이 큽니다(지금 그런 흐름이 없음).</p>
+<p><b>추천:</b> 공지 + 시행일.</p></div>
+<div class="item"><h3>질문: "약관이 바뀌어도 다시 동의를 받지 않고 공지와 시행일로 알리기" — 이거 되는 거 확실한가요?</h3>
+<p><b>확실하지 않습니다. 제 추천이 틀렸습니다.</b> 공지와 시행일만으로는, 이미 가입한 사람에게 새 약관이 적용된다는 근거가 약합니다.</p>
+<ul>
+<li>대법원 2013. 2. 15. 선고 2011다69053: 고객이 변경 발표에 반대하지 않았다는 것만으로는 동의했다고 볼 수 없다고 봤습니다. 그래서 기존 고객에게는 옛 기준이 적용됐습니다.</li>
+<li>약관규제법 제12조제1호: "반대하지 않으면 동의한 것으로 봄" 조항은 원칙적으로 무효입니다. 다만 상당한 기한을 주고 그 뜻을 <b>명확하게 따로 알린</b> 경우는 예외입니다. 그래도 중요한 내용이면 법원이 효력을 부정할 수 있습니다(위 판례).</li>
+<li>공정위 온라인게임 표준약관 제4조는 "7일 전(불리하면 30일 전) 공지 + 거부하지 않으면 동의로 봄 + 동의하지 않으면 해지"를 씁니다. 전자상거래 표준약관 제3조⑤는 바뀐 약관을 새로 맺는 계약에만 적용합니다.</li>
+<li>개인정보 보호법 제15조②: 동의로 모으는 항목·목적·보유기간이 바뀌면 <b>기존 회원에게도 다시 동의</b>를 받아야 합니다.</li>
+</ul>
+<p>그래서 11번은 미승인을 추천합니다. 바꾼 제안(가벼운 변경은 공지, 중요한 변경은 다음 로그인 때 다시 동의)은 새 페이지 "다시 동의 결정"에 올렸습니다.</p>
+<p class="note">출처(2026-10-12 확인): 약관규제법 https://www.law.go.kr/LSW/lsInfoP.do?lsiSeq=260021 · 판례 https://www.law.go.kr/LSW/precInfoP.do?precSeq=170805 · 온라인게임 표준약관 https://www.ftc.go.kr/www/downloadBbsFile.do?atchmnflNo=14861 · 개인정보 보호법 https://www.law.go.kr/LSW/lsInfoP.do?lsiSeq=283839. 자세히 <code>research.md</code> 4절. 법률 자문이 아니라 공개 자료를 읽고 정리한 것입니다.</p></div>
+
+<div class="item"><h3><span class="no">12</span>인계서에 글 넣기 예시 SQL을 두고, 넣은 글은 새로고침하면 바로 보임 <span class="an">[안]</span></h3>
+<p>운영자 화면이 없으니, Claude가 따라 할 수 있는 예시(공지 넣기, 고정, 숨기기, 약관 새 버전 넣기)를 인계서에 적습니다. 서버는 글을 오래 기억해 두지 않아서, 넣은 뒤 화면을 새로고침하면 바로 보입니다.</p>
+<p class="alt"><b>다른 선택:</b> 서버가 글을 몇 분 기억해 두어 빠르게 보냄. 대신 넣은 뒤 몇 분 동안 옛 글이 보입니다.</p>
+<p><b>추천:</b> 바로 보임.</p></div>
+
+<div class="item"><h3><span class="no">13</span>"검토 전 문구" 표시를 없앰 <span class="an">[안]</span></h3>
+<p>지금 약관 화면 제목 옆에 붙은 "검토 전 문구" 표시를 웹 코드에서 없앱니다. 지금 들어 있는 자리 글(2026-10-04 버전)은 본문 첫 줄의 "검토 전 자리 글입니다" 문장으로만 알 수 있습니다. 검토한 문구를 새 버전으로 넣으면 그 문장도 사라집니다.</p>
+<p class="alt"><b>다른 선택:</b> 버전마다 "검토 전" 표시 칸을 둠. 칸이 하나 늘지만, 검토가 끝나면 쓸 일이 없습니다.</p>
+<p><b>추천:</b> 표시를 없앰.</p></div>
+</section>
+
+<section class="card"><h2><span class="num">7</span>화면 상태와 하지 않는 것</h2>
+<div class="item"><h3><span class="no">14</span>불러오는 중·글 없음·찾을 수 없음·오류 문구 <span class="an">[안]</span></h3>
+<table>
+<tr><th>때</th><th>보이는 것</th></tr>
+<tr><td>불러오는 중</td><td>글 자리에 회색 줄</td></tr>
+<tr><td>공지가 하나도 없음</td><td>"아직 공지가 없어요"</td></tr>
+<tr><td>없는 공지·없는 버전 주소</td><td>"찾을 수 없어요" + 목록(또는 지금 버전)으로 가는 링크</td></tr>
+<tr><td>서버 오류·늦음</td><td>"글을 불러오지 못했어요" + 다시 시도</td></tr>
+</table>
+<p class="alt"><b>다른 선택:</b> 문구를 바꾸시려면 기타에 적어 주세요.</p></div>
+
+<div class="item"><h3><span class="no">15</span>새 공지 표시(N)와 첫 화면 공지 띠·팝업은 이번에 하지 않고 나중 할 일 목록으로 <span class="an">[안]</span></h3>
+<p>이번에는 공지사항 페이지와 바닥글 링크만 만듭니다. 새 공지가 있다는 표시나 첫 화면 띠는 나중 할 일 목록(backlog)에 적어 둡니다. 공지 검색, 분류 필터, 조회수, 댓글, 첨부 파일도 하지 않습니다.</p>
+<p class="alt"><b>다른 선택:</b> 첫 화면 위에 최신 공지 한 줄을 이번에 같이 만듦. 화면 한 곳이 더 바뀌고, 닫기·다시 안 보기 규칙이 필요합니다.</p>
+<p><b>추천:</b> 나중으로.</p></div>
+</section>
+
+<p class="foot">원본: <code>docs/cycles/16-notices-and-policies/spec.md</code> (2026-10-12). 근거: <code>research.md</code> 1절(마크다운 부품), 2절(법령·지침), 3절(공지 게시판 조사).</p>
+</main>
+</body>
+</html>

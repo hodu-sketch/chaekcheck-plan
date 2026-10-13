@@ -101,3 +101,7 @@
 | [ADR-0095](0095-lookup-egress-proxies-per-ip-browser-ua.md) | 서비스 대출 조회는 세 나가는 길(직접·업체 고정 IP 프록시·조회 서버)을 설정으로 고르고, 나가는 IP마다 따로 세며, 막힌 IP만 그 사이트에서 멈추고, 일반 브라우저 User-Agent로 보냄 (ADR-0011 일부·사이클 01 UA 식별을 서비스 조회에 한해 바꿈) | Proposed | 2026-10-13 | 사이클 밖 (배포 조사) |
 | [ADR-0096](0096-usage-log-storage-and-fields.md) | 사용자 행동 기록(검색·도서관 클릭·책 상세·더 보기·사서 추천 보기·지역/내 도서관 바꾸기·도서관 응답)은 같은 PostgreSQL 새 schema에, 지역·도서관·로그인 여부·IP 포함, IP는 30일·나머지 1년, 회원 번호·쿠키·User-Agent는 안 남김 (2026-10-12 조사의 "IP 안 남김"을 바꿈) | Proposed | 2026-10-13 | 15 |
 | [ADR-0097](0097-usagelog-module-and-write-path.md) | 기록 전용 모듈 `usagelog`, `catalog`·`availability`가 공개 창구 직접 호출(이벤트 안 씀), 5초 묶음 `batchUpdate`·비동기 커밋, 표 다섯, 클릭 알림은 fetch keepalive + CSRF, IP는 `X-Real-IP` | Proposed | 2026-10-13 | 15 |
+| [ADR-0098](0098-sitecontent-module-versioned-documents.md) | 공지·서비스 안내·약관 글을 새 모듈 `sitecontent`가 DB에 판으로(판 순번, 지금 판 = 시행된 것 중 최대), 쓰기는 SQL, 고정 1쪽 위, 숨김은 남김 | Proposed | 2026-10-13 | 16 |
+| [ADR-0099](0099-signup-document-version-from-sitecontent.md) | 가입 문서 버전 원본을 서버 설정에서 `sitecontent`로, 동의 기록 = 판 순번, `auth → sitecontent` (사이클 05 제약 27 폐기, AC-18 변경) | Proposed | 2026-10-13 | 16 |
+| [ADR-0100](0100-privacy-policy-public-regardless-of-login.md) | 처리방침은 로그인 기능과 상관없이 공개 (사이클 05 제약 35 일부 변경) | Proposed | 2026-10-13 | 16 |
+| [ADR-0101](0101-terms-change-notice-or-reconsent.md) | 약관이 바뀔 때: 가벼우면 공지 + 시행일, 중요하면 다음 로그인 때 다시 동의(화면은 나중) | Proposed | 2026-10-13 | 16 |

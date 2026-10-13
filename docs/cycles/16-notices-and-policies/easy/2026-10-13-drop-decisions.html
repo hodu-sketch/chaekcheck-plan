@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>빼도 되는 칸 세 개</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+.flow{display:grid;gap:10px;margin:10px 0 16px}.lane{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--card)}.lane b{display:block;margin-bottom:4px}.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{font-size:14px;border-radius:6px;padding:2px 8px;background:var(--code-bg)}.chip.new{background:var(--warn-bg)}.chip.dev{background:var(--ok-bg)}.arrow{text-align:center;color:var(--muted);font-size:18px;line-height:1}
+</style>
+<style>
+.li{display:flex;gap:8px;align-items:baseline;padding:8px 4px;border-bottom:1px solid var(--line)}
+.li .t{flex:1}.li .d{color:var(--muted);white-space:nowrap;font-size:11px}
+.li.pin{background:var(--accent-bg)}.tag{font-size:10px;font-weight:700;color:var(--accent);border:1px solid var(--accent);border-radius:4px;padding:0 4px;margin-right:4px}
+.ph .li{display:block}.ph .li .d{display:block;margin-top:2px}
+.pager{display:flex;gap:6px;justify-content:center;margin-top:12px;font-size:11px}.pager span{padding:2px 6px;border-radius:4px}.pager .on{background:var(--accent);color:var(--card)}
+.band{background:var(--warn-bg);border:1px solid var(--warn);border-radius:6px;padding:6px 8px;margin-bottom:10px;font-size:11px}.band a{color:var(--accent);font-weight:700}
+.chg{background:var(--warn-bg);border-radius:6px;padding:6px 8px;margin:8px 0;font-size:11px}
+.hist{border-top:1px solid var(--line);margin-top:12px;padding-top:8px;font-size:11px}.hist b{color:var(--accent)}.hist div{color:var(--muted);padding:2px 0 2px 10px}
+.meta{color:var(--muted);font-size:11px;margin:-4px 0 8px}
+.fl{display:flex;gap:16px;justify-content:space-between;font-size:11px;color:var(--muted)}.fl b{color:var(--text)}
+.ph .fl,.fcol{flex-direction:column;gap:4px}
+.mini{font-size:11px;color:var(--muted)}
+.sel{display:inline-block;border:1px solid var(--line);border-radius:4px;padding:1px 6px;background:var(--card)}
+</style>
+
+<style>
+/* easy diagrams (shared with the phone page) */
+.cap{color:var(--muted);font-size:17px;margin:4px 0 14px}
+.fd{display:flex;flex-direction:column;gap:0;margin:12px 0;max-width:640px}
+.fd .bx{border:2px solid var(--line);border-radius:12px;padding:9px 14px;background:var(--card);font-size:18px}
+.fd .bx.a{border-color:var(--accent);background:var(--accent-bg)}.fd .bx.w{border-color:var(--warn);background:var(--warn-bg)}
+.fd .bx.o{border-color:var(--ok);background:var(--ok-bg)}.fd .bx.n{border-color:var(--no);background:var(--no-bg)}
+.fd .bx small{display:block;color:var(--muted);font-size:15px}
+.fd .ar{text-align:center;color:var(--muted);font-size:15px;padding:3px 0}
+.fork{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-width:760px}
+.cmp{display:grid;grid-template-columns:repeat(2,minmax(0,300px));gap:16px;margin:12px 0}
+.cmp>div{min-width:0}.cmp h5{margin:0 0 6px;font-size:16px;text-align:center}
+.cmp .ok h5{color:var(--ok)}.cmp .x h5{color:var(--muted)}
+.rec{background:var(--ok-bg);border-left:5px solid var(--ok);border-radius:10px;padding:12px 16px;margin:12px 0 6px}
+.rec b{color:var(--ok)}
+.addr{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);border-radius:6px;padding:1px 6px}
+.tl{display:flex;margin:12px 0 4px;font-size:16px;max-width:640px}.tl div{flex:1;border-top:8px solid var(--line);padding-top:6px;text-align:center;color:var(--muted)}
+.tl .now{border-color:var(--ok);color:var(--text);font-weight:700}.tl .old{border-color:var(--accent-bg)}
+.card>h3{font-size:22px;margin:26px 0 8px}
+.hl{outline:3px solid var(--warn);outline-offset:2px;border-radius:4px}
+/* small phone mock-ups used in comparisons */
+.mph{width:100%;max-width:300px;margin:10px auto 6px;border:3px solid var(--muted);border-radius:22px;background:var(--bg);overflow:hidden;font-size:12.5px;line-height:1.5}
+.mph .hd{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line)}
+.mph .hd b{font-size:13px}.mph .hd span{font-size:11px}
+.mph .bt{white-space:normal;padding:1px 6px;font-size:11px}
+.mph .pg{background:var(--card);margin:10px;border:1px solid var(--line);border-radius:10px;padding:10px;max-width:none}
+.mph .pg h4{margin:0 0 6px;font-size:13px}
+.mph .meta{color:var(--muted);font-size:11px;margin:0 0 6px}
+.mph .li{display:block;padding:7px 4px;border-bottom:1px solid var(--line)}.mph .li .d{display:block;color:var(--muted);font-size:11px}
+.mph .bar{height:7px;border-radius:4px;background:var(--line);margin:5px 0}
+.mph .ft{position:static;text-align:left;padding:10px 12px;font-size:11px;color:var(--muted);border-top:1px solid var(--line);background:var(--card)}
+.mph .ft b{color:var(--text)}
+.mph .hist,.mph .band,.mph .chg,.mph .tag{font-size:11px}
+.cmp[style*="repeat(3"]{grid-template-columns:repeat(3,minmax(0,240px)) !important}
+.card table{max-width:820px}
+</style>
+<style>
+.mods{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;max-width:820px;margin:12px 0}
+.mod{border:2px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--card);font-size:17px}
+.mod b{display:block;font-size:19px}.mod small{color:var(--muted);display:block}
+.mod.new{border-color:var(--accent);background:var(--accent-bg)}
+.arrowrow{max-width:820px;color:var(--muted);font-size:16px;margin:4px 0 10px}
+.tbl{display:inline-block;vertical-align:top;border:2px solid var(--line);border-radius:12px;background:var(--card);margin:6px 10px 6px 0;min-width:220px;font-size:15px;overflow:hidden}
+.tbl b{display:block;background:var(--code-bg);padding:6px 12px;font-size:16px}
+.tbl div{padding:3px 12px;border-top:1px solid var(--line)}
+.tbl.new{border-color:var(--accent)}.tbl.new b{background:var(--accent-bg)}
+.kv{font-family:ui-monospace,Consolas,monospace;font-size:15px;background:var(--code-bg);border-radius:10px;padding:10px 14px;white-space:pre-wrap;max-width:820px}
+.steps{counter-reset:s;list-style:none;padding:0;max-width:820px}
+.steps li{counter-increment:s;position:relative;padding:8px 12px 8px 46px;margin:6px 0;background:var(--card);border:1px solid var(--line);border-radius:12px}
+.steps li::before{content:counter(s);position:absolute;left:12px;top:8px;width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-size:14px;display:grid;place-items:center}
+.steps li.bad{border-color:var(--no);background:var(--no-bg)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">설계에서 빼도 되는 것 세 가지</p>
+<p class="sub">앞 페이지의 질문(2번 "왜 hidden이 있어?", 9번 고정 공지, 11번 "다시 동의 필요가 없지 않나?")에 답하면서 추천을 "빼기"로 바꿨습니다. 칩만으로는 처음 제안과 바꾼 추천 중 어느 쪽을 고르셨는지 알 수 없어서, 바꾼 추천만 여기 따로 올립니다. <b>승인 = 뺌, 미승인 = 둠</b>입니다.</p>
+
+<section class="card"><h2><span class="num">1</span>공지 표의 "숨김" 칸</h2>
+<div class="item"><h3><span class="no">1</span>공지 "숨김" 칸을 빼고, 잘못 올린 공지는 SQL로 지움 <span class="an">[안]</span></h3>
+<p>뺀 뒤: 공지 표에는 번호만 남습니다. 잘못 올린 공지는 Claude가 그 공지와 판을 지웁니다(되살리기는 백업에서만). 명세 R4-1의 "지우지 않고 숨김"을 고칩니다.</p>
+<p class="alt"><b>미승인(둠):</b> 숨김을 "예"로 바꿔 화면에서만 내리고 DB에는 남김.</p>
+<div class="rec"><b>추천: 뺌.</b> "이전 기록이 보였으면"은 고친 공지의 옛 판 이야기라, 내린 공지를 남기는 것과 다릅니다.</div></div>
+<div class="item"><h3>바로잡을 것: "어짜피 리퀴베이스에 기록되니"</h3>
+<p><b>운영 중에 Claude가 SQL로 직접 넣거나 지우는 것은 Liquibase에 기록되지 않습니다.</b> Liquibase는 dev 코드 안의 DB 변경 파일(changelog)만 순서대로 실행하고, 그 실행한 파일 목록만 남깁니다. 그 파일은 서버를 새 판으로 올릴 때(배포) 실행됩니다.</p>
+<table>
+<tr><th>넣는 길</th><th>Liquibase 기록</th><th>배포 필요</th><th>쓰는 곳</th></tr>
+<tr><td>dev 코드의 DB 변경 파일</td><td>남음 (파일과 실행 기록)</td><td>예</td><td>처음 판(seed) — 이번 설계</td></tr>
+<tr><td>Claude가 운영 DB에 SQL 직접 실행</td><td><b>안 남음</b></td><td>아니요</td><td>공지 올리기·고치기·지우기, 약관 새 판 — 이번 설계 ("배포 없이"로 정함)</td></tr>
+</table>
+<p>그래서 숨김 칸을 빼고 공지를 지우면, 지운 공지는 DB 백업에만 남습니다. 둘 중 하나를 골라 주세요(이 칩의 기타에).</p>
+<table>
+<tr><th>적어 주실 말</th><th>뜻</th></tr>
+<tr><td>그대로 빼기</td><td>숨김 칸 없음. 지운 공지는 백업에만 남아도 됨</td></tr>
+<tr><td>숨김 두기</td><td>DB에 남기고 싶으면 숨김 칸을 둠(앞 설계대로)</td></tr>
+</table></div>
+<div class="item"><h3>질문: "그러면 기록용으로 뭐 어떻게 하면 좋아?"</h3>
+<p><b>기록을 남기고 싶으시면 "숨김 칸을 두는 것"이 가장 단순합니다.</b> 칸 하나만 있으면, 내린 공지가 제목·본문·모든 판까지 DB에 그대로 남고 화면에서만 사라집니다. 따로 기록하는 일이 없습니다.</p>
+<table>
+<tr><th>방법</th><th>남는 것</th><th>더 드는 일</th></tr>
+<tr><td><b>숨김 칸 둠 (추천)</b></td><td>내린 공지 전체가 DB에 남음. 되살리기도 칸 하나만 바꾸면 됨</td><td>칸 하나, "숨긴 공지는 목록·주소에서 안 보임" 규칙 하나</td></tr>
+<tr><td>지우기 전에 Claude가 운영 기록 파일에 적어 둠</td><td>지운 날, 제목, 본문이 파일에 남음</td><td>DB는 단순하지만, 지울 때마다 파일을 쓰는 절차가 생기고 빠뜨릴 수 있음</td></tr>
+<tr><td>지운 공지를 담는 표를 따로 둠</td><td>지운 공지와 지운 때</td><td>표가 하나 늘어남 — 이 규모엔 과함</td></tr>
+<tr><td>DB 백업만 믿음</td><td>백업 보관 기간 동안만</td><td>찾으려면 백업을 되살려야 함</td></tr>
+</table>
+<p>처음에 숨김 칸을 넣었던 이유가 바로 이것이었습니다. 앞에서 "빼기"를 추천한 것은 기록이 필요 없다고 보았기 때문이고, 기록을 원하시면 <b>숨김 칸을 두는 쪽으로 추천을 되돌립니다.</b> 이 칩을 <b>미승인</b>(= 칸을 둠)으로 바꿔 보내 주시면 그렇게 하겠습니다.</p></div>
+<div class="item"><h3>질문: "숨김 칸을 두면 나중에 공지가 많아지면 문제고 표를 나눠야겠지만, 지금 단계는 아닌 거지?"</h3>
+<p><b>지금 단계에서 나눌 일은 없고, 공지가 많아져도 숨김 칸 때문에 표를 나눌 일은 거의 없습니다(추론).</b></p>
+<ul>
+<li>숨김 칸은 "예/아니요" 한 칸이라 공지 하나에 아주 작은 자리만 씁니다.</li>
+<li>목록을 읽을 때는 "숨김이 아니요인 공지"만 고릅니다. 공지가 수천 개가 되어도 이 정도 고르기는 DB가 빠르게 합니다. 느려지는 때가 오면 표를 나누지 않고 "숨기지 않은 공지만 따로 찾는 색인" 하나를 더하는 것으로 충분합니다.</li>
+<li>공지가 많아질 때 먼저 손볼 곳은 숨김 칸보다 목록 쪽 나누기(10개씩)인데, 이것은 이미 설계에 있습니다.</li>
+</ul>
+<p>그래서 숨김 칸을 두어도 지금 따로 대비할 것은 없습니다. 칸을 두시려면 이 칩을 <b>미승인</b>(= 칸을 둠)으로 보내 주세요.</p></div>
+<div class="item"><h3>다시 답: "DB WHERE 절 검색 이야기한 건데"</h3>
+<p><b><code>WHERE NOT hidden</code>이 붙어도 지금은 문제가 없고, 커지면 "숨기지 않은 줄만 담는 부분 색인(partial index)" 하나로 해결합니다. 표를 나눌 필요는 없습니다.</b></p>
+<div class="kv">-- 공지 목록 1쪽 (개념)
+SELECT … FROM sitecontent.notice n JOIN sitecontent.notice_version v …
+WHERE NOT n.hidden
+ORDER BY 게시일 DESC LIMIT 10 OFFSET 0;</div>
+<ul>
+<li><b>지금(수십~수백 줄):</b> PostgreSQL은 표 전체를 훑어도(순차 스캔) 순식간에 끝납니다. 색인이 있어도 이 크기면 안 쓰는 경우가 많습니다.</li>
+<li><b>숨김 칸에 보통 색인은 소용이 적음:</b> 대부분의 공지가 "숨김 아님"이라, "숨김 아님"을 찾는 조건은 거의 모든 줄에 맞습니다. PostgreSQL 문서도 "전체 줄의 몇 퍼센트 넘게 맞는 값을 찾는 질의는 어차피 색인을 쓰지 않는다"고 합니다.</li>
+<li><b>커지면:</b> 목록이 실제로 쓰는 정렬 순서(게시일)로, 숨기지 않은 줄만 담는 부분 색인을 만듭니다. 예: <code>CREATE INDEX … ON sitecontent.notice (…) WHERE NOT hidden;</code> 그러면 <code>WHERE NOT hidden … ORDER BY … LIMIT 10</code>이 이 색인에서 앞 10개만 읽고 끝납니다. 문서의 예(청구 안 된 주문만 색인)와 같은 쓰임입니다.</li>
+<li>게시일이 공지 판 표(<code>notice_version</code>)에 있어서, 커졌을 때의 정확한 색인 모양은 그때 실제 질의 계획(EXPLAIN)을 보고 정합니다. 지금 정하지 않습니다.</li>
+</ul>
+<p class="note">출처: PostgreSQL 공식 문서 "Partial Indexes" https://www.postgresql.org/docs/current/indexes-partial.html (2026-10-13 확인) — "A partial index is an index built over a subset of a table…", "a query searching for a common value … will not use the index anyway". 공지 수와 속도 판단은 추론입니다.</p></div>
+</section>
+
+<section class="card"><h2><span class="num">2</span>고정 공지</h2>
+<div class="item"><h3><span class="no">2</span>고정 공지를 두지 않고, 중요한 공지는 제목 앞에 "[중요]"를 붙임 <span class="an">[안]</span></h3>
+<p>뺀 뒤: 공지 목록은 날짜순만 있습니다. 공지 표의 "고정" 칸, "1쪽 위에 따로" 규칙이 사라집니다. 화면 흐름 4번에서 승인하신 "고정" 표시를 되돌립니다. 조사한 곳 중 교보문고, 카카오 고객센터, 다음, 토스, 예스24가 이 방식입니다(research.md 7절).</p>
+<p class="alt"><b>미승인(둠):</b> 앞 페이지 처음 제안대로 고정 공지를 1쪽 맨 위에만, 10개 셈에서 뺌.</p>
+<div class="rec"><b>추천: 뺌.</b> 처음엔 공지가 몇 개뿐이라 고정할 일이 드뭅니다. 필요해지면 그때 칸을 더합니다.</div></div>
+</section>
+
+<section class="card"><h2><span class="num">3</span>"다시 동의 필요" 칸</h2>
+<div class="item"><h3><span class="no">3</span>문서 판 표의 "다시 동의 필요" 칸을 지금은 만들지 않음 <span class="an">[안]</span></h3>
+<p>뺀 뒤: 다시 동의 화면을 만들 때(나중 할 일 목록) 칸을 함께 더합니다. 명세 R7-2의 "새 버전에 다시 동의 필요 표시를 둠"과 R7-3의 경고 줄을 고칩니다. "중요한 변경은 다음 로그인 때 다시 동의"라는 규칙 자체는 그대로입니다.</p>
+<p class="alt"><b>미승인(둠):</b> 칸을 지금 만들고 DB에만 둠.</p>
+<div class="rec"><b>추천: 뺌.</b> 지금은 이 칸을 읽는 화면이 없습니다.</div></div>
+</section>
+
+<p class="foot">원본: <code>architect-proposal.md</code> 결정 2·9·11, <code>spec.md</code> R4-1·R7-2·R7-3 (2026-10-13).</p>
+</main>
+</body>
+</html>

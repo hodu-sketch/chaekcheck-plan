@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>이전 기록 보기 결정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+.flow{display:grid;gap:10px;margin:10px 0 16px}.lane{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--card)}.lane b{display:block;margin-bottom:4px}.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{font-size:14px;border-radius:6px;padding:2px 8px;background:var(--code-bg)}.chip.new{background:var(--warn-bg)}.chip.dev{background:var(--ok-bg)}.arrow{text-align:center;color:var(--muted);font-size:18px;line-height:1}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">서비스 안내와 공지도<br>이전 기록을 남기고 보여 주기</p>
+<p class="sub">앞 페이지에서 "서비스 안내와 공지는 버전 없이 고쳐 씀"을 미승인하셨습니다. 사용자 말: "서비스 안내 공지 모두 이전 기록이 보였으면 하는데 ..". 그 말에 맞춰 다시 낸 제안 하나를 골라 주세요.</p>
+
+<section class="card"><h2><span class="num">1</span>네 글 모두 같은 규칙</h2>
+<div class="gist">공지사항, 서비스 안내, 이용약관, 개인정보 처리방침 네 글 모두 고칠 때마다 새 버전을 남깁니다. 각 페이지 아래에 "이전 버전" 목록을 두고, 날짜를 누르면 그때 글이 열립니다.</div>
+
+<div class="item"><h3><span class="no">1</span>네 글 모두 버전을 남기고, 페이지 아래 "이전 버전" 목록에서 옛 글을 봄 <span class="an">[안]</span></h3>
+<p>예: 서비스 안내를 11월 3일에 고치면, 페이지에는 11월 3일 글이 보입니다. 아래 "이전 버전"에 "2026-10-12"가 남고, 누르면 그날 글이 열립니다.</p>
+<p>공지사항은 공지 하나하나가 따로 남습니다. 지난 공지는 지우지 않고 목록에 계속 보입니다. 공지 하나를 고치면 그 공지에 "고침 2026-11-03"이 붙고, 같은 방식으로 이전 버전을 볼 수 있습니다.</p>
+<p>약관과 처리방침도 같은 목록으로 옛 버전을 볼 수 있습니다. 처리방침의 옛 버전을 공개하라는 공식 안내가 있는지는 아직 확인 못 함이고, 명세 단계에서 개인정보보호위원회 작성지침으로 확인합니다.</p>
+<p class="alt"><b>다른 선택 1:</b> 버전은 DB에만 남기고 화면에는 지금 글만 보임. 화면은 단순하지만, 이용자는 이전 기록을 볼 수 없습니다.</p>
+<p class="alt"><b>다른 선택 2:</b> 화면의 "이전 버전" 목록은 약관·처리방침에만 두고, 서비스 안내·공지는 DB에만 남김. 말씀하신 "안내·공지 이전 기록이 보이게"와 맞지 않습니다.</p>
+<p><b>추천:</b> 네 글 모두 같은 규칙. 규칙이 하나라 표와 화면도 하나의 모양으로 만들 수 있습니다.</p></div>
+
+<p class="note">아래 그림은 자리와 순서만 보여 줍니다. 실제 모양은 다음 단계(화면 흐름)에서 PC·태블릿·폰으로 그려 정합니다. 지금 서비스 안내 화면(흰 카드에 제목과 글)을 바탕으로 그렸습니다.</p>
+<div class="shots">
+<div class="shot"><p class="cap">PC</p>
+<div class="fr pc"><div class="hd"><b>책첵</b><span class="sp"></span><span class="bt">로그인</span></div>
+<div class="bd"><div class="pg" style="max-width:520px"><h4>서비스 안내</h4><div class="bar m"></div><div class="bar"></div><div class="bar s"></div>
+<div class="sec"><b>이전 버전</b><div>2026-10-12 · 2026-10-04</div></div></div></div>
+<div class="ft">공지사항 · 서비스 안내 · 이용약관 · 개인정보 처리방침 · 문의 chaekcheck9104@gmail.com</div></div></div>
+<div class="shot"><p class="cap">폰</p>
+<div class="fr ph"><div class="hd"><b>책첵</b><span class="sp"></span><span class="bt">로그인</span></div>
+<div class="bd"><div class="pg"><h4>공지사항</h4>
+<div class="row"><b>도서관 30곳 추가</b><div class="note" style="font-size:11px">2026-11-03 · 고침 2026-11-04</div></div>
+<div class="row"><b>서비스 시작</b><div class="note" style="font-size:11px">2026-10-20</div></div></div></div>
+<div class="ft">공지사항 · 서비스 안내 · …</div></div></div>
+</div>
+<p class="note">그림: 서비스 안내 페이지 아래에 "이전 버전" 날짜 목록이 있고, 공지사항 목록에는 지난 공지와 "고침" 날짜가 보입니다. 공지 제목과 날짜는 예시입니다.</p>
+</section>
+
+<p class="foot">원본: <code>docs/cycles/16-notices-and-policies/scope.md</code> 포함 2 (2026-10-12). 앞 페이지: <code>2026-10-12-scope-decisions.html</code> (7개 중 6개 승인, 3번 미승인).</p>
+</main>
+</body>
+</html>
