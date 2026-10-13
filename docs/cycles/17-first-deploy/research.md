@@ -38,16 +38,27 @@ dev 확인 (2026-10-13): Redirect URI는 `AUTH_PUBLIC_BASE_URL` + `/api/v1/auth/
 
 ## 3. 업체 고정 IP 프록시 (한국)
 
-| 업체 | 한국 고정 IP 상품 | 값 (업체 표기) | 정부 사이트·약관 | 출처 |
-|---|---|---|---|---|
-| Oxylabs | Dedicated Datacenter (한국 위치 페이지) | 월 $8.25부터, IP당 $2~1.2 | ISP 상품 제한 대상에 "Government websites", 모든 고객 KYC 질문지 | https://oxylabs.io/locations/south-korea , https://oxylabs.io/pricing/dedicated-datacenter-proxies , https://developers.oxylabs.io/products/proxies/isp-proxies/restricted-targets , https://oxylabs.io/kyc-and-safety |
-| Bright Data | ISP·Datacenter (한국 네트워크 포함, 구매 화면 KR 선택은 확인 못 함) | IP당 약 $1.4~0.9 (표 라벨 없음) | **"government websites are blocked across all networks"** | https://brightdata.com/locations/kr , https://docs.brightdata.com/products/residential/network-access |
-| Decodo | Dedicated ISP, KR 있음 | 3 IP 월 $9.99부터 | 정부 사이트 조항 확인 못 함 | https://decodo.com/proxies/isp-proxies/pricing , https://decodo.com/legal/master-service-agreement |
-| IPRoyal | Datacenter, KR 있음 | 30일 $1.57/proxy, 월 100GB | AUP 4.4: .gov 차단(신분증 인증 시 허용), **3.2: robots.txt·속도 제한 우회 금지** | https://iproyal.com/datacenter-proxies/ , https://iproyal.com/acceptable-use-policy/ |
-| Webshare | KR IP 있음(상품별 확인 못 함) | static residential 20개 $6/월 | "government infrastructure" 금지, KYC 가능 | https://www.webshare.io/features/proxy-locations , https://help.webshare.io/en/articles/9987853-restricted-activities-with-webshare-proxies |
+9개 업체를 공식 페이지로 조사함(2026-10-14, 서브에이전트 4건). 우리 조건은 **한국 고정 IP 1~3개, 적은 전송량, 아이디·비밀번호 또는 IP 허용, 월 결제**. 값·조항은 모두 업체 공식 페이지 표기이고, 끝내 확인하지 못한 항목은 "확인 못 함".
 
-- 공공 전자도서관 주소 다수가 `go.kr`·지자체·교육청 도메인임(예: `ebook.gangnam.go.kr`, `library.busan.go.kr`, 수집 목록). 업체의 "정부 사이트"에 이것이 들어가는지 공개 문서에 없음 → 업체에 질문 [확인 필요]
+| 업체 | 한국 고정 IP 상품 | 최소·값 (업체 표기) | 정부 사이트 조항 | 출처 |
+|---|---|---|---|---|
+| Proxy-Cheap | Static Residential·Datacenter, KR 있음 | 최소 수량 확인 못 함. Static Res $2.44/월, DC IPv4 $1.49/월, 무제한 전송 | **정부 사이트 전용 조항 없음** (AUP는 일반 "Provider가 특정 사이트 차단 가능" 18항만) | https://proxy-cheap.com/locations/asia/south-korea , https://proxy-cheap.com/appropriate-use-policy |
+| Rayobyte | Static **Datacenter만** KR (ISP는 KR 미제공) | 최소 5 IP, $2.50/IP/월, 무제한(fair use) | **정부 사이트 전용 조항 없음** (일반 준법 조항만) | https://rayobyte.com/products/datacenter-ips/ , https://rayobyte.com/tos-and-aup/ |
+| Mango Proxy | Static Datacenter, 체크아웃에서 KR 선택 | 최소 수량 확인 못 함, $1.43/IP/월, 무제한. 인증·엔드포인트·환불·KYC 확인 못 함, 구매는 Telegram 봇 | **정부 사이트 전용 조항 없음** | https://mangoproxy.com/prod-dc-static/ , https://mangoproxy.com/terms-of-service/ |
+| IPRoyal | Datacenter, KR 22,863 IP | 30일 $1.57/proxy, 월 100GB 상한 | AUP 4.4 `.gov`·은행 차단, **4.4.1 신분증 인증 시 `.gov` 접근 허용(유일하게 명문화)**, 3.2 robots.txt·속도 제한 우회 금지 | https://iproyal.com/datacenter-proxies/ , https://iproyal.com/acceptable-use-policy/ |
+| Decodo | Dedicated ISP, KR 있음 | 최소 3 IP $9.99/월, 무제한, 14일 환불 | 정부 사이트 차단. 신분증 인증 예외는 Mailing·Streaming·Business·회전형에만, **정부에는 적용 안 됨** | https://decodo.com/proxies/isp-proxies/pricing , https://decodo.com/questions/do-you-have-any-blocked-sites |
+| Oxylabs | Dedicated Datacenter·ISP, KR 확정 | DC IP당 $2(최대 2개), ISP 5.5k IP. 최소 수량 명시 없음 | **DC·ISP 제한 대상 모두 "Government websites" (usa.gov, canada.ca 예시, 비열거적)**, 모든 고객 KYC 질문지 | https://oxylabs.io/locations/south-korea , https://developers.oxylabs.io/products/proxies/datacenter-proxies/restricted-targets.md , https://oxylabs.io/kyc-and-safety |
+| Webshare | KR 위치 있음 | **DC 최소 100개 / Static Res 최소 20개 → 1~3개 불가** | "government infrastructure" 금지, "Government Websites"는 사용량 임계 카테고리 | https://www.webshare.io/proxy-locations/kr , https://help.webshare.io/en/articles/9987853-restricted-activities-with-webshare-proxies |
+| Bright Data | ISP·Datacenter, KR 네트워크 | **최소 10 IP**, ISP $1.8/IP, DC Shared $1.4/IP | **정부 사이트 기본 차단(policy_20051, 403), `.gov` 접미사에 한정 안 함 → `go.kr`도 차단 대상 가능**, KYC+컴플라이언스 승인 경로 | https://www.brightdata.com/locations/kr , https://docs.brightdata.com/general/policy/acceptable-use-policy , https://docs.brightdata.com/scraping-automation/web-unlocker/kyc-and-access |
+| ~~NetNut~~ | **제외** | — | **2026-07-02 FBI 도메인 압수(Popa 봇넷 연루 혐의), 2026-10-14 사이트에 압수 배너. 후보 제외** | https://krebsonsecurity.com/2026/07/fbi-seizes-netnut-proxy-platform-popa-botnet/ |
+
+- 공공 전자도서관 주소 다수가 `go.kr`·지자체·교육청 도메인임(예: `ebook.gangnam.go.kr`, `library.busan.go.kr`, 수집 목록). **어느 업체도 한국 `go.kr`을 콕 집어 적지 않음** → 결제 전 업체 지원팀에 "한국 공공도서관(`*.go.kr`) 접속이 되는지" 물어야 함 [확인 필요]
+- 조사한 9곳은 모두 해외 업체임(국내 업체 아님). 정부 사이트 제한은 업체마다 다름: **Proxy-Cheap·Rayobyte·Mango는 정부 사이트 전용 조항이 아예 없음**, Bright Data는 기본 차단(가장 셈), IPRoyal은 차단하되 신분증 인증으로 해제, Oxylabs·Decodo·Webshare는 제한·문의 대상
+- 1~3개 소량 조건에 맞는 곳: Proxy-Cheap·Mango(최소 수량 미확인이나 소량 가능해 보임), Decodo(최소 3). Rayobyte는 최소 5, Bright Data 최소 10, Webshare는 20~100으로 소량에 안 맞음
 - IPRoyal AUP 3.2(속도 제한 우회 금지)와 ADR-0095의 "막힌 IP만 멈추고 다른 IP로 계속"이 맞는지 [확인 필요: 업체 약관 해석, 전문가 확인 항목과 함께]
+- 여러 업체에서 "HTTP CONNECT" 용어 자체는 공식 문서에 없으나 HTTP(S) 프록시 지원이 명시돼 HTTPS 터널링은 가능으로 보임(§4 Java 프록시와 함께 시험 확인). 업체별 상세(인증방식·엔드포인트 형식·환불일·KYC)의 확인 못 함 항목은 서브에이전트 보고 원문 참조
+- 업체 선택 방향 [확정] (사용자 승인, 2026-10-14, `easy/2026-10-14-proxy-vendor.html` #1·#2): ① 결제 전 두세 업체에 "한국 `go.kr` 공공도서관 접속 가능 여부"를 먼저 묻고, 된다는 곳 중에서 고름. ② 업체 종류는 데이터센터 IP부터 시험하고 막히면 ISP·주거용으로 옮김. 둘 다 고정 IP라 "IP를 바꿔 가지 않음" 원칙에 맞음
+- VPN 검토 (사용자 질문 2026-10-14): 상용 VPN은 기기 전체 트래픽을 한 출구로 보내 "도서관 호출만·나가는 IP마다 따로"가 안 되고 고정 KR IP도 드물어 부적합. 직접 세운 VPN(한국 VPS + WireGuard)은 가능하나 ADR-0095 ③안(한국에 조회 서버 두기)과 사실상 같음 → 프록시 업체(②안) vs 한국 VPS 직접(③안)의 선택으로 정리. 셋 중 무엇을 먼저 할지는 설계에서 ADR-0095 세 길을 정할 때 함께 [확인 필요: 사용자 결정]
 
 ## 4. Java HttpClient로 인증 프록시 쓰기
 
@@ -169,14 +180,19 @@ dev 확인 (2026-10-13): Redirect URI는 `AUTH_PUBLIC_BASE_URL` + `/api/v1/auth/
 - 뜻: 공공 도서관의 **장서·대출·소장 여부**는 정보나루 공식 API라는 합법적인 길이 있음. 다만 우리 서비스가 묻는 것은 전자책 **대출 가능 여부**(각 전자도서관 사이트의 실시간 상태)라 정보나루로 대체되지 않음 [안: 확인]. 전자정부 지침 개정으로 공공기관 사이트가 크롤러를 일부 막을 수 있게 됨 → `go.kr` 전자도서관이 데이터센터 IP를 막을 수 있다는 또 하나의 근거
 - 확인 못 함: 전자정부 지침의 개방성 조문 원문과 robots.txt 구체 문구, 정보나루 API 호출 제한 수치, 개별 `go.kr` 전자도서관이 실제로 데이터센터 IP를 막는지(배포 뒤 시험)
 
-### 업체 약관의 정부 사이트 조항 (research 3절 + 보강)
+### 업체 약관의 정부 사이트 조항 (research 3절과 같음, 2026-10-14 9곳 조사)
 
 | 업체 | 정부 사이트 조항 | 우리에게 |
 |---|---|---|
-| Bright Data | "government websites are blocked across all networks" | 공공도서관이 government로 분류되면 아예 안 됨 |
-| Oxylabs | ISP 상품 제한 대상에 "Government websites (usa.gov, canada.ca)", 모든 고객 KYC | `go.kr` 포함 여부는 업체에 질문 |
-| IPRoyal | AUP 4.4 DC·ISP 차단 목록에 `.gov`(신분증 인증 시 허용), 3.2 robots.txt·속도 제한 우회 금지 | 신분증 인증·약관 해석 필요 |
-| Webshare | "government infrastructure" 금지, KYC 가능 | 분류 확인 필요 |
-| Decodo | 정부 사이트 조항 확인 못 함 | 업체에 질문 |
+| Proxy-Cheap | **전용 조항 없음** (일반 "Provider가 차단 가능"만) | 조항상 가장 자유로움 |
+| Rayobyte | **전용 조항 없음** (일반 준법 조항만) | 단 KR은 Datacenter만, 최소 5 IP |
+| Mango Proxy | **전용 조항 없음** | 인증·환불·KYC 미확인, 구매 Telegram 봇 |
+| IPRoyal | AUP 4.4 `.gov` 차단, **4.4.1 신분증 인증 시 허용(유일 명문화)**, 3.2 우회 금지 | 신분증 인증·약관 해석 필요 |
+| Decodo | 정부 사이트 차단, 신분증 예외는 정부에 적용 안 됨 | 공공도서관이 걸리면 불리 |
+| Oxylabs | DC·ISP 제한 대상 모두 "Government websites", 모든 고객 KYC | `go.kr` 포함 여부는 업체에 질문 |
+| Webshare | "government infrastructure" 금지, 정부 웹사이트는 사용량 임계 카테고리 | 최소 20~100개로 소량 불가 |
+| Bright Data | **정부 사이트 기본 차단(403), `.gov` 한정 안 함 → `go.kr`도 가능**, KYC+승인 경로 | 가장 셈. 최소 10 IP |
+| NetNut | — | **FBI 압수(2026-07), 제외** |
 
 - 어느 업체도 "한국 `go.kr`"를 콕 집어 적지 않음. 업체 지원팀에 "한국 공공도서관(`go.kr`) 접속이 되는지" 물어야 함 [확인 필요]
+- 조사한 9곳 모두 해외 업체(국내 업체 아님). 정부 사이트 제한은 업체마다 다르며, 세 곳(Proxy-Cheap·Rayobyte·Mango)은 전용 조항이 아예 없음
