@@ -155,3 +155,28 @@ dev 확인 (2026-10-13): Redirect URI는 `AUTH_PUBLIC_BASE_URL` + `/api/v1/auth/
 - 서비스(앱) 로그 보관: 14일(접속 기록과 같음), 도서관 요청 응답을 서버 로그로만 남김(IP 없음) [확정] (사용자 승인)
 - 클릭·행동 알림 주소: `/api/v1/library-clicks` → `/api/v1/usage-events` (15, 2026-10-14). 한도 1분 60번 그대로. spec R3-3 반영
 - 로그인 쿠키 경로 `/api/v1`(ADR-0102): nginx 할 일 없음. spec R12-1
+
+## 10. 공공기관 접속 공개 자료 (2026-10-14, 사용자 질문)
+
+### 한국 공개 자료
+
+| 자료 | 내용 | 출처 (확인 2026-10-14) |
+|---|---|---|
+| 도서관 정보나루 Open API | 공식 API로 도서관별 장서·대출·소장 여부(ISBN)를 받을 수 있음. 회원가입 + 인증키 필요, "데이터 공개에 참여하는 도서관"만. 호출 제한은 페이지에 없음(매뉴얼·약관 확인) | https://www.data4library.kr/apiUtilization |
+| 전자정부 웹사이트 품질관리 지침 (행안부 고시) | 2025-06-25 개정(제2025-46호)으로 크롤링 "완전 허용" → "일부 차단 가능"으로 바뀜. 공공기관 사이트를 전면 개방으로 가정하면 안 됨. 적용 대상: 행정·공공기관. 조문 원문·robots.txt 구체 문구는 확인 못 함(law.go.kr 본문 미표시) | https://www.mois.go.kr/frt/bbs/type001/commonSelectBoardArticle.do?bbsId=BBSMSTR_000000000016&nttId=118636 |
+| 공공데이터포털(data.go.kr) 약관 | "제공시스템의 성능 저하 등의 문제가 발생할 경우 서비스 이용을 제한할 수 있습니다"(오픈 API 이용 제한). 크롤링을 콕 집어 금지하는 문구는 없음. ※ "사전협의 없는 자동화된 접근 제한"은 특정 기관(공단) 처리방침 문구라 일반 규정 아님 | https://www.data.go.kr/ugs/selectPortalPolicyView.do |
+
+- 뜻: 공공 도서관의 **장서·대출·소장 여부**는 정보나루 공식 API라는 합법적인 길이 있음. 다만 우리 서비스가 묻는 것은 전자책 **대출 가능 여부**(각 전자도서관 사이트의 실시간 상태)라 정보나루로 대체되지 않음 [안: 확인]. 전자정부 지침 개정으로 공공기관 사이트가 크롤러를 일부 막을 수 있게 됨 → `go.kr` 전자도서관이 데이터센터 IP를 막을 수 있다는 또 하나의 근거
+- 확인 못 함: 전자정부 지침의 개방성 조문 원문과 robots.txt 구체 문구, 정보나루 API 호출 제한 수치, 개별 `go.kr` 전자도서관이 실제로 데이터센터 IP를 막는지(배포 뒤 시험)
+
+### 업체 약관의 정부 사이트 조항 (research 3절 + 보강)
+
+| 업체 | 정부 사이트 조항 | 우리에게 |
+|---|---|---|
+| Bright Data | "government websites are blocked across all networks" | 공공도서관이 government로 분류되면 아예 안 됨 |
+| Oxylabs | ISP 상품 제한 대상에 "Government websites (usa.gov, canada.ca)", 모든 고객 KYC | `go.kr` 포함 여부는 업체에 질문 |
+| IPRoyal | AUP 4.4 DC·ISP 차단 목록에 `.gov`(신분증 인증 시 허용), 3.2 robots.txt·속도 제한 우회 금지 | 신분증 인증·약관 해석 필요 |
+| Webshare | "government infrastructure" 금지, KYC 가능 | 분류 확인 필요 |
+| Decodo | 정부 사이트 조항 확인 못 함 | 업체에 질문 |
+
+- 어느 업체도 "한국 `go.kr`"를 콕 집어 적지 않음. 업체 지원팀에 "한국 공공도서관(`go.kr`) 접속이 되는지" 물어야 함 [확인 필요]
