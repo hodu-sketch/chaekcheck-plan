@@ -9,3 +9,4 @@
 | [2026-10-14-design-delta-review.html](2026-10-14-design-delta-review.html) | 설계 정리(구성도·흐름·바뀌는 것), 비밀 값 범위·이름, User-Agent 연락처, 운영 DB SQL 길, design-delta 확정 + ADR-0103 | `../design-delta.md`, ADR-0103 초안 | 4개 |
 | [2026-10-14-design-easy.html](2026-10-14-design-easy.html) | 설계 전체를 쉽게: 들어오는 길, 서버 안 구성, 비밀 값, 모니터링, 백업, 요청 한도, 프록시(뒤에) | 사이클 17 전체 | 설명 (결정 없음) |
 | [2026-10-14-proxy-vendor.html](2026-10-14-proxy-vendor.html) | 프록시 업체 고르기: 업체에 먼저 물을 것(go.kr), 업체 비교, 공공기관 접속 공개 자료, 고르는 순서 | `../research.md` 3·4·10절 | 2개 |
+| [2026-10-14-deploy-decisions-remote.html](2026-10-14-deploy-decisions-remote.html) | 첫 배포 결정 3가지(호스트 EC2·기간 6개월·비밀값 IAM) 승인/미승인/기타 버튼 — claude.ai 비공개 Artifact로 밖에서 선택·저장. URL: https://claude.ai/artifact/GCMZe8BbAPeCBKSKxwuWtC | `../research.md` 12절, ADR-0103, scope.md | 3개 |
