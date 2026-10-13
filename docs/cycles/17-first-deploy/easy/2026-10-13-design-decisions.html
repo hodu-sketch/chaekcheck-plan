@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 17 설계 결정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.card h3.t{font-size:21px;margin:26px 0 8px}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font-size:15px;line-height:1.55;margin:8px 0 6px;word-break:normal}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+pre .cm{color:var(--muted)} pre .hl{background:var(--warn-bg);color:var(--warn);font-weight:700}
+.src{color:var(--muted);font-size:15px;margin:14px 0 0}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+.fig{overflow-x:auto;margin:8px 0 4px}
+.fig svg{width:100%;min-width:640px;height:auto;display:block}
+.mine{border:1px dashed var(--warn);background:var(--warn-bg);border-radius:8px;padding:10px 14px;font-size:18px;margin:10px 0}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0}
+.pc>div{border-radius:10px;padding:12px 16px;font-size:18px}
+.pc .p{background:var(--ok-bg)} .pc .c{background:var(--no-bg)}
+.pc h4{margin:0 0 6px;font-size:18px}
+.pc ul{margin:0;padding-left:20px}
+.pc li{margin:0 0 8px}
+@media (max-width:640px){.pc{grid-template-columns:1fr} body{font-size:18px} .lead{font-size:24px}}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">사이클 17 설계:<br>서버 안을 어떻게 짤지 열 가지</p>
+<p class="sub">서비스의 모듈·표·API는 바뀌지 않습니다. 정할 것은 서버 안의 구성(컨테이너, 비밀 값, 지표, 백업, 이미지 옮기기)입니다. 설계 제안은 <code>architect-proposal.md</code>에 있습니다. (2026-10-13)</p>
+
+<section class="card">
+<h2><span class="num">1</span>서버 안 구성 한 장</h2>
+<p class="gist">컨테이너를 두 무리로 나눕니다. 바깥에서 오는 요청을 받는 무리(edge)와, 안에서만 쓰는 무리(app)입니다. 어떤 컨테이너도 서버 바깥에 포트를 열지 않습니다.</p>
+<div class="fig">
+<svg viewBox="0 0 900 380" role="img" aria-label="edge와 app 두 네트워크의 컨테이너">
+<rect x="20" y="150" width="120" height="60" rx="8" fill="var(--accent-bg)" stroke="var(--accent)"/>
+<text x="80" y="178" text-anchor="middle" font-size="14" fill="var(--text)">사용자·운영자</text>
+<text x="80" y="196" text-anchor="middle" font-size="11" fill="var(--muted)">Cloudflare 거쳐</text>
+<rect x="180" y="20" width="250" height="340" rx="12" fill="var(--warn-bg)" stroke="var(--warn)"/>
+<text x="305" y="44" text-anchor="middle" font-size="14" font-weight="700" fill="var(--text)">edge 네트워크</text>
+<text x="305" y="62" text-anchor="middle" font-size="11" fill="var(--muted)">nginx가 믿는 주소는 이 범위 하나</text>
+<g font-size="13" fill="var(--text)">
+<rect x="210" y="80" width="190" height="44" rx="6" fill="var(--card)" stroke="var(--line)"/><text x="305" y="107" text-anchor="middle">cloudflared</text>
+<rect x="210" y="160" width="190" height="44" rx="6" fill="var(--card)" stroke="var(--line)"/><text x="305" y="187" text-anchor="middle">nginx + 화면 파일</text>
+<rect x="210" y="280" width="190" height="44" rx="6" fill="var(--card)" stroke="var(--line)"/><text x="305" y="307" text-anchor="middle">grafana</text>
+</g>
+<rect x="470" y="20" width="410" height="340" rx="12" fill="var(--ok-bg)" stroke="var(--ok)"/>
+<text x="675" y="44" text-anchor="middle" font-size="14" font-weight="700" fill="var(--text)">app 네트워크 (안에서만)</text>
+<g font-size="13" fill="var(--text)">
+<rect x="500" y="70" width="170" height="44" rx="6" fill="var(--card)" stroke="var(--line)"/><text x="585" y="90" text-anchor="middle">backend</text><text x="585" y="106" text-anchor="middle" font-size="11" fill="var(--muted)">8080 서비스 / 8081 지표</text>
+<rect x="690" y="70" width="170" height="44" rx="6" fill="var(--card)" stroke="var(--line)"/><text x="775" y="97" text-anchor="middle">DB (PostgreSQL)</text>
+<rect x="500" y="150" width="170" height="44" rx="6" fill="var(--card)" stroke="var(--line)"/><text x="585" y="177" text-anchor="middle">prometheus</text>
+<rect x="690" y="150" width="170" height="44" rx="6" fill="var(--card)" stroke="var(--line)"/><text x="775" y="177" text-anchor="middle">node_exporter</text>
+<rect x="500" y="230" width="170" height="44" rx="6" fill="var(--card)" stroke="var(--line)"/><text x="585" y="257" text-anchor="middle">cAdvisor</text>
+<rect x="690" y="230" width="170" height="44" rx="6" fill="var(--card)" stroke="var(--line)"/><text x="775" y="250" text-anchor="middle">접속 기록 exporter</text><text x="775" y="266" text-anchor="middle" font-size="11" fill="var(--muted)">429 횟수</text>
+<rect x="500" y="300" width="360" height="40" rx="6" fill="var(--card)" stroke="var(--line)" stroke-dasharray="6 4"/><text x="680" y="325" text-anchor="middle" font-size="12" fill="var(--muted)">조회 서버(fetch-service): 넣어 두되 꺼 둠</text>
+</g>
+<line x1="140" y1="180" x2="210" y2="102" stroke="var(--text)" stroke-width="2"/>
+<line x1="305" y1="124" x2="305" y2="160" stroke="var(--text)" stroke-width="2"/>
+<line x1="305" y1="124" x2="305" y2="280" stroke="var(--muted)" stroke-dasharray="4 3"/>
+<line x1="400" y1="182" x2="500" y2="92" stroke="var(--text)" stroke-width="2"/>
+<line x1="670" y1="92" x2="690" y2="92" stroke="var(--text)" stroke-width="2"/>
+<line x1="400" y1="302" x2="500" y2="172" stroke="var(--muted)" stroke-width="2"/>
+</svg>
+</div>
+<p class="cap">nginx는 두 네트워크에 함께 걸쳐 있습니다. Prometheus만 backend의 지표 포트(8081)를 읽습니다.</p>
+<div class="item">
+<h3><span class="no">1</span>네트워크를 edge·app 둘로 나누고, edge 주소 범위는 10.x에서 고름 (예 <code>10.250.0.0/24</code>) [안]</h3>
+<p>명세에 적은 예시 <code>172.30.0.0/24</code>는 Docker가 저절로 쓰는 주소 범위(172.17~31) 안이라 다른 네트워크와 겹칠 수 있어서 바꾸는 안입니다. Lightsail 사설망 대역과 겹치지 않는지는 서버에서 확인합니다.</p>
+<p class="alt"><b>네트워크 하나:</b> 단순합니다. 대신 nginx가 믿는 범위에 backend·DB까지 들어갑니다.</p>
+<p class="rec">추천: 둘로 나눔, 10.x 범위.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>비밀 값과 지표</h2>
+<p class="gist">비밀 값은 backend만 쓰지 않습니다(DB 비밀번호는 DB, 터널 토큰은 cloudflared, Grafana 비밀번호는 grafana). 그래서 모든 컨테이너가 같은 방식으로 받게 하는 안입니다.</p>
+<div class="item">
+<h3><span class="no">2</span>띄우기 스크립트가 Parameter Store에서 값을 읽어 권한을 막은 파일에 쓰고, compose가 그 파일을 읽음 [안]</h3>
+<p>예: <code>up.sh</code>를 실행하면 <code>/chaekcheck/prod/</code> 아래 값을 한 번에 받아 본인만 읽을 수 있는 파일로 쓰고, 그 파일로 컨테이너를 띄웁니다. 값을 못 받으면 멈추고 지금 컨테이너는 그대로 둡니다. 코드는 바꾸지 않습니다.</p>
+<p class="alt"><b>값마다 파일로 넘기기(compose secrets):</b> 컨테이너 설정 화면(<code>docker inspect</code>)에 값이 안 보입니다. 대신 재부팅 때 따로 돌릴 것이 생기고 고칠 곳이 많습니다.<br>
+<b>Spring이 직접 읽기(Spring Cloud AWS):</b> backend만 해결되고, 지금 Spring Boot 4.1과 맞는지 공식 표에 없습니다.</p>
+<p class="rec">추천: 띄우기 스크립트.</p>
+</div>
+<div class="item">
+<h3><span class="no">3</span>도서관 호출 포기 횟수는 코드에서 직접 셈 (Micrometer 카운터, 포기 이유 두 가지로 나눔) [안]</h3>
+<p>지금 포기하는 길이 둘인데 하나만 로그를 남깁니다. 두 곳 모두에서 숫자를 올리고, 빠진 로그도 더합니다. 도서관마다 따로 세지는 않습니다(수백 곳이라 숫자 종류가 너무 많아짐).</p>
+<p class="alt"><b>로그에서 세기:</b> 코드를 덜 고칠 것 같지만, 로그가 없는 길 때문에 어차피 고쳐야 하고 컨테이너가 늘어납니다.</p>
+<p class="rec">추천: 코드에서 셈.</p>
+</div>
+<div class="item">
+<h3><span class="no">4</span>지표 주소는 서비스 포트(8080)와 다른 포트(8081)에만 둠 [안]</h3>
+<p>지금 서비스는 로그인이 필요한 몇 곳 말고는 누구나 부를 수 있게 되어 있습니다. 지표를 다른 포트에 두면 nginx 설정을 실수로 넓혀도 바깥에 나가지 않습니다. 다른 포트에 로그인 검사가 어떻게 걸리는지는 시험으로 확인합니다.</p>
+<p class="alt"><b>같은 포트, nginx에서만 막기:</b> 설정이 가장 적습니다. 대신 막는 장치가 nginx 규칙 하나입니다.</p>
+<p class="rec">추천: 다른 포트.</p>
+</div>
+<div class="item">
+<h3><span class="no">5</span>429 횟수는 nginx 접속 기록을 읽는 exporter로 셈 [안]</h3>
+<p>한도로 나는 429는 nginx가 돌려줘서 서비스는 모릅니다. 그래서 서비스 지표만으로는 Grafana의 "오류 수(429 포함)"가 0으로 나옵니다. 접속 기록을 읽는 컨테이너 하나를 두면 상태 코드별 횟수와 사용자가 겪는 응답 시간이 나옵니다. 이 도구의 관리 상태와 라이선스는 확인하지 못했습니다.</p>
+<p class="alt"><b>429는 Cloudflare 대시보드에서만:</b> 더할 것이 없습니다. 대신 정한 Grafana 묶음과 어긋납니다.</p>
+<p class="rec">추천: exporter. 도구 상태가 나쁘면 Cloudflare로 바꿀지 다시 여쭙니다.</p>
+</div>
+<div class="item">
+<h3><span class="no">6</span>컨테이너 메모리는 cAdvisor로 셈 [안]</h3>
+<p>DB뿐 아니라 모든 컨테이너의 메모리가 보여, 이번에 하는 "4GB에 다 들어가는지 재기"에 그대로 씁니다. cAdvisor 자신이 쓰는 메모리는 서버에서 잽니다.</p>
+<p class="alt"><b>1분마다 숫자를 파일로 쓰는 스크립트:</b> 가장 가볍습니다. 대신 직접 짜는 스크립트가 생깁니다.</p>
+<p class="rec">추천: cAdvisor. 무거우면 스크립트로 바꿉니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>백업</h2>
+<p class="gist">수집한 책 목록은 내 PC가 원본이므로 매일 백업에서 빼고, 회원·내 도서관·기록처럼 운영 중에만 생기는 것만 매일 백업하는 안입니다.</p>
+<div class="item">
+<h3><span class="no">7</span>매일 백업은 수집 책 목록을 뺀 나머지 DB만, 책 목록은 PC의 마지막 반영 파일을 백업으로 봄 [안]</h3>
+<p>파일이 작고 03:00에 DB 부담이 적을 것으로 봅니다(크기는 재 봄). 되살릴 때는 두 단계입니다: 덤프 복원 → 책 목록 반영 파일 다시 넣기(사이클 11에서 만든 방법).</p>
+<p class="alt"><b>DB 전체:</b> 되살리기가 한 번에 끝납니다. 대신 DB가 약 8.5GiB라 덤프가 GB 단위이고, 되살릴 때 검색 색인을 다시 만드느라 오래 걸립니다.</p>
+<p class="rec">추천: 책 목록은 빼고.</p>
+</div>
+<div class="item">
+<h3><span class="no">8</span>내 PC는 Windows 작업 스케줄러가 백업 전용 SSH 키로 받아 오고, 7개 넘는 것을 지움 [안]</h3>
+<p>백업 전용 계정은 백업 폴더만 읽을 수 있게 막습니다. PC가 꺼져 있던 날은 켜지자마자 받습니다. 집 IP가 바뀌면 서버 SSH 허용 주소를 고칠 때까지 실패합니다.</p>
+<p class="alt"><b>Lightsail 버킷을 거침:</b> PC가 꺼져 있어도 쌓입니다. 대신 저장소와 키가 하나 늘고, 요금은 확인하지 못했습니다.</p>
+<p class="rec">추천: 작업 스케줄러 + SSH.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>조회 서버와 이미지 옮기기</h2>
+<div class="item">
+<h3><span class="no">9</span>조회 서버(fetch-service)는 compose에 넣어 두되 꺼 둠 [안]</h3>
+<p class="chg">범위(scope 포함 1)에는 "조회 서버를 띄움"으로 적었는데, 지금 조회 방식이 서버가 직접 묻는 방식(<code>direct</code>)이라 조회 서버를 쓰지 않습니다. 쓰지 않는 Java 프로그램 하나가 4GB에서 메모리를 쓰므로 꺼 두는 안입니다. 대출 조회 나가는 길(ADR-0095)을 다시 정한 뒤 켭니다.</p>
+<p class="alt"><b>늘 띄움:</b> 범위 글 그대로입니다. 메모리를 씁니다.</p>
+<p class="rec">추천: 넣어 두되 꺼 둠.</p>
+</div>
+<div class="item">
+<h3><span class="no">10</span>이미지는 내 PC에서 만들어 SSH로 서버에 옮김 (레지스트리 없음) [안]</h3>
+<p>PC에서 <code>docker build</code> 뒤 <code>docker save</code>로 묶어 서버에서 <code>docker load</code>합니다. 계정과 비밀 값이 늘지 않습니다. 서버 CPU가 Intel·AMD여야 PC 이미지를 그대로 씁니다(서버를 만든 뒤 확인).</p>
+<p class="alt"><b>GitHub 비공개 이미지 저장소:</b> 옮기기가 편합니다. 토큰이 하나 늘어납니다.<br><b>서버에서 빌드:</b> 4GB에서 빌드가 서비스와 메모리를 다툽니다.</p>
+<p class="rec">추천: PC에서 만들어 옮김.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">5</span>바로잡을 것 하나 (결정 아님, 시험으로 확인)</h2>
+<p class="gist">명세에 접속 기록을 "<code>$uri</code>로 경로만"이라고 적었는데, 화면 주소(<code>/search</code> 등)는 nginx 안에서 <code>/index.html</code>로 바뀐 뒤 기록될 것으로 봅니다. 그러면 어느 화면을 열었는지 안 남습니다.</p>
+<p>설계에서는 원래 주소(<code>$request_uri</code>)에서 <code>?</code> 앞까지만 잘라 남기는 방식으로 쓰고, dev가 시험(<code>/search?q=x</code> 요청 뒤 기록 확인)으로 확인합니다. "검색어는 빼고 경로만"이라는 결정은 그대로입니다.</p>
+</section>
+
+<p class="foot">원문: <code>docs/cycles/17-first-deploy/architect-proposal.md</code>. 근거: <code>spec.md</code>, <code>flow.md</code>, dev 코드(2026-10-13 읽음), 공식 문서 주소는 원문에.</p>
+</main>
+</body>
+</html>
