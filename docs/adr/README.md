@@ -106,3 +106,4 @@
 | [ADR-0100](0100-privacy-policy-public-regardless-of-login.md) | 처리방침은 로그인 기능과 상관없이 공개 (사이클 05 제약 35 일부 변경) | Proposed | 2026-10-13 | 16 |
 | [ADR-0101](0101-terms-change-notice-or-reconsent.md) | 약관이 바뀔 때: 가벼우면 공지 + 시행일, 중요하면 다음 로그인 때 다시 동의(화면은 나중) | Proposed | 2026-10-13 | 16 |
 | [ADR-0102](0102-access-cookie-api-v1-and-login-status-reader.md) | 액세스 토큰 쿠키 경로를 `/api/v1`로 넓히고, 로그인 상태 판별은 `auth`의 부품 하나에 모음 (만료돼도 서명 맞으면 로그인함, 로그인 꺼짐이면 쿠키를 보지 않음; ADR-0042의 액세스 쿠키 경로 부분을 바꿈) | Proposed | 2026-10-14 | 15 |
+| [ADR-0103](0103-production-server-layout.md) | 첫 운영 서버는 compose 한 벌(edge·app 네트워크), 비밀 값은 띄우기 스크립트가 Parameter Store에서, 지표는 별도 포트·Micrometer 카운터·접속 기록 exporter·cAdvisor, 백업은 수집 목록 빼고 Tunnel SSH로 받음 | Proposed | 2026-10-14 | 17 |
