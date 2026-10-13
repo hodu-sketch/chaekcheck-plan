@@ -12,3 +12,4 @@
 | [2026-10-13-check-results.html](2026-10-13-check-results.html) | 설계 전 확인 다섯 가지 결과, 로그인 상태 확인 중일 때 | `../architect-proposal.md` 확인 결과 | 결정됨: 승인 + 로그인 켬/끔 모두 동작 (2026-10-13) |
 | [2026-10-13-logging-start.html](2026-10-13-logging-start.html) | 사이클 17 전달 글, 16·17 정리본 반영, 기록 시작 시점 | `../spec.md`, `../to-cycle-17.md` | 결정됨: 승인 (2026-10-13) |
 | [design-delta-original.html](design-delta-original.html) | design-delta.md 초안 원문 + 그림 7개(모듈 구성도, 흐름 4개, 도메인 모델, 표 관계) | `../design-delta.md` | 초안, 회고 뒤 확정 |
+| [2026-10-13-more-actions.html](2026-10-13-more-actions.html) | 더 보기 기록, 더 남길 행동 후보(사서 추천, 지역·내 도서관, 도서관 응답) | `../spec.md` | 결정됨: 4개 모두 승인 (2026-10-13) |

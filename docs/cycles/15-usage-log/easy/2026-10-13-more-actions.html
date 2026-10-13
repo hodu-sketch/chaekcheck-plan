@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 15 더 남길 행동</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+.flow{display:grid;gap:10px;margin:10px 0 16px}.lane{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--card)}.lane b{display:block;margin-bottom:4px}.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{font-size:14px;border-radius:6px;padding:2px 8px;background:var(--code-bg)}.chip.new{background:var(--warn-bg)}.chip.dev{background:var(--ok-bg)}.arrow{text-align:center;color:var(--muted);font-size:18px;line-height:1}
+</style>
+<style>
+main{max-width:1080px}
+.pick{display:inline-block;font-size:14px;font-weight:700;color:var(--warn);background:var(--warn-bg);border-radius:6px;padding:1px 8px}
+.rec{display:inline-block;font-size:15px;font-weight:700;color:var(--ok);background:var(--ok-bg);border-radius:6px;padding:1px 8px}
+.ex{background:var(--ok-bg);border-radius:10px;padding:12px 16px;margin:10px 0}.ex b{color:var(--ok)}
+.alt{background:var(--code-bg);border-radius:10px;padding:12px 16px}
+.toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px 18px;font-size:18px;margin:6px 0 0;padding:0;list-style:none}
+.toc li{display:flex;gap:8px;align-items:baseline}
+figure{max-width:440px}
+figure svg text{font-family:"Noto Sans KR",system-ui,sans-serif}
+.card>figure{margin-left:auto;margin-right:auto}
+@media (min-width:980px){
+ .item{display:grid;grid-template-columns:minmax(0,1fr) 420px;column-gap:32px;align-items:start}
+ .item>*{grid-column:1}
+ .item>h3{grid-column:1 / -1}
+ .item>figure{grid-column:2;grid-row:2 / span 30;margin-top:4px}
+}
+@media (max-width:600px){body{font-size:18px}.card{padding:20px 16px}.lead{font-size:23px}}
+</style>
+</head>
+<body><main class="doc">
+<p class="lead">"더 보기"와 그 밖에 더 남길 수 있는 행동,<br>네 가지를 골라 주세요</p>
+<p class="sub">사이클 15 · 2026-10-13 · 사용자: "이거 했으면 좋겠어 어지간한면 기록하고 싶어" · 원본 <code>docs/cycles/15-usage-log/spec.md</code></p>
+
+<section class="card" id="h16c"><h2><span class="num">★</span>사이클 16에 전달할 글 (3차, 늘어난 기록)</h2><div class="gist">처리방침에 더할 항목입니다. 복사해 16 세션에 붙여 넣으시면 됩니다. 같은 글이 <code>docs/cycles/15-usage-log/to-cycle-16.md</code> 끝에 있습니다.</div><pre style="white-space:pre-wrap;background:var(--code-bg);border-radius:10px;padding:16px;font-size:16px;line-height:1.6">사이클 16 세션에 전달합니다 (3차, 2차에 덧붙임). 사이클 15가 남기는 행동이 늘었습니다. 처리방침의 &quot;자동으로 수집하는 정보&quot;에 더해 주세요.
+
+- 더 보기: 직접 찾기 &quot;다음 묶음&quot;, 도서관별 &quot;더 보기&quot;, 수집 목록 다음 쪽 — 종류, 몇 번째, 도서관, 검색어, 로그인 여부, IP, 시각
+- 사서 추천 목록 화면·추천 책 창 열기 — 분야·책, 로그인 여부, IP, 시각
+- 지역 설정 바꾸기, 내 도서관 넣기·빼기 — 바뀐 지역·도서관 번호, 로그인 여부, IP, 시각 (회원 번호는 남기지 않음)
+- 도서관에서 직접 찾기의 도서관별 응답 결과·걸린 시간 — 개인정보 아님(IP 없음), 참고
+- 보관은 같음: IP 30일, 나머지 1년, 매일 04:30 자동 삭제
+- 참고 (사이클 17 확정): nginx 접속 기록 14일, 쿼리 문자열(검색어) 빼고 경로만
+</pre></section>
+<section class="card"><h2><span class="num">0</span>지금 남기기로 한 것과 후보</h2>
+<div class="gist">"더 보기"는 남기기로 받았습니다. 아래 표의 아래쪽 셋은 "어지간하면 기록"에 맞춰 제가 찾은 후보입니다. 하나씩 고르시면 됩니다.</div>
+<table><tr><th>행동</th><th>상태</th><th>서버가 이미 아나</th></tr>
+<tr><td>검색 (처음 요청)</td><td>정함</td><td>예</td></tr>
+<tr><td>책 상세 열기</td><td>정함</td><td>예</td></tr>
+<tr><td>도서관 링크 누르기</td><td>정함</td><td>아니오 → 화면이 알림</td></tr>
+<tr><td>더 보기 (다음 묶음·도서관별 더 보기·다음 쪽)</td><td>#1 (남기기로 받음, 방법 확인)</td><td>예</td></tr>
+<tr><td>사서 추천 목록·추천 책 창 열기</td><td>#2 후보</td><td>일부 → 화면이 알림</td></tr>
+<tr><td>지역 설정 바꾸기, 내 도서관 넣기·빼기</td><td>#3 후보</td><td>로그인 뒤 저장만 앎, 로그인 전 지역은 브라우저에만 → 화면이 알림</td></tr>
+<tr><td>직접 찾기에서 도서관마다 응답했나·실패했나</td><td>#4 후보</td><td>예</td></tr></table>
+</section>
+
+<section class="card"><h2><span class="num">1</span>더 보기</h2>
+<div class="item"><h3><span class="no">1</span>"더 보기" 세 종류를 서버가 받는 요청에서 한 줄씩, 검색 기록과 다른 표에 남김 [안]</h3>
+<figure><svg viewBox="0 0 340 220" xmlns="http://www.w3.org/2000/svg">
+<rect x="10" y="10" width="320" height="44" rx="10" fill="var(--accent-bg)" stroke="var(--accent)"/>
+<text x="22" y="37" font-size="12.5" font-weight="700" fill="var(--text)">검색 한 번 (search_event 한 줄, 지금 그대로)</text>
+<g font-size="11.5">
+<rect x="10" y="70" width="100" height="70" rx="8" fill="var(--warn-bg)"/><text x="60" y="94" text-anchor="middle" fill="var(--text)">다음 묶음</text><text x="60" y="114" text-anchor="middle" fill="var(--muted)">직접 찾기</text><text x="60" y="130" text-anchor="middle" fill="var(--muted)">몇 번째 묶음</text>
+<rect x="120" y="70" width="100" height="70" rx="8" fill="var(--warn-bg)"/><text x="170" y="94" text-anchor="middle" fill="var(--text)">도서관별 더 보기</text><text x="170" y="114" text-anchor="middle" fill="var(--muted)">직접 찾기</text><text x="170" y="130" text-anchor="middle" fill="var(--muted)">어느 도서관·몇 쪽</text>
+<rect x="230" y="70" width="100" height="70" rx="8" fill="var(--warn-bg)"/><text x="280" y="94" text-anchor="middle" fill="var(--text)">다음 쪽</text><text x="280" y="114" text-anchor="middle" fill="var(--muted)">수집 목록</text><text x="280" y="130" text-anchor="middle" fill="var(--muted)">몇 쪽</text>
+</g>
+<text x="10" y="170" font-size="12" fill="var(--text)">→ 새 표 search_more에 한 줄씩: 시각, 종류, 몇 번째,</text>
+<text x="10" y="190" font-size="12" fill="var(--text)">도서관(있으면), 검색어, 로그인 여부, IP(30일)</text>
+<text x="10" y="210" font-size="11.5" fill="var(--muted)">검색 수는 그대로 "사람이 한 검색 한 번 = 한 줄"</text>
+</svg><figcaption>검색 수가 부풀지 않게, 더 보기는 따로 셉니다.</figcaption></figure>
+<p><b>이렇게 되면</b>: "검색 100번 중 다음 묶음을 누른 건 몇 번", "어느 도서관에서 더 보기를 많이 누르나"를 볼 수 있습니다. 세 요청은 이미 서버로 오므로 화면을 고칠 필요가 없습니다(로그인 여부 값만 같이 붙임). 대출 수 채우기처럼 화면이 사람 손 없이 부르는 요청은 여전히 세지 않습니다.</p>
+<p class="alt"><b>다른 선택</b>: 검색 기록 표에 "몇 번째 요청" 칸을 더해 같은 표에 남김 → 표는 안 늘지만 "검색 수"를 셀 때마다 첫 요청만 골라야 해서 통계 SQL이 헷갈립니다.</p>
+<p><span class="rec">추천</span> 새 표 search_more</p>
+</div></section>
+
+<section class="card"><h2><span class="num">2</span>그 밖의 후보</h2>
+<div class="gist">#2·#3은 서버가 모르는 행동이라 화면이 알림을 보내야 합니다. 도서관 클릭 알림과 같은 주소를 "화면 행동 알림"으로 넓혀 쓰면 새 주소 없이 됩니다(설계에서).</div>
+<div class="item"><h3><span class="no">2</span>사서 추천 목록 화면 열기와 추천 책 창 열기도 기록 [안]</h3>
+<p><b>이렇게 되면</b>: "사서 추천을 몇 명이 보나, 어떤 분야·책 창을 많이 여나"를 알 수 있습니다. 추천 책 창에서 도서관으로 넘어가는 클릭은 이미 남기므로, 그 앞 단계까지 이어 볼 수 있습니다(같은 IP 30일 안).</p>
+<p class="alt"><b>다른 선택</b>: 남기지 않음 → 화면 알림이 늘지 않지만, 사서 추천 페이지가 쓰이는지는 클릭으로만 짐작합니다.</p>
+<p><span class="rec">추천</span> 기록</p>
+</div>
+<div class="item"><h3><span class="no">3</span>지역 설정 바꾸기, 내 도서관 넣기·빼기도 기록 (무엇을 바꿨는지만) [안]</h3>
+<p><b>이렇게 되면</b>: "어느 지역 사람이 많이 쓰나", "어떤 도서관을 내 도서관에 많이 넣나"를 알 수 있습니다. 회원 번호는 남기지 않고 바뀐 지역·도서관 번호와 로그인 여부·IP만 남깁니다. 로그인 전 지역 설정은 브라우저에만 저장되므로 화면이 알림을 보냅니다.</p>
+<p class="alt"><b>다른 선택</b>: 남기지 않음 → 검색 기록의 지역·도서관 칸으로도 어느 정도 알 수 있습니다(검색할 때의 설정).</p>
+<p><span class="rec">추천</span> 기록</p>
+</div>
+<div class="item"><h3><span class="no">4</span>직접 찾기에서 도서관마다 응답했나·실패했나·시간이 얼마나 걸렸나를 기록 [안]</h3>
+<p><b>이렇게 되면</b>: "어느 도서관 사이트가 자주 응답하지 않나, 느린가"를 볼 수 있습니다. 서버가 이미 아는 값이라 화면 변화가 없습니다. 사람의 행동이라기보다 운영 기록이지만, 통계 때 "못 찾은 이유"를 나누는 데 씁니다. IP는 붙이지 않습니다.</p>
+<p class="alt"><b>다른 선택</b>: 남기지 않음 → 지금처럼 서버 로그로만 봅니다.</p>
+<p><span class="rec">추천</span> 기록</p>
+</div>
+<p class="note">이 넷을 더하면 기록 표가 다섯에서 일곱~여덟으로 늘고, 1년 크기 어림도 늘어납니다(검색 1~2GB → 많아야 몇 GB, 운영 뒤 측정). 고르시면 명세·설계 초안·ADR-0096/0097을 고칩니다.</p>
+</section>
+<p class="foot">원본: <code>docs/cycles/15-usage-log/spec.md</code>, <code>design-delta.md</code> (초안)</p>
+</main></body></html>

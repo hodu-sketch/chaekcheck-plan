@@ -1,6 +1,6 @@
 # 설계 변경: 사이클 15 사용자 행동 기록 (검색·책 상세·도서관 클릭)
 
-> **초안 (2026-10-13)**. 방향은 사용자가 정함(`architect-proposal.md` "고른 방향", ADR-0096·0097 Proposed). 12·13·14 회고에서 실제 코드를 본 뒤, 그리고 사이클 17의 nginx `CF-Connecting-IP` 설정을 확인한 뒤 확정합니다 [확정: 순서] (scope). 그때까지 아래 이름·숫자 중 따로 적지 않은 것은 [안]
+> **초안 (2026-10-13)**. 2026-10-13 더 남기는 행동(spec R6) 반영: 표 다섯 → 여덟 [안] (`search_more`, `screen_event`, `library_response` 추가), 클릭 알림 주소를 화면 행동 알림으로 넓힘 [안]. 방향은 사용자가 정함(`architect-proposal.md` "고른 방향", ADR-0096·0097 Proposed). 12·13·14 회고에서 실제 코드를 본 뒤, 그리고 사이클 17의 nginx `CF-Connecting-IP` 설정을 확인한 뒤 확정합니다 [확정: 순서] (scope). 그때까지 아래 이름·숫자 중 따로 적지 않은 것은 [안]
 
 ## 구조 그림
 
@@ -219,6 +219,33 @@ erDiagram
     text reason
     jsonb raw_values
   }
+  SEARCH_MORE {
+    bigint id PK
+    timestamptz received_at
+    text kind
+    integer seq
+    bigint library_id
+    text title
+    text author
+    text publisher
+    boolean logged_in
+    inet client_ip
+  }
+  SCREEN_EVENT {
+    bigint id PK
+    timestamptz received_at
+    text kind
+    jsonb detail
+    boolean logged_in
+    inet client_ip
+  }
+  LIBRARY_RESPONSE {
+    bigint id PK
+    timestamptz received_at
+    bigint library_id
+    text outcome
+    integer elapsed_ms
+  }
   DROPPED_BATCH {
     bigint id PK
     timestamptz dropped_at
@@ -246,6 +273,13 @@ erDiagram
 | `library_click.book_id`, `book_view.book_id` | `bigint` | FK 없음 | 책 번호 (catalog 번호는 가져오기 때 이어 씀, ADR-0062) | [확정] |
 | `rejected_click.reason` | `text` | CHECK | `unknown_library`,`invalid_place`,`invalid_screen`,`invalid_book_id`,`malformed` | [안] |
 | `rejected_click.raw_values` | `jsonb` | 크기 상한 [안: 2KB 넘으면 잘라 냄] | 받은 값 | [안] |
+| `search_more.kind` | `text` | CHECK (`direct_next_batch`,`library_more`,`catalog_next_page`) | 더 보기 종류 (R6-1) | [확정] (기록), [안] (값 이름) |
+| `search_more.seq` | `integer` | | 묶음 번호·쪽 번호 | [안] |
+| `search_more.library_id` | `bigint` | 도서관별 더 보기만 | | [안] |
+| `screen_event.kind` | `text` | CHECK (`picks_list_view`,`picks_book_view`,`region_change`,`my_library_add`,`my_library_remove`) | 화면 행동 (R6-2·R6-3) | [확정] (기록), [안] (값 이름) |
+| `screen_event.detail` | `jsonb` | 종류별 정한 키만 | 분야·책 번호 / 바뀐 지역 번호 / 도서관 번호 (회원 번호 없음) | [안] |
+| `library_response.outcome` | `text` | CHECK (`ok`,`failed`,`timeout`,`skipped`) | 직접 찾기 첫 묶음의 도서관별 결과 (R6-4) | [확정] (기록), [안] (값) |
+| `library_response.elapsed_ms` | `integer` | | 걸린 시간 | [확정] |
 | `dropped_batch.reason` | `text` | CHECK | `db_failure`,`buffer_full` | [안] |
 | 색인 | BRIN `(received_at)` 각 표, `client_ip IS NOT NULL` 부분 색인 [안] | — | 지우기·기간 조회 | [안] |
 
@@ -257,7 +291,7 @@ erDiagram
 
 | 메서드 | 경로 | 설명 | 요청 | 응답 | 에러 |
 |---|---|---|---|---|---|
-| POST | `/api/v1/library-clicks` | 도서관 링크 클릭 알림 | JSON (아래) | `204`, 본문 없음 | 로그인 기능 켜짐에서 CSRF 표시 없음·틀림 → `403` (기존 규칙). 값이 틀려도 `204` (rejected_click에 남김). nginx 한도 초과도 `204` |
+| POST | `/api/v1/library-clicks` | 도서관 링크 클릭 알림 (R6-2·R6-3 화면 행동도 같은 주소로 받을지, `/api/v1/usage-events`처럼 이름을 넓힐지 [안] — 설계 확정 때) | JSON (아래) | `204`, 본문 없음 | 로그인 기능 켜짐에서 CSRF 표시 없음·틀림 → `403` (기존 규칙). 값이 틀려도 `204` (rejected_click에 남김). nginx 한도 초과도 `204` |
 | GET | `/api/v1/books` | (변경) 쿼리에 `loggedIn` 추가 | `loggedIn=true|false`, 없으면 모름 | 변경 없음 | 변경 없음 |
 | GET | `/api/v1/books/{bookId}` | (변경) 같음 | 같음 | 변경 없음 | 변경 없음 |
 | GET | `/api/v1/ebook-searches/stream` | (변경) 같음 | 같음 | 변경 없음 | 변경 없음 |
