@@ -7,6 +7,7 @@
 > - 이상한 클릭 알림은 개수가 아니라 IP와 함께 한 줄씩, 30일 (spec R2-3) → `beacon_rejection_daily` 대신 `usagelog.rejected_click(id, received_at, client_ip, reason, raw_values jsonb)` [안], 30일 뒤 DELETE
 > - 버린 묶음 기록 (spec R3-3) → `usagelog.dropped_batch(id, dropped_at, row_count, reason)` [안], 다음 성공 묶음과 같은 트랜잭션으로 넣음 + 서버 로그
 > - IP 값: nginx `X-Real-IP`(=`$remote_addr`). 사이클 17이 nginx에서 `CF-Connecting-IP`를 사용자 주소로 읽게 해야 실제 사용자 IP [확인 필요: 17 설정]
+> - 더 남기는 행동 (spec R6, 2026-10-13 승인): 더 보기 세 종류 → `search_more`, 사서 추천 보기·지역/내 도서관 바꾸기 → `screen_event`(화면 알림), 직접 찾기 도서관별 응답 → `library_response`. `UsageLog.recordMore`·`recordLibraryResponse` 추가 [안]
 > - 로봇: robots.txt(`/api/` 금지) + nginx가 이름 밝힌 로봇을 직접 찾기·대출 조회 location에서 403 (spec R1-7·R1-8). 서버 쪽 로봇 건너뛰기(R1-5)도 그대로
 
 > 결정 기록: ADR-0096(무엇을·어디에·얼마나), ADR-0097(서버 안 기록 방식), 둘 다 Proposed

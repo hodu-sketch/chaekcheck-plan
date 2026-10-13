@@ -34,3 +34,26 @@
    - 15는 매일 04:30(서울)에 기록 지우기(IP 30일 비우기, 1년 지난 줄 지우기)를 돌림. 지금 04:00 회원 정리, 05:00 사서 추천 받기 사이. 17의 백업·점검 작업 시각과 겹치면 알려 주세요
 
 - 2026-10-13 17 답: 접속 기록 14일·쿼리 문자열 뺌, DB 백업 03:00 (겹침 없음) — 15 spec에 반영
+
+---
+
+## 2차 (2026-10-13) — 1차에 덧붙임
+
+사이클 17 세션에 전달합니다 (2차). 사이클 15가 남기는 행동이 늘었습니다(더 보기, 사서 추천 보기, 지역·내 도서관 바꾸기, 직접 찾기 도서관별 응답).
+- 디스크: 1년 어림이 1~2GB에서 늘어남(많아야 몇 GB, 운영 뒤 측정). 40GB 디스크 계산에 반영 부탁
+- 메모리: 버퍼 상한 1만 줄(약 5MB)은 그대로
+- nginx: 화면 행동 알림도 클릭 알림 주소(또는 넓힌 주소)로 오므로 IP당 1분 60번 한도를 같이 받음. 한도를 넉넉히 할지는 지인 기간 시험에서 봄
+- 17 답(접속 기록 14일·쿼리 문자열 뺌, 백업 03:00)은 15에 반영함
+
+## 3차 (2026-10-13) — 터널 IP는 15가 조사함
+
+사이클 17 세션에 전달합니다 (3차). 터널을 거친 사용자 IP는 시험을 기다리지 않고 15가 공식 문서로 조사했습니다.
+- Cloudflare 공식: Tunnel에서 원 서버는 cloudflared 주소를 보고, HTTP는 `CF-Connecting-IP` 머리글로 방문자 IP를 받음 (https://developers.cloudflare.com/cloudflare-one/networks/connectivity-options/ , 확인 2026-10-13). 이 머리글은 Cloudflare에서 원 서버로 가는 요청에만 붙음 (https://developers.cloudflare.com/fundamentals/reference/http-headers/)
+- nginx 설정 (Cloudflare 안내 https://developers.cloudflare.com/support/troubleshooting/restoring-visitor-ips/restoring-original-visitor-ips/ 를 터널에 맞춤):
+  ```
+  real_ip_header CF-Connecting-IP;
+  set_real_ip_from 127.0.0.1;   # cloudflared가 nginx에 붙는 주소. Docker면 그 네트워크 주소 (Cloudflare 주소 목록 아님)
+  ```
+  그러면 `$remote_addr`(= 15가 읽는 `X-Real-IP`, IP별 요청 한도의 기준)가 사용자 IP가 됨
+- 배포 때 확인 한 줄: `nginx -V`에 `--with-http_realip_module`이 있는지 (nginx.org 패키지는 들어 있을 것으로 보임, 추론)
+- 지킬 것: Cloudflare의 "Remove visitor IP headers" 설정은 끈 채로, nginx 포트는 바깥에 직접 열지 않음 (열려 있으면 누구나 `CF-Connecting-IP`를 꾸며 보낼 수 있음)

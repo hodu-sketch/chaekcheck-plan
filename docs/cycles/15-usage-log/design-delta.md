@@ -1,6 +1,6 @@
 # 설계 변경: 사이클 15 사용자 행동 기록 (검색·책 상세·도서관 클릭)
 
-> **초안 (2026-10-13)**. 2026-10-13 더 남기는 행동(spec R6) 반영: 표 다섯 → 여덟 [안] (`search_more`, `screen_event`, `library_response` 추가), 클릭 알림 주소를 화면 행동 알림으로 넓힘 [안]. 방향은 사용자가 정함(`architect-proposal.md` "고른 방향", ADR-0096·0097 Proposed). 12·13·14 회고에서 실제 코드를 본 뒤, 그리고 사이클 17의 nginx `CF-Connecting-IP` 설정을 확인한 뒤 확정합니다 [확정: 순서] (scope). 그때까지 아래 이름·숫자 중 따로 적지 않은 것은 [안]
+> **초안 (2026-10-13)**. 2026-10-13 더 남기는 행동(spec R6) 반영: 표 다섯 → 여덟 [안] (`search_more`, `screen_event`, `library_response` 추가), 클릭 알림 주소를 화면 행동 알림으로 넓힘 [안]. 방향은 사용자가 정함(`architect-proposal.md` "고른 방향", ADR-0096·0097 Proposed). 12·13·14 회고에서 실제 코드를 본 뒤, 확정합니다 (IP 값은 Cloudflare 공식 문서로 확인함, 배포 때 `nginx -V`만 남음) [확정: 순서] (scope). 그때까지 아래 이름·숫자 중 따로 적지 않은 것은 [안]
 
 ## 구조 그림
 
@@ -15,6 +15,9 @@ flowchart TB
   catalog -->|UsageLog.recordSearch / recordBookView| usagelog
   availability -->|UsageLog.recordSearch 첫 묶음 끝·끊김| usagelog
   usagelog -->|비울 때 도서관 번호 확인| library
+  web -->|화면 행동 알림: 사서 추천 보기, 지역·내 도서관 바꾸기| usagelog
+  catalog -->|UsageLog.recordMore 다음 쪽| usagelog
+  availability -->|UsageLog.recordMore 다음 묶음·더 보기, recordLibraryResponse| usagelog
   usagelog -->|5초마다 1 트랜잭션, 비동기 커밋| db[(schema usagelog)]
   nginx[nginx] -.->|X-Real-IP = 사용자 IP, 17 설정| catalog
   nginx -.->|X-Real-IP| availability
@@ -53,7 +56,8 @@ sequenceDiagram
   else 창 닫음·오류·시간 초과 (먼저 온 하나만)
     A->>U: recordSearch(kind=direct, resultCount=null)
   end
-  Note over W,A: 다음 묶음·도서관별 더 보기는 기록 안 함
+  A->>U: recordLibraryResponse(도서관마다 결과·걸린 시간)
+  Note over W,A: 다음 묶음·도서관별 더 보기는 검색 기록이 아니라 더 보기 기록(search_more)으로
 ```
 
 **질문에 대한 답 (2026-10-13): "다음 묶음·도서관별 더 보기는 기록 안 함, 이건 왜?"**
@@ -158,7 +162,7 @@ classDiagram
 
 | 모듈 | 신규/변경 | 책임 | 공개 API | 발행/구독 이벤트 | 소유 테이블 |
 |---|---|---|---|---|---|
-| `usagelog` | 신규 | 기록 받기·모으기·5초 넣기·04:30 지우기·클릭 알림 주소, 로봇·설정 꺼짐 거르기 | `UsageLog` (`recordSearch`, `recordBookView`), 공개 record `SearchRecord`·`BookViewRecord` [안] | 없음 | `usagelog.*` 다섯 |
+| `usagelog` | 신규 | 기록 받기·모으기·5초 넣기·04:30 지우기·클릭·화면 행동 알림 주소, 로봇·설정 꺼짐 거르기 | `UsageLog` (`recordSearch`, `recordBookView`, `recordMore`, `recordLibraryResponse`), 공개 record [안] | 없음 | `usagelog.*` 다섯 |
 | `catalog` | 변경 | 첫 쪽 검색·책 상세 성공 뒤 `UsageLog` 호출, `loggedIn` 읽기 | 변경 없음 | 없음 | 변경 없음 |
 | `availability` | 변경 | 직접 찾기 첫 묶음 끝·끊김에 한 번 `UsageLog` 호출 | 변경 없음 | 없음 | 변경 없음 |
 | `library` | 변경 없음 | `usagelog`이 도서관 번호 확인에 쓰는 공개 API (13 회고 뒤 `listAll` 등 어느 것을 쓸지 정함) | 기존 | 없음 | — |
@@ -321,7 +325,8 @@ POST /api/v1/library-clicks
 | 항목 | 확인 방법 | 막는 단계 |
 |---|---|---|
 | 12·13·14 뒤 검색·책 상세·결과 줄 코드 위치, 도서관 번호 확인 API(13 `listAll`), master changelog 끝 | 12·13·14 회고 | 설계 확정 |
-| 17 nginx가 `CF-Connecting-IP`로 `$remote_addr`를 바꾸는지, realip 모듈이 이미지에 있는지, 터널에서 머리글이 붙는지 | 17 배포 시험 | 설계 확정 |
+| 터널에서 `CF-Connecting-IP`가 붙는지 | **조사로 확인됨** (Cloudflare 공식: Tunnel 원 서버는 cloudflared 주소를 보고 HTTP는 `CF-Connecting-IP`로 방문자 IP, spec R5-2) | — |
+| nginx 이미지의 realip 모듈, `set_real_ip_from`에 적을 cloudflared 주소, "Remove visitor IP headers" 꺼짐 | 배포 때 `nginx -V` 한 줄, 지인 기간 시험에서 기록된 IP 확인 | 없음 (설계는 안 막음) |
 | `SmartLifecycle` 정지 phase와 Hikari 닫힘 순서 | 프로토타입 | 개발 |
 | dev pgjdbc 실제 버전 | 의존성 트리 | 개발 |
 | `id` PK·부분 색인을 둘지 (넣기 비용) | 프로토타입, AC-16 측정 | 개발 |
