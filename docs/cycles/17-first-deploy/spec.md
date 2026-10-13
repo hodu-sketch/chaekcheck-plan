@@ -28,6 +28,8 @@
 | R9 | Prometheus·Grafana·node_exporter 직접, Spring Actuator 지표 | [hosting-options 결정 줄](../../research/deploy/hosting-options.md), [research 5절](research.md) | [확정] / 바깥에서 보기: 터널에 `grafana.chaekcheck.com`을 더하고 Grafana 로그인(익명 끔)으로 막음, Prometheus·`/actuator/prometheus`는 바깥에 열지 않음 [확정] (사용자 승인, 2026-10-13, #3) |
 | R10 | DB 백업 매일 03:00, 내 PC가 내려받음 | [research 7절](research.md), [scope 포함 8](scope.md) | [확정] / 보관: 서버 최근 2개, 내 PC 최근 7개, 더 오래된 것은 지움 [확정] (사용자 승인, 2026-10-13, #4) |
 | R11 | nginx 접속 기록 14일, 쿼리 문자열 빼고 경로만 | [research 7절](research.md) | [확정] |
+| R11-1 | 서비스(앱) 로그는 14일 보관(접속 기록과 같음). 도서관 요청 응답을 서버 로그로만 남김(IP 없음) | 사이클 15 질문 (2026-10-14) | [확정] (사용자 승인, 2026-10-14) |
+| R10-1 | DB 백업 보관: 서버 2일치, 내 PC 7일치(매일 1개씩). 처리방침에는 "백업 7일" | 사이클 15 질문 (2026-10-14) | [확정] (사용자 승인, 2026-10-14) |
 | R12 | 15 기록은 첫 배포 때 꺼짐, 지인 기간 실서버 시험 뒤 지움, 공개일에 켬 | [research 7절](research.md) | [확정] |
 | R12-1 | 로그인 쿠키(`access_token`) 경로가 `/api/v1`로 넓어짐(ADR-0102). nginx는 `/api/`를 그대로 넘기므로 쿠키를 건드리는 설정 없음 | 사이클 15 (2026-10-14) | [확정] |
 

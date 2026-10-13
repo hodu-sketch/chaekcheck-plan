@@ -111,7 +111,7 @@ sequenceDiagram
 
 | 모듈 | 신규/변경 | 책임 | 공개 API | 발행/구독 이벤트 | 소유 테이블 |
 |---|---|---|---|---|---|
-| `availability` | 변경 (안쪽만) | `InMemoryHostThrottle`가 포기 두 경로에서 카운터를 올림(`chaekcheck.availability.throttle.timeouts`, 태그 `wait=slot\|interval`, 호스트 태그 없음), 경로 (2)에도 `log.info`. `availability.user-agent` 값에 서비스 주소 | 변경 없음 | 없음 | 변경 없음 |
+| `availability` | 변경 (안쪽만) | `InMemoryHostThrottle`가 포기 두 경로에서 카운터를 올림(`chaekcheck.availability.throttle.timeouts`, 태그 `wait=slot\|interval`, 호스트 태그 없음), 경로 (2)에도 `log.info`. `availability.user-agent` 값에 서비스 주소·연락처(`chaekcheck/<버전> (+https://chaekcheck.com; chaekcheck9104@gmail.com)`) | 변경 없음 | 없음 | 변경 없음 |
 | 앱 설정 | 변경 | 운영 프로필(이름 [안] `prod`): DB 주소 `db`, Liquibase contexts에서 `test-data` 뺌, `management.server.port: 8081`, 노출 `health,prometheus`, 15 기록 스위치 꺼짐, `AUTH_PUBLIC_BASE_URL=https://chaekcheck.com`, `AUTH_PROVIDERS=kakao` | — | — | — |
 | `fetch-service` | 변경 없음 | compose에 `profiles: [fetch]`로 꺼 둠 | — | — | — |
 
