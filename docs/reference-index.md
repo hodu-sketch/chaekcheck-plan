@@ -10,6 +10,7 @@
 |---|---|
 | `CLAUDE.md` (plan) | 사이클 진행 방식, 현재 사이클 |
 | `docs/backlog.md` | 아직 사이클에 안 들어간 것, 다음 순서(맨 위 "2026-10-01 정리"), 미룬 것 |
+| `docs/research/scaling/in-memory-state.md` | 서버를 여러 대로 늘릴 때(Redis·DB 잠금) 고칠 곳 모음: 호출 간격, 캐시, 로그인 도중 값, 새벽 작업, 사용 기록 (2026-10-13) |
 | `docs/current/` (`module-map.md`, `data-model.md`, `api.md`, `flows.md`, `handoff.md`) | 지금 설계 전체. `handoff.md`는 현재 인계서(사이클 04) |
 | `docs/adr/README.md` | 결정 목록 (ADR-0001~0093, 2026-10-12) |
 | dev `docs/plan-feedback.md` | dev가 개발 중 바꾼 것·측정·질문. 사이클별 절(`# 사이클 04`는 702행~). **다음 회고의 입력** |

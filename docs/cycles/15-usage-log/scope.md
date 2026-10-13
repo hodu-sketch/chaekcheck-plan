@@ -79,6 +79,8 @@
 - 함께 쓰는 파일(`CLAUDE.md`, `docs/backlog.md`, `docs/current/`, `docs/adr/README.md`)은 다른 세션도 고침. 고칠 때는 바로 전에 다시 읽고 이 사이클 줄만 고치며, 커밋은 이 사이클 파일만 경로를 집어서 함
 - `docs/current/`는 12·13·14 회고 뒤 이 사이클 cycle-close에서 고침
 
+- 서버 여러 대로 늘릴 때 고칠 곳 모음(사용자 요청, 2026-10-13): `docs/research/scaling/in-memory-state.md`
+
 ## 영향 받을 모듈
 
 - 새 모듈 하나 [확정] (사용자 승인, 2026-10-12, `easy/2026-10-12-scope-decisions.html`). 이름 [안] 예 `usagelog` (`/design-delta`에서 정함): 새 schema, 기록 칸, 클릭 알림 받는 주소(로그인 없이), 모아서 넣기, 1년 지난 기록 지우기

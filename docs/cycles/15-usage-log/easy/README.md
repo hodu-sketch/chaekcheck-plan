@@ -15,3 +15,4 @@
 | [2026-10-13-more-actions.html](2026-10-13-more-actions.html) | 더 보기 기록, 더 남길 행동 후보(사서 추천, 지역·내 도서관, 도서관 응답) | `../spec.md` | 결정됨: 4개 모두 승인 (2026-10-13) |
 | [2026-10-13-more-actions-design.html](2026-10-13-more-actions-design.html) | 늘린 기록 설계: 알림 주소 하나, 로그인 뒤 저장 기록 경로, screen_event 칸, search_more 칸, 도서관 응답 범위·보관 | `../design-delta.md` | 결정됨 (2026-10-13): #1~#5 승인(#5에 대출 수 채우기 더함), #6 → 도서관마다 하루 요약 1년 |
 | [2026-10-13-library-response-summary.html](2026-10-13-library-response-summary.html) | 도서관 응답 하루 요약으로 바꾼 뒤: 요청 하나하나 기록, 요약 보관 기간 | `../spec.md` R6-4 | 결정됨: 둘 다 승인 (2026-10-13) |
+| [2026-10-13-summary-method.html](2026-10-13-summary-method.html) | 도서관 응답 하루 요약 만드는 법: 메모리에서 세어 더하기, 남길 숫자, 요청 세는 단위 | `../design-delta.md` | 결정됨: 셋 다 승인 (2026-10-13) |

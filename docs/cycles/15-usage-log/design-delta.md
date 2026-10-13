@@ -260,8 +260,8 @@ erDiagram
     integer failed_count
     integer timeout_count
     integer skipped_count
-    integer avg_ms
-    integer max_ms
+    bigint ok_ms_total
+    integer ok_ms_max
   }
   DROPPED_BATCH {
     bigint id PK
@@ -296,7 +296,7 @@ erDiagram
 | `search_more` 조건 칸 | 검색 기록과 같은 조건 칸 전부 (검색 방식·범위·지역·도서관) | | 더 보기 줄만으로 어떤 검색인지 알게 | [확정] (사용자 승인, 2026-10-13, `easy/2026-10-13-more-actions-design.html` #4) |
 | `screen_event.kind` | `text` | CHECK (`picks_list_view`,`picks_book_view`,`region_change`,`my_library_add`,`my_library_remove`) | 화면 행동 (R6-2·R6-3) | [확정] (기록), [안] (값 이름) |
 | `screen_event.picks_category`, `book_id`, `residence_region_ids`, `work_region_ids`, `library_id` | 종류별 칸, 맞지 않는 칸은 NULL (CHECK로 검사) | | 분야·책 / 바뀐 지역 / 도서관(넣기·빼기는 kind로) — JSON 칸 없음, 회원 번호 없음 | [확정] (사용자 승인, 2026-10-13, `easy/2026-10-13-more-actions-design.html` #3) |
-| `library_response_daily` | (day, library_id, source) PK, 수 칸 `integer`, 시간 `integer` ms | 서울 날짜 | 도서관마다 하루 한 줄 요약: 성공·실패·시간 초과·건너뜀 수, 평균·가장 긴 시간. 서비스 메모리에서 세다가 5초 묶음 때 `ON CONFLICT … DO UPDATE`로 더함 [안: 방법]. 보관 1년 | [확정] (사용자 제안: "보통은 요청마다 DB에 남기기보다 집계 숫자(횟수·실패·평균 시간)로 모아요 … 이렇게 해줘", 2026-10-13, `easy/2026-10-13-more-actions-design.html` #6) |
+| `library_response_daily` | (day, library_id, source) PK, 수 칸 `integer`, 시간 `integer` ms | 서울 날짜 | 도서관마다 하루 한 줄 요약: 성공·실패·시간 초과·건너뜀 수, 성공 시간 합 `ok_ms_total`·가장 긴 성공 시간 `ok_ms_max`(평균은 볼 때 계산). 서비스 메모리에서 세다가 5초 묶음 때 `ON CONFLICT (day, library_id, source) DO UPDATE SET …count = …count + EXCLUDED…, ok_ms_max = GREATEST(…)`로 더함 [확정: 방법·숫자·세는 단위] (사용자 승인, 2026-10-13, `easy/2026-10-13-summary-method.html`). 보관 1년. 여러 대로 늘릴 때 고려: `docs/research/scaling/in-memory-state.md` | [확정] (사용자 제안: "보통은 요청마다 DB에 남기기보다 집계 숫자(횟수·실패·평균 시간)로 모아요 … 이렇게 해줘", 2026-10-13, `easy/2026-10-13-more-actions-design.html` #6) |
 | `dropped_batch.reason` | `text` | CHECK | `db_failure`,`buffer_full` | [안] |
 | 색인 | BRIN `(received_at)` 각 표, `client_ip IS NOT NULL` 부분 색인 [안] | — | 지우기·기간 조회 | [안] |
 
