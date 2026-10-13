@@ -48,7 +48,7 @@ sequenceDiagram
   participant C as PicksCache
   S->>S: 받을지 판단 (목록 없음 / 월요일 / 마지막 받기가 실패이고 그 뒤 성공 없음 / 마지막 성공이 7일보다 오래됨)
   S->>J: run(trigger)
-  J->>N: GET ?key=…&startRowNumApi=1&endRowNumApi=1000&start_date=오늘-2년&end_date=오늘
+  J->>N: GET ?key=…&startRowNumApi=1&endRowNumApi=1000&start_date=오늘-3년&end_date=오늘
   alt 키 설정 없음
     J->>DB: fetch_run FAILED key_missing (요청 안 보냄)
   else 연결 실패·시간 초과
@@ -57,10 +57,10 @@ sequenceDiagram
     J->>DB: fetch_run FAILED request_rejected (URL·본문 안 남김)
   else XML 모양이 다름 / totalCount > 받은 수
     J->>DB: fetch_run FAILED format_changed / incomplete
-  else 최근 6개 달 0권
+  else 최근 12개 달 0권
     J->>DB: fetch_run FAILED no_books
   else 정상
-    J->>J: 추천 연월 최근 6개 달만 남김, ISBN 정리, 새 분야 코드는 넣고 셈
+    J->>J: 추천 연월 최근 12개 달만 남김, ISBN 정리, 새 분야 코드는 넣고 셈
     alt 저장된 목록과 같음
       J->>DB: fetch_run SUCCEEDED changed=false
     else 다름
@@ -256,13 +256,13 @@ erDiagram
 
 - 다른 모듈과 FK·조인 없음. `catalog`와는 값으로만 맞춤(ADR-0090)
 - `updated_at` 칸 없음 → 트리거 없음
-- 크기: `pick` 52줄 안팎, `cover` 52장 × 10KB대 [안: 추정]
+- 크기: `pick` 108줄 안팎, `cover` 108장 × 10KB대 — 범위 12번(2년)은 [확정] (사용자 결정, dev 2026-10-14). 실측 `cover` 108장 1,285,929바이트(장당 4,158~22,290) (2026-10-14 dev 받기 시험)
 
 ## API
 
 | 메서드 | 경로 | 설명 | 요청 | 응답 | 에러 |
 |---|---|---|---|---|---|
-| GET | `/api/v1/picks` | 최근 6번 사서추천(분류별) + 있음/없음. 인증 없음. `/api/v1/popular-books` 대체 | `residenceRegionIds`, `workRegionIds`, `scope`, `visit`, `libraryIds` (`/api/v1/books`와 같은 이름·검사) | 200 아래 예시 | 400 `validation_error`, 422 `invalid_region`, 500 `internal_error` (ProblemDetail) |
+| GET | `/api/v1/picks` | 최근 12번(2년) 사서추천(분류별) + 있음/없음 (범위 [확정] 사용자 결정, dev 2026-10-14; 처음 6번). 인증 없음. `/api/v1/popular-books` 대체 | `residenceRegionIds`, `workRegionIds`, `scope`, `visit`, `libraryIds` (`/api/v1/books`와 같은 이름·검사) | 200 아래 예시 | 400 `validation_error`, 422 `invalid_region`, 500 `internal_error` (ProblemDetail) |
 | GET | `/api/v1/picks/covers/{coverId}` | 저장한 표지(200px JPEG). `/api/v1/popular-books/covers/{coverId}` 대체 | | 200 `image/jpeg`, `Cache-Control: public, max-age=2592000, immutable` | 404 `cover_not_found` |
 
 ```json
@@ -296,7 +296,7 @@ erDiagram
 ## 웹
 
 - 경로 `/popular` → `/picks`, 폴더 `features/popular` → `features/picks`(이름은 dev). 옛 경로 남기지 않음 [확정] (flow)
-- 머리 링크 "사서추천도서", 카드 머리 "1 - 9 / 10", 순위 칩 없앰, "? 추천 기준 보기", 도움말·출처 줄·S14 추천 줄·S12 `/about` 문구 — `flow.md` 그대로 [확정]
+- 머리 링크 "사서추천도서", 카드 머리 "1 - 9 / 18"(분류마다 18권, 테마 36권 — 사용자 결정, dev 2026-10-14; 처음 "/ 10"), 순위 칩 없앰, "? 추천 기준 보기", 도움말·출처 줄·S14 추천 줄·S12 `/about` 문구 — `flow.md` 그대로 [확정]
 - 새 분류(모르는 코드)도 같은 카드로 그림. 이름은 응답의 `name`
 
 ## 설정·인증키
@@ -307,9 +307,9 @@ erDiagram
 | `chaekcheck.picks.fetch.api-key` | 환경 변수 `CHAEKCHECK_PICKS_NLK_API_KEY`, 기본 빈 값. 로컬 `.env`(git 밖), 운영은 배포 비밀값 | [확정] |
 | `cron` | `0 0 5 * * *`, `zone Asia/Seoul` (매일 05:00 판단, 받는 날은 월요일 + 실패 뒤 성공할 때까지 매일 + 따라잡기) | [확정] (ADR-0092) |
 | `base-url` | `https://nl.go.kr` | [확정] |
-| `window` / `end-row` | 2년 / 1000 | [확정] |
+| `window` / `end-row` | **3년** / 1000 (남기는 범위는 최근 12번 = `KeptPicks.MONTHS` 12) | `end-row` [확정]. 남기는 범위 12번 [확정] (사용자 결정, dev 2026-10-14). `window` 3년은 [안: dev 변경, 사용자 확인 전] — 처음 승인한 2년을 dev가 바꿈, [이유 미확인 — 사용자 발언 없음. dev가 적은 이유: 12번 = 약 24개월이라 2년이면 받는 날에 따라 12번째 추천이 범위 밖으로 빠질 수 있음 (dev `docs/plan-feedback.md` 3783행, `application.yml` 201-204행)] |
 | `connect-timeout` / `read-timeout` | 5초 / 10초 | [확정] |
-| `max-body-size` | 10MB (2년 범위 실측 1.56MB) | [확정] (사용자 승인, 2026-10-12) |
+| `max-body-size` | 10MB (2년 범위 실측 1.56MB, 3년 범위 실측 2,511,752바이트 — 2026-10-14 dev 받기 시험) | [확정] (사용자 승인, 2026-10-12) |
 | 표지 | `cover-max-body-size` 5MB (사이클 10은 50MB. 사용자 "5MB (추천)", 2026-10-12 설계 검토 — ADR-0091 이유 줄의 "사이클 10 값 그대로"는 이 값만 다름, 질문에 5MB로 적어 승인받음), `cover.width` 200, `jpeg-quality` 0.8, `max-pixels` 16,000,000, `request-interval` 1초 | [확정] (ADR-0091) |
 | `cache.refresh-interval` | 10분 | [확정] |
 | `user-agent` | 지금 값(`book search service`, 배포 때 주소 붙임) | [확정] (사이클 10 회고) |

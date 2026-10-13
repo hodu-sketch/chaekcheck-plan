@@ -80,3 +80,66 @@
 - 11단계 측정 결과(방식 × 여섯 관점 × 두 번, 힙 줄이기 표), 결과 비교(다른 책 0권인지), 기본값 추천과 사용자 결정(R-B7)
 - 옛 사본 한 번 비교
 - dev 코드 대조
+
+## 최종 회고 (2026-10-14)
+
+- 근거: dev `docs/plan-feedback.md` "# 사이클 11" "11단계 중간 전달 2"(2970~3016행), "11단계 최종"(3018~3111행), "사용자 결정: 기본 방식과 옛 방식 이름"(3113~3148행). 커밋 `15fbe80`(중간 전달 2), `4a8d242`(11단계 결과), `11ed991`(기본 `compact`, 이름 `objects`), `a647e0d`·`40766aa`(옵션 측정), `df2750b`·`affe8dd`(측정 보고 HTML). 사이클 12 병합 `3182918`과 함께 main에 있음
+- 위 "남은 것" 세 항목을 닫음. 이유는 사용자의 말만, 없으면 `[이유 미확인]`
+
+### 11단계 측정 결과 (같은 새 사본, 같은 PC, 하나씩, 2026-10-12 18:21 끝, 실행 23번) [확정] (dev 측정)
+
+| 방식 | 끝까지 된 가장 작은 힙 | 그때 전체 시간 | 6GB 힙 최고 MB | 살아 있는 데이터 MB | Java CPU s | DB CPU s | temp GB | DB 최대 GB | 검색 p95 ms |
+|---|---|---|---|---|---|---|---|---|---|
+| `current`(지금 이름 `objects`) | 6GB (4GB는 첫 읽기 중 OOM) | 26:25~27:49 | 8,432~8,460 | 5,013~5,016 | 3,072~3,154 | 892~951 | 21.4 | 19.4~20.8 | 460~490 |
+| `current` + `UseCompactObjectHeaders`·`UseStringDeduplication` | 4GB (3GB OOM) | 30:58 | 8,612~8,630 | 3,666~3,671 | 1,745~1,851 | 808~847 | 21.2 | 18.9~19.6 | 453~459 |
+| `compact` | 2GB (1GB OOM) | 21:17 | 2,907~2,925 | 1,357~1,358 (Remark 뒤) | 1,001~1,014 | 690~715 | 21.0 | 19.0~20.9 | 399~420 |
+| `sql` | 1GB (인계서의 가장 작은 단계, 더 아래 안 잼) | 33:49 | 666~742 | 297~302 (Remark 뒤) | 1,244~1,286 | 1,638~1,820 | 61.0~61.2 | 25.2~27.5 | 389~449 |
+
+- 6GB는 두 번씩(위 범위), 힙 줄이기는 6 → 4 → 3 → 2 → 1GB에서 처음 실패한 값에서 멈춤. 모든 실행에서 검색 5xx 0, 내보내기 파일 약 606MB (dev 3022~3054행)
+- `sql`은 힙 대신 DB에 짐을 옮김: 실행마다 임시 쓰기 약 61GB(그중 묶기 약 40GB), DB 최대 약 27GB(시작 약 9GB). 실데이터 사슬 반복 수는 로그에 남기지 않음 [확인 필요: 다음에 `sql`로 가져올 때 로그에 남길지 — 기본이 아니라 급하지 않음] (dev 3105행)
+- 추가 측정 `compact` + 두 Java 옵션(사용자 요청 "응 재봐줘"): 1GB는 여전히 OOM, 2GB는 메모리 약 2% 감소·Java CPU 979 → 1,731초. 결론 `compact`에는 옵션을 붙이지 않음. 2GB 실행이 36분 42초로 길었던 것은 같은 PC의 테스트·빌드가 겹친 탓으로 봄(dev 판단, 3125~3148행)
+
+### 결과 비교 (AC-8, AC-9) — 통과 [확정]
+
+- dry run 셋 끝까지(18:16 / 26:31 / 29:24). `compare_grouping.py dryrun`: `current` 대 `compact`, `current` 대 `sql` 모두 책 1,619,668줄·소장 17,778,801줄 차이 0
+- 내보내기 번호: `current` 두 번끼리, `current` 대 `current`+옵션·`compact`·`sql` 모두 책·소장 번호와 내용 차이 0. 힙 줄이기에서 끝까지 된 실행(`sql` 1GB, `compact` 2GB, `current`+옵션 4GB)도 차이 0 (dev 2976~2979·3031행)
+- 사이클 12 새 규칙에서도 세 방식이 같음(사이클 12 AC-6, `../12-grouping-rules/retro.md`)
+
+### 기본 방식 고르기 (R-B7)
+
+- dev가 R-B7 기준(결과 비교 통과 + 43분 안 + 힙이 가장 작은 것)을 그대로 적용한 추천은 `sql`(1GB, 약 34분). 함께 보인 맞바꿈: `sql`은 DB 임시 쓰기 약 61GB·DB CPU 약 2배, `compact`는 2GB로 가장 빠름(약 21분), 사이클 12 규칙 변경은 `sql`이 고칠 곳이 가장 많음 (dev 3072~3081행)
+- **사용자 결정: 기본 = `compact`, 세 방식 모두 남김** [확정] (사용자: "기본 방식은 compact로 해줘 그리고 sql이나 다른 방법들도 구현에 남겨둬 선택해서 할 수 있게 해줘", 2026-10-12 19:20, dev 3115행). R-B7 기준 그대로의 결과(`sql`)와 다름 — 기준과 다르게 고른 까닭은 [이유 미확인] (결정 전에 위 맞바꿈과 결과 페이지를 보았음)
+- **옛 방식 이름 `current` → `objects`** [확정] (사용자: "옛 방식 이름을 current가 아니라 다른 걸로 해야 할 것 같은데 normal이라던가 아니면 날짜를 붙이던가" → 선택지 objects / normal / v2026-10 / classic 중 `objects`, dev 3119행). 설정 값 `current`는 이제 시작 전에 거절, 클래스 이름 `BookGrouping`은 그대로
+- 인계서와 다름: 인계서는 "기본 방식 바꾸기는 사용자 결정 뒤 다음 사이클"이었으나 사용자가 지금 바꾸라고 해 사이클 11에서 바꿈 (dev 3117행)
+- ADR-0079 덧붙임("사이클 12에서 `current` 지움")과 다름 → 사이클 12 회고의 새 ADR 초안에 함께 적음 (`retro/current-delta-12.md`)
+
+### 옛 사본 한 번 (사이클 08 #3c와 비교) [확정] (dev 3056~3070행)
+
+- 같은 사본 `ebook-catalog-2026-10-05-0745.sqlite`, `current` 6GB 내보내기: 단계별 책 수 7,601,958 → 7,281,398 → 6,613,296 → 1,615,125, #3c와 같음. 묶기 결과 같음
+- 시간 24분 51초(#3c 약 33분) — 내보내기는 색인·통계·바꿔 끼우기를 하지 않고(내 PC `finish`에서 따로 약 1분 30초), 같은 날 PC 부하 차이도 있음. 같은 방식 비교는 새 사본 표로 봄. 살아 있는 데이터 4,978MB(#3c 최대 약 4.8GB)
+- 책 번호 kept 1,615,124 / new 1 / dropped 4,544 — 내 PC `catalog`가 이미 새 사본이라 거꾸로 맞대진 것
+
+### 완료 기준 (최종) [확정] (dev 3083~3101행)
+
+- AC-1~AC-7, AC-11~AC-15 통과(위 중간 회고 표), AC-8·AC-9 통과(위), AC-10 측정 표(위)
+- `./gradlew build` 통과(`ModularityTests`·`DocumentationTests` 포함), 이미 적용된 changeset은 바뀌지 않음(예외: 0단계 `popular/001` CHECK — 인계서 C2의 예외 그대로)
+
+### dev 코드 대조 (2026-10-14, main = 사이클 11·12·13·14 병합 뒤)
+
+- `catalog.internal.PgTools`: 복원 세션 이름 `RESTORE_APPLICATION = "chaekcheck-restore"`(23행), 덤프 연결 이름 `chaekcheck-dump`(50행) — 설계·중간 회고와 같음
+- `catalog.internal.JdbcCatalogLoad`: 시작 때 남은 복원 세션 `pg_terminate_backend`(257행), `hasWaitingExport()`(242행), 설정이 없으면 "Set chaekcheck.catalog.load.pg-command"(277행). **`FORMAT_VERSION = 2`**(76행) — 사이클 13 ADR-0086(반영 파일 판 2)으로 올라간 값이라 사이클 11 기준(1)과 다름. 판이 다른 파일은 거절(`Manifests` 207~210행)
+- `catalog.internal.Manifests`: `load_manifest` 칸 목록(36행, `format_version`…), 같은 줄을 `COMMENT ON TABLE catalog_next.load_manifest`로도 넣고 목차에서 읽음(154·181~184행) — 중간 회고와 같음
+- `catalog.CatalogLoad`: `hasWaitingExport()`(88행), `enum Discarded`(94행) — 중간 회고와 같음
+- `collection…importer.ImportTransfer`: 모드 `export`(126행)·`apply`(154행)·`finish`(213행, 실패하면 기록 줄 없음)·기다리는 새 표 확인(234행). `apply`에 사이클 13의 도서관 부분(`LibraryPart`, 134·162행)이 더해짐 — 사이클 11 설계 위에 사이클 13이 얹은 것
+- `CatalogImportRunner`: `GROUPINGS = objects, compact, sql`(51행), 기본 `compact`(78행), 방식 고르기 `objects → BookGrouping`, `compact → CompactGrouping`, `sql → SqlGrouping`(146~151행)
+- `CompactGrouping`·`SqlGrouping`·`BookGrouping`: 셋 다 사이클 12 규칙(`SameTextKey`·`SubtitleParts`)을 부름. `SqlGrouping` 임시 표 `grp_*`(127~552행)
+- Spring Modulith `module-collection.puml`: `Collection → Catalog`, `Collection → Library` — 모듈 관계 변화 없음
+- 설계와 다른 점은 중간 회고 표 그대로, 더할 것은 위 `format_version` 2(사이클 13)와 기본·이름(위)뿐
+
+### 남은 정리 (사이클 밖, 사용자 PC)
+
+- dev `.claude/worktrees/`의 9·10단계 작업 폴더 둘, compose `db-ops` 볼륨 `db-ops-data` 약 9GB, 결과 파일 `data/cycle11/m` 약 4GB와 덤프 둘 1.2GB — git 밖이라 지워도 된다고 dev가 적음 (dev 3106~3111행). 지울지는 사용자가 정함 [확인 필요: 사용자에게 질문]
+
+### docs/current 반영 (최종)
+
+- 사이클 12 회고와 함께 적용: `retro/current-delta-12.md`(scratchpad). 사이클 11 부분은 "중간 회고 2026-10-12" 표시를 "회고 2026-10-14"로, `grouping` 값과 이름(`compact` 기본·`objects`·`sql`), 남아 있던 "설계됨(미구현, 사이클 11)" 줄(`module-map.md`·`data-model.md`·`flows.md` 머리 줄, `module-map.md` `collection` 줄 일부, `data-model.md` `export_id`·`exported_at` 칸), 힙 값, "확인 필요 (사이클 11)"의 `sql` 줄
