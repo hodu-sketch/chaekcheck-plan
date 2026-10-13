@@ -250,8 +250,12 @@ dev 12·13·14가 끝나 main에 합쳐짐. 요약 왕복 없이, 첫 배포(17)
 ### 무료 플랜·크레딧
 - 신규 계정(2025-07-15 이후): 가입 시 $100 크레딧, 활동으로 최대 $200, 무료 플랜 6개월(183일) 또는 크레딧 소진 시 계정 자동 종료(유료 전환 안 하면). [확정] (출처: https://aws.amazon.com/about-aws/whats-new/2025/07/aws-free-tier-credits-month-free-plan/ , https://aws.amazon.com/free/ , 확인 2026-10-14)
 - 크레딧은 "항상 무료" 한도와 달리 서비스 요금에 쓸 수 있음. 단 무료 플랜은 "선택된 일부 서비스"로 제한(비싼 서비스는 막힘), 전체는 유료 전환 필요. **막히는 서비스 공식 목록은 공개 안 됨** [확인 못 함: 콘솔 청구/프리티어 화면]
+- **추가 $100 적립 방법**: "주요 서비스 살펴보기" 활동으로 가입 $100 + 최대 $100. 제3자 정리로는 5개 활동 × $20: ① EC2 인스턴스 실행(우리 배포로 어차피 함) ② RDS DB 구성 ③ Lambda 함수 만들기(+Function URL) ④ Bedrock 사용(플레이그라운드 프롬프트) ⑤ AWS Budgets에서 예산 설정. AWS 공식은 EC2·Bedrock만 예시로 명시 → **정확한 목록·금액은 콘솔 "Explore AWS" 위젯이 기준** [확인 못 함: 5×$20은 제3자 출처] (출처: https://aws.amazon.com/about-aws/whats-new/2025/07/aws-free-tier-credits-month-free-plan/ , https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/free-tier.html , 확인 2026-10-14)
 - EC2는 무료 플랜에서 사용 가능(공식: EC2 사용으로 보너스 크레딧 적립). Lightsail 포함 여부는 출처 엇갈림 [확인 못 함: 콘솔 Lightsail 생성 화면]
-- 값: Lightsail 4GB Linux $24/월, IPv6 전용 4GB $20/월 (확인 2026-10-14, https://aws.amazon.com/lightsail/pricing/). 무료 체험 기간·대상 번들은 공개 페이지에 없음 [확인 못 함]
+- **Lightsail 무료 = "유료 플랜 90일 무료 평가판"**, 대상 번들 정해짐 [확정] (사용자가 콘솔 프리티어 화면 캡처, 2026-10-14. 근거: https://aws.amazon.com/lightsail/pricing/ 스펙): IPv4 Linux **$5(0.5GB)·$7(1GB)·$12(2GB)까지만 무료**, $24(4GB)는 평가판 아님. IPv6 전용은 $3.50(0.5GB)·$5(1GB)·$10(2GB). 둘 다 **무료 최대 2GB RAM / 2 vCPU / 60GB SSD / 3TB 전송**. 그 밖 평가판: 마이크로 컨테이너 $10, 관리형 DB $15
+- **문제: 무료 Lightsail 최대 2GB < 설계 4GB(ADR-0103)**. 2GB엔 전체 스택(PG+pg_bigm+앱+nginx+cloudflared+모니터링 묶음) 다 올리기 빠듯, 구독형 캐시 메모리가 관건 [확인 필요: 2GB에 캐시 들어가는지]
+  - (A) $100 크레딧으로 4GB(Lightsail $24/월[크레딧 대상 콘솔 확인] 또는 EC2 t4g.medium[크레딧 확실]) → 설계 그대로, 2주 체험 공짜. 추천
+  - (B) 90일 무료 2GB → 크레딧 안 씀, 대신 2주간 모니터링 묶음 빼고 앱+DB+nginx+터널만
 - 뜻(배포): $100 크레딧이면 4GB 서버(Lightsail $24/월 또는 EC2 t4g.medium ~$24-30/월) 3~4개월 치를 덮음 → 2주 체험 사실상 무료. **배포 설계는 호스트 무관(둘 다 리눅스 VM)이라 Lightsail이 막히면 EC2로 바꿔도 설계 그대로.** 덤: EC2는 IAM 역할 지원 → Parameter Store 읽기에 접근 키 불필요(Lightsail은 접근 키 필요, §1·design-delta 외부연동) [안: 설계에서 검토]
 - "못 하는 것": ① 무료 플랜은 선택 서비스만(비싼 것 유료 전환 전 불가, 목록 비공개) ② 6개월/크레딧 소진 시 계정 자동 종료 ③ Lightsail 가용 여부 미확정(콘솔 확인)
 
