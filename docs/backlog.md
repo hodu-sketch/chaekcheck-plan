@@ -155,6 +155,7 @@
 - → 사이클 17 (`docs/cycles/17-first-deploy`, 2026-10-13 시작). **모니터링 (배포 사이클 후보)** (사용자, 2026-10-12: "프로메테우스나 그라파나 node_exporter같은거"). 지금 dev에 Actuator·Micrometer 없음. Spring은 `micrometer-registry-prometheus` + `/actuator/prometheus` 노출 설정 필요(https://docs.spring.io/spring-boot/reference/actuator/metrics.html). Prometheus·Grafana·node_exporter를 서버에 직접 띄움(2주 Lightsail, 노트북 모두) [확정] (사용자, 2026-10-13: "Prometheus·Grafana를 직접할래 계속"). Grafana Cloud 무료는 쓰지 않음. 사이클 15 이용 기록(검색·클릭)과는 다른 것(서버 상태 숫자)
 - **교보 구독형 서버를 다른 우리 IP에서 다시 받기·조회하기** (사용자 승인, 2026-10-13, `docs/research/ebook-catalog/crawl-method.md` 1절 나가는 IP). dev에 넘길 것: 수집기의 `*.dkyobobook.co.kr` 거름(사이클 13 인계 [확정])을 "막힌 IP(집)에서만 거름"으로, 교보 서버 동시 1건·1초. 서비스 조회는 교보 서버를 주소별이 아니라 서버 하나로 세고 동시 3건, 조회 서버(fetch-service)마다 각자 셈·평소 한 대만 씀, 느려지면 1건·막힘 신호면 멈추고 화면에 "확인 불가"처럼 따로 알림 [확정] (사용자, 2026-10-13) — 결정 페이지 `docs/research/deploy/easy/2026-10-12-ip-principle-decisions.html`. ADR 초안 예정
 - → 사이클 17 (`docs/cycles/17-first-deploy`, 2026-10-13, 사용자 "이거 지금 해"). **대출 조회 나가는 길 (배포 사이클, dev에 넘길 것)** (사용자 결정, 2026-10-13, `docs/research/deploy/hosting-options.md` 결정 줄): 본 서비스 직접 / 직접 + 업체 프록시 여러 곳 / 조회 서버(조회 서버마다 업체 프록시 여러 곳)를 모두 만들고 설정으로 고름. 업체 프록시는 고정 IP 상품, 프록시 주소·인증은 비밀 값. 도서관마다 보내는 양은 나가는 IP마다 따로 셈. 한 IP가 막히면 그 IP만 그 사이트에서 멈춤. 나간 길·업체를 조회 기록에. User-Agent는 일반 브라우저와 같은 값(사용자 결정, 2026-10-13). ADR-0011·ADR-0094 고칠 것
+- 특정 IP 계속 막기: 지금 IP 규칙은 모두 잠깐 막는 것(넘친 요청만 429·204), 계속 막는 목록 없음. 접속 기록을 보고 nginx(`deny`) 또는 Cloudflare 규칙으로 특정 IP를 막는 방법과 운영 순서 (사용자: "백로그에 좀 적어놔", 2026-10-13, 사이클 17 명세 검토 중)
 - 폰 + 태블릿 + 모니터 대응 (dev CLAUDE.md: 데스크톱 먼저, 이후 반응형)
 - MSA로 각 서비스 분리 — 요청 전까지 하지 않음 (dev CLAUDE.md 규칙)
 
@@ -256,3 +257,6 @@
 - → 사이클 15 (`docs/cycles/15-usage-log`, 2026-10-12 시작). 사용자 행동 기록(검색, 도서관으로 넘어가는 클릭) — 사이클 15 예정, 통계는 그다음 (사용자: "통계는 다음이고지금은 기록이야", 2026-10-12). 저장 장소 조사 `docs/research/usage-log/storage.md` — 같은 PostgreSQL 새 schema, 처음 검색만+지역·도서관, 클릭은 sendBeacon, 회원 번호·IP 없음, 1년 보관 [확정] (사용자 승인, 2026-10-12)
 - 봇 차단 강화: AWS WAF(요청 수 규칙, Bot Control)로 이름을 속이는 로봇까지 — EC2 앞에 CloudFront 필요, 배포 사이클에서 (2026-10-13 바뀜: 운영 서버가 Lightsail + Cloudflare Tunnel이라 17은 WAF를 범위에서 뺌, Cloudflare 무료 요청 한도 규칙으로 대신할지 17에서 다시 봄) (사용자: "이번 사이클에 robots.txt와 \"이름 밝힌 로봇은 직접 찾기에서 거절\"만 더하자", 2026-10-13, 사이클 15 spec R1-8)
 - → 사이클 17 (`docs/cycles/17-first-deploy`, 2026-10-13 시작). nginx 접속 기록(IP·검색어 든 주소) 보관 기간 정하기 — 지금 dev nginx에 접속 기록 설정이 없어 기본값으로 남음, 배포 사이클에서, 사이클 16 처리방침에 알림 (사이클 15 조사, 2026-10-13)
+- 운영자 화면(브라우저에서 공지·약관 쓰기, 관리자 권한) — 사이클 16은 SQL(Claude)로 씀 [확정] (사용자 B안, 2026-10-12). 이미 있는 "운영자용 도서관 사용 여부 관리 API"와 함께 (사이클 16, 2026-10-13)
+- 다시 동의 화면(로그인 뒤 "약관이 바뀌었어요", 동의 또는 탈퇴)과 문서 판의 "다시 동의 필요" 칸 — 첫 실제 중요 약관·동의문 변경 전에 (ADR-0101, 사이클 16, 2026-10-13)
+- 새 공지 알림(N 표시, 첫 화면 공지 띠·팝업) — 사이클 16 비목표 [확정] (사용자 승인, 2026-10-12)
