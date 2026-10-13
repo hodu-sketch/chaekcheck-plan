@@ -165,9 +165,10 @@ classDiagram
 | `usagelog` | 신규 | 기록 받기·모으기·5초 넣기·04:30 지우기·클릭·화면 행동 알림 주소, 로봇·설정 꺼짐 거르기 | `UsageLog` (`recordSearch`, `recordBookView`, `recordMore`, `recordLibraryResponse`), 공개 record [안] | 없음 | `usagelog.*` 다섯 |
 | `catalog` | 변경 | 첫 쪽 검색·책 상세 성공 뒤 `UsageLog` 호출, `loggedIn` 읽기 | 변경 없음 | 없음 | 변경 없음 |
 | `availability` | 변경 | 직접 찾기 첫 묶음 끝·끊김에 한 번 `UsageLog` 호출 | 변경 없음 | 없음 | 변경 없음 |
+| `auth` | 변경 | 로그인 상태 판별 부품 공개 (켜짐: 쿠키 서명 확인, 만료돼도 로그인함 / 꺼짐: 쿠키를 보지 않고 `login_off`), `access_token` 쿠키 경로 `/api/v1` | `LoginStatusReader` [안: 이름] | 없음 | 변경 없음 |
 | `library` | 변경 없음 | `usagelog`이 도서관 번호 확인에 쓰는 공개 API (13 회고 뒤 `listAll` 등 어느 것을 쓸지 정함) | 기존 | 없음 | — |
 
-- `usagelog`: `@ApplicationModule(allowedDependencies = { "library" })` [확정] (사용자 승인, 2026-10-14, `easy/2026-10-14-remaining-proposals.html` #6). `catalog → usagelog`, `availability → usagelog` 의존이 새로 생김 (순환 없음)
+- `usagelog`: `@ApplicationModule(allowedDependencies = { "library", "auth" })` [확정] (auth 추가: 사용자 승인, 2026-10-14, `easy/2026-10-14-login-status.html` #1; 처음 #6은 library만) (사용자 승인, 2026-10-14, `easy/2026-10-14-remaining-proposals.html` #6). `catalog → usagelog`, `availability → usagelog` 의존이 새로 생김 (순환 없음)
 - 기록 설정 값: `chaekcheck.usagelog.enabled` [확정] (사용자 승인, 2026-10-14, `easy/2026-10-14-remaining-proposals.html` #2), 기본 꺼짐, 공개일에 켬 [확정] (spec)
 
 ## 데이터
@@ -193,7 +194,7 @@ erDiagram
     bigint_arr work_region_ids
     bigint_arr library_ids
     integer result_count
-    boolean logged_in
+    text login_status
     inet client_ip
   }
   LIBRARY_CLICK {
@@ -203,7 +204,7 @@ erDiagram
     text place
     text screen
     bigint book_id
-    boolean logged_in
+    text login_status
     inet client_ip
   }
   BOOK_VIEW {
@@ -213,7 +214,7 @@ erDiagram
     bigint_arr residence_region_ids
     bigint_arr work_region_ids
     bigint_arr library_ids
-    boolean logged_in
+    text login_status
     inet client_ip
   }
   REJECTED_CLICK {
@@ -237,7 +238,7 @@ erDiagram
     bigint_arr residence_region_ids
     bigint_arr work_region_ids
     bigint_arr library_ids
-    boolean logged_in
+    text login_status
     inet client_ip
   }
   SCREEN_EVENT {
@@ -249,7 +250,7 @@ erDiagram
     bigint_arr residence_region_ids
     bigint_arr work_region_ids
     bigint library_id
-    boolean logged_in
+    text login_status
     inet client_ip
   }
   LIBRARY_RESPONSE_DAILY {
@@ -282,7 +283,7 @@ erDiagram
 | `search_event.scope`, `visit` | `text` | NOT NULL | 받은 값 | [확정] |
 | `*.residence_region_ids`, `work_region_ids`, `library_ids` | `bigint[]` | NOT NULL DEFAULT `'{}'` | 받은 값 그대로 | [확정] (값), [안] (타입) |
 | `search_event.result_count` | `integer` | NULL 가능 | 직접 찾기가 첫 묶음 전 끊기면 NULL | [확정] |
-| `*.logged_in` | `boolean` | NULL = 모름 | 화면이 보낸 값 | [확정] (#check-results) |
+| `*.login_status` | `text` | CHECK (`signed_in`,`signed_out`,`login_off`) [안: 값 이름] | `auth`의 로그인 상태 판별 부품이 정함: 로그인함 / 안 함 / 로그인 기능 꺼짐 | [확정] (사용자 승인, 2026-10-14, `easy/2026-10-14-login-status.html` #2) |
 | `*.client_ip` | `inet` | NULL 가능 | `X-Real-IP`, 30일 뒤 NULL | [확정] (값·기간), [안] (타입) |
 | `library_click.library_id` | `bigint` | NOT NULL, FK 없음 | 확인된 서비스 도서관 번호 | [확정] |
 | `library_click.place` | `text` | CHECK 여섯 값 | `result_card`,`join_link`,`join_guide`,`home_page`,`logo`,`summary_bar` | [확정] 값 이름 (사용자 승인, 2026-10-14, `easy/2026-10-14-remaining-proposals.html` #2) |
