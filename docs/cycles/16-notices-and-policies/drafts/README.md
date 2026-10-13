@@ -7,7 +7,7 @@
 | [privacy-policy.md](privacy-policy.md) | 개인정보 처리방침 | `PRIVACY_POLICY` |
 | [privacy-collection.md](privacy-collection.md) | 가입 화면의 개인정보 수집·이용 동의문 (4항목 + 한 줄) | `PRIVACY_COLLECTION` |
 | [terms-of-service.md](terms-of-service.md) | 이용약관 | `TERMS_OF_SERVICE` |
-| [about.md](about.md) | 서비스 안내 (13·14 회고 때 실제 문장과 맞춤) | `ABOUT` |
+| [about.md](about.md) | 서비스 안내 (13·14 실제 문장과 맞춤, 2026-10-14) | `ABOUT` |
 | [notice-first.md](notice-first.md) | 첫 공지 "책첵을 시작했어요" | 공지 (`notice`) |
 | [ops-sql.md](ops-sql.md) | 운영 예시 SQL 초안 [안] — 인계서에 옮김, 시험 전 | — |
 

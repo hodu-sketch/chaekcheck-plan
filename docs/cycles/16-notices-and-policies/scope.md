@@ -69,8 +69,8 @@
 
 | 사이클 | 상태 | 겹치는 곳 | 이 사이클에서 할 일 |
 |---|---|---|---|
-| [13 crawler-to-dev](../13-crawler-to-dev/scope.md) | dev 개발 중 (따로 worktree) | `/about`에 공지 한 줄 (S12, [ADR-0087](../../adr/0087-join-survey-date-notice.md)) | 화면이 자동으로 붙임(spec R5-1). 13이 만든 `/about` 코드를 회고에서 보고 서비스 안내 첫 판을 맞춤 |
-| [14 librarian-picks](../14-librarian-picks/flow.md) | dev 개발 중 (`../chaekcheck-dev-c14`) | 머리말 "사서추천도서", `/about` 문단 하나 | 서비스 안내 초안에 14 문단을 넣음([drafts/about.md](drafts/about.md)). 회고 때 실제 문장 확인 |
+| [13 crawler-to-dev](../13-crawler-to-dev/scope.md) | dev 끝남, main에 합침 (2026-10-14) | `/about`에 공지 한 줄 (S12, [ADR-0087](../../adr/0087-join-survey-date-notice.md)) | 화면이 자동으로 붙임(spec R5-1). 서비스 안내 첫 판을 dev `/about`과 맞춤 (2026-10-14) |
+| [14 librarian-picks](../14-librarian-picks/flow.md) | dev 끝남, main에 합침 (2026-10-14) | 머리말 "사서추천도서", `/about` 문단 하나 | 서비스 안내 초안을 14 확정 문구로 맞춤 ([drafts/about.md](drafts/about.md), 2026-10-14) |
 | [15 usage-log](../15-usage-log/scope.md) | plan 진행 중 (다른 세션) | ① **처리방침 문구**: 15가 모으는 기록을 처리방침에 적음 ② 둘 다 새 DB schema(`usagelog` / `sitecontent`) ③ ADR 번호 | ① 받은 값 [privacy-inputs.md](privacy-inputs.md) ② 이름 겹치지 않음, Liquibase master 끝줄 병합 순서 확인 ③ ADR은 만들 때 마지막 번호를 다시 확인 |
 | [17 first-deploy](../17-first-deploy/scope.md) | plan 진행 중 (다른 세션) | 처리방침의 접속 기록·바깥 업체, 첫 공개일 | 받은 값 [privacy-inputs.md](privacy-inputs.md) |
 

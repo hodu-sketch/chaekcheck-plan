@@ -282,7 +282,7 @@ erDiagram
 
 | # | 항목 | 확인 방법 | 막는 단계 |
 |---|---|---|---|
-| 1 | 서비스 안내 첫 판 본문(사이클 13·14가 더한 문장) | 13·14 회고 때 dev `AboutPage.tsx` | 설계 확정 |
+| 1 | ~~서비스 안내 첫 판 본문(사이클 13·14가 더한 문장)~~ | 풀림 (2026-10-14): dev main `AboutPage.tsx`와 맞춤, 사용자 승인 ([drafts/about.md](drafts/about.md)) | — |
 | 2 | `react-markdown@10`과 dev의 React 판, 묶음 크기 | dev 설치 시험 | 개발 |
 | 3 | 정수가 아닌 `?version`·`?page` 400이 `ApiExceptionHandler`에 이미 있는지 | dev 코드 | 개발 |
 | 4 | seed 본문의 세미콜론·`$$` 처리 | dev 적용 시험 | 개발 |
