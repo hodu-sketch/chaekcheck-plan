@@ -203,13 +203,13 @@ classDiagram
 | 클릭 알림 (웹) | `features/search/ResultRow.tsx`: 카드 `:185-191`, 가입 링크 `:97-101`, 가입 안내 `:106-113`, 도서관 첫 화면 `:62-69`, 로고 `:131`; `components/LibraryLogo.tsx:34-39`; 요약 막대 이름 = `LibrarySummaryBar.tsx`의 `LibraryCell` 첫 화면 링크 `:126-130` (`DirectResults.tsx:122-128`의 `LibraryCountButton` 안) | 화면: 직접 찾기 `DirectResults`, 수집 목록 `InstantResults.tsx:137`, 책 페이지 `features/book/BookPage.tsx:149`, 사서 추천 `features/picks/PicksBookDialog.tsx:163`, 내 도서관 `features/mylibrary/MyLibrariesPage.tsx:253,268`(로고만) |
 | 화면 행동 알림 (웹) | 사서 추천 목록 `features/picks/PicksPage.tsx:317-325`(분야 `category.code`), 책 창 `PicksPage.tsx:355-362`; 지역 저장 `features/region/RegionContext.tsx:113-128`(로그인 전 `regionStorage.ts:32`, 뒤 `putMyRegions`); 내 도서관 `MyLibraryContext.tsx:118-157` | 로그인 전후 같은 자리에서 보냄 |
 | 알림 보내기 (웹) | `api/auth.ts:48` `send`(CSRF 붙임, 403 `csrf_invalid` 한 번 다시), 표시 받기 `GET /api/v1/auth/csrf-token`(`CsrfTokenController.java:27-31`), 꺼짐 판단 `api/auth.ts:111-113` | 사용 알림 공용 함수는 이 `send` 방식을 따르되 `keepalive` [안] |
-| CSRF 검사 범위 | `SecurityConfiguration.java:47-48,75` — 지금 `/api/v1/me/**`만 보호 | `auth`의 보호 주소(`PROTECTED`)에 `/api/v1/usage-events`(POST)를 더함 — 로그인은 요구하지 않고 CSRF만 검사 [안: 방법은 개발 때, 예: CSRF 대상 매처를 따로 둠]. 꺼짐이면 Spring Security가 빠져 검사 없음(`AuthToggleEnvironmentPostProcessor.java:45-56`) |
+| CSRF 검사 범위 | `SecurityConfiguration.java:47-48,75` — 지금 `/api/v1/me/**`만 보호 | `POST /api/v1/usage-events`가 로그인 기능 켜짐에서 CSRF 검사를 받고 로그인은 요구하지 않게 함 [확정] (ADR-0102). `PROTECTED`에 넣으면 로그인을 요구하게 되므로 넣지 않음. 지금 `csrf.spa()…ignoringRequestMatchers(WEBHOOKS)`(`:75`)가 웹훅 말고 모든 POST를 검사하는 모양이라 고칠 것이 없을 수 있음 → 시험으로 증명, 필요하면 고침 [안: 방법]. 꺼짐이면 Spring Security가 빠져 검사 없음(`AuthToggleEnvironmentPostProcessor.java:45-56`) |
 | 04:30 정리 | 기존 예: `auth/internal/cleanup/DailyAccountCleanup.java:65` (cron·zone 설정 값) | 같은 방식으로 `chaekcheck.usagelog.cleanup.cron`·`zone` [안: 이름] |
 | Liquibase | `db/changelog/db.changelog-master.yaml` 끝 `:94` `picks/001-picks-schema.yaml` | 규칙: main에 합치는 순서대로 master 끝에 붙임. 15(`usagelog`)와 16(`sitecontent` [안])은 schema가 달라 서로 기대지 않으므로 어느 쪽이 먼저여도 됨. 합칠 때 나중 사이클이 rebase해 자기 줄을 맨 끝으로 옮기고, 이미 다른 DB에 돈 changeset은 고치지 않음 [안] |
 | 모듈 의존 선언 | 예: `picks/package-info.java:20` | `usagelog/package-info.java`에 `allowedDependencies = { "library", "auth" }` |
 | nginx | `deploy/nginx/chaekcheck-locations.conf:17` X-Real-IP, 한도 `rate-limits.conf:15,20`, 직접 찾기 `:27-29`, 대출 조회 `:45`; `robots.txt` 없음(`web/public`) | 새 zone·`location = /api/v1/usage-events`·UA 거절·`web/public/robots.txt` |
 
-- 참고(15 밖, 사이클 14·17에 알림): nginx 화면 주소 목록(`chaekcheck-locations.conf:90`)에 `/picks`가 없어, nginx 뒤에서 `/picks`를 바로 열면 404가 날 수 있음
+- 참고(15 밖, 사이클 14·17에 알림): nginx 화면 주소 목록(`chaekcheck-locations.conf:90`)에 `/picks`가 없어, nginx 뒤에서 `/picks`를 바로 열면 404가 날 수 있음. (2026-10-14 인계서 쓸 때 다시 봄: dev 작업 폴더 `:91`에는 이미 `picks`가 들어 있고 "2026-10-14 터널로 열다 발견" 주석이 있음. main 커밋 여부는 dev가 확인)
 
 ## 데이터
 
