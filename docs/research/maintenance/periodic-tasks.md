@@ -50,6 +50,7 @@
 1. 준비: 수집 SQLite(`chaekcheck-data\ebook-catalog.sqlite`), 국가서지 TTL 폴더(dev `data/nlk/ttl`, git에 넣지 않음). dev 안내는 "수집 세션이 쉴 때" 실행. 가져오기는 SQLite를 읽기 전용으로 한 시점만 읽음(dev `CollectedCatalog.java`). 2026-10-03에는 수집 중에 실행함
 2. 먼저 세기만: dev `backend/`에서 아래 명령 끝에 `--chaekcheck.catalog.import.dry-run=true`를 더해 실행 (DB에 쓰지 않음)
 
+       # (2026-10-14) 옛 프로필 이름 — 지금 명령은 dev `docs/maintenance/3-import.md`
        ./gradlew bootRun --args='--spring.profiles.active=catalog-import --chaekcheck.catalog.import.sqlite-path=../../chaekcheck-data/ebook-catalog.sqlite --chaekcheck.catalog.import.ttl-path=../data/nlk/ttl'
 
 3. 요약 숫자를 지난번과 비교 (아래 표). 크게 다르면 사용자에게 알리고 멈춤 [안]

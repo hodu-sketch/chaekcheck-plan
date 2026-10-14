@@ -87,7 +87,7 @@
 - 같은 책 묶기·ISBN `same-book-isbn.md`
 - 수집 DB `chaekcheck-data/ebook-catalog.sqlite`, 안내 `chaekcheck-data/README.md`
 - backlog "도서정보·소장 주기 갱신", "2026-10-01 정리: 사이클 05 이후로 미룬 것"
-- 결정: ADR-0034(목록 저장), ADR-0031(정리 코드 한 벌), ADR-0035(묶기 ④·번호 체계). 현재 스키마 `docs/current/data-model.md` `catalog` 절, 가져오기 흐름 `docs/current/flows.md` 흐름 8
+- 결정: ADR-0034(목록 저장), ADR-0031(정리 코드 한 벌), ADR-0035(묶기 ④·번호 체계). 현재 스키마 `docs/current/data-model.md` `catalog` 절, 가져오기 흐름 `docs/current/flows.md` 흐름 16·20·27~29 (흐름 8은 사이클 04 모양, 2026-10-14 고침)
 - 도서관 목록 점검 절차(2절 1번): dev `docs/library-maintenance.md` 4-9·4-11, dev `docs/library-site-issues.md`. 재작업 체크리스트: `docs/reference-index.md` 6절
 
 ## 변경 기록

@@ -110,7 +110,7 @@
 
 ## 8. 실행 도구 (2026-09-30)
 
-- 수집기: `chaekcheck-data/scripts/crawl_catalog.py`, DB `chaekcheck-data/ebook-catalog.sqlite`, 안내 `chaekcheck-data/README.md`
+- 수집기: dev `scripts/crawl/crawl_catalog.py` (사이클 13에 옮김, ADR-0088; 그 전 `chaekcheck-data/scripts/crawl_catalog.py`), DB `chaekcheck-data/ebook-catalog.sqlite`, 안내 `chaekcheck-data/README.md`
 - 이 문서의 3절 절차, 4절 날짜 세 층, 5절 항목을 그대로 따름. 더한 것:
   - 목록 구역(`section`): 한 사이트의 목록이 여럿이면(YES24 전자책·오디오북, 포털 EBK·ADO) 구역마다 받고, 빠진 책 표시는 받은 구역 안에서만
   - 책 코드가 없는 줄은 실행을 실패시키지 않고 건너뛴 뒤 개수를 기록

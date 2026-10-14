@@ -7,7 +7,7 @@
 
 > **수집 절차의 원본은 dev입니다** (ADR-0047, 2026-10-04 dev가 옮김). 돌리는 방법(이어 받기, 명령, 병렬·IP 줄, 받지 않는 도서관, 문제별 대처, 새 사이트 붙이기, 상세 URL, 오디오북 표시)은 dev `docs/maintenance/2-crawl.md`, 플랫폼별 방법은 dev `docs/maintenance/platforms.md`, 세 작업을 잇는 순서는 dev `docs/maintenance/README.md`. 이 문서에는 **진행 상태(1·8절)와 결정 기록(2·3절)**만 남깁니다.
 >
-> 수집 중 새로 알게 된 사실은 dev 문서에 더해야 합니다. plan 세션은 dev에 쓰지 않으므로 **4절 "dev에 반영할 것"에 모아 두고 사용자가 dev 세션에 전달**합니다. 수집기 코드(`chaekcheck-data\scripts\`)는 전체 수집이 끝난 뒤 dev `scripts/crawl/`로 옮깁니다(요청서 B, `docs/research/maintenance/dev-move-request.md`).
+> 수집 중 새로 알게 된 사실은 dev 문서에 더해야 합니다. plan 세션은 dev에 쓰지 않으므로 **4절 "dev에 반영할 것"에 모아 두고 사용자가 dev 세션에 전달**합니다. 수집기 코드는 사이클 13에 dev `scripts/crawl/`로 옮겼습니다(ADR-0088, dev `scripts/crawl/README.md`; 그 전 `chaekcheck-data\scripts\`, 요청서 B `docs/research/maintenance/dev-move-request.md`).
 
 ## 0. 어디를 보나
 

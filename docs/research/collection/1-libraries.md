@@ -22,6 +22,8 @@
 
 단계마다 나오는 것입니다. 경로의 `chaekcheck-data`는 git 밖 데이터 폴더입니다.
 
+> (2026-10-14) 아래 "넣기 (서비스 DB seed)"·"넣기 = seed 만들기"·"같은 사이트 거르기"의 seed 스크립트(`build_candidate_seed.py`, `SAME_SITE`)는 **사이클 07 때 방법의 기록**입니다. 사이클 13부터는 `collection` 넣기 명령(미리 보기 → 보고서 → 넣기, ADR-0084·0093·0107·0110)과 dev 규칙 TSV `scripts/library/rules/`(`same_site.tsv`·`same_host_kept.tsv`·`final_origins.tsv` 등, ADR-0085)를 씁니다.
+
 | 단계 | 결과물 | 경로 | 근거 |
 |---|---|---|---|
 | 확인 (probe) | 사이트마다 열림·화면 종류·권수 | `other-platforms/kyobo-institutions-probe-2026-10-03.tsv`(교보, `library_model` 칸), `other-platforms/okbari-2026-10-03/yes24-probe.tsv`, `bookcube-probe.tsv`, 알라딘 결과 | `crawl-runbook.md` 8-1절 |
@@ -99,11 +101,11 @@
 |---|---|---|
 | 등록 도서관 확인 (목록 출처, 화면 종류, 주소 확정, 운영 신호, 책 번호 점검) | `docs/library-maintenance.md` (자리표는 `docs/maintenance/1-libraries.md` "등록 도서관 확인: 어디를 보나") | `scripts/library/CheckKyoboSites.java`, `CheckYes24Sites.java`, `check_code_spaces.py` |
 | 가입 자격·가입 방법 | `docs/library-maintenance.md` 1-1, 1-2, 4-8, 4-10, 14절 | `scripts/library/join_overrides.tsv`(사람이 정한 값이 마지막에 이김, `periodic-tasks.md` 1절) |
-| 후보 도서관 찾기 (확인 → 수집 DB에 넣기) | `docs/maintenance/1-libraries.md` "후보 도서관 찾기" | `scripts/library/candidates/probe_kyobo_institutions.py`, `probe_yes24.py`, `probe_aladin.py`, `probe_other_platforms.py`. 넣기 `scripts/crawl/crawl_catalog.py import-probe`·`import-bookcube` |
+| 후보 도서관 찾기 (확인 → 수집 DB에 넣기) | `docs/maintenance/1-libraries.md` "후보 도서관 찾기" | `scripts/library/discover/probe_kyobo_institutions.py`, `probe_yes24.py`, `probe_aladin.py`, `probe_other_platforms.py`. 넣기 `scripts/crawl/crawl_catalog.py import-probe`·`import-bookcube` |
 | 구독 규칙·마감 확인 | `docs/maintenance/1-libraries.md` "구독 규칙·마감 확인" | `scripts/library/probe_kyobo_limits.py`, `limits-daily.cmd` |
 | 같은 사이트 거르기, 넣기(seed 생성), 최종 주소 확인 | `docs/maintenance/1-libraries.md` "같은 사이트 거르기", "넣기(서비스 DB)" (사이클 07에 더함, 2026-10-05) | `scripts/library/build_candidate_seed.py`(테스트 `test_build_candidate_seed.py`), `scripts/library/CheckFinalOrigins.java` |
 | 가져오기 (수집 DB 사본 → 서비스 DB) | `docs/maintenance/3-import.md` | 백엔드 `collection` 모듈, 프로필 `collection-import` |
-| 로고 받기 | 아직 없음 | git 밖 `chaekcheck-data/scripts/probe_logos.py`, `probe_home_logos.py`. dev로 옮길 때 `scripts/library/` [안] (`library-logos.md` 머리말) |
+| 로고 받기 | 아직 없음 | dev `scripts/library/probe_logos.py`, `probe_home_logos.py` (옮김 확인 2026-10-14, `library-logos.md` 머리말) |
 | 화면 종류별 첫 화면·목록 | `docs/maintenance/platforms.md`, `docs/library-maintenance.md` 1-3, 4-6 | — |
 
 - dev 코드는 2026-10-05 복사됨(ADR-0047 B·C, dev `plan-feedback.md` "B·C"). 지금 돌고 있는 것은 옛 복사본 `chaekcheck-data\scripts\`이고, 갈아타는 때는 사용자가 정함 (dev `2-crawl.md` 0절)
