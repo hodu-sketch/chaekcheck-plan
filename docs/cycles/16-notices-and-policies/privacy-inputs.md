@@ -150,3 +150,9 @@ spec R8-3: 문구는 Claude가 법정 항목([research.md](research.md) 2.1)을 
 
 - 백업 보관 7일(사이클 17) — 위 "사이클 17 확정: DB 백업 보관 기간"과 같음, 처리방침에 이미 반영
 - 참고: 서비스 로그는 14일, IP 없음 → 처리방침 항목 아님
+
+## 16 정정 (2026-10-14, cycle-close 설계 검토)
+
+- 5차 "16 확인 … 고칠 곳 없음"은 틀렸음: 사이클 15 사용 알림(`POST /api/v1/usage-events`)이 CSRF 검사를 받으므로(15 spec R2-4, AC-9), 로그인 기능이 켜져 있으면 로그인하지 않은 방문자도 `XSRF-TOKEN` 쿠키(HttpOnly 아님, dev `SecurityConfiguration.java:96`)를 받음
+- 처리방침 3절을 "로그인 유지와 로그인 상태 확인용 쿠키, 요청 위조를 막는 보안 쿠키를 씁니다…"로 고침 [확정] (사용자 승인, 2026-10-14, [easy/2026-10-14-close-review-decisions.html](easy/2026-10-14-close-review-decisions.html) #1). 쿠키 허용/거부 창은 두지 않음 ([research.md](research.md) 10절)
+- 사이클 17 방향 변경(17 scope, 2026-10-14): 위 "처음 2주"·"Lightsail"은 당시 값. 지금은 무료 크레딧·6개월 무렵까지 AWS, 노트북 이전은 그때 다시 봄. 처리방침의 "Amazon Web Services"는 그대로

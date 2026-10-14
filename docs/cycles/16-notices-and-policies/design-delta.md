@@ -2,7 +2,7 @@
 
 근거: [scope.md](scope.md), [spec.md](spec.md), [flow.md](flow.md), [architect-proposal.md](architect-proposal.md)(결정 결과 표), [research.md](research.md), [privacy-inputs.md](privacy-inputs.md) (2026-10-13). 설계 대안 결정 페이지 [easy/2026-10-13-design-decisions.html](easy/2026-10-13-design-decisions.html), [easy/2026-10-13-drop-decisions.html](easy/2026-10-13-drop-decisions.html), 정리·ADR [easy/2026-10-13-design-adr-decisions.html](easy/2026-10-13-design-adr-decisions.html). 그림 원본 [easy/design-delta-original.html](easy/design-delta-original.html)
 
-**설계 확정은 사이클 12·13·14 회고 뒤** [확정] (scope). 이 문서는 그때 dev 코드(특히 13·14가 바꾼 `/about`)와 맞춰 보고 확정한다. `docs/current/`는 cycle-close에서 고친다.
+**설계 확정은 사이클 12·13·14 회고 뒤** [확정] (scope). 12·13·14·15 회고·인계 뒤(2026-10-14) dev main 코드와 맞춰 보고 확정했다(design-reviewer 검토, [easy/2026-10-14-close-review-decisions.html](easy/2026-10-14-close-review-decisions.html)). `docs/current/`에 합침.
 
 ## 구조 그림
 
@@ -78,8 +78,10 @@ sequenceDiagram
   A->>S: SiteDocuments.currentVersion(TERMS_OF_SERVICE, PRIVACY_COLLECTION)
   S-->>A: 1, 1
   A-->>W: documents version "1", "1"
+  W->>S: GET /api/v1/documents/terms-of-service?version=1
   W->>S: GET /api/v1/documents/privacy-collection?version=1
-  S-->>W: 4항목 + 전문 (보인 글 = 동의할 판)
+  S-->>W: 약관 전문, 동의문 4항목 + 전문 (보인 글 = 동의할 판)
+  Note over W: 둘 중 하나라도 실패하면 체크 칸·가입 버튼 잠금 + 다시 시도 (flow S6)
   W->>A: POST /api/v1/auth/signup consents version "1"
   A->>S: 지금 판 다시 물음
   alt 그사이 새 판이 시행됨
@@ -139,6 +141,9 @@ classDiagram
 | 웹 | 변경 | S16·S17 새로. S8·S9·S12·S6이 API를 읽고 `react-markdown`으로 그림. 제목 아래 날짜 고르기 칸. 바닥글 링크 한 줄, "문의: 준비 중" 지움. `/privacy`의 `LoginOnly` 지움. `legalText.ts`·`documentVersions.json`·`NOT_REVIEWED` 지움 | — | — | — |
 
 - 새 의존은 `auth → sitecontent` 하나. `sitecontent`는 어떤 모듈에도 의존하지 않음. `auth/package-info.java`의 "depends on no other module (AC-18)"이 바뀜 → ADR
+  - 같이 고칠 dev 시험: `ModularityTests.java:27`의 `assertThat(dependenciesOf("auth")).isEmpty()` → `sitecontent`만 담게, `sitecontent`는 의존 없음 줄을 더함. `auth`의 `@ApplicationModuleTest`(예: `AuthSchemaTests`)는 `BootstrapMode.DIRECT_DEPENDENCIES`가 필요해짐. 사이클 15(`usagelog → auth`)도 같은 시험 파일을 고치므로 나중에 합치는 쪽이 rebase 때 두 줄을 함께 둠 (2026-10-14 dev main 확인)
+- 오류 처리: dev는 루트 `ApiExceptionHandler`가 `ResponseEntityExceptionHandler`만 확장하고(정수가 아닌 값은 400 `bad_request`), 모듈 오류는 모듈마다 `@RestControllerAdvice(basePackageClasses=…)` + `@Order(HIGHEST_PRECEDENCE)`로 둠(예: `picks/internal/web/PicksErrors.java`). `sitecontent/internal/web`에 같은 방식으로 400 `validation_error`(`errors[]`: `field`·`message`·`code`), 404 `notice_not_found`·`document_not_found`·`version_not_found` [확정] (dev 방식 따름, 2026-10-14 dev main 확인)
+- 같이 고칠 웹·시험 파일: `SignupPage.tsx`(`legalText`의 `COLLECTION_NOTICE`·`PRIVACY_COLLECTION_BODY`·`TERMS_OF_SERVICE_BODY`·`NOT_REVIEWED` 대신 API), `LegalPage.tsx`·`LegalPage.test.tsx`·`AuthScreens.test.tsx`(`documentVersions` 사용), `AboutPage.tsx`(본문을 API로, 기준일 줄은 그대로), `Footer.tsx`. 백엔드 `DocumentVersionsMatchWebTests`(지움), `AuthPropertiesTests`(documents 설정 값), `SignupTests`(`properties`로 정한 문서 버전 `2026-10-01`·`2026-10-02` → DB 판 기준)
 - 가입은 동기 읽기가 필요해 이벤트를 쓰지 않음
 - 이용약관 REST는 로그인 기능이 꺼져도 열어 두고, 웹 경로 `/terms`만 숨김 [확정] (사용자 승인, 2026-10-13) — `sitecontent`가 `auth` 설정을 알면 `sitecontent → auth`가 생겨 서로 의존하게 됨
 
@@ -201,12 +206,12 @@ erDiagram
 
 - "다시 동의 필요" 칸은 두지 않음 — 다시 동의 화면을 만들 때 함께 더함 [확정] (사용자 승인, 2026-10-13)
 - `updated_at` 없음: 판은 고치지 않고 새로 넣음. 다른 모듈과 FK·JOIN 없음(auth는 판 순번 값만 기억)
-- Liquibase: 새 changelog 파일로 추가 (기존 changeset 수정 없음)
+- Liquibase: 새 changelog 파일로 추가 (기존 changeset 수정 없음 — 사이클 15와 나란히 개발하고 작업 폴더마다 DB가 따로라, 기존 changeset을 고치면 다른 작업 폴더의 DB 체크섬이 깨짐(사이클 14 dev 기록))
   - `sitecontent/001-sitecontent-schema.yaml` (표·CHECK는 `sql` changeset)
-  - `sitecontent/002-sitecontent-seed.yaml`: 개발 DB 첫 판 = 지금 웹 코드의 글을 마크다운으로(이용약관·동의문·처리방침·서비스 안내, 공지는 없음). `sql` + `$$` + `splitStatements: false` [안: dev 적용 시험]. 개발 DB 시행일은 `2026-10-04`(지금 동의 기록과 이어짐). 동의문·처리방침의 로그인 수단은 카카오만 [확정] (사용자, 2026-10-13). 서비스 안내 첫 판은 사이클 13·14가 더한 문장까지(회고 때 확인)
+  - `sitecontent/002-sitecontent-seed.yaml`: 개발 DB 첫 판 = 지금 웹 코드의 글을 마크다운으로(이용약관·동의문·처리방침·서비스 안내, 공지는 없음). `sql` + `$$` + `splitStatements: false` [안: dev 적용 시험]. 개발 DB 시행일은 `2026-10-04`(지금 동의 기록과 이어짐). 동의문·처리방침의 로그인 수단은 카카오만 [확정] (사용자, 2026-10-13). 서비스 안내 첫 판은 [drafts/about.md](drafts/about.md)(dev `AboutPage.tsx`와 맞춤, 2026-10-14)
   - `auth/002-consent-version-number.yaml`: 테스트 계정 동의 기록 값 바꾸기 + 형식 CHECK
-  - master 끝에 추가. 사이클 13·14·15(`usagelog`)도 master 끝줄을 고치므로 병합 순서 확인
-- **운영 첫 판**: 운영 DB는 검토한 글([drafts/](drafts/), 승인 2026-10-13)부터 시작하고, 첫 판의 시행일은 **모르는 사람에게도 공개하는 날**(첫 배포일 아님). 그 전에 seed를 검토한 글·공개일로 바꾸고 개발 DB는 초기화, 테스트 계정은 다시 가입 [확정] (사용자 승인·제안, 2026-10-13). 사이클 17 체크리스트에 전함
+  - master 끝에 추가. 지금 끝줄은 `# cycle 14` `picks/001-picks-schema.yaml`(dev main 2026-10-14). 사이클 15가 `usagelog/001-usagelog-schema.yaml`을 붙임. **main에 합치는 순서대로 끝에 붙이고, 나중에 합치는 쪽이 rebase해서 자기 줄을 맨 끝으로 옮김** [확정] (사이클 15 인계서와 같은 규칙)
+- **운영 첫 판**: 운영 DB는 검토한 글([drafts/](drafts/), 승인 2026-10-13)부터 시작하고, 첫 판의 시행일은 **모르는 사람에게도 공개하는 날**(첫 배포일 아님). 그 전에 seed를 검토한 글·공개일로 바꾸고 개발 DB는 초기화, 테스트 계정은 다시 가입 [확정] (사용자 승인·제안, 2026-10-13). 이미 돈 `sitecontent/002`를 고치는 일이라 dev의 `PRE_DEPLOYMENT` 표시(`db/changelog/PRE_DEPLOYMENT`, dev CLAUDE.md)가 있는 동안에만 함 — 사이클 17이 표시를 지우기 전에. 사이클 17 체크리스트에 전함
 
 ## API
 
@@ -255,6 +260,12 @@ erDiagram
   "instance": "/api/v1/documents/terms-of-service", "code": "version_not_found" }
 ```
 
+```json
+{ "type": "about:blank", "title": "Bad Request", "status": 400, "detail": "Invalid request",
+  "instance": "/api/v1/notices", "code": "validation_error",
+  "errors": [ { "field": "page", "message": "must be greater than or equal to 1", "code": "Min" } ] }
+```
+
 - `versions`에는 시행 중이거나 지난 판만(앞날 판 빠짐). 웹의 날짜 고르기 칸 문구: 지난 판 "A ~ (B-1일) 적용", 같은 날 바뀐 판 "A 적용 (같은 날 바뀜)", 지금 판 "A ~ 지금" [확정] (사용자 승인, 2026-10-13)
 - 숨긴 공지·첫 판이 앞날인 공지는 목록과 주소 모두 404
 
@@ -268,6 +279,8 @@ erDiagram
 - 공지 고치기: 판 = 마지막 + 1, 조건 새 날짜 ≥ 마지막 판 날짜(0줄이면 확인)
 - 숨기기·고정: `UPDATE sitecontent.notice SET hidden = … / pinned = …`
 - 문서 새 판: `INSERT … SELECT :key, max+1, :date, $$본문$$, $$바뀐 점$$ … WHERE :date >= max(effective_on)`. 동의문은 4항목 필수. 약관·동의문을 바꿀 때 공지도 함께(R7-1). 중요하거나 불리한 변경은 다시 동의 화면이 생기기 전에는 넣지 않음(R7-3)
+- 초안 전체: [drafts/ops-sql.md](drafts/ops-sql.md)
+- 운영 DB 계정 권한: 사이클 17이 정한 "`sitecontent` schema 쓰기만 있는 DB 계정"(17 design-delta)은 `sitecontent` 표의 SELECT·INSERT·UPDATE와 `notice.id` 시퀀스 USAGE가 필요함 → 사이클 17에 알림
 
 ## 결정 기록
 
@@ -275,8 +288,7 @@ erDiagram
 - [ADR-0099](../../adr/0099-signup-document-version-from-sitecontent.md) 가입 문서 버전의 원본을 `sitecontent`로, 동의 기록 = 판 순번, `auth → sitecontent` (사이클 05 제약 27 폐기, AC-18 변경)
 - [ADR-0100](../../adr/0100-privacy-policy-public-regardless-of-login.md) 처리방침은 로그인 기능과 상관없이 공개 (사이클 05 제약 35 일부 변경)
 - [ADR-0101](../../adr/0101-terms-change-notice-or-reconsent.md) 약관이 바뀔 때: 가벼우면 공지 + 시행일, 중요하면 다음 로그인 때 다시 동의 (화면은 나중)
-- 네 ADR 모두 초안 승인(사용자, 2026-10-13), 상태 Proposed. 설계 확정(12·13·14 회고 뒤) 때 Accepted로 바꿈
-- 다음 단계: 여기서 멈추고, 설계 확정·cycle-close·인계서는 12·13·14 회고 뒤 [확정] (사용자 승인, 2026-10-13). 그 사이 처리방침·약관 초안을 먼저 씀
+- 네 ADR 모두 초안 승인(사용자, 2026-10-13), 설계 확정(2026-10-14, cycle-close)으로 Accepted
 
 ## 확인 필요
 
@@ -284,8 +296,8 @@ erDiagram
 |---|---|---|---|
 | 1 | ~~서비스 안내 첫 판 본문(사이클 13·14가 더한 문장)~~ | 풀림 (2026-10-14): dev main `AboutPage.tsx`와 맞춤, 사용자 승인 ([drafts/about.md](drafts/about.md)) | — |
 | 2 | `react-markdown@10`과 dev의 React 판, 묶음 크기 | dev 설치 시험 | 개발 |
-| 3 | 정수가 아닌 `?version`·`?page` 400이 `ApiExceptionHandler`에 이미 있는지 | dev 코드 | 개발 |
+| 3 | ~~정수가 아닌 `?version`·`?page` 400이 `ApiExceptionHandler`에 이미 있는지~~ | 풀림 (2026-10-14): 루트는 400 `bad_request`만, 모듈 오류 처리 파일로 둠(위 "모듈") | — |
 | 4 | seed 본문의 세미콜론·`$$` 처리 | dev 적용 시험 | 개발 |
-| 5 | 사이클 15와 Liquibase master 끝줄 병합 순서 | 병합 때 | 개발 |
+| 5 | 사이클 15와 병합: master 끝줄, `ModularityTests` 의존 줄 | 규칙은 위 "데이터"·"모듈". 병합 때 확인 | 개발 |
 | 6 | 날짜 고르기 칸이 폰에서 어떤 고르기 화면으로 열리는지 | dev 구현 때 프로토타입 | 개발 |
 | 7 | 운영 첫 판([drafts/](drafts/))의 공개 전 값: AWS 계약 법인, Cloudflare 연락처·보유 기간·쿠키 여부, 공개일 | 사용자에게 질문(공개일), 사이클 17 배포 때 계정·계약서(나머지) | 공개 전 |

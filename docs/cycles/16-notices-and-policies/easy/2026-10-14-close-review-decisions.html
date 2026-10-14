@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>설계 검토 두 가지</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+.flow{display:grid;gap:10px;margin:10px 0 16px}.lane{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--card)}.lane b{display:block;margin-bottom:4px}.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{font-size:14px;border-radius:6px;padding:2px 8px;background:var(--code-bg)}.chip.new{background:var(--warn-bg)}.chip.dev{background:var(--ok-bg)}.arrow{text-align:center;color:var(--muted);font-size:18px;line-height:1}
+</style>
+<style>.cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0}.cmp>div{border:1px solid var(--line);border-radius:10px;padding:10px 14px;background:var(--card);font-size:18px}.cmp b{display:block;font-size:15px;color:var(--muted)}@media(max-width:640px){.cmp{grid-template-columns:1fr}}</style>
+</head>
+<body><main class="doc">
+<p class="lead">인계 전 설계 검토에서<br>고르실 것 두 가지</p>
+<p class="sub">사이클 16을 dev에 넘기기 전에 설계 검토(design-reviewer)를 돌렸습니다. 이름·시험 파일처럼 정해진 대로 고치면 되는 것은 바로 고치고, 아래 두 가지만 여쭙니다. (2026-10-14)</p>
+
+<div class="card"><h2><span class="num">1</span>처리방침의 쿠키 문장</h2>
+<p class="gist">로그인하지 않은 사람에게도 보안용 쿠키가 하나 생깁니다. 처리방침에 한 마디 더합니다.</p>
+<p>사이클 15가 만들 사용 기록에서는 화면이 서버에 "검색 결과에서 이 도서관을 눌렀어요" 같은 짧은 알림을 보냅니다. 서버는 이 알림이 남의 사이트가 몰래 보낸 것이 아닌지 확인합니다(요청 위조 방지, CSRF). 그 확인에 쓰는 표가 <code>XSRF-TOKEN</code> 쿠키입니다(dev <code>SecurityConfiguration.java</code> 96행, 사이클 15 spec R2-4). 로그인 기능이 켜져 있으면, 로그인하지 않은 방문자도 이 알림을 처음 보낼 때 이 쿠키를 받습니다.</p>
+<p>지금 초안은 "로그인한 경우에만 … 쿠키를 씁니다"라서 실제와 다릅니다. 처리방침에는 쿠키를 적어야 합니다(개인정보 보호법 제30조 제1항 제7호, research.md 5절).</p>
+<div class="item"><h3><span class="no">1</span>쿠키 문장을 아래처럼 바꿉니다 <span class="an">[안]</span></h3>
+<div class="cmp"><div><b>바꾼 뒤</b>로그인 유지와 로그인 상태 확인용 쿠키, 요청 위조를 막는 보안 쿠키를 씁니다. 이 밖의 기록용 쿠키는 쓰지 않습니다. 브라우저에서 막을 수 있으며, 막으면 로그인을 쓸 수 없습니다.</div><div><b>지금 초안</b>로그인한 경우에만 로그인 유지와 로그인 상태 확인용 쿠키를 씁니다. 이 밖의 기록용 쿠키는 쓰지 않습니다. 브라우저에서 막을 수 있으며, 막으면 로그인만 쓸 수 없습니다.</div></div>
+<p>보안 쿠키에는 누구인지 알 수 있는 값이 없고, 사이클 15는 쿠키 값을 저장하지 않습니다(15 spec R1-5). 막아도 검색은 그대로 됩니다.</p>
+<p class="alt"><b>다른 선택:</b> 로그인하지 않은 사람은 사용 알림에서 보안 확인을 빼서 쿠키가 안 생기게 합니다. 사이클 15가 이미 정한 "예외 주소 없음"(15 spec R2-4)을 바꾸게 되어 추천하지 않습니다.</p></div>
+<div class="item"><h3>질문: 쿠키 허용/거부 창을 띄워야 하나요? → 띄우지 않아도 됩니다</h3>
+<p class="gist" style="background:var(--ok-bg)">책첵 쿠키는 로그인과 보안에 꼭 필요한 것뿐이라, 처리방침에 적는 것으로 충분합니다. 다른 국내 책 서비스도 창을 띄우지 않습니다.</p>
+<table><tr><th>근거</th><th>내용</th></tr>
+<tr><td>법</td><td>서비스 제공에 꼭 필요한 처리는 동의 없이 할 수 있음(개인정보 보호법 제15조 제1항 제4호). 로그인 유지·보안 쿠키가 여기에 해당한다고 봄(추론)</td></tr>
+<tr><td>개인정보위 처리방침 작성지침(2026.4.) 항목 14</td><td>쿠키는 처리방침에 목적과 거부 방법(브라우저 설정)을 적음. 서비스가 거부 창을 만들라는 문장은 없음</td></tr>
+<tr><td>동의가 필요한 경우</td><td>광고·맞춤형 마케팅처럼 서비스와 직접 관련 없는 쿠키. 책첵은 쓰지 않음</td></tr>
+<tr><td>쿠키 창이 흔한 이유</td><td>유럽(EU) 규칙 때문. 책첵은 유럽 이용자 대상이 아님</td></tr>
+<tr><td>다른 서비스 (2026-10-14 첫 화면 확인)</td><td>리디, 카카오, 밀리의서재, 예스24, 알라딘 — 다섯 곳 모두 창 없음. 네이버는 열지 못해 확인 못 함</td></tr></table>
+<p class="alt">법률 자문이 아니라 공식 문서와 다른 서비스를 보고 정리한 것입니다. 나중에 광고·분석 도구를 넣으면 다시 봅니다. 자세한 근거: <code>research.md</code> 10절.</p></div>
+
+</div>
+
+<div class="card"><h2><span class="num">2</span>가입 화면에서 약관 글을 못 불러왔을 때</h2>
+<p class="gist">가입 화면이 약관 글을 DB에서 따로 읽게 되므로, 그 읽기가 실패한 경우를 정해야 합니다.</p>
+<p>지금 가입 화면(S6)은 이용약관·동의문 글이 화면 코드 안에 있어서 못 불러올 일이 없습니다. 바뀐 뒤에는 "가입할 판 번호"를 받은 다음 그 판의 이용약관과 동의문 글을 한 번 더 읽습니다. 이 두 번째 읽기가 실패하면 동의할 글 없이 체크 칸만 남습니다.</p>
+<div class="item"><h3><span class="no">2</span>글을 못 불러오면 체크 칸과 가입 버튼을 잠그고 다시 시도 버튼을 보입니다 <span class="an">[안]</span></h3>
+<div class="shots">
+<div class="shot"><p class="cap">PC</p><div class="fr pc" style="height:300px"><div class="hd"><b>책첵</b></div><div class="bd"><b style="font-size:15px">가입</b><div class="row" style="background:var(--no-bg);border-color:var(--no)">약관 글을 불러오지 못했어요. <span class="bt">다시 시도</span></div><div class="row" style="opacity:.45">☐ 이용약관에 동의합니다<br>☐ 개인정보 수집·이용에 동의합니다<br>☐ 만 14세 이상입니다</div><p style="margin:10px 0 0"><span class="bt pri off">가입</span> <span class="bt">취소</span></p></div></div></div>
+<div class="shot"><p class="cap">폰</p><div class="fr ph" style="height:330px"><div class="hd"><b>책첵</b></div><div class="bd"><b style="font-size:15px">가입</b><div class="row" style="background:var(--no-bg);border-color:var(--no)">약관 글을 불러오지 못했어요.<br><span class="bt">다시 시도</span></div><div class="row" style="opacity:.45">☐ 이용약관에 동의합니다<br>☐ 개인정보 수집·이용에 동의합니다<br>☐ 만 14세 이상입니다</div><p style="margin:10px 0 0"><span class="bt pri off">가입</span> <span class="bt">취소</span></p></div></div></div>
+</div>
+<p class="cap" style="color:var(--muted);font-size:16px">자리와 순서만 보이는 그림입니다(모양은 지금 가입 화면 그대로). 읽는 동안에는 지금처럼 로딩 표시.</p>
+<p>보지 못한 글에 동의하는 일이 생기지 않습니다. 다시 시도를 누르면 같은 판을 다시 읽습니다.</p>
+<p class="alt"><b>다른 선택:</b> 첫 화면으로 돌려보내고 "잠시 뒤 다시 로그인해 주세요" 알림. 지금 가입 화면이 판 번호를 못 받을 때 하는 방식(<code>SignupPage.tsx</code> 53행)과 같지만, 카카오 로그인부터 다시 해야 합니다.</p></div>
+</div>
+
+<div class="card"><h2><span class="num">3</span>바로 고친 것 (여쭙지 않음)</h2>
+<p class="gist">정해진 결정을 따라 문서만 맞춘 것입니다.</p>
+<table><tr><th>무엇</th><th>고친 내용</th></tr>
+<tr><td>모듈 시험</td><td>dev <code>ModularityTests</code>가 "auth는 다른 모듈을 쓰지 않음"을 검사함 → 인계서에 "auth는 sitecontent만" 으로 바꾸기를 적음(사이클 15도 같은 시험을 고침)</td></tr>
+<tr><td>가입 화면이 읽는 글</td><td>동의문만 적혀 있었음 → 이용약관 글도 같은 판 번호로 읽음</td></tr>
+<tr><td>이메일 누르면 메일 쓰기</td><td>서비스 안내·처리방침의 이메일을 링크 꼴(<code>&lt;chaekcheck9104@gmail.com&gt;</code>)로. 화면에 보이는 글자는 같음</td></tr>
+<tr><td>오류 응답</td><td>dev 방식(모듈마다 오류 처리 파일)에 맞춰 적음</td></tr>
+<tr><td>배포 전 seed 고치기</td><td>dev의 <code>PRE_DEPLOYMENT</code> 표시가 있는 동안만 허용됨을 적음(결정은 이미 2026-10-13 승인)</td></tr>
+<tr><td>사이클 17 방향</td><td>"2주 뒤 노트북"을 "크레딧·6개월 무렵 다시 봄"으로</td></tr>
+</table></div>
+<p class="foot">이 페이지는 요약이며 근거는 <code>docs/cycles/16-notices-and-policies/</code>의 design-delta.md·flow.md·drafts/privacy-policy.md와 사이클 15 spec.md에 있습니다.</p>
+</main></body></html>

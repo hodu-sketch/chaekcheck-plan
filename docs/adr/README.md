@@ -101,10 +101,10 @@
 | [ADR-0095](0095-lookup-egress-proxies-per-ip-browser-ua.md) | 서비스 대출 조회는 세 나가는 길(직접·업체 고정 IP 프록시·조회 서버)을 설정으로 고르고, 나가는 IP마다 따로 세며, 막힌 IP만 그 사이트에서 멈추고, 일반 브라우저 User-Agent로 보냄 (ADR-0011 일부·사이클 01 UA 식별을 서비스 조회에 한해 바꿈) | Proposed | 2026-10-13 | 사이클 밖 (배포 조사) |
 | [ADR-0096](0096-usage-log-storage-and-fields.md) | 사용자 행동 기록(검색·도서관 클릭·책 상세·더 보기·사서 추천 보기·지역/내 도서관 바꾸기·도서관 응답 하루 요약)은 같은 PostgreSQL 새 schema에, 지역·도서관·로그인 여부·IP 포함, IP는 30일·나머지 1년, 회원 번호·쿠키·User-Agent는 안 남김 (2026-10-12 조사의 "IP 안 남김"을 바꿈) | Accepted (2026-10-14) | 2026-10-13 | 15 |
 | [ADR-0097](0097-usagelog-module-and-write-path.md) | 기록 전용 모듈 `usagelog`, `catalog`·`availability`가 공개 창구 직접 호출(이벤트 안 씀), 5초 묶음 `batchUpdate`·비동기 커밋, 표 여덟, 사용 알림은 fetch keepalive + CSRF, IP는 `X-Real-IP` | Accepted (2026-10-14) | 2026-10-13 | 15 |
-| [ADR-0098](0098-sitecontent-module-versioned-documents.md) | 공지·서비스 안내·약관 글을 새 모듈 `sitecontent`가 DB에 판으로(판 순번, 지금 판 = 시행된 것 중 최대), 쓰기는 SQL, 고정 1쪽 위, 숨김은 남김 | Proposed | 2026-10-13 | 16 |
-| [ADR-0099](0099-signup-document-version-from-sitecontent.md) | 가입 문서 버전 원본을 서버 설정에서 `sitecontent`로, 동의 기록 = 판 순번, `auth → sitecontent` (사이클 05 제약 27 폐기, AC-18 변경) | Proposed | 2026-10-13 | 16 |
-| [ADR-0100](0100-privacy-policy-public-regardless-of-login.md) | 처리방침은 로그인 기능과 상관없이 공개 (사이클 05 제약 35 일부 변경) | Proposed | 2026-10-13 | 16 |
-| [ADR-0101](0101-terms-change-notice-or-reconsent.md) | 약관이 바뀔 때: 가벼우면 공지 + 시행일, 중요하면 다음 로그인 때 다시 동의(화면은 나중) | Proposed | 2026-10-13 | 16 |
+| [ADR-0098](0098-sitecontent-module-versioned-documents.md) | 공지·서비스 안내·약관 글을 새 모듈 `sitecontent`가 DB에 판으로(판 순번, 지금 판 = 시행된 것 중 최대), 쓰기는 SQL, 고정 1쪽 위, 숨김은 남김 | Accepted | 2026-10-13 | 16 |
+| [ADR-0099](0099-signup-document-version-from-sitecontent.md) | 가입 문서 버전 원본을 서버 설정에서 `sitecontent`로, 동의 기록 = 판 순번, `auth → sitecontent` (사이클 05 제약 27 폐기, AC-18 변경) | Accepted | 2026-10-13 | 16 |
+| [ADR-0100](0100-privacy-policy-public-regardless-of-login.md) | 처리방침은 로그인 기능과 상관없이 공개 (사이클 05 제약 35 일부 변경) | Accepted | 2026-10-13 | 16 |
+| [ADR-0101](0101-terms-change-notice-or-reconsent.md) | 약관이 바뀔 때: 가벼우면 공지 + 시행일, 중요하면 다음 로그인 때 다시 동의(화면은 나중) | Accepted | 2026-10-13 | 16 |
 | [ADR-0102](0102-access-cookie-api-v1-and-login-status-reader.md) | 액세스 토큰 쿠키 경로를 `/api/v1`로 넓히고, 로그인 상태 판별은 `auth`의 부품 하나에 모음 (만료돼도 서명 맞으면 로그인함, 로그인 꺼짐이면 쿠키를 보지 않음; ADR-0042의 액세스 쿠키 경로 부분을 바꿈) | Accepted (2026-10-14) | 2026-10-14 | 15 |
 | [ADR-0103](0103-production-server-layout.md) | 첫 운영 서버는 compose 한 벌(edge·app 네트워크), 비밀 값은 띄우기 스크립트가 Parameter Store에서, 지표는 별도 포트·Micrometer 카운터·접속 기록 exporter·cAdvisor, 백업은 수집 목록 빼고 Tunnel SSH로 받음 | Proposed | 2026-10-14 | 17 |
 | [ADR-0104](0104-first-deploy-host-ec2-credit-iam-role.md) | 첫 배포 호스트는 AWS EC2 t4g.medium(4GB·서울), 무료 크레딧으로 최대 6개월 운영, 비밀 값은 IAM 역할로 접근 키 없이(ADR-0103의 접근 키 전제를 이 호스트에서 대체) | Proposed | 2026-10-14 | 17 |
@@ -112,6 +112,6 @@
 | [ADR-0106](0106-grouping-step4-author-title-subtitle-split-volume-numbers.md) | 네 번째 묶기 단계 보완: 본제목이 저자 이름이면 전체 제목, 부제는 같은 도서관이 따로 가질 때만 나눔, 권 숫자는 권·판처럼 보이는 것만, 로마·한자 숫자, 꼬리 넷 (ADR-0082 보완) | Accepted | 2026-10-14 | 12 (회고) |
 | [ADR-0107](0107-library-insert-additions.md) | 넣기 명령 보탬: 새 곳 최종 주소 줄 필수, 확인한 사라진 곳 gone_known.tsv, 번호는 nextId()부터, 종료 5, 운영 반영은 같은 번호가 다른 도서관이면 멈춤 (ADR-0084·0085·0086 보완) | Accepted | 2026-10-14 | 13 (회고) |
 | [ADR-0108](0108-picks-twelve-recommendations-three-year-window.md) | 사서추천도서는 최근 12번(2년)을 보여 주고 요청 기간은 3년, 도움말에 12번(2년)과 추천 주기 (ADR-0089의 범위·기간 부분을 바꿈) | Accepted | 2026-10-14 | 14 (회고) |
-| [ADR-0109](0109-disable-libraries-by-liquibase.md) | 이미 켜진 도서관을 끄거나 다시 켤 때는 library 모듈의 새 Liquibase 변경 파일로 (내 PC·운영 같은 판, 반영 비교가 맞게) | Proposed | 2026-10-14 | 18 |
-| [ADR-0110](0110-library-insert-skips-zero-ebook-sites.md) | 새 도서관 넣기에서 가져오기와 같은 거르기 규칙으로 센 줄이 0이면 "전자책 0권"으로 뺌, 기존 이유 6개 다음, 묻지 않음 (ADR-0107 보완) | Proposed | 2026-10-14 | 18 |
-| [ADR-0111](0111-underscore-host-separate-request-path.md) | 호스트에 밑줄이 있는 도서관 주소: 가져오기는 collection 안의 밑줄 받는 읽기, 대출 조회·직접 찾기는 따로 만든 요청 길(SNI 없이, 인증서 검사 켬) | Proposed | 2026-10-14 | 18 |
+| [ADR-0109](0109-disable-libraries-by-liquibase.md) | 이미 켜진 도서관을 끄거나 다시 켤 때는 library 모듈의 새 Liquibase 변경 파일로 (내 PC·운영 같은 판, 반영 비교가 맞게) | Accepted | 2026-10-14 | 18 |
+| [ADR-0110](0110-library-insert-skips-zero-ebook-sites.md) | 새 도서관 넣기에서 가져오기와 같은 거르기 규칙으로 센 줄이 0이면 "전자책 0권"으로 뺌, 기존 이유 6개 다음, 묻지 않음 (ADR-0107 보완) | Accepted | 2026-10-14 | 18 |
+| [ADR-0111](0111-underscore-host-separate-request-path.md) | 호스트에 밑줄이 있는 도서관 주소: 가져오기는 collection 안의 밑줄 받는 읽기, 대출 조회·직접 찾기는 따로 만든 요청 길(SNI 없이, 인증서 검사 켬) | Accepted | 2026-10-14 | 18 |

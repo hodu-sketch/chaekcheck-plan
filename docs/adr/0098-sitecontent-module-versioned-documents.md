@@ -1,6 +1,6 @@
 # ADR-0098: 공지·서비스 안내·약관 글을 새 모듈 `sitecontent`가 DB에 판으로 둔다
 
-Status: Proposed
+Status: Accepted (사용자: "회고 15 플랜 세션이 주면 그거 반영해서 /cycle-close하고 dev가 할 수 있게 해줘", 2026-10-14 — 설계 확정, dev main 대조 뒤)
 Date: 2026-10-13
 Cycle: 16-notices-and-policies
 Supersedes: 없음
@@ -9,7 +9,7 @@ Supersedes: 없음
 공지사항 페이지가 필요했고, 서비스 안내·이용약관·개인정보 처리방침·가입 동의문 글이 웹 코드(`legalText.ts`, `AboutPage.tsx`)에 있어 고칠 때마다 배포해야 했다. 사용자는 이전 기록도 보이기를 원했다("서비스 안내 공지 모두 이전 기록이 보였으면 하는데 .."). 운영자는 한 사람이고, 글은 Claude가 대신 넣는다. 설계 확정은 사이클 12·13·14 회고 뒤 dev 코드(13·14가 바꾼 `/about`)와 맞춰 한다.
 
 ## 결정
-새 모듈 `sitecontent`(스키마 같은 이름)가 공지(`notice`, `notice_version`)와 네 문서(`document_version`: ABOUT, TERMS_OF_SERVICE, PRIVACY_POLICY, PRIVACY_COLLECTION)의 모든 판을 가진다. 고칠 때마다 글마다 1부터 붙는 판 순번으로 새 판을 넣고 옛 판은 지우지 않는다. 지금 판 = 시행일(게시일)이 오늘(Asia/Seoul) 이전인 판 중 순번 최대. 로그인 없이 읽는 REST(`/api/v1/notices`, `/api/v1/documents/{key}`)만 두고 쓰기는 SQL(Claude). 운영자 화면은 없다. 고정 공지는 1쪽 맨 위에만, 숨긴 공지는 지우지 않고 DB에 남긴다. 본문은 제한된 마크다운(`react-markdown`, HTML은 그리지 않음).
+새 모듈 `sitecontent`(스키마 같은 이름)가 공지(`notice`, `notice_version`)와 네 문서(`document_version`: ABOUT, TERMS_OF_SERVICE, PRIVACY_POLICY, PRIVACY_COLLECTION)의 모든 판을 가진다. 고칠 때마다 글마다 1부터 붙는 판 순번으로 새 판을 넣고 옛 판은 지우지 않는다. 지금 판 = 시행일(게시일)이 오늘(Asia/Seoul) 이전인 판 중 순번 최대. 로그인 없이 읽는 REST(`/api/v1/notices`, `/api/v1/documents/{key}`)만 두고 쓰기는 SQL(Claude). 운영자 화면은 없다. 고정 공지는 1쪽 맨 위에만, 숨긴 공지는 지우지 않고 DB에 남긴다. 본문은 제한된 마크다운(`react-markdown`, HTML은 그리지 않음). 동의문의 4항목(목적·항목·보유 기간·거부할 권리)은 `document_version.consent_items` jsonb 배열 하나에 두고 DB가 정확히 4개인지 검사한다(대안: 칸 4개, 본문 마크다운 표 — 칸 4개는 다른 문서에 빈 칸이 생기고, 표는 화면이 항목을 골라 그릴 수 없음).
 
 ## 이유 (사용자 발언)
 - DB + 읽기 API: "B. DB 표 + 읽기 API 이걸로 해주고" (2026-10-12)
@@ -17,7 +17,7 @@ Supersedes: 없음
 - 판 순번: "하루에 여러 공지가 날 수 있는데 이상한데 그냥 그 자체의 순번으로 하면 안돼?" (2026-10-13)
 - 숨긴 공지를 남김: "이전에 기록을 봤으면 해" (2026-10-13)
 - 고정 공지를 둠: 고정을 빼는 안에 "음..  보기 어려워" (2026-10-13)
-- 모듈 이름·표 구조·마크다운: 제안 → 승인 [이유 미확인]
+- 모듈 이름·표 구조·마크다운·4항목 jsonb: 제안 → 승인 [이유 미확인]
 
 ## 검토한 대안
 ### A안: 새 모듈, 공지 표 둘 + 문서 판 표 하나 (채택)
