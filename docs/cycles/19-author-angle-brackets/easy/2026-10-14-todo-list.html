@@ -15,32 +15,75 @@ main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
 h1,h2,h3{text-wrap:balance;line-height:1.35}
 p,li,td{text-wrap:pretty}
 .lead{font-size:28px;font-weight:700;margin:0 0 8px}
-.sub{color:var(--muted);margin:0 0 32px;font-size:18px}
+.sub{color:var(--muted);margin:0 0 24px;font-size:18px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
 .card h2{margin:0 0 14px;font-size:24px}
+.card h3{margin:26px 0 6px;font-size:20px;display:flex;align-items:center;gap:10px}
 .num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:#fff;font-size:18px;margin-right:10px}
+.dark .num{color:#16181c}
 .concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
 .tag{display:inline-block;font-size:15px;font-weight:700;border-radius:6px;padding:1px 8px;margin-right:6px;white-space:nowrap}
 .t-me{background:var(--ok-bg);color:var(--ok)}
 .t-you{background:var(--warn-bg);color:var(--warn)}
 .t-dev{background:var(--accent-bg);color:var(--accent)}
 .t-no{background:var(--no-bg);color:var(--no)}
-.items{list-style:none;padding:0;margin:0}
-.items li{display:flex;gap:14px;padding:14px 0;border-top:1px solid var(--line)}
-.items li:first-child{border-top:none}
-.items svg.ic{flex:0 0 30px;width:30px;height:30px;margin-top:4px;stroke:var(--accent);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.items b{display:block}
 .ex{color:var(--muted);font-size:18px}
 code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
-table{width:100%;border-collapse:collapse;font-size:18px}
-td,th{border-top:1px solid var(--line);padding:10px 8px;text-align:left;vertical-align:top}
-th{color:var(--muted);font-weight:500}
-.fig{margin:8px 0 6px;overflow-x:auto}
+.fig{margin:8px 0 6px}
 .fig svg{width:100%;max-width:640px;height:auto;display:block}
 .cap{color:var(--muted);font-size:17px;margin:4px 0 0}
-.theme{position:fixed;top:12px;right:12px;font:inherit;font-size:15px;padding:6px 12px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer}
+.theme{position:fixed;top:12px;right:12px;font:inherit;font-size:15px;padding:6px 12px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer;z-index:2}
 .foot{color:var(--muted);font-size:16px;margin-top:40px}
-@media (max-width:600px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+/* svg 공통 */
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxw{fill:var(--warn-bg);stroke:var(--warn);stroke-width:2;stroke-dasharray:6 4}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxd{fill:var(--card);stroke:var(--muted);stroke-width:2;stroke-dasharray:6 5}
+svg .now{fill:var(--accent-bg);stroke:var(--accent);stroke-width:3}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .lb18{font:500 18px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .big{font:700 20px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .gr{font:700 15px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .red{fill:var(--no);font-weight:700}
+svg .okt{fill:var(--ok);font-weight:700}
+svg .wt{fill:var(--warn);font-weight:700}
+svg .ar{stroke:var(--muted);stroke-width:2;fill:none}
+svg .arA{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .arD{stroke:var(--muted);stroke-width:2;fill:none;stroke-dasharray:5 4}
+svg .ah{fill:var(--muted)}
+svg .ahA{fill:var(--accent)}
+/* 진행 막대 */
+.prog{display:grid;grid-template-columns:auto 1fr auto;gap:10px 14px;align-items:center;font-size:18px;margin:0 0 30px}
+.bar{height:16px;border-radius:8px;background:var(--code-bg);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:8px}
+.prog .n{font-weight:700;white-space:nowrap}
+/* 가로 막대 그래프 */
+.hb{display:grid;grid-template-columns:minmax(120px,auto) 1fr;gap:8px 12px;align-items:center;font-size:17px;margin:12px 0 4px}
+.hb .b{height:26px;border-radius:6px;display:flex;align-items:center;padding:0 8px;color:#fff;font-size:15px;font-weight:700;white-space:nowrap;min-width:fit-content}
+.stack{display:flex;height:34px;border-radius:8px;overflow:hidden;font-size:15px;font-weight:700;color:#fff;margin:10px 0 4px}
+.stack span{display:flex;align-items:center;padding:0 10px;white-space:nowrap}
+/* 타일 */
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.tile{border:1px solid var(--line);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:6px}
+.tile svg.ic{width:44px;height:44px;stroke:var(--accent);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tile b{font-size:19px}
+.tile .why{margin-top:auto;font-size:16px;color:var(--muted);border-top:1px dashed var(--line);padding-top:8px}
+/* 백로그 세 칸 */
+.buckets{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.bucket{border-radius:12px;padding:16px;border:2px solid}
+.bucket.ok{border-color:var(--ok);background:var(--ok-bg)}
+.bucket.q{border-color:var(--warn);background:var(--warn-bg)}
+.bucket.no{border-color:var(--no);background:var(--no-bg)}
+.bucket h4{margin:0 0 10px;font-size:19px;display:flex;align-items:center;gap:8px}
+.bucket h4 svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.bucket.ok h4{color:var(--ok)}.bucket.q h4{color:var(--warn)}.bucket.no h4{color:var(--no)}
+.chip{background:var(--card);border-radius:8px;padding:10px 12px;margin:0 0 10px;font-size:17px;line-height:1.55}
+.chip:last-child{margin-bottom:0}
+.chip small{display:block;color:var(--muted);font-size:15px;margin-top:4px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}.tiles,.buckets{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -48,75 +91,181 @@ th{color:var(--muted);font-weight:500}
 <main>
 
 <p class="lead">지금 할 일은<br>"확인 넷 → 범위 확정 → 명세" 순서입니다.</p>
-<p class="sub">사이클 19는 같은 책이 여러 줄로 갈라져 보이는 원인 다섯 가지를 고칩니다. 고칠 방법은 거의 다 정해졌습니다. 남은 것은 숫자와 원인 확인, 그리고 범위 확정 한 번입니다. 실제 공개(사이클 17)는 이 사이클이 운영에 반영된 뒤입니다.</p>
+<p class="sub">사이클 19는 같은 책이 검색 결과에 여러 줄로 갈라져 보이는 원인 다섯 가지를 고칩니다. 실제 공개(사이클 17)는 이 사이클이 운영에 반영된 뒤입니다.</p>
+
+<div class="fig">
+<svg viewBox="0 0 640 230" role="img" aria-label="다섯 원인을 고쳐 같은 책을 한 줄로">
+<rect class="bxno" x="10" y="10" width="250" height="34" rx="8"/><text class="lb" x="24" y="33">① 꺾쇠로 감싼 저자 이름</text>
+<rect class="bxno" x="10" y="52" width="250" height="34" rx="8"/><text class="lb" x="24" y="75">② 저자 칸의 다른 사람 이름</text>
+<rect class="bxno" x="10" y="94" width="250" height="34" rx="8"/><text class="lb" x="24" y="117">③ 제목 앞 괄호</text>
+<rect class="bxno" x="10" y="136" width="250" height="34" rx="8"/><text class="lb" x="24" y="159">④ 띄어쓰기 빠진 역할 낱말</text>
+<rect class="bxno" x="10" y="178" width="250" height="34" rx="8"/><text class="lb" x="24" y="201">⑤ 뒤바뀐 저자·출판사</text>
+<path class="ar" d="M262 27 C330 27 340 112 395 112M262 69 C330 69 340 112 395 112M262 111 L395 112M262 153 C330 153 340 112 395 112M262 195 C330 195 340 112 395 112"/>
+<path class="ahA" d="M395 104 L410 112 L395 120Z"/>
+<rect class="bxok" x="414" y="72" width="216" height="80" rx="12"/>
+<text class="big" x="522" y="105" text-anchor="middle">같은 책은</text>
+<text class="big" x="522" y="134" text-anchor="middle">검색 결과 한 줄</text>
+</svg>
+</div>
+<p class="cap" style="margin-bottom:22px">왼쪽 다섯 가지 때문에 같은 책이 서로 다른 책으로 갈라집니다. 다섯 가지를 고치면 검색 결과에 한 줄로 모입니다.</p>
+
+<div class="prog">
+<span>고칠 방법 정하기</span><div class="bar"><i style="width:100%;background:var(--ok)"></i></div><span class="n" style="color:var(--ok)">5 / 5 끝</span>
+<span>확인하기</span><div class="bar"><i style="width:0"></i></div><span class="n" style="color:var(--warn)">0 / 4</span>
+<span>범위 확정</span><div class="bar"><i style="width:0"></i></div><span class="n" style="color:var(--warn)">0 / 1</span>
+<span>명세 → 인계서</span><div class="bar"><i style="width:0"></i></div><span class="n" style="color:var(--muted)">아직</span>
+</div>
 
 <div class="card">
-<h2><span class="num">1</span>사이클 19가 고치는 다섯 가지</h2>
-<p class="concl">다섯 가지 모두 "같은 책인데 검색 결과에 여러 줄로 나오는" 원인입니다. 고칠 방법은 모두 2026-10-14에 정했습니다.</p>
-<table>
-<tr><th>원인</th><th>예</th><th>정한 고치는 방법</th></tr>
-<tr><td>저자 이름을 꺾쇠로 감쌈</td><td>「&lt;김정은&gt;,&lt;김지혜&gt; 저」</td><td>꺾쇠를 떼고 「김정은」으로 읽음. 〈 〉, 《 》도 실제로 쓰였으면 같이 뗌</td></tr>
-<tr><td>저자 칸에 다른 사람 이름</td><td>「백만장자 마인드」 저자 「김근아 저자」</td><td>먼저 어떤 줄인지 확인. 공급사 상품 코드가 같으면 저자를 보지 않고 모음, 아니면 같은 날·제목·출판사면 모음</td></tr>
-<tr><td>제목 앞 괄호</td><td>「(부를 끌어 당기는) 백만장자 마인드」</td><td>같은 책인지 견줄 때만 앞 괄호를 뗌. (만화)·(큰글자책)·(영문판)·(오디오북) 같은 책 종류 괄호는 남김. 화면 제목·검색은 그대로</td></tr>
-<tr><td>역할 낱말 뒤 띄어쓰기 빠짐</td><td>「루이스 캐럴 저이소연 역」</td><td>「저·지음·글 + 한글 2~4자 + 역·옮김·그림」 모양만 자름. 앞에 역할 낱말이 따로 적혀 있으면 자르지 않음</td></tr>
-<tr><td>저자와 출판사가 통째로 뒤바뀜</td><td>저자 「율리시즈」, 출판사 「모리세 시게토모」</td><td>전북특별자치도교육청·경기도교육청·대구 전자도서관 세 곳. 가져올 때 두 칸을 바꿔 읽고, 수집기도 고침</td></tr>
-</table>
-<p class="cap">책 상세 화면의 저자 칸에는 꺾쇠를 뗀 이름이 보이게 합니다. 화면에서 바뀌는 곳은 이것뿐입니다.</p>
+<h2><span class="num">1</span>다섯 가지가 고치면 어떻게 바뀌나</h2>
+<p class="concl">모두 「백만장자 마인드」 같은 실제 예입니다. 빨간 글자가 같은 책을 갈라 놓는 부분입니다. 고칠 방법은 모두 2026-10-14에 정했습니다.</p>
+
+<h3>① 꺾쇠로 감싼 저자 이름</h3>
+<div class="fig"><svg viewBox="0 0 640 160" role="img" aria-label="꺾쇠 저자">
+<text class="gr" x="10" y="18">지금: 저자 칸이 다른 두 줄</text><text class="gr" x="420" y="18">고친 뒤</text>
+<rect class="bx" x="10" y="28" width="370" height="50" rx="8"/><text class="lb18" x="24" y="60">모리세 시게토모</text>
+<rect class="bx" x="10" y="92" width="370" height="50" rx="8"/><text class="lb18" x="24" y="124"><tspan class="red">&lt;</tspan>모리세 시게토모<tspan class="red">&gt;</tspan> 저/<tspan class="red">&lt;</tspan>이민연<tspan class="red">&gt;</tspan> 역</text>
+<path class="arA" d="M386 85 H410"/><path class="ahA" d="M408 78 L420 85 L408 92Z"/>
+<rect class="bxok" x="424" y="52" width="206" height="66" rx="10"/><text class="lb18" x="527" y="80" text-anchor="middle">모리세 시게토모</text><text class="lb" x="527" y="104" text-anchor="middle"><tspan class="okt">한 줄</tspan></text>
+</svg></div>
+<p class="cap">꺾쇠를 떼고 읽습니다. 〈 〉, 《 》도 저자 칸에 실제로 쓰였으면 같이 뗍니다(얼마나 쓰였는지는 아직 셈 전). 책 상세 화면 저자 칸에도 뗀 이름이 보입니다.</p>
+
+<h3>② 저자 칸에 적힌 다른 사람 이름</h3>
+<div class="fig"><svg viewBox="0 0 640 160" role="img" aria-label="다른 이름 저자">
+<text class="gr" x="10" y="18">지금: 같은 날 등록된 두 줄</text><text class="gr" x="420" y="18">고친 뒤</text>
+<rect class="bx" x="10" y="28" width="370" height="50" rx="8"/><text class="lb18" x="24" y="60">&lt;모리세 시게토모&gt; 저/&lt;이민연&gt; 역</text>
+<rect class="bx" x="10" y="92" width="370" height="50" rx="8"/><text class="lb18" x="24" y="124"><tspan class="red">김근아 저자</tspan></text>
+<path class="arA" d="M386 85 H410"/><path class="ahA" d="M408 78 L420 85 L408 92Z"/>
+<rect class="bxw" x="424" y="44" width="206" height="82" rx="10"/><text class="lb" x="527" y="72" text-anchor="middle"><tspan class="wt">먼저 확인</tspan></text><text class="lb" x="527" y="96" text-anchor="middle">상품 코드나 날짜·제목·</text><text class="lb" x="527" y="116" text-anchor="middle">출판사가 같으면 한 줄</text>
+</svg></div>
+<p class="cap">국가서지에는 지은이 모리세 시게토모, 옮긴이 이민연뿐이고 김근아는 없습니다. 어떤 줄인지 먼저 확인한 뒤, 정해 둔 두 방법 중 하나로 모읍니다.</p>
+
+<h3>③ 제목 앞 괄호</h3>
+<div class="fig"><svg viewBox="0 0 640 190" role="img" aria-label="제목 앞 괄호">
+<text class="gr" x="10" y="18">지금: 제목 칸이 다른 두 줄</text><text class="gr" x="420" y="18">고친 뒤</text>
+<rect class="bx" x="10" y="28" width="370" height="50" rx="8"/><text class="lb18" x="24" y="60">백만장자 마인드</text>
+<rect class="bx" x="10" y="92" width="370" height="50" rx="8"/><text class="lb18" x="24" y="124"><tspan class="red">(부를 끌어 당기는)</tspan> 백만장자 마인드</text>
+<path class="arA" d="M386 85 H410"/><path class="ahA" d="M408 78 L420 85 L408 92Z"/>
+<rect class="bxok" x="424" y="44" width="206" height="82" rx="10"/><text class="lb" x="527" y="74" text-anchor="middle">같은 책인지 견줄 때만</text><text class="lb" x="527" y="96" text-anchor="middle">괄호를 떼고 비교</text><text class="lb" x="527" y="118" text-anchor="middle"><tspan class="okt">한 줄</tspan></text>
+<rect class="bxa" x="10" y="152" width="620" height="32" rx="8"/><text class="lb" x="24" y="174">단, 「(만화) 삼국지」처럼 책 종류를 적은 괄호는 그대로 둠 → 따로 남음</text>
+</svg></div>
+<p class="cap">화면에 보이는 제목과 제목 검색은 바뀌지 않습니다. 남겨 둘 책 종류 낱말((만화)·(큰글자책)·(영문판)·(오디오북) 등)의 목록은 확인 뒤 같이 정합니다.</p>
+
+<h3>④ 띄어쓰기 빠진 역할 낱말</h3>
+<div class="fig"><svg viewBox="0 0 640 160" role="img" aria-label="붙은 역할 낱말">
+<text class="gr" x="10" y="18">지금: 한 사람으로 읽힘</text><text class="gr" x="420" y="18">고친 뒤: 두 사람</text>
+<rect class="bx" x="10" y="55" width="370" height="54" rx="8"/><text class="lb18" x="24" y="88">루이스 캐럴 <tspan class="red">저이소연</tspan> 역</text>
+<path class="arA" d="M386 82 H410"/><path class="ahA" d="M408 75 L420 82 L408 89Z"/>
+<rect class="bxok" x="424" y="30" width="206" height="46" rx="10"/><text class="lb" x="527" y="59" text-anchor="middle">루이스 캐럴 · 지은이</text>
+<rect class="bxok" x="424" y="90" width="206" height="46" rx="10"/><text class="lb" x="527" y="119" text-anchor="middle">이소연 · 옮긴이</text>
+</svg></div>
+<p class="cap">지금은 「루이스 캐럴 저이소연」이 옮긴이 한 사람으로 읽혀, 저자 "루이스 캐럴"로 찾아도 이 책이 안 나옵니다. 「저·지음·글 + 한글 2~4자 + 역·옮김·그림」 모양만 자릅니다.</p>
+<div class="stack" role="img" aria-label="1,303줄 중 1,264줄 자름, 39줄 보호">
+<span style="flex:1264;background:var(--ok)">1,264줄 자름</span><span style="flex:39;background:var(--warn);padding:0 4px"></span>
+</div>
+<p class="cap">수집 사본(2026-10-12)에서 이 모양에 걸린 1,303줄 중 노란 39줄(「발터 글라소프」 같은 외국 이름)은 자르지 않습니다. 앞에 역할 낱말이 따로 적혀 있으면 자르지 않는 보호 규칙 덕분입니다.</p>
+
+<h3>⑤ 저자와 출판사가 통째로 뒤바뀐 도서관 셋</h3>
+<div class="fig"><svg viewBox="0 0 640 150" role="img" aria-label="저자 출판사 뒤바뀜">
+<text class="gr" x="10" y="18">지금</text><text class="gr" x="420" y="18">고친 뒤</text>
+<rect class="bx" x="10" y="28" width="370" height="44" rx="8"/><text class="sm" x="24" y="56">저자</text><text class="lb18" x="80" y="57"><tspan class="red">율리시즈</tspan></text>
+<rect class="bx" x="10" y="84" width="370" height="44" rx="8"/><text class="sm" x="24" y="112">출판사</text><text class="lb18" x="80" y="113"><tspan class="red">모리세 시게토모</tspan></text>
+<path class="arA" d="M386 50 L410 104M386 104 L410 50"/>
+<rect class="bxok" x="424" y="28" width="206" height="44" rx="8"/><text class="sm" x="436" y="56">저자</text><text class="lb" x="480" y="56">모리세 시게토모</text>
+<rect class="bxok" x="424" y="84" width="206" height="44" rx="8"/><text class="sm" x="436" y="112">출판사</text><text class="lb" x="490" y="112">율리시즈</text>
+</svg></div>
+<p class="cap">한 줄씩 틀린 게 아니라 아래 세 도서관이 거의 모든 줄을 뒤바꿔 넣었습니다(수집 사본 실험). 가져올 때 두 칸을 바꿔 읽고, 수집기도 고칩니다.</p>
+<div class="hb">
+<span>전북특별자치도교육청</span><div class="b" style="width:100%;background:var(--no)">63,660줄</div>
+<span>경기도교육청</span><div class="b" style="width:42.8%;background:var(--no)">27,251줄</div>
+<span>대구전자도서관</span><div class="b" style="width:20.1%;background:var(--no)">12,768줄</div>
+</div>
+<p class="cap">같은 방식의 다른 네 곳(부산·강원·인천·경북)은 바르게 들어와 있었습니다.</p>
 </div>
 
 <div class="card">
 <h2><span class="num">2</span>좁게: 제가 지금 바로 확인할 것 넷</h2>
-<p class="concl">넷 다 결정이 필요 없는 확인입니다. 결과가 나오면 명세에 숫자로 들어갑니다. dev 프로젝트는 고치지 않고 읽기만 합니다.</p>
-<ul class="items">
-<li><svg class="ic" viewBox="0 0 24 24"><path d="M8 4 3 12l5 8M16 4l5 8-5 8"/></svg><div><b><span class="tag t-me">Claude</span>다른 괄호 수 세기</b>저자 칸에 〈 〉, 《 》가 실제로 몇 줄 있는지 셉니다. 2026-10-12 수집 사본을 읽기만 합니다.<div class="ex">있으면 꺾쇠와 같이 떼고, 없으면 규칙에 넣지 않습니다.</div></div></li>
-<li><svg class="ic" viewBox="0 0 24 24"><path d="M9 4C6 7 6 17 9 20M15 4c3 3 3 13 0 16"/></svg><div><b><span class="tag t-me">Claude</span>제목 앞 괄호에 어떤 낱말이 오는지 세기</b>「(만화) …」, 「(개정판) …」처럼 제목 앞 괄호에 오는 낱말을 많은 순으로 뽑습니다.<div class="ex">여기서 "떼지 않을 책 종류 낱말 목록" 안이 나옵니다. 이 목록은 같이 정합니다(3번).</div></div></li>
-<li><svg class="ic" viewBox="0 0 24 24"><path d="M4 7h11M4 7l3-3M4 7l3 3M20 17H9m11 0-3-3m3 3-3 3"/></svg><div><b><span class="tag t-me">Claude</span>세 도서관이 왜 뒤바뀌었는지</b>수집기 코드에서 그 세 사이트의 저자·출판사 칸을 읽는 곳을 찾아, 사이트 칸 순서 탓인지 수집기 탓인지 확인합니다.<div class="ex">수집기를 어떻게 고칠지 인계서에 적으려면 필요합니다.</div></div></li>
-<li><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5"/></svg><div><b><span class="tag t-me">Claude</span>「김근아 저자」 줄이 무엇인지</b>수집 사본에서 그 줄의 도서관·공급사·상품 코드·상세 주소를 찾고, 상세 주소를 브라우저로 열어 표지·소개 글을 꺾쇠 줄과 비교합니다.<div class="ex">결과에 따라 이미 정한 두 방법(코드가 같으면 모음 / 같은 날·제목·출판사면 모음) 중 하나로 갑니다.</div></div></li>
-</ul>
+<p class="concl">넷 다 결정이 필요 없는 확인입니다. 결과는 명세에 숫자로 들어갑니다. dev 프로젝트는 읽기만 합니다.</p>
+<div class="tiles">
+<div class="tile">
+<svg class="ic" viewBox="0 0 24 24"><path d="M8 4 3 12l5 8M16 4l5 8-5 8"/></svg>
+<span><span class="tag t-me">Claude</span></span>
+<b>다른 괄호 수 세기</b>
+<span>저자 칸에 〈 〉, 《 》가 몇 줄 있는지 수집 사본에서 셉니다.</span>
+<span class="why">→ ①에서 같이 뗄지 정해짐</span>
+</div>
+<div class="tile">
+<svg class="ic" viewBox="0 0 24 24"><path d="M9 4C6 7 6 17 9 20M15 4c3 3 3 13 0 16M4 9h3M4 15h3"/></svg>
+<span><span class="tag t-me">Claude</span></span>
+<b>제목 앞 괄호 낱말 세기</b>
+<span>「(만화)…」, 「(개정판)…」처럼 앞 괄호에 오는 낱말을 많은 순으로 뽑습니다.</span>
+<span class="why">→ ③의 "남겨 둘 낱말 목록" 안이 나옴</span>
+</div>
+<div class="tile">
+<svg class="ic" viewBox="0 0 24 24"><path d="M4 7h11M4 7l3-3M4 7l3 3M20 17H9m11 0-3-3m3 3-3 3"/></svg>
+<span><span class="tag t-me">Claude</span></span>
+<b>세 도서관이 뒤바뀐 원인</b>
+<span>수집기 코드에서 그 사이트의 저자·출판사 칸을 읽는 곳을 찾습니다.</span>
+<span class="why">→ ⑤ 수집기 고칠 곳을 인계서에 적음</span>
+</div>
+<div class="tile">
+<svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5"/></svg>
+<span><span class="tag t-me">Claude</span></span>
+<b>「김근아 저자」 줄 확인</b>
+<span>그 줄의 도서관·상품 코드·상세 주소를 찾고, 상세 화면을 브라우저로 열어 꺾쇠 줄과 비교합니다.</span>
+<span class="why">→ ②의 두 방법 중 어느 쪽인지 정해짐</span>
+</div>
+</div>
 </div>
 
 <div class="card">
 <h2><span class="num">3</span>좁게: 같이 정할 것</h2>
-<p class="concl">지금 당장 정할 것은 하나입니다. 나머지는 확인 결과가 나오면 결정 페이지로 묻겠습니다.</p>
-<ul class="items">
-<li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12l4 4 10-10"/></svg><div><b><span class="tag t-you">지금</span>범위 #6 "이 범위로 명세 시작"</b>범위 페이지의 마지막 질문이 답 없이 닫혔습니다. 그 뒤 범위가 원인 다섯 가지로 넓어졌으니 다시 묻습니다.<div class="ex">승인하면 확인 넷을 끝내고 바로 명세를 씁니다.</div></div></li>
-<li><svg class="ic" viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h7"/></svg><div><b><span class="tag t-you">확인 뒤</span>떼지 않을 책 종류 낱말 목록</b>2번 둘째 확인 결과를 보고 정합니다.</div></li>
-<li><svg class="ic" viewBox="0 0 24 24"><path d="M3 12h18M12 3v18"/></svg><div><b><span class="tag t-you">확인 뒤</span>백로그에서 같이 넣을 것</b>4번 카드의 후보 둘을 넣을지 정합니다.</div></li>
-</ul>
+<p class="concl">지금 당장 정할 것은 범위 #6 하나입니다. 이것과 확인 넷이 끝나면 명세를 씁니다.</p>
+<div class="fig"><svg viewBox="0 0 640 170" role="img" aria-label="명세 시작 조건">
+<rect class="bxa" x="10" y="14" width="300" height="56" rx="10"/><text class="lb18" x="28" y="40">확인 넷</text><text class="sm" x="28" y="60">Claude가 혼자 함</text>
+<rect class="bxw" x="10" y="96" width="300" height="56" rx="10"/><text class="lb18" x="28" y="122">범위 #6 "이 범위로 명세 시작"</text><text class="sm" x="28" y="142">같이 정함 (다섯 가지로 넓어진 범위)</text>
+<path class="ar" d="M312 42 C380 42 380 83 430 83M312 124 C380 124 380 83 430 83"/><path class="ah" d="M428 76 L442 83 L428 90Z"/>
+<rect class="bxok" x="446" y="50" width="184" height="66" rx="12"/><text class="big" x="538" y="91" text-anchor="middle">명세 시작</text>
+</svg></div>
+<p class="cap">범위 페이지의 마지막 질문(#6)은 답 없이 닫혔고, 그 뒤 범위가 원인 다섯 가지로 넓어져 다시 묻습니다. 남겨 둘 책 종류 낱말 목록과 백로그 후보 둘(4번 카드)은 확인 결과를 보고 결정 페이지로 묻겠습니다.</p>
 </div>
 
 <div class="card">
-<h2><span class="num">4</span>넓게: 백로그에서 이 사이클과 닿는 것</h2>
-<p class="concl">백로그에서 사이클 19와 같은 곳을 건드리는 것은 여섯 가지입니다. 하나는 이미 같이 하기로 정했고, 둘은 넣을지 물을 후보, 셋은 이번에 안 합니다.</p>
-<table>
-<tr><th>백로그 항목</th><th>판단</th></tr>
-<tr><td>가져오기 설정 이름 <code>exclude-candidate-libraries</code>를 새 이름으로 바꾸기</td><td><span class="tag t-dev">함께</span>"다음에 가져오기 코드를 고치는 dev 일 때 함께"로 이미 정함(사이클 13 회고). 인계서에 한 줄 넣습니다</td></tr>
-<tr><td>역할 낱말이 연달아 붙은 저자 칸<br><span class="ex">「마키타 겐지 저전선영 역강재헌 감수」</span></td><td><span class="tag t-you">후보</span>159가지·12,370줄로 셌지만 실제로 잘못 읽히는 줄 수는 아직 모름. 제가 표본을 보고 수를 가져와 넣을지 묻겠습니다</td></tr>
-<tr><td>도서관 사이트에서 직접 찾을 때 저자 "정확히 일치"로 「김달 저」, 「김달 지음」 줄이 빠짐 (사이클 03 회고)</td><td><span class="tag t-you">후보</span>저자 표기 문제라 닮았지만 지금도 남아 있는 문제인지 확인하지 못했습니다. 지금 코드에서 확인한 뒤 묻겠습니다</td></tr>
-<tr><td>괄호 없이 수식어를 붙인 제목<br><span class="ex">「부를 끌어 당기는 백만장자 마인드」</span></td><td><span class="tag t-no">안 함</span>같은 책 키를 둘 두면 잘못 합쳐지는 책이 이어서 늘어나 이번엔 넣지 않기로 함</td></tr>
-<tr><td>판이 다른데 ISBN이 없는 책 나누기<br><span class="ex">「이상한 나라의 앨리스」 2010 주해판 / 2020 동화 에디션</span></td><td><span class="tag t-no">안 함</span>사용자: "규칙 더하지 않음". 잘못 합침 신고가 늘면 다시 봄</td></tr>
-<tr><td>책은 있는데 보이는 소장 도서관이 0곳인 책 (「묘왕동주」)</td><td><span class="tag t-no">안 함</span>저자 정리와 원인이 다름</td></tr>
-</table>
+<h2><span class="num">4</span>넓게: 백로그에서 이 사이클과 닿는 여섯 가지</h2>
+<p class="concl">하나는 이미 같이 하기로 정했고, 둘은 넣을지 물을 후보, 셋은 이번에 안 합니다.</p>
+<div class="buckets">
+<div class="bucket ok"><h4><svg viewBox="0 0 24 24"><path d="M5 12l4 4 10-10"/></svg>함께 함</h4>
+<div class="chip">가져오기 설정 이름 <code>exclude-candidate-libraries</code> 바꾸기<small>"다음에 가져오기 코드를 고치는 dev 일 때 함께"로 이미 정함 (사이클 13 회고). 인계서에 한 줄</small></div>
+</div>
+<div class="bucket q"><h4><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5V14M12 17.5v.01"/></svg>넣을지 물음</h4>
+<div class="chip">역할 낱말이 연달아 붙은 저자 칸<small>「마키타 겐지 저전선영 역강재헌 감수」. 159가지·12,370줄로 셌지만 실제로 잘못 읽히는 수는 모름 → 표본 보고 물음</small></div>
+<div class="chip">사이트에서 직접 찾을 때 「김달 저」 줄이 빠짐<small>사이클 03 회고. 지금도 남은 문제인지 확인 못 함 → 코드 확인 뒤 물음</small></div>
+</div>
+<div class="bucket no"><h4><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>이번엔 안 함</h4>
+<div class="chip">괄호 없이 수식어 붙은 제목<small>같은 책 키를 둘 두면 잘못 합침이 이어서 늘어남</small></div>
+<div class="chip">판이 다른데 ISBN 없는 책 나누기<small>사용자: "규칙 더하지 않음"</small></div>
+<div class="chip">소장 도서관 0곳으로 보이는 책<small>저자 정리와 원인이 다름</small></div>
+</div>
+</div>
 </div>
 
 <div class="card">
 <h2><span class="num">5</span>넓게: 사이클 19가 끝나기까지 전체 순서</h2>
-<p class="concl">이 세션(plan)이 할 일은 명세·화면·설계·인계서까지입니다. 그 뒤 dev가 고치고, 책 목록을 다시 가져와 운영에 반영해야 사이클 17이 실제로 공개됩니다.</p>
+<p class="concl">이 세션이 할 일은 ①~⑤입니다. 그 뒤 dev가 고치고 책 목록을 다시 가져와 운영에 반영해야 사이클 17이 실제로 공개됩니다.</p>
 <div class="fig">
 <svg viewBox="0 0 640 590" role="img" aria-label="사이클 19 전체 순서">
-<style>.bx{fill:var(--card);stroke:var(--accent);stroke-width:2}.bxd{fill:var(--card);stroke:var(--muted);stroke-width:2;stroke-dasharray:6 5}.now{fill:var(--accent-bg);stroke:var(--accent);stroke-width:3}.lb{font:500 18px "Noto Sans KR",sans-serif;fill:var(--text)}.gr{font:700 16px "Noto Sans KR",sans-serif;fill:var(--muted)}.ar{stroke:var(--muted);stroke-width:2}</style>
 <text class="gr" x="10" y="20">plan (이 세션)</text>
-<rect class="now" x="10" y="30" width="620" height="40" rx="8"/><text class="lb" x="26" y="56">① 확인 넷 + 범위 확정 ← 지금</text>
-<rect class="bx" x="10" y="84" width="620" height="40" rx="8"/><text class="lb" x="26" y="110">② 명세: 지켜야 할 규칙과 통과 기준</text>
-<rect class="bx" x="10" y="138" width="620" height="40" rx="8"/><text class="lb" x="26" y="164">③ 화면 흐름: 책 상세 저자 칸 표시만</text>
-<rect class="bx" x="10" y="192" width="620" height="40" rx="8"/><text class="lb" x="26" y="218">④ 설계 변경 + 결정 기록(ADR)</text>
-<rect class="bx" x="10" y="246" width="620" height="40" rx="8"/><text class="lb" x="26" y="272">⑤ 검토 + 인계서(dev에게 넘길 단계 목록)</text>
+<rect class="now" x="10" y="30" width="620" height="40" rx="8"/><text class="lb18" x="26" y="56">① 확인 넷 + 범위 확정 ← 지금</text>
+<rect class="bxa" x="10" y="84" width="620" height="40" rx="8"/><text class="lb18" x="26" y="110">② 명세: 지켜야 할 규칙과 통과 기준</text>
+<rect class="bxa" x="10" y="138" width="620" height="40" rx="8"/><text class="lb18" x="26" y="164">③ 화면 흐름: 책 상세 저자 칸 표시만</text>
+<rect class="bxa" x="10" y="192" width="620" height="40" rx="8"/><text class="lb18" x="26" y="218">④ 설계 변경 + 결정 기록(ADR)</text>
+<rect class="bxa" x="10" y="246" width="620" height="40" rx="8"/><text class="lb18" x="26" y="272">⑤ 검토 + 인계서(dev에게 넘길 단계 목록)</text>
 <text class="gr" x="10" y="318">dev 프로젝트</text>
-<rect class="bxd" x="10" y="328" width="620" height="40" rx="8"/><text class="lb" x="26" y="354">⑥ 저자·제목 정리 규칙과 수집기 고치기</text>
-<rect class="bxd" x="10" y="382" width="620" height="40" rx="8"/><text class="lb" x="26" y="408">⑦ 내 PC에서 책 목록 다시 가져오기, 사이클 12 숫자와 비교</text>
+<rect class="bxd" x="10" y="328" width="620" height="40" rx="8"/><text class="lb18" x="26" y="354">⑥ 저자·제목 정리 규칙과 수집기 고치기</text>
+<rect class="bxd" x="10" y="382" width="620" height="40" rx="8"/><text class="lb18" x="26" y="408">⑦ 내 PC에서 책 목록 다시 가져오기, 사이클 12 숫자와 비교</text>
 <text class="gr" x="10" y="454">운영</text>
-<rect class="bxd" x="10" y="464" width="620" height="40" rx="8"/><text class="lb" x="26" y="490">⑧ 운영 DB에 반영 → 서비스를 새 코드로 다시 켬</text>
-<rect class="bxd" x="10" y="518" width="620" height="40" rx="8"/><text class="lb" x="26" y="544">⑨ 사이클 17 실제 공개</text>
+<rect class="bxd" x="10" y="464" width="620" height="40" rx="8"/><text class="lb18" x="26" y="490">⑧ 운영 DB에 반영 → 서비스를 새 코드로 다시 켬</text>
+<rect class="bxd" x="10" y="518" width="620" height="40" rx="8"/><text class="lb18" x="26" y="544">⑨ 사이클 17 실제 공개</text>
 </svg>
 </div>
 <p class="cap">굵은 칸이 지금 단계, 점선은 이 세션 밖에서 일어나는 일입니다. ⑦에서 사서추천 맞춘 수(지금 108권 중 72권)도 다시 잽니다.</p>
@@ -124,14 +273,21 @@ th{color:var(--muted);font-weight:500}
 
 <div class="card">
 <h2><span class="num">6</span>넓게: 옆 사이클과 순서가 맞물리는 곳</h2>
-<p class="concl">사이클 19는 사이클 17 공개를 막고 있고, 사이클 18의 가져오기 고침보다 먼저 들어가야 합니다.</p>
-<table>
-<tr><th>사이클</th><th>맞물리는 곳</th></tr>
-<tr><td>17 첫 배포</td><td>배포 준비는 먼저 진행. 실제 공개는 19 반영 뒤 (사용자: "사이클 17이 먼저지만 실제 배포는 나중에 해도 되니까")</td></tr>
-<tr><td>18 소장이 빈 도서관</td><td>18의 가져오기 고침(B)은 19가 dev에 합쳐진 뒤. 같은 가져오기 코드를 고치므로 파일이 겹치면 순서를 맞춤</td></tr>
-<tr><td>14 사서추천</td><td>저자 비교 규칙이 바뀌어 맞춘 수가 달라짐 → 반영 뒤 다시 잼</td></tr>
-<tr><td>12 책 묶기</td><td>묶기 규칙은 그대로 두고 저자 정리만 바꿈. 바뀐 결과를 12의 기준값(책 1,563,167권 등)과 비교</td></tr>
-</table>
+<p class="concl">사이클 19는 사이클 17 공개보다 먼저, 사이클 18의 가져오기 고침보다도 먼저 들어가야 합니다.</p>
+<div class="fig"><svg viewBox="0 0 640 330" role="img" aria-label="옆 사이클과의 순서">
+<rect class="bx" x="10" y="14" width="220" height="56" rx="10"/><text class="lb" x="24" y="38">17 배포 준비</text><text class="sm" x="24" y="58">먼저 진행 중</text>
+<rect class="bxw" x="410" y="14" width="220" height="56" rx="10"/><text class="lb" x="424" y="38">17 실제 공개</text><text class="sm" x="424" y="58">19 반영을 기다림</text>
+<path class="arD" d="M232 42 H398"/><path class="ah" d="M396 35 L408 42 L396 49Z"/>
+<rect class="now" x="210" y="134" width="220" height="62" rx="12"/><text class="big" x="320" y="162" text-anchor="middle">19 반영</text><text class="sm" x="320" y="184" text-anchor="middle">dev 합침 → 운영 반영</text>
+<path class="arA" d="M400 132 L500 74"/><path class="ahA" d="M494 70 L509 69 L501 82Z"/>
+<rect class="bx" x="10" y="262" width="220" height="56" rx="10"/><text class="lb" x="24" y="286">18 가져오기 고침(B)</text><text class="sm" x="24" y="306">19가 dev에 합쳐진 뒤</text>
+<path class="arA" d="M250 198 L150 258"/><path class="ahA" d="M148 250 L142 263 L156 262Z"/>
+<rect class="bx" x="410" y="262" width="220" height="56" rx="10"/><text class="lb" x="424" y="286">14 사서추천</text><text class="sm" x="424" y="306">맞춘 수 다시 잼</text>
+<path class="arA" d="M390 198 L490 258"/><path class="ahA" d="M484 262 L498 263 L492 250Z"/>
+<rect class="bx" x="10" y="140" width="160" height="50" rx="10"/><text class="lb" x="24" y="164">12 기준값</text><text class="sm" x="24" y="182">책 1,563,167권 등</text>
+<path class="arD" d="M208 165 H176"/><text class="sm" x="176" y="128">비교</text>
+</svg></div>
+<p class="cap">17 공개 순서는 사용자 말 그대로입니다: "사이클 17이 먼저지만 실제 배포는 나중에 해도 되니까". 12의 묶기 규칙은 그대로 두고, 바뀐 결과만 12의 숫자와 견줍니다.</p>
 </div>
 
 <p class="foot">이 글은 요약이며 근거는 원본 <code>handover-from-15.md</code>, <code>scope.md</code>, <code>research.md</code>, <code>docs/backlog.md</code>에 있습니다. 2026-10-14.</p>
