@@ -2,5 +2,5 @@
 
 | 파일 | 설명하는 것 | 원문 | 남은 결정 |
 |---|---|---|---|
-| [2026-10-14-scope-decisions.html](2026-10-14-scope-decisions.html) | 사이클 18 범위: 목표, 볼 도서관, 원인별 처리, 화면 그대로, 국회·군포·김천, 교보 구독형 서버, 다른 사이클과 순서, 1차 조사, 폴더 이름 | `../scope.md` | 10개 |
+| [2026-10-14-scope-decisions.html](2026-10-14-scope-decisions.html) | 사이클 18 범위: 목표, 볼 도서관, 원인별 처리, 화면 그대로, 국회·군포·김천, 교보 구독형 서버, 다른 사이클과 순서, 1차 조사, 폴더 이름 | `../scope.md` | 결정됨: 10개 모두 승인 (2026-10-14) |
 | [2026-10-14-scope-decisions-artifact.html](2026-10-14-scope-decisions-artifact.html) | 위 페이지의 claude.ai 비공개 페이지판 (밖에서 열어 고르기, 저장 버튼). 올린 주소 https://claude.ai/artifact/U1iQNTmwu8cCbEaioqDDqr. 이 파일은 기록용 사본이고 저장 버튼은 claude.ai에서만 동작 | `../scope.md` | 위와 같음 |
