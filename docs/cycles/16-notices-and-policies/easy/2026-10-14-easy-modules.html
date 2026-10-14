@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>공지·약관 모듈</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+.flow{display:grid;gap:10px;margin:10px 0 16px}.lane{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--card)}.lane b{display:block;margin-bottom:4px}.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{font-size:14px;border-radius:6px;padding:2px 8px;background:var(--code-bg)}.chip.new{background:var(--warn-bg)}.chip.dev{background:var(--ok-bg)}.arrow{text-align:center;color:var(--muted);font-size:18px;line-height:1}
+</style>
+<style>.steps{display:grid;gap:8px;margin:12px 0}.st{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:10px 14px;background:var(--card);font-size:18px}.st b{flex:none;min-width:5.5em;color:var(--accent)}.st.bad{border-color:var(--no);background:var(--no-bg)}.st.ok{border-color:var(--ok);background:var(--ok-bg)}.arr{text-align:center;color:var(--muted);line-height:1}.tb{border:2px solid var(--accent);border-radius:10px;background:var(--card);margin:10px 0;overflow:hidden}.tb h4{margin:0;padding:8px 14px;background:var(--accent-bg);font-size:19px}.tb p{margin:6px 14px}</style>
+</head><body><main>
+<p class="lead">공지와 안내·약관 글은<br>새 모듈 <code>sitecontent</code> 한 곳이 맡습니다</p>
+<p class="sub">사이클 16이 <code>docs/current/module-map.md</code>에 더한 것을 쉽게 옮긴 페이지입니다. 모듈은 서버 코드를 일 단위로 나눈 묶음이고, 각 모듈은 자기 표만 만집니다. (2026-10-14, 설계됨·아직 만들지 않음)</p>
+
+<div class="card"><h2><span class="num">1</span>누가 누구를 부르나</h2>
+<p class="gist">글을 읽는 쪽은 둘(웹 화면, 가입을 맡은 <code>auth</code>), 글을 넣는 쪽은 하나(Claude의 SQL)입니다. <code>sitecontent</code>는 다른 모듈을 부르지 않습니다.</p>
+<figure><svg viewBox="0 0 760 330" role="img" aria-label="모듈 관계 그림">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" fill="#5b636e"/></marker></defs>
+<rect x="250" y="16" width="260" height="66" rx="10" fill="#e7eef6" stroke="#2f5d8a" stroke-width="2"/>
+<text x="380" y="44" text-anchor="middle" font-size="19" font-weight="700" fill="#1f2328">웹 화면</text>
+<text x="380" y="68" text-anchor="middle" font-size="15" fill="#5b636e">공지·약관·처리방침·안내·가입</text>
+<rect x="250" y="170" width="260" height="76" rx="10" fill="#fff" stroke="#2f5d8a" stroke-width="3"/>
+<text x="380" y="202" text-anchor="middle" font-size="20" font-weight="700" fill="#1f2328">sitecontent</text>
+<text x="380" y="228" text-anchor="middle" font-size="15" fill="#5b636e">공지·문서의 모든 판</text>
+<rect x="16" y="178" width="170" height="60" rx="10" fill="#fff" stroke="#5b636e" stroke-width="2"/>
+<text x="101" y="204" text-anchor="middle" font-size="18" font-weight="700" fill="#1f2328">auth</text>
+<text x="101" y="226" text-anchor="middle" font-size="14" fill="#5b636e">로그인·가입</text>
+<rect x="574" y="178" width="170" height="60" rx="10" fill="#fbf0d9" stroke="#8a5a00" stroke-width="2"/>
+<text x="659" y="204" text-anchor="middle" font-size="17" font-weight="700" fill="#1f2328">Claude의 SQL</text>
+<text x="659" y="226" text-anchor="middle" font-size="14" fill="#5b636e">사용자 확인 뒤</text>
+<line x1="380" y1="82" x2="380" y2="166" stroke="#5b636e" stroke-width="2" marker-end="url(#a)"/>
+<text x="392" y="130" font-size="15" fill="#1f2328">글 읽기 (로그인 없이)</text>
+<line x1="186" y1="208" x2="246" y2="208" stroke="#5b636e" stroke-width="2" marker-end="url(#a)"/>
+<text x="216" y="196" text-anchor="middle" font-size="14" fill="#1f2328">판 번호</text>
+<line x1="574" y1="208" x2="514" y2="208" stroke="#8a5a00" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#a)"/>
+<text x="544" y="196" text-anchor="middle" font-size="14" fill="#1f2328">새 판</text>
+<line x1="250" y1="70" x2="120" y2="174" stroke="#5b636e" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#a)"/>
+<text x="112" y="118" font-size="14" fill="#1f2328">가입할 때</text>
+<text x="380" y="296" text-anchor="middle" font-size="16" fill="#5b636e">sitecontent에서 밖으로 나가는 화살표는 없습니다</text>
+</svg><figcaption>실선은 화면이 늘 하는 읽기, 점선은 가입할 때와 새 글을 넣을 때만 생기는 일입니다.</figcaption></figure>
+</div>
+
+<div class="card"><h2><span class="num">2</span>sitecontent가 맡는 일</h2>
+<p class="gist">글을 고칠 때마다 배포하지 않고, 옛 판도 남겨 볼 수 있게 하는 것이 이 모듈의 일입니다.</p>
+<table><tr><th>맡는 것</th><th>예</th></tr>
+<tr><td>공지</td><td>"점검 안내"를 올리고, 고치면 고친 판이 하나 더 생김</td></tr>
+<tr><td>문서 넷</td><td>서비스 안내, 이용약관, 개인정보 처리방침, 가입 동의문</td></tr>
+<tr><td>지금 판 고르기</td><td>시행일이 오늘(한국 날짜)이 된 판 중 가장 새 판을 보여 줌. 12월 1일 시행 판은 11월에는 안 보임</td></tr>
+<tr><td>읽는 주소 셋</td><td><code>/api/v1/notices</code>(공지 목록), <code>/api/v1/notices/{번호}</code>(공지 글), <code>/api/v1/documents/{문서}</code>(<code>about</code>, <code>terms-of-service</code>, <code>privacy-policy</code>, <code>privacy-collection</code>)</td></tr>
+</table>
+<p>글을 쓰는 화면(운영자 화면)은 없습니다. 사용자가 "점검 공지 올려 줘"라고 하면 Claude가 글을 보여 드리고, 확인을 받은 뒤 SQL로 넣습니다.</p>
+<table><tr><th>결정</th><th>이유 (사용자 말)</th></tr>
+<tr><td>DB 표 + 읽기 주소, 운영자 화면 없음</td><td>"B. DB 표 + 읽기 API 이걸로 해주고" (2026-10-12)</td></tr>
+<tr><td>안내·약관·처리방침도 DB로</td><td>"1. 셋 다 DB로" (2026-10-12)</td></tr>
+<tr><td>옛 판을 남겨 보이기</td><td>"서비스 안내 공지 모두 이전 기록이 보였으면 하는데 .." (2026-10-12)</td></tr>
+<tr><td>모듈 이름 <code>sitecontent</code></td><td>제안 → 승인 (이유 미확인)</td></tr></table>
+</div>
+
+<div class="card"><h2><span class="num">3</span>가입(auth)에서 바뀌는 것</h2>
+<p class="gist"><code>auth</code>가 처음으로 다른 모듈을 부르게 됩니다. 가입 화면이 "어느 판에 동의하는지"를 <code>sitecontent</code>에 묻기 때문입니다.</p>
+<div class="steps">
+<div class="st"><b>지금</b><span>약관 버전이 서버 설정 파일에 날짜 <code>2026-10-04</code>로 적혀 있음. 동의 기록에도 그 날짜가 남음</span></div>
+<div class="st ok"><b>바뀐 뒤</b><span><code>auth</code>가 <code>sitecontent</code>에 지금 판 번호를 물음(예: 1). 동의 기록에는 <code>1</code>이 남음. 테스트 계정 기록도 <code>2026-10-04</code> → <code>1</code></span></div>
+</div>
+<p>반대 방향(<code>sitecontent</code>가 <code>auth</code>를 부르는 일)은 없습니다. 그래서 로그인 기능을 꺼도 약관 글을 읽는 주소는 열려 있고, 웹이 <code>/terms</code> 화면만 숨깁니다. 처리방침은 로그인 기능과 상관없이 늘 보입니다.</p>
+<p>dev의 모듈 시험(<code>ModularityTests</code>)은 지금 "auth는 다른 모듈을 쓰지 않는다"를 검사합니다. 이 줄을 "auth는 sitecontent만 쓴다"로 바꿉니다.</p>
+</div>
+<p class="foot">이 글은 요약이며 근거는 <code>docs/current/module-map.md</code>("공지·안내·약관 글", "<code>sitecontent</code> 도메인 모델")와 ADR-0098·0099·0100에 있습니다.</p>
+</main></body></html>

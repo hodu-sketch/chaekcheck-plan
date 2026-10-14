@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>공지·약관 데이터</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+.flow{display:grid;gap:10px;margin:10px 0 16px}.lane{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--card)}.lane b{display:block;margin-bottom:4px}.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{font-size:14px;border-radius:6px;padding:2px 8px;background:var(--code-bg)}.chip.new{background:var(--warn-bg)}.chip.dev{background:var(--ok-bg)}.arrow{text-align:center;color:var(--muted);font-size:18px;line-height:1}
+</style>
+<style>.steps{display:grid;gap:8px;margin:12px 0}.st{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:10px 14px;background:var(--card);font-size:18px}.st b{flex:none;min-width:5.5em;color:var(--accent)}.st.bad{border-color:var(--no);background:var(--no-bg)}.st.ok{border-color:var(--ok);background:var(--ok-bg)}.arr{text-align:center;color:var(--muted);line-height:1}.tb{border:2px solid var(--accent);border-radius:10px;background:var(--card);margin:10px 0;overflow:hidden}.tb h4{margin:0;padding:8px 14px;background:var(--accent-bg);font-size:19px}.tb p{margin:6px 14px}</style>
+</head><body><main>
+<p class="lead">공지와 문서는 판마다 따로 남기고,<br>고치지 않고 새 판을 더합니다</p>
+<p class="sub">사이클 16이 <code>docs/current/data-model.md</code>에 더한 표 셋을 예로 풀었습니다. 표는 모두 <code>sitecontent</code> 모듈 것이고 다른 모듈 표와 이어지지 않습니다. (2026-10-14, 설계됨·아직 만들지 않음)</p>
+
+<div class="card"><h2><span class="num">1</span>공지는 두 표에 나눠 둡니다</h2>
+<p class="gist">공지 자체(번호, 고정, 숨김)와 그 공지의 판(날짜, 제목, 본문)을 따로 둡니다. 그래야 고쳐도 번호가 그대로입니다.</p>
+<div class="tb"><h4>공지 (<code>notice</code>)</h4><p>7번 · 고정 아님 · 숨김 아님</p></div>
+<div class="arr">▼ 7번 공지의 판들</div>
+<div class="tb"><h4>공지 판 (<code>notice_version</code>)</h4>
+<p>판 1 · 2026-11-03 · "점검 안내" · "새벽 2시~4시에 점검해요"</p>
+<p>판 2 · 2026-11-04 · "점검 안내(시간 바뀜)" · "새벽 3시~5시로 바뀌었어요"</p></div>
+<p>목록에는 판 2의 제목과 판 1의 날짜(게시일)가 보입니다. 공지 글에서는 "2026-11-03 · 고침 2026-11-04"로 보입니다.</p>
+<p>숨기면 목록과 주소에서 사라지지만 DB에는 남습니다. 사용자 말: "이전에 기록을 봤으면 해" (2026-10-13)</p></div>
+
+<div class="card"><h2><span class="num">2</span>문서 넷은 한 표에 판으로 쌓입니다</h2>
+<p class="gist">서비스 안내, 이용약관, 처리방침, 가입 동의문이 각자 판 1, 2, 3…을 가집니다.</p>
+<div class="tb"><h4>문서 판 (<code>document_version</code>)</h4>
+<p>처리방침 · 판 1 · 시행 공개일 · 본문</p>
+<p>처리방침 · 판 2 · 시행 2026-12-01 · 본문 · 바뀐 점 "○○ 항목을 더했어요"</p>
+<p>가입 동의문 · 판 1 · 시행 공개일 · 본문 · 동의 항목 넷(목적, 항목, 보유 기간, 거부할 권리)</p></div>
+<table><tr><th>칸</th><th>어느 문서에</th></tr>
+<tr><td>바뀐 점</td><td>이용약관·처리방침·동의문. 서비스 안내에는 없음(DB가 막음)</td></tr>
+<tr><td>동의 항목 넷</td><td>가입 동의문에만. 정확히 4개여야 넣어짐(DB가 검사)</td></tr></table>
+<p>위 예에서 11월 30일까지는 판 1, 12월 1일부터는 판 2가 "지금 판"입니다. 미리 넣어 두어도 12월 1일 전에는 어느 화면에도 나오지 않습니다.</p></div>
+
+<div class="card"><h2><span class="num">3</span>가입 동의 기록에 남는 값</h2>
+<p class="gist">동의 기록(<code>auth</code> 모듈의 표)에는 날짜 대신 판 번호가 남습니다.</p>
+<div class="steps">
+<div class="st"><b>지금</b><span>이용약관 <code>2026-10-04</code>, 동의문 <code>2026-10-04</code></span></div>
+<div class="st ok"><b>바뀐 뒤</b><span>이용약관 <code>1</code>, 동의문 <code>1</code>. 숫자가 아닌 값은 DB가 받지 않음</span></div>
+</div>
+<p>번호로 바꾼 이유: 하루에 판이 둘 생기면 날짜로는 어느 글인지 모릅니다. 사용자 말: "하루에 여러 공지가 날 수 있는데 이상한데 그냥 그 자체의 순번으로 하면 안돼?" (2026-10-13)</p></div>
+
+<div class="card"><h2><span class="num">4</span>처음 들어가는 글</h2>
+<p class="gist">개발 DB에는 지금 화면의 글이 판 1(2026-10-04)로 들어가고, 운영 DB에는 승인한 초안이 공개일 날짜로 들어갑니다.</p>
+<p>운영용 글로 바꾸는 일은 사이클 17이 배포 전 표시(<code>PRE_DEPLOYMENT</code>)를 지우기 전에 해야 합니다. 공개일은 아직 정하지 않았습니다.</p></div>
+<p class="foot">이 글은 요약이며 근거는 <code>docs/current/data-model.md</code>("스키마 <code>sitecontent</code>", <code>auth.account_consent</code>)와 ADR-0098·0099에 있습니다.</p>
+</main></body></html>
