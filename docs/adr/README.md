@@ -82,7 +82,7 @@
 | [ADR-0076](0076-library-classification-api-and-rename.md) | 도서관 분류 값(vendor·lendingModel·orderNo)은 API로 보내고 화면이 글자를 만듦, 이름은 번호로 고치는 changeset(014), 이름 찾기는 화면에서 (ADR-0071을 이어서) | Accepted | 2026-10-11 | 09 |
 | [ADR-0077](0077-popular-drop-sparse-categories.md) | 인기 도서는 전자책이 거의 없는 다섯 분류(만화·어린이·청소년·기타·의학·스포츠)를 받지 않음, ADR-0072 범위·0074·0075 숫자 바로잡음 | Superseded by 0080 | 2026-10-11 | 10 |
 | [ADR-0078](0078-separate-import-export-apply.md) | 가져오기는 내 PC에서 하고 운영 DB에는 파일 하나(pg_dump -Fc, load_manifest)로 옮겨 비교 뒤 바꿔 끼움, 모드 in-place·export·apply·finish·discard (ADR-0065를 이어서) | Accepted | 2026-10-12 | 11 |
-| [ADR-0079](0079-grouping-modes-same-result.md) | 책 묶기는 세 방식(current·compact·sql)을 설정으로 고르고 결과가 번호까지 같아야 씀, 묶기 규칙은 그대로. 덧붙임: 사이클 12에서 compact·sql 둘 다 남기고 current는 지움 | Accepted | 2026-10-12 | 11 |
+| [ADR-0079](0079-grouping-modes-same-result.md) | 책 묶기는 세 방식(current·compact·sql)을 설정으로 고르고 결과가 번호까지 같아야 씀, 묶기 규칙은 그대로. 덧붙임: 사이클 12에서 compact·sql 둘 다 남기고 current는 지움 | Accepted (덧붙임의 "current 지움"은 ADR-0105가 바꿈: 셋 모두 남김·기본 compact·이름 objects) | 2026-10-12 | 11 |
 | [ADR-0081](0081-popular-cover-resize-200px-jpeg.md) | 표지는 미리 받아 폭 200px JPEG로 줄여 저장하고 우리 서버가 넘겨줌, 표지 본문 상한 50MB, 경로 폴더 여럿, 1,600만 화소 상한 (ADR-0075를 대체) | Superseded by 0091 | 2026-10-12 | 10 |
 | [ADR-0080](0080-popular-fourteen-categories.md) | 인기 도서는 일곱 분류(만화·어린이·청소년·기타·의학·스포츠·언어·기술·공학)를 받지 않고 "전체" + 14분류, 요청 30건·750권, display_order CHECK 0..14 (ADR-0077을 대체) | Superseded by 0089 | 2026-10-12 | 10 |
 | [ADR-0083](0083-library-registry-add.md) | `library`에 공개 기능 "도서관 더하기"(`LibraryRegistry`), 번호는 부르는 쪽이 정하고 부르는 쪽 트랜잭션 안에서만 ("Java never saves a library"를 바꿈) | Accepted | 2026-10-12 | 13 (12보다 미리) |
@@ -91,8 +91,8 @@
 | [ADR-0086](0086-apply-file-v2-library-part.md) | 반영 파일 판 2: 새 도서관을 `load_manifest.notes`에 싣고 운영은 도서관 → 비교 → 책 (ADR-0078을 이어서) | Accepted | 2026-10-12 | 13 (12보다 미리) |
 | [ADR-0087](0087-join-survey-date-notice.md) | 가입 조건 조사 기준일은 하나만(날짜 파일 → 넣기 실행 기록), `/about` 공지 한 줄, 도서관마다 날짜 칸 없음 | Accepted | 2026-10-12 | 13 (12보다 미리) |
 | [ADR-0088](0088-crawler-switch-to-dev.md) | 수집은 dev `scripts/crawl/`로 갈아타고 옛 코드는 보관 폴더에 백업, 지우지 않음 (ADR-0047을 이어서) | Accepted | 2026-10-12 | 13 (12보다 미리) |
-| [ADR-0082](0082-grouping-step4-main-title-volume-isbn-split.md) | 네 번째 묶기 단계: 본제목 + 권 표시로 비교, ISBN 다르면 나눔, 자리 채움 값은 없음, `collection` 안 (ADR-0035 ④ 부분을 바꿈) | Accepted | 2026-10-12 | 12 |
-| [ADR-0089](0089-librarian-picks-source-and-module.md) | 인기 도서를 사서추천도서로: 국립중앙도서관 Open API(주 1회 1건, 최근 추천 6번), 새 모듈 `picks`, `popular`·출판유통통합전산망 코드·changeset 지움 (ADR-0072·0073·0080을 대체) | Accepted | 2026-10-12 | 14 |
+| [ADR-0082](0082-grouping-step4-main-title-volume-isbn-split.md) | 네 번째 묶기 단계: 본제목 + 권 표시로 비교, ISBN 다르면 나눔, 자리 채움 값은 없음, `collection` 안 (ADR-0035 ④ 부분을 바꿈) | Accepted (ADR-0106이 보완) | 2026-10-12 | 12 |
+| [ADR-0089](0089-librarian-picks-source-and-module.md) | 인기 도서를 사서추천도서로: 국립중앙도서관 Open API(주 1회 1건, 최근 추천 6번), 새 모듈 `picks`, `popular`·출판유통통합전산망 코드·changeset 지움 (ADR-0072·0073·0080을 대체) | Accepted (범위·요청 기간은 ADR-0108이 바꿈: 최근 12번·요청 3년) | 2026-10-12 | 14 |
 | [ADR-0090](0090-picks-match-isbn-then-title-author-in-cache.md) | 사서추천 책은 공용 캐시를 만들 때 ISBN, 안 되면 본제목 + 첫 저자로 맞춤(`catalog` 새 조회), 여럿이면 가진 도서관 많은 책 (ADR-0074를 대체) | Accepted | 2026-10-12 | 14 |
 | [ADR-0091](0091-picks-cover-nlk-resize-200px.md) | 사서추천 표지는 국립중앙도서관 표지를 받아 200px JPEG로 줄여 우리 서버가 넘겨줌, 우리 전자책 표지는 이번에 안 씀 (ADR-0081을 대체) | Accepted | 2026-10-12 | 14 |
 | [ADR-0092](0092-picks-fetch-retry-daily-and-catch-up.md) | 사서추천 받기는 실패하면 성공할 때까지 매일 다시, 마지막 성공이 7일보다 오래되면 따라잡음 (ADR-0089의 "다음 날 한 번 더"를 바꿈) | Accepted | 2026-10-12 | 14 |
@@ -108,3 +108,7 @@
 | [ADR-0102](0102-access-cookie-api-v1-and-login-status-reader.md) | 액세스 토큰 쿠키 경로를 `/api/v1`로 넓히고, 로그인 상태 판별은 `auth`의 부품 하나에 모음 (만료돼도 서명 맞으면 로그인함, 로그인 꺼짐이면 쿠키를 보지 않음; ADR-0042의 액세스 쿠키 경로 부분을 바꿈) | Accepted (2026-10-14) | 2026-10-14 | 15 |
 | [ADR-0103](0103-production-server-layout.md) | 첫 운영 서버는 compose 한 벌(edge·app 네트워크), 비밀 값은 띄우기 스크립트가 Parameter Store에서, 지표는 별도 포트·Micrometer 카운터·접속 기록 exporter·cAdvisor, 백업은 수집 목록 빼고 Tunnel SSH로 받음 | Proposed | 2026-10-14 | 17 |
 | [ADR-0104](0104-first-deploy-host-ec2-credit-iam-role.md) | 첫 배포 호스트는 AWS EC2 t4g.medium(4GB·서울), 무료 크레딧으로 최대 6개월 운영, 비밀 값은 IAM 역할로 접근 키 없이(ADR-0103의 접근 키 전제를 이 호스트에서 대체) | Proposed | 2026-10-14 | 17 |
+| [ADR-0105](0105-grouping-three-modes-default-compact.md) | 책 묶는 방식 셋(compact·objects·sql)을 모두 남기고 기본은 compact, 옛 이름 current → objects (ADR-0079 덧붙임의 "current 지움"을 바꿈) | Accepted | 2026-10-14 | 11·12 (회고) |
+| [ADR-0106](0106-grouping-step4-author-title-subtitle-split-volume-numbers.md) | 네 번째 묶기 단계 보완: 본제목이 저자 이름이면 전체 제목, 부제는 같은 도서관이 따로 가질 때만 나눔, 권 숫자는 권·판처럼 보이는 것만, 로마·한자 숫자, 꼬리 넷 (ADR-0082 보완) | Accepted | 2026-10-14 | 12 (회고) |
+| [ADR-0107](0107-library-insert-additions.md) | 넣기 명령 보탬: 새 곳 최종 주소 줄 필수, 확인한 사라진 곳 gone_known.tsv, 번호는 nextId()부터, 종료 5, 운영 반영은 같은 번호가 다른 도서관이면 멈춤 (ADR-0084·0085·0086 보완) | Accepted | 2026-10-14 | 13 (회고) |
+| [ADR-0108](0108-picks-twelve-recommendations-three-year-window.md) | 사서추천도서는 최근 12번(2년)을 보여 주고 요청 기간은 3년, 도움말에 12번(2년)과 추천 주기 (ADR-0089의 범위·기간 부분을 바꿈) | Accepted | 2026-10-14 | 14 (회고) |

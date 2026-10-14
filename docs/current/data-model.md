@@ -7,7 +7,7 @@
 사이클 10 cycle-close (2026-10-12): 새 스키마 `popular`(`fetch_run`, `ranking_month`, `ranking_category`, `ranking_entry`, `cover`) — 구현됨 (사이클 10). 다른 모듈 표는 바뀌지 않음(`catalog.book`은 `isbn13` 값으로만 맞춤). 근거 `docs/cycles/10-popular-books/design-delta.md` "데이터", ADR-0073~0075·0077, ADR-0080·ADR-0081.
 사이클 10 회고 (2026-10-12): 구현 대조, 분류 14개·표지 200px JPEG·User-Agent·문구 반영 (`docs/cycles/10-popular-books/retro.md`). dev Liquibase `popular/001-popular-schema.yaml`로 제약·색인·changeSet 이름을 대조함.
 사이클 11 cycle-close (2026-10-12): 가져오기 따로 하기(export·apply·finish·discard, load_manifest, db-ops) + 묶는 방식 compact(기본)·objects(옛 이름 current)·sql — 구현됨 (사이클 11, 회고 2026-10-14). `collection.catalog_import` 칸 `export_id`·`exported_at`과 CHECK, `failure_reason` 값 `mismatch`(changeset 없음), `step_seconds` 새 키, 실행 중에만 있는 `catalog_next.load_manifest`(Liquibase 아님), dev compose `db-ops`. 새 스키마·새 색인 없음. 근거 `docs/cycles/11-separate-import/design-delta.md` "데이터", spec.md, ADR-0078·0079. 이름·번호는 따로 적지 않으면 [안].
-사이클 12 (2026-10-12, 사이클 11 dev 진행 중에 미리 한 plan): 책 묶기 네 번째 단계 규칙 — 구현됨 (사이클 12, 회고 2026-10-14). 근거 `docs/cycles/12-grouping-rules/design-delta.md`, ADR-0082, ADR-NNNN-b.
+사이클 12 (2026-10-12, 사이클 11 dev 진행 중에 미리 한 plan): 책 묶기 네 번째 단계 규칙 — 구현됨 (사이클 12, 회고 2026-10-14). 근거 `docs/cycles/12-grouping-rules/design-delta.md`, ADR-0082, ADR-0106.
 사이클 11 최종·사이클 12 회고 (2026-10-14): 표·Liquibase 변경 없음(사이클 12). 서비스 DB 책 1,619,668 → 1,563,167(가져오기 기록 9번, 소장 17,778,801 그대로), 묶는 방식 기본 `compact`·옛 이름 `objects`, 가져오기 힙 값, `sql` 측정 결과. 회고 `docs/cycles/11-separate-import/retro.md` "최종 회고", `docs/cycles/12-grouping-rules/retro.md`.
 사이클 14 cycle-close (2026-10-12): 스키마 `popular`(사이클 10, 구현됨·배포 전)를 지우고 새 스키마 `picks`(`fetch_run`, `pick`, `cover`) — 설계됨(미구현, 사이클 14). changelog `picks/001-picks-schema.yaml`, `popular/001-popular-schema.yaml`은 지움(배포 전 규칙), 로컬 `db`·`db-test`에서 `DROP SCHEMA popular CASCADE`와 `databasechangelog`의 `popular-001-%` 줄 지움. 다른 모듈 표는 바뀌지 않음(`catalog.book`과는 ISBN·제목+저자 값으로만 맞춤). 근거 `docs/cycles/14-librarian-picks/design-delta.md` "데이터", ADR-0089·0090·0091.
 사이클 14 회고 (2026-10-14): 스키마 `picks` 구현됨 — dev `db/changelog/picks/001-picks-schema.yaml`(changeset `picks-001-schema`·`picks-001-fetch-run`·`picks-001-pick`·`picks-001-cover`), 칸·제약·색인이 설계와 같음. 스키마 `popular`는 changeset·14 worktree DB·원래 `db`·`db-test`에서 지움(원래 DB는 사용자 승인 뒤). 범위 최근 12번으로 크기 실측 반영 (`docs/cycles/14-librarian-picks/retro.md`).
@@ -17,7 +17,7 @@
 사이클 08 cycle-close (2026-10-11): `catalog` 가져오기를 새 표(`catalog_next`)에 쓰고 바꿔 끼우기, 소장 번호 잇기, `collection.catalog_import` 칸 추가, `collection.national_bibliography_record`·`national_bibliography_source`, `library.library.mobile_site_differs`, 도서관 이름 고침 changeset, `library`·`region` `updated_at` 트리거, 교보 대여·혼합 11곳 seed에서 뺌, 정리 규칙을 바꿀 때의 순서 — 구현됨 (사이클 08). 근거 `docs/cycles/08-polish-swap-memory/design-delta.md` "데이터"·"정리 규칙을 바꿀 때"·"이름 고치기", ADR-0065~0070. 이름·숫자는 따로 적지 않으면 [안].
 사이클 08 회고 (2026-10-11): dev Liquibase(`collection/003`·`004`, `library/011`~`013`, `region/003`)와 dev `plan-feedback.md` "# 사이클 08"로 대조함. 달라진 점: 국가서지 원문은 ISBN마다 한 줄, `step_seconds` 키가 늘어남, 가져오기 기록에 `status`·`failure_reason`·`failure_detail`, 넓은 줄은 임시 표와 `catalog_next`에 두 번 씀, 파일 번호가 설계 [안]과 다름, 이름 고침은 `library/013`. 가져오기 힙(AC-12), 국가서지 원문 재사용 시간(AC-15), 색인 단계 중단(AC-9 둘째 경우)은 측정 중 [확인 필요]. 근거 `docs/cycles/08-polish-swap-memory/retro.md`.
 
-사이클 07 회고 반영 (2026-10-05): 후보 도서관 넣기 — 새 스키마 `collection`, `library.library` 칸 추가·바꿈, `catalog.book.library_ids`, `catalog.catalog_import`를 `collection.catalog_import`로 옮김, `catalog_library_snapshot.import_id` 지움 — 구현됨 (사이클 07). dev Liquibase(`library/001`, `catalog/001`, `collection/001`, seed `library/008`~`010`, `collection/002`)와 대조함. 근거 docs/cycles/07-candidate-libraries/retro.md, dev plan-feedback.md '# 사이클 07'. 설계 근거 `docs/cycles/07-candidate-libraries/design-delta.md` "데이터", ADR-0052~0055, 0059, 0060.
+사이클 07 회고 반영 (2026-10-05): 수집 목록에서 찾은 도서관 2,394곳 넣기 — 새 스키마 `collection`, `library.library` 칸 추가·바꿈, `catalog.book.library_ids`, `catalog.catalog_import`를 `collection.catalog_import`로 옮김, `catalog_library_snapshot.import_id` 지움 — 구현됨 (사이클 07). dev Liquibase(`library/001`, `catalog/001`, `collection/001`, seed `library/008`~`010`, `collection/002`)와 대조함. 근거 docs/cycles/07-candidate-libraries/retro.md, dev plan-feedback.md '# 사이클 07'. 설계 근거 `docs/cycles/07-candidate-libraries/design-delta.md` "데이터", ADR-0052~0055, 0059, 0060.
 
 사이클 06 회고 반영 (2026-10-05): 내 도서관(`mylibrary`)을 더함 — 구현됨 (사이클 06). dev changelog `mylibrary/001-mylibrary-schema.yaml`과 대조함. 근거 `docs/cycles/06-my-libraries/design-delta.md`.
 
@@ -266,7 +266,7 @@ erDiagram
   - 쓴 뒤 `VACUUM (ANALYZE)` [확정] (D7). 사이클 08부터는 바꿔 끼우기 전에 `catalog_next`에 (구현됨 (사이클 08))
   - 실제 양(2026-10-05, 17단계 다시 가져오기): 읽음 22,051,238줄, 책 1,617,445, 소장 20,383,882, DB 9,812MB, 시간 36분 43초(2회차 40분 36초, 그동안 검색이 기다림), JVM 기본 최대 힙 8,096MB에서 끝남 [확정] (dev 측정)
 - 묶기 [확정]: ① 같은 플랫폼 코드(번호 체계: 교보·교보 구독형·YES24 V1~V3는 공유, 포털·강남구는 도서관 안) ② 교보식 코드 → 종이책 ISBN ③ 국가서지 ISBN (정리한 본제목·대표 저자·출판사로 하나만 맞을 때) ④ 정리한 전체 제목 + 대표 저자 + 정리한 출판사 (개발 중 사용자 결정, 2026-09-30). 규칙·수치는 `docs/research/ebook-catalog/same-book-isbn.md` 5절
-  - 사이클 12 — 구현됨 (사이클 12, 회고 2026-10-14) (ADR-0082, ADR-NNNN-b): ④를 "비교 제목 + 권 표시 + 첫 저자 + 출판사"로 비교 [확정]. 비교 제목 = 본제목에서 꼬리 넷(`(PC만 열람 가능)`, `(스마트 패드 전용)`, `(잠 못 이루는 밤을 위해)`, `(한국인이 가장 좋아하는 단편소설)`)을 끝에서 떼고 숫자 앞의 0을 뗀 것, 본제목이 첫 저자 이름이면 전체 제목. 권 표시 = 본제목·짧은 부제 조각(공백 빼고 8자 이하)의 모든 숫자 + 긴 조각의 권·판처럼 보이는 숫자 + 권 자리의 로마·한자 숫자, 상·중·하, 판 낱말 11개. 같은 키 안 ISBN이 둘 이상이면 판마다 따로(ISBN 없는 묶음끼리 한 책), 부제가 둘 이상이면 같은 도서관이 서로 다른 부제를 따로 가질 때만 나눔(`SubtitleParts`). 저자 "기타"·"unknown", 출판사 "기타"·"미상"·"unknown"은 값 없음(첫 저자가 자리 채움이면 다음 저자). 판 표시·ISBN 없는 다른 판은 지금처럼 합쳐짐(받아들인 위험, 사용자: "규칙 더하지 않음 (Recommended)", 2026-10-14). 표·칸 변경 없음, 기록은 기존 `catalog_import`의 `book_count`·`kept/new/dropped_book_id_count`
+  - 사이클 12 — 구현됨 (사이클 12, 회고 2026-10-14) (ADR-0082, ADR-0106): ④를 "비교 제목 + 권 표시 + 첫 저자 + 출판사"로 비교 [확정]. 비교 제목 = 본제목에서 꼬리 넷(`(PC만 열람 가능)`, `(스마트 패드 전용)`, `(잠 못 이루는 밤을 위해)`, `(한국인이 가장 좋아하는 단편소설)`)을 끝에서 떼고 숫자 앞의 0을 뗀 것, 본제목이 첫 저자 이름이면 전체 제목. 권 표시 = 본제목·짧은 부제 조각(공백 빼고 8자 이하)의 모든 숫자 + 긴 조각의 권·판처럼 보이는 숫자 + 권 자리의 로마·한자 숫자, 상·중·하, 판 낱말 11개. 같은 키 안 ISBN이 둘 이상이면 판마다 따로(ISBN 없는 묶음끼리 한 책), 부제가 둘 이상이면 같은 도서관이 서로 다른 부제를 따로 가질 때만 나눔(`SubtitleParts`). 저자 "기타"·"unknown", 출판사 "기타"·"미상"·"unknown"은 값 없음(첫 저자가 자리 채움이면 다음 저자). 판 표시·ISBN 없는 다른 판은 지금처럼 합쳐짐(받아들인 위험, 사용자: "규칙 더하지 않음 (Recommended)", 2026-10-14). 표·칸 변경 없음, 기록은 기존 `catalog_import`의 `book_count`·`kept/new/dropped_book_id_count`
   - 실제 양 (2026-10-14, 같은 사본 `ebook-catalog-2026-10-12-0135.sqlite`, `compact`, 가져오기 기록 9번) [확정] (dev 측정, `plan-feedback.md` 3479행): 책 1,563,167(사이클 11 1,619,668), 사람 1,740,854, 소장 17,778,801. 번호(8번 대비) 이어 씀 1,550,778 / 새 12,389 / 사라짐 0, 사이클 12 전 대비 합쳐짐 67,129·나뉨 10,932. 확정 규칙 dry run에서 ISBN으로 나뉨 7,529, 자리 채움으로 키 없음 60,672, 부제로 나뉨 12,389. 규칙 원본 `docs/research/ebook-catalog/same-book-isbn.md` 5.7절
 - 국가서지 파일 위치: dev 저장소 안 `data/nlk/` (git 제외, 사용자 결정 2026-09-30). 인계서 [안]은 저장소 밖이었음. 사이클 08부터 TTL에서 뽑은 원문은 `collection.national_bibliography_record`에 남김(아래 `collection` 절, ADR-0069)
 
@@ -608,7 +608,7 @@ erDiagram
 
 ## 스키마 `picks` (소유: `picks` 모듈) — 구현됨 (사이클 14, 회고 2026-10-14)
 
-국립중앙도서관 사서추천도서 Open API에서 주 1회 받은 최근 12번(추천 연월이 다른 최근 12개 달, 약 2년) 추천 책 [확정] (사용자 결정, dev 2026-10-14; 처음 6번, ADR-NNNN), 줄인 표지, 받기 기록입니다(ADR-0089·0091). 사이클 10 스키마 `popular`(`fetch_run`, `ranking_month`, `ranking_category`, `ranking_entry`, `cover`, 출판유통통합전산망 순위)를 대체하고 `popular`는 지웠습니다 [확정] (ADR-0089) — 구현됨 (사이클 14). 스키마 이름 `picks`, 표·칸 이름 [확정] (사용자 승인 "이름·값: … 승인", 2026-10-12). 다른 모듈과 FK·조인이 없고, `catalog`와는 값으로만 맞춥니다(공용 캐시를 만들 때 `BookLookup.byIsbn13` → `BookLookup.byTitleAndAuthor`, ADR-0090). JPA 엔티티 없이 JdbcClient. 근거 `docs/cycles/14-librarian-picks/design-delta.md` "데이터".
+국립중앙도서관 사서추천도서 Open API에서 주 1회 받은 최근 12번(추천 연월이 다른 최근 12개 달, 약 2년) 추천 책 [확정] (사용자 결정, dev 2026-10-14; 처음 6번, ADR-0108), 줄인 표지, 받기 기록입니다(ADR-0089·0091). 사이클 10 스키마 `popular`(`fetch_run`, `ranking_month`, `ranking_category`, `ranking_entry`, `cover`, 출판유통통합전산망 순위)를 대체하고 `popular`는 지웠습니다 [확정] (ADR-0089) — 구현됨 (사이클 14). 스키마 이름 `picks`, 표·칸 이름 [확정] (사용자 승인 "이름·값: … 승인", 2026-10-12). 다른 모듈과 FK·조인이 없고, `catalog`와는 값으로만 맞춥니다(공용 캐시를 만들 때 `BookLookup.byIsbn13` → `BookLookup.byTitleAndAuthor`, ADR-0090). JPA 엔티티 없이 JdbcClient. 근거 `docs/cycles/14-librarian-picks/design-delta.md` "데이터".
 
 ```mermaid
 erDiagram
@@ -762,10 +762,10 @@ erDiagram
 
 | 항목 | 방법 |
 |---|---|
-| 국립중앙도서관 표지를 저장해 보여 줘도 되는지(공공누리 제1유형이 표지 그림에도 해당하는지) | 공식 문서 확인 (Open API 가이드 파일·이용약관) / 문의 (정보기술기반과 02-590-0727). 배포 전. 개발 중 확인 못 함, 코드에 `TODO(확인 필요)`(dev `FetchJob.fetchCovers`, `AboutPage.tsx` 42행) → 회고 질문 3(사이클 17 배포 체크리스트) |
+| ~~국립중앙도서관 표지를 저장해 보여 줘도 되는지(공공누리 제1유형이 표지 그림에도 해당하는지)~~ | 공식 문서 확인 (Open API 가이드 파일·이용약관) / 문의 (정보기술기반과 02-590-0727). 배포 전. 개발 중 확인 못 함, 코드에 `TODO(확인 필요)`(dev `FetchJob.fetchCovers`, `AboutPage.tsx` 42행) → 따로 확인하지 않음 [확정] (사용자: "어짜피 api받았으니까 괜찮아.... 키 같은 것은 따로 설정으로 빼던가", 2026-10-14, 회고 결정 #23) |
 | Open API 하루 호출 한도 | 공식 문서 확인 (주 1~2건이라 막지 않음). 개발 중 문서 확인 못 함, 하루 1건만 불러 거절·오류 없음 (dev, 2026-10-14) |
 | ~~제목+저자 조회 52권 시간, dev DB에서 맞는 비율(수집 DB 측정 32/52)~~ | 해결: 52건 73~87ms, 맞음 ① 30 / ①이나 ② 33 of 52(서비스 DB 복사본), 12번(108권) 캐시 72 / 108, 캐시 새로 고침 53~114ms (dev, 2026-10-14) |
-| ~~같은 달 같은 등록일·`recomNo` 글자 순이 사서가 올린 순서와 맞는지~~ | 해결(맞지 않음): 웹 목록 순서 = API 응답 순서, 같은 달 안은 등록일순도 `recomNo`순도 아닌 사서의 배치. 우리 순서와 거의 거꾸로 (dev 웹 1쪽 확인, 2026-10-14) → 회고 질문 2 |
+| ~~같은 달 같은 등록일·`recomNo` 글자 순이 사서가 올린 순서와 맞는지~~ | 해결(맞지 않음): 웹 목록 순서 = API 응답 순서, 같은 달 안은 등록일순도 `recomNo`순도 아닌 사서의 배치. 우리 순서와 거의 거꾸로 (dev 웹 1쪽 확인, 2026-10-14) → 지금 순서 유지 [확정] (사용자 승인, 2026-10-14, 회고 결정 #22) |
 | 국립중앙도서관 API 오류 응답 모양 | 운영에서 만나면 기록하고 규칙 손봄(지금 오류 요소 이름 `*error*`·`err_code`·`result_code`는 짐작) |
 | 공용 캐시 메모리 | 운영 측정 (추정 수백 KB 안쪽 [안: 추정, 측정 아님], dev 2026-10-14) |
 

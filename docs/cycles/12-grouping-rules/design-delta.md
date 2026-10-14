@@ -1,5 +1,7 @@
 # 설계 변경: 사이클 12 책 묶기 기준 다시 보기
 
+> 2026-10-14 회고에서 바뀐 것이 있습니다 → [retro.md](retro.md), ADR-0105·0106. 지금 규칙은 `docs/research/ebook-catalog/same-book-isbn.md` 5.7절. 도서관 수 2,394곳은 지금 2,381곳(사이클 08에서 11곳 뺌, 2곳 꺼짐).
+
 - 작성: 2026-10-12. 근거 `spec.md`(R1~R8), `flow.md`, `architect-proposal.md`. 결정 1~6과 세부 질문은 모두 추천안 [확정] (사용자 승인 "전부 승인", 2026-10-12, `easy/2026-10-12-design-decisions.html`)
 - 바뀌는 곳: `collection` 모듈 가져오기 안의 네 번째 묶기 단계(같은 글자)와 비교 도구. **표·Liquibase·REST·웹·이벤트·모듈 관계 변경 없음** [확정] (architect 확인, dev 코드 읽기 2026-10-12)
 - `catalog`(정리 함수 `normalize`, 번호 잇기 `CatalogLoad`, 검색) 변경 없음 → ADR-0069 표의 "묶기·대표값·날짜 규칙을 고침: 새 코드로 가져오기 → 바꿔 끼우기, 서비스는 그대로"

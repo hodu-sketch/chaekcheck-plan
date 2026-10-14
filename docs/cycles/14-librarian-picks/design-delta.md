@@ -307,7 +307,7 @@ erDiagram
 | `chaekcheck.picks.fetch.api-key` | 환경 변수 `CHAEKCHECK_PICKS_NLK_API_KEY`, 기본 빈 값. 로컬 `.env`(git 밖), 운영은 배포 비밀값 | [확정] |
 | `cron` | `0 0 5 * * *`, `zone Asia/Seoul` (매일 05:00 판단, 받는 날은 월요일 + 실패 뒤 성공할 때까지 매일 + 따라잡기) | [확정] (ADR-0092) |
 | `base-url` | `https://nl.go.kr` | [확정] |
-| `window` / `end-row` | **3년** / 1000 (남기는 범위는 최근 12번 = `KeptPicks.MONTHS` 12) | `end-row` [확정]. 남기는 범위 12번 [확정] (사용자 결정, dev 2026-10-14). `window` 3년은 [안: dev 변경, 사용자 확인 전] — 처음 승인한 2년을 dev가 바꿈, [이유 미확인 — 사용자 발언 없음. dev가 적은 이유: 12번 = 약 24개월이라 2년이면 받는 날에 따라 12번째 추천이 범위 밖으로 빠질 수 있음 (dev `docs/plan-feedback.md` 3783행, `application.yml` 201-204행)] |
+| `window` / `end-row` | **3년** / 1000 (남기는 범위는 최근 12번 = `KeptPicks.MONTHS` 12) | `end-row` [확정]. 남기는 범위 12번 [확정] (사용자 결정, dev 2026-10-14). `window` 3년 [확정] (처음 승인한 2년을 dev가 바꿈 → 사용자 승인, 2026-10-14, 회고 결정 #21, ADR-0108. 이유: 제안 → 승인 (2026-10-14). dev가 적은 이유(사용자 말 아님): 12번 = 약 24개월이라 2년이면 받는 날에 따라 12번째 추천이 범위 밖으로 빠질 수 있음 (dev `docs/plan-feedback.md` 3783행, `application.yml` 201-204행)) |
 | `connect-timeout` / `read-timeout` | 5초 / 10초 | [확정] |
 | `max-body-size` | 10MB (2년 범위 실측 1.56MB, 3년 범위 실측 2,511,752바이트 — 2026-10-14 dev 받기 시험) | [확정] (사용자 승인, 2026-10-12) |
 | 표지 | `cover-max-body-size` 5MB (사이클 10은 50MB. 사용자 "5MB (추천)", 2026-10-12 설계 검토 — ADR-0091 이유 줄의 "사이클 10 값 그대로"는 이 값만 다름, 질문에 5MB로 적어 승인받음), `cover.width` 200, `jpeg-quality` 0.8, `max-pixels` 16,000,000, `request-interval` 1초 | [확정] (ADR-0091) |

@@ -1,5 +1,7 @@
 # 기능 명세: 사이클 12 책 묶기 기준 다시 보기
 
+> 2026-10-14 회고에서 바뀐 것이 있습니다 → [retro.md](retro.md), ADR-0105·0106. 지금 규칙은 `docs/research/ebook-catalog/same-book-isbn.md` 5.7절. 도서관 수 2,394곳은 지금 2,381곳(사이클 08에서 11곳 뺌, 2곳 꺼짐).
+
 - 작성: 2026-10-12. 범위 `scope.md`. 방향은 `../../research/ebook-catalog/same-book-isbn.md` 5.5절 [확정] (사용자 승인, 2026-10-12)
 - 지금 규칙(바꾸기 전): `same-book-isbn.md` 5절 ①~④, 코드 dev `collection/internal/importer/BookGrouper.java`(`key`, `firstAuthor`), `BookGrouping.mergeSameText`(④는 **전체 제목** `titleNorm` + 첫 저자 + 출판사)
 - 기준 숫자(사이클 11 실데이터, 새 사본 2026-10-12 01:35, 지금 규칙): 책 1,619,668, 소장 17,778,801, 책 번호 이어 씀 1,615,124 / 새 4,544 / 사라짐 1 (`same-book-isbn.md` 5.4)
