@@ -268,3 +268,24 @@ dev 12·13·14가 끝나 main에 합쳐짐. 요약 왕복 없이, 첫 배포(17)
 - 사이즈: 6개월을 꽉 채우려면 **4GB가 스윗스팟**(4GB Lightsail $24/월×6=$144 < $200). 8GB($44/월×6=$264)는 크레딧이 ~4.5개월에 바닥 → 기간 단축 교환. EC2 4GB도 비슷
 - 영향(문서 반영 보류, 방향만): scope.md·ADR-0103·research의 "2주" 전제, 16에 넘긴 "노트북 이전 시 처리방침 AWS 줄 빼기"가 모두 6개월 쪽으로 밀림. **부산 등 AWS IP를 막는 go.kr은 그 기간 내내 막힌 채**(집 이전해야 풀림) → 배포 후 전체 go.kr 접속 훑어 막히는 곳 수 파악 [확인 필요]
 - **[확정]** (사용자 승인, 2026-10-14, 캔버스 `easy/2026-10-14-deploy-host-decisions.html` #1·#2·#3, ADR-0104): 호스트 = **EC2 t4g.medium 4GB 서울**, 무료 크레딧으로 최대 6개월, 노트북 이전은 나중에. 비밀 값은 **EC2 IAM 역할**로 접근 키 없이(ADR-0103 보완). scope.md·design-delta 외부연동 반영함
+
+## 13. 사이클 15 회고 전달(5차) 중 배포에 닿는 것 (2026-10-14)
+
+plan 15가 `docs/cycles/15-usage-log/to-cycle-17.md` "5차"에 올린 실제 값·결정. 요약 왕복 없이 17에 반영.
+
+| 항목 | 값 | 17이 할 일 |
+|---|---|---|
+| 기록 켜기 설정 | `chaekcheck.usagelog.enabled` 기본 `false`, 환경 변수 `CHAEKCHECK_USAGELOG_ENABLED` [안: 이름 dev가 바꿀 수 있음] | 운영 프로필에 `false`. 공개일에 `true`. design-delta 앱 설정에 반영 |
+| 정리 시각 | 매일 04:30 Asia/Seoul (설정 꺼져도 돎) | 03:00 백업과 안 겹침 — 할 일 없음 |
+| 메모리·디스크 | 버퍼 최대 1만 줄 약 5MB, 디스크 1년 많아야 몇 GB | 4GB·40GB 계산에 여유 |
+| nginx 사용 알림 한도·로봇·robots.txt | `location = /api/v1/usage-events` IP당 60r/m burst 20 nodelay 넘치면 204; 로봇 UA(`~*(bot\|crawler\|spider)`) → stream·`/api/v1/availability/`에서 403; `web/public/robots.txt` `Disallow: /api/` | **dev가 15 9단계에서 `deploy/nginx/`에 이미 넣음**. 17 배포가 같은 파일을 쓰면 그대로. 17의 일반 `/api/` 한도는 이 파일에 겹치지 않게 추가. `/robots.txt`가 index.html이 아니라 그 파일로 나가는지 배포 때 확인 |
+| realip | `real_ip_header CF-Connecting-IP` + `set_real_ip_from`=compose nginx·cloudflared 범위 | 17이 넣음(15는 안 함). 배포 때 `nginx -V`에 realip 모듈, Cloudflare "Remove visitor IP headers" 꺼짐, nginx 포트 바깥 비공개 확인 |
+| 로그인 쿠키 | `access_token` 경로 `/api/v1` | nginx는 그대로 넘김 (R12-1) |
+
+### 회고 결정 중 17 배포 순서·범위에 닿는 것 (사용자 승인 2026-10-14)
+- **사이클 19(꺾쇠 저자 표기 정리)가 첫 배포 전에 들어감**: 저자 규칙 고침 → 내 PC에서 책 목록 다시 가져오기 → 운영 DB 반영(사이클 11 방식) → 17 첫 배포. dev 순서 15 → 19 → 배포. 17의 "운영 DB 채우기"(scope 포함 4)는 19 반영 뒤의 목록을 씀 [확정: 사용자 승인]
+- `/picks` nginx 화면 주소: dev `deploy/nginx/chaekcheck-locations.conf:91`에 이미 있음(main 커밋됐는지 배포 전 확인)
+- **사서추천(국립중앙도서관) 인증키: 새로 받지 않고 지금 키를 설정(운영 비밀값)으로 뺌. 표지 이용 조건·권리자 연락처는 따로 확인 안 함** (사용자, #23) → §11·design-delta 비밀값의 "새 키 교체·표지 조건" 항목 해소
+- 배포 전 작은 일(backlog, dev): 제목 완전 일치 검색 500 오류, 없는 주소(`*`) 화면
+- 교보 구독형 수집: **첫 배포 뒤** 같은 AWS 계정에 수집용 서버를 잠깐 따로 띄워 그 서버만 다시 받음(ADR-0094 동시 1건·1초). 서비스 4GB 서버는 안 씀. 17 뒤 별도 사이클 (scope 제외 그대로)
+- 15 인계 끝: `docs/current/handoff.md` = 15 인계서(ADR-0096·0097·0102 Accepted)

@@ -113,7 +113,7 @@ sequenceDiagram
 | 모듈 | 신규/변경 | 책임 | 공개 API | 발행/구독 이벤트 | 소유 테이블 |
 |---|---|---|---|---|---|
 | `availability` | 변경 (안쪽만) | `InMemoryHostThrottle`가 포기 두 경로에서 카운터를 올림(`chaekcheck.availability.throttle.timeouts`, 태그 `wait=slot\|interval`, 호스트 태그 없음), 경로 (2)에도 `log.info`. `availability.user-agent` 값에 서비스 주소·연락처(`chaekcheck/<버전> (+https://chaekcheck.com; chaekcheck9104@gmail.com)`) | 변경 없음 | 없음 | 변경 없음 |
-| 앱 설정 | 변경 | 운영 프로필(이름 [안] `prod`): DB 주소 `db`, Liquibase contexts에서 `test-data` 뺌, `management.server.port: 8081`, 노출 `health,prometheus`, 15 기록 스위치 꺼짐, `AUTH_PUBLIC_BASE_URL=https://chaekcheck.com`, `AUTH_PROVIDERS=kakao` | — | — | — |
+| 앱 설정 | 변경 | 운영 프로필(이름 [안] `prod`): DB 주소 `db`, Liquibase contexts에서 `test-data` 뺌, `management.server.port: 8081`, 노출 `health,prometheus`, **`chaekcheck.usagelog.enabled=false`**(환경 변수 `CHAEKCHECK_USAGELOG_ENABLED` [안], 공개일에 `true`, 사이클 15), `AUTH_PUBLIC_BASE_URL=https://chaekcheck.com`, `AUTH_PROVIDERS=kakao` | — | — | — |
 | `fetch-service` | 변경 없음 | compose에 `profiles: [fetch]`로 꺼 둠 | — | — | — |
 
 - 의존성: `backend/build.gradle`에 Actuator와 Prometheus 레지스트리 (Spring Boot 4.1 좌표 [확인 필요: 공식 문서])
@@ -138,7 +138,7 @@ sequenceDiagram
 | `deploy/prod/compose.yaml` | edge·app 네트워크(edge subnet 10.x 고정), 모든 컨테이너 `ports:` 없음, `mem_limit`, `restart: unless-stopped`, fetch-service는 `profiles: [fetch]` | #1, #9 |
 | `deploy/prod/prod.env` | 비밀이 아닌 설정 (git) | #2 |
 | `deploy/prod/bin/up.sh` | Parameter Store `/chaekcheck/prod/` → `chmod 600` env 파일 → compose up. env 파일이 이미 있으면 그것을 씀 | #2, 노트북 대비 |
-| `deploy/prod/nginx/prod.conf` | `real_ip_header CF-Connecting-IP; set_real_ip_from <edge subnet>;`, http → https, 일반 `/api/` zone `chaekcheck_api` 5r/s burst 30 nodelay, 클릭 알림 정확 일치 location은 제외, 도서관 호출 zone 그대로 | spec R2·R3 |
+| `deploy/prod/nginx/prod.conf` | `real_ip_header CF-Connecting-IP; set_real_ip_from <edge subnet>;`(17이 넣음), http → https, 일반 `/api/` zone `chaekcheck_api` 5r/s burst 30 nodelay, 클릭 알림 정확 일치 location은 제외, 도서관 호출 zone 그대로. **사이클 15가 dev `deploy/nginx/`에 이미 넣은 것(usage-events 60r/m burst 20 넘치면 204, 로봇 UA 403, `robots.txt Disallow /api/`)과 같은 파일이면 그대로 들어감 — 겹치지 않게 합침**. `/robots.txt`가 index.html 아니라 그 파일로 나가는지·Cloudflare "Remove visitor IP headers" 꺼짐 배포 때 확인 | spec R2·R3, research 13절 |
 | 접속 기록 `log_format` + 호스트 `logrotate` | `$remote_addr`, 시각, 메서드, 경로(`$request_uri`의 `?` 앞, `map`), `$status`, `$body_bytes_sent`, `$request_time`. daily·rotate 14·maxage 14 | spec R11 (경로 방식은 시험으로 확인) |
 | `deploy/monitoring/` | prometheus.yml(backend:8081, node_exporter, cadvisor, 접속 기록 exporter), Grafana 프로비저닝(대시보드 네 묶음), `GF_AUTH_ANONYMOUS_ENABLED=false`, `GF_SERVER_ROOT_URL=https://grafana.chaekcheck.com` | #4, #5, #6, flow F5 |
 | `deploy/backup/` | 서버 systemd 타이머·스크립트, PC 작업 스케줄러 스크립트(Tunnel SSH로 받기, 7개 넘으면 지움) | #7, #8 |
