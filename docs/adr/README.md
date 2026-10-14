@@ -115,3 +115,4 @@
 | [ADR-0109](0109-disable-libraries-by-liquibase.md) | 이미 켜진 도서관을 끄거나 다시 켤 때는 library 모듈의 새 Liquibase 변경 파일로 (내 PC·운영 같은 판, 반영 비교가 맞게) | Accepted | 2026-10-14 | 18 |
 | [ADR-0110](0110-library-insert-skips-zero-ebook-sites.md) | 새 도서관 넣기에서 가져오기와 같은 거르기 규칙으로 센 줄이 0이면 "전자책 0권"으로 뺌, 기존 이유 6개 다음, 묻지 않음 (ADR-0107 보완) | Accepted | 2026-10-14 | 18 |
 | [ADR-0111](0111-underscore-host-separate-request-path.md) | 호스트에 밑줄이 있는 도서관 주소: 가져오기는 collection 안의 밑줄 받는 읽기, 대출 조회·직접 찾기는 따로 만든 요청 길(SNI 없이, 인증서 검사 켬) | Accepted | 2026-10-14 | 18 |
+| [ADR-0112](0112-underscore-host-path-in-fetch-service.md) | 밑줄 호스트 요청 길을 조회 서버 앱(fetch-service)에도 넣음: UrlGuard는 연결할 이름으로 DNS 풀어 내부망 거부 유지, 같은 라이브러리·같은 조건 (ADR-0111 보완) | Accepted | 2026-10-14 | 18 |

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 18 ADR-0112</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.card h3.t{font-size:21px;margin:26px 0 8px}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font-size:15px;line-height:1.55;margin:8px 0 6px;word-break:normal}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+pre .cm{color:var(--muted)} pre .hl{background:var(--warn-bg);color:var(--warn);font-weight:700}
+.src{color:var(--muted);font-size:15px;margin:14px 0 0}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+.fig{overflow-x:auto;margin:8px 0 4px}
+.fig svg{width:100%;min-width:640px;height:auto;display:block}
+.mine{border:1px dashed var(--warn);background:var(--warn-bg);border-radius:8px;padding:10px 14px;font-size:18px;margin:10px 0}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0}
+.pc>div{border-radius:10px;padding:12px 16px;font-size:18px}
+.pc .p{background:var(--ok-bg)} .pc .c{background:var(--no-bg)}
+.pc h4{margin:0 0 6px;font-size:18px}
+.pc ul{margin:0;padding-left:20px}
+.pc li{margin:0 0 8px}
+@media (max-width:640px){.pc{grid-template-columns:1fr} body{font-size:18px} .lead{font-size:24px}}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">사이클 18 2차 검토:<br>조회 서버 앱 결정을 기록으로 남기기</p>
+<p class="sub">2차 검토에서 "조회 서버 앱에도 같은 길" 결정이 여러 문서에 덜 퍼져 있다는 지적이 나와 모두 맞췄습니다(scope·spec·설계·인계서·지금 설계 문서). 남은 것은 이 결정을 ADR로 남기는 것 하나입니다. (2026-10-14)</p>
+
+<section class="card"><h2><span class="num">1</span>맞춘 것</h2>
+<ul>
+<li>범위·명세·설계·인계서에 "조회 서버 앱(<code>fetch-service</code>)도 같은 밑줄 길"을 넣음</li>
+<li>인계서: 바뀌는 곳에 조회 서버 앱, 그 앱의 빌드·시험, 의존성은 앱마다 하나(같은 라이브러리)</li>
+<li>조회 서버 앱의 주소 검사는 지금 하는 보호를 그대로 둠: 밑줄 이름으로 DNS를 풀어 내부망 주소면 거부, 사용자 정보가 든 주소 거부. "밑줄 이름이 내부망으로 풀리면 거부" 시험을 넣음</li>
+<li><code>module-map.md</code>에 사이클 18 구성도·도메인 모델 그림, 조회 서버 줄 갱신</li>
+</ul>
+</section>
+
+<section class="card"><h2><span class="num">2</span>ADR 초안</h2>
+<p class="gist">ADR-0111은 본 서비스(가져오기·대출 조회)만 다뤘습니다. 조회 서버 앱은 따로 도는 앱이고 보안 검사도 고치므로, 이 결정을 ADR-0112로 남깁니다. ADR-0111은 그대로 두고 보완합니다.</p>
+<div class="item"><h3><span class="no">1</span>ADR-0112: 밑줄 호스트 요청 길을 조회 서버 앱에도 넣는다</h3>
+<p>[안] 내용: 조회 서버 앱의 주소 검사는 밑줄 호스트를 읽되 실제 연결할 이름과 같은 이름으로 DNS를 풀어 내부망이면 거부하고, 요청은 본 서비스와 같은 라이브러리·같은 조건으로 보냄. 이유: "같이 해 굳이 왜 나눠서 해 조회 서버도 같이 해". 대안: 직접 조회에만 넣기(미승인). 승인하면 <code>docs/adr/</code>에 확정(Accepted)으로 쓰고, 설계·인계서·지금 설계 문서의 ADR 줄에 연결합니다.</p>
+<p class="alt"><b>다른 선택:</b> ADR 없이 설계 문서에만 적음 → 규칙상 구조 결정은 ADR로 남기는 쪽이 맞습니다.</p>
+<p class="rec">추천: ADR-0112로 남김.</p></div>
+</section>
+<p class="foot">초안 전문: 작업용 폴더 <code>adr/0112-underscore-host-path-in-fetch-service.md</code> (승인 뒤 <code>docs/adr/</code>로)</p>
+</main>
+</body>
+</html>
