@@ -18,7 +18,7 @@ flowchart LR
 
 ### my-libraries / library-picker (지금 화면)
 - 도서관 목록은 `GET /api/v1/libraries`에서 옴. 끈 22곳은 이 응답에 없으므로 목록·범위 고르기에 나오지 않음 (지금 꺼진 도서관과 같은 동작)
-- 이미 "내 도서관"에 직접 추가해 둔 끈 도서관은 지금처럼 "쓸 수 없는 도서관"으로 보임. 지울 때까지 20곳 상한에 셈 (`docs/current/api.md` 271행)
+- 이미 "내 도서관"에 직접 추가해 둔 끈 도서관은 지금처럼 "쓸 수 없는 도서관"으로 보임. 지울 때까지 20곳 상한에 셈 (`docs/current/api.md`의 "직접 추가 상한" 줄)
 - 상태: 지금 그대로
 
 ### search / search-results (지금 화면)

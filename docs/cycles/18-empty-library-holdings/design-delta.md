@@ -3,7 +3,11 @@
 - 근거: [scope.md](scope.md), [spec.md](spec.md), [flow.md](flow.md), [research.md](research.md), [architect-proposal.md](architect-proposal.md)와 결정 페이지 `easy/2026-10-14-design-decisions.html`·`easy/2026-10-14-design-followup-decisions.html` (모두 사용자 결정, 2026-10-14)
 - 검토: [easy/2026-10-14-design-delta-review.html](easy/2026-10-14-design-delta-review.html) 5개 모두 승인 (2026-10-14)
 - 새 표·새 칸·새 API·새 화면 없음. 코드 이름은 모두 [안]이며 dev가 바꿔도 됨 [확정] (설계 결정 #7)
-- 개발 순서 [확정]: 22곳 끄기·넣기 거르기는 언제든. 가져오기 고침은 사이클 19가 main에 들어간 뒤(설계 후속 #6). 밑줄 주소 요청 길은 사이클 17과 순서 상관없음(설계 후속 #5). 운영 반영은 17 첫 배포 뒤 보통 반영(범위 결정 #8)
+- 개발 순서 [확정]
+  - 언제든: 22곳 끄기, 밑줄 호스트 요청 길(`availability`, 사이클 17과 순서 상관없음, 설계 후속 #5)
+  - 사이클 19가 main에 들어간 뒤: `SiteHosts`·`HoldingRowFilter` 꺼내기(가져오기 고침), 넣기 "전자책 0권"(`HoldingRowFilter`를 씀), 옛 설정 이름 바꾸기, 내 PC 가져오기 (설계 후속 #6, 사용자 "19뒤에 하자")
+  - 사이클 17 첫 배포 뒤: 운영 반영 (범위 결정 #8)
+  - spec AC-1(켜진 0권 0곳)은 22곳 끄기와 현대제철 가져오기가 둘 다 끝나야 맞음
 
 ## 구조 그림
 
@@ -138,13 +142,14 @@ classDiagram
 | 모듈 | 신규/변경 | 책임 | 공개 API | 발행/구독 이벤트 | 소유 테이블 |
 |---|---|---|---|---|---|
 | `library` | 변경 (Liquibase만) | 22곳 `enabled=false` | 그대로 | 없음 | `library.library` (칸 변경 없음) |
-| `collection` | 변경 (내부만) | ① `SiteHosts` [안]: 밑줄을 받는 호스트 읽기(지금 `LibraryInsertPlanner.host`를 옮김), `CollectedCatalog.httpHostOf`·`hostOf`·`sameSite`가 씀 ② `HoldingRowFilter` [안]: `skipReason`을 값으로 받는 함수로 꺼내 가져오기와 넣기 명령이 같이 씀 ③ 넣기 명령 빠진 이유 `no_ebooks` [안](보고서 "전자책 0권"), 이유 1~6 다음 ④ 사이클 12 시험용 설정 `exclude-candidate-libraries` 이름 바꿈(새 이름 dev가 정함) | 그대로 | 없음 | 변경 없음 |
+| `collection` | 변경 (내부만) | ① `SiteHosts` [안]: 밑줄을 받는 호스트 읽기(지금 `LibraryInsertPlanner.host`를 옮김), `CollectedCatalog.httpHostOf`·`hostOf`·`sameSite`가 씀 ② `HoldingRowFilter` [안]: `skipReason`을 값으로 받는 함수로 꺼내 가져오기와 넣기 명령이 같이 씀 ③ 넣기 명령 빠진 이유 `no_ebooks` [안](보고서 "전자책 0권"), 이유 1~6 다음 ④ 사이클 12 시험용 설정 `exclude-candidate-libraries`(Java `excludeCandidateLibraries`, 옛 "후보" 용어) 이름 바꿈, 새 이름 dev가 정함 [확정] (12·13·14 회고 결정 #14, 사용자 승인 2026-10-14, `docs/backlog.md`) | 그대로 | 없음 | 변경 없음 |
 | `availability` | 변경 (내부만) | 사이트 요청 부품에서 호스트에 밑줄이 있으면 새 요청 라이브러리로 보냄(대출 조회·직접 찾기 둘 다). SNI 없이, 인증서 이름 검사 켬, 지금 길과 같은 시간 제한·응답 크기 제한·`LibrarySiteTls`. 실패하면 그 도서관만 실패. `HostThrottle.key`·`Candidate.hostKey`가 밑줄 호스트에서 NPE를 내지 않게 | 그대로 | 없음 | 없음 |
 | `catalog`, web | 변경 없음 | — | — | — | — |
 
 - 모듈 사이 의존은 바뀌지 않음 (`ModularityTests` 그대로 통과) [확정: 설계 결정 #4 "collection 안"]
 - 공용 모듈 없음 (dev `spring-modulith` "generic shared module 금지")
-- 요청 라이브러리는 dev가 시제품으로 고름. 조건 ①~④ [확정] (설계 후속 #2), 첫 후보 Apache HttpClient 5 [확인 필요: 시제품]
+- 요청 라이브러리는 dev가 시제품으로 고름 [확정] (설계 후속 #2). 조건: ① 밑줄 호스트로 실제 요청이 됨 ② 지금 길과 같은 시간 제한·응답 크기 제한·도서관 사이트 인증서 설정(`LibrarySiteTls`) ③ 새 라이브러리는 하나 ④ 인증서 이름 검사를 끄지 않음. 첫 후보 Apache HttpClient 5 [확인 필요: 시제품]
+- 호스트 읽기를 `collection` 안에 둔 것: `library` 공개 API로 올리는 안은 책 상세 주소가 도서관 정보가 아니라 결국 각 모듈이 다시 읽어 뺐고, 공용 모듈은 dev 규칙("generic shared module 금지")으로 뺌 [확정] (설계 결정 #4)
 - 사이클 17이 같은 사이트 요청 부품에 나가는 길 고르기·IP별 셈·User-Agent를 넣음(ADR-0095). 순서는 상관없고, 나중에 합치는 쪽이 맞춤 [확정] (설계 후속 #5). 밑줄 길도 17이 정한 User-Agent·셈·멈춤 규칙을 따름 [확정] (사용자 승인, 2026-10-14, design-delta 검토 #1)
 
 ## 데이터
@@ -182,13 +187,15 @@ classDiagram
 | `HoldingRowFilter`: 지금 `skipReason`과 같은 판정 | 바꾸기 전후 같은 사본으로 가져오기 기록 같음(밑줄 줄 빼고) | spec R2-1 |
 | 대출 조회·직접 찾기: 밑줄 호스트 | NPE 없음, 응답이면 값, 실패면 그 줄만 실패, 다른 도서관 영향 없음 | spec AC-4, 설계 후속 #4 |
 | 시제품: 고른 라이브러리로 현대제철에 실제 요청 | 응답 받음, 인증서 이름 검사 통과 | 설계 후속 #2·#3 |
-| 22곳 끄기 | 변경 파일 적용 뒤 켜진 0권 도서관 0곳, 목록 API에 없음 | spec AC-1·2 |
+| 22곳 끄기 | 변경 파일 적용 뒤 목록 API에 22곳 없음 (켜진 0권 0곳은 현대제철 가져오기 뒤) | spec AC-1·2 |
+| 끄기 전에 22곳 중 하나를 "내 도서관"에 넣어 둔 계정 | 끈 뒤 "쓸 수 없는 도서관"으로 보임 (지금 동작, 회귀 확인) | spec AC-3 |
+| dev 문서 | `library-site-issues.md`에 22곳 원인·원문·확인일 (문서 확인) | spec AC-7 |
 
 ## 결정 기록
 
-- [ADR-0109](../../adr/0109-disable-libraries-by-liquibase.md) (Proposed, 초안 승인 2026-10-14) 이미 켜진 도서관을 끌 때는 Liquibase 변경 파일로 (내 PC·운영 같은 판) — 사이클 07 방식을 규칙으로
-- [ADR-0110](../../adr/0110-library-insert-skips-zero-ebook-sites.md) (Proposed, 초안 승인 2026-10-14) 새 도서관 넣기에서 전자책 0권인 곳을 뺌 (가져오기와 같은 거르기 규칙, 맨 마지막 이유, 묻지 않음) — ADR-0107(넣기 명령 보탬)에 이어
-- [ADR-0111](../../adr/0111-underscore-host-separate-request-path.md) (Proposed, 초안 승인 2026-10-14) 호스트에 밑줄이 있는 도서관 주소: 가져오기는 직접 읽고, 대출 조회는 따로 만든 요청 길로 (SNI 없이, 인증서 검사 켬)
+- [ADR-0109](../../adr/0109-disable-libraries-by-liquibase.md) (Accepted, 사용자 승인 2026-10-14) 이미 켜진 도서관을 끌 때는 Liquibase 변경 파일로 (내 PC·운영 같은 판) — 사이클 07 방식을 규칙으로
+- [ADR-0110](../../adr/0110-library-insert-skips-zero-ebook-sites.md) (Accepted, 사용자 승인 2026-10-14) 새 도서관 넣기에서 전자책 0권인 곳을 뺌 (가져오기와 같은 거르기 규칙, 맨 마지막 이유, 묻지 않음) — ADR-0107(넣기 명령 보탬)에 이어
+- [ADR-0111](../../adr/0111-underscore-host-separate-request-path.md) (Accepted, 사용자 승인 2026-10-14) 호스트에 밑줄이 있는 도서관 주소: 가져오기는 직접 읽고, 대출 조회는 따로 만든 요청 길로 (SNI 없이, 인증서 검사 켬)
 
 ## 확인 필요
 
@@ -199,3 +206,4 @@ classDiagram
 | Liquibase `library/` 마지막 번호 | dev 작업 때 확인 | 개발 |
 | 새 곳이 많을 때 줄 세기 시간 | 시제품 (2026-10-12 사본) | 개발 |
 | 사이클 19가 `CollectedCatalog`를 어떻게 바꿨는지 | 19 main 합친 뒤 dev 코드 읽기 | 18 가져오기 고침 시작 |
+| `list_left_out.py`가 새 이유 `no_ebooks`와 끈 22곳을 그대로 보이는지 (`disabled_reasons.tsv`만으로 되는지) | dev 코드 읽기·실행 | 개발 |

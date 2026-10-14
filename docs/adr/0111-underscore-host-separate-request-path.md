@@ -1,6 +1,6 @@
 # ADR-0111: 호스트에 밑줄이 있는 도서관 주소는 따로 읽고 따로 요청한다
 
-Status: Proposed
+Status: Accepted
 Date: 2026-10-14
 Cycle: 18-empty-library-holdings
 Supersedes: 없음

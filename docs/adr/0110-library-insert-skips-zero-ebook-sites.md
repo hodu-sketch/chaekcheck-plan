@@ -1,6 +1,6 @@
 # ADR-0110: 새 도서관 넣기에서 전자책 0권인 곳을 뺀다
 
-Status: Proposed
+Status: Accepted
 Date: 2026-10-14
 Cycle: 18-empty-library-holdings
 Supersedes: 없음

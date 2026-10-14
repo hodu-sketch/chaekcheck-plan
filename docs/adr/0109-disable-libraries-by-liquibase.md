@@ -1,6 +1,6 @@
 # ADR-0109: 이미 켜진 도서관은 Liquibase 변경 파일로 끈다
 
-Status: Proposed
+Status: Accepted
 Date: 2026-10-14
 Cycle: 18-empty-library-holdings
 Supersedes: 없음
