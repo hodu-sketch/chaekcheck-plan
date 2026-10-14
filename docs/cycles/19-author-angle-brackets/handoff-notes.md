@@ -19,7 +19,7 @@
 ## 18 B가 dev main에 들어감 (2026-10-14, dev 커밋 a0e438a, dev 18 세션 → plan 19)
 
 - 19 dev는 a0e438a 위에서 시작 [확정] (dev 18 알림)
-- 가져오기 코드: 줄 거르기 `HoldingRowFilter.skipReason(removedAt, contentType, contentKind, detailUrl, title, libraryHost)` (`collection/internal/importer`), 호스트 읽기 `SiteHosts.host`/`httpHost` (`collection/internal`). 판정 순서·결과는 그대로이고 밑줄 호스트만 이제 읽음
+- 가져오기 코드: 줄 거르기 `HoldingRowFilter.skipReason(removedAt, contentType, contentKind, detailUrl, title, libraryHost)` (`collection/internal/importer`), 호스트 읽기 `SiteHosts.host`/`httpHost` (`collection/internal`). 판정 순서·결과는 그대로이고 밑줄 호스트만 이제 읽음. 가져올 줄 고르기는 `CollectedLibraries.importableRows`, 설정의 Java 이름 `excludeAddedLaterLibraries` (plan 18 알림)
 - 설정 이름 바뀜(끝남): `exclude-candidate-libraries` → `exclude-added-later-libraries`, 건너뜀 이유 `library_excluded_added_later` → 19 인계서의 할 일 아님
 - 넣기 명령에 새 빠진 이유 `no_ebooks`("전자책 0권", 맨 끝)
 - Liquibase: 18 B는 changeset을 더하지 않음. master 끝은 18 `library/016` → 16 → 15 `usagelog/001` → **19 changeset은 그 뒤**
