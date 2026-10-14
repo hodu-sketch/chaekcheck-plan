@@ -12,8 +12,9 @@
 사이클 14 cycle-close (2026-10-12): 인기 도서 → 사서추천도서 — 흐름 24를 "사서추천도서 받기 (주 1회, 실패 포함)"와 "받기 판단 상태"로, 흐름 25를 "사서추천도서 화면 열기와 공용 캐시 (S13)"로 바꾸고(사이클 10 인기 도서 매달 받기·화면 열기는 지움), 흐름 26(S14)·"화면 공통"에 바뀌는 점을 적음 — 설계됨(미구현, 사이클 14). 근거 `docs/cycles/14-librarian-picks/design-delta.md` "구조 그림", flow.md, ADR-0089·0090·0091.
 사이클 14 회고 (2026-10-14): 흐름 24~26·"화면 공통" 구현됨, 요청 3년·남기는 범위 12개 달, 받기 판단 세부(오늘 성공이면 쉼, 시작 때는 목록 없음·7일만), 진짜 받기 시험 값 반영 (`docs/cycles/14-librarian-picks/retro.md`).
 사이클 13 회고 반영 (2026-10-14): 흐름 32·33과 S12 한 줄 — 구현됨 (사이클 13, 회고 2026-10-14). 흐름 32에 `nextId` 다시 확인·종료 5, 흐름 33에 "같은 번호가 다른 도서관이면 멈춤"을 더함(ADR-0107). 첫 실행(여주대 빈 곳 채우기)은 뺌(AC-1). 근거 `docs/cycles/13-crawler-to-dev/retro.md`.
-사이클 15 cycle-close (2026-10-14, 12·13·14 회고 뒤): 사용자 행동 기록 — 흐름 34(수집 목록 검색 기록), 35(직접 찾기 첫 묶음과 "더 보기" 기록), 36(사용 알림), 37(기록 쓰기와 지우기)을 더함 — 설계됨(미구현, 사이클 15). 근거 `docs/cycles/15-usage-log/design-delta.md` "주요 흐름", ADR-0096·0097·0102.
-사이클 16 cycle-close (2026-10-14, 12·13·14·15 회고·인계 뒤): 공지사항과 안내·약관 페이지를 DB로 — 흐름 38(공지 목록·공지 글), 39(서비스 안내·이용약관·처리방침 글), 40(가입 화면의 약관·동의문, 글을 못 불러올 때), 41(운영자가 새 판을 넣을 때)을 더하고 흐름 9에 문서 버전의 원본을 적음 — 설계됨(미구현, 사이클 16). 근거 `docs/cycles/16-notices-and-policies/design-delta.md` "주요 흐름", ADR-0098~0101.
+사이클 15 cycle-close (2026-10-14, 12·13·14 회고 뒤): 사용자 행동 기록 — 흐름 34(수집 목록 검색 기록), 35(직접 찾기 첫 묶음과 "더 보기" 기록), 36(사용 알림), 37(기록 쓰기와 지우기)을 더함 — 구현됨 (사이클 15, 회고 2026-10-15). 근거 `docs/cycles/15-usage-log/design-delta.md` "주요 흐름", ADR-0096·0097·0102.
+사이클 16 cycle-close (2026-10-14, 12·13·14·15 회고·인계 뒤): 공지사항과 안내·약관 페이지를 DB로 — 흐름 38(공지 목록·공지 글), 39(서비스 안내·이용약관·처리방침 글), 40(가입 화면의 약관·동의문, 글을 못 불러올 때), 41(운영자가 새 판을 넣을 때)을 더하고 흐름 9에 문서 버전의 원본을 적음 — 구현됨 (사이클 16, 회고 2026-10-15). 근거 `docs/cycles/16-notices-and-policies/design-delta.md` "주요 흐름", ADR-0098~0101.
+사이클 15·16·18 회고 (2026-10-15): 구현됨으로 바꾸고 실제 이름·값을 맞춤. 15 `usagelog`·16 `sitecontent` 구현됨, 18은 A1·A2·B 구현됨(dev main `a0e438a`), C(운영 반영)는 사이클 17 첫 배포 뒤. 근거 `docs/cycles/15-usage-log/retro.md`, `docs/cycles/16-notices-and-policies/retro.md`, `docs/cycles/18-empty-library-holdings/retro.md`, dev `plan-feedback.md` "# 사이클 15"·"# 사이클 16"·"# 사이클 18".
 
 사이클 13 cycle-close (2026-10-12, 사이클 12와 나란히 미리 한 plan, 사이클 12 뒤에 개발): 새 도서관 넣기 — 흐름 32(넣기 미리 보기 → 넣기, 내 PC)와 흐름 33(운영 반영 판 2: 도서관 → 비교 → 책)을 더하고, "화면 공통"에 S12 `/about` 가입 조사 기준일 한 줄을 적음. 흐름 16·23-3의 seed로 넣기는 사이클 07~09 방식으로 남김 — 구현됨 (사이클 13, 회고 2026-10-14). 근거 `docs/cycles/13-crawler-to-dev/design-delta.md` "구조 그림", flow.md, ADR-0083~0088·0093.
 사이클 08 cycle-close (2026-10-11): 흐름 20(가져오기: 새 표에 쓰고 바꿔 끼우기), 21(검색 계획과 책 화면 소장 읽기), 22(막혔을 때 429·503)를 더하고, 흐름 6·16과 "화면 공통"에 바뀌는 점을 적음 — 구현됨 (사이클 08). 근거 `docs/cycles/08-polish-swap-memory/design-delta.md` "주요 흐름"(흐름 A~C), ADR-0065~0070.
@@ -336,7 +337,7 @@ sequenceDiagram
   end
 ```
 
-- 사이클 16 — 설계됨(미구현, 사이클 16) (ADR-0099): "동의할 문서 버전"은 서버 설정이 아니라 `sitecontent`의 지금 판 순번이고, S6은 그 판의 약관·동의문 글을 `sitecontent`에서 읽음. 자세한 것은 흐름 40
+- 사이클 16 — 구현됨 (사이클 16, 회고 2026-10-15) (ADR-0099): "동의할 문서 버전"은 서버 설정이 아니라 `sitecontent`의 지금 판 순번이고, S6은 그 판의 약관·동의문 글을 `sitecontent`에서 읽음. 자세한 것은 흐름 40
 
 ## 흐름 10: 토큰 갱신과 교체 — 구현됨(사이클 05, 2026-10-04 retro 반영)
 
@@ -607,6 +608,7 @@ sequenceDiagram
 - 로그인 전(로그인 기능이 꺼져 있어도) S10(`/my-libraries`)도 열리고, 직접 추가는 브라우저 키 `chaekcheck.chosenLibraries.v1` [확정] (dev 구현 확인, 2026-10-05)에 저장합니다 [확정] (ADR-0057). 이름 찾기에서 이미 추가한 곳은 "직접 추가함"(흐리게, 누를 수 없음), 없으면 "찾는 도서관이 없어요". S10 도서관 찾기는 `GET /api/v1/libraries`를 통째로 받아 화면에서 거릅니다(두 글자 이상, 앞 글자 맞는 것 먼저·가나다순, 20곳씩) [확정] (ADR-0058)
 - 사이클 07에서 넣은 도서관 이름을 누르면 열리는 가입 정보 창 맨 위에 가입 조사 상태별 안내가 있습니다 [확정] (ADR-0053). `joinSurvey`가 `SURVEYED`가 아니면 안내 문구 + (가입 방법·주의가 있으면 그것) + [도서관 첫 화면] 링크(`homepageUrl`)
 - 북큐브 사이트 그림의 "/xml/productView/?num=" 주소는 서비스 도서관 주소(https 최종 주소)의 scheme·포트로 옮겨 쓴 상세 주소에서 만듭니다(강동대학교 북큐브가 검색되지 않던 원인, 사이클 07 고침)
+- S10의 긴 목록(이름 찾기 결과·누구나 가입·지역 도서관)은 10곳씩 "더 보기" (세 목록, 직접 추가한 도서관은 그대로; 사용자 요청 2026-10-14, 회고 결정 대기 중인 ADR-0058 덧붙임). 사이클 07에서는 20곳씩. dev `MyLibrariesPage.tsx` `PAGE = 10` (사이클 15 회고 2026-10-15)
 
 ## 흐름 18: 직접 추가하지 않은 이용자 — 구현됨 (사이클 07)
 
@@ -1234,7 +1236,7 @@ sequenceDiagram
 - 1215 이름 고침 changeset(`library/015-library-name-1215.yaml` [확정])은 운영 역할 DB에도 판 2 반영 전에 적용돼 있어야 도서관 해시가 맞음
 - 판 2 배포 때 내 PC에 판 1 내보내기가 기다리면 `finish`가 거절됨 → 배포 전 `finish`·`discard` [확인 필요: 절차 문서]
 
-## 흐름 34: 수집 목록 검색 기록 (첫 쪽·다음 쪽·책 상세) — 설계됨(미구현, 사이클 15)
+## 흐름 34: 수집 목록 검색 기록 (첫 쪽·다음 쪽·책 상세) — 구현됨 (사이클 15, 회고 2026-10-15)
 
 ADR-0097·0102. 모듈 구성은 `module-map.md` "사용자 행동 기록".
 
@@ -1256,9 +1258,10 @@ sequenceDiagram
 
 - `page=1`이면 `recordSearch(kind=catalog, totalCount)`, `page` ≥ 2면 `recordMore(catalog_next_page, seq=page)`, 책 상세(`GET /api/v1/books/{bookId}`)는 `recordBookView`. 400·422·404면 기록 없음
 - `catalog`는 로그인을 모름. 쿠키 경로가 `/api/v1`이라 요청에 `access_token`이 함께 오고, `usagelog`가 `auth`의 판별 부품으로 정함 [확정] (ADR-0102)
-- 기록 설정 `chaekcheck.usagelog.enabled`(기본 꺼짐)가 꺼져 있으면 곧바로 돌아감 [안]
+- 기록 설정 `chaekcheck.usagelog.enabled`(기본 꺼짐)가 꺼져 있으면 곧바로 돌아감 [확정] (dev 구현 확인, 2026-10-15)
+- 실제 부르는 꼴 (dev `UsageLog.java`, 회고 2026-10-15): 컨트롤러가 요청 스레드에서 `UsageLog.capture(request)`로 `UsageRequest`를 만들고 `recordSearch(UsageRequest, SearchKind.CATALOG, SearchConditions, totalCount)`·`recordMore(UsageRequest, MoreKind.CATALOG_NEXT_PAGE, page, null, SearchConditions)`·`recordBookView(...)`를 부름 (dev `catalog/internal/web/BookSearchController.java` 53~76행)
 
-## 흐름 35: 도서관에서 직접 찾기 기록 (첫 묶음과 "더 보기") — 설계됨(미구현, 사이클 15)
+## 흐름 35: 도서관에서 직접 찾기 기록 (첫 묶음과 "더 보기") — 구현됨 (사이클 15, 회고 2026-10-15)
 
 ```mermaid
 sequenceDiagram
@@ -1277,11 +1280,12 @@ sequenceDiagram
   A->>U: recordMore(direct_next_batch, 몇 번째) + recordLibraryResponse
 ```
 
-- 첫 묶음 기록은 세션마다 한 번만 [안]: 첫 `batch-done`을 보낸 순간 `recordSearch(kind=direct, countedRows)`, 그 전에 `clientGone`이 되거나 `finish()`·emitter 시간 초과(`streamDuration()+5s`)·오류로 끝나면 `recordSearch(resultCount=null)`. 세션 안 "기록함" 표시 하나로 두 번 남기지 않음. 보낼 것이 없어 끊김을 모르는 경우도 묶음 마감(8초) 뒤 `finish()`가 `done`을 보내다 알게 되므로 늦어도 그때 남김
-- 다음 묶음(`batchNo` ≥ 2)은 `recordMore(direct_next_batch, seq=batchNo)`, 도서관별 더 보기는 `recordMore(library_more, libraryId, seq=page)`
+- 첫 묶음 기록은 세션마다 한 번만 [확정] (dev 구현 확인, 2026-10-15; 방법은 dev가 정함: `SseEmitter` 콜백 대신 `BatchRunner.start`에 `Consumer<Integer> searched`, `BatchSession`이 `synchronized` 필드 하나로 한 번만 부름): 첫 `batch-done`을 보낸 순간 `recordSearch(kind=direct, countedRows)`, 그 전에 `clientGone`이 되거나 `finish()`·emitter 시간 초과(`streamDuration()+5s`)·오류로 끝나면 `recordSearch(resultCount=null)`. 세션 안 "기록함" 표시 하나로 두 번 남기지 않음. 보낼 것이 없어 끊김을 모르는 경우도 묶음 마감(8초) 뒤 `finish()`가 `done`을 보내다 알게 되므로 늦어도 그때 남김
+- 다음 묶음(`batchNo` ≥ 2)은 `recordMore(direct_next_batch, seq=batchNo)`, 도서관별 더 보기는 `recordMore(library_more, libraryId, seq=page)`. 두 요청은 기록용 쿼리 값 `scope`·`visit`·`residenceRegionIds`·`workRegionIds`·`libraryIds`(도서관별 더 보기는 `filter`도)를 더 받아 `search_more`에 남김. 틀린 값이어도 검색을 막지 않고 그 칸만 비움(NULL·빈 배열) [확정] (사용자: "그래 이대로 해", 2026-10-14; dev `EbookBatchStreamController.java` 40~44행, `LibraryEbookController.java` 69~73행)
 - `recordLibraryResponse`는 모든 도서관 요청(직접 찾기 `source=direct_search`, 대출 수 채우기 `source=holding_fill`)마다. 결과: 성공 / 오류 → 실패 / 시간 초과·묶음 마감 → 시간 초과 / 시작 마감(`LAUNCH_CUTOFF`, 3초)까지 요청을 못 보낸 후보 → 건너뜀 [확정]. 조회 서버 바꿔 보내기는 한 번으로 셈 [확정]. 켜진 도서관만 [확정] (사이클 15 회고 결정 #1~#3, 사용자 승인 2026-10-14). 끊긴 뒤에도 이미 보낸 도서관 요청의 응답은 끝날 때 셈 (spec R6-4)
+- dev가 더 정한 셈 [안] (dev 구현, 회고 결정 대기; dev `BatchRunner.java` 181행): 3분 캐시에서 나온 답은 도서관 응답으로 세지 않음(도서관에 요청을 보내지 않았으므로), 같은 페이지를 다른 검색과 함께 기다리면 두 번 셀 수 있음, 묶음 마감 뒤에 온 성공한 답은 `TIMEOUT`, `ROW_LIMIT`으로 멈춘 것은 건너뜀(`SKIPPED`)이 아님. 대출 수 채우기에서 구독형과 도서관 주소 밖 상세 주소는 세지 않음 [확정] (dev 구현 확인, 2026-10-15)
 
-## 흐름 36: 사용 알림 (도서관 클릭·화면 행동) — 설계됨(미구현, 사이클 15)
+## 흐름 36: 사용 알림 (도서관 클릭·화면 행동) — 구현됨 (사이클 15, 회고 2026-10-15)
 
 ADR-0097·0102. 주소는 `api.md` "사용 알림".
 
@@ -1306,11 +1310,11 @@ sequenceDiagram
   end
 ```
 
-- 로그인 기능 켜짐에서 CSRF 표시가 없거나 틀리면 403 `csrf_invalid`(웹은 새 표시를 받아 한 번 다시 [안]). 로그인은 요구하지 않음 [확정] (ADR-0102)
-- 값이 틀려도 204, `rejected_event`(IP와 받은 값, 30일) [확정]. 기록 설정이 꺼져 있어도 204 [안]
-- nginx 한도 IP당 60r/m, 넘치면 204 [확정]. 로봇 User-Agent 거절(403 [안])은 직접 찾기·대출 조회 location에만 [확정]
+- 로그인 기능 켜짐에서 CSRF 표시가 없거나 틀리면 403 `csrf_invalid`(웹은 새 표시를 받아 한 번 다시; 로그인 기능 상태를 아직 모를 때는 쿠키가 있으면 표시를 붙이고 403이면 한 번 더 [안] (dev 구현, 회고 결정 대기)). 웹 함수 `web/src/api/usageEvents.ts` `sendUsageEvent`, 도서관 클릭 `web/src/lib/libraryClick.ts` [확정] (dev 구현 확인, 2026-10-15). 로그인은 요구하지 않음 [확정] (ADR-0102)
+- 값이 틀려도 204, `rejected_event`(IP와 받은 값, 30일) [확정]. 기록 설정이 꺼져 있어도 204 [확정] (dev 구현 확인, 2026-10-15). 본문 8KB 넘으면 `malformed` [안] (dev 구현, 회고 결정 대기)
+- nginx 한도 IP당 60r/m(zone `chaekcheck_usage_events`, `burst=20 nodelay`), 넘치면 `@usage_events_limited` → 204 [확정]. 로봇 User-Agent 거절(map `$chaekcheck_named_bot`, 403 [확정] (dev 구현 확인, 2026-10-15))은 직접 찾기·대출 조회 스트림과 `/api/v1/availability/` location에만 [확정]. dev 측정(AC-11): 같은 IP 약 10초에 80번 → 모두 204, 기록 31줄
 
-## 흐름 37: 기록 쓰기와 지우기 — 설계됨(미구현, 사이클 15)
+## 흐름 37: 기록 쓰기와 지우기 — 구현됨 (사이클 15, 회고 2026-10-15)
 
 ADR-0096·0097. 표는 `data-model.md` 스키마 `usagelog`.
 
@@ -1333,11 +1337,13 @@ sequenceDiagram
   Note over U,D: 매일 04:30 서울: 30일 지난 client_ip 비움, 30일 지난 rejected_event 지움, 1년 지난 줄 지움(1만 줄씩 [안])
 ```
 
-- 메모리 큐 상한 1만 줄, 넘치면 버리고 `dropped_batch`(`buffer_full`) [확정] (ADR-0097). DB 실패는 `db_failure`
+- 메모리 큐 상한 1만 줄, 넘치면 버리고 `dropped_batch`(`buffer_full`) [확정] (ADR-0097). DB 실패는 `db_failure`. 쓰기는 자기 단일 스레드 `usagelog-flush`, 버린 묶음 메모는 메모리에 100개까지(`chaekcheck.usagelog.max-dropped-notes`) [안] (dev 구현, 회고 결정 대기)
+- 쓰기 전에 값의 NUL 문자를 뺌, NUL이 든 `raw_values`는 글자로 바꿔 넣음(PostgreSQL `text`·`jsonb`는 NUL을 받지 않아 묶음 전체가 실패) [확정] (dev 시험, 2026-10-14)
+- 정상 종료 순서: 웹 서버 정상 종료 → 남은 기록 씀 → Hikari 닫힘 [확정] (dev 시험 로그, 2026-10-14)
 - 도서관 번호 확인은 `LibraryCatalog.enabledLibraryRefs()`(켜진 도서관만) [확정]
-- 04:30 정리 설정 이름 `chaekcheck.usagelog.cleanup.cron`·`zone` [안: 이름]. DB 백업 매일 03:00(사이클 17)과 겹치지 않음
+- 04:30 정리 설정 이름 `chaekcheck.usagelog.cleanup.cron`·`zone`·`batch-size`(10000) [확정] (dev 구현 확인, 2026-10-15). 기록 설정이 꺼져 있어도 돎. 공용 `@Scheduled` 실행기(스레드 1개)를 회원 정리·사서추천 받기와 같이 씀. DB 백업 매일 03:00(사이클 17)과 겹치지 않음
 
-## 흐름 38: 공지 목록과 공지 글 (S16·S17) — 설계됨(미구현, 사이클 16)
+## 흐름 38: 공지 목록과 공지 글 (S16·S17) — 구현됨 (사이클 16, 회고 2026-10-15)
 
 ADR-0098. 모듈 구성은 `module-map.md` "공지·안내·약관 글", 표는 `data-model.md` 스키마 `sitecontent`, 주소는 `api.md` "공지·안내·약관 글".
 
@@ -1364,8 +1370,9 @@ sequenceDiagram
 - 로그인 없음, 캐시 없음 [확정]. 지금 판 = 시행일 ≤ 오늘(`Asia/Seoul`)인 판 중 순번 최대 [확정]
 - 목록 10개씩, 최신 게시일순(같으면 번호 큰 순). 고정 공지는 1쪽 맨 위 `pinned`에만, 10개 셈·총 개수에서 뺌. 없는 쪽(`?page=99`)은 마지막 쪽으로 맞춤 [확정]
 - 숨긴 공지·첫 판이 앞날인 공지는 목록과 주소 모두 404 [확정]
+- dev가 정한 세부 [안] (dev 구현, 회고 결정 대기; dev `plan-feedback.md` 4117~4136행): 공지가 0개면 `page` 1, `items` [] / 고정 공지 순서는 일반 공지와 같음 / 옛 판을 볼 때 `title`은 그 판 제목, `editedOn`은 지금 판 기준. 웹: "목록으로"는 보던 쪽으로, 404 링크 글 "지금 버전 보기"·"공지 목록 보기", 5xx·끊김은 1초 뒤 한 번 더 읽고 "글을 불러오지 못했어요", 틀린 `?page=`는 1쪽, 쪽 번호는 PC 10개·폰 5개 묶음
 
-## 흐름 39: 서비스 안내·이용약관·처리방침 글 (S8·S9·S12) — 설계됨(미구현, 사이클 16)
+## 흐름 39: 서비스 안내·이용약관·처리방침 글 (S8·S9·S12) — 구현됨 (사이클 16, 회고 2026-10-15)
 
 ADR-0098·0100.
 
@@ -1391,7 +1398,7 @@ sequenceDiagram
 - `versions`에는 시행 중이거나 지난 판만(앞날 판 빠짐). 날짜 고르기 칸 문구: 지난 판 "A ~ (B-1일) 적용", 같은 날 바뀐 판 "A 적용 (같은 날 바뀜)", 지금 판 "A ~ 지금" [확정] (사용자 승인, 2026-10-13)
 - 이용약관 REST는 로그인 기능이 꺼져도 열어 두고, 웹 경로 `/terms`만 숨김 [확정]. 처리방침은 로그인 기능과 상관없이 공개 [확정] (ADR-0100)
 
-## 흐름 40: 가입 화면의 약관·동의문 (S6) — 설계됨(미구현, 사이클 16)
+## 흐름 40: 가입 화면의 약관·동의문 (S6) — 구현됨 (사이클 16, 회고 2026-10-15)
 
 ADR-0099. 흐름 9의 "동의할 문서 버전"이 어디서 오는지와 S6이 글을 읽는 순서입니다.
 
@@ -1421,8 +1428,9 @@ sequenceDiagram
 - 문서 버전의 원본은 `sitecontent`(서버 설정 `chaekcheck.auth.documents`가 아님), 동의 기록 `document_version`은 판 순번 글자(`"1"`) [확정] (ADR-0099)
 - 약관·동의문 글을 못 불러오면 체크 칸과 가입 버튼을 잠그고 "약관 글을 불러오지 못했어요" + "다시 시도"(같은 판을 다시 읽음). 첫 화면으로 돌려보내지 않음 [확정] (사용자 승인, 2026-10-14)
 - 가입은 동기 읽기가 필요해 이벤트를 쓰지 않음
+- 웹 세부 [안] (dev 구현, 회고 결정 대기): 두 글을 읽는 동안 체크 칸·가입 버튼 잠금 + 회색 줄. 실제 카카오 가입으로는 확인하지 않음(가짜 응답과 서버 시험 `SignupTests`만, 사용자: "지금은 일단 가짜응답으로만확인", 2026-10-14)
 
-## 흐름 41: 운영자가 공지·문서 새 판을 넣을 때 — 설계됨(미구현, 사이클 16)
+## 흐름 41: 운영자가 공지·문서 새 판을 넣을 때 — 구현됨 (사이클 16, 회고 2026-10-15)
 
 쓰기 API는 없음 [확정]. 실행 문장은 인계서의 예시 SQL(`docs/cycles/16-notices-and-policies/drafts/ops-sql.md`).
 
@@ -1440,10 +1448,13 @@ sequenceDiagram
 
 - 새 공지: `notice` INSERT RETURNING id → `notice_version` 판 1 INSERT, 한 트랜잭션. 고치기: 판 = 마지막 + 1, 새 날짜 ≥ 마지막 판 날짜. 숨기기·고정: `UPDATE sitecontent.notice SET hidden = … / pinned = …`
 - 문서 새 판: 동의문은 4항목 필수. 약관·동의문을 바꿀 때 공지도 함께. 중요하거나 불리한 변경은 다시 동의 화면이 생기기 전에는 넣지 않음 (ADR-0101)
+- 운영 SQL은 "줄 수를 보고 확정하기"로 실행: psql에 파일을 한 번에 넣으면 `COMMIT;`까지 멈추지 않으므로 `\gset` + `\if :ok COMMIT \else ROLLBACK`으로 바뀐 줄 수를 확인한 뒤에만 확정 [안] (dev 구현, 회고 결정 대기; dev가 c16 개발 DB에서 1~6절 실행, 고친 문장 없음). 이 PC의 WSL psql은 한국어 오류가 깨져 `SET lc_messages = 'C'`
+- 공지 운영 규칙 [확정] (사용자: "근데 어짜피 기능 공유해서 이런거니까 공지 판 있는 설정으로 안 쓰면 되는거아닌가?", 2026-10-14; dev `docs/maintenance/5-sitecontent.md` 2절): 공지는 보통 고치지 않음. 꼭 고칠 때만 새 판, 아니면 숨기고 새 공지. 코드는 그대로, 공지 판 기능을 줄일지는 회고 결정 대기
 
-## 흐름 42: 새 도서관 넣기 미리 보기의 "전자책 0권" — 설계됨(미구현, 사이클 18)
+## 흐름 42: 새 도서관 넣기 미리 보기의 "전자책 0권" — 구현됨 (사이클 18 B, dev main `a0e438a`, 회고 2026-10-15)
 
 - 근거: `docs/cycles/18-empty-library-holdings/design-delta.md`, ADR-0110. 기존 이유 6개 다음 맨 마지막, 가져오기와 같은 거르기 규칙으로 센 줄이 0이면 뺌, 묻지 않음, 종료 코드 그대로
+- 회고 2026-10-15 (dev 구현 확인): 줄 세기 `CollectedLibraries.importableRows(collectionId, libraryHost)`, 판정 `HoldingRowFilter.skipReason(removedAt, contentType, contentKind, detailUrl, title, libraryHost)`, 이유 값 `no_ebooks`(`LibraryInsertPlanner.NO_EBOOKS`) [확정]. `no_ebooks` 검사는 규칙 파일 오류 검사(`library_kinds`·`final_origins`) 앞에 둠(0권 곳 때문에 규칙 파일 오류로 멈추지 않게) [확정] (dev 구현 확인, 2026-10-15; 인계서가 dev에게 맡긴 [안]). 시험 `LibraryInsertCommandTests` ①②③ 통과. 이번 사본은 새 곳이 0이라 줄 세기 시간은 재지 못함 [확인 필요: 다음 새 도서관 넣기 때]
 
 ```mermaid
 sequenceDiagram
@@ -1470,9 +1481,11 @@ sequenceDiagram
   P-->>O: 보고서 (묻지 않음, 종료 코드 그대로)
 ```
 
-## 흐름 43: 호스트에 밑줄이 있는 도서관의 가져오기와 대출 조회 — 설계됨(미구현, 사이클 18)
+## 흐름 43: 호스트에 밑줄이 있는 도서관의 가져오기와 대출 조회 — 구현됨 (사이클 18 A2·B, dev main `a0e438a`, 회고 2026-10-15; 운영 반영 C는 사이클 17 첫 배포 뒤)
 
 - 근거: `docs/cycles/18-empty-library-holdings/design-delta.md`, ADR-0111. 지금 해당 도서관은 현대제철 2624 한 곳(2026-10-14). 조회 서버 앱 모드도 같은 길
+- 회고 2026-10-15 (dev 구현 확인): 가져오기 쪽 호스트 읽기 `collection/internal/SiteHosts`(`host`·`httpHost`). 대출 조회 쪽 `HostRoutingSiteFetcher` → `UnderscoreHostSiteFetcher`(Apache HttpClient 5 `httpclient5` 5.6.4, SNI 없음, 인증서 이름 검사는 HttpClient `DefaultHostnameVerifier`·`HostnameVerificationPolicy.CLIENT`, redirect·재시도·쿠키·압축 없음, 로그 `via=direct-underscore`). 조회 서버 앱은 `UnderscoreHosts`·`UrlGuard`(authority의 `@` 거부, 내부망 거부)·`LibraryClient` (ADR-0112). 실제 확인: direct·조회 서버 모드 둘 다 「1984」 보유 1·대출 0
+- 241권 가져오기(B7)는 복사본 DB에서만 함(기록 11번, `detail_url_not_http` 283 → 42). 원래 DB와 첫 배포 데이터에는 아직 없음 [확인 필요: 넣는 길, 사이클 17·회고 결정]
 
 ```mermaid
 sequenceDiagram

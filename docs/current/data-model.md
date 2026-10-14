@@ -12,8 +12,9 @@
 사이클 14 cycle-close (2026-10-12): 스키마 `popular`(사이클 10, 구현됨·배포 전)를 지우고 새 스키마 `picks`(`fetch_run`, `pick`, `cover`) — 설계됨(미구현, 사이클 14). changelog `picks/001-picks-schema.yaml`, `popular/001-popular-schema.yaml`은 지움(배포 전 규칙), 로컬 `db`·`db-test`에서 `DROP SCHEMA popular CASCADE`와 `databasechangelog`의 `popular-001-%` 줄 지움. 다른 모듈 표는 바뀌지 않음(`catalog.book`과는 ISBN·제목+저자 값으로만 맞춤). 근거 `docs/cycles/14-librarian-picks/design-delta.md` "데이터", ADR-0089·0090·0091.
 사이클 14 회고 (2026-10-14): 스키마 `picks` 구현됨 — dev `db/changelog/picks/001-picks-schema.yaml`(changeset `picks-001-schema`·`picks-001-fetch-run`·`picks-001-pick`·`picks-001-cover`), 칸·제약·색인이 설계와 같음. 스키마 `popular`는 changeset·14 worktree DB·원래 `db`·`db-test`에서 지움(원래 DB는 사용자 승인 뒤). 범위 최근 12번으로 크기 실측 반영 (`docs/cycles/14-librarian-picks/retro.md`).
 사이클 13 회고 반영 (2026-10-14): `collection.library_insert_run`, `other_library_count` 이름 바꿈, `library/015` 1215 이름, 반영 파일 판 2 — 구현됨 (사이클 13, 회고 2026-10-14). 새 도서관 6곳(서비스 번호 2675~2680)을 넣기 명령으로 넣음. 근거 `docs/cycles/13-crawler-to-dev/retro.md`, dev Liquibase `collection/001`(52·53행)·`collection/006`·`library/015`.
-사이클 15 cycle-close (2026-10-14, 12·13·14 회고 뒤): 새 스키마 `usagelog`(`search_event`, `book_view`, `search_more`, `library_click`, `screen_event`, `library_response_daily`, `rejected_event`, `dropped_batch`) — 설계됨(미구현, 사이클 15). 다른 모듈 표는 바뀌지 않음(도서관·책·지역은 번호 값으로만). 근거 `docs/cycles/15-usage-log/design-delta.md` "데이터", ADR-0096·0097.
-사이클 16 cycle-close (2026-10-14, 12·13·14·15 회고·인계 뒤): 새 스키마 `sitecontent`(`notice`, `notice_version`, `document_version`), `auth.account_consent.document_version` 값을 판 순번 글자로 + 형식 CHECK — 설계됨(미구현, 사이클 16). changelog `sitecontent/001`·`002`, `auth/002`. 근거 `docs/cycles/16-notices-and-policies/design-delta.md` "데이터", ADR-0098·0099.
+사이클 15 cycle-close (2026-10-14, 12·13·14 회고 뒤): 새 스키마 `usagelog`(`search_event`, `book_view`, `search_more`, `library_click`, `screen_event`, `library_response_daily`, `rejected_event`, `dropped_batch`) — 구현됨 (사이클 15, 회고 2026-10-15). 다른 모듈 표는 바뀌지 않음(도서관·책·지역은 번호 값으로만). 근거 `docs/cycles/15-usage-log/design-delta.md` "데이터", ADR-0096·0097.
+사이클 16 cycle-close (2026-10-14, 12·13·14·15 회고·인계 뒤): 새 스키마 `sitecontent`(`notice`, `notice_version`, `document_version`), `auth.account_consent.document_version` 값을 판 순번 글자로 + 형식 CHECK — 구현됨 (사이클 16, 회고 2026-10-15). changelog `sitecontent/001`·`002`, `auth/002`. 근거 `docs/cycles/16-notices-and-policies/design-delta.md` "데이터", ADR-0098·0099.
+사이클 15·16·18 회고 (2026-10-15): 구현됨으로 바꾸고 실제 이름·값을 맞춤. 15 `usagelog`·16 `sitecontent` 구현됨, 18은 A1·A2·B 구현됨(dev main `a0e438a`), C(운영 반영)는 사이클 17 첫 배포 뒤. 근거 `docs/cycles/15-usage-log/retro.md`, `docs/cycles/16-notices-and-policies/retro.md`, `docs/cycles/18-empty-library-holdings/retro.md`, dev `plan-feedback.md` "# 사이클 15"·"# 사이클 16"·"# 사이클 18".
 
 사이클 13 cycle-close (2026-10-12, 사이클 12와 나란히 미리 한 plan, 사이클 12 뒤에 개발): 수집기 dev로 갈아타기 + 새 도서관 넣기 명령 — 새 표 `collection.library_insert_run`(넣기 실행 기록), `collection.catalog_import.candidate_library_count` → `other_library_count` 이름 바꿈(배포 전 규칙으로 `collection/001`을 고치고 로컬 `db`·`db-ops`는 이름 바꾸기 SQL + 체크섬 비우기로 맞춤(데이터 유지, 사용자 선택 2026-10-12)), `library.library` 1215 이름 고침 changeset, 반영 파일 판 2(`load_manifest.notes.libraryPart`, 새 표 없음), 앞으로 도서관 seed changeset을 만들지 않음 — 구현됨 (사이클 13, 회고 2026-10-14). `library` 칸 변경 없음. 근거 `docs/cycles/13-crawler-to-dev/design-delta.md` "데이터", ADR-0083~0087·0093. 이름·번호는 따로 적지 않으면 [안] (dev가 바꿀 수 있음).
 사이클 08 cycle-close (2026-10-11): `catalog` 가져오기를 새 표(`catalog_next`)에 쓰고 바꿔 끼우기, 소장 번호 잇기, `collection.catalog_import` 칸 추가, `collection.national_bibliography_record`·`national_bibliography_source`, `library.library.mobile_site_differs`, 도서관 이름 고침 changeset, `library`·`region` `updated_at` 트리거, 교보 대여·혼합 11곳 seed에서 뺌, 정리 규칙을 바꿀 때의 순서 — 구현됨 (사이클 08). 근거 `docs/cycles/08-polish-swap-memory/design-delta.md` "데이터"·"정리 규칙을 바꿀 때"·"이름 고치기", ADR-0065~0070. 이름·숫자는 따로 적지 않으면 [안].
@@ -34,7 +35,7 @@
   - `collection/002-collection-seed-candidates.yaml` + `002-collection-link.csv`(짝: 번호 1~280 도서관의 같은 번호 짝 + 사이클 07에서 넣은 2,394곳의 짝). 번호 1~280 짝도 `library.library`를 읽지 않고 CSV 줄로 적음(다른 모듈 표를 읽지 않기 위해) [확정] (dev 구현 확인, 2026-10-05)
   - `library/009-library-logos.yaml` + `009-library-logos.csv`: 로고 칸 둘 + `logo_file` 값(임시 표 `library.logo_seed`에 `loadData` → UPDATE → 표 지움) [확정] (dev 구현 확인, 2026-10-05)
   - `library/010-library-disabled.yaml`: 135 전라북도교육청통합도서관, 2194 장안대학교 (YES24), 2198 성균관대학교 (YES24)를 `enabled = false` [확정] (사용자 승인, 2026-10-05, 17단계)
-  - 사이클 18 구현됨(dev main, 커밋 5f8403c, 2026-10-14): `library/016-library-disabled-cycle18.yaml` (changeset `library-016-disabled-cycle18`) — 44, 112, 168, 261, 269, 305, 318, 323, 378, 425, 455, 514, 537, 622, 623, 625, 626, 721, 1045, 1131, 1620, 2023을 `enabled = false` [확정] (사용자 승인, 2026-10-14, ADR-0109). 이유는 dev `scripts/library/disabled_reasons.tsv`·`docs/library-site-issues.md`. 이미 켜진 도서관을 끄거나 다시 켤 때는 새 변경 파일로 (내 PC·운영 같은 판, 반영 비교가 켜진 도서관을 보므로)
+  - 사이클 18 A1 구현됨 (dev 커밋 `d8513f7`~`d3e8413`, dev main `a0e438a`, 회고 2026-10-15): `library/016-library-disabled-cycle18.yaml` (changeset `library-016-disabled-cycle18`, author `chaekcheck`, master 끝 `# cycle 18` 주석 아래) — 44, 112, 168, 261, 269, 305, 318, 323, 378, 425, 455, 514, 537, 622, 623, 625, 626, 721, 1045, 1131, 1620, 2023을 `enabled = false` [확정] (사용자 승인, 2026-10-14, ADR-0109). 이유는 dev `scripts/library/disabled_reasons.tsv`·`docs/library-site-issues.md`. 이미 켜진 도서관을 끄거나 다시 켤 때는 새 변경 파일로 (내 PC·운영 같은 판, 반영 비교가 켜진 도서관을 보므로). 원래 DB(5432)에는 사이클 16 `bootRun` 때 적용됨(켜진 도서관 2,664 → 2,642). 운영 DB 반영(C)은 사이클 17 첫 배포 뒤
   - 합칠 때 대조 규칙 [확정] (사용자 제안, 2026-10-05): 둘 다 있으면 합치고 다른 점은 목록으로 보고, 새 파일에만 있으면 넣고, **옛 파일에만 있으면 지우지 않고** dev가 그 사이트 첫 화면을 열어 확인 → 열리지 않거나 바뀌었으면 `enabled = false` 제안 목록을 사용자에게 보여 주고 사용자가 정함 (ADR 없음, 사이클 07 design-delta "데이터"에만 기록). 대조 결과: 이름·화면 종류·주소 다른 곳 0, 옛 파일에만 있는 곳 2(59·131, 이미 꺼짐, 그대로 둠)
   - 지역 seed `region/002`에 증평군(4311) 추가, 전남광주통합특별시 `short_name` "전남광주" [확정] (사용자 결정, 2026-10-05, 배포 전 규칙으로 고침)
 - 사이클 08 Liquibase (구현됨 (사이클 08)), 새 파일로 더함. 파일 이름은 dev가 정함 [확정] (dev 구현 확인, 2026-10-11; 설계 [안]의 `collection/004`·`005`, `library/011`·`012`·`013` 번호와 다름): `collection/003-import-period-and-timings.yaml`(changeset `collection-003-import-period-and-timings`: 수집 기간·단계별 시간, `collection-003-import-status`: 상태·실패 칸), `collection/004-national-bibliography.yaml`(두 표), `library/011-updated-at-trigger.sql`, `region/003-updated-at-trigger.sql`(master에서 이번 사이클 다른 changeset보다 앞), `library/012-library-mobile-site-differs.yaml`(칸 + 13곳 UPDATE), `library/013-library-name-overrides.yaml`(이름 고침 UPDATE). 트리거 파일은 dev `CLAUDE.md` 규칙대로 formatted SQL: 첫 줄 `--liquibase formatted sql`, `splitStatements:false`, `CREATE OR REPLACE`, `runOnChange:true` [확정] (사용자 승인, 2026-10-11, 설계 검토)
@@ -45,12 +46,12 @@
   - `library/015-library-name-1215.yaml`: 1215 이름 고침 [확정] (dev 구현 확인, 2026-10-14). 운영 역할 DB에도 판 2 반영 **전에** 적용돼 있어야 도서관 해시가 맞음
   - master(`db.changelog-master.yaml`) 끝줄은 사이클 13(`collection/006`, `library/015`)과 사이클 14(`popular/001` → `picks/001`)가 함께 손댐 — 합친 결과(실제 끝): `# cycle 13` 주석 아래 `library/015` → `collection/006`, 그 뒤 `# cycle 14: librarian picks (ADR-0089)` + `picks/001-picks-schema.yaml` (dev master 92~94행) [확정] (dev 구현 확인, 2026-10-14)
   - 앞으로 도서관 seed changeset을 만들지 않음 — 새 도서관은 `collection` 넣기 명령으로 [확정] (ADR-0084)
-- 사이클 15 Liquibase — 설계됨(미구현, 사이클 15): 새 파일 `db/changelog/usagelog/001-usagelog-schema.yaml`을 master 끝에 [확정], 기존 changeset 수정 없음. 사이클 16(`sitecontent` [확정])과는 schema가 달라 어느 쪽이 먼저여도 되고, main에 합치는 순서대로 끝에 붙이고 나중에 합치는 쪽이 rebase해 자기 줄을 맨 끝으로 옮김(이미 다른 DB에 돈 changeset은 고치지 않음) [확정] (사이클 15·16 인계서 같은 규칙)
-- 사이클 16 Liquibase — 설계됨(미구현, 사이클 16): 새 changelog 파일로 추가, 기존 changeset 수정 없음(사이클 15와 나란히 개발하고 작업 폴더마다 DB가 따로라 기존 changeset을 고치면 다른 작업 폴더의 DB 체크섬이 깨짐, 사이클 14 dev 기록) [확정]
-  - `sitecontent/001-sitecontent-schema.yaml`: 스키마·표 셋(표·CHECK는 `sql` changeset)
-  - `sitecontent/002-sitecontent-seed.yaml`: 개발 DB 첫 판 = 지금 웹 코드의 글을 마크다운으로(이용약관·동의문·처리방침·서비스 안내, 공지는 없음). `sql` + `$$` + `splitStatements: false` [안: dev 적용 시험]. 개발 DB 시행일 `2026-10-04`(지금 동의 기록과 이어짐). 동의문·처리방침의 로그인 수단은 카카오만 [확정] (사용자, 2026-10-13). 서비스 안내 첫 판은 `docs/cycles/16-notices-and-policies/drafts/about.md`(dev `AboutPage.tsx`와 맞춤, 2026-10-14)
-  - `auth/002-consent-version-number.yaml`: 테스트 계정 동의 기록 값 `'2026-10-04'` → `'1'` + 형식 CHECK(아래 `auth.account_consent`)
-  - master 끝에 추가. 지금 끝줄은 `# cycle 14` `picks/001-picks-schema.yaml`(dev main 2026-10-14), 사이클 15가 `usagelog/001-usagelog-schema.yaml`을 붙임. main에 합치는 순서대로 끝에 붙이고, 나중에 합치는 쪽이 rebase해서 자기 줄을 맨 끝으로 옮김 [확정] (사이클 15 인계서와 같은 규칙)
+- 사이클 15 Liquibase — 구현됨 (사이클 15, 회고 2026-10-15): 새 파일 `db/changelog/usagelog/001-usagelog-schema.yaml`(changeset id `usagelog-001-*` 아홉 개)을 master 맨 끝에 [확정], 기존 changeset 수정 없음. 실제 master 끝 순서 (dev master 96~112행, 회고 2026-10-15): `# cycle 18` `library/016` → `# cycle 16` 세 줄(`sitecontent/001`, `sitecontent/002`, `auth/002`) → `# cycle 15` `usagelog/001` 맨 끝 [확정] (dev 구현 확인). 원래 DB(5432)에 적용, 표 여덟 확인. 사이클 16(`sitecontent` [확정])과는 schema가 달라 어느 쪽이 먼저여도 되고, main에 합치는 순서대로 끝에 붙이고 나중에 합치는 쪽이 rebase해 자기 줄을 맨 끝으로 옮김(이미 다른 DB에 돈 changeset은 고치지 않음) [확정] (사이클 15·16 인계서 같은 규칙)
+- 사이클 16 Liquibase — 구현됨 (사이클 16, 회고 2026-10-15): 새 changelog 파일로 추가, 기존 changeset 수정 없음(사이클 15와 나란히 개발하고 작업 폴더마다 DB가 따로라 기존 changeset을 고치면 다른 작업 폴더의 DB 체크섬이 깨짐, 사이클 14 dev 기록) [확정]
+  - `sitecontent/001-sitecontent-schema.yaml`: 스키마·표 셋(표·CHECK는 `sql` changeset), changeset id `sitecontent-001-*` 넷(`schema`·`notice`·`notice-version`·`document-version`) [확정] (dev 구현 확인, 2026-10-15)
+  - `sitecontent/002-sitecontent-seed.yaml`: 개발 DB 첫 판 = 지금 웹 코드의 글을 마크다운으로(이용약관·동의문·처리방침·서비스 안내, 공지는 없음). `sql` + `$$` + `splitStatements: false` [확정] (dev 적용 시험, 2026-10-14: `$$`·세미콜론이 그대로 들어감). changeset id `sitecontent-002-*` 넷(`terms-of-service`·`privacy-collection`·`privacy-policy`·`about`). 개발 DB 시행일 `2026-10-04`(지금 동의 기록과 이어짐). 동의문·처리방침의 로그인 수단은 카카오만 [확정] (사용자, 2026-10-13). 서비스 안내 첫 판은 `docs/cycles/16-notices-and-policies/drafts/about.md`(dev `AboutPage.tsx`와 맞춤, 2026-10-14)
+  - `auth/002-consent-version-number.yaml`(changeset id `auth-002-consent-version-number`): 테스트 계정 동의 기록 값 `'2026-10-04'` → `'1'` + 형식 CHECK(아래 `auth.account_consent`). 원래 DB(5432)에 사이클 16 `bootRun`으로 적용, 동의 값 2줄 바뀜 (회고 2026-10-15)
+  - master 끝에 추가. 지금 끝줄은 `# cycle 14` `picks/001-picks-schema.yaml`(dev main 2026-10-14), 사이클 15가 `usagelog/001-usagelog-schema.yaml`을 붙임. main에 합치는 순서대로 끝에 붙이고, 나중에 합치는 쪽이 rebase해서 자기 줄을 맨 끝으로 옮김 [확정] (사이클 15 인계서와 같은 규칙). 실제: 18 `library/016` → 16 세 줄 → 15 `usagelog/001` (회고 2026-10-15)
   - 운영 첫 판: 운영 DB는 검토한 글(`docs/cycles/16-notices-and-policies/drafts/`, 승인 2026-10-13)부터 시작하고, 첫 판의 시행일은 모르는 사람에게도 공개하는 날(첫 배포일 아님). 그 전에 seed를 검토한 글·공개일로 바꾸고 개발 DB는 초기화, 테스트 계정은 다시 가입 [확정] (사용자 승인·제안, 2026-10-13). 이미 돈 `sitecontent/002`를 고치는 일이라 `PRE_DEPLOYMENT` 표시가 있는 동안에만 함 — 사이클 17이 표시를 지우기 전에 (사이클 17 체크리스트)
 - CHECK, 부분 인덱스, `UNIQUE NULLS NOT DISTINCT`는 Liquibase OSS YAML이 지원하지 않아 changeset 안의 `sql`로 만듦
 - **배포 전 규칙** [확정] (사용자, 2026-09-28): dev의 `db/changelog/PRE_DEPLOYMENT` 파일이 있는 동안에는 이미 적용된 changeset도 고칠 수 있습니다(로컬 DB를 지우고 다시 적용). 첫 배포 때 이 파일을 지우고, 그 뒤로는 새 파일만 더합니다. 그래서 사이클 02 스키마 변경은 `library/001`에 합쳐져 있습니다
@@ -73,8 +74,8 @@ erDiagram
 
 - `COLLECTION_LINK`는 사이클 07에 더한 표입니다(구현됨 (사이클 07)). `BOOK`·`HOLDING`의 자세한 관계는 아래 `catalog` 그림.
 - `PICK`(스키마 `picks`)은 사이클 14에 더한 표입니다 — 구현됨 (사이클 14). 사이클 10의 `RANKING_ENTRY`(스키마 `popular`)는 지움 — 구현됨 (사이클 14). 자세한 것은 아래 `picks` 절.
-- `LIBRARY_CLICK`(스키마 `usagelog`)은 사이클 15에 더한 표입니다 — 설계됨(미구현, 사이클 15). `usagelog`의 다른 표도 도서관·책·지역 번호를 값으로만 남김. 자세한 것은 아래 `usagelog` 절.
-- 스키마 `sitecontent`(사이클 16)는 다른 모듈 표와 FK·JOIN이 없어 이 그림에 넣지 않음 — 설계됨(미구현, 사이클 16). `auth.account_consent.document_version`은 판 순번 값만 기억함. 자세한 것은 아래 `sitecontent` 절.
+- `LIBRARY_CLICK`(스키마 `usagelog`)은 사이클 15에 더한 표입니다 — 구현됨 (사이클 15, 회고 2026-10-15). `usagelog`의 다른 표도 도서관·책·지역 번호를 값으로만 남김. 자세한 것은 아래 `usagelog` 절.
+- 스키마 `sitecontent`(사이클 16)는 다른 모듈 표와 FK·JOIN이 없어 이 그림에 넣지 않음 — 구현됨 (사이클 16, 회고 2026-10-15). `auth.account_consent.document_version`은 판 순번 값만 기억함. 자세한 것은 아래 `sitecontent` 절.
 
 ## 스키마 `region` (소유: `region` 모듈) — 구현됨
 
@@ -551,10 +552,10 @@ erDiagram
 | id | bigint | PK, IDENTITY | |
 | account_id | bigint | NOT NULL, FK → auth.account(id) ON DELETE CASCADE | |
 | consent_type | text | NOT NULL, CHECK IN ('TERMS_OF_SERVICE','PRIVACY_COLLECTION','AGE_OVER_14') | 확인란 셋 [확정] |
-| document_version | text | NULL | 이용약관·수집 이용 고지 버전. 형식 `YYYY-MM-DD`(시행 날짜) [확정] (사용자 승인, 2026-10-04, 설계 검토 10). 사이클 16부터 `sitecontent.document_version.version_no`의 판 순번 글자(`'1'`, `'2'`…), 새 CHECK `account_consent_document_version_format_check (document_version IS NULL OR document_version ~ '^[1-9][0-9]*$')`, 테스트 계정 기록 `'2026-10-04'` → `'1'` [확정] (사용자 승인, 2026-10-13, ADR-0099; CHECK 이름·식 글자 모양은 [안: dev가 정해도 됨]) — 설계됨(미구현, 사이클 16) |
+| document_version | text | NULL | 이용약관·수집 이용 고지 버전. 형식 `YYYY-MM-DD`(시행 날짜) [확정] (사용자 승인, 2026-10-04, 설계 검토 10). 사이클 16부터 `sitecontent.document_version.version_no`의 판 순번 글자(`'1'`, `'2'`…), 새 CHECK `account_consent_document_version_format_check (document_version IS NULL OR document_version ~ '^[1-9][0-9]*$')`, 테스트 계정 기록 `'2026-10-04'` → `'1'` [확정] (사용자 승인, 2026-10-13, ADR-0099; CHECK 이름·식 글자 모양은 [안: dev가 정해도 됨]) — 구현됨 (사이클 16, 회고 2026-10-15) |
 | agreed_at | timestamptz | NOT NULL | |
 - CHECK: `AGE_OVER_14`가 아니면 `document_version IS NOT NULL`. UNIQUE `(account_id, consent_type, document_version)` NULLS NOT DISTINCT(sql changeset). INDEX `(account_id)`
-- 현재 버전은 서버 설정이 원본: 웹은 화면에 보인 버전을 보내고, 서버의 현재 버전과 다르면 409. 사이클 16 — 설계됨(미구현, 사이클 16) (ADR-0099): 원본이 `sitecontent`(`SiteDocuments.currentVersion`)로 바뀌고 서버 설정 `chaekcheck.auth.documents`는 지움. 칸 타입(`text`)은 그대로, 다른 schema로 FK 없음(판 순번 값만). "다시 동의 필요" 칸은 두지 않음 — 다시 동의 화면을 만들 때 함께 더함 [확정] (사용자 승인, 2026-10-13)
+- 현재 버전은 서버 설정이 원본: 웹은 화면에 보인 버전을 보내고, 서버의 현재 버전과 다르면 409. 사이클 16 — 구현됨 (사이클 16, 회고 2026-10-15) (ADR-0099): 원본이 `sitecontent`(`SiteDocuments.currentVersion`)로 바뀌고 서버 설정 `chaekcheck.auth.documents`는 지움. 칸 타입(`text`)은 그대로, 다른 schema로 FK 없음(판 순번 값만). "다시 동의 필요" 칸은 두지 않음 — 다시 동의 화면을 만들 때 함께 더함 [확정] (사용자 승인, 2026-10-13)
 
 **`auth.refresh_token`**
 | 컬럼 | 타입 | 제약 | 설명 |
@@ -570,7 +571,7 @@ erDiagram
 
 **`modulith.event_publication`**: Spring Modulith 2.1.1 공식 DDL 그대로(Liquibase 별도 파일. https://docs.spring.io/spring-modulith/reference/appendix.html). 설정: `spring.modulith.events.jdbc.schema=modulith`, `spring.modulith.events.jdbc.schema-initialization.enabled=false`, `spring.modulith.events.completion-mode=delete` [확정] (사용자 승인, 2026-10-04, 설계 검토 8).
 
-- Liquibase: `db/changelog/auth/001-auth-schema.yaml`(CHECK, NULLS NOT DISTINCT는 `sql` changeset), `db/changelog/modulith/001-event-publication.yaml`, master에 include 두 줄. 새 파일만 더합니다 [확정]. 사이클 16: `auth/002-consent-version-number.yaml` — 설계됨(미구현, 사이클 16)
+- Liquibase: `db/changelog/auth/001-auth-schema.yaml`(CHECK, NULLS NOT DISTINCT는 `sql` changeset), `db/changelog/modulith/001-event-publication.yaml`, master에 include 두 줄. 새 파일만 더합니다 [확정]. 사이클 16: `auth/002-consent-version-number.yaml` — 구현됨 (사이클 16, 회고 2026-10-15)
 - JPA 매핑 참고: cascade는 DB FK에 맡기고 JPA 연관 cascade는 쓰지 않습니다. 삭제는 `account` 한 줄 삭제 쿼리로 합니다. 엔티티를 쓸지 `JdbcClient`를 쓸지는 dev가 정합니다.
 - `auth` 스키마는 사이클 06에서 바뀌지 않습니다. 동의 항목 추가(지역·직접 추가 도서관)는 문서 문구뿐이고 `document_version`은 그대로 [확정] (사이클 06 spec R7).
 
@@ -693,7 +694,7 @@ erDiagram
 - 목차·추천 글은 받아도 저장하지 않음 [확정] (spec 비목표)
 - Liquibase: changelog `db/changelog/picks/001-picks-schema.yaml`. `popular/001-popular-schema.yaml`은 지우고 마스터의 include를 바꿈 — 배포 전 규칙으로 기존 changelog를 바꿈 [확정] (ADR-0089, 사이클 10 회고 `display_order` 선례). 로컬 DB(`db`, `db-test`) 정리: `DROP SCHEMA popular CASCADE`; `DELETE FROM databasechangelog WHERE id LIKE 'popular-001-%'`. `catalog` 등 다른 스키마는 그대로(다시 가져오지 않음), 빠뜨리면 표가 남으므로 AC-22로 확인 [확정] (ADR-0089). CHECK는 맨 위 규칙대로 changeset 안 `sql`. 구현됨 (사이클 14): `popular/001` 파일 없음, master 92~94행에 `picks/001`. 로컬 정리 끝남(14 worktree 5452·5453, 원래 5432·5433은 합친 뒤 사용자 승인으로, 2026-10-14, AC-22). changelog 머리 주석(1~2행)은 아직 "latest six recommendation months" — 동작과 무관, dev에 알릴 것
 
-## 스키마 `usagelog` (소유: `usagelog` 모듈) — 설계됨(미구현, 사이클 15)
+## 스키마 `usagelog` (소유: `usagelog` 모듈) — 구현됨 (사이클 15, 회고 2026-10-15)
 
 사용자 행동 기록입니다: 검색(수집 목록·직접 찾기), 책 상세, 더 보기 세 종류, 도서관 클릭, 화면 행동(사서 추천 목록·책 창 열기, 지역 바꾸기, 내 도서관 넣기·빼기), 도서관 응답 하루 요약, 이상한 사용 알림, 버린 묶음 (ADR-0096·0097). 스키마 이름 `usagelog` [확정] (사용자 승인, 2026-10-13). 근거 `docs/cycles/15-usage-log/design-delta.md` "데이터".
 
@@ -706,7 +707,7 @@ erDiagram
     text title
     text author
     text publisher
-    boolean exact
+    text_arr exact
     text_arr roles
     text sort
     text filter
@@ -738,7 +739,7 @@ erDiagram
     text title
     text author
     text publisher
-    boolean exact
+    text_arr exact
     text_arr roles
     text sort
     text filter
@@ -800,19 +801,19 @@ erDiagram
 
 | 테이블.컬럼 | 타입 | 제약 | 설명 | 상태 태그 |
 |---|---|---|---|---|
-| `id` (`library_response_daily` 빼고 모든 표) | `bigint GENERATED ALWAYS AS IDENTITY` | PK | 지우기를 나눠 할 때 | [안] (뺄지 프로토타입으로) |
+| `id` (`library_response_daily` 빼고 모든 표) | `bigint GENERATED ALWAYS AS IDENTITY` | PK | 지우기를 나눠 할 때 | [확정] (dev 측정으로 둠, 회고 2026-10-15: 1만 줄 넣기 `id` PK·부분 색인 있음 27.6ms / 둘 다 없음 13.1ms) |
 | `*.received_at` | `timestamptz` | NOT NULL | 서버가 받은 시각 | [확정] (spec) |
 | `search_event.kind` | `text` | CHECK (`catalog`,`direct`) | 검색 종류 | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2) |
 | `title`/`author`/`publisher` | `text` | 셋 중 하나 이상 | 서버가 다듬은 검색어, 2~50자 | [확정] (spec) |
-| `exact`, `roles`, `sort` | `boolean`, `text[]`, `text` | 수집 목록만 | 받은 값, 없으면 기본값 | [확정] |
-| `filter` | `text` | 직접 찾기만 | `all`/`available` | [확정] |
-| `scope`, `visit` | `text` | NOT NULL | 받은 값 | [확정] |
+| `exact`, `roles`, `sort` | `text[]`, `text[]`, `text` | 수집 목록만(CHECK `*_kind_fields_check`: `catalog`·`catalog_next_page`면 셋 다 NOT NULL, 아니면 NULL) | 받은 값, 없으면 기본값. `exact`는 정확히 찾을 칸 목록(`title`·`author`·`publisher` 중 여럿, 없으면 빈 배열) | `exact` 꼴: [안] (dev 구현, 회고 결정 대기 — 설계 `boolean`에서 바꿈, dev 까닭: 여러 칸이라 참·거짓 하나로는 받은 값을 못 남김). 나머지 [확정] |
+| `filter` | `text` | 직접 찾기만, CHECK (`all`,`available`) | `all`/`available` | [확정]. CHECK는 [안] (dev 구현, 회고 결정 대기) |
+| `scope`, `visit` | `text` | `search_event`는 NOT NULL, `search_more`는 NULL 가능(다음 묶음·도서관별 더 보기가 기록용 쿼리 값으로 받고, 없거나 틀리면 NULL). CHECK `scope IN ('all','joinable')`, `visit IN ('any','none')` | 받은 값 | [확정] (`search_more` NULL 허용: 사용자 "그래 이대로 해", 2026-10-14). CHECK는 [안] (dev 구현, 회고 결정 대기) |
 | `residence_region_ids`, `work_region_ids`, `library_ids` | `bigint[]` | `search_event`·`book_view`·`search_more`는 NOT NULL DEFAULT `'{}'`, `screen_event`는 종류에 맞지 않으면 NULL | 받은 값 그대로 | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #3) |
-| `search_event.result_count` | `integer` | NULL 가능 | 직접 찾기가 첫 묶음 전 끊기면 NULL | [확정] |
-| `*.login_status` | `text` | CHECK (`signed_in`,`signed_out`,`login_off`) | `auth` 판별 부품이 정함 | [확정] ([로그인 판별](../cycles/15-usage-log/easy/2026-10-14-login-status.html) #2), [안] (값 이름) |
+| `search_event.result_count` | `integer` | NULL 가능, CHECK `>= 0` | 직접 찾기가 첫 묶음 전 끊기면 NULL | [확정]. CHECK는 [안] (dev 구현, 회고 결정 대기) |
+| `*.login_status` | `text` | CHECK (`signed_in`,`signed_out`,`login_off`) | `auth` 판별 부품(`LoginStatusReader`)이 정함 | [확정] ([로그인 판별](../cycles/15-usage-log/easy/2026-10-14-login-status.html) #2), 값 이름 [확정] (dev 구현 확인, 2026-10-15) |
 | `*.client_ip` | `inet` | NULL 가능 | `X-Real-IP`, 30일 뒤 NULL | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #3) |
 | `search_more.kind` | `text` | CHECK (`direct_next_batch`,`library_more`,`catalog_next_page`) | 더 보기 종류 | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2) |
-| `search_more.seq`, `library_id` | `integer`, `bigint` | `library_id`는 도서관별 더 보기만 | 묶음·쪽 번호, 도서관 | [안] (칸 이름) |
+| `search_more.seq`, `library_id` | `integer`, `bigint` | `seq` NOT NULL CHECK `>= 1`. `search_more_library_id_check`: `library_id`는 `library_more`일 때만 NOT NULL | 묶음·쪽 번호, 도서관 | 칸 이름 [확정] (dev 구현 확인, 2026-10-15). CHECK는 [안] (dev 구현, 회고 결정 대기) |
 | `search_more` 조건 칸 | 검색 기록과 같은 조건 칸 전부 | | 더 보기 줄만으로 어떤 검색인지 알게 | [확정] ([늘린 기록 설계](../cycles/15-usage-log/easy/2026-10-13-more-actions-design.html) #4) |
 | `library_click.library_id` | `bigint` | NOT NULL, FK 없음 | 확인된 서비스 도서관 번호 | [확정] |
 | `library_click.place` | `text` | CHECK | `result_card`,`join_link`,`join_guide`,`home_page`,`logo`,`summary_bar` | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2) |
@@ -825,17 +826,20 @@ erDiagram
 | `rejected_event.raw_values` | `jsonb` | 2KB 넘으면 잘라 냄 | 받은 값 | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #4) |
 | `dropped_batch.reason` | `text` | CHECK (`db_failure`,`buffer_full`) | 버린 이유 | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2) |
 | 색인 | BRIN `(received_at)` 각 표 | — | 지우기·기간 조회 | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #3) |
-| 부분 색인 | `client_ip IS NOT NULL` | — | 30일 IP 비우기 | [안] |
+| 부분 색인 | `<표>_ip_received_at_idx` `(received_at) WHERE client_ip IS NOT NULL` — 다섯 기록 표(`search_event`·`book_view`·`search_more`·`library_click`·`screen_event`) | — | 30일 IP 비우기 | [확정] (dev 구현 확인, 2026-10-15) |
+| 그 밖의 CHECK | `book_id`·`library_id` 등 번호 `>= 1`, `library_response_daily`·`dropped_batch`의 수 칸 `>= 0`, `screen_event` 종류에 따른 칸 CHECK | — | dev가 더 둠 (dev `001-usagelog-schema.yaml`) | [안] (dev 구현, 회고 결정 대기) |
 
 - 쓰기 [확정] (ADR-0097): `usagelog`가 메모리 큐(상한 1만 줄)에 모았다가 5초마다 한 트랜잭션 — 묶음의 도서관 번호 확인 한 번(켜진 도서관만) → `SET LOCAL synchronous_commit TO OFF` → 표마다 `batchUpdate` → `library_response_daily` `ON CONFLICT … 더하기` → 지난번 버린 묶음을 `dropped_batch`에 → COMMIT. 실패하면 묶음을 버리고 버린 사실을 메모리에 들고 서버 로그(흐름 37)
-- 보관 [확정] (ADR-0096): `client_ip`는 30일 뒤 NULL, `rejected_event`는 30일 뒤 지움, 나머지는 1년 뒤 지움. 매일 04:30 (Asia/Seoul) 정리, 1만 줄씩 [안]
+- 보관 [확정] (ADR-0096): `client_ip`는 30일 뒤 NULL, `rejected_event`는 30일 뒤 지움, 나머지는 1년 뒤 지움. 매일 04:30 (Asia/Seoul) 정리, 1만 줄씩(`chaekcheck.usagelog.cleanup.batch-size` 10000) [확정] (dev 구현 확인, 2026-10-15)
+- 쓰기 전에 값의 NUL 문자(`\u0000`)를 뺌, NUL이 든 `raw_values`는 글자로 바꿔 넣음 — PostgreSQL `text`·`jsonb`는 NUL을 받지 않아 값 하나 때문에 묶음 전체가 실패함 [확정] (dev 시험, 2026-10-14; dev `UsageLogWriter.java`, `UsageEventReader.java`)
 - 남기지 않는 것 [확정] (ADR-0096): 회원 번호·쿠키·User-Agent. 기록끼리 잇는 칸 없음 (spec R2-6)
 - `library_response_daily` 수의 뜻 [확정] (사이클 15 회고 결정 #1~#3, 사용자 승인 2026-10-14): `skipped_count` = 직접 찾기에서 시작 마감(`LAUNCH_CUTOFF`, 3초)까지 요청을 보내지 못한 후보 도서관 하나마다 1, 조회 서버 바꿔 보내기는 한 번으로 셈, 켜진 도서관만(꺼진 번호의 사용 알림은 `rejected_event` `unknown_library`)
 - 파티션 없음 [확정] ([설계](../cycles/15-usage-log/easy/2026-10-13-design-decisions.html) #2)
 - 다른 schema로 FK 없음 (모듈 경계, 번호만 남김)
-- Liquibase: 새 파일 `db/changelog/usagelog/001-usagelog-schema.yaml`을 master 끝에 [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2). 기존 changeset 수정 없음
+- Liquibase: 새 파일 `db/changelog/usagelog/001-usagelog-schema.yaml`을 master 끝에 [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2). 기존 changeset 수정 없음. changeset id `usagelog-001-*`, 제약 이름 `<표>_<칸>_check`. 실제 master 끝 순서: 18 `library/016` → 16 세 줄 → 15 `usagelog/001` 맨 끝 (회고 2026-10-15)
+- 사이클 15 [확인 필요] 결과 (회고 2026-10-15, dev `plan-feedback.md` 4354~4361행): pgjdbc 42.7.13 [확정] (dev 확인). 1만 줄 넣기 `id` PK·부분 색인 있음 27.6ms / 없음 13.1ms → 둘 다 둠. 공용 `@Scheduled` 실행기는 Spring Boot 기본 스레드 1개(04:30 정리가 회원 정리·사서추천 받기와 같은 스레드), 5초 쓰기는 자기 스레드 `usagelog-flush`. 남은 [확인 필요]: 모니터링 도구를 켠 상태의 메모리, nginx realip·광고 차단 비율·로봇의 API 호출(배포 뒤, 사이클 17·운영)
 
-## 스키마 `sitecontent` (소유: `sitecontent` 모듈) — 설계됨(미구현, 사이클 16)
+## 스키마 `sitecontent` (소유: `sitecontent` 모듈) — 구현됨 (사이클 16, 회고 2026-10-15)
 
 공지와 네 문서(서비스 안내, 이용약관, 개인정보 처리방침, 개인정보 수집·이용 동의문)의 모든 판입니다 (ADR-0098). 스키마 이름 `sitecontent` [확정]. 근거 `docs/cycles/16-notices-and-policies/design-delta.md` "데이터".
 
@@ -878,23 +882,23 @@ erDiagram
 | notice_version.notice_id | bigint | NOT NULL, FK `notice_version_notice_id_fkey` → `sitecontent.notice(id)` (같은 모듈) | | [확정] |
 | notice_version.version_no | integer | NOT NULL, CHECK `notice_version_version_no_check (version_no >= 1)` | 판 순번, 주소 `?version=` | [확정] (사용자 제안, 2026-10-13) |
 | notice_version.effective_on | date | NOT NULL | 판 1 = 게시일, 그 뒤 = 고친 날. 앞날이면 그날부터 보임 | [확정] |
-| notice_version.title | text | NOT NULL, CHECK `notice_version_title_check (btrim(title) <> '')` | 그 판의 제목 | [확정] |
-| notice_version.body | text | NOT NULL, CHECK `notice_version_body_check (btrim(body) <> '')` | 제한된 마크다운 | [확정] |
+| notice_version.title | text | NOT NULL, CHECK `notice_version_title_check (btrim(title, E' \t\r\n') <> '')` (회고 2026-10-15: dev가 줄바꿈·탭까지 지우게 바꿈, [안] 회고 결정 대기) | 그 판의 제목 | [확정] |
+| notice_version.body | text | NOT NULL, CHECK `notice_version_body_check (btrim(body, E' \t\r\n') <> '')` | 제한된 마크다운 | [확정] |
 | notice_version.created_at | timestamptz | NOT NULL DEFAULT now() | | [확정] |
 | (PK) | | `notice_version_pkey (notice_id, version_no)` | 색인을 더 두지 않음. 공지가 많아지면 `WHERE NOT hidden` 부분 색인을 그때 질의 계획을 보고 더함 | [확정] |
 | document_version.document_key | text | NOT NULL, CHECK `document_version_document_key_check (document_key IN ('ABOUT','TERMS_OF_SERVICE','PRIVACY_POLICY','PRIVACY_COLLECTION'))` | | [확정] |
 | document_version.version_no | integer | NOT NULL, CHECK `>= 1` | 판 순번 | [확정] |
 | document_version.effective_on | date | NOT NULL | 시행일(서비스 안내는 게시일) | [확정] |
-| document_version.body | text | NOT NULL, CHECK `btrim(body) <> ''` | 제한된 마크다운 | [확정] |
+| document_version.body | text | NOT NULL, CHECK `document_version_body_check (btrim(body, E' \t\r\n') <> '')` | 제한된 마크다운 | [확정] |
 | document_version.change_summary | text | NULL, CHECK `document_version_change_summary_check (document_key <> 'ABOUT' OR change_summary IS NULL)` | 바뀐 점(사람이 씀) | [확정] |
-| document_version.consent_items | jsonb | NULL, CHECK `document_version_consent_items_check ((document_key = 'PRIVACY_COLLECTION') = (consent_items IS NOT NULL))`, CHECK `(consent_items IS NULL OR (jsonb_typeof(consent_items) = 'array' AND jsonb_array_length(consent_items) = 4))` | 동의문 4항목(목적·항목·보유 기간·거부할 권리 — 문구는 `docs/cycles/16-notices-and-policies/drafts/privacy-collection.md`) | [확정] |
+| document_version.consent_items | jsonb | NULL, CHECK `document_version_consent_items_check ((document_key = 'PRIVACY_COLLECTION') = (consent_items IS NOT NULL))`, CHECK `document_version_consent_items_shape_check (consent_items IS NULL OR (jsonb_typeof(consent_items) = 'array' AND jsonb_array_length(consent_items) = 4))` (이름은 dev가 정함, 회고 2026-10-15) | 동의문 4항목(목적·항목·보유 기간·거부할 권리 — 문구는 `docs/cycles/16-notices-and-policies/drafts/privacy-collection.md`) | [확정] |
 | document_version.created_at | timestamptz | NOT NULL DEFAULT now() | | [확정] |
 | (PK) | | `document_version_pkey (document_key, version_no)` | | [확정] |
 
 - 지금 판 = 시행일 ≤ 오늘(`Asia/Seoul`)인 판 중 순번 최대 [확정]. 판 번호는 마지막 + 1, 새 시행일은 앞 판 시행일 이후(운영자가 넣는 SQL 조건, 흐름 41)
 - `updated_at` 없음: 판은 고치지 않고 새로 넣음 [확정]. 다른 모듈과 FK·JOIN 없음(`auth`는 판 순번 값만 기억)
 - "다시 동의 필요" 칸은 두지 않음 — 다시 동의 화면을 만들 때 함께 더함 [확정] (사용자 승인, 2026-10-13)
-- 쓰기 API 없음. 운영 DB 계정 권한: 사이클 17이 정한 "`sitecontent` schema 쓰기만 있는 DB 계정"은 `sitecontent` 표의 SELECT·INSERT·UPDATE와 `notice.id` 시퀀스 USAGE가 필요함 (사이클 17에 알림)
+- 쓰기 API 없음. 운영 DB 계정 권한: 사이클 17이 정한 "`sitecontent` schema 쓰기만 있는 DB 계정"은 `sitecontent` 표의 SELECT·INSERT·UPDATE와 시퀀스 `sitecontent.notice_id_seq`(`notice.id` `GENERATED BY DEFAULT AS IDENTITY`) USAGE가 필요함 (사이클 17에 알림)
 - Liquibase: `sitecontent/001-sitecontent-schema.yaml`, `sitecontent/002-sitecontent-seed.yaml`, `auth/002-consent-version-number.yaml`, master 끝에 추가 [확정] (위 "사이클 16 Liquibase")
 
 ## seed
