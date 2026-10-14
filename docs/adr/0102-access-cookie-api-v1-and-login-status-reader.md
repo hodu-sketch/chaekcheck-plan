@@ -1,6 +1,6 @@
 # ADR-0102: 액세스 토큰 쿠키 경로를 `/api/v1`로 넓히고, 로그인 상태 판별은 `auth`의 부품 하나에 모음
 
-Status: Proposed
+Status: Accepted
 Date: 2026-10-14
 Cycle: 15-usage-log
 Supersedes: 없음 (ADR-0042의 "액세스 토큰 쿠키 `Path=/api/v1/me`" 부분만 바꿈)

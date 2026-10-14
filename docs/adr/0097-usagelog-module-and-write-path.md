@@ -1,6 +1,6 @@
 # ADR-0097: 기록 전용 모듈 `usagelog`, 공개 창구 직접 호출, 5초 묶음·비동기 커밋, 클릭 알림은 fetch keepalive + CSRF
 
-Status: Proposed
+Status: Accepted
 Date: 2026-10-13
 Cycle: 15-usage-log
 Supersedes: 없음

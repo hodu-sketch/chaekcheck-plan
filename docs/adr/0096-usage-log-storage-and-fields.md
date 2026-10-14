@@ -1,6 +1,6 @@
 # ADR-0096: 사용자 행동 기록은 같은 PostgreSQL에 남기고, IP는 30일만, 나머지는 1년
 
-Status: Proposed
+Status: Accepted
 Date: 2026-10-13
 Cycle: 15-usage-log
 Supersedes: 없음

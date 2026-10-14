@@ -195,11 +195,11 @@ classDiagram
 | 직접 찾기 첫 묶음 | `availability/internal/web/EbookSearchStreamController.java:43-48`, 끝: `search/BatchSession.java:167-193` (`finishBatchIfDone`·`finish`) | 끊김은 지금 보내기 실패(`BatchSession.send` `:195-200`, `clientGone`)로만 알고 `SseEmitter`의 `onCompletion`·`onTimeout`·`onError`는 없음. 기록은 세션마다 한 번만: 첫 `batch-done`을 보낸 순간 `recordSearch(countedRows)`, 그 전에 `clientGone`이 되거나 `finish()`·emitter 시간 초과(`streamDuration()+5s`)·오류로 끝나면 `recordSearch(resultCount=null)`. 세션 안 "기록함" 표시 하나로 두 번 남기지 않음 [안]. 보낼 것이 없어 끊김을 모르는 경우도 묶음 마감(8초) 뒤 `finish()`가 `done`을 보내다 알게 되므로 늦어도 그때 남김. 끊긴 뒤에도 이미 보낸 도서관 요청의 응답은 끝날 때 도서관 응답 요약에 셈 (spec R6-4) |
 | 다음 묶음 | `web/EbookBatchStreamController.java:32` (`batchNo` ≥ 2) | `recordMore(direct_next_batch, seq=batchNo)` |
 | 도서관별 더 보기 | `web/LibraryEbookController.java:50-52` | `recordMore(library_more, libraryId, seq=page)`. 이 요청의 도서관 응답(`source=direct_search`)은 `:58` `fetcher.fetch(...)` 앞뒤로 시간을 재고 성공·실패(`UpstreamException`)를 셈 [안] |
-| 도서관 응답 (직접 찾기) | `search/BatchRunner.java:161-174` (`fetchAsync(...).whenComplete`) | 지금 도서관마다 걸린 시간이 없음 → 요청 시작 시각을 잡아 끝날 때 ms 계산 [안]. 결과: 성공 / `UpstreamException.Kind.ERROR` → 실패 / `TIMEOUT`·묶음 마감(`deadlinePassed`) → 시간 초과 |
+| 도서관 응답 (직접 찾기) | `search/BatchRunner.java:161-174` (`fetchAsync(...).whenComplete`) | 지금 도서관마다 걸린 시간이 없음 → 요청 시작 시각을 잡아 끝날 때 ms 계산 [안]. 결과: 성공 / `UpstreamException.Kind.ERROR` → 실패 / `TIMEOUT`·묶음 마감(`deadlinePassed`) → 시간 초과 / 시작 마감(`LAUNCH_CUTOFF`, `BatchRunner.runTasks` `:271-301`)까지 요청을 못 보낸 후보 → 건너뜀 [확정] ([회고 결정](easy/2026-10-14-retro-decisions.html) #1, 사용자 승인 2026-10-14). 조회 서버 바꿔 보내기(`FetchServiceSiteFetcher` `:97-102`)는 한 번으로 셈 [확정] ([회고 결정](easy/2026-10-14-retro-decisions.html) #2, 사용자 승인 2026-10-14) |
 | 도서관 응답 (대출 수 채우기) | `BatchRunner.java:225-250` (`startHolding`, `requestedAt` `:234`) | 구독형은 요청 없이 끝나고(`:226-228`), 도서관 주소 밖 상세 주소는 요청 없이 실패(`:230-232`) → 실제 요청이 아니라 세지 않음 [안] |
 | 요청 하나하나 서버 로그 | 지금은 실패만 남김(`BatchSession.java:116`, `HoldingSession.java:104`), `DirectSiteFetcher.java:107`은 도서관 번호 없음 | 위 두 `whenComplete`에서 `library=… source=… result=… ms=…` 한 줄 INFO 더함 [안] |
 | 로그인 상태 | 쿠키 `auth/internal/security/AuthCookies.java:9` (`/api/v1/me` → `/api/v1`), 서명 확인 `SecurityConfiguration.java:105-108` (HS256), 켜고 끄기 `chaekcheck.auth.enabled`(`auth/ConditionalOnAuthEnabled.java`) | 꺼짐이면 `@ConditionalOnAuthEnabled`의 반대로 쿠키를 보지 않는 부품 |
-| 도서관 번호 확인 | `library/LibraryCatalog.java:44` `enabledLibraryRefs()` (켜진 도서관만) | `LibraryRegistry.listAll()`(사이클 13)은 꺼진 도서관도 돌려줌 |
+| 도서관 번호 확인 | `library/LibraryCatalog.java:44` `enabledLibraryRefs()` (켜진 도서관만) | 이것을 씀: 켜진 도서관만 정상, 꺼진 번호는 `unknown_library` [확정] ([회고 결정](easy/2026-10-14-retro-decisions.html) #3, 사용자 승인 2026-10-14). `LibraryRegistry.listAll()`(사이클 13)은 꺼진 도서관도 돌려주므로 쓰지 않음 |
 | 클릭 알림 (웹) | `features/search/ResultRow.tsx`: 카드 `:185-191`, 가입 링크 `:97-101`, 가입 안내 `:106-113`, 도서관 첫 화면 `:62-69`, 로고 `:131`; `components/LibraryLogo.tsx:34-39`; 요약 막대 이름 = `LibrarySummaryBar.tsx`의 `LibraryCell` 첫 화면 링크 `:126-130` (`DirectResults.tsx:122-128`의 `LibraryCountButton` 안) | 화면: 직접 찾기 `DirectResults`, 수집 목록 `InstantResults.tsx:137`, 책 페이지 `features/book/BookPage.tsx:149`, 사서 추천 `features/picks/PicksBookDialog.tsx:163`, 내 도서관 `features/mylibrary/MyLibrariesPage.tsx:253,268`(로고만) |
 | 화면 행동 알림 (웹) | 사서 추천 목록 `features/picks/PicksPage.tsx:317-325`(분야 `category.code`), 책 창 `PicksPage.tsx:355-362`; 지역 저장 `features/region/RegionContext.tsx:113-128`(로그인 전 `regionStorage.ts:32`, 뒤 `putMyRegions`); 내 도서관 `MyLibraryContext.tsx:118-157` | 로그인 전후 같은 자리에서 보냄 |
 | 알림 보내기 (웹) | `api/auth.ts:48` `send`(CSRF 붙임, 403 `csrf_invalid` 한 번 다시), 표시 받기 `GET /api/v1/auth/csrf-token`(`CsrfTokenController.java:27-31`), 꺼짐 판단 `api/auth.ts:111-113` | 사용 알림 공용 함수는 이 `send` 방식을 따르되 `keepalive` [안] |
@@ -389,8 +389,6 @@ erDiagram
 
 | 항목 | 확인 방법 | 막는 단계 |
 |---|---|---|
-| 도서관 응답의 "건너뜀"이 무엇인지 (dev에는 건너뜀 결과가 없고, 시작 마감(3초)까지 못 보낸 도서관은 요청 자체가 없음), 조회 서버 바꿔 보내기(연결 실패·503)를 한 번으로 셀지 | 사용자에게 질문 (결정 페이지) | 설계 확정 |
-| 도서관 번호 확인에 켜진 도서관만 쓸지 (`enabledLibraryRefs`) | 사용자에게 질문 (결정 페이지) | 설계 확정 |
 | nginx 이미지의 realip 모듈, compose 네트워크 범위, Cloudflare "Remove visitor IP headers" 꺼짐 | 배포 때 `nginx -V`, 지인 기간 시험에서 기록된 IP 확인 | 없음 (배포 때) |
 | `SmartLifecycle` 정지 phase와 Hikari 닫힘 순서 | 프로토타입 | 개발 |
 | dev pgjdbc 실제 버전 | 의존성 트리 | 개발 |
