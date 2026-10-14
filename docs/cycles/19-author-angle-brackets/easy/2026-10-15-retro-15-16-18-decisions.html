@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 15·16·18 회고 결정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+</style>
+</head>
+<body>
+<main class="doc">
+
+<p class="lead">사이클 15·16·18 회고를 썼습니다.<br>개발 중에 바뀐 것 가운데 정할 것 15개를 골라 주세요.</p>
+<p class="sub">세 사이클 모두 dev main에 들어갔습니다(사이클 18은 운영 반영 C 단계만 사이클 17 뒤로 남음). 계획과 실제 코드를 견준 결과는 각 사이클의 <code>retro.md</code>에 있고, <code>docs/current</code>는 실제 코드에 맞게 고치는 중입니다. 아래는 이유를 모르거나 사용자가 정해야 하는 것만 모았습니다.</p>
+
+<div class="card">
+<h2>세 사이클에서 무엇이 만들어졌나</h2>
+<p class="concl">계획한 것은 모두 만들어졌고 완료 기준도 모두 통과했습니다. 바뀐 것은 대부분 설계가 dev에게 맡긴 범위에서 dev가 정한 세부입니다.</p>
+<table>
+<tr><th>사이클</th><th>만든 것</th><th>시험·확인</th></tr>
+<tr><td>15 사용 기록</td><td>새 모듈 <code>usagelog</code>, 표 여덟, 사용 알림 주소, 04:30 정리, nginx 횟수 제한·로봇 거절</td><td>AC 전부 통과, 응답 시간 차이 1% 안, 사용자 폰 "화면 다 통과야"</td></tr>
+<tr><td>16 공지·약관</td><td>새 모듈 <code>sitecontent</code>, 공지 목록·글, 안내·약관·처리방침을 DB에서, 판 고르기</td><td>AC-1~13 통과, 사용자 폰 확인</td></tr>
+<tr><td>18 빈 도서관</td><td>22곳 끄기, 밑줄 주소 도서관(현대제철 2624) 조회·가져오기, 넣기 "전자책 0권"</td><td>AC-1~7 통과, AC-8(운영)은 사이클 17 뒤</td></tr>
+</table>
+</div>
+
+<h2 style="margin:36px 0 14px">사이클 15: 사용 기록</h2>
+
+<div class="card">
+<h2><span class="num">1</span>"정확히 찾기" 기록 칸을<br>칸 목록으로 둘지</h2>
+<p class="concl">설계는 정확히 찾기를 켰는지(참·거짓)만 남기는 칸이었는데, dev가 어느 칸(제목·저자·출판사)을 정확히 찾았는지 목록으로 남기게 바꿨습니다. 정확히 찾기는 여러 칸에 동시에 켤 수 있어서 참·거짓 하나로는 받은 값을 그대로 남길 수 없었습니다.</p>
+<p class="ex">예: 제목과 저자를 정확히 찾으면 지금은 <code>{title, author}</code>로 남고, 설계대로였다면 "켜짐" 하나만 남았을 것입니다.</p>
+<div class="prop">dev가 바꾼 칸 목록(<code>text[]</code>)을 그대로 확정합니다. [안]</div>
+<p class="alt">다른 선택: 참·거짓으로 되돌림 → 어느 칸을 정확히 찾았는지 잃고, dev 코드·시험을 다시 고쳐야 함.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">2</span>책 페이지에서 거르기를 바꾸면<br>"책 열기"가 한 번 더 남는 것</h2>
+<p class="concl">책 페이지에서 "전체 / 지금 빌릴 수 있는"을 바꾸면 화면이 책 정보를 다시 받아 "책 열기" 기록이 한 줄 더 생깁니다. dev는 고치지 않고 plan에 판단을 넘겼습니다.</p>
+<div class="prop">지금은 그대로 두고, 나중에 통계를 만들 때 "같은 사람·같은 책·몇 초 안"은 한 번으로 셉니다. 이 규칙을 <code>data-model.md</code>에 메모합니다. [안]</div>
+<p class="alt">다른 선택: 거르기를 바꿀 때 책 정보를 다시 받지 않게 웹을 고침 → 작은 웹 일이지만 사이클 17·19 사이에 끼워야 함.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">3</span>도서관 응답 수를 셀 때<br>3분 캐시에서 나온 답은 빼는 규칙</h2>
+<p class="concl">같은 검색을 3분 안에 다시 하면 도서관에 묻지 않고 저장해 둔 답을 씁니다. dev는 이때 도서관 응답으로 세지 않게 했습니다. 도서관에 실제로 요청을 보내지 않았기 때문입니다.</p>
+<p class="ex">한계: 같은 페이지를 다른 검색과 함께 기다린 경우는 두 번 셀 수 있습니다. 묶음 마감 뒤에 온 성공한 답은 "시간 초과"로 셉니다.</p>
+<div class="prop">dev 규칙을 확정합니다: 도서관에 실제로 보낸 요청만 셉니다. [안]</div>
+<p class="alt">다른 선택: 캐시 답도 셈 → 도서관이 얼마나 빨리 답했는지 숫자가 실제보다 좋아 보임.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">4</span>dev가 맡은 범위에서 정한 값들을<br>한꺼번에 확정할지</h2>
+<p class="concl">아래 값은 설계가 dev에게 맡긴 범위 안에서 dev가 정했고, 모두 시험을 통과했습니다.</p>
+<table>
+<tr><th>값</th><th>뜻</th></tr>
+<tr><td>CHECK 더 둠</td><td>범위 값(<code>all/joinable</code> 등)·수가 0 이상·번호가 1 이상인지 DB가 막음</td></tr>
+<tr><td>사용 알림 본문 8KB, 지역 배열 20개, 분야 20자</td><td>넘으면 기록하지 않고 이유만 남김</td></tr>
+<tr><td>버린 묶음 기록 100개까지 (<code>max-dropped-notes</code>)</td><td>쓰기가 계속 실패할 때 메모리가 늘지 않게</td></tr>
+<tr><td>nginx <code>burst=20</code></td><td>같은 IP가 잠깐 몰아 보내는 것을 20개까지 받아 줌</td></tr>
+<tr><td>가운데 버튼 클릭은 셈, 길게 누르기·오른쪽 버튼은 안 셈</td><td>새 탭으로 여는 클릭도 넘어간 것으로 봄</td></tr>
+<tr><td>로그인 상태를 아직 모를 때 쿠키를 붙이고, 거절되면 한 번 더</td><td>첫 화면에서도 로그인 여부를 놓치지 않게</td></tr>
+<tr><td>실패한 도서관 요청은 로그가 두 줄</td><td>원래 실패 줄 + 새 기록 줄</td></tr>
+</table>
+<div class="prop">위 값을 모두 확정합니다. [안]</div>
+<p class="alt">다른 선택: 바꿀 것만 "기타"에 적어 주세요.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">5</span>"내 도서관" 목록을 10곳씩 보이게 바꾼 것을<br>어떻게 기록할지</h2>
+<p class="concl">사용자 요청으로 내 도서관 화면의 긴 목록 세 곳이 20곳씩에서 10곳씩 + "더 보기"로 바뀌었습니다(사용자: "최대 10개까지 뜨고 그 이후에 더보기같은걸로 되게 해요 지금 너무 많이 떠서 불편해"). "직접 추가한 도서관"은 그대로입니다.</p>
+<div class="prop">ADR-0058(목록 20곳씩)에 "2026-10-14 사용자 요청으로 10곳씩(세 목록)" 덧붙임만 하고 새 ADR은 쓰지 않습니다. <code>docs/current</code>만 고치고 사이클 07 문서는 그대로 둡니다. [안]</div>
+<p class="alt">다른 선택: 새 ADR로 ADR-0058을 바꿈 → 결정의 큰 틀(목록 전체 보여 주기)은 그대로라 기록만 늘어남.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">6</span>모듈 그림 자동 출력이<br>옛 빌드 그대로인 것</h2>
+<p class="concl">dev의 모듈 그림 자동 출력(Spring Modulith <code>Documenter</code>)이 사이클 13·14 전 빌드 그대로라 새 모듈(<code>usagelog</code>·<code>sitecontent</code>·<code>picks</code>)이 없습니다. 이번 회고는 코드의 모듈 선언으로 대신 견줬습니다.</p>
+<div class="prop">다음 인계서 "dev에 알릴 것"에 "main에서 <code>./gradlew build</code> 뒤 모듈 그림 출력을 새로 만들어 세 모듈 그림 확인"을 한 줄 넣습니다. [안]</div>
+<p class="alt">다른 선택: 그대로 둠 → 다음 회고도 그림으로 견줄 수 없음.</p>
+</div>
+
+<h2 style="margin:36px 0 14px">사이클 16: 공지·약관</h2>
+
+<div class="card">
+<h2><span class="num">7</span>"바뀐 점"에 표를 쓸 수 없는 것</h2>
+<p class="concl">화면이 쓰는 글 그리기 도구(<code>react-markdown</code>)는 표를 그리지 않습니다. 그래서 처리방침 표는 이미 목록으로 바꿨습니다(사용자 결정 2026-10-14). 그런데 명세 R3-3은 약관이 바뀔 때 "바뀌기 전·후 표"를 쓸 수 있다고 적고 있어 지금 코드와 맞지 않습니다.</p>
+<div class="prop">명세 R3-3과 운영 SQL 안내를 "바뀐 점은 목록으로(표 안 됨)"로 고치고 ADR-0098에 덧붙입니다. 코드는 그대로입니다. [안]</div>
+<p class="alt">다른 선택: 표 그리기 도구(<code>remark-gfm</code>)를 더함 → 의존성이 하나 늘고 화면 파일이 커지며, 폰에서 표가 옆으로 넘침.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">8</span>공지 "판" 기능을 줄일지</h2>
+<p class="concl">공지는 약관처럼 판(고친 이력)을 남기게 만들어졌습니다. 폰 확인 때 사용자가 "어짜피 기능 공유해서 이런거니까 공지 판 있는 설정으로 안 쓰면 되는거아닌가?"라고 물었고, dev는 코드를 그대로 두고 운영 규칙("공지는 보통 고치지 않음. 꼭 고칠 때만 새 판, 아니면 숨기고 새 공지")을 운영 메모에 적었습니다.</p>
+<div class="prop">코드는 그대로 두고 운영 규칙만 씁니다. 판이 하나뿐이면 화면에 날짜 고르기 칸이 안 보이므로 평소에는 판 기능이 보이지 않습니다. [안]</div>
+<p class="alt">다른 선택: 공지를 판 하나로 줄임 → 공개 전이라 바꿀 수는 있지만 API·화면·시험을 다시 손보고 ADR-0098을 바꿔야 함.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">9</span>화면 파일이 38kB 커진 것과<br>보안 점검 경고 1건</h2>
+<p class="concl">글 그리기 도구를 넣어 첫 화면에 받는 파일이 170 → 208kB(압축 기준)로 커졌습니다. 또 웹 의존성 점검(<code>npm audit</code>)에 높음 1건(<code>source-map-js</code>)이 있는데, 이 도구를 넣기 전부터 있던 것입니다.</p>
+<div class="prop">백로그에 두 줄을 넣습니다: "글 화면만 늦게 불러오기(첫 배포 뒤 측정 보고)", "사이클 17 배포 점검표에서 <code>npm audit</code> 한 번". [안]</div>
+<p class="alt">다른 선택: 지금 사이클 17에 넣음 → 배포 전 일이 늘어남.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">10</span>실제 카카오 가입과 안내 기준일 줄은<br>첫 배포 뒤 확인할지</h2>
+<p class="concl">약관 판 번호로 가입이 기록되는지는 서버 시험으로만 확인했습니다(사용자: "지금은 일단 가짜응답으로만확인"). 서비스 안내의 "가입 조사 기준일" 줄도 개발 DB에 값이 없어 화면으로는 못 봤습니다.</p>
+<div class="prop">사이클 17 점검표에 두 줄을 넣습니다: "첫 배포 뒤 실제 카카오 가입 1번으로 동의 기록 판 1 확인", "운영 <code>/about</code>에 기준일 줄이 보이는지". 사이클 17에는 공유 파일로 알립니다. [안]</div>
+<p class="alt">다른 선택: 서버 시험으로 충분하다고 보고 넣지 않음.</p>
+</div>
+
+<h2 style="margin:36px 0 14px">사이클 18: 빈 도서관</h2>
+
+<div class="card">
+<h2><span class="num">11</span>실제 확인 때 다른 도서관에도<br>요청이 나간 것</h2>
+<p class="concl">밑줄 주소 도서관을 실제로 확인할 때, dev가 지역 없이 검색을 불러 다른 도서관 21곳에 1건씩 요청이 나갔습니다. 그중 2건은 "요청하지 않기로" 한 교보 구독형 서버였습니다. 이미 나간 요청은 되돌릴 수 없고, 요청 간격 규칙은 지켜졌습니다.</p>
+<div class="prop">회고에 기록하고, 다음 인계서 공통 제약에 "실제 확인은 도서관 하나만 부르는 주소(<code>/availability/libraries/{id}/ebooks</code>)로"를 한 줄 넣습니다. [안]</div>
+<p class="alt">다른 선택: 기록만 함 → 같은 실수가 다시 날 수 있음.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">12</span>가져오기 전·후 시험 비교를 건너뛴 것</h2>
+<p class="concl">계획은 미리 돌려 보기(dry run) 전·후 비교였는데, dev는 "빨리 마무리"(사용자 말)를 이유로 진짜 가져오기 기록을 같은 사본의 이전 기록과 비교했습니다. 결과는 현대제철(2624) 말고는 판정이 바뀐 줄이 없었습니다.</p>
+<div class="prop">이 비교로 충분하다고 보고 확정합니다. [안]</div>
+<p class="alt">다른 선택: 미리 돌려 보기를 다시 함 → 약 30분과 확인 하나가 더 들지만 새로 얻는 것은 거의 없음.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">13</span>현대제철 전자책 241권을<br>원래 DB와 첫 배포에 넣는 길</h2>
+<p class="concl">사이클 18 가져오기는 복사본 DB에서만 해서, 원래 DB(내 PC)에는 현대제철 241권이 아직 없습니다. 사이클 19가 원래 DB에 책 목록을 다시 가져오면 고친 코드로 241권도 함께 들어옵니다. 첫 배포(사이클 17)는 19 반영 뒤의 책 목록을 씁니다.</p>
+<div class="fig"><svg viewBox="0 0 640 130" role="img" aria-label="241권이 들어가는 순서">
+<rect class="bx" x="10" y="30" width="180" height="60" rx="10"/><text class="lb" x="100" y="56" text-anchor="middle">18 B 코드</text><text class="sm" x="100" y="76" text-anchor="middle">dev main에 들어감</text>
+<path class="ar" d="M192 60 H222"/><path class="ah" d="M220 53 L232 60 L220 67Z"/>
+<rect class="bxa" x="236" y="30" width="180" height="60" rx="10"/><text class="lb" x="326" y="56" text-anchor="middle">19 다시 가져오기</text><text class="sm" x="326" y="76" text-anchor="middle">원래 DB, 241권 들어옴</text>
+<path class="ar" d="M418 60 H448"/><path class="ah" d="M446 53 L458 60 L446 67Z"/>
+<rect class="bxok" x="462" y="30" width="168" height="60" rx="10"/><text class="lb" x="546" y="56" text-anchor="middle">17 첫 배포</text><text class="sm" x="546" y="76" text-anchor="middle">운영 DB에도 들어감</text>
+</svg></div>
+<div class="prop">따로 가져오기를 하지 않고 사이클 19 다시 가져오기에 맡깁니다. 19 인계서 완료 기준에 "2624 소장 241권 확인"을 넣고, 사이클 17에는 공유 파일로 알립니다. [안]</div>
+<p class="alt">다른 선택: 지금 원래 DB에서 한 번 더 가져옴 → 약 30분이 더 들고 19 때 또 가져옴.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">14</span>꺼 둔 도서관 표에 빠진 세 줄</h2>
+<p class="concl">dev 운영 문서의 "꺼 둔 도서관" 표(<code>library-maintenance.md</code> 6-2)에 사이클 07에 끈 135 전라북도교육청통합도서관, 2194 장안대학교, 2198 성균관대학교 줄이 원래 없고 이번에도 더하지 않았습니다. 끈 이유는 다른 파일에는 있습니다.</p>
+<div class="prop">다음 인계서 "dev에 알릴 것"에 세 줄 더하기를 넣습니다. [안]</div>
+<p class="alt">다른 선택: 그대로 둠 → 다시 켤 때 그 표만 보면 세 곳을 놓침.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">15</span>ADR 0110~0112에<br>실제로 만든 방법을 덧붙일지</h2>
+<p class="concl">결정은 바뀌지 않았지만, 만드는 법에서 중요한 사실이 나왔습니다. 자바 기본 기능은 밑줄 주소의 인증서 이름 검사를 거절해서, 검사를 끄지 않으려고 HttpClient의 검사 기능을 썼습니다.</p>
+<div class="prop">세 ADR의 상태는 그대로 두고 "결과" 절에 실제 이름과 방법을 덧붙입니다(0111: HttpClient 인증서 이름 검사, 0112: 주소의 <code>@</code>를 따로 거부, 0110: "전자책 0권" 검사가 규칙 파일 오류 검사보다 앞). [안]</div>
+<p class="alt">다른 선택: 덧붙이지 않음 → 나중에 밑줄 주소 코드를 고칠 때 왜 이렇게 했는지 알기 어려움.</p>
+</div>
+
+<p class="foot">원본: <code>docs/cycles/15-usage-log/retro.md</code>, <code>docs/cycles/16-notices-and-policies/retro.md</code>, <code>docs/cycles/18-empty-library-holdings/retro.md</code>. 근거는 dev <code>docs/plan-feedback.md</code>의 각 사이클 절. 2026-10-15.</p>
+</main>
+</body>
+</html>
