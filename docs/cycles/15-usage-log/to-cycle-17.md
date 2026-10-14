@@ -92,3 +92,30 @@
 2. 서비스(애플리케이션) 로그 보관 기간: 15는 도서관 요청 하나하나의 응답(도서관·결과·걸린 시간)을 서버 로그로만 남깁니다(IP 없음). 서비스 로그를 며칠 두는지 알려 주세요
 - 2026-10-14 4차를 사용자가 전달함 (사용자: "전달했어")
 - 2026-10-14 17 답: 백업 보관 7일(내 PC 기준, 서버 2일치), 처리방침 문구 "지운 정보는 백업에 7일 동안 남았다가 지워집니다" 가능, 서비스 로그 14일, 두 정정은 17 spec에 반영, nginx는 쿠키 건드리는 설정 없음 — 15 spec R3-7·R6-4에 반영, 16에 7차로 전달
+
+---
+
+## 5차 (2026-10-14) — 15 인계 끝, 배포에 넣을 실제 값과 결정
+
+사이클 17 세션에 전달합니다 (5차, 17 요청 "요약 말고 실제 값·결정"에 답함). 사이클 15는 2026-10-14 dev에 인계했습니다(`docs/current/handoff.md` = 15 인계서, ADR-0096·0097·0102 Accepted).
+
+| 항목 | 값·결정 | 17이 할 일 | 근거 |
+|---|---|---|---|
+| 기록 켜기 설정 | `chaekcheck.usagelog.enabled`, 기본 `false`. 환경 변수 `CHAEKCHECK_USAGELOG_ENABLED` [안: 이름, dev가 바꿀 수 있음] | 첫 배포 환경 설정에 `false`. 처리방침 공개일에 `true`로 바꿔 다시 켬. 지인 기간 실서버 시험 때만 잠깐 켜고 그 기록을 지움 | spec R3-6, ADR-0097 |
+| 기록 정리 시각 | 매일 04:30 Asia/Seoul (IP 30일 뒤 비움, 이상한 알림 30일, 나머지 1년). 설정이 꺼져 있어도 정리는 돎 [안] | 03:00 백업과 겹치지 않음 — 할 일 없음 | spec R3-5 |
+| 보관 (17 답 반영) | DB 백업 7일, 서비스 로그 14일, nginx 접속 기록 14일·경로만 | 이미 17 결정 | 4차 답 |
+| 메모리 | 기록 버퍼 최대 1만 줄(약 5MB), DB 연결 추가 없음 | 4GB 계산에 5MB | spec R3-2 |
+| 디스크 | 1년 많아야 몇 GB(어림, 운영 뒤 측정) | 40GB 계산에 여유 | 2차 |
+| nginx 사용 알림 한도 | `location = /api/v1/usage-events`, IP(`$binary_remote_addr`)당 60r/m, burst [안: 20 nodelay], 넘치면 기록 안 하고 204 | **dev가 15 9단계에서 `deploy/nginx/`에 넣음**. 17 배포 설정이 이 파일을 쓰면 그대로 들어감. 17이 conf를 따로 만들면 같은 줄을 넣음 | handoff 9단계 |
+| 로봇 거절 | `map $http_user_agent` `~*(bot|crawler|spider)` → 직접 찾기(`^/api/v1/(ebook-searches|book-availabilities)(/batches)?/stream$`)·대출 조회(`^~ /api/v1/availability/`) location에서 403 [안: 코드] | 위와 같음 (dev가 넣음) | handoff 9단계 |
+| robots.txt | `web/public/robots.txt`: `User-agent: *` / `Disallow: /api/` | 위와 같음. nginx에서 `/robots.txt`가 `index.html`이 아니라 이 파일로 나가는지 배포 때 한 번 확인 | handoff 9단계 |
+| 사용자 IP | 서비스는 `X-Real-IP`(= nginx `$remote_addr`)를 읽음. nginx `real_ip_header CF-Connecting-IP;` + `set_real_ip_from` = compose에서 정한 nginx·cloudflared 네트워크 범위(17 R3) | **17 배포 설정에서 넣음 (15는 안 함)**. 배포 때 `nginx -V`에 `--with-http_realip_module`, Cloudflare "Remove visitor IP headers" 꺼짐, nginx 포트를 바깥에 열지 않음. 지인 기간 시험에서 기록된 IP가 실제 사용자 IP인지 확인 | Cloudflare 문서(3차), spec R5-2 |
+| 로그인 쿠키 | `access_token` 경로 `/api/v1` (옛 `/api/v1/me` 쿠키를 지우는 코드는 넣지 않음, 15분 뒤 만료) | nginx는 쿠키를 그대로 넘기면 됨 | ADR-0102 |
+
+[12·13·14 회고 결정 중 17에 닿는 것] (사용자 승인, 2026-10-14, `easy/2026-10-14-retro-decisions.html`)
+- **사이클 19(꺾쇠 저자 표기 정리)는 첫 배포 전에 들어갑니다**: 저자 정리 규칙 고침 → 내 PC에서 책 목록 다시 가져오기 → 운영 역할 DB 반영(사이클 11 방식) → 서비스 다시 켬 → 17 첫 배포. dev 순서는 15 지금, 19 이어서. 둘 다 배포 전 (`docs/cycles/19-author-angle-brackets/scope.md`)
+- `/picks` nginx 화면 주소: dev 작업 폴더 `deploy/nginx/chaekcheck-locations.conf:91`에 이미 `picks`가 들어 있고 "2026-10-14 터널로 열다 발견" 주석이 있음. main에 커밋됐는지 배포 전에 확인 (회고 결정 #5)
+- 사서추천 인증키: 새로 받지 않고 지금 키를 쓰되, 코드가 아니라 설정(운영 비밀값)으로 뺌. 표지 이용 조건·권리자 연락처는 따로 확인하지 않음 (사용자: "어짜피 api받았으니까 괜찮아.... 키 같은 것은 따로 설정으로 빼던가", #23). User-Agent에 서비스 주소 넣기는 [안]으로 backlog에 남음
+- 배포 전 작은 일 둘 (backlog): 제목 완전 일치 검색 500 오류(「묘왕동주 1」, #12), 없는 주소 화면(`*` 경로, #24)
+- 교보 구독형 서버 책 목록: **첫 배포 뒤** 같은 AWS 계정에 수집용 서버를 잠깐 따로 띄워 그 서버만 다시 받고(ADR-0094: 동시 1건·1초), 결과는 집 PC 가져오기로 넣음. 서비스 서버(4GB)는 쓰지 않음. 사이클 17 뒤 따로 사이클 (사용자: "aws에서 배포하게 될 건데 aws에서 수집을 돌릴 수도 있어", 회고 결정 #17 → 이어서 #2 승인)
+- 응답 약 5.2초인 2677 여주대(YES24)·2679 경운대: 읽기 제한 5초 그대로, 운영 뒤 15의 도서관 응답 요약으로 판단 (#18)
