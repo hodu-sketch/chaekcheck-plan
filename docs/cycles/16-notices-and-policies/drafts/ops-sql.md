@@ -2,7 +2,7 @@
 
 공지·서비스 안내·약관 글을 운영 DB에 넣고 고칠 때 Claude가 따라 하는 SQL입니다. 운영자 화면이 없어서 이 SQL로 씁니다 ([spec.md](../spec.md) R8-1·R8-2). 인계서에 옮길 초안이며, 표·칸 이름은 [design-delta.md](../design-delta.md)를 따릅니다. 설계가 아직 Proposed라서 12·13·14 회고 뒤 설계를 확정할 때 이름이 바뀌면 함께 고칩니다.
 
-[확인 필요: 실제 DB에서 돌려 보기 — 이 SQL은 아직 시험하지 않음(이 PC에 PostgreSQL 없음, 2026-10-14). dev가 `sitecontent` 표를 만든 뒤 개발 DB에서 한 번씩 실행해 확인]
+시험함 (dev 사이클 16, 2026-10-14): 1~6절 모두 개발 DB에서 돎, 고친 문장 없음. dev가 더한 것: psql 한 번 실행 안에서 `\gset` + `\if`로 "1줄일 때만 COMMIT". 시퀀스 이름 `sitecontent.notice_id_seq`. 실제로 쓰는 판은 dev `docs/maintenance/5-sitecontent.md` (dev `docs/plan-feedback.md` "# 사이클 16")
 
 ## 지키는 것
 
