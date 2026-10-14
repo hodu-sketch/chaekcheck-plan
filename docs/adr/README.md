@@ -112,3 +112,6 @@
 | [ADR-0106](0106-grouping-step4-author-title-subtitle-split-volume-numbers.md) | 네 번째 묶기 단계 보완: 본제목이 저자 이름이면 전체 제목, 부제는 같은 도서관이 따로 가질 때만 나눔, 권 숫자는 권·판처럼 보이는 것만, 로마·한자 숫자, 꼬리 넷 (ADR-0082 보완) | Accepted | 2026-10-14 | 12 (회고) |
 | [ADR-0107](0107-library-insert-additions.md) | 넣기 명령 보탬: 새 곳 최종 주소 줄 필수, 확인한 사라진 곳 gone_known.tsv, 번호는 nextId()부터, 종료 5, 운영 반영은 같은 번호가 다른 도서관이면 멈춤 (ADR-0084·0085·0086 보완) | Accepted | 2026-10-14 | 13 (회고) |
 | [ADR-0108](0108-picks-twelve-recommendations-three-year-window.md) | 사서추천도서는 최근 12번(2년)을 보여 주고 요청 기간은 3년, 도움말에 12번(2년)과 추천 주기 (ADR-0089의 범위·기간 부분을 바꿈) | Accepted | 2026-10-14 | 14 (회고) |
+| [ADR-0109](0109-disable-libraries-by-liquibase.md) | 이미 켜진 도서관을 끄거나 다시 켤 때는 library 모듈의 새 Liquibase 변경 파일로 (내 PC·운영 같은 판, 반영 비교가 맞게) | Proposed | 2026-10-14 | 18 |
+| [ADR-0110](0110-library-insert-skips-zero-ebook-sites.md) | 새 도서관 넣기에서 가져오기와 같은 거르기 규칙으로 센 줄이 0이면 "전자책 0권"으로 뺌, 기존 이유 6개 다음, 묻지 않음 (ADR-0107 보완) | Proposed | 2026-10-14 | 18 |
+| [ADR-0111](0111-underscore-host-separate-request-path.md) | 호스트에 밑줄이 있는 도서관 주소: 가져오기는 collection 안의 밑줄 받는 읽기, 대출 조회·직접 찾기는 따로 만든 요청 길(SNI 없이, 인증서 검사 켬) | Proposed | 2026-10-14 | 18 |

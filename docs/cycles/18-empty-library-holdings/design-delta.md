@@ -1,6 +1,7 @@
 # 설계 변경: 사이클 18 소장이 비었거나 덜 모인 도서관
 
 - 근거: [scope.md](scope.md), [spec.md](spec.md), [flow.md](flow.md), [research.md](research.md), [architect-proposal.md](architect-proposal.md)와 결정 페이지 `easy/2026-10-14-design-decisions.html`·`easy/2026-10-14-design-followup-decisions.html` (모두 사용자 결정, 2026-10-14)
+- 검토: [easy/2026-10-14-design-delta-review.html](easy/2026-10-14-design-delta-review.html) 5개 모두 승인 (2026-10-14)
 - 새 표·새 칸·새 API·새 화면 없음. 코드 이름은 모두 [안]이며 dev가 바꿔도 됨 [확정] (설계 결정 #7)
 - 개발 순서 [확정]: 22곳 끄기·넣기 거르기는 언제든. 가져오기 고침은 사이클 19가 main에 들어간 뒤(설계 후속 #6). 밑줄 주소 요청 길은 사이클 17과 순서 상관없음(설계 후속 #5). 운영 반영은 17 첫 배포 뒤 보통 반영(범위 결정 #8)
 
@@ -144,7 +145,7 @@ classDiagram
 - 모듈 사이 의존은 바뀌지 않음 (`ModularityTests` 그대로 통과) [확정: 설계 결정 #4 "collection 안"]
 - 공용 모듈 없음 (dev `spring-modulith` "generic shared module 금지")
 - 요청 라이브러리는 dev가 시제품으로 고름. 조건 ①~④ [확정] (설계 후속 #2), 첫 후보 Apache HttpClient 5 [확인 필요: 시제품]
-- 사이클 17이 같은 사이트 요청 부품에 나가는 길 고르기·IP별 셈·User-Agent를 넣음(ADR-0095). 순서는 상관없고, 나중에 합치는 쪽이 맞춤 [확정] (설계 후속 #5). 밑줄 길도 17이 정한 User-Agent·셈·멈춤 규칙을 따름 [안]
+- 사이클 17이 같은 사이트 요청 부품에 나가는 길 고르기·IP별 셈·User-Agent를 넣음(ADR-0095). 순서는 상관없고, 나중에 합치는 쪽이 맞춤 [확정] (설계 후속 #5). 밑줄 길도 17이 정한 User-Agent·셈·멈춤 규칙을 따름 [확정] (사용자 승인, 2026-10-14, design-delta 검토 #1)
 
 ## 데이터
 
@@ -157,9 +158,9 @@ classDiagram
   - `scripts/library/disabled_reasons.tsv`: 22줄 [확정] (spec R1-3)
   - `scripts/library/rules/gone_known.tsv`: 44·261·269 줄 지움 [확정] (설계 결정 #2)
   - `docs/library-site-issues.md`: 22곳 원인·원문·확인일 [확정] (범위 결정 #4)
-  - `docs/library-maintenance.md` 6-2 "꺼 둔 도서관" 표 [안]
+  - `docs/library-maintenance.md` 6-2 "꺼 둔 도서관" 표 [확정] (사용자 승인, 2026-10-14, design-delta 검토 #2)
   - `docs/maintenance/1-libraries.md` 넣기 절차에 한 줄: "보고서의 전자책 0권 목록에서 넣을 주소가 바뀐 곳은 사이트를 열어 확인" [확정] (설계 결정 #6 사용자 제안)
-  - `docs/maintenance/3-import.md` 반영 절차에 한 줄: "끄기 변경 파일이 든 판으로 내 PC를 띄운 뒤 내보내기. 끄기 전 판으로 내보내면 반영 비교가 mismatch로 멈춤" [안]
+  - `docs/maintenance/3-import.md` 반영 절차에 한 줄: "끄기 변경 파일이 든 판으로 내 PC를 띄운 뒤 내보내기. 끄기 전 판으로 내보내면 반영 비교가 mismatch로 멈춤" [확정] (사용자 승인, 2026-10-14, design-delta 검토 #2)
 
 ## API
 
@@ -185,10 +186,9 @@ classDiagram
 
 ## 결정 기록
 
-- ADR-0109 [안] 이미 켜진 도서관을 끌 때는 Liquibase 변경 파일로 (내 PC·운영 같은 판) — 사이클 07 방식을 규칙으로
-- ADR-0110 [안] 새 도서관 넣기에서 전자책 0권인 곳을 뺌 (가져오기와 같은 거르기 규칙, 맨 마지막 이유, 묻지 않음) — ADR-0107(넣기 명령 보탬)에 이어
-- ADR-0111 [안] 호스트에 밑줄이 있는 도서관 주소: 가져오기는 직접 읽고, 대출 조회는 따로 만든 요청 길로 (SNI 없이, 인증서 검사 켬)
-- 번호는 쓸 때 `docs/adr/README.md` 다음 번호
+- [ADR-0109](../../adr/0109-disable-libraries-by-liquibase.md) (Proposed, 초안 승인 2026-10-14) 이미 켜진 도서관을 끌 때는 Liquibase 변경 파일로 (내 PC·운영 같은 판) — 사이클 07 방식을 규칙으로
+- [ADR-0110](../../adr/0110-library-insert-skips-zero-ebook-sites.md) (Proposed, 초안 승인 2026-10-14) 새 도서관 넣기에서 전자책 0권인 곳을 뺌 (가져오기와 같은 거르기 규칙, 맨 마지막 이유, 묻지 않음) — ADR-0107(넣기 명령 보탬)에 이어
+- [ADR-0111](../../adr/0111-underscore-host-separate-request-path.md) (Proposed, 초안 승인 2026-10-14) 호스트에 밑줄이 있는 도서관 주소: 가져오기는 직접 읽고, 대출 조회는 따로 만든 요청 길로 (SNI 없이, 인증서 검사 켬)
 
 ## 확인 필요
 
