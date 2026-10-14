@@ -58,10 +58,10 @@
 ## 단일 설계
 
 ### 예약 작업
-- Spring `@Scheduled`, `popular` 설정 클래스에 자기 `@EnableScheduling`. 실제 받기는 단일 스레드 실행기 [안](43건 × 2초 ≈ 90초, 서버 시작을 막지 않음)
+- Spring `@Scheduled`, `popular` 설정 클래스에 자기 `@EnableScheduling`. 실제 받기는 단일 스레드 실행기 [안] (43건 × 2초 ≈ 90초, 서버 시작을 막지 않음)
 - 판단 `shouldFetch(today)` [안], Asia/Seoul: ① 서버 켜질 때(`ApplicationReadyEvent`)와 매일 05:00 [안]에 판단 ② 저장된 달이 하나도 없으면 받음(R1-6). 켜질 때 실패하면 다음 날 05:00 다시 [안, spec에 없음] ③ 대상 달은 지난달 ④ 그 달이 이미 저장됐고 다음 달 3일 00:00 KST 뒤에 받은 것이면 받지 않음 ⑤ 3일 이후 그 달 시도가 2번 실패했으면 받지 않음(R1-3) ⑥ 오늘이 3일 이후면 받음
 - 처음 배포가 1~2일이면 덜 모인 지난달을 받고, ④ 때문에 3일에 다시 받아 바꿈 [안, spec에 없음]
-- 겹침 방지: 운영 서버 1대 [확정](module-map), JVM 안에서 실행기 하나 + `AtomicBoolean` [안]. `collection-import` 프로필·시험에서는 `chaekcheck.popular.fetch.enabled=false` [안 이름]. 여러 대가 되면 advisory lock / ShedLock → backlog
+- 겹침 방지: 운영 서버 1대 [확정] (module-map), JVM 안에서 실행기 하나 + `AtomicBoolean` [안]. `collection-import` 프로필·시험에서는 `chaekcheck.popular.fetch.enabled=false` [안 이름]. 여러 대가 되면 advisory lock / ShedLock → backlog
 
 ### 받기 순서 (조사 문서 2·2-1절)
 - 사이트에 직접 연결(조회 서버는 GET만). `java.net.http.HttpClient` + `CookieManager` [안], 연결 5초·읽기 10초 [안]

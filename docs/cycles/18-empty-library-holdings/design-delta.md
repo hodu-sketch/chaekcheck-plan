@@ -145,7 +145,7 @@ classDiagram
 | 모듈 | 신규/변경 | 책임 | 공개 API | 발행/구독 이벤트 | 소유 테이블 |
 |---|---|---|---|---|---|
 | `library` | 변경 (Liquibase만) | 22곳 `enabled=false` | 그대로 | 없음 | `library.library` (칸 변경 없음) |
-| `collection` | 변경 (내부만) | ① `SiteHosts` [안]: 밑줄을 받는 호스트 읽기(지금 `LibraryInsertPlanner.host`를 옮김), `CollectedCatalog.httpHostOf`·`hostOf`·`sameSite`가 씀 ② `HoldingRowFilter` [안]: `skipReason`을 값으로 받는 함수로 꺼내 가져오기와 넣기 명령이 같이 씀 ③ 넣기 명령 빠진 이유 `no_ebooks` [안](보고서 "전자책 0권"), 이유 1~6 다음 ④ 사이클 12 시험용 설정 `exclude-candidate-libraries`(Java `excludeCandidateLibraries`, 옛 "후보" 용어) 이름 바꿈, 새 이름 dev가 정함 [확정] (12·13·14 회고 결정 #14, 사용자 승인 2026-10-14, `docs/backlog.md`) | 그대로 | 없음 | 변경 없음 |
+| `collection` | 변경 (내부만) | ① `SiteHosts` [안]: 밑줄을 받는 호스트 읽기(지금 `LibraryInsertPlanner.host`를 옮김), `CollectedCatalog.httpHostOf`·`hostOf`·`sameSite`가 씀 ② `HoldingRowFilter` [안]: `skipReason`을 값으로 받는 함수로 꺼내 가져오기와 넣기 명령이 같이 씀 ③ 넣기 명령 빠진 이유 `no_ebooks` [안] (보고서 "전자책 0권"), 이유 1~6 다음 ④ 사이클 12 시험용 설정 `exclude-candidate-libraries`(Java `excludeCandidateLibraries`, 옛 "후보" 용어) 이름 바꿈, 새 이름 dev가 정함 [확정] (12·13·14 회고 결정 #14, 사용자 승인 2026-10-14, `docs/backlog.md`) | 그대로 | 없음 | 변경 없음 |
 | `availability` | 변경 (내부만) | 사이트 요청 부품에서 호스트에 밑줄이 있으면 새 요청 라이브러리로 보냄(대출 조회·직접 찾기 둘 다). SNI 없이, 인증서 이름 검사 켬, 지금 길과 같은 시간 제한·응답 크기 제한·`LibrarySiteTls`. 실패하면 그 도서관만 실패. `HostThrottle.key`·`Candidate.hostKey`가 밑줄 호스트에서 NPE를 내지 않게 | 그대로 | 없음 | 없음 |
 | `fetch-service` (조회 서버 앱, 따로 도는 앱) | 변경 | 같은 밑줄 주소 길: `UrlGuard`가 밑줄 호스트를 읽되 사설·내부 주소 막기는 그대로, `LibraryClient`가 밑줄 호스트를 새 라이브러리로 보냄(같은 네 조건) [확정] (사용자: "같이 해 굳이 왜 나눠서 해 조회 서버도 같이 해", 2026-10-14) | 그대로 | 없음 | 없음 |
 | `catalog`, web | 변경 없음 | — | — | — | — |

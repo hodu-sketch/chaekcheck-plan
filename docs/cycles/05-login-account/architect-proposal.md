@@ -196,7 +196,7 @@
 - A안 [안]: 어느 모듈에도 속하지 않는 별도 스키마 `<modulith>` [안 이름]에 두고 `spring.modulith.events.jdbc.schema`로 지정. Liquibase `db/changelog/modulith/001-event-publication.yaml`(hash 인덱스는 YAML이 지원하지 않으므로 `sql` changeset). `member`의 이벤트도 같은 표를 씀
 - B안: `auth` 스키마에 둠 → 사이클 06부터 다른 모듈 이벤트까지 `auth` 스키마에 쌓여 "모듈이 자기 표만 가짐"과 어긋남
 - C안: `public` 스키마(속성 미지정) → 가장 단순하지만 모듈 스키마 규칙에 예외가 생김
-- 추천: A안 [안]. 완료 모드는 기본값 `update` [안](AC-15 확인용으로 완료된 줄이 남아야 함). 완료된 줄의 보관 기간과 정리 방법은 [확인 필요] — 지워진 계정 번호가 남기 때문에 처리방침 문구와 같이 정합니다(backlog 후보)
+- 추천: A안 [안]. 완료 모드는 기본값 `update` [안] (AC-15 확인용으로 완료된 줄이 남아야 함). 완료된 줄의 보관 기간과 정리 방법은 [확인 필요] — 지워진 계정 번호가 남기 때문에 처리방침 문구와 같이 정합니다(backlog 후보)
 - 의존성: `spring-modulith-starter-jdbc` [확정 이름, events.html], 버전은 BOM `2.1.1`이 관리
 
 ---

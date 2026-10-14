@@ -169,7 +169,7 @@
 4. **분류 상수** (`picks/internal/PickCategory.java` [안 위치]) [확정 값]: `ALL` 0 "전체", `11` 1 "문학", `6` 2 "인문", `5` 3 "사회", `4` 4 "자연", `425` 5 "테마". 모르는 코드는 enum 밖에서(3·5단계)
 5. **설정** (`application.yml`, `application-collection-import.yml`, `application-test.yml`, `picks/internal/PicksProperties.java` [안 이름])
    - 키 이름 [확정]: `chaekcheck.picks.fetch.enabled: ${CHAEKCHECK_PICKS_FETCH_ENABLED:true}`, `chaekcheck.picks.fetch.api-key: ${CHAEKCHECK_PICKS_NLK_API_KEY:}`
-   - 값 [확정](키 위치 `chaekcheck.picks.fetch.*` [안]): `cron "0 0 5 * * *"`, `zone Asia/Seoul`, `base-url https://nl.go.kr`, `window 2y`, `end-row 1000`, `connect-timeout 5s`, `read-timeout 10s`, `max-body-size 10MB`, `cover-max-body-size 5MB`, `cover.width 200`, `cover.jpeg-quality 0.8`, `cover.max-pixels 16000000`, `cover.request-interval 1s`, `user-agent "book search service"`(`TODO(확인 필요)` 배포 때 주소), `chaekcheck.picks.cache.refresh-interval 10m`
+   - 값 [확정] (키 위치 `chaekcheck.picks.fetch.*` [안]): `cron "0 0 5 * * *"`, `zone Asia/Seoul`, `base-url https://nl.go.kr`, `window 2y`, `end-row 1000`, `connect-timeout 5s`, `read-timeout 10s`, `max-body-size 10MB`, `cover-max-body-size 5MB`, `cover.width 200`, `cover.jpeg-quality 0.8`, `cover.max-pixels 16000000`, `cover.request-interval 1s`, `user-agent "book search service"`(`TODO(확인 필요)` 배포 때 주소), `chaekcheck.picks.cache.refresh-interval 10m`
    - `collection-import`·`test`는 `enabled: false`. `PicksProperties.toString()`에서 `apiKey` 가림
 6. **기존 시험 고침**: `ModularityTests`(33-40행) `popular` → `picks`(의존 `catalog`·`catalog :: normalize`·`library`, 다른 모듈은 `picks`를 모름), `DocumentationTests` 32행 `module-popular.puml` → `module-picks.puml`, `AuthEnabledSecurityTests` 29-30·68·76-88행 → `/api/v1/picks`·`/api/v1/picks/covers/{id}`(5단계에서 채움)
 7. **`db-test` 다시 정리**(0단계 주의)
@@ -259,7 +259,7 @@
 3. **측정** (`# 사이클 14` 절에, 재서 보고만): 캐시 새로 고침 시간(① + ②)·메모리, `GET /api/v1/picks` p50·p95·응답 크기, 서비스 DB 맞은 권수(① / ①이나 ②) vs plan 32/52, 계획 하나(서울 거주 [안])의 `available` 권수
 4. **Playwright** 1280 → 768 → 375 → 320(데스크톱 먼저): 머리 "사서추천도서"와 320px 겹침, S13 3×3·칩 없음·카드 머리·세모·다음 분류(AC-3), S13c·"? 추천 기준 보기"·S13i, S14 추천 줄·3줄·[책 검색 >>] → S3 → 뒤로(AC-20), S15, 폰 밀기(AC-19)·뒤로 가기(AC-18), 표지 실패 칸, 로그아웃(AC-16), `/about`, `/popular`가 없는 경로로 처리됨
 5. **사용자 실제 폰 확인**: 아래 완료 기준의 폰 줄
-6. **dev 문서**: `docs/maintenance/4-popular.md` → 사서추천 운영 메모 [안 이름 `4-picks.md`, `README.md` 목차](받기 켜고 끄기, 키를 넣는 곳(값은 적지 않음), `picks.fetch_run` 읽는 법과 `failure_reason`·`trigger` 뜻, 판단 규칙). `docs/maintenance/3-import.md` 205행 `CHAEKCHECK_POPULAR_FETCH_ENABLED` → `CHAEKCHECK_PICKS_FETCH_ENABLED`
+6. **dev 문서**: `docs/maintenance/4-popular.md` → 사서추천 운영 메모 [안 이름 `4-picks.md`, `README.md` 목차] (받기 켜고 끄기, 키를 넣는 곳(값은 적지 않음), `picks.fetch_run` 읽는 법과 `failure_reason`·`trigger` 뜻, 판단 규칙). `docs/maintenance/3-import.md` 205행 `CHAEKCHECK_POPULAR_FETCH_ENABLED` → `CHAEKCHECK_PICKS_FETCH_ENABLED`
 - 위험: 중간 (응답이 조사 때와 다르면 멈추고 보고)
 
 ## 테스트

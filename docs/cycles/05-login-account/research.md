@@ -319,14 +319,14 @@
 
 - 7번 후속 질문("탈퇴용으로 따로 두면 카카오/네이버가 승인할까?"), 2026-10-04: 카카오 Redirect URI는 앱 설정에서 등록(심사 언급 없음. 문서의 "10개"는 로그아웃 리다이렉트 URI 한도) https://developers.kakao.com/docs/ko/kakaologin/prerequisite · 네이버 Callback URL은 내 애플리케이션에서 등록, 개수·용도 제한과 재인증의 별도 승인에 관한 문장 없음, 검수 항목은 서비스 내용·로그인 구현 형태·정보 사용·로고와 앱 이름 (devguide.md, verify.md). 등록 가능 개수는 두 제공자 모두 [확인 필요: 콘솔에서 직접 확인].
 
-- 8번 후속 질문("서버 기록이 뭐 로그 이런 거야? db이런데 넣으면 안 되나"), 2026-10-04: OWASP Logging Cheat Sheet — 기록 대상에 "addition or deletion of users", 기록 위치는 파일 시스템·데이터베이스(쓰기 전용 계정 권장)·원격 수집, 제외할 값은 비밀번호·세션 식별 값·접근 토큰, 보관 기간 준수. https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html [확정]. 다른 서비스의 탈퇴 기록 위치는 [확인 필요](자료 없음).
+- 8번 후속 질문("서버 기록이 뭐 로그 이런 거야? db이런데 넣으면 안 되나"), 2026-10-04: OWASP Logging Cheat Sheet — 기록 대상에 "addition or deletion of users", 기록 위치는 파일 시스템·데이터베이스(쓰기 전용 계정 권장)·원격 수집, 제외할 값은 비밀번호·세션 식별 값·접근 토큰, 보관 기간 준수. https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html [확정]. 다른 서비스의 탈퇴 기록 위치는 [확인 필요] (자료 없음).
 
 - ADR-0039 초안 검토 중 질문("카카오나 네이버에서 사용자 이름 정보 가져올 수 있나? 나중에 아이디/별명 설정 이런것도 기존 소셜 로그인에 넣을 수 있으려나"), 2026-10-04: 카카오 개인정보 동의항목의 필요 권한 — 닉네임·프로필 사진 "기본 제공", 카카오계정(이메일) "비즈 앱, 테스트 앱", 이름·성별·연령대·생일·전화번호 "동의 단계 설정 권한, 테스트 앱" (https://developers.kakao.com/docs/ko/kakaologin/utilize, 요약으로 읽음) [확정]. 네이버 항목은 2절. 네이버 항목별 추가 조건은 [확인 필요].
 
 - 사이클 닫기 검토 중 질문("만약 우리 서버가 내려가 있다면? 우리 쪽에서 저 신호를 몰아서 받을 수 있도록 못하나?"), 2026-10-04: 카카오 "사용자 목록 가져오기" `/v1/user/ids` — 앱에 연결된 사용자들의 회원번호 목록, 어드민 키, `limit` 1~100, `from_id`, `order`, 분당 100회 (https://developers.kakao.com/docs/ko/kakaologin/rest-api, 요약으로 읽음) [확정]. 네이버는 토큰 없이 연결 상태를 묻는 방법이 문서에 없음 [확인 필요]. 놓친 웹훅·콜백을 다시 받는 기능은 두 제공자 모두 문서에 없음.
 
 - 사이클 닫기 검토 5번(제공자 호출 대기 시간), 2026-10-04: Spring Boot는 `spring.http.clients.connect-timeout`·`read-timeout`으로 전역 설정 가능, 문서 예시는 2s·1s, 기본값은 이 페이지에 없음 (https://docs.spring.io/spring-boot/reference/io/rest-client.html) [확정]. AWS SDK 모범 사례는 대기 시간을 정해 빨리 실패하게 하라고 권하나 숫자는 없음 (https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/best-practices.html) [확정]. 권장 숫자를 주는 공식 문서는 찾지 못함 [확인 필요: dev가 호출해 보고 조정].
-- 같은 검토 9번(네이버), 2026-10-04: 네이버 가이드에 토큰 없이 연결 상태를 확인하는 방법과 연결된 사용자 목록 조회는 없음. "네이버에서는 실패 요청에 대해서 재시도를 수행하지 않습니다" [확정]. 다른 사이트의 관행은 [확인 필요](공식 자료 없음).
+- 같은 검토 9번(네이버), 2026-10-04: 네이버 가이드에 토큰 없이 연결 상태를 확인하는 방법과 연결된 사용자 목록 조회는 없음. "네이버에서는 실패 요청에 대해서 재시도를 수행하지 않습니다" [확정]. 다른 사이트의 관행은 [확인 필요] (공식 자료 없음).
 
 - 개발 중 돌아올 주소로 localhost를 쓸 수 있는지(사용자 질문 "아직 서비스를 배포하지 않았는데 배포해서 도메인을 받아야 하나?", 2026-10-04): 카카오는 데브톡에 `http://localhost:8080` 등으로 Redirect URI를 등록해 쓰는 사례가 있음 (https://devtalk.kakao.com/t/redirect-uri/122948 , https://devtalk.kakao.com/t/redirect-uri/87357) [확정: 사례]. 네이버 가이드에는 localhost에 관한 문장이 없음. 제3자 예제는 `http://localhost:8000`으로 등록 (https://github.com/ryulstory/django-allauth-providers-ko) [확인 필요: 사용자가 등록 화면에서 확인].
 

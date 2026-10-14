@@ -30,6 +30,17 @@ let html = renderMarkdown(marked).replace(/<p>\s*MERMAIDSVG(\d+)END\s*<\/p>|MERM
   return '<div class="dg">' + svg + '</div>';
 });
 
+// Relative links in the markdown point from the doc's folder; the page lives elsewhere (easy/), so re-point them.
+const out = outArg || path.join(path.dirname(src), 'easy', path.basename(src, path.extname(src)) + '-original.html');
+html = html.replace(/href="([^"#][^"]*)"/g, (m, href) => {
+  if (/^[a-z][a-z0-9+.-]*:/i.test(href) || href.startsWith('/')) return m;
+  const hash = href.indexOf('#');
+  const file = hash < 0 ? href : href.slice(0, hash);
+  const tail = hash < 0 ? '' : href.slice(hash);
+  const target = path.resolve(path.dirname(src), decodeURI(file.replace(/&amp;/g, '&')));
+  return 'href="' + encodeURI(path.relative(path.dirname(path.resolve(out)), target).split(path.sep).join('/')) + tail + '"';
+});
+
 const page = `<!doctype html>
 <html lang="ko">
 <head>
@@ -59,7 +70,6 @@ ${html}
 </body>
 </html>
 `;
-const out = outArg || path.join(path.dirname(src), 'easy', path.basename(src, path.extname(src)) + '-original.html');
 fs.mkdirSync(path.dirname(out), { recursive: true });
 fs.writeFileSync(out, page);
 console.log(JSON.stringify({ html: out, diagrams: n, missing }));

@@ -149,7 +149,7 @@ UPDATE databasechangelog SET md5sum = NULL WHERE id = 'collection-001-catalog-im
 COMMIT;
 ```
 - `databasechangelog`가 있는 스키마는 dev Liquibase 설정을 보고 맞춤. `md5sum`이 NULL이면 다음 Liquibase 실행 때 새 값으로 다시 채움 [확인 필요: 앱을 켜서 체크섬 오류 없이 지나가는지 확인]
-- 새 이름은 [안](dev가 바꾸면 SQL도 같이)
+- 새 이름은 [안] (dev가 바꾸면 SQL도 같이)
 - 미리 하지 않음: 합치기 전에 이름만 바꾸면 지금 코드(`candidate_library_count`를 씀)와 사이클 11 측정이 깨짐. **13 작업 폴더의 따로 띄운 DB에는 필요 없고, main에 합칠 때 `db`·`db-ops`(5432·5434)에 돌림**
 - `db-test`는 컨테이너를 다시 띄움(tmpfs)
 
@@ -223,7 +223,7 @@ COMMIT;
    - `GET /api/v1/join-surveys/latest` [확정]. 인증 없음. `{"surveyedOn":"2026-10-05"}`, 기록이 없으면 `{"surveyedOn":null}`. 오류는 일반 500(Problem Details)
    - 값: `SELECT max(join_surveyed_on) FROM collection.library_insert_run WHERE status = 'SUCCEEDED'` [안. "최신"을 날짜 최대로 읽음, 마지막 실행 값으로 할지는 보고]
    - 기본 프로필(서비스)에서 켜져야 함(명령 프로필에만 두지 않음). `api-design` 스킬(복수형, Problem Details)
-- 테스트: `JoinSurveyApiTests` [안](줄 없으면 null, 성공 줄 둘이면 최신, FAILED 무시), `AuthEnabledSecurityTests`(로그인 켬)에 새 GET이 로그인 없이 200(`popularBooksNeedNoLogin` 78행 꼴, 사이클 14가 같은 파일을 고침), `ModularityTests`에 `collection` 의존이 `catalog`·`catalog :: normalize`·`library`뿐이고 `library`는 `collection`을 모른다는 단언 [안]
+- 테스트: `JoinSurveyApiTests` [안] (줄 없으면 null, 성공 줄 둘이면 최신, FAILED 무시), `AuthEnabledSecurityTests`(로그인 켬)에 새 GET이 로그인 없이 200(`popularBooksNeedNoLogin` 78행 꼴, 사이클 14가 같은 파일을 고침), `ModularityTests`에 `collection` 의존이 `catalog`·`catalog :: normalize`·`library`뿐이고 `library`는 `collection`을 모른다는 단언 [안]
 - 확인: `./gradlew build`
 
 ### 7단계: 반영 파일 판 2 (의존: 5단계) — AC-7

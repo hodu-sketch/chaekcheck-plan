@@ -26,7 +26,7 @@ a{color:var(--accent)}
 <ul>
 <li>작성: 2026-10-14, <code>architect</code> 서브에이전트 (dev 코드 읽기만). 근거: 이 폴더 scope·spec·flow·research, <code>docs/cycles/13-crawler-to-dev/design-delta.md</code>, <code>docs/current/module-map.md</code></li>
 <li>이름은 모두 [안]이며 dev가 바꿔도 됩니다 (사이클 13 방식)</li>
-<li>결정 페이지: <a href="easy/2026-10-14-design-decisions.html">easy/2026-10-14-design-decisions.html</a></li>
+<li>결정 페이지: <a href="2026-10-14-design-decisions.html">easy/2026-10-14-design-decisions.html</a></li>
 </ul>
 <p><strong>먼저 알릴 것 (새로 찾은 사실, AC-4에 걸림)</strong>: 대출 조회는 Java 기본 HTTP 클라이언트(<code>java.net.http</code>)로 요청합니다. 이 클라이언트는 호스트를 읽을 수 없는 주소면 요청을 만들 때 바로 거절합니다(<code>HttpRequest.newBuilder</code> → <code>checkURI</code> → <code>IllegalArgumentException(&quot;unsupported URI …&quot;)</code>). 현대제철 주소 <code>https://hs_partners.yes24library.com</code>은 밑줄 때문에 <code>getHost()</code>가 null이라, 호스트 읽기만 고쳐서는 요청을 보낼 수 없습니다 (결정 2).</p>
 <h2 id="">현재 상태</h2>
