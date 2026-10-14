@@ -11,4 +11,4 @@
 | [2026-10-14-design-followup-decisions.html](2026-10-14-design-followup-decisions.html) | 설계 후속(3번 미승인 뒤): 밑줄 주소 길을 쓰는 곳, 라이브러리 고르는 법, 보안 연결, 실패 때, 17·19와 개발 순서 | `../architect-proposal.md` 결정 2 | 결정됨: 승인 4, 5번 미승인(17과 순서 상관없음), 6번 승인 "19뒤에" (2026-10-14) |
 | [2026-10-14-design-delta-review.html](2026-10-14-design-delta-review.html) | design-delta 검토: 바뀌는 것, 개발 순서, 17 요청 규칙 따르기, 절차 문서 두 줄, ADR-0109~0111 초안 | `../design-delta.md` ([design-delta-original.html](design-delta-original.html)) | 결정됨: 5개 모두 승인 (2026-10-14) |
 | [2026-10-14-close-decisions.html](2026-10-14-close-decisions.html) | 마무리 전: ADR 확정, 인계서 위치(사이클 폴더), 커밋·dev 18 알림 | `../design-delta.md`, `docs/adr/0109~0111` | 결정됨: 3개 모두 승인 (2026-10-14) |
-| [2026-10-14-handoff-review.html](2026-10-14-handoff-review.html) | 인계서 검토: 세 묶음, 조회 서버 방식 범위, 전자책 0권 검사 자리, 확인 SQL, 22곳 밖 0권, 합치는 법, 넘기기 | `../handoff.md` | 6개 |
+| [2026-10-14-handoff-review.html](2026-10-14-handoff-review.html) | 인계서 검토: 세 묶음, 조회 서버 방식 범위, 전자책 0권 검사 자리, 확인 SQL, 22곳 밖 0권, 합치는 법, 넘기기 | `../handoff.md` | 결정됨: 승인 4, 1번 미승인(조회 서버도 같이), 4번 사용자 제안(알아서 끄고 메모만) (2026-10-14) |
