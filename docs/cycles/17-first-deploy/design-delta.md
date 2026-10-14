@@ -149,7 +149,7 @@ sequenceDiagram
 
 | 대상 | 방식 | 제한·키 관리 | 실패 시 동작 | 상태 태그 |
 |---|---|---|---|---|
-| AWS Parameter Store (서울) | `up.sh`가 띄울 때 한 번 읽음 | 읽기 전용 IAM 사용자 접근 키 한 쌍(경로 하나만), Standard 무료. 넣는 값: DB 비밀번호, JWT 키, 카카오 키 3개, 터널 토큰, Grafana 관리자 비밀번호, 국립중앙도서관 사서추천 Open API 키(dev 14, 배포 전 새 키 교체 여부는 사용자 결정 [확인 필요])(조회 서버 토큰은 꺼 둬서 이번엔 안 넣음). 이름 끝 = 환경 변수 이름(`/chaekcheck/prod/DB_PASSWORD` → `DB_PASSWORD`) | 멈추고 기존 컨테이너 유지 | [확정] (사용자 승인, 2026-10-14, #1) |
+| AWS Parameter Store (서울) | `up.sh`가 띄울 때 한 번 읽음 | **EC2 IAM 역할**로 읽음(접근 키 없음, ADR-0104). 역할에 그 경로 읽기만 허용, Standard 무료. 넣는 값: DB 비밀번호, JWT 키, 카카오 키 3개, 터널 토큰, Grafana 관리자 비밀번호, 국립중앙도서관 사서추천 Open API 키(dev 14, 배포 전 새 키 교체 여부는 사용자 결정 [확인 필요])(조회 서버 토큰은 꺼 둬서 이번엔 안 넣음). 이름 끝 = 환경 변수 이름(`/chaekcheck/prod/DB_PASSWORD` → `DB_PASSWORD`) | 멈추고 기존 컨테이너 유지 | [확정] (사용자 승인, 2026-10-14, #1) |
 | Cloudflare Tunnel | `cloudflared` 컨테이너, `chaekcheck.com`·`grafana.chaekcheck.com`·SSH 길 | 터널 토큰은 Parameter Store | Error 1033 / 502·504 (flow F4) | [확정] / SSH 길 설정·무료 범위 [확인 필요] |
 | 카카오 로그인 | 지금 그대로, 운영 Redirect URI 등록 | 키는 Parameter Store | 카카오 화면 오류 | [확정] (spec R6) |
 
@@ -170,5 +170,5 @@ sequenceDiagram
 | 덤프 크기·시간 | 프로토타입 |
 | Cloudflare Tunnel로 SSH 거는 방법과 무료 범위 | 공식 문서 |
 | systemd `OnCalendar`의 `Asia/Seoul` | 서버에서 `systemd-analyze calendar` |
-| Lightsail 사설망 대역과 edge subnet | 서버에서 `ip addr`, `docker network inspect` |
+| EC2 VPC 사설망 대역과 edge subnet | 서버에서 `ip addr`, `docker network inspect` |
 | 컨테이너별 `mem_limit` 합이 4GB 안인지 | 서버에서 측정 |

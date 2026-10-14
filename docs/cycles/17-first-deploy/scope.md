@@ -12,7 +12,7 @@
 
 ## 포함 [확정] (사용자 승인, 2026-10-13, `easy/2026-10-13-scope-decisions.html` #1)
 
-1. 운영 서버: AWS 서울 4GB 한 대(고정 IP)에 nginx·서비스·조회 서버·PostgreSQL + pg_bigm을 Docker로 [확정: 4GB·서울]. **호스트는 Lightsail vs EC2 미정** [안]: Lightsail 무료는 90일 평가판이라 **최대 2GB**뿐(4GB는 크레딧으로 결제), EC2는 크레딧 사용 확실 + IAM 역할로 비밀값 접근 키 불필요 → EC2 추천. 결정은 ADR 초안·콘솔 Lightsail 크레딧 대상 확인 뒤 (`research.md` 12절)
+1. 운영 서버: **AWS EC2 t4g.medium(4GB·서울·Arm)** 한 대에 nginx·서비스·조회 서버·PostgreSQL + pg_bigm을 Docker로 [확정] (사용자 승인, 2026-10-14, ADR-0104, `easy/2026-10-14-deploy-host-decisions.html` #1). Lightsail 무료 평가판은 2GB까지라 4GB엔 작고, EC2는 크레딧 사용 확실 + IAM 역할로 비밀값 접근 키 불필요. 무료 크레딧으로 최대 6개월 운영 (`research.md` 12절)
 2. 연결: 도메인 `chaekcheck.com`을 Cloudflare에서 삼 [확정] (사용자 승인, 2026-10-13, `easy/2026-10-13-scope-decisions.html` #4) (쓸 수 있는 이름인지는 [확인 필요]) + Cloudflare Tunnel, 인증서는 Cloudflare [확정: Tunnel]
 3. nginx가 `CF-Connecting-IP`를 사용자 주소로 읽게 [확정], 책 검색 목록 등 나머지 `/api/`의 IP별 한도 [안]
 4. 운영 DB 채우기: 첫 배포 직전 seed 다시 만들기·`PRE_DEPLOYMENT` 지우기(backlog "첫 배포 직전"), 책 목록은 내 PC에서 가져와 운영에 반영(ADR-0078, 사이클 11 반영 방법)
@@ -43,13 +43,13 @@
 
 | 항목 | 확인 방법 |
 |---|---|
-| Lightsail 4GB 묶음의 CPU 종류(Intel·AMD·Arm) | 서버 만든 뒤 `lscpu` |
-| 한국 데이터센터 IP를 도서관 사이트가 받는지 | Lightsail(또는 CloudShell 서울)에서 6곳 1번씩 (`aws-crawl.md` 1절) |
+| EC2 t4g.medium CPU(Arm Graviton) 실제 성능 | 서버 만든 뒤 `lscpu`·부하 측정 |
+| 한국 데이터센터 IP를 도서관 사이트가 받는지 | [일부 확인] CloudShell(시드니 AWS)에서 go.kr 5곳+교보 열림, 부산만 차단. 서울 IP는 EC2에서 재확인 (`research.md` 10·12절) |
 | 터널을 거칠 때 `CF-Connecting-IP`가 붙는지, 스트림이 버퍼링되는지, 125초 제한 | 시험 |
 | 도메인 이름과 구매 (Cloudflare Registrar) | 사용자에게 질문 |
 | 카카오 운영 등록(사이트 도메인, Redirect URI, 동의 항목) | 공식 문서 확인 + 사용자 콘솔 작업 |
 | 4GB에 서비스·DB·조회 서버·Prometheus·Grafana가 함께 들어가는지 | 서버에서 측정 |
-| Lightsail 서버가 Parameter Store·Secrets Manager를 읽는 방법(Lightsail에는 EC2처럼 서버에 붙이는 권한(IAM 역할)이 있는지, 없으면 접근 키를 어디에 둘지)과 요금 | 공식 문서 확인 |
+| ~~비밀 값 읽는 방법~~ [해결] EC2로 정해져 **IAM 역할**로 접근 키 없이 읽음(ADR-0104). Parameter Store Standard 무료 | — |
 | 사이클 15 요청: 운영 nginx 이미지에 realip 모듈(`nginx -V`), 정식 터널에서 `CF-Connecting-IP` 시험 결과, 15 nginx 설정(클릭 알림 한도·봇 403·robots.txt)과 17 한도 맞추기, 접속 기록 보관 기간·쿼리 문자열 빼기, 백업 시각(04:00·04:30·05:00과 겹치지 않게) | `research.md` 7절 |
 | 사이클 16 요청: AWS 계약 법인 이름, Cloudflare 연락처·요청 정보 보유 기간, Cloudflare 쿠키 여부(배포 때 계정에서 확인해 16에 넘김), 공개일을 정할 때 16 개발이 끝났는지 확인 | `research.md` 6절 |
 | 업체 프록시 고르기(한국 고정 IP 상품, 최소 수량, 자동 요청 허용 약관, 월 비용) | 공식 페이지 확인 + 사용자에게 질문 |

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>첫 배포 호스트 결정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:860px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:26px 24px;margin:0 0 24px}
+.item h3{font-size:22px;margin:0 0 10px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.num{flex:none;display:inline-grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--accent);color:var(--card);font-size:17px}
+.item p{margin:8px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:10px 14px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:36px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 6px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+td.cok{background:var(--ok-bg)}td.cwarn{background:var(--warn-bg)}td.cno{background:var(--no-bg)}
+@media (max-width:640px){body{font-size:18px}.lead{font-size:24px}}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">첫 배포: 호스트·기간·비밀값 정하기</p>
+<p class="sub">AWS 신규 계정 무료 크레딧($100~200·6개월)을 쓰기로 하면서 생긴 결정 3가지입니다. 항목마다 승인/미승인/기타를 정해 주세요. 근거는 <code>research.md</code> 12절. (2026-10-14)</p>
+
+<section class="card item">
+<h3><span class="num">1</span>호스트는 EC2 4GB(크레딧)로 [확정] (사용자 승인, 2026-10-14)</h3>
+<p>첫 배포 서버를 <b>AWS EC2 t4g.medium</b>(램 4GB·서울·Arm)으로 올리고 <b>무료 크레딧으로 결제</b>합니다. 크레딧이면 4GB를 6개월 내내 덮습니다(<code>$24×6=$144 &lt; $200</code>).</p>
+<table>
+<tr><th>선택</th><th>무료 범위</th><th>비밀값</th></tr>
+<tr><td>EC2 t4g.medium 4GB</td><td class="cok">크레딧으로 결제 확실</td><td class="cok">IAM 역할 → 접근 키 없음</td></tr>
+<tr><td>Lightsail 4GB</td><td class="cwarn">무료 평가판은 2GB까지, 4GB는 크레딧 결제(대상인지 콘솔 확인)</td><td class="cwarn">역할 없음 → 접근 키 필요</td></tr>
+<tr><td>Lightsail 2GB(무료 평가판)</td><td class="cok">90일 무료</td><td class="cno">모니터링 빼야 들어감(설계 축소)</td></tr>
+</table>
+<p class="rec">추천: EC2 4GB.</p>
+</section>
+
+<section class="card item">
+<h3><span class="num">2</span>크레딧 한도(최대 6개월)까지, 노트북은 나중에 [확정] (사용자 승인, 2026-10-14)</h3>
+<div class="chg">바뀌는 점: 처음엔 "2주"였습니다. 무료 크레딧을 알게 되어 <b>6개월 한도까지 AWS</b>로 돌리고 <b>집 노트북 이전은 나중에</b> 재검토합니다.</div>
+<p>신규 계정 크레딧(<code>$100~200</code>)으로 무료 플랜 6개월 또는 크레딧 소진 중 먼저까지 운영합니다. 4GB면 $200 안에서 6개월을 채웁니다.</p>
+<p class="alt"><b>감수할 것:</b> 부산처럼 AWS IP를 막는 <code>go.kr</code> 사이트는 그 기간 내내 막힌 채입니다(집 가정용 IP로 옮겨야 풀림).</p>
+<p class="rec">추천: 6개월까지, 노트북 미룸.</p>
+</section>
+
+<section class="card item">
+<h3><span class="num">3</span>비밀값은 EC2 IAM 역할로(접근 키 없이) [확정] (사용자 승인, 2026-10-14)</h3>
+<p>EC2를 쓰면 서버에 <b>IAM 역할</b>을 붙여, Parameter Store의 비밀값(카카오 키·DB 비밀번호 등)을 <b>접근 키 없이</b> 읽습니다. ADR-0103의 "Lightsail엔 역할이 없어 접근 키를 둔다"를 이 경우 대체해 키 관리가 사라집니다.</p>
+<p class="alt"><b>전제:</b> 1번이 EC2일 때만 적용됩니다. Lightsail로 가면 기존 접근 키 방식 그대로입니다.</p>
+<p class="rec">추천: 적용(EC2 전제).</p>
+</section>
+
+<p class="foot">근거: <code>docs/cycles/17-first-deploy/research.md</code> 12절, ADR-0103, scope.md. 2026-10-14.</p>
+</main>
+</body>
+</html>
