@@ -2,7 +2,7 @@
 
 - 근거: [scope.md](scope.md), [spec.md](spec.md), [flow.md](flow.md), [research.md](research.md), [architect-proposal.md](architect-proposal.md)와 결정 페이지 `easy/2026-10-14-design-decisions.html`·`easy/2026-10-14-design-followup-decisions.html` (모두 사용자 결정, 2026-10-14)
 - 검토: [easy/2026-10-14-design-delta-review.html](easy/2026-10-14-design-delta-review.html) 5개 모두 승인 (2026-10-14)
-- 새 표·새 칸·새 API·새 화면 없음. 코드 이름은 모두 [안]이며 dev가 바꿔도 됨 [확정] (설계 결정 #7)
+- 새 표·새 칸·새 API·새 화면 없음. 코드 이름은 모두 [안]이며 dev가 바꿔도 됨 [확정] (설계 결정 #7) 새 의존성은 둘(본 서비스 `backend`와 조회 서버 앱 `fetch-service`에 같은 라이브러리 하나씩)
 - 개발 순서 [확정]
   - 언제든: 22곳 끄기, 밑줄 호스트 요청 길(`availability`, 사이클 17과 순서 상관없음, 설계 후속 #5)
   - 사이클 19가 main에 들어간 뒤: `SiteHosts`·`HoldingRowFilter` 꺼내기(가져오기 고침), 넣기 "전자책 0권"(`HoldingRowFilter`를 씀), 옛 설정 이름 바꾸기, 내 PC 가져오기 (설계 후속 #6, 사용자 "19뒤에 하자")
@@ -43,6 +43,8 @@ flowchart TB
   AV --> CAT
   SF -->|지금 길| SITES[(도서관 사이트)]
   UND -->|SNI 없이, 인증서 검사 켬| SITES
+  SF -.->|조회 서버 모드| FSV[fetch-service 앱<br/>UrlGuard 밑줄 허용·내부망 막기 유지<br/>LibraryClient 밑줄 길]
+  FSV --> SITES
   WEB[web 그대로] --> LIB
   WEB --> AV
 ```
@@ -177,7 +179,7 @@ classDiagram
 
 | 대상 | 방식 | 제한·키 관리 | 실패 시 동작 | 상태 태그 |
 |---|---|---|---|---|
-| 밑줄 호스트 도서관 사이트 (지금 현대제철 `https://hs_partners.yes24library.com`) | 새 요청 라이브러리, SNI 없이, 인증서 이름 검사 켬 | 지금 길과 같은 시간 제한·응답 크기 제한·호스트별 간격. 키 없음 | 그 줄만 "대출 가능 여부 확인 필요" | [확정] 방식 (설계 후속 #1~#4) / 라이브러리 [확인 필요: 시제품] |
+| 밑줄 호스트 도서관 사이트 (지금 현대제철 `https://hs_partners.yes24library.com`) | 새 요청 라이브러리, SNI 없이, 인증서 이름 검사 켬 | 지금 길과 같은 시간 제한·응답 크기 제한·호스트별 간격. 키 없음 | 그 줄만 "대출 가능 여부 확인 필요" | [확정] 방식 (설계 후속 #1~#4) / 라이브러리 [확인 필요: 시제품] (조회 서버 앱 모드에서도 같은 라이브러리·같은 조건) |
 
 ## 시험 (dev)
 
@@ -187,6 +189,8 @@ classDiagram
 | 가져오기: 밑줄 호스트 도서관 | 전자책 줄이 들어감, `detail_url_not_http`로 빠지지 않음 | spec AC-5 |
 | `HoldingRowFilter`: 지금 `skipReason`과 같은 판정 | 바꾸기 전후 같은 사본으로 가져오기 기록 같음(밑줄 줄 빼고) | spec R2-1 |
 | 대출 조회·직접 찾기: 밑줄 호스트 | NPE 없음, 응답이면 값, 실패면 그 줄만 실패, 다른 도서관 영향 없음 | spec AC-4, 설계 후속 #4 |
+| 조회 서버 앱 `UrlGuard` | 밑줄 호스트 통과, 그 이름이 사설·내부 주소로 풀리면 거부, 사용자 정보(`user@`) 든 주소 거부 유지 | 설계 검토 2차 |
+| 조회 서버 앱 `LibraryClient` | 밑줄 갈래(가짜 서버), 로그 한 줄의 호스트가 null로 찍히지 않음, 본 서비스 → 조회 서버 → 가짜 사이트 한 번(가능하면) | 사용자 "조회 서버도 같이 해" |
 | 시제품: 고른 라이브러리로 현대제철에 실제 요청 | 응답 받음, 인증서 이름 검사 통과 | 설계 후속 #2·#3 |
 | 22곳 끄기 | 변경 파일 적용 뒤 목록 API에 22곳 없음 (켜진 0권 0곳은 현대제철 가져오기 뒤) | spec AC-1·2 |
 | 끄기 전에 22곳 중 하나를 "내 도서관"에 넣어 둔 계정 | 끈 뒤 "쓸 수 없는 도서관"으로 보임 (지금 동작, 회귀 확인) | spec AC-3 |
@@ -197,6 +201,7 @@ classDiagram
 - [ADR-0109](../../adr/0109-disable-libraries-by-liquibase.md) (Accepted, 사용자 승인 2026-10-14) 이미 켜진 도서관을 끌 때는 Liquibase 변경 파일로 (내 PC·운영 같은 판) — 사이클 07 방식을 규칙으로
 - [ADR-0110](../../adr/0110-library-insert-skips-zero-ebook-sites.md) (Accepted, 사용자 승인 2026-10-14) 새 도서관 넣기에서 전자책 0권인 곳을 뺌 (가져오기와 같은 거르기 규칙, 맨 마지막 이유, 묻지 않음) — ADR-0107(넣기 명령 보탬)에 이어
 - [ADR-0111](../../adr/0111-underscore-host-separate-request-path.md) (Accepted, 사용자 승인 2026-10-14) 호스트에 밑줄이 있는 도서관 주소: 가져오기는 직접 읽고, 대출 조회는 따로 만든 요청 길로 (SNI 없이, 인증서 검사 켬)
+- 조회 서버 앱(`fetch-service`)에도 같은 길: ADR-0111을 보완하는 새 ADR [안] (초안 검토 중)
 
 ## 확인 필요
 
@@ -205,6 +210,8 @@ classDiagram
 | 요청 라이브러리가 밑줄 호스트로 실제 요청하는지, Java 인증서 이름 검사가 `*.yes24library.com`으로 통과하는지 | 시제품 (dev) | 개발 |
 | 어댑터의 `UriComponentsBuilder…toUri()`가 밑줄 호스트에서 예외를 내는지 | 시제품 (dev) | 개발 |
 | Liquibase `library/` 마지막 번호 | dev 작업 때 확인 | 개발 |
+| 조회 서버 앱: `UrlGuard`가 DNS로 확인한 이름과 `LibraryClient`가 연결하는 이름이 같은지(검사 우회 구멍이 없는지) | 코드 읽기·시험 (dev) | 개발 |
+| 조회 서버 앱에 본 서비스와 같은 라이브러리를 그대로 쓸 수 있는지(앱의 TLS·크기 제한 부품과 맞는지) | 시제품 (dev) | 개발 |
 | 새 곳이 많을 때 줄 세기 시간 | 시제품 (2026-10-12 사본) | 개발 |
 | 사이클 19가 `CollectedCatalog`를 어떻게 바꿨는지 | 19 main 합친 뒤 dev 코드 읽기 | 18 가져오기 고침 시작 |
 | `list_left_out.py`가 새 이유 `no_ebooks`와 끈 22곳을 그대로 보이는지 (`disabled_reasons.tsv`만으로 되는지) | dev 코드 읽기·실행 | 개발 |

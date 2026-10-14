@@ -37,7 +37,7 @@
   - `[확정]`: 사용자가 정했거나 공식 문서로 확인한 값
   - `[안]`: 제안
   - `[확인 필요]`: 모르는 값. 확정된 것처럼 코드에 넣지 말고 `TODO(확인 필요)`로 둔 뒤 확인하고 보고합니다
-- 단계마다 통과해야 다음 단계로 갑니다: `backend/`에서 `./gradlew build`(`ModularityTests`·`DocumentationTests` 포함). 웹은 바꾸지 않으므로 `web/` 명령은 회귀 확인용으로만 돌립니다
+- 단계마다 통과해야 다음 단계로 갑니다: `backend/`에서 `./gradlew build`(`ModularityTests`·`DocumentationTests` 포함). 웹은 바꾸지 않으므로 `web/` 명령은 회귀 확인용으로만 돌립니다 조회 서버 앱을 고친 단계(A2-7)는 `fetch-service/`에서도 `./gradlew build`를 돌립니다
 - dev `CLAUDE.md`, 스킬(`spring-modulith`, `postgres-patterns`, `jpa-patterns`), `docs/library-maintenance.md` 기록 규칙, 사이클 05~15 인계서의 제약을 그대로 따릅니다. 아래에는 더하거나 바뀌는 것만 적습니다
 
 ## 참고 문서 (chaekcheck-plan, 읽기 전용)
@@ -49,6 +49,7 @@
 - `.../15-usage-log/to-cycle-18.md` 3·4번: 옛 설정 이름, 19와 가져오기 따로
 - ADR (`../chaekcheck-plan/docs/adr/`): 0109, 0110, 0111. 관련: 0078(운영 반영), 0095(사이클 17 나가는 길·User-Agent), 0107(넣기 명령)
 - dev 쪽 출발점: `docs/plan-feedback.md` 절 "# 다음 사이클 후보: 소장이 비었거나 덜 모인 도서관"(3491행 부근, 22곳 표)
+- dev 조회 서버 앱: `fetch-service/src/main/java/com/chaekcheck/fetch/UrlGuard.java`(42·47행 부근 `getHost()`와 DNS 조회), `LibraryClient.java`(55행 부근 `HttpRequest.newBuilder`, 98행 부근 로그)
 
 ## 결정 기록
 
@@ -61,7 +62,7 @@
 ## 지켜야 할 제약
 
 - **C1. 모듈 경계** [확정] (design-delta "모듈")
-  - 바뀌는 곳은 `library`(Liquibase만), `collection`(내부만), `availability`(내부만)입니다
+  - 바뀌는 곳은 `library`(Liquibase만), `collection`(내부만), `availability`(내부만), 그리고 따로 도는 앱 `fetch-service`(`UrlGuard`·`LibraryClient`, 별도 Gradle 빌드)입니다 [확정] (사용자: "같이 해 굳이 왜 나눠서 해 조회 서버도 같이 해", 2026-10-14)
   - 공개 API·이벤트·모듈 의존은 바뀌지 않습니다. 공용(shared/common) 모듈은 만들지 않습니다
   - 호스트 읽기는 `collection`과 `availability`가 각자 안에 둡니다(서로 부르지 않음, 설계 결정 #4)
 - **C2. Liquibase** [확정] (ADR-0109, dev `CLAUDE.md`)
@@ -114,7 +115,7 @@
    - 원래 프로젝트 `chaekcheck`과 다른 사이클의 docker 프로젝트는 켜고 끄지 않습니다
    - 따로 만든 DB에는 원래 서비스 DB를 한 번 복사합니다(사이클 14 방법, 원래 DB는 읽기만). 복사하지 않고 원래 `db`를 쓰려면 사용자에게 먼저 묻습니다
    - A·B·C는 때가 달라 따로 합쳐도 됩니다. A1·A2를 각각 main에 합치고, B는 19 뒤 새 브랜치에서 하는 방식을 권합니다 [안]
-2. **기준 빌드**: 시작 커밋에서 `./gradlew build`(backend)를 돌려 통과를 확인합니다. 실패하면 이 사이클 작업 전에 기록하고 사용자에게 알립니다
+2. **기준 빌드**: 시작 커밋에서 `./gradlew build`(backend)를 돌려 통과를 확인합니다. 실패하면 이 사이클 작업 전에 기록하고 사용자에게 알립니다 `fetch-service/`의 `./gradlew build`도 같이 돌려 둡니다
 3. **기준 수치 기록** (`# 사이클 18` 절에): 내 PC 서비스 DB에서 다음을 셉니다(아래 AC-1 SQL)
    - 켜진 0권 도서관 수
    - `GET /api/v1/libraries`의 도서관 수(plan 읽기: 2,658곳, 2026-10-14)
@@ -209,8 +210,10 @@
 7. **조회 서버 앱(`fetch-service/`)에도 같은 길** [확정] (사용자: "같이 해 굳이 왜 나눠서 해 조회 서버도 같이 해", 2026-10-14)
    - 조회 서버는 본 서비스와 따로 도는 앱이고, 지금 첫 배포에서는 꺼 둡니다(사이클 17). 그래도 이번에 같은 밑줄 길을 넣습니다
    - `UrlGuard`(`fetch-service/.../UrlGuard.java`): 지금은 `getHost()`가 null이면 거절합니다. 밑줄 호스트도 읽게 하되, 그 이름을 DNS로 풀어 사설·내부 주소를 막는 검사는 그대로 둡니다 [안] (지금 있는 보호를 그대로 둠)
+   - `UrlGuard` 보안 규칙 [확정: 지금 보호 유지] (설계 검토 2차): 밑줄 호스트를 읽는 방법은 `LibraryClient`가 실제로 연결할 이름과 같은 값이어야 하고, 그 이름으로 DNS 조회해 사설·내부 주소면 거부합니다. 사용자 정보(`getRawUserInfo()`)가 든 주소 거부도 그대로입니다. 시험에 "밑줄 이름이 사설 주소로 풀리면 거부"를 넣습니다
+   - `LibraryClient` 로그 한 줄(98행 부근 `uri.getHost()`)도 밑줄 호스트에서 null이 찍히지 않게 읽은 호스트를 씁니다
    - `LibraryClient`(`HttpRequest.newBuilder`): 밑줄 호스트는 본 서비스와 같은 라이브러리·같은 네 조건(C3)으로 보냅니다. 조회 서버의 `LibrarySiteTls`·`TlsCompatibility`·`BodyLimit`·로그 한 줄 모양을 그대로 씁니다 [안]
-   - 조회 서버는 별도 앱이라 의존성도 그 앱의 `build.gradle`에 하나 더합니다(앱마다 하나) [안]
+   - 조회 서버는 별도 앱이라 의존성도 그 앱의 `build.gradle`에 하나 더합니다. 본 서비스와 같은 라이브러리를 쓰는 것은 [확정](C3), 어느 라이브러리인지는 A2-1 시제품 뒤 정함
    - 본 서비스가 조회 서버로 보낼 때(`FetchServiceSiteFetcher`) 밑줄 주소가 그대로 넘어가는지 봅니다
    - 시험: `UrlGuard` 밑줄 호스트 통과·사설 주소 막기 유지, `LibraryClient` 밑줄 갈래(가짜 서버), 본 서비스 → 조회 서버 → 가짜 사이트 한 번(가능하면)
    - 실제 확인: 조회 서버를 내 PC에서 켜고(사용자 승인) 2624 직접 찾기 한 번 [안]
@@ -295,7 +298,7 @@
 ## 테스트
 
 - 단위: `SiteHostNames`(availability), `SiteHosts`·`HoldingRowFilter`(collection), `HostThrottle` 키, `checkedUri`, 갈래, 어댑터 주소 만들기
-- 통합(`db-test`): `LibraryDisabledCycle18Tests`, my-libraries 회귀, 넣기 미리 보기 ①②③, 가져오기 밑줄 도서관, `CatalogImportSettingsTests`, `BatchRunner` 실패 가두기, `ModularityTests`(모듈 의존 바뀌지 않음), `DocumentationTests`, 기존 시험 전부
+- 통합(`db-test`): `LibraryDisabledCycle18Tests`, my-libraries 회귀, 넣기 미리 보기 ①②③, 가져오기 밑줄 도서관, `CatalogImportSettingsTests`, `BatchRunner` 실패 가두기, `ModularityTests`(모듈 의존 바뀌지 않음), `DocumentationTests`, 기존 시험 전부 / 조회 서버 앱(`fetch-service/` 빌드): `UrlGuard` 밑줄 통과·사설 주소 거부·사용자 정보 거부, `LibraryClient` 밑줄 갈래, 본 서비스 → 조회 서버 → 가짜 사이트(가능하면)
 - 시제품·실제: A2-1 현대제철 요청(몇 건), A2 끝 직접 찾기, B 끝 검색·조회, B7 dry run 비교
 - 화면: 바뀌지 않음. Playwright 데스크톱 1280에서 회귀만 봅니다
 
@@ -323,8 +326,8 @@ WHERE l.enabled AND NOT EXISTS (SELECT 1 FROM catalog.holding h WHERE h.library_
 ## 완료 기준
 
 - [ ] AC-1~AC-8을 위 표의 단계에서 확인하고, AC 확인표를 `# 사이클 18` 절에 적습니다(C는 17 첫 배포 뒤 따로 덧붙임)
-- [ ] 각 묶음(A1, A2, B)이 끝날 때 `./gradlew build` 통과(`ModularityTests`·`DocumentationTests` 포함)
-- [ ] 새 의존성은 하나뿐이고, 밑줄 길에서 인증서 이름 검사가 켜져 있습니다(C3)
+- [ ] 각 묶음(A1, A2, B)이 끝날 때 `backend/`의 `./gradlew build` 통과(`ModularityTests`·`DocumentationTests` 포함), A2는 `fetch-service/`의 `./gradlew build`도 통과
+- [ ] 새 의존성은 앱마다 하나(`backend` 하나, `fetch-service` 하나, 같은 라이브러리)이고, 밑줄 길에서 인증서 이름 검사가 켜져 있습니다(C3). 조회 서버 앱의 내부망 막기·사용자 정보 거부가 그대로입니다
 - [ ] `library/` 기존 changeset을 고치지 않았습니다(C2)
 - [ ] `disabled_reasons.tsv` 22줄, `gone_known.tsv`에 44·261·269 없음, `library-maintenance.md` 6-2 표, `library-left-out.md` B절 27곳, `1-libraries.md`·`3-import.md` 한 줄씩
 - [ ] 옛 설정 이름 `exclude-candidate-libraries`·`excludeCandidateLibraries`가 코드·설정·`3-import.md`에 남지 않습니다(`docs/plan-feedback.md` 지난 기록은 예외)

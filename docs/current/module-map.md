@@ -41,7 +41,7 @@
 | `usagelog` | 사이클 15 새 모듈 (ADR-0096·0097). 사용자 행동 기록 받기·메모리에 모으기·5초마다 한 트랜잭션(비동기 커밋)으로 넣기, 도서관 응답 하루 요약, 매일 04:30 정리, 사용 알림 주소, 기록 설정 꺼짐·로봇 이름 거르기. `@ApplicationModule(allowedDependencies = { "library", "auth" })` [확정]. 기록 설정 `chaekcheck.usagelog.enabled` [확정], 기본 꺼짐·공개일에 켬 [확정] | Java `UsageLog`(`recordSearch`, `recordBookView`, `recordMore`, `recordLibraryResponse`), 공개 record [안: 이름] / REST `POST /api/v1/usage-events`. 쓰는 것: `library`의 `LibraryCatalog.enabledLibraryRefs()`(켜진 도서관만) [확정], `auth`의 `LoginStatusReader` [안: 이름] | 없음 | `usagelog.search_event`, `book_view`, `search_more`, `library_click`, `screen_event`, `library_response_daily`, `rejected_event`, `dropped_batch` (`data-model.md` 스키마 `usagelog`) | 설계됨(미구현, 사이클 15) |
 | `sitecontent` | 사이클 16 새 모듈 [확정] (사용자 승인, 2026-10-13, ADR-0098). 공지와 네 문서(서비스 안내, 이용약관, 처리방침, 동의문)의 모든 판을 갖고, 로그인 없이 읽게 함. 쓰기 API 없음(운영자가 SQL로 새 판을 넣음, 흐름 41). 어떤 모듈에도 의존하지 않음 [확정] | REST `GET /api/v1/notices`, `GET /api/v1/notices/{noticeId}`, `GET /api/v1/documents/{documentKey}`(`api.md` "공지·안내·약관 글"). Java `SiteDocuments.currentVersion(ConsentDocument) → int`, 공개 enum `ConsentDocument { TERMS_OF_SERVICE, PRIVACY_COLLECTION }` [안: 이름은 dev가 정해도 됨] (`auth`가 씀) | 없음 | `sitecontent.notice`, `sitecontent.notice_version`, `sitecontent.document_version` (`data-model.md` 스키마 `sitecontent`) | 설계됨(미구현, 사이클 16) |
 | (공용 인프라) 이벤트 발행 저장소 | Spring Modulith JDBC 발행 저장소. 완료된 기록은 삭제(`completion-mode=delete`, ADR-0041) | — | — | `modulith.event_publication` (어느 모듈 소유도 아님. ADR-0002의 예외는 이 표 하나) | 구현됨(사이클 05, 2026-10-04 retro 반영) |
-| 조회 서비스 (Modulith 모듈 아님, 별도 배포 단위) | 받은 URL을 GET으로 가져와 상태 코드와 원본을 돌려줌. 여러 대, 고정 IP (ADR-0011, 0015) | 내부 REST `POST /v1/fetches` | 없음 | 없음 | 구현됨. dev 폴더 `fetch-service/`, 패키지 `com.chaekcheck.fetch`, 독립 Gradle 빌드 [확정] |
+| 조회 서비스 (Modulith 모듈 아님, 별도 배포 단위) | 받은 URL을 GET으로 가져와 상태 코드와 원본을 돌려줌. 여러 대, 고정 IP (ADR-0011, 0015) | 내부 REST `POST /v1/fetches` | 없음 | 없음 | 구현됨. dev 폴더 `fetch-service/`, 패키지 `com.chaekcheck.fetch`, 독립 Gradle 빌드 [확정] 사이클 18 설계됨(미구현): `UrlGuard`·`LibraryClient`에 밑줄 호스트 길(본 서비스와 같은 라이브러리, 내부망 막기·사용자 정보 거부 유지) [확정] (사용자: "같이 해 굳이 왜 나눠서 해 조회 서버도 같이 해", 2026-10-14) |
 
 base package `com.chaekcheck` [확정].
 
@@ -276,6 +276,46 @@ flowchart TB
 - 웹: S16 `/notices`·S17 `/notices/{번호}` 새 화면. S8·S9·S12·S6이 API를 읽고 `react-markdown`으로 그림 [확인 필요: `react-markdown@10`과 dev React 판·묶음 크기, dev 설치 시험]. 제목 아래 날짜 고르기 칸. 바닥글 링크 한 줄("공지사항 · 서비스 안내 · 이용약관 · 개인정보 처리방침"), "문의: 준비 중" 지움. `legalText.ts`·`documentVersions.json`·`NOT_REVIEWED` 지움 [확정]. 화면은 `docs/cycles/16-notices-and-policies/flow.md`
 - 같이 고칠 웹·시험 파일: `SignupPage.tsx`(`legalText` 대신 API), `LegalPage.tsx`·`LegalPage.test.tsx`·`AuthScreens.test.tsx`(`documentVersions` 사용), `AboutPage.tsx`(본문을 API로, 기준일 줄은 그대로), `Footer.tsx`. 백엔드 `DocumentVersionsMatchWebTests`(지움), `AuthPropertiesTests`(documents 설정 값), `SignupTests`(문서 버전 → DB 판 기준)
 - 운영 DB 계정: 사이클 17의 "`sitecontent` schema 쓰기만 있는 DB 계정"은 `sitecontent` 표의 SELECT·INSERT·UPDATE와 `notice.id` 시퀀스 USAGE가 필요함 (사이클 17에 알림)
+
+### 켜졌는데 책이 0권인 도서관과 밑줄 호스트 — 설계됨(미구현, 사이클 18)
+
+12~16 회고·인계 뒤 dev main 코드(2026-10-14)를 읽고 정한 설계입니다. 근거 `docs/cycles/18-empty-library-holdings/design-delta.md` "구조 그림"·"모듈", ADR-0109~0111. 새 표·칸·API·화면·모듈 사이 의존 없음
+
+```mermaid
+flowchart TB
+  OP[운영자 명령<br/>library-insert preview] --> INS
+  IMPC[운영자 명령<br/>가져오기] --> IMP
+  SQ[(수집 DB 사본<br/>읽기만)] --> INS
+  SQ --> IMP
+  subgraph COL[collection]
+    INS[libraryinsert<br/>빠진 이유 7번째: 전자책 0권]
+    IMP[importer<br/>CollectedCatalog]
+    FIL[HoldingRowFilter<br/>줄 거르기 한 벌]
+    HOST[SiteHosts<br/>밑줄 받는 호스트 읽기]
+    INS --> FIL
+    IMP --> FIL
+    INS --> HOST
+    IMP --> HOST
+  end
+  LIB[library<br/>Liquibase 변경 파일: 22곳 끔]
+  CAT[catalog 그대로]
+  subgraph AV[availability]
+    SF[사이트 요청 부품]
+    UND[밑줄 주소 길<br/>새 요청 라이브러리]
+    SF -->|호스트에 밑줄| UND
+  end
+  IMP --> LIB
+  INS --> LIB
+  IMP --> CAT
+  AV --> LIB
+  AV --> CAT
+  SF -->|지금 길| SITES[(도서관 사이트)]
+  UND -->|SNI 없이, 인증서 검사 켬| SITES
+  SF -.->|조회 서버 모드| FSV[fetch-service 앱<br/>UrlGuard 밑줄 허용·내부망 막기 유지<br/>LibraryClient 밑줄 길]
+  FSV --> SITES
+  WEB[web 그대로] --> LIB
+  WEB --> AV
+```
 
 ## 도메인 모델
 
@@ -767,6 +807,45 @@ classDiagram
 
 - `InsertReport`는 DB 표가 아니라 보고서 파일(`library-insert-<id>.json`, 정규화 JSON, 번호 = SHA-256 앞 12자리) [확정] (dev 구현 확인, 2026-10-14). `RuleSet`은 dev `scripts/library/rules/` 파일들(ADR-0085). `LibraryInsertRun`은 `collection.library_insert_run` 한 줄(`data-model.md`), `NewLibrary`는 `LibraryRegistry.add`가 받는 값(`library.library` + `eligibility_rule` 줄), `CollectionLink`는 `collection.collection_link` 줄. 코드 이름 `InsertReport`·`RuleSet`·`NewLibrary`는 그대로, 실행 기록 줄은 표 이름 그대로이고 그 밖에 `InsertPlan`·`CollectedLibraries`·`LibraryPart`가 있음 [확정] (dev 구현 확인, 2026-10-14)
 - 가입 조건 조사 기준일은 하나만 기록(규칙 폴더의 날짜 파일 → 실행 기록 `join_surveyed_on`), 도서관마다 두지 않음 [확정] (ADR-0087)
+
+### 넣기 "전자책 0권"과 밑줄 호스트 도메인 모델 — 설계됨(미구현, 사이클 18)
+
+근거 `docs/cycles/18-empty-library-holdings/design-delta.md` "도메인 모델", ADR-0110·0111. 이름은 dev가 바꿀 수 있음
+
+```mermaid
+classDiagram
+  class CollectedLibrary {
+    id
+    platformType
+    baseUrl
+    crawlSkip
+    lastFullSuccessAt
+  }
+  class HoldingRow {
+    removedAt
+    contentType
+    contentKind
+    detailUrl
+    title
+  }
+  class LeftOutReason {
+    kyobo_rental_mixed
+    crawl_skip
+    no_full_success
+    demo_or_closed
+    same_site
+    test
+    no_ebooks
+  }
+  class Library {
+    id
+    baseUrl
+    enabled
+  }
+  CollectedLibrary "1" --> "0..*" HoldingRow : 모은 줄
+  CollectedLibrary "0..1" --> "0..1" LeftOutReason : 넣지 않은 이유
+  CollectedLibrary "0..1" --> "0..1" Library : collection_link
+```
 
 ## 관련 ADR
 

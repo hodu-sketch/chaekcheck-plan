@@ -266,7 +266,7 @@
 | robots.txt·이용 조건 | — | — | — | [확인 필요] (`crawl-method.md` 1절과 같음) |
 
 - `PlatformAdapter`에 기본 메서드 `detailFetchUri(URI detailUri)`(기본 = 그대로). 같은 호스트라 throttle·캐시 키 그대로 [확정] (dev 구현 확인, 2026-10-05)
-- 조회 서비스(fetch-service)는 호스트 허용 목록 없이 `UrlGuard`만 있어 바뀌지 않습니다
+- 조회 서비스(fetch-service)는 호스트 허용 목록 없이 `UrlGuard`만 있어 바뀌지 않습니다 (사이클 18 설계됨(미구현): `UrlGuard`·`LibraryClient`가 호스트에 밑줄이 있는 주소를 받게 함, 내부망 막기는 그대로)
 - 사이트 시험 결과 (dev, 2026-10-05): 북큐브 `keyoption2` 1 서명·2 저자·3 출판사, 쪽 넘기기 `itemCount`·`page` 됨, 없는 `num` → XML 머리만 있는 빈 응답 → 확인 실패, http·포트 사이트 정상. 알라딘 `search_item=author`·`publisher` 됨, 쪽 크기 20줄 고정이라 첫 쪽만 [확정] (dev 사이트 시험, 2026-10-05). 북큐브 한 사이트에 소장형·대여형이 섞이는지는 못 봄(줄마다 판정하므로 섞여도 맞게 나옴)
 - XML은 JDK 파서, DTD·외부 엔티티·XInclude 끔
 - 도서관 TLS (사이클 07): JDK 최상위 기관에 더해 OISTE WISeKey Global Root GB CA를 도서관 사이트 연결에만 믿고(3곳), 중간 인증서 3개를 더함. 폴더 `tls/library-roots/`(본 서비스·조회 서비스 둘 다) [확정] (사용자: "이거 신뢰해줘", 2026-10-05). ADR-0022("JDK 최상위 기관만 믿음")를 바꿈 — ADR-0061, ADR-0022 보완
