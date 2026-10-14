@@ -12,6 +12,7 @@
 사이클 14 cycle-close (2026-10-12): 인기 도서 → 사서추천도서 — 흐름 24를 "사서추천도서 받기 (주 1회, 실패 포함)"와 "받기 판단 상태"로, 흐름 25를 "사서추천도서 화면 열기와 공용 캐시 (S13)"로 바꾸고(사이클 10 인기 도서 매달 받기·화면 열기는 지움), 흐름 26(S14)·"화면 공통"에 바뀌는 점을 적음 — 설계됨(미구현, 사이클 14). 근거 `docs/cycles/14-librarian-picks/design-delta.md` "구조 그림", flow.md, ADR-0089·0090·0091.
 사이클 14 회고 (2026-10-14): 흐름 24~26·"화면 공통" 구현됨, 요청 3년·남기는 범위 12개 달, 받기 판단 세부(오늘 성공이면 쉼, 시작 때는 목록 없음·7일만), 진짜 받기 시험 값 반영 (`docs/cycles/14-librarian-picks/retro.md`).
 사이클 13 회고 반영 (2026-10-14): 흐름 32·33과 S12 한 줄 — 구현됨 (사이클 13, 회고 2026-10-14). 흐름 32에 `nextId` 다시 확인·종료 5, 흐름 33에 "같은 번호가 다른 도서관이면 멈춤"을 더함(ADR-0107). 첫 실행(여주대 빈 곳 채우기)은 뺌(AC-1). 근거 `docs/cycles/13-crawler-to-dev/retro.md`.
+사이클 15 cycle-close (2026-10-14, 12·13·14 회고 뒤): 사용자 행동 기록 — 흐름 34(수집 목록 검색 기록), 35(직접 찾기 첫 묶음과 "더 보기" 기록), 36(사용 알림), 37(기록 쓰기와 지우기)을 더함 — 설계됨(미구현, 사이클 15). 근거 `docs/cycles/15-usage-log/design-delta.md` "주요 흐름", ADR-0096·0097·0102.
 
 사이클 13 cycle-close (2026-10-12, 사이클 12와 나란히 미리 한 plan, 사이클 12 뒤에 개발): 새 도서관 넣기 — 흐름 32(넣기 미리 보기 → 넣기, 내 PC)와 흐름 33(운영 반영 판 2: 도서관 → 비교 → 책)을 더하고, "화면 공통"에 S12 `/about` 가입 조사 기준일 한 줄을 적음. 흐름 16·23-3의 seed로 넣기는 사이클 07~09 방식으로 남김 — 구현됨 (사이클 13, 회고 2026-10-14). 근거 `docs/cycles/13-crawler-to-dev/design-delta.md` "구조 그림", flow.md, ADR-0083~0088·0093.
 사이클 08 cycle-close (2026-10-11): 흐름 20(가져오기: 새 표에 쓰고 바꿔 끼우기), 21(검색 계획과 책 화면 소장 읽기), 22(막혔을 때 429·503)를 더하고, 흐름 6·16과 "화면 공통"에 바뀌는 점을 적음 — 구현됨 (사이클 08). 근거 `docs/cycles/08-polish-swap-memory/design-delta.md` "주요 흐름"(흐름 A~C), ADR-0065~0070.
@@ -1229,3 +1230,106 @@ sequenceDiagram
 - 도서관 부분 실패는 `catalog_import` `FAILED`·`failure_reason` `error`·`failure_detail` `library part: …`로 남고, `step_seconds`에 `library part` 단계가 있음 [확정] (dev 구현 확인, 2026-10-14). 9단계 운영 흉내(`db-ops`): 도서관 부분 1.0초, `compare` 4.1초, 전체 4분 35초, `mismatch` 없음
 - 1215 이름 고침 changeset(`library/015-library-name-1215.yaml` [확정])은 운영 역할 DB에도 판 2 반영 전에 적용돼 있어야 도서관 해시가 맞음
 - 판 2 배포 때 내 PC에 판 1 내보내기가 기다리면 `finish`가 거절됨 → 배포 전 `finish`·`discard` [확인 필요: 절차 문서]
+
+## 흐름 34: 수집 목록 검색 기록 (첫 쪽·다음 쪽·책 상세) — 설계됨(미구현, 사이클 15)
+
+ADR-0097·0102. 모듈 구성은 `module-map.md` "사용자 행동 기록".
+
+```mermaid
+sequenceDiagram
+  participant W as 웹
+  participant C as catalog
+  participant U as usagelog
+  participant A as auth
+  W->>C: GET /api/v1/books?title=… (access_token 쿠키 함께)
+  C->>C: 검사 (400·422면 기록 없이 끝)
+  C-->>W: BookPage (totalCount)
+  C->>U: recordSearch(kind=catalog, 조건, totalCount, 요청)
+  U->>U: 기록 설정 꺼짐·로봇 이름이면 버림
+  U->>A: 로그인 상태 판별(요청)
+  A-->>U: signed_in / signed_out / login_off
+  U->>U: 큐에 넣음 (5초마다 DB)
+```
+
+- `page=1`이면 `recordSearch(kind=catalog, totalCount)`, `page` ≥ 2면 `recordMore(catalog_next_page, seq=page)`, 책 상세(`GET /api/v1/books/{bookId}`)는 `recordBookView`. 400·422·404면 기록 없음
+- `catalog`는 로그인을 모름. 쿠키 경로가 `/api/v1`이라 요청에 `access_token`이 함께 오고, `usagelog`가 `auth`의 판별 부품으로 정함 [확정] (ADR-0102)
+- 기록 설정 `chaekcheck.usagelog.enabled`(기본 꺼짐)가 꺼져 있으면 곧바로 돌아감 [안]
+
+## 흐름 35: 도서관에서 직접 찾기 기록 (첫 묶음과 "더 보기") — 설계됨(미구현, 사이클 15)
+
+```mermaid
+sequenceDiagram
+  participant W as 웹
+  participant A as availability
+  participant U as usagelog
+  W->>A: GET /api/v1/ebook-searches/stream?… (쿠키 함께)
+  A-->>W: SSE 첫 묶음
+  A->>U: recordLibraryResponse(도서관마다 결과·걸린 시간)
+  alt 첫 묶음 끝
+    A->>U: recordSearch(kind=direct, countedRows)
+  else 창 닫음·오류·시간 초과 (먼저 온 하나만)
+    A->>U: recordSearch(kind=direct, resultCount=null)
+  end
+  W->>A: 사람이 "더 보기" → GET …/batches/stream
+  A->>U: recordMore(direct_next_batch, 몇 번째) + recordLibraryResponse
+```
+
+- 첫 묶음 기록은 세션마다 한 번만 [안]: 첫 `batch-done`을 보낸 순간 `recordSearch(kind=direct, countedRows)`, 그 전에 `clientGone`이 되거나 `finish()`·emitter 시간 초과(`streamDuration()+5s`)·오류로 끝나면 `recordSearch(resultCount=null)`. 세션 안 "기록함" 표시 하나로 두 번 남기지 않음. 보낼 것이 없어 끊김을 모르는 경우도 묶음 마감(8초) 뒤 `finish()`가 `done`을 보내다 알게 되므로 늦어도 그때 남김
+- 다음 묶음(`batchNo` ≥ 2)은 `recordMore(direct_next_batch, seq=batchNo)`, 도서관별 더 보기는 `recordMore(library_more, libraryId, seq=page)`
+- `recordLibraryResponse`는 모든 도서관 요청(직접 찾기 `source=direct_search`, 대출 수 채우기 `source=holding_fill`)마다. 결과: 성공 / 오류 → 실패 / 시간 초과·묶음 마감 → 시간 초과 / 시작 마감(`LAUNCH_CUTOFF`, 3초)까지 요청을 못 보낸 후보 → 건너뜀 [확정]. 조회 서버 바꿔 보내기는 한 번으로 셈 [확정]. 켜진 도서관만 [확정] (사이클 15 회고 결정 #1~#3, 사용자 승인 2026-10-14). 끊긴 뒤에도 이미 보낸 도서관 요청의 응답은 끝날 때 셈 (spec R6-4)
+
+## 흐름 36: 사용 알림 (도서관 클릭·화면 행동) — 설계됨(미구현, 사이클 15)
+
+ADR-0097·0102. 주소는 `api.md` "사용 알림".
+
+```mermaid
+sequenceDiagram
+  participant W as 웹
+  participant N as nginx
+  participant U as usagelog
+  W->>W: 링크는 새 탭으로 바로 열림
+  alt 로그인 기능 켜짐
+    W->>W: XSRF-TOKEN 없으면 받아 옴
+    W->>N: POST /api/v1/usage-events (JSON, X-XSRF-TOKEN, keepalive)
+  else 로그인 기능 꺼짐
+    W->>N: POST /api/v1/usage-events (JSON, keepalive, 표시 없음)
+  end
+  alt IP당 1분 60번 넘음
+    N-->>W: 204 (기록 안 함)
+  else
+    N->>U: 전달 (X-Real-IP)
+    U->>U: 값 검사 → 정상이면 library_click·screen_event 큐 / 이상하면 rejected_event 큐
+    U-->>W: 204
+  end
+```
+
+- 로그인 기능 켜짐에서 CSRF 표시가 없거나 틀리면 403 `csrf_invalid`(웹은 새 표시를 받아 한 번 다시 [안]). 로그인은 요구하지 않음 [확정] (ADR-0102)
+- 값이 틀려도 204, `rejected_event`(IP와 받은 값, 30일) [확정]. 기록 설정이 꺼져 있어도 204 [안]
+- nginx 한도 IP당 60r/m, 넘치면 204 [확정]. 로봇 User-Agent 거절(403 [안])은 직접 찾기·대출 조회 location에만 [확정]
+
+## 흐름 37: 기록 쓰기와 지우기 — 설계됨(미구현, 사이클 15)
+
+ADR-0096·0097. 표는 `data-model.md` 스키마 `usagelog`.
+
+```mermaid
+sequenceDiagram
+  participant U as usagelog
+  participant L as library
+  participant D as DB
+  loop 5초마다
+    U->>L: 이번 묶음의 도서관 번호 확인 (한 번)
+    U->>D: BEGIN, SET LOCAL synchronous_commit TO OFF
+    U->>D: batchUpdate search_event, book_view, search_more, library_click, screen_event, rejected_event
+    U->>D: library_response_daily ON CONFLICT … 더하기
+    U->>D: 지난번 버린 묶음 → dropped_batch
+    U->>D: COMMIT
+    alt 실패
+      U->>U: 묶음 버림, 버린 사실을 메모리에 들고 서버 로그
+    end
+  end
+  Note over U,D: 매일 04:30 서울: 30일 지난 client_ip 비움, 30일 지난 rejected_event 지움, 1년 지난 줄 지움(1만 줄씩 [안])
+```
+
+- 메모리 큐 상한 1만 줄, 넘치면 버리고 `dropped_batch`(`buffer_full`) [확정] (ADR-0097). DB 실패는 `db_failure`
+- 도서관 번호 확인은 `LibraryCatalog.enabledLibraryRefs()`(켜진 도서관만) [확정]
+- 04:30 정리 설정 이름 `chaekcheck.usagelog.cleanup.cron`·`zone` [안: 이름]. DB 백업 매일 03:00(사이클 17)과 겹치지 않음

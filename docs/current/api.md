@@ -11,6 +11,7 @@
 사이클 14 cycle-close (2026-10-12): 인기 도서 → 사서추천도서 — `GET /api/v1/popular-books`·`GET /api/v1/popular-books/covers/{coverId}`(모듈 `popular`, 사이클 10 구현됨·배포 전)를 `GET /api/v1/picks`·`GET /api/v1/picks/covers/{coverId}`(모듈 `picks`, 인증 없음)로 바꿈, 옛 경로는 남기지 않음. 응답에서 `month`·`rank`가 빠지고 책에 `recomNo`·`category`·`recommendedMonth`가 더해짐. `holdingLimit`·`cover_not_found`는 그대로 — 설계됨(미구현, 사이클 14). 근거 `docs/cycles/14-librarian-picks/design-delta.md` "API", ADR-0089·0090·0091.
 사이클 14 회고 (2026-10-14): `GET /api/v1/picks`·`…/covers/{coverId}` 구현됨, `popular-books` 두 경로 지움, 범위 최근 12번(2년), 응답 칸 이름 설계 그대로(dev `PicksController.java` 130~143행) (`docs/cycles/14-librarian-picks/retro.md`).
 사이클 13 회고 반영 (2026-10-14): `GET /api/v1/join-surveys/latest`와 S12 `/about` 한 줄 — 구현됨 (사이클 13, 회고 2026-10-14). 경로·응답·인증 없음이 설계와 같음(`JoinSurveyController.java:25-37`, 시험 `joinSurveyDateNeedsNoLogin`). 근거 `docs/cycles/13-crawler-to-dev/retro.md`.
+사이클 15 cycle-close (2026-10-14, 12·13·14 회고 뒤): 새 요청 `POST /api/v1/usage-events`(모듈 `usagelog`, 로그인 요구 없음, 로그인 기능 켜짐이면 CSRF), 액세스 쿠키 `access_token` 경로 `/api/v1/me` → `/api/v1`(ADR-0102). 검색·책 상세·직접 찾기 요청 형식은 그대로(로그인 여부는 쿠키로 서버가 판별) — 설계됨(미구현, 사이클 15). 근거 `docs/cycles/15-usage-log/design-delta.md` "API", ADR-0096·0097·0102.
 
 사이클 13 cycle-close (2026-10-12, 사이클 12와 나란히 미리 한 plan, 사이클 12 뒤에 개발): 새 요청 `GET /api/v1/join-surveys/latest`(모듈 `collection`, 인증 없음, 가입 조건 조사 기준일)와 S12 `/about` 공지 한 줄 — 구현됨 (사이클 13, 회고 2026-10-14). 다른 요청·응답·오류 코드는 그대로(새로 넣은 도서관은 `/libraries`·스트림에 지금 모양으로 나옴, 1215 이름은 "한화S&C"). 근거 `docs/cycles/13-crawler-to-dev/design-delta.md` "API", flow.md S12, ADR-0087·0093.
 사이클 08 cycle-close (2026-10-11): `GET /api/v1/libraries` 항목과 스트림 `targets.libraries[]`에 `mobileSiteDiffers`, 503 `server_busy`에 `Retry-After: 5`, 대출 현황 스트림의 도서관별 실패 코드 `holding_not_found`, 429·503 화면 안내 문구를 따로 둠 — 구현됨 (사이클 08). 요청 모양은 그대로. 근거 `docs/cycles/08-polish-swap-memory/design-delta.md` "API"·"웹", ADR-0070.
@@ -52,6 +53,7 @@
 | GET | `/api/v1/picks?residenceRegionIds=&workRegionIds=&scope=&visit=&libraryIds=` | `picks` | **사이클 14 — 구현됨 (사이클 14, 회고 2026-10-14)** (ADR-0089·0090). `/api/v1/popular-books`(사이클 10)를 대체했고 옛 경로는 지움. 최근 12번 사서추천(추천 연월이 다른 최근 12개 달, 약 2년, 분류별) + 전자책 있음/없음 [확정] (사용자 결정, dev 2026-10-14; 처음 6번). 측정: 강서구 계획 p50 27.4ms·p95 35.9ms, 응답 51,207바이트(108권, 분류 6개) (dev, 2026-10-14). 인증 없음 [확정] (spec R7-3). 계획 파라미터는 `/api/v1/books`와 같은 이름·검증 규칙, 페이지 없음. 서버가 `LibraryCatalog.planSearch`로 계획 도서관을 만들고(실패 422 `invalid_region`) 공용 캐시의 목록과 책별 `(bookId, libraryIds)`로 `available`을 요청마다 계산. 200 `{fetchedAt, categories[{code, name, books[{recomNo, category, recommendedMonth, title, coverUrl, bookId, available}]}]}` — 모양·칸 뜻은 아래 "사서추천도서". 목록이 없으면 200 `{"fetchedAt": null, "categories": []}` [확정]. 오류 400 `validation_error`, 422 `invalid_region`, 500 `internal_error` (ProblemDetail). 도서관 사이트를 부르지 않으므로 nginx `limit_req` 대상 아님 |
 | GET | `/api/v1/picks/covers/{coverId}` | `picks` | **사이클 14 — 구현됨 (사이클 14)** (ADR-0091). `/api/v1/popular-books/covers/{coverId}`를 대체(옛 경로 지움). 저장한 국립중앙도서관 표지(폭 200px JPEG로 줄인 것). 인증 없음. 200 그림(`Content-Type: image/jpeg`), `Cache-Control: public, max-age=2592000, immutable`(30일) [확정]. 없으면 404 `cover_not_found` [확정] → 웹은 제목 글자. 도서관 사이트를 부르지 않으므로 nginx `limit_req` 대상 아님. CSP는 바꾸지 않음(우리 주소) |
 | GET | `/api/v1/join-surveys/latest` | `collection` | **사이클 13 — 구현됨 (사이클 13, 회고 2026-10-14)** (ADR-0087·0093). 가입 조건 조사 기준일: 성공한 넣기 실행 기록(`collection.library_insert_run`, `status = 'SUCCEEDED'`) 중 `join_surveyed_on` 최댓값 [확정] (dev 구현 확인, 2026-10-14). 내 PC·운영 흉내 DB 모두 `2026-10-05` (AC-4·AC-7). 경로 [확정] (ADR-0093). 요청 파라미터 없음, 인증 없음(`SecurityConfiguration`은 `/api/v1/me/**`만 보호). 200 `{"surveyedOn": "2026-10-05"}`(`YYYY-MM-DD`), 기록이 없으면 200 `{"surveyedOn": null}`. 오류는 일반 500 `internal_error`(ProblemDetail). `collection` 컨트롤러(Java 공개 API는 없음). `/libraries`에 싣지 않음(큰 목록 약 874KB [안: architect 추정, 재지 않음], `library → collection` 의존 고리) (ADR-0087). 운영 DB에서도 값이 나오도록 운영 반영이 실행 기록 줄을 옮김 (ADR-0093, AC-7). 웹 S12 `/about`이 "가입 조건은 {YYYY}년 {M}월에 조사한 내용입니다."로 보임, 로딩 중 비움, `null`·오류면 줄 없음 [확정] (flow S12). 도서관 사이트를 부르지 않으므로 nginx `limit_req` 대상 아님 |
+| POST | `/api/v1/usage-events` | `usagelog` | **사이클 15 — 설계됨(미구현, 사이클 15)** (ADR-0097). 사용 알림(도서관 클릭·화면 행동)을 한 주소로 받음, 늘 204. 아래 "사용 알림" 절 |
 | POST | 조회 서비스 `/v1/fetches` (내부) | 조회 서비스 | URL 한 개를 GET으로 가져와 `{outcome, status, contentType, location, body(base64), startedAt, endedAt}`. `outcome`: `RESPONDED \| TIMEOUT \| CONNECT_FAILED \| ERROR`. 조회 서버 자신이 정상이면 항상 200. 401 토큰 없음·틀림(헤더 `X-Fetch-Token` [안, 임시]), 400 잘못된 URL·사설 주소, 503 과부하·종료 중 (ADR-0015) |
 
 ## 사서추천도서 (`picks`) — 구현됨 (사이클 14, 회고 2026-10-14)
@@ -87,6 +89,37 @@
 - `available`: `bookId`가 있고 그 책의 `libraryIds`가 계획 도서관과 겹치면 true. 이용자별 계산이라 캐시하지 않음 [확정] (사이클 10과 같은 뜻)
 - 사이클 10에서 없어지는 칸: `month`, `rank`. 위 시각·책·표지 번호는 예시 값
 - S14·S15용 새 API 없음. S14는 `GET /api/v1/books/{bookId}` + `GET /api/v1/book-availabilities/stream?…&holdingLimit=3`(같은 계획 파라미터)
+
+## 사용 알림 (`usagelog`) — 설계됨(미구현, 사이클 15)
+
+근거 `docs/cycles/15-usage-log/design-delta.md` "API", ADR-0096·0097·0102. 처음 설계의 `/api/v1/library-clicks`를 이 주소 하나로 바꿈 [확정] ([늘린 기록 설계](../cycles/15-usage-log/easy/2026-10-13-more-actions-design.html) #1).
+
+| 메서드 | 경로 | 인증 | CSRF | 요청 | 응답 | 오류 |
+|---|---|---|---|---|---|---|
+| POST | `/api/v1/usage-events` | 없음 (로그인 요구 안 함) | 로그인 기능 켜짐이면 필요(`X-XSRF-TOKEN`), 꺼짐이면 검사 없음 | JSON (아래) | `204`, 본문 없음 | 로그인 기능 켜짐에서 CSRF 표시 없음·틀림 → 403 `csrf_invalid`. 값이 틀려도 `204`(`rejected_event`에 남김). nginx 한도(IP당 60r/m) 초과도 `204` |
+
+`type` 값과 칸 [안: JSON 칸 이름]:
+
+| `type` | 칸 | 기록 표 |
+|---|---|---|
+| `library_click` | `libraryId`, `place`, `screen`, `bookId`? | `library_click` |
+| `picks_list_view` | `category` | `screen_event` |
+| `picks_book_view` | `category`, `bookId` | `screen_event` |
+| `region_change` | `residenceRegionIds`, `workRegionIds` | `screen_event` |
+| `my_library_add`, `my_library_remove` | `libraryId` | `screen_event` |
+
+```json
+{ "type": "library_click", "libraryId": 12, "place": "result_card", "screen": "picks", "bookId": 345 }
+{ "type": "region_change", "residenceRegionIds": [1114], "workRegionIds": [1102] }
+```
+
+- `place` 값 `result_card`·`join_link`·`join_guide`·`home_page`·`logo`·`summary_bar`, `screen` 값 `direct_results`·`catalog_results`·`book_page`·`picks`·`my_libraries` [확정]
+- 검사: `libraryId`는 켜진 서비스 도서관만, `type`·`place`·`screen`은 정해진 값만. 아니면 `rejected_event`에 이유(`unknown_library`, `invalid_place`, `invalid_screen`, `invalid_book_id`, `malformed`, `unknown_type`, `invalid_value`)와 받은 값(2KB까지)을 30일 남기고 그래도 204 [확정]
+- 웹: 공용 함수 한 곳에서 `fetch` keepalive로 보내고 기다리지 않음. 링크는 새 탭으로 바로 열림. 로그인 기능 켜짐이면 `XSRF-TOKEN`이 없을 때 `GET /api/v1/auth/csrf-token`으로 받아 오고 403 `csrf_invalid`면 한 번 다시(지금 `api/auth.ts` `send` 방식) [안]. 로그인 여부는 보내지 않음(서버가 쿠키로 판별, ADR-0102)
+- CSRF: `auth`의 보호 경로(`/api/v1/me/**`, 로그인 요구)에 넣지 않고 CSRF 검사만 받게 함 [확정] (ADR-0102). 지금 `csrf.spa()` 설정이 웹훅 말고 모든 POST를 검사하는 모양이라 고칠 것이 없을 수 있음 → 시험으로 증명, 필요하면 고침 [안: 방법]. 로그인 기능이 꺼져 있으면 Spring Security가 빠져 검사 없음
+- 기록 설정 `chaekcheck.usagelog.enabled`(기본 꺼짐) [확정]이 꺼져 있어도 이 주소는 204, 아무것도 남기지 않음 [안]
+- 로봇: nginx가 직접 찾기·대출 조회 location에서 User-Agent에 `bot`·`crawler`·`spider`가 있으면 거절(403 [안]) [확정], `robots.txt`가 `/api/`를 막음 [확정]. 검색 기록에서도 로봇 이름은 `usagelog`가 버림
+- 검색·책 상세·직접 찾기·도서관별 더 보기 요청(`/api/v1/books`, `/api/v1/books/{bookId}`, `/api/v1/ebook-searches/stream`, `…/batches/stream`, `/api/v1/availability/libraries/{id}/ebooks`)은 형식이 바뀌지 않음. 성공하면 서버가 기록을 남김(흐름 34·35)
 
 ## 검색 조건 파라미터 (ADR-0025, 도서관에서 직접 찾기)
 
@@ -196,7 +229,8 @@
 
 - 설정 `chaekcheck.auth.enabled`가 꺼져 있으면 이 절의 주소는 없습니다(404, ADR-0046).
 - 제공자 설정(`chaekcheck.auth.providers`, 기본 `naver,kakao`)에서 뺀 제공자의 로그인 시작·돌아올 주소·연결 끊김 웹훅도 없습니다(404, ADR-0046 덧붙임). 서블릿 필터가 보안 필터 체인 앞에서 답합니다(dev 구현).
-- 쿠키: 액세스 토큰 `access_token`(`Path=/api/v1/me`), 리프레시 토큰 `refresh_token`(`Path=/api/v1/auth`), 둘 다 `Secure`·`HttpOnly`·`SameSite=Lax`. 로그인 도중의 세션 쿠키는 `Path=/api/v1`, 10분. CSRF는 `XSRF-TOKEN` 쿠키 → `X-XSRF-TOKEN` 헤더.
+- 쿠키: 액세스 토큰 `access_token`(`Path=/api/v1/me`. 사이클 15에서 `Path=/api/v1`로 넓힘 [확정] (ADR-0102) — 설계됨(미구현, 사이클 15), 옛 경로 쿠키는 따로 지우지 않음), 리프레시 토큰 `refresh_token`(`Path=/api/v1/auth`), 둘 다 `Secure`·`HttpOnly`·`SameSite=Lax`. 로그인 도중의 세션 쿠키는 `Path=/api/v1`, 10분. CSRF는 `XSRF-TOKEN` 쿠키 → `X-XSRF-TOKEN` 헤더.
+- 사이클 15 — 설계됨(미구현, 사이클 15) (ADR-0102): 쿠키 경로가 넓어져 검색·책 상세·직접 찾기 요청에도 `access_token`이 함께 가고, `usagelog`가 `auth`의 공개 `LoginStatusReader` [안: 이름]로 로그인 상태를 판별함(서명 확인, 만료돼도 서명이 맞으면 로그인함, 로그인 기능이 꺼져 있으면 쿠키를 보지 않고 `login_off`). 보호 경로는 그대로 `/api/v1/me/**`만. `POST /api/v1/usage-events`는 로그인 없이 CSRF 검사만(위 "사용 알림")
 
 
 | 메서드 | 경로 | 인증 | CSRF | 성공 | 오류 |
@@ -255,7 +289,7 @@
 ## 내 도서관 (`mylibrary`) — 구현됨 (사이클 06)
 
 - 근거: ADR-0048, ADR-0049, ADR-0051. 요청·응답 예시는 `docs/cycles/06-my-libraries/design-delta.md` "API".
-- `/api/v1/me/**`라서 액세스 쿠키(`Path=/api/v1/me`)와 요청마다의 계정 확인이 이미 적용되고, 변경 메서드는 `X-XSRF-TOKEN`이 필요합니다(ADR-0044). 로그인이 꺼져 있으면 404(ADR-0046). 로그인 정보 `GET /api/v1/me`와 따로입니다 [확정] (사이클 06 spec R8-1).
+- `/api/v1/me/**`라서 액세스 쿠키(`Path=/api/v1/me`, 사이클 15부터 `Path=/api/v1` — 설계됨(미구현, 사이클 15), ADR-0102)와 요청마다의 계정 확인이 이미 적용되고, 변경 메서드는 `X-XSRF-TOKEN`이 필요합니다(ADR-0044). 로그인이 꺼져 있으면 404(ADR-0046). 로그인 정보 `GET /api/v1/me`와 따로입니다 [확정] (사이클 06 spec R8-1).
 - 웹은 로그인 직후 `GET /api/v1/me/regions`와 `GET /api/v1/me/libraries`를 동시에 부릅니다(흐름 13). 사이클 07: 계정이 비었고 브라우저에 지역이나 직접 추가가 있으면 S11에서 `PUT /api/v1/me/regions`(지역이 비었을 때만)와 `POST /api/v1/me/library-imports`(도서관이 비었을 때만)를 부릅니다(흐름 19) — 구현됨 (사이클 07)
 - 로그인 전 직접 추가 (사이클 07, ADR-0057, 구현됨 (사이클 07)): 웹이 브라우저 키 `chaekcheck.chosenLibraries.v1` [확정] (dev 구현 확인, 2026-10-05)에 최대 20곳 저장하고(로그인 기능이 꺼져 있어도 같음) 검색 요청에 `libraryIds`로 넘깁니다. 서버 API는 바뀌지 않습니다(검색 모듈은 회원을 모름, ADR-0037)
 
@@ -292,7 +326,7 @@
 | `upstream_error` | 502 | 더 보기, 스트림의 `library-failed` — 도서관 오류 응답, 3xx, 파싱 실패, 모든 조회 서버가 쉼. 사이클 07: 도서관 응답 본문이 4MB [안]을 넘음 |
 | `upstream_timeout` | 504 | 더 보기, 스트림의 `library-failed` — 8초 초과, 조회 서버 읽기 시간 초과. 사이클 07: 본문 포함 요청 전체 15초 [안] 초과 |
 | `unauthorized` | 401 | 로그인·계정·내 도서관 — 로그인이 필요함, 토큰 만료·무효, 계정 없음(지워짐), 웹훅·콜백 검증 실패 |
-| `csrf_invalid` | 403 | 로그인·계정·내 도서관 — CSRF 토큰 없음·틀림 |
+| `csrf_invalid` | 403 | 로그인·계정·내 도서관 — CSRF 토큰 없음·틀림. 사이클 15 — 설계됨(미구현, 사이클 15): `POST /api/v1/usage-events`(로그인 기능 켜짐일 때) |
 | `forbidden` | 403 | 로그인·계정 — CSRF가 아닌 403(지금은 나오지 않음) |
 | `reauthentication_required`, `reauthentication_expired` | 403 | 탈퇴 — 본인 확인 기록 없음 / 5분 초과 |
 | `signup_not_found` | 404 | 가입 대기 없음·만료 |

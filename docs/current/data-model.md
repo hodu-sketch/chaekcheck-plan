@@ -12,6 +12,7 @@
 사이클 14 cycle-close (2026-10-12): 스키마 `popular`(사이클 10, 구현됨·배포 전)를 지우고 새 스키마 `picks`(`fetch_run`, `pick`, `cover`) — 설계됨(미구현, 사이클 14). changelog `picks/001-picks-schema.yaml`, `popular/001-popular-schema.yaml`은 지움(배포 전 규칙), 로컬 `db`·`db-test`에서 `DROP SCHEMA popular CASCADE`와 `databasechangelog`의 `popular-001-%` 줄 지움. 다른 모듈 표는 바뀌지 않음(`catalog.book`과는 ISBN·제목+저자 값으로만 맞춤). 근거 `docs/cycles/14-librarian-picks/design-delta.md` "데이터", ADR-0089·0090·0091.
 사이클 14 회고 (2026-10-14): 스키마 `picks` 구현됨 — dev `db/changelog/picks/001-picks-schema.yaml`(changeset `picks-001-schema`·`picks-001-fetch-run`·`picks-001-pick`·`picks-001-cover`), 칸·제약·색인이 설계와 같음. 스키마 `popular`는 changeset·14 worktree DB·원래 `db`·`db-test`에서 지움(원래 DB는 사용자 승인 뒤). 범위 최근 12번으로 크기 실측 반영 (`docs/cycles/14-librarian-picks/retro.md`).
 사이클 13 회고 반영 (2026-10-14): `collection.library_insert_run`, `other_library_count` 이름 바꿈, `library/015` 1215 이름, 반영 파일 판 2 — 구현됨 (사이클 13, 회고 2026-10-14). 새 도서관 6곳(서비스 번호 2675~2680)을 넣기 명령으로 넣음. 근거 `docs/cycles/13-crawler-to-dev/retro.md`, dev Liquibase `collection/001`(52·53행)·`collection/006`·`library/015`.
+사이클 15 cycle-close (2026-10-14, 12·13·14 회고 뒤): 새 스키마 `usagelog`(`search_event`, `book_view`, `search_more`, `library_click`, `screen_event`, `library_response_daily`, `rejected_event`, `dropped_batch`) — 설계됨(미구현, 사이클 15). 다른 모듈 표는 바뀌지 않음(도서관·책·지역은 번호 값으로만). 근거 `docs/cycles/15-usage-log/design-delta.md` "데이터", ADR-0096·0097.
 
 사이클 13 cycle-close (2026-10-12, 사이클 12와 나란히 미리 한 plan, 사이클 12 뒤에 개발): 수집기 dev로 갈아타기 + 새 도서관 넣기 명령 — 새 표 `collection.library_insert_run`(넣기 실행 기록), `collection.catalog_import.candidate_library_count` → `other_library_count` 이름 바꿈(배포 전 규칙으로 `collection/001`을 고치고 로컬 `db`·`db-ops`는 이름 바꾸기 SQL + 체크섬 비우기로 맞춤(데이터 유지, 사용자 선택 2026-10-12)), `library.library` 1215 이름 고침 changeset, 반영 파일 판 2(`load_manifest.notes.libraryPart`, 새 표 없음), 앞으로 도서관 seed changeset을 만들지 않음 — 구현됨 (사이클 13, 회고 2026-10-14). `library` 칸 변경 없음. 근거 `docs/cycles/13-crawler-to-dev/design-delta.md` "데이터", ADR-0083~0087·0093. 이름·번호는 따로 적지 않으면 [안](dev가 바꿀 수 있음).
 사이클 08 cycle-close (2026-10-11): `catalog` 가져오기를 새 표(`catalog_next`)에 쓰고 바꿔 끼우기, 소장 번호 잇기, `collection.catalog_import` 칸 추가, `collection.national_bibliography_record`·`national_bibliography_source`, `library.library.mobile_site_differs`, 도서관 이름 고침 changeset, `library`·`region` `updated_at` 트리거, 교보 대여·혼합 11곳 seed에서 뺌, 정리 규칙을 바꿀 때의 순서 — 구현됨 (사이클 08). 근거 `docs/cycles/08-polish-swap-memory/design-delta.md` "데이터"·"정리 규칙을 바꿀 때"·"이름 고치기", ADR-0065~0070. 이름·숫자는 따로 적지 않으면 [안].
@@ -42,6 +43,7 @@
   - `library/015-library-name-1215.yaml`: 1215 이름 고침 [확정] (dev 구현 확인, 2026-10-14). 운영 역할 DB에도 판 2 반영 **전에** 적용돼 있어야 도서관 해시가 맞음
   - master(`db.changelog-master.yaml`) 끝줄은 사이클 13(`collection/006`, `library/015`)과 사이클 14(`popular/001` → `picks/001`)가 함께 손댐 — 합친 결과(실제 끝): `# cycle 13` 주석 아래 `library/015` → `collection/006`, 그 뒤 `# cycle 14: librarian picks (ADR-0089)` + `picks/001-picks-schema.yaml` (dev master 92~94행) [확정] (dev 구현 확인, 2026-10-14)
   - 앞으로 도서관 seed changeset을 만들지 않음 — 새 도서관은 `collection` 넣기 명령으로 [확정] (ADR-0084)
+- 사이클 15 Liquibase — 설계됨(미구현, 사이클 15): 새 파일 `db/changelog/usagelog/001-usagelog-schema.yaml`을 master 끝에 [확정], 기존 changeset 수정 없음. 사이클 16(`sitecontent` [안])과는 schema가 달라 어느 쪽이 먼저여도 되고, 합칠 때 나중 사이클이 rebase해 자기 줄을 맨 끝으로 옮김(이미 다른 DB에 돈 changeset은 고치지 않음) [안]
 - CHECK, 부분 인덱스, `UNIQUE NULLS NOT DISTINCT`는 Liquibase OSS YAML이 지원하지 않아 changeset 안의 `sql`로 만듦
 - **배포 전 규칙** [확정] (사용자, 2026-09-28): dev의 `db/changelog/PRE_DEPLOYMENT` 파일이 있는 동안에는 이미 적용된 changeset도 고칠 수 있습니다(로컬 DB를 지우고 다시 적용). 첫 배포 때 이 파일을 지우고, 그 뒤로는 새 파일만 더합니다. 그래서 사이클 02 스키마 변경은 `library/001`에 합쳐져 있습니다
 
@@ -58,10 +60,12 @@ erDiagram
   BOOK ||--o{ HOLDING : "book_id"
   HOLDING }o..|| LIBRARY : "library_id (번호만)"
   PICK }o..o| BOOK : "isbn13 또는 제목+저자 값으로만 (FK 없음, 사이클 14)"
+  LIBRARY_CLICK }o..|| LIBRARY : "library_id (번호만, FK 없음, 사이클 15)"
 ```
 
 - `COLLECTION_LINK`는 사이클 07에 더한 표입니다(구현됨 (사이클 07)). `BOOK`·`HOLDING`의 자세한 관계는 아래 `catalog` 그림.
 - `PICK`(스키마 `picks`)은 사이클 14에 더한 표입니다 — 구현됨 (사이클 14). 사이클 10의 `RANKING_ENTRY`(스키마 `popular`)는 지움 — 구현됨 (사이클 14). 자세한 것은 아래 `picks` 절.
+- `LIBRARY_CLICK`(스키마 `usagelog`)은 사이클 15에 더한 표입니다 — 설계됨(미구현, 사이클 15). `usagelog`의 다른 표도 도서관·책·지역 번호를 값으로만 남김. 자세한 것은 아래 `usagelog` 절.
 
 ## 스키마 `region` (소유: `region` 모듈) — 구현됨
 
@@ -680,6 +684,148 @@ erDiagram
 - 목차·추천 글은 받아도 저장하지 않음 [확정] (spec 비목표)
 - Liquibase: changelog `db/changelog/picks/001-picks-schema.yaml`. `popular/001-popular-schema.yaml`은 지우고 마스터의 include를 바꿈 — 배포 전 규칙으로 기존 changelog를 바꿈 [확정] (ADR-0089, 사이클 10 회고 `display_order` 선례). 로컬 DB(`db`, `db-test`) 정리: `DROP SCHEMA popular CASCADE`; `DELETE FROM databasechangelog WHERE id LIKE 'popular-001-%'`. `catalog` 등 다른 스키마는 그대로(다시 가져오지 않음), 빠뜨리면 표가 남으므로 AC-22로 확인 [확정] (ADR-0089). CHECK는 맨 위 규칙대로 changeset 안 `sql`. 구현됨 (사이클 14): `popular/001` 파일 없음, master 92~94행에 `picks/001`. 로컬 정리 끝남(14 worktree 5452·5453, 원래 5432·5433은 합친 뒤 사용자 승인으로, 2026-10-14, AC-22). changelog 머리 주석(1~2행)은 아직 "latest six recommendation months" — 동작과 무관, dev에 알릴 것
 
+## 스키마 `usagelog` (소유: `usagelog` 모듈) — 설계됨(미구현, 사이클 15)
+
+사용자 행동 기록입니다: 검색(수집 목록·직접 찾기), 책 상세, 더 보기 세 종류, 도서관 클릭, 화면 행동(사서 추천 목록·책 창 열기, 지역 바꾸기, 내 도서관 넣기·빼기), 도서관 응답 하루 요약, 이상한 사용 알림, 버린 묶음 (ADR-0096·0097). 스키마 이름 `usagelog` [확정] (사용자 승인, 2026-10-13). 근거 `docs/cycles/15-usage-log/design-delta.md` "데이터".
+
+```mermaid
+erDiagram
+  SEARCH_EVENT {
+    bigint id PK
+    timestamptz received_at
+    text kind
+    text title
+    text author
+    text publisher
+    boolean exact
+    text_arr roles
+    text sort
+    text filter
+    text scope
+    text visit
+    bigint_arr residence_region_ids
+    bigint_arr work_region_ids
+    bigint_arr library_ids
+    integer result_count
+    text login_status
+    inet client_ip
+  }
+  BOOK_VIEW {
+    bigint id PK
+    timestamptz received_at
+    bigint book_id
+    bigint_arr residence_region_ids
+    bigint_arr work_region_ids
+    bigint_arr library_ids
+    text login_status
+    inet client_ip
+  }
+  SEARCH_MORE {
+    bigint id PK
+    timestamptz received_at
+    text kind
+    integer seq
+    bigint library_id
+    text title
+    text author
+    text publisher
+    boolean exact
+    text_arr roles
+    text sort
+    text filter
+    text scope
+    text visit
+    bigint_arr residence_region_ids
+    bigint_arr work_region_ids
+    bigint_arr library_ids
+    text login_status
+    inet client_ip
+  }
+  LIBRARY_CLICK {
+    bigint id PK
+    timestamptz received_at
+    bigint library_id
+    text place
+    text screen
+    bigint book_id
+    text login_status
+    inet client_ip
+  }
+  SCREEN_EVENT {
+    bigint id PK
+    timestamptz received_at
+    text kind
+    text picks_category
+    bigint book_id
+    bigint_arr residence_region_ids
+    bigint_arr work_region_ids
+    bigint library_id
+    text login_status
+    inet client_ip
+  }
+  LIBRARY_RESPONSE_DAILY {
+    date day PK
+    bigint library_id PK
+    text source PK
+    integer ok_count
+    integer failed_count
+    integer timeout_count
+    integer skipped_count
+    bigint ok_ms_total
+    integer ok_ms_max
+  }
+  REJECTED_EVENT {
+    bigint id PK
+    timestamptz received_at
+    inet client_ip
+    text reason
+    jsonb raw_values
+  }
+  DROPPED_BATCH {
+    bigint id PK
+    timestamptz dropped_at
+    integer row_count
+    text reason
+  }
+```
+
+| 테이블.컬럼 | 타입 | 제약 | 설명 | 상태 태그 |
+|---|---|---|---|---|
+| `id` (`library_response_daily` 빼고 모든 표) | `bigint GENERATED ALWAYS AS IDENTITY` | PK | 지우기를 나눠 할 때 | [안] (뺄지 프로토타입으로) |
+| `*.received_at` | `timestamptz` | NOT NULL | 서버가 받은 시각 | [확정] (spec) |
+| `search_event.kind` | `text` | CHECK (`catalog`,`direct`) | 검색 종류 | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2) |
+| `title`/`author`/`publisher` | `text` | 셋 중 하나 이상 | 서버가 다듬은 검색어, 2~50자 | [확정] (spec) |
+| `exact`, `roles`, `sort` | `boolean`, `text[]`, `text` | 수집 목록만 | 받은 값, 없으면 기본값 | [확정] |
+| `filter` | `text` | 직접 찾기만 | `all`/`available` | [확정] |
+| `scope`, `visit` | `text` | NOT NULL | 받은 값 | [확정] |
+| `residence_region_ids`, `work_region_ids`, `library_ids` | `bigint[]` | `search_event`·`book_view`·`search_more`는 NOT NULL DEFAULT `'{}'`, `screen_event`는 종류에 맞지 않으면 NULL | 받은 값 그대로 | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #3) |
+| `search_event.result_count` | `integer` | NULL 가능 | 직접 찾기가 첫 묶음 전 끊기면 NULL | [확정] |
+| `*.login_status` | `text` | CHECK (`signed_in`,`signed_out`,`login_off`) | `auth` 판별 부품이 정함 | [확정] ([로그인 판별](../cycles/15-usage-log/easy/2026-10-14-login-status.html) #2), [안] (값 이름) |
+| `*.client_ip` | `inet` | NULL 가능 | `X-Real-IP`, 30일 뒤 NULL | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #3) |
+| `search_more.kind` | `text` | CHECK (`direct_next_batch`,`library_more`,`catalog_next_page`) | 더 보기 종류 | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2) |
+| `search_more.seq`, `library_id` | `integer`, `bigint` | `library_id`는 도서관별 더 보기만 | 묶음·쪽 번호, 도서관 | [안] (칸 이름) |
+| `search_more` 조건 칸 | 검색 기록과 같은 조건 칸 전부 | | 더 보기 줄만으로 어떤 검색인지 알게 | [확정] ([늘린 기록 설계](../cycles/15-usage-log/easy/2026-10-13-more-actions-design.html) #4) |
+| `library_click.library_id` | `bigint` | NOT NULL, FK 없음 | 확인된 서비스 도서관 번호 | [확정] |
+| `library_click.place` | `text` | CHECK | `result_card`,`join_link`,`join_guide`,`home_page`,`logo`,`summary_bar` | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2) |
+| `library_click.screen` | `text` | CHECK | `direct_results`,`catalog_results`,`book_page`,`picks`,`my_libraries` | [확정] (같음) |
+| `*.book_id` | `bigint` | FK 없음 | 책 번호 (가져오기 때 이어 씀, ADR-0062) | [확정] |
+| `screen_event.kind` | `text` | CHECK (`picks_list_view`,`picks_book_view`,`region_change`,`my_library_add`,`my_library_remove`) | 화면 행동 | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2) |
+| `screen_event` 종류별 칸 | `picks_category`, `book_id`, 지역들, `library_id` | 종류에 맞지 않는 칸은 NULL (CHECK) | JSON 칸 없음, 회원 번호 없음 | [확정] ([늘린 기록 설계](../cycles/15-usage-log/easy/2026-10-13-more-actions-design.html) #3) |
+| `library_response_daily` | (day, library_id, source) PK, 수 `integer`, 시간 ms | `source` CHECK (`direct_search`,`holding_fill`), `day`는 서울 날짜 | 서비스 메모리에서 세다가 5초 묶음 때 `ON CONFLICT (day, library_id, source) DO UPDATE SET …_count = …_count + EXCLUDED…, ok_ms_total = … + EXCLUDED…, ok_ms_max = GREATEST(…)`. 보관 1년 | [확정] ([요약 방법](../cycles/15-usage-log/easy/2026-10-13-summary-method.html) #1~#3, [남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2) |
+| `rejected_event.reason` | `text` | CHECK | `unknown_library`,`invalid_place`,`invalid_screen`,`invalid_book_id`,`malformed`,`unknown_type`,`invalid_value` | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2, [검증](../cycles/15-usage-log/easy/2026-10-14-verify-decisions.html) #2) |
+| `rejected_event.raw_values` | `jsonb` | 2KB 넘으면 잘라 냄 | 받은 값 | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #4) |
+| `dropped_batch.reason` | `text` | CHECK (`db_failure`,`buffer_full`) | 버린 이유 | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2) |
+| 색인 | BRIN `(received_at)` 각 표 | — | 지우기·기간 조회 | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #3) |
+| 부분 색인 | `client_ip IS NOT NULL` | — | 30일 IP 비우기 | [안] |
+
+- 쓰기 [확정] (ADR-0097): `usagelog`가 메모리 큐(상한 1만 줄)에 모았다가 5초마다 한 트랜잭션 — 묶음의 도서관 번호 확인 한 번(켜진 도서관만) → `SET LOCAL synchronous_commit TO OFF` → 표마다 `batchUpdate` → `library_response_daily` `ON CONFLICT … 더하기` → 지난번 버린 묶음을 `dropped_batch`에 → COMMIT. 실패하면 묶음을 버리고 버린 사실을 메모리에 들고 서버 로그(흐름 37)
+- 보관 [확정] (ADR-0096): `client_ip`는 30일 뒤 NULL, `rejected_event`는 30일 뒤 지움, 나머지는 1년 뒤 지움. 매일 04:30 (Asia/Seoul) 정리, 1만 줄씩 [안]
+- 남기지 않는 것 [확정] (ADR-0096): 회원 번호·쿠키·User-Agent. 기록끼리 잇는 칸 없음 (spec R2-6)
+- `library_response_daily` 수의 뜻 [확정] (사이클 15 회고 결정 #1~#3, 사용자 승인 2026-10-14): `skipped_count` = 직접 찾기에서 시작 마감(`LAUNCH_CUTOFF`, 3초)까지 요청을 보내지 못한 후보 도서관 하나마다 1, 조회 서버 바꿔 보내기는 한 번으로 셈, 켜진 도서관만(꺼진 번호의 사용 알림은 `rejected_event` `unknown_library`)
+- 파티션 없음 [확정] ([설계](../cycles/15-usage-log/easy/2026-10-13-design-decisions.html) #2)
+- 다른 schema로 FK 없음 (모듈 경계, 번호만 남김)
+- Liquibase: 새 파일 `db/changelog/usagelog/001-usagelog-schema.yaml`을 master 끝에 [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2). 기존 changeset 수정 없음
+
 ## seed
 
 - 켜진 도서관 278곳 (2026-09-29, dev 보고). 중단된 2곳(id 59, 131)은 `enabled=false`. 방문 가입 86곳, 그중 누구나 가입 16곳 (2026-09-30, dev 보고: `visit=none`이면 계획 192곳)
@@ -755,6 +901,18 @@ erDiagram
 | 지난달 값이 들어온 뒤 고쳐지는지(3일 받기) | API 호출 시험 (11-03, 11-10) |
 | 사이클 08 웹과 `AppLayout` 변경 순서 | dev 회고 때 |
 | ~~표 크기~~ | 해결: 실측 표지 808장 11MB, 중간값 14KB (dev 받기 시험, 2026-10-12) |
+
+## 확인 필요 (사이클 15)
+
+`docs/cycles/15-usage-log/design-delta.md` "확인 필요"에서 연 줄.
+
+| 항목 | 방법 |
+|---|---|
+| `id` PK·`client_ip IS NOT NULL` 부분 색인을 둘지 (넣기 비용) | 프로토타입, AC-16 측정 (개발) |
+| `SmartLifecycle` 정지 phase와 Hikari 닫힘 순서 (끌 때 남은 큐 넣기) | 프로토타입 (개발) |
+| dev pgjdbc 실제 버전 | 의존성 트리 (개발) |
+| nginx 이미지의 realip 모듈, compose 네트워크 범위, Cloudflare "Remove visitor IP headers" 꺼짐 | 배포 때 `nginx -V`, 지인 기간 시험에서 기록된 IP 확인 |
+| 광고 차단으로 빠지는 알림 비율 | 지인 기간 실서버 시험 |
 
 ## 확인 필요 (사이클 14)
 
