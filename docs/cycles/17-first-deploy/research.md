@@ -295,6 +295,8 @@ plan 15가 `docs/cycles/15-usage-log/to-cycle-17.md` "5차"에 올린 실제 값
 - **밑줄(`_`) 호스트 전용 조회 길이 새로 생김**: 밑줄 든 호스트(예 2624 `hs_partners.yes24library.com`)는 `java.net.http` 대신 **Apache HttpClient 5.6.4**로 보냄. 갈래: 본 서비스 `availability/internal/fetch/UnderscoreHostSiteFetcher`(`HostRoutingSiteFetcher`가 갈래 나눔), 조회 서버 앱 `fetch-service` `LibraryClient.getUnderscoreHost`.
 - ADR-0095 나가는 길(일반 브라우저 User-Agent, 나가는 IP마다 동시 건수·간격 따로 셈, 한 IP가 막히면 그 IP만 그 사이트에서 멈춤)을 **이 두 밑줄 길에도 같이 적용해야 함**. 프록시를 쓰면 HttpClient 5는 `setProxy`/`setRoutePlanner`로 설정. 17이 나중에 합치면 **17 쪽 설정이 맞춤**. 근거 ADR-0111·0112, 사이클 18 인계서 C5 → **17 인계서에 한 줄 넣음** [확인 필요: 인계서 작성 시]
 - **`library/016` changeset으로 도서관 22곳 꺼짐**: 첫 배포 판에 `016`이 들어가면 운영 DB에도 22곳이 꺼진 채로 들어감(18 C 단계). 17 "운영 DB 채우기"가 어느 판까지 포함하는지에 달림 — **첫 배포에 016을 넣을지/뺄지 확인** [확인 필요: 배포 판 범위, scope 포함 4]. 참고: CLAUDE.md·plan 18은 "18 운영 반영은 17 첫 배포 뒤"라 기본은 016 제외로 보이나, main에서 빌드하면 섞일 수 있어 배포 전 판 확인 필요
+- **dev 18 B 보강 (2026-10-14, dev main a0e438a)**: 원래 DB(5432)에는 **016(22곳 끄기)은 이미 들어갔지만, 현대제철 2624 전자책 241권은 아직 없음**(18 가져오기는 복사본에서만 함). 첫 배포 데이터에 2624 책이 들어가려면 **배포 전에 원래 DB에서 가져오기를 다시 돌리거나(사이클 19의 가져오기가 될 수 있음), 18 C 단계 내보내기 때** 들어감 → 17은 19 반영 뒤 목록을 쓰므로(scope 포함 4) 그때 함께 들어올지 배포 전 확인 [확인 필요]
+- 가져오기 설정 이름 바뀜: `exclude-candidate-libraries` → `exclude-added-later-libraries`(dry run 전용, 배포 설정에는 보통 없음). 17 배포 설정엔 영향 없음(참고)
 
 ### dev 15 최종 확인 (2026-10-14, dev main a34c6ed) — 정확한 이름
 - nginx 파일·이름(17이 일반 `/api/` 한도·realip을 여기에 겹치지 않게 넣음): `deploy/nginx/rate-limits.conf`에 한도 영역 `chaekcheck_usage_events`(분당 60, burst 20)·로봇 이름 map `$chaekcheck_named_bot`; `deploy/nginx/chaekcheck-locations.conf`에 `location = /api/v1/usage-events`(넘치면 204)·직접 찾기/대출 조회/도서관별 더 보기의 로봇 403; `/robots.txt`는 `web/public`에서 나감
