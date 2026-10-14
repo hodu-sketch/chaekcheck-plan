@@ -8,4 +8,4 @@
 | [2026-10-14-spec-decisions.html](2026-10-14-spec-decisions.html) | 명세: 넣기 보고서 이유 이름, 빠진 도서관 목록, 전자책 0권 세는 법, 거르는 차례, 묻지 않음, 설계로 감 | `../spec.md` | 결정됨: 6개 모두 승인, 4번 질문(교보 대여·혼합)에 답 (2026-10-14) |
 | [2026-10-14-flow-decisions.html](2026-10-14-flow-decisions.html) | 화면 흐름: 바뀌는 화면 없음, 결과가 보이는 곳 | `../flow.md` ([flow-original.html](flow-original.html)) | 결정됨: 승인 (2026-10-14) |
 | [2026-10-14-design-decisions.html](2026-10-14-design-decisions.html) | 설계: 끄기는 Liquibase, gone_known 정리, 현대제철 조회는 그 줄만 실패(AC-4 고침), 주소 읽기·거르기 규칙 위치, 드문 경우, 이름 | `../architect-proposal.md` ([architect-proposal-original.html](architect-proposal-original.html)) | 결정됨: 승인 5, 6번 사용자 제안(시험 넣기), 3번 미승인 → 밑줄 주소 길 따로 개발 (2026-10-14) |
-| [2026-10-14-design-followup-decisions.html](2026-10-14-design-followup-decisions.html) | 설계 후속(3번 미승인 뒤): 밑줄 주소 길을 쓰는 곳, 라이브러리 고르는 법, 보안 연결, 실패 때, 17·19와 개발 순서 | `../architect-proposal.md` 결정 2 | 6개 |
+| [2026-10-14-design-followup-decisions.html](2026-10-14-design-followup-decisions.html) | 설계 후속(3번 미승인 뒤): 밑줄 주소 길을 쓰는 곳, 라이브러리 고르는 법, 보안 연결, 실패 때, 17·19와 개발 순서 | `../architect-proposal.md` 결정 2 | 결정됨: 승인 4, 5번 미승인(17과 순서 상관없음), 6번 승인 "19뒤에" (2026-10-14) |
