@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 15 인계서 검토</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+.flow{display:grid;gap:10px;margin:10px 0 16px}.lane{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--card)}.lane b{display:block;margin-bottom:4px}.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{font-size:14px;border-radius:6px;padding:2px 8px;background:var(--code-bg)}.chip.new{background:var(--warn-bg)}.chip.dev{background:var(--ok-bg)}.arrow{text-align:center;color:var(--muted);font-size:18px;line-height:1}
+</style>
+<style>
+main{max-width:1080px}
+.pick{display:inline-block;font-size:14px;font-weight:700;color:var(--warn);background:var(--warn-bg);border-radius:6px;padding:1px 8px}
+.rec{display:inline-block;font-size:15px;font-weight:700;color:var(--ok);background:var(--ok-bg);border-radius:6px;padding:1px 8px}
+.ex{background:var(--ok-bg);border-radius:10px;padding:12px 16px;margin:10px 0}.ex b{color:var(--ok)}
+.alt{background:var(--code-bg);border-radius:10px;padding:12px 16px}
+.toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px 18px;font-size:18px;margin:6px 0 0;padding:0;list-style:none}
+.toc li{display:flex;gap:8px;align-items:baseline}
+figure{max-width:440px}
+figure svg text{font-family:"Noto Sans KR",system-ui,sans-serif}
+.card>figure{margin-left:auto;margin-right:auto}
+@media (min-width:980px){
+ .item{display:grid;grid-template-columns:minmax(0,1fr) 420px;column-gap:32px;align-items:start}
+ .item>*{grid-column:1}
+ .item>h3{grid-column:1 / -1}
+ .item>figure{grid-column:2;grid-row:2 / span 30;margin-top:4px}
+}
+@media (max-width:600px){body{font-size:18px}.card{padding:20px 16px}.lead{font-size:23px}}
+</style>
+</head><body><main class="doc">
+<p class="lead">사이클 15 인계서가 나왔습니다.<br>이대로 dev에 넘길지 정해 주세요</p>
+<p class="sub">2026-10-14 · 원본: <code>docs/cycles/15-usage-log/handoff.md</code> (planner가 설계 초안·ADR-0096·0097·0102·dev 코드 자리로 씀). 승인되면 <code>docs/current/handoff.md</code>를 이것으로 바꾸고, 설계를 <code>docs/current</code>에 "설계됨(미구현)"으로 합친 뒤 사이클 15를 닫습니다.</p>
+<section class="card"><h2><span class="num">1</span>인계서에 든 것</h2>
+<div class="gist">새 모듈 <code>usagelog</code>가 검색·클릭·화면 행동을 같은 DB의 표 여덟에 남깁니다. 검색은 기록을 기다리지 않고, 기록은 5초마다 한 번에 넣습니다. 화면 모양은 바뀌지 않습니다.</div>
+<div class="item"><h3><span class="no">1</span>이 인계서(10단계, 완료 기준 AC-1~26, 단계마다 시험)대로 dev에 넘깁니다 [안]</h3>
+<p class="ex"><b>이렇게 되면</b>: dev가 1단계(로그인 쿠키 경로)부터 차례로 하고, 단계마다 빌드·시험이 통과해야 다음으로 갑니다. 이름에 "제안" 표시가 붙은 것(클래스·설정 키 이름 등)은 dev가 바꾸고 알리기만 합니다. 표 이름·보관 기간·셈 규칙처럼 정하신 것은 바꾸지 않습니다. 인계서를 쓰며 찾은 것: 사용 알림의 CSRF 검사는 지금 설정으로 이미 될 수 있어 "시험으로 증명, 필요하면 고침"으로 적었고, nginx <code>/picks</code>는 dev 작업 폴더에서 이미 고쳐져 있었습니다.</p>
+<p class="alt"><b>다른 선택</b>: 고칠 곳을 기타로 적어 주시면 고친 뒤 다시 올립니다.</p>
+<p><span class="rec">추천</span> 이대로 넘김</p><figure><svg viewBox="0 0 420 424" width="100%" role="img" aria-label="인계서의 10단계. 노란 칸(3·5단계)이 가장 까다로운 곳입니다(동시에 도는 스레드, 두 번 기록 막기)"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs><rect x="30" y="4" width="360" height="32" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="1.5"/><text x="210.0" y="24.9" font-size="14" text-anchor="middle" fill="var(--text)" font-weight="400">1 auth: 쿠키 경로 /api/v1, 로그인 판별 부품</text><line x1="210" y1="36" x2="210" y2="46" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ah)"/><rect x="30" y="46" width="360" height="32" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="1.5"/><text x="210.0" y="66.9" font-size="14" text-anchor="middle" fill="var(--text)" font-weight="400">2 usagelog 뼈대, 표 여덟, 기록 켜기 설정</text><line x1="210" y1="78" x2="210" y2="88" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ah)"/><rect x="30" y="88" width="360" height="32" rx="8" fill="var(--warn-bg)" stroke="var(--line)" stroke-width="1.5"/><text x="210.0" y="108.9" font-size="14" text-anchor="middle" fill="var(--text)" font-weight="400">3 쓰기: 1만 줄 버퍼, 5초마다 한 번에 넣기</text><line x1="210" y1="120" x2="210" y2="130" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ah)"/><rect x="30" y="130" width="360" height="32" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="1.5"/><text x="210.0" y="150.9" font-size="14" text-anchor="middle" fill="var(--text)" font-weight="400">4 catalog: 검색 첫 쪽·다음 쪽·책 상세</text><line x1="210" y1="162" x2="210" y2="172" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ah)"/><rect x="30" y="172" width="360" height="32" rx="8" fill="var(--warn-bg)" stroke="var(--line)" stroke-width="1.5"/><text x="210.0" y="192.9" font-size="14" text-anchor="middle" fill="var(--text)" font-weight="400">5 availability: 직접 찾기·더 보기·도서관 응답</text><line x1="210" y1="204" x2="210" y2="214" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ah)"/><rect x="30" y="214" width="360" height="32" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="1.5"/><text x="210.0" y="234.9" font-size="14" text-anchor="middle" fill="var(--text)" font-weight="400">6 사용 알림 주소 POST /api/v1/usage-events</text><line x1="210" y1="246" x2="210" y2="256" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ah)"/><rect x="30" y="256" width="360" height="32" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="1.5"/><text x="210.0" y="276.9" font-size="14" text-anchor="middle" fill="var(--text)" font-weight="400">7 매일 04:30 정리 (IP 30일, 1년)</text><line x1="210" y1="288" x2="210" y2="298" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ah)"/><rect x="30" y="298" width="360" height="32" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="1.5"/><text x="210.0" y="318.9" font-size="14" text-anchor="middle" fill="var(--text)" font-weight="400">8 웹: 클릭 여섯 곳, 화면 행동 알림</text><line x1="210" y1="330" x2="210" y2="340" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ah)"/><rect x="30" y="340" width="360" height="32" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="1.5"/><text x="210.0" y="360.9" font-size="14" text-anchor="middle" fill="var(--text)" font-weight="400">9 nginx: 1분 60번, 로봇 거절, robots.txt</text><line x1="210" y1="372" x2="210" y2="382" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ah)"/><rect x="30" y="382" width="360" height="32" rx="8" fill="var(--ok-bg)" stroke="var(--line)" stroke-width="1.5"/><text x="210.0" y="402.9" font-size="14" text-anchor="middle" fill="var(--text)" font-weight="400">10 마무리: 로그인 켬·끔, 성능, 폰 확인</text></svg><figcaption>인계서의 10단계. 노란 칸(3·5단계)이 가장 까다로운 곳입니다(동시에 도는 스레드, 두 번 기록 막기)</figcaption></figure>
+</div>
+</section>
+<section class="card"><h2><span class="num">2</span>어떻게 개발하나</h2>
+<div class="gist">인계서가 "사용자에게 질문"으로 남긴 것과, 넣을지 정할 확인 하나입니다.</div>
+<div class="item"><h3><span class="no">2</span>사이클 16(공지·처리방침)과 동시에 개발하면, 사이클 14처럼 따로 작업 폴더·DB 묶음·포트를 씁니다. 16 인계가 아직이면 15 먼저 합니다 [안]</h3>
+<p class="ex"><b>이렇게 되면</b>: 사이클 14는 <code>../chaekcheck-dev-c14</code>, docker 프로젝트 <code>chaekcheck-c14</code>, 따로 포트로 나란히 했습니다. 둘 다 DB 표를 하나씩 더하지만 schema가 달라(<code>usagelog</code>, <code>sitecontent</code>) 합치는 순서만 지키면 됩니다(main에 합치는 순서대로 changelog 맨 끝에 붙임).</p>
+<p class="alt"><b>다른 선택</b>: 늘 차례로 → 섞일 일이 없지만 배포가 늦어집니다.</p>
+<p><span class="rec">추천</span> 16이 준비됐으면 따로 폴더로 나란히</p></div>
+<div class="item"><h3><span class="no">3</span>완료 기준에 사용자 폰(Samsung Internet) 확인을 넣습니다: 결과 카드·로고·가입 링크를 누르면 새 탭이 지금처럼 바로 열리고 기록이 남는지 [안]</h3>
+<p class="ex"><b>이렇게 되면</b>: 화면 모양은 같지만 링크를 누를 때 알림을 함께 보내므로, 폰 브라우저에서 새 탭 열림이 늦어지거나 막히지 않는지 직접 봅니다(사이클 10에서 정하신 "Chrome 폰 흉내로 갈음하지 않음"과 같은 방식).</p>
+<p class="alt"><b>다른 선택</b>: 넣지 않음 → dev가 끝내는 시간이 짧아지지만 폰에서 링크 동작은 배포 뒤에야 확인합니다.</p>
+<p><span class="rec">추천</span> 넣음</p></div>
+</section>
+<section class="card"><h2><span class="num">3</span>dev 순서</h2>
+<div class="gist">사이클 19(꺾쇠 저자 표기)는 첫 배포 전에 끝내기로 하셨고, 아직 명세 전입니다.</div>
+<div class="item"><h3><span class="no">4</span>사이클 15는 지금 dev를 시작하고, 사이클 19는 명세·인계가 끝나는 대로 이어서 합니다. 둘 다 사이클 17 첫 배포 전에 들어갑니다 [안]</h3>
+<p class="ex"><b>이렇게 되면</b>: 15는 인계서가 준비돼 기다릴 이유가 없습니다. 19는 책 목록을 다시 가져와야 해 내 PC를 오래 쓰므로, 15 개발과 겹치면 DB 묶음을 따로 둡니다. 기록은 첫 배포 때 꺼 두고 처리방침 공개일에 켭니다.</p>
+<p class="alt"><b>다른 선택</b>: 19 먼저 → 배포를 막는 일을 먼저 끝내지만 19 명세를 기다리는 동안 dev가 쉽니다.</p>
+<p><span class="rec">추천</span> 15 지금, 19 이어서</p><figure><svg viewBox="0 0 420 94" width="100%" role="img" aria-label="배포 전에 15와 19가 모두 들어갑니다. 기록은 배포 때 꺼 두고 공개일에 켭니다"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs><rect x="0" y="10" width="130" height="46" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.5"/><text x="65.0" y="27.4" font-size="14" text-anchor="middle" fill="var(--text)" font-weight="400">사이클 15</text><text x="65.0" y="48.4" font-size="14" text-anchor="middle" fill="var(--text)" font-weight="400">지금 개발</text><rect x="145" y="10" width="130" height="46" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.5"/><text x="210.0" y="27.4" font-size="14" text-anchor="middle" fill="var(--text)" font-weight="400">사이클 19</text><text x="210.0" y="48.4" font-size="14" text-anchor="middle" fill="var(--text)" font-weight="400">명세·인계 뒤</text><rect x="290" y="10" width="130" height="46" rx="8" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="1.5"/><text x="355.0" y="27.4" font-size="14" text-anchor="middle" fill="var(--text)" font-weight="400">사이클 17</text><text x="355.0" y="48.4" font-size="14" text-anchor="middle" fill="var(--text)" font-weight="400">첫 배포</text><line x1="130" y1="33" x2="143" y2="33" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ah)"/><line x1="275" y1="33" x2="288" y2="33" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ah)"/><text x="210" y="84" font-size="13" text-anchor="middle" fill="var(--muted)" font-weight="400">16(공지·처리방침)은 인계가 준비되는 대로 나란히</text></svg><figcaption>배포 전에 15와 19가 모두 들어갑니다. 기록은 배포 때 꺼 두고 공개일에 켭니다</figcaption></figure>
+</div>
+</section>
+<p class="foot">원본: <code>docs/cycles/15-usage-log/handoff.md</code>, <code>design-delta.md</code>, <code>spec.md</code>. 이 페이지는 요약이며 근거는 원본에 있습니다.</p>
+</main></body></html>
