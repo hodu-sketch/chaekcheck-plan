@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AWS에서 터널 유지 여부</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1a1c1e;--card:#242729;--text:#e8e8e6;--muted:#a3a9b2;--line:#3a3e42;--accent:#7bb0e0;--accent-bg:#1f2d3a;--ok:#5fcf8e;--ok-bg:#16301f;--warn:#e3b760;--warn-bg:#332814;--no:#e88a82;--no-bg:#331a18;--code-bg:#2c2f31;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1a1c1e;--card:#242729;--text:#e8e8e6;--muted:#a3a9b2;--line:#3a3e42;--accent:#7bb0e0;--accent-bg:#1f2d3a;--ok:#5fcf8e;--ok-bg:#16301f;--warn:#e3b760;--warn-bg:#332814;--no:#e88a82;--no-bg:#331a18;--code-bg:#2c2f31;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:820px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:27px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 30px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:26px 24px;margin:0 0 22px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:13px 16px;margin:0 0 18px;font-weight:500}
+.item h3{font-size:22px;margin:0 0 10px}
+.item p{margin:8px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+td.cok{background:var(--ok-bg)}td.cwarn{background:var(--warn-bg)}td.cno{background:var(--no-bg)}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 0}
+.foot{color:var(--muted);font-size:17px;margin-top:30px}
+@media (max-width:640px){body{font-size:18px}.lead{font-size:23px}}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">AWS에서 계속 쓸 거면<br>Cloudflare Tunnel이 필요한가</p>
+<p class="sub">배포를 "2주"가 아니라 "6개월까지 AWS"로 바꾸면서 생긴 질문입니다. 결론: Cloudflare 전체가 아니라 그중 <b>Tunnel</b>이 선택이 됩니다. (2026-10-14)</p>
+
+<section class="card">
+<h3>먼저: 무엇이 바뀌고 무엇은 그대로인가</h3>
+<p class="gist">cloudflared 터널을 넣은 가장 큰 이유는 <b>집 노트북</b>이었습니다. 집 노트북은 고정 공인 IP가 없고 공유기 뒤에 있어 바깥에서 들어올 길이 없기 때문입니다. 그런데 <b>AWS EC2는 고정 공인 IP(Elastic IP)가 있어</b>, DNS를 그 IP로 가리키고 443 포트를 열면 터널 없이도 서비스됩니다. 그래서 터널은 "필수"에서 "선택"이 됩니다.</p>
+<p>그대로 필요한 것: <b>도메인</b>(chaekcheck.com, 어디선가는 사야 함), <b>https 인증서</b>(터널 없어도 Cloudflare 프록시나 서버의 Let's Encrypt로 받음), 원하면 <b>DDoS·과도요청 막이</b>. 이건 터널과 별개입니다.</p>
+</section>
+
+<section class="card item">
+<h3>EC2에서도 Cloudflare Tunnel을 유지함 [안]</h3>
+<p>EC2에서도 지금 설계대로 cloudflared 터널로 들어오게 합니다. 서버에 바깥으로 열린 포트가 하나도 없고(ADR-0103이 그 이유로 고른 구조), <b>나중에 집 노트북으로 옮길 때 같은 설정을 그대로</b> 써서 재작업이 없습니다. "6개월 AWS"는 집 이전을 없앤 게 아니라 미룬 것뿐입니다.</p>
+<table>
+<tr><th>방식</th><th>열린 포트</th><th>집 이전 때</th><th>보호</th></tr>
+<tr><td>① 터널 유지(이 안)</td><td class="cok">없음</td><td class="cok">재작업 없음</td><td class="cok">SSL·DDoS</td></tr>
+<tr><td>② 터널 빼고 Cloudflare 프록시</td><td class="cwarn">443을 Cloudflare에 열기</td><td class="cwarn">터널 다시 도입</td><td class="cok">SSL·DDoS</td></tr>
+<tr><td>③ Cloudflare 최소(DNS만)+서버 직접 TLS</td><td class="cno">443 전체 공개</td><td class="cwarn">터널 도입</td><td class="cno">없음(IP 노출)</td></tr>
+</table>
+<p class="cap">②·③은 지금은 조금 단순하지만, 집 노트북으로 옮길 때 터널을 다시 넣어야 합니다(재작업). ①은 지금 손이 한 겹 더 들지만 그 뒤가 매끄럽습니다.</p>
+<p class="alt"><b>다른 선택이 끌리면:</b> "지금 6개월은 단순하게" 원하면 ②(프록시)로, "Cloudflare 보호도 빼고 가장 단순" 원하면 ③으로 — 기타에 적어 주세요.</p>
+<p class="rec">추천: ① 터널 유지. 단 터널의 스트리밍 응답 제한(기록해 둔 125초 확인 항목)만 배포 때 점검.</p>
+</section>
+
+<section class="card">
+<h3>계속 AWS에 둘 거면: AWS 자체 기능으로 세팅하는 건? (궁금증 답)</h3>
+<p class="gist">됩니다. 집 이전을 안 하고 AWS에 계속 둘 거면, Cloudflare가 해 주던 일(https 인증서·DDoS 막이·CDN·origin IP 숨김)을 <b>AWS 자체 서비스로 대체</b>할 수 있습니다. 거의 무료로 되는 길도 있고, 그게 더 'AWS다운' 구성이라 운영 관점에서도 보여줄 거리가 됩니다.</p>
+<p>Cloudflare 역할을 AWS로 바꾸면: 도메인 DNS = <b>Route 53</b>(월 $0.50), https 인증서 = <b>ACM</b>(ALB·CloudFront에 쓰면 무료), CDN+인증서+DDoS = <b>CloudFront</b>(월 1TB·요청 1천만까지 항상 무료, EC2에서 가져오는 트래픽 무료), 기본 DDoS 막이 = <b>Shield Standard</b>(모든 계정 기본 무료). 즉 <b>Route 53 + ACM + CloudFront</b>면 우리 규모에선 월 $0.50 수준입니다.</p>
+<table>
+<tr><th>방식</th><th>월 비용(크레딧)</th><th>열린 포트</th><th>AWS 네이티브</th></tr>
+<tr><td>① Cloudflare Tunnel</td><td class="cok">$0</td><td class="cok">없음(가장 안전)</td><td class="cno">아니오</td></tr>
+<tr><td>④ Route 53 + ACM + CloudFront</td><td class="cok">약 $0.5</td><td class="cwarn">443을 CloudFront IP에 열기</td><td class="cok">예 (거의 무료)</td></tr>
+<tr><td>⑤ Route 53 + ACM + ALB</td><td class="cno">약 $22/월</td><td class="cwarn">443을 ALB에 열기</td><td class="cok">예 (과함)</td></tr>
+</table>
+<p class="cap">④가 Cloudflare 프록시(②)와 거의 같은 일을 AWS 안에서 합니다. ⑤(ALB)는 서버 한 대엔 과하고 크레딧을 빨리 씁니다. 다만 ④·⑤ 모두 origin(EC2) 포트를 그 서비스 IP에만 여는 설정이 필요해, <b>"열린 포트 0개"는 터널(①)만의 장점</b>입니다.</p>
+<p class="alt">정리하면 — "AWS면 Cloudflare 무의미"가 아니라, <b>Cloudflare 무료 기능이 AWS 유료 기능(특히 ALB)보다 싼 경우가 많습니다.</b> 반대로 <b>AWS 기술을 보여주는 게 목적이면 ④(CloudFront)로 가는 값어치가 있습니다.</b> 집 이전을 정말 안 할 거라면 ④도 진지한 후보입니다.</p>
+<p class="rec">지금 결정은 위 제안(터널 유지)만 정하면 됩니다. "AWS 네이티브(④)로 가고 싶다"면 기타에 적어 주세요 — 그러면 ④ 기준으로 설계를 다시 그립니다.</p>
+<p class="src" style="color:var(--muted);font-size:15px">출처(확인 2026-10-14): ALB 요금 https://aws.amazon.com/elasticloadbalancing/pricing/ , CloudFront 무료 https://aws.amazon.com/cloudfront/pricing/ , Route 53 https://aws.amazon.com/route53/pricing/ , ACM https://aws.amazon.com/certificate-manager/faqs/ , Shield Standard https://aws.amazon.com/shield/</p>
+</section>
+
+<p class="foot">근거: ADR-0103(열린 포트 없음·터널), scope.md(도메인·터널), research 3·12절. 2026-10-14.</p>
+</main>
+</body>
+</html>

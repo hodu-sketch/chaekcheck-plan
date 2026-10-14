@@ -289,3 +289,7 @@ plan 15가 `docs/cycles/15-usage-log/to-cycle-17.md` "5차"에 올린 실제 값
 - 배포 전 작은 일(backlog, dev): 제목 완전 일치 검색 500 오류, 없는 주소(`*`) 화면
 - 교보 구독형 수집: **첫 배포 뒤** 같은 AWS 계정에 수집용 서버를 잠깐 따로 띄워 그 서버만 다시 받음(ADR-0094 동시 1건·1초). 서비스 4GB 서버는 안 씀. 17 뒤 별도 사이클 (scope 제외 그대로)
 - 15 인계 끝: `docs/current/handoff.md` = 15 인계서(ADR-0096·0097·0102 Accepted)
+
+## 14. 사이클 18 A2 전달 (2026-10-14)
+
+- ADR-0095 나가는 길(일반 브라우저 User-Agent, 나가는 IP마다 동시 건수·간격 따로 셈, 한 IP가 막히면 그 IP만 그 사이트에서 멈춤)을 구현·배포할 때, **밑줄(`_`) 호스트 전용 조회 길 두 곳에도 같이 적용해야 함**: backend `availability`의 `UnderscoreHostSiteFetcher`, 조회 서버 앱 `fetch-service`의 `LibraryClient` 밑줄 갈래(Apache HttpClient 5.6.4, 앱마다 하나). 근거 ADR-0111·0112, 사이클 18 인계서 C5 → **17 인계서에 한 줄 넣음** [확인 필요: 인계서 작성 시]
