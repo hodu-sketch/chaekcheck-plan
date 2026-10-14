@@ -15,7 +15,7 @@
 1. 운영 서버: **AWS EC2 t4g.medium(4GB·서울·Arm)** 한 대에 nginx·서비스·조회 서버·PostgreSQL + pg_bigm을 Docker로 [확정] (사용자 승인, 2026-10-14, ADR-0104, `easy/2026-10-14-deploy-host-decisions.html` #1). Lightsail 무료 평가판은 2GB까지라 4GB엔 작고, EC2는 크레딧 사용 확실 + IAM 역할로 비밀값 접근 키 불필요. 무료 크레딧으로 최대 6개월 운영 (`research.md` 12절)
 2. 연결: 도메인 `chaekcheck.com`을 Cloudflare에서 삼 [확정] (사용자 승인, 2026-10-13, `easy/2026-10-13-scope-decisions.html` #4) (쓸 수 있는 이름인지는 [확인 필요]) + Cloudflare Tunnel, 인증서는 Cloudflare [확정: Tunnel]
 3. nginx가 `CF-Connecting-IP`를 사용자 주소로 읽게 [확정], 책 검색 목록 등 나머지 `/api/`의 IP별 한도 [안]
-4. 운영 DB 채우기: 첫 배포 직전 seed 다시 만들기·`PRE_DEPLOYMENT` 지우기(backlog "첫 배포 직전"), 책 목록은 내 PC에서 가져와 운영에 반영(ADR-0078, 사이클 11 반영 방법)
+4. 운영 DB 채우기: 첫 배포 직전 seed 다시 만들기·`PRE_DEPLOYMENT` 지우기(backlog "첫 배포 직전"), 책 목록은 내 PC에서 가져와 운영에 반영(ADR-0078, 사이클 11 반영 방법). **단, 배포 전에 사이클 19(꺾쇠 저자 표기 정리)가 먼저 들어가 책 목록을 다시 가져와 반영하므로, 17은 19 반영 뒤의 목록을 씀** (사용자 승인 2026-10-14, `research.md` 13절). dev 순서: 15 → 19 → 17 배포
 5. 비밀 값(카카오 키, DB 비밀번호, 조회 서버 토큰)은 **AWS Parameter Store 또는 Secrets Manager**에 둠 [확정] (사용자: "해보자 그냥 써보고 싶어", 2026-10-13, #5 제안 `.env` 미승인. 둘 중 어느 것인지는 [안: 설계에서]), 카카오 콘솔 운영 주소, 약관·처리방침 시행일(사이클 16과 맞춤)
 6. 운영 메모리 값 다시 재기(서비스 힙, DB `shared_buffers` 등, backlog "배포 사이클" 줄들)
 7. 모니터링: Prometheus·Grafana·node_exporter를 서버에 직접 [확정], Spring Actuator·Micrometer 붙이기, 그래프를 바깥에서 보는 방법
