@@ -71,7 +71,7 @@
 - **C3. 밑줄 요청 길의 네 조건** [확정] (설계 후속 #2)
   1. 밑줄 호스트로 실제 요청이 됩니다
   2. 지금 길과 같은 연결 시간·읽기 시간·전체 시간 제한, 응답 크기 제한, `LibrarySiteTls.sslContext()`를 씁니다
-  3. 새 라이브러리는 하나만 들입니다
+  3. 새 라이브러리는 하나만 들입니다(본 서비스와 조회 서버 앱이 같은 라이브러리를 씀)
   4. 인증서 이름 검사를 끄지 않습니다
 
   더해서 SNI는 보내지 않습니다 [확정] (설계 후속 #3). 지금 길처럼 redirect를 따르지 않고, 같은 User-Agent를 쓰고, 같은 로그 한 줄을 남깁니다 [안]. 첫 후보는 Apache HttpClient 5입니다(밑줄 호스트를 받는지는 확인 못 함 [확인 필요: 시제품])
@@ -198,7 +198,7 @@
    - 설정은 지금 길과 같은 값(`AvailabilityProperties`의 `connectTimeout`·`readTimeout`·`totalTimeout`·`maxBodySize`·`userAgent`)을 씁니다. redirect는 따르지 않습니다. 그 밖에 C3을 지킵니다
    - 오류 구분은 `DirectSiteFetcher`와 같게 합니다: 시간 초과는 TIMEOUT, 크기 초과·입출력 오류·인증서 실패는 ERROR
    - 로그는 같은 모양 한 줄(`upstream via=… host=… path=… status=… userAgent=…`)입니다. `via` 값은 [안]: 지금 `direct` 그대로, 또는 구분 값. 사이클 15의 도서관 응답 하루 요약이 `via`를 쓰면 그쪽과 맞춥니다
-   - 구성은 `AvailabilityConfiguration.siteFetcher`의 direct 갈래에만 둡니다. `fetch-service` 모드는 이번 범위 밖입니다(아래 "이번에 하지 않는 것"). 그 모드에서도 2의 NPE 제거로 그 도서관만 실패해야 합니다
+   - 구성은 `AvailabilityConfiguration.siteFetcher`의 direct 갈래에 둡니다. 조회 서버(`fetch-service`) 모드는 아래 7에서 같은 길을 조회 서버 앱에 넣습니다 [확정] (사용자: "같이 해 굳이 왜 나눠서 해 조회 서버도 같이 해", 2026-10-14)
 4. **주소 만들기**: 1에서 `toUri()`가 밑줄 호스트에서 예외를 내면, 2624가 쓰는 `Yes24V2Adapter.searchUri`·`detailUri`가 한 인자 `URI` 생성(registry-based authority 허용)으로 주소를 만들게 고칩니다 [안]. 같은 모양의 다른 어댑터(`Yes24V1`·`V3`, `Kyobo*`, `Bookcube*`, `ElibPortalV1`, `GangnamV1`, `AladinV1`(`base.getHost()`))는 한 줄로 같이 고칠 수 있으면 같이 고칩니다. 아니면 목록만 보고합니다 [안] (spec R3-3)
 5. **지금 길 방어**: `DirectSiteFetcher.fetch`에서 `HttpRequest.newBuilder(uri)`의 `IllegalArgumentException`을 잡아 `UpstreamException.error`로 바꿉니다. 갈래에 안 걸린 다른 못 읽는 주소도 그 줄만 실패하게 합니다 [안] (architect 결정 2 근거)
 6. **사이클 15·17과 합치기** (C5)
@@ -206,6 +206,14 @@
    - 17이 나중에 들어오면 17 쪽이 밑줄 길에도 적용합니다
    - 사이클 15의 도서관 응답 하루 요약 기록도 밑줄 길에서 같은 방식으로 남는지 봅니다
    - 프록시를 거치는 경우 새 라이브러리 설정 방법 [확인 필요: 합칠 때]
+7. **조회 서버 앱(`fetch-service/`)에도 같은 길** [확정] (사용자: "같이 해 굳이 왜 나눠서 해 조회 서버도 같이 해", 2026-10-14)
+   - 조회 서버는 본 서비스와 따로 도는 앱이고, 지금 첫 배포에서는 꺼 둡니다(사이클 17). 그래도 이번에 같은 밑줄 길을 넣습니다
+   - `UrlGuard`(`fetch-service/.../UrlGuard.java`): 지금은 `getHost()`가 null이면 거절합니다. 밑줄 호스트도 읽게 하되, 그 이름을 DNS로 풀어 사설·내부 주소를 막는 검사는 그대로 둡니다 [안] (지금 있는 보호를 그대로 둠)
+   - `LibraryClient`(`HttpRequest.newBuilder`): 밑줄 호스트는 본 서비스와 같은 라이브러리·같은 네 조건(C3)으로 보냅니다. 조회 서버의 `LibrarySiteTls`·`TlsCompatibility`·`BodyLimit`·로그 한 줄 모양을 그대로 씁니다 [안]
+   - 조회 서버는 별도 앱이라 의존성도 그 앱의 `build.gradle`에 하나 더합니다(앱마다 하나) [안]
+   - 본 서비스가 조회 서버로 보낼 때(`FetchServiceSiteFetcher`) 밑줄 주소가 그대로 넘어가는지 봅니다
+   - 시험: `UrlGuard` 밑줄 호스트 통과·사설 주소 막기 유지, `LibraryClient` 밑줄 갈래(가짜 서버), 본 서비스 → 조회 서버 → 가짜 사이트 한 번(가능하면)
+   - 실제 확인: 조회 서버를 내 PC에서 켜고(사용자 승인) 2624 직접 찾기 한 번 [안]
 - 테스트 (진짜 사이트 없음)
   - `SiteHostNamesTests` [안]: 보통 호스트는 `getHost()`와 같고, `hs_partners.yes24library.com`도 읽습니다. 포트·사용자 정보 떼기, 대문자, 호스트 없음은 예외입니다
   - `HostThrottleTests`에 더함: 밑줄 주소 키가 NPE 없이 나오고, 같은 밑줄 호스트의 다른 포트는 한 칸을 나눕니다
@@ -341,7 +349,7 @@ WHERE l.enabled AND NOT EXISTS (SELECT 1 FROM catalog.holding h WHERE h.library_
 - 사이트 표시 소장 수가 없는 약 2,400곳, 사이트 권수(`holdings_count`)를 전자책만 센 값으로 고치기, 비율 0.7 이상 6곳 처리(research.md 3절 기록으로 끝남)
 - 가져오기 때마다 켜진 0권 도서관을 자동으로 알리기, 넣기 보고서의 "전자책 0권"과 "주소 호스트 다름" 나누기
 - 나머지 `detail_url_not_http` 42줄 원인 찾기, 「묘왕동주」 원인 확인
-- `fetch-service` 모드(그리고 `fetch-service/` 앱)의 밑줄 호스트 요청. 그 모드에서는 NPE 없이 그 도서관만 실패하면 됩니다 [안]
+
 - 다시 수집(`scripts/crawl/`), 묶기 규칙 변경(사이클 12·19 몫), 새 표·칸·API
 
 ## 개발 후 plan 쪽에 알려줄 것
