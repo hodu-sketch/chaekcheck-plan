@@ -58,3 +58,9 @@
 |---|---|
 | 서비스의 대출 조회·"도서관에서 직접 찾기"도 밑줄 호스트(현대제철)에서 막히는지 | dev 코드 읽기 (`availability` 쪽 주소 처리), 설계 때 |
 | 교보 구독형 4곳의 지금 권수 | 다른 IP에서 다시 받기(backlog) 때 |
+
+## 5. 설계 질문 때 더 본 것 (2026-10-14)
+
+- 밑줄이 든 호스트: 수집 DB 모든 도서관 주소에서 1곳(현대제철 102467), 책 상세 주소에서 현대제철 451줄뿐, 서비스 DB 모든 도서관(꺼진 곳 포함)에서 2624 한 곳 (설계 결정 #3 질문)
+- 책 상세 주소의 호스트가 그 도서관 수집 주소의 호스트와 다른 곳(오디오북·동영상 책 제외): 수집 DB 전체에서 0곳. 최종 주소에서 호스트까지 바뀐 411(`ebook2.ezville.net` → `gsenc.bookcube.biz`)도 서비스에 64,136권이 들어가 있음 (설계 결정 #6 질문)
+- 대출 조회의 요청은 Java 기본 요청 기능(`java.net.http`)이 만들고, 호스트를 못 읽는 주소면 요청 전에 거절함: JDK 21 `HttpRequestBuilderImpl.checkURI` "unsupported URI" https://github.com/openjdk/jdk21u/blob/master/src/java.net.http/share/classes/jdk/internal/net/http/HttpRequestBuilderImpl.java, JDK-8180809 "Not an Issue" https://bugs.openjdk.org/browse/JDK-8180809 (확인 2026-10-14, architect 조사)
