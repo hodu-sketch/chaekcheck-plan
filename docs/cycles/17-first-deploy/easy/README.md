@@ -11,3 +11,4 @@
 | [2026-10-14-proxy-vendor.html](2026-10-14-proxy-vendor.html) | 프록시 업체 고르기: 업체에 먼저 물을 것(go.kr), 업체 비교, 공공기관 접속 공개 자료, 고르는 순서 | `../research.md` 3·4·10절 | 2개 |
 | [2026-10-14-deploy-decisions-remote.html](2026-10-14-deploy-decisions-remote.html) | 첫 배포 결정 3가지(호스트 EC2·기간 6개월·비밀값 IAM) 승인/미승인/기타 버튼 — claude.ai 비공개 Artifact로 밖에서 선택·저장. URL: https://claude.ai/artifact/GCMZe8BbAPeCBKSKxwuWtC | `../research.md` 12절, ADR-0103, scope.md | 3개 |
 | [2026-10-14-your-todo.html](2026-10-14-your-todo.html) | 지금 사용자가 직접 할 일 5가지(예산·EC2·IAM 역할·도메인·카카오) 쉬운 단계 안내 | scope.md, `../research.md` 12절, ADR-0103·0104 | 0개 |
+| [2026-10-14-cloudflare-tunnel-decision.html](2026-10-14-cloudflare-tunnel-decision.html) | AWS에서 계속 쓸 때 Cloudflare Tunnel 유지 여부(①유지/②CF프록시/③DNS만/④AWS Route53+CloudFront/⑤ALB) | ADR-0103, research 3·12절 | 1개 |
