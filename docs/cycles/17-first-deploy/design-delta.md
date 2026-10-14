@@ -123,7 +123,7 @@ sequenceDiagram
 
 - 표·schema·Liquibase 변경 없음 [확정] (architect 확인, 사용자 승인 흐름에서 이견 없음). 사이클 15·16의 Liquibase 병합 순서에 17은 끼지 않음
 - 백업 범위: `pg_dump -Fc -N catalog -N catalog_next` [확정] (#7). 수집 목록은 PC의 마지막 반영 파일이 백업(ADR-0078). 복원은 덤프 → 반영 `apply` 두 단계
-- 운영 DB에 Claude가 SQL을 넣는 길(사이클 16 요청): Tunnel SSH → `docker exec db psql`, `sitecontent` schema 쓰기만 있는 DB 계정, 사용자가 승인한 SQL만 [확정] (사용자 승인, 2026-10-14, `easy/2026-10-14-design-delta-review.html` #3)
+- 운영 DB에 Claude가 SQL을 넣는 길(사이클 16 요청): Tunnel SSH → `docker exec db psql`, `sitecontent` schema 쓰기만 있는 DB 계정, 사용자가 승인한 SQL만 [확정] (사용자 승인, 2026-10-14, `easy/2026-10-14-design-delta-review.html` #3). **계정 권한(dev 16 확인)**: `sitecontent.notice`·`notice_version`·`document_version`의 `SELECT·INSERT·UPDATE` + 시퀀스 `sitecontent.notice_id_seq` `USAGE`
 
 ## API
 

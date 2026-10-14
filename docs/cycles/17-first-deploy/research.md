@@ -302,3 +302,11 @@ plan 15가 `docs/cycles/15-usage-log/to-cycle-17.md` "5차"에 올린 실제 값
 - realip(`real_ip_header CF-Connecting-IP`·`set_real_ip_from`)은 15가 안 함. **배포에서 안 넣으면 기록 IP가 전부 cloudflared 주소가 됨** → 17이 꼭 넣음(design-delta nginx 줄)
 - **요청마다 서비스 로그에 INFO 한 줄**: `library=… source=… result=… ms=…`. 서비스 로그 14일 보관(R11-1)과 양 맞춤 — 로그 디스크 계산에 반영
 - 운영 메모: dev `docs/maintenance/5-usage-log.md`
+
+## 15. 사이클 16 dev 전달 (2026-10-14, dev main) — 공개일·sitecontent
+
+- **공개일 = 2026-10-18** [확정] (사용자 결정 2026-10-14). 첫 배포일이 아니라 "모르는 사람에게 여는 날". 사용 기록 켜기·첫 공지·seed 시행일이 모두 이 날 기준
+- **sitecontent/002 seed를 검토한 글(plan drafts)·공개일(2026-10-18)로 바꾸는 일**은 17이 db·changelog·`PRE_DEPLOYMENT`를 지우기 **전에** 해야 함(이미 돈 changeset을 고치는 일). 아직 안 함 — 사용자가 시킬 때 dev가 함. 처리방침 표는 목록으로 넣기로 사용자 결정 → scope "운영 DB 채우기"(포함 4) 순서에 끼움 [확인 필요: 배포 전 단계]
+- sitecontent 쓰기 DB 계정 권한(dev 16): `sitecontent.notice`·`notice_version`·`document_version` `SELECT·INSERT·UPDATE` + 시퀀스 `sitecontent.notice_id_seq` `USAGE` → design-delta 데이터 절에 반영
+- nginx: `deploy/nginx/chaekcheck-locations.conf` 화면 주소 정규식에 `notices|notices/[0-9]+` 더함(16 9단계) → 17이 nginx 합칠 때 이 파일 그대로 씀(research 13절)
+- 첫 공지(dev `drafts/notice-first.md`)는 공개일(2026-10-18)에 운영 SQL 1절로(dev `docs/maintenance/5-sitecontent.md`) → 공개일 체크리스트
