@@ -290,6 +290,8 @@ plan 15가 `docs/cycles/15-usage-log/to-cycle-17.md` "5차"에 올린 실제 값
 - 교보 구독형 수집: **첫 배포 뒤** 같은 AWS 계정에 수집용 서버를 잠깐 따로 띄워 그 서버만 다시 받음(ADR-0094 동시 1건·1초). 서비스 4GB 서버는 안 씀. 17 뒤 별도 사이클 (scope 제외 그대로)
 - 15 인계 끝: `docs/current/handoff.md` = 15 인계서(ADR-0096·0097·0102 Accepted)
 
-## 14. 사이클 18 A2 전달 (2026-10-14)
+## 14. 사이클 18 A1·A2 전달 (2026-10-14, dev 18 로컬 main 5f8403c)
 
-- ADR-0095 나가는 길(일반 브라우저 User-Agent, 나가는 IP마다 동시 건수·간격 따로 셈, 한 IP가 막히면 그 IP만 그 사이트에서 멈춤)을 구현·배포할 때, **밑줄(`_`) 호스트 전용 조회 길 두 곳에도 같이 적용해야 함**: backend `availability`의 `UnderscoreHostSiteFetcher`, 조회 서버 앱 `fetch-service`의 `LibraryClient` 밑줄 갈래(Apache HttpClient 5.6.4, 앱마다 하나). 근거 ADR-0111·0112, 사이클 18 인계서 C5 → **17 인계서에 한 줄 넣음** [확인 필요: 인계서 작성 시]
+- **밑줄(`_`) 호스트 전용 조회 길이 새로 생김**: 밑줄 든 호스트(예 2624 `hs_partners.yes24library.com`)는 `java.net.http` 대신 **Apache HttpClient 5.6.4**로 보냄. 갈래: 본 서비스 `availability/internal/fetch/UnderscoreHostSiteFetcher`(`HostRoutingSiteFetcher`가 갈래 나눔), 조회 서버 앱 `fetch-service` `LibraryClient.getUnderscoreHost`.
+- ADR-0095 나가는 길(일반 브라우저 User-Agent, 나가는 IP마다 동시 건수·간격 따로 셈, 한 IP가 막히면 그 IP만 그 사이트에서 멈춤)을 **이 두 밑줄 길에도 같이 적용해야 함**. 프록시를 쓰면 HttpClient 5는 `setProxy`/`setRoutePlanner`로 설정. 17이 나중에 합치면 **17 쪽 설정이 맞춤**. 근거 ADR-0111·0112, 사이클 18 인계서 C5 → **17 인계서에 한 줄 넣음** [확인 필요: 인계서 작성 시]
+- **`library/016` changeset으로 도서관 22곳 꺼짐**: 첫 배포 판에 `016`이 들어가면 운영 DB에도 22곳이 꺼진 채로 들어감(18 C 단계). 17 "운영 DB 채우기"가 어느 판까지 포함하는지에 달림 — **첫 배포에 016을 넣을지/뺄지 확인** [확인 필요: 배포 판 범위, scope 포함 4]. 참고: CLAUDE.md·plan 18은 "18 운영 반영은 17 첫 배포 뒤"라 기본은 016 제외로 보이나, main에서 빌드하면 섞일 수 있어 배포 전 판 확인 필요
