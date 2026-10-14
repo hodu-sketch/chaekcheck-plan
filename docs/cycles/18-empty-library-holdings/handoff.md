@@ -2,7 +2,7 @@
 
 - 기준 문서: plan `docs/cycles/18-empty-library-holdings/design-delta.md`. 구현은 이 문서를 기준으로 합니다. `architect-proposal.md`는 결정 기록일 뿐입니다
 - ADR: 0109, 0110, 0111 (모두 Accepted, 2026-10-14)
-- 승인: 사용자 검토 전 [확인 필요]
+- 승인: 이 인계서대로 dev에 넘김 [확정] (사용자 승인, 2026-10-14, `easy/2026-10-14-handoff-review.html` #6). 같은 페이지 결정: 조회 서버 앱도 같은 밑줄 길(#1 미승인 → "같이 해"), "전자책 0권" 검사 자리는 dev가 정하고 보고(#2), 확인 SQL(#3), 22곳 밖 0권은 dev가 알아서 끄고 메모만(#4 사용자 제안), A1·A2 따로 합치고 B는 19 뒤 새 브랜치(#5)
 - **dev 순서** [확정] (scope.md "진행 순서", 사용자 "19뒤에 하자", "순서는 상관없어 어짜피 내가 외부에 주소 공개 안 하면 되니까", 2026-10-14)
 
 | 묶음 | 언제 | 내용 |
@@ -299,7 +299,7 @@
 - 시제품·실제: A2-1 현대제철 요청(몇 건), A2 끝 직접 찾기, B 끝 검색·조회, B7 dry run 비교
 - 화면: 바뀌지 않음. Playwright 데스크톱 1280에서 회귀만 봅니다
 
-**AC-1 SQL** [안] (spec: "사이클 12 분포 검사와 같은 SQL". 그 SQL이 dev `data/cycle12/dist/`(git 밖)에 남아 있으면 그것을 씁니다):
+**AC-1 SQL** [확정] (사용자 승인, 2026-10-14, 인계서 검토 #3) (spec: "사이클 12 분포 검사와 같은 SQL". 그 SQL이 dev `data/cycle12/dist/`(git 밖)에 남아 있으면 그것을 씁니다):
 ```sql
 SELECT l.id FROM library.library l
 WHERE l.enabled AND NOT EXISTS (SELECT 1 FROM catalog.holding h WHERE h.library_id = l.id);

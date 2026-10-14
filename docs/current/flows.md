@@ -1440,3 +1440,60 @@ sequenceDiagram
 
 - 새 공지: `notice` INSERT RETURNING id → `notice_version` 판 1 INSERT, 한 트랜잭션. 고치기: 판 = 마지막 + 1, 새 날짜 ≥ 마지막 판 날짜. 숨기기·고정: `UPDATE sitecontent.notice SET hidden = … / pinned = …`
 - 문서 새 판: 동의문은 4항목 필수. 약관·동의문을 바꿀 때 공지도 함께. 중요하거나 불리한 변경은 다시 동의 화면이 생기기 전에는 넣지 않음 (ADR-0101)
+
+## 흐름 42: 새 도서관 넣기 미리 보기의 "전자책 0권" — 설계됨(미구현, 사이클 18)
+
+- 근거: `docs/cycles/18-empty-library-holdings/design-delta.md`, ADR-0110. 기존 이유 6개 다음 맨 마지막, 가져오기와 같은 거르기 규칙으로 센 줄이 0이면 뺌, 묻지 않음, 종료 코드 그대로
+
+```mermaid
+sequenceDiagram
+  actor O as 운영자
+  participant P as LibraryInsertPlanner
+  participant S as CollectedLibraries
+  participant F as HoldingRowFilter
+  O->>P: preview
+  loop 짝이 없는 수집 도서관마다
+    P->>P: 이유 1~6 (교보 대여·혼합 … 시험용)
+    alt 1~6에 걸림
+      P->>P: 빠진 곳[그 이유]
+    else 통과
+      P->>S: 가져올 줄 수(id, 넣을 주소 호스트)
+      S->>F: 줄마다 skipReason
+      S-->>P: 줄 수
+      alt 0줄
+        P->>P: 빠진 곳[no_ebooks] 전자책 0권
+      else 1줄 이상
+        P->>P: 넣을 곳
+      end
+    end
+  end
+  P-->>O: 보고서 (묻지 않음, 종료 코드 그대로)
+```
+
+## 흐름 43: 호스트에 밑줄이 있는 도서관의 가져오기와 대출 조회 — 설계됨(미구현, 사이클 18)
+
+- 근거: `docs/cycles/18-empty-library-holdings/design-delta.md`, ADR-0111. 지금 해당 도서관은 현대제철 2624 한 곳(2026-10-14). 조회 서버 앱 모드도 같은 길
+
+```mermaid
+sequenceDiagram
+  participant I as 가져오기
+  participant H as SiteHosts
+  participant DB as 서비스 DB
+  actor U as 이용자 (2624 직접 추가)
+  participant A as availability 사이트 요청 부품
+  participant N as 밑줄 주소 길
+  participant W as 현대제철 사이트
+  I->>H: 도서관·책 주소 호스트 (hs_partners.yes24library.com)
+  H-->>I: 읽음
+  I->>DB: 전자책 241권 (detail_url_not_http 283 → 42)
+  U->>A: 검색 (범위 2624)
+  A->>A: 호스트에 밑줄?
+  A->>N: 예 → 따로 만든 길
+  N->>W: 요청 (SNI 없이, 인증서 이름 검사)
+  alt 응답
+    W-->>N: 대출 상태
+    N-->>U: 그 줄에 보유·대출 수
+  else 인증서 검사 실패·시간 초과 등
+    N-->>U: 그 줄만 "대출 가능 여부 확인 필요"
+  end
+```
