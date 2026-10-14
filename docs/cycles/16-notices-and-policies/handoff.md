@@ -2,8 +2,8 @@
 
 - 기준 문서: plan `docs/cycles/16-notices-and-policies/design-delta.md` (설계 확정 2026-10-14, design-reviewer 검토, dev main(사이클 12·13·14 합친 뒤)과 맞춰 봄)
 - ADR: 0098, 0099, 0100, 0101 (모두 Accepted, 2026-10-14)
-- 승인: [확인 필요: 이 인계서 사용자 검토] (plan이 검토를 받은 뒤 이 줄을 [확정]으로 바꿈)
-- 이 인계서는 plan `docs/cycles/16-notices-and-policies/handoff.md`에 둡니다. `docs/current/handoff.md`는 사이클 15 인계서이므로 고치지 않고, 알림 한 줄과 링크만 둡니다 [안]
+- 승인: 이 인계서대로 dev에 넘김 [확정] (사용자 승인, 2026-10-14, `easy/2026-10-14-handoff-review.html` #1)
+- 이 인계서는 plan `docs/cycles/16-notices-and-policies/handoff.md`에 둡니다. `docs/current/handoff.md`는 사이클 15 인계서이므로 고치지 않고, 알림 한 줄과 링크만 둡니다 [확정] (사이클 13·14와 같은 방식)
 
 ## 시작 조건
 
@@ -126,7 +126,7 @@
   - 500은 공통 처리(`internal_error`) 그대로
 - **C6. 서비스 안내의 기준일 줄** [확정] (spec R5-1, flow S12, AC-10)
   - 사이클 13의 "가입 조건은 ○○에 조사한 내용입니다." 줄은 DB 글에 넣지 않습니다. 화면이 지금처럼 `GET /api/v1/join-surveys/latest`로 붙이고, 위치는 **DB 글 바로 아래**입니다
-  - 참고: `drafts/about.md` 머리 주석의 "첫 문단 아래"는 spec·flow와 다릅니다. spec을 따릅니다. 지금 dev `AboutPage.tsx:39`는 첫 문단 아래에 둡니다
+  - 지금 dev `AboutPage.tsx:39`는 첫 문단 아래에 두지만, 글 전체 아래로 옮깁니다 [확정] (사용자 승인, 2026-10-14, `easy/2026-10-14-handoff-review.html` #3)
 - **C7. 보이는 문구는 바꾸지 않음**. 화면 글자는 flow.md 그대로 씁니다: "공지사항", "아직 공지가 없어요", "글을 불러오지 못했어요" + "다시 시도", "찾을 수 없어요", "목록으로", "고정", "이전 버전", "바뀐 점 보기", "시행 YYYY-MM-DD", "약관 글을 불러오지 못했어요", "약관이 바뀌었어요. 다시 확인해 주세요"
 - **C8. 노랑 바탕을 쓰지 않음** [확정] (flow 색 결정: "노랑은 이 테마에 안 맞아"). "고정" 표시, "이전 버전" 표시, "바뀐 점 보기"의 색은 dev 테마 안에서 정합니다
 
@@ -474,11 +474,11 @@
   - 409 → 새 판으로 다시 읽음
 - 위험: 중간
 
-### 9단계: nginx 화면 주소 (의존: 7단계) [안: design-delta 밖, plan이 인계서를 쓰며 찾음]
+### 9단계: nginx 화면 주소 (의존: 7단계) — 이 사이클에서 함 [확정] (사용자 승인, 2026-10-14, `easy/2026-10-14-handoff-review.html` #2)
 
 - 사실: `deploy/nginx/chaekcheck-locations.conf:91`의 화면 주소 정규식 `^/(search|signup|terms|privacy|about|my-libraries|picks|auth/complete|books/[^/]+)$`에 `notices`가 없습니다(2026-10-14 dev main). 배포 뒤 `/notices`나 `/notices/3`을 바로 열거나 새로고침하면 `location /`의 `try_files $uri =404`로 404가 납니다(`:113-117`)
-- 할 일 [안]: 정규식에 `notices|notices/[0-9]+`를 더하고, 주석과 `deploy/nginx/README.md` 표(`:27`, `:65` 근처)에 한 줄 씁니다. `local-test.conf`로 `/notices`, `/notices/1`, `/notices?page=2` 직접 열기 200 `text/html`
-- 이 사이클에서 할지, 사이클 17 배포 설정에서 할지는 사용자가 정합니다. dev는 먼저 사용자에게 알리고 결과를 `# 사이클 16` 절에 적습니다
+- 할 일: 정규식에 `notices|notices/[0-9]+`를 더하고, 주석과 `deploy/nginx/README.md` 표(`:27`, `:65` 근처)에 한 줄 씁니다. `local-test.conf`로 `/notices`, `/notices/1`, `/notices?page=2` 직접 열기 200 `text/html`
+- 결과를 `# 사이클 16` 절에 적습니다. 사이클 17 배포 설정과 같은 파일이므로 합칠 때 겹치면 rebase로 풂
 - 위험: 낮음
 
 ### 10단계: 마무리 — 합치기, 원래 DB, 화면, 폰, 운영 메모 (의존: 1~9단계)
@@ -579,7 +579,7 @@
 - **사이클 17에 전할 것** [확정] (design-delta "인계서에 넣을 운영 예시 SQL")
   - 17이 정한 "`sitecontent` schema 쓰기만 있는 DB 계정"에는 `sitecontent` 표 셋의 SELECT·INSERT·UPDATE와 `notice.id` identity 시퀀스 USAGE가 필요합니다(시퀀스 이름은 5단계 결과)
   - seed 바꾸기는 17이 `PRE_DEPLOYMENT`를 지우기 전에 해야 합니다
-  - 9단계 nginx `/notices` 줄을 16에서 하지 않았다면 17 배포 설정에서 합니다
+  - nginx `/notices` 줄은 16 9단계에서 더함(17 배포 설정과 같은 파일)
 
 ## 이번에 하지 않는 것
 
@@ -604,6 +604,6 @@
 - `auth`: `AuthSchemaTests`에 `DIRECT_DEPENDENCIES`가 필요했는지, 고친 시험 목록, `auth/002`가 원래 `db`에서 바꾼 줄 수
 - 웹: `react-markdown@10` 설치 결과·묶음 크기, `allowedElements`를 썼는지, 날짜 고르기 칸 구현과 폰에서 열리는 모양, "목록으로" 보던 쪽 방법, 지금 판을 고를 때 주소
 - 운영 SQL 5단계 결과(절마다 줄 수·오류, `BEGIN`/`COMMIT` 나눠 보내기, 시퀀스 이름), 고친 문장
-- 9단계 nginx `/notices`를 16에서 했는지, 사용자 결정
+- 9단계 nginx `/notices` 결과
 - 사용자 화면 확인·실제 폰 확인 결과
 - [확인 필요] 표 각 행의 결과, 설계와 달라진 점, 새로 알게 된 제약, AC 확인표

@@ -145,6 +145,7 @@ classDiagram
 - 오류 처리: dev는 루트 `ApiExceptionHandler`가 `ResponseEntityExceptionHandler`만 확장하고(정수가 아닌 값은 400 `bad_request`), 모듈 오류는 모듈마다 `@RestControllerAdvice(basePackageClasses=…)` + `@Order(HIGHEST_PRECEDENCE)`로 둠(예: `picks/internal/web/PicksErrors.java`). `sitecontent/internal/web`에 같은 방식으로 400 `validation_error`(`errors[]`: `field`·`message`·`code`), 404 `notice_not_found`·`document_not_found`·`version_not_found` [확정] (dev 방식 따름, 2026-10-14 dev main 확인)
 - 같이 고칠 웹·시험 파일: `SignupPage.tsx`(`legalText`의 `COLLECTION_NOTICE`·`PRIVACY_COLLECTION_BODY`·`TERMS_OF_SERVICE_BODY`·`NOT_REVIEWED` 대신 API), `LegalPage.tsx`·`LegalPage.test.tsx`·`AuthScreens.test.tsx`(`documentVersions` 사용), `AboutPage.tsx`(본문을 API로, 기준일 줄은 그대로), `Footer.tsx`. 백엔드 `DocumentVersionsMatchWebTests`(지움), `AuthPropertiesTests`(documents 설정 값), `SignupTests`(`properties`로 정한 문서 버전 `2026-10-01`·`2026-10-02` → DB 판 기준)
 - 가입은 동기 읽기가 필요해 이벤트를 쓰지 않음
+- 배포 설정: dev `deploy/nginx/chaekcheck-locations.conf`의 화면 주소 정규식에 `notices|notices/[0-9]+`를 더함(없으면 새로고침 때 404) [확정] (사용자 승인, 2026-10-14, [easy/2026-10-14-handoff-review.html](easy/2026-10-14-handoff-review.html) #2)
 - 이용약관 REST는 로그인 기능이 꺼져도 열어 두고, 웹 경로 `/terms`만 숨김 [확정] (사용자 승인, 2026-10-13) — `sitecontent`가 `auth` 설정을 알면 `sitecontent → auth`가 생겨 서로 의존하게 됨
 
 ## 데이터

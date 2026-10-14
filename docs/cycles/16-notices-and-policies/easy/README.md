@@ -20,3 +20,4 @@
 | [2026-10-13-drafts-review.html](2026-10-13-drafts-review.html) | 처리방침·동의문·이용약관·서비스 안내·첫 공지 초안 검토 | `../drafts/` | 없음 (2026-10-13): 5개 승인(최소판 3차) |
 | [2026-10-14-about-align-decisions.html](2026-10-14-about-align-decisions.html) | 서비스 안내 초안을 사이클 13·14 실제 /about 문장에 맞춤 (3가지) | `../drafts/about.md` | 없음 (2026-10-14, 3개 모두 승인) |
 | [2026-10-14-close-review-decisions.html](2026-10-14-close-review-decisions.html) | cycle-close 설계 검토 뒤 두 가지(쿠키 문장, 가입 화면 글 못 불러올 때) + 쿠키 창 질문 답 | `../drafts/privacy-policy.md`, `../flow.md` | 없음 (2026-10-14, 2개 승인) |
+| [2026-10-14-handoff-review.html](2026-10-14-handoff-review.html) | 인계서 확인 + nginx 공지 주소 + 기준일 줄 자리 | `../handoff.md` | 없음 (2026-10-14, 3개 모두 승인) |
