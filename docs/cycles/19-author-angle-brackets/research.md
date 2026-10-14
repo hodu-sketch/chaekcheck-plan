@@ -1,0 +1,201 @@
+# 사이클 19 추가 조사: 같은 책을 갈라 놓는 원인 세 가지 (a)(b)(c)
+
+- 조사일: 2026-10-14. dev 저장소는 읽기만 함 (Read/Grep). DB는 돌리지 않음 — 수는 모두 [확인 필요]이고 아래 SQL·dry run 방법으로 잼
+- 사용자 결정: "같이 고치자" (2026-10-14) — 꺾쇠 저자와 같은 사이클 19에서 (a)(b)(c)도 고침
+- 경로 약어: `C` = `chaekcheck-dev/backend/src/main/java/com/chaekcheck/catalog/normalize/`, `I` = `chaekcheck-dev/backend/src/main/java/com/chaekcheck/collection/internal/importer/`, `PF` = `chaekcheck-dev/docs/plan-feedback.md`
+
+## 0. 「백만장자 마인드」(율리시즈) 줄 원문 (사이클 12 조사 파일)
+
+dev `data/cycle12/sub-ac3.txt` 1~5행 (git 밖 파일, 사이클 12 반영 2회차 뒤 책 번호·제목·저자·출판사·날짜·ISBN):
+
+| 책 | 제목 | 저자 | 날짜 | ISBN |
+|---|---|---|---|---|
+| 38469 | 백만장자 마인드 | 모리세 시게토모 | 2022-03-31 | 9788998229979 |
+| 230325 | (부를 끌어 당기는) 백만장자 마인드 : 미래를 바꾸는 … | 모리세 시게토모 | 2022-04-27 | |
+| 402245 | 부를 끌어 당기는 백만장자 마인드 : 미래를 바꾸는 … | 모리세 시게토모 | 2022-03-25 | |
+| 421535 | 백만장자 마인드 | `<모리세 시게토모> 저/<이민연> 역` | 2022-04-11 | |
+| 980346 | 백만장자 마인드 | 김근아 저자 | 2022-04-11 | |
+
+- 검색 스냅숏 `data/cycle12/search/after.json` 77~86행에는 저자와 출판사가 **뒤바뀐** 줄도 있음: 「백만장자 마인드」 저자 「율리시즈」, 출판사 「모리세 시게토모」, 2022-03-25 (책 247114). (a)(b)(c) 어느 규칙으로도 안 모이는 네 번째 원인 → backlog 후보
+- 국가서지(국립중앙도서관 LOD 파일, dev `data/nlk/ttl/book_ttl_20260807/book_10.ttl` 4121854~4121883행): 표제 「(부를 끌어당기는) 백만장자 마인드」, 책임표시 「모리세 시게토모 지음 ; 이민연 옮김」, `dc:creator` "이민연", "모리세 시게토모", ISBN 9788998229979, 2022, 율리시즈, 원저자명 森瀨繁智, 원서 「すごい!お金持ちチェンジ」
+- 꺾쇠 규칙(사이클 19 본 범위)만 넣으면 38469·421535가 같은 첫 저자가 됨. 230325·402245·980346은 그대로 따로 → 아래 (a)(b)
+
+## (a) 다른 사람 이름이 첫 저자로 적힌 줄 — 「김근아 저자」
+
+### 증거: 「김근아」는 누구인가
+
+- **확인 못 함.** 근거로 말할 수 있는 것:
+  1. 국가서지의 이 책(위 0절)에는 지은이 모리세 시게토모, 옮긴이 이민연뿐이고 김근아는 없음 (`book_10.ttl` 4121855·4121873행). 꺾쇠 줄도 「<이민연> 역」이라 **옮긴이도 아님**
+  2. 국가서지에서 「김근아」는 이 책과 무관한 책의 공저자로만 나옴: 「자원봉사론」(`book_8.ttl` 989280행, `book_17.ttl` 3818333행), 「컬러풀 시드니」 사진/글 44명 중 하나(`book_9.ttl` 4432245행). 같은 사람인지는 모름
+  3. 김근아 줄의 날짜 2022-04-11은 꺾쇠 줄(421535)과 같음. 2026-10-12 사이트 확인 때 북큐브의 2022-04-11 줄(공급사 예스24)은 **저자 칸이 비어 있었음**("저/ 역") (plan `docs/research/ebook-catalog/same-book-isbn.md` 239행). 같은 공급 데이터가 도서관마다 저자 칸이 다르게(빈 칸 / 꺾쇠 / 김근아) 들어온 것으로 보이나 **추정**임
+  4. 같은 모양의 저자 칸 오류가 사이트로 확인된 예가 이미 있음: 「열 줌의 흙」 저자 「연호택」 쪽, 「열국지 4」 저자 「남춘자」 쪽 — 둘 다 상품 코드가 같은 같은 책 (`PF` 3406~3407행)
+- 판단: "다른 판"이라는 증거도 "번역자"라는 증거도 없음. 지금 가진 자료로는 **한 공급 데이터의 저자 칸 오류일 가능성이 높음 [확인 필요]**
+
+### 확인 방법
+
+1. dev DB에서 그 줄의 도서관·화면·공급사·코드·주소:
+   ```sql
+   SELECT h.book_id, h.library_id, h.platform, h.item_key, h.alt_code, h.supplier,
+          h.title_raw, h.author_raw, h.published_raw, h.detail_url
+   FROM catalog.holding h
+   WHERE h.publisher_raw LIKE '%율리시즈%' AND h.title_raw LIKE '%백만장자 마인드%'
+   ORDER BY h.published_raw, h.author_raw;
+   ```
+   (칸 이름은 `catalog/001-catalog-schema.yaml` 74~92행)
+2. 김근아 줄과 꺾쇠 줄의 `detail_url`을 내장 브라우저로 한 번씩 열어 표지·소개 글·파일 크기·공급사 상품 코드 비교 (사이클 12 결정 1과 같은 방법, `PF` 3404~3411행)
+3. 김근아가 다른 책에도 잘못 붙었는지: `SELECT title_raw, publisher_raw, supplier, count(*) FROM catalog.holding WHERE author_raw LIKE '%김근아%' GROUP BY 1,2,3;`
+
+### 지금 코드
+
+- 「김근아 저자」 → `parse`가 `TRAILING_ROLE`(`C/Contributors.java` 66~67행)로 「저자」를 떼고 AUTHOR 「김근아」 (`ROLE_WORDS` 41행). 첫 저자 `SameTextKey.firstAuthor`(`I/SameTextKey.java` 338~345행)가 「김근아」가 되어 ④ 키(같은 파일 166행)가 다른 줄과 다름
+- 책의 저자는 묶음 안 가장 많은 표기(`I/BookGrouping.java` 385행, `I/CompactGrouping.java` 619행). 김근아 줄은 혼자 한 책이라 대표 저자도 김근아 → 검색 "김근아"가 이 책을 찾음
+
+### 안
+
+| | (a)-1 저자 없이 맞추는 보조 키: 같은 날 같은 책 | (a)-2 공급사 상품 코드가 같으면 저자를 보지 않음 |
+|---|---|---|
+| 규칙 | ④에서 키가 서로 다른 묶음이라도 비교 제목 + 권 표시 + 출판사 + **출판일(일 단위까지)**이 같으면 합침. 자리 채움 날짜(0000-00-00, 1월 1일, 1900 이하)와 자리 채움 출판사는 빼고, 부제 나누기(같은 도서관에 따로 있으면 나눔)는 그대로 | 북큐브처럼 도서관마다 번호가 다른 화면이라도 공급사 상품 코드(`holding.alt_code` 또는 상세 화면의 공급사 코드)가 같으면 ①처럼 한 묶음. 사이클 12에서 dev가 「열 줌의 흙」·「열국지 4」를 같은 책으로 판정한 근거와 같음 (`PF` 3406~3407행) |
+| 고치는 것 | 김근아 줄(2022-04-11) ↔ 꺾쇠 줄(2022-04-11). 「열 줌의 흙」·「열국지 4」 같은 저자 칸 오류 중 날짜가 같은 것 | 코드가 같은 저자 칸 오류 전부 (날짜가 달라도). 김근아 줄은 **코드가 다른 줄과 같을 때만** |
+| 깨질 수 있는 것 | 같은 출판사가 같은 날 낸 같은 제목의 다른 저자 책(번역본 둘, 교재 시리즈의 저자만 다른 권)이 잘못 합쳐짐. 날짜가 등록일이라 같은 날 대량 등록한 출판사(한국문학도서관 등, `same-book-isbn.md` 225행)에서 위험 | `alt_code`가 무엇인지 확실하지 않음: 사이클 04 기록은 "북큐브(`alt_code`)가 빠져서"뿐 (`PF` 755행). 포털 `book_idx`는 도서관마다 다른 번호였음(`PF` 757행). 코드가 사이트별이면 효과 없음, 재사용되면 다른 책을 합침 |
+| 검색 | 합쳐진 책의 대표 저자가 가장 많은 표기(모리세 시게토모)가 되어 "김근아" 검색에서 빠짐 (좋아짐) | 같음 |
+| 잴 방법 | 아래 SQL 1 + dry run → `compare_grouping.py regroup`(dev `docs/maintenance/3-import.md` 154행)으로 합쳐짐 표본 20권, 저자가 다른데 합쳐진 것만 골라 사이트 확인 | 아래 SQL 2로 코드가 여러 도서관에 걸친 수와 그중 제목이 다른 비율(사이클 04 `check_code_spaces.py` 방식, `PF` 757~758행) → 비율이 낮으면 dry run |
+
+SQL 1 (dev DB, (a)-1에서 새로 합쳐질 쌍 어림 — 책 단위, 출판일 칸은 `catalog.book.published_on`):
+```sql
+SELECT a.id, b.id, a.title, a.author_display, b.author_display, a.publisher, a.published_on
+FROM catalog.book a JOIN catalog.book b
+  ON a.main_title_norm = b.main_title_norm AND a.publisher_norm = b.publisher_norm
+ AND a.published_on = b.published_on AND a.id < b.id
+WHERE a.author_display IS DISTINCT FROM b.author_display
+  AND extract(month FROM a.published_on) * 100 + extract(day FROM a.published_on) <> 101
+  AND a.publisher_norm NOT IN ('기타','미상','unknown')
+LIMIT 200;   -- 먼저 count(*)로 규모, 그다음 표본
+```
+(권 표시는 SQL로 못 봐서 표본에서 사람이 봄. 정확한 수는 dry run 카운터로)
+
+SQL 2 ((a)-2, 코드 공간 점검):
+```sql
+SELECT platform, count(DISTINCT alt_code) AS codes,
+       count(*) FILTER (WHERE n_titles > 1) AS codes_with_different_titles
+FROM (SELECT platform, alt_code, count(DISTINCT left(regexp_replace(lower(title_raw),'\s','','g'),8)) AS n_titles
+      FROM catalog.holding WHERE alt_code IS NOT NULL GROUP BY platform, alt_code
+      HAVING count(DISTINCT library_id) > 1) t
+GROUP BY platform;
+```
+
+- 다른 방법 한 줄: 확인된 줄만 고치는 **바로잡기 목록**(도서관·코드 → 저자 무시, `TAILS`처럼 상수) — 잘못 합칠 위험 0이지만 사람이 하나씩 찾아야 함
+
+## (b) 제목 앞 괄호가 시리즈 표시가 아닌 줄 — 「(부를 끌어 당기는) 백만장자 마인드 : …」
+
+### 증거
+
+- `PF` 3458행: "앞 괄호가 시리즈 표시가 아니라 본제목이 다름"
+- 국가서지도 같은 표제를 「(부를 끌어당기는) 백만장자 마인드」로 씀 (`book_10.ttl` 4121881행). 우리 목록 작성에서 표제 앞 괄호 수식어(관제)는 흔한 표기로 보임 [확인 필요: 공식 목록 규칙(KORMARC) 출처 확인 안 함]
+- 같은 책에 괄호 **없이** 「부를 끌어 당기는 백만장자 마인드 : …」로 적힌 줄(402245)도 있음 → 괄호 규칙으로는 이 줄을 못 모음
+
+### 지금 코드
+
+- 본제목 `CatalogText.mainTitleNorm`(`C/CatalogText.java` 68~77행): 앞의 `LEADING_SERIES`(20행: `〈…〉`, `<…>`, `[…]`만)를 떼고 첫 " : "/" - " 앞. **`(…)`는 떼지 않음** → 「(부를끌어당기는)백만장자마인드」
+- ④ 비교 제목 `SameTextKey.comparisonTitle`(`I/SameTextKey.java` 191~193행)은 `mainTitleNorm`을 씀. 권 표시·부제는 자기 `LEADING_SERIES`(54행, 같은 세 괄호)를 뗀 전체 제목에서 읽음(174·216행)
+- **이미 `(…)`를 떼는 곳이 두 군데 있음**: 국가서지 키 `NationalBibliography.LEADING_BRACKET`(`I/NationalBibliography.java` 46~47행, 188행, 주석 예 「(장난감 피아노로 시작하는) 엄마표 피아노 레슨」, 「(The) tale」), 사서추천 맞추기 `CatalogText.PICK_LEADING_BRACKET`(`C/CatalogText.java` 29~31행, 85~101행). 도서관 줄의 ③ 키(`I/BookGrouping.java` 386행 등)는 괄호를 남기므로 지금은 「(…) 제목」 줄이 국가서지 키와도 안 맞음
+- 검색: `book.main_title_norm`은 제목 "정확히 일치"(`catalog/internal/search/PgBigmBookSearch.java` 180~181행)와 정확 일치 순위(82행)에 씀. 단어 검색은 `title_norm`(184행)이라 영향 없음
+
+### 안
+
+| | (b)-1 ④ 비교 제목에서만 앞 `(…)`를 뗌 | (b)-2 본제목 규칙(`CatalogText.mainTitleNorm`)에서 앞 `(…)`를 뗌 |
+|---|---|---|
+| 규칙 | `SameTextKey.comparisonTitle`에서 앞 `(…)` 하나를 떼고 비교. 권 표시·판 낱말은 지금처럼 괄호 포함 전체 제목에서 읽음 → 「(개정판) X」, 「(2024) X」, 「(상) X」는 권 표시가 달라 따로 남음. 떼고 남는 게 없으면 그대로 | `LEADING_SERIES`에 `\([^)]*\)`를 더함(`NationalBibliography`와 같은 모양). `main_title_norm`, ③ 키, ④ 키가 모두 바뀜 |
+| 고치는 것 | 230325 ↔ 「백만장자 마인드」 줄들(첫 저자가 같으면). 부제가 있는 줄과 없는 줄은 사이클 12 최종 규칙(같은 도서관에 따로 있으면 나눔, `PF` 3474행)에 따라 합쳐짐 [확인 필요: dry run] | (b)-1 전부 + 도서관 줄의 ③ 키가 국가서지 키와 맞아 ISBN이 더 붙음 + 제목 "정확히 일치" 검색 「백만장자 마인드」가 괄호 줄도 찾음 |
+| 깨질 수 있는 것 | 앞 괄호가 **책 종류**인 경우: 「(만화) 삼국지」 / 「삼국지」, 「(큰글자책) X」, 「(영문판) X」, 「(오디오북) X」가 같은 저자·출판사면 합쳐짐 → 판 낱말 목록(`EDITION_WORDS` 42~43행)에 없는 종류 낱말이 문제. 표본으로 상위 괄호 낱말을 보고 "떼지 않을 낱말" 목록을 둘지 정함 | (b)-1 위험 + 검색 정확 일치가 넓어짐(「(만화) 삼국지」가 "삼국지" 정확 일치에 나옴), 정확 일치 순위가 바뀜. ③에서 국가서지 ISBN이 잘못 붙을 가능성(키가 모호하면 안 붙는 장치는 있음, `NationalBibliography.java` 172~178행). 가져오기 규칙 변경이 검색 쪽 규칙 변경이 되어 ADR-0069의 "검색어 다듬기 규칙" 절차를 따라야 함 |
+| 못 고치는 것 | 402245처럼 괄호 없이 수식어를 본제목에 붙인 줄 (두 안 모두) | 같음 |
+| 잴 방법 | SQL 3으로 앞 괄호 낱말 분포 → 위험 낱말 확인, SQL 4로 새로 같은 키가 될 책 쌍 어림 → dry run + `regroup` 합쳐짐 표본 20권 | (b)-1 방법 + 국가서지 ISBN 붙음 수(`nationalBibliography…` 카운터) 전후 비교 + 검색 탐침(제목 정확 일치 몇 개) |
+
+SQL 3 (앞 괄호 낱말 분포):
+```sql
+SELECT substring(title FROM '^\s*\(([^)]*)\)') AS lead, count(*)
+FROM catalog.book WHERE title ~ '^\s*\([^)]*\)'
+GROUP BY 1 ORDER BY 2 DESC LIMIT 200;
+```
+SQL 4 (괄호를 떼면 다른 책과 본제목·출판사가 같아지는 책 — 첫 저자 비교는 표본에서):
+```sql
+SELECT a.id, a.title, b.id, b.title, a.author_display, b.author_display
+FROM catalog.book a JOIN catalog.book b
+  ON regexp_replace(a.main_title_norm, '^\([^)]*\)', '') = b.main_title_norm
+ AND a.publisher_norm = b.publisher_norm AND a.id <> b.id
+WHERE a.main_title_norm ~ '^\(' LIMIT 200;   -- 먼저 count(*)
+```
+
+- 덧붙임(안으로 내지 않음): 402245까지 모으려면 "괄호를 뗀 키"와 "괄호만 푼 키" 두 개로 이어 붙여야 하는데, 키가 둘이면 묶음이 사슬처럼 이어져 잘못 합침이 커지고 세 방식(compact·sql·objects)을 모두 고쳐야 함 → 이번엔 권하지 않음
+
+## (c) 역할 낱말 뒤 구분자가 빠진 줄 — 「루이스 캐럴 저이소연 역」
+
+### 증거
+
+- `PF` 3373행(R5 표본 10번): 「이상한 나라의 앨리스」(펭귄클래식코리아) 2020-03-01 줄 저자 「루이스 캐럴 저이소연 역」
+- **주의**: 이 예의 두 줄은 사이트에서 **다른 판**으로 확인됨 — 2010 주해판(교보, ISBN 9788901105949) / 2020 마카롱 동화 에디션(YES24, ISBN 없음) (`PF` 3410~3411행). (c)를 고치면 사이클 07 도서관 없이도 두 줄이 합쳐질 수 있음(지금 전체 데이터에서는 이미 합쳐져 있음, R1-3 받아들인 위험)
+- 로컬 파일에서 같은 모양(`[가-힣] 저[가-힣]{2,3} (역|옮김)`)은 이 한 줄만 찾음(`data/cycle12/r5-sample.md` 13행). 수집 원문 전체는 DB에만 있어 **전체 수는 모름**
+
+### 지금 코드가 하는 일
+
+- 한 덩이(`/`·`,` 없음) 「루이스 캐럴 저이소연 역」 → `TRAILING_ROLE`(`C/Contributors.java` 66~67행)이 끝의 「 역」만 떼어 **이름 「루이스 캐럴 저이소연」, 역할 TRANSLATOR** 한 사람
+- 첫 저자는 AUTHOR·UNKNOWN만 봄(`I/SameTextKey.java` 338~345행, `I/BookGrouper.java` 113~120행) → 이 줄은 첫 저자 **없음** → ③·④ 키 없음(합치지 않음)
+- 검색: 저자 검색 기본 역할은 AUTHOR·UNKNOWN(`catalog/internal/web/BookParams.java` 76행) → "루이스 캐럴" 저자 검색에 이 책이 안 나옴. 이름 다듬기 `name_norm` = 「루이스캐럴저이소연」
+
+### 붙을 수 있는 역할 낱말과 이름을 잘못 자를 위험
+
+`ROLE_WORDS`(`C/Contributors.java` 39~56행) 중 앞사람 뒤에 붙어 다음 이름 앞에 올 수 있는 것과, 그 글자로 **시작하는** 실제 이름(공백 뒤 낱말 첫머리가 문제이므로 "이름이 그 글자로 시작하는가"가 위험):
+
+| 붙는 낱말 | 예 | 그 글자로 시작하는 실제 이름 (데이터에서 센 것 아님, 일반 지식 예) | 위험 |
+|---|---|---|---|
+| 저, 저자 | 「A 저B 역」 | 「저우언라이」, 「저우싱츠」 같은 중국 인명 한글 표기 | 낮음~중간 |
+| 지음, 지은이 | 「A 지음B 옮김」 | 모름 | 낮음 |
+| 글 | 「A 글B 그림」(그림책) | 단체 「글공작소」류 [확인 필요] | 중간 |
+| 역, 역자 | 「A 역B 그림」 | 「역사…연구회」 같은 단체 | 낮음 |
+| 옮김, 옮긴이 | 「A 옮김B 그림」 | 모름 | 낮음 |
+| 그림 | 「A 그림B 글」 | **「그림 형제」/「그림형제」** (Grimm) | 높음 |
+| 편, 편저, 편역, 엮음 | 「A 편B 역」 | **성씨 「편」**: 「편혜영」(소설가), 「편해문」 등 | 높음 — 「정이현 편혜영 저」처럼 쉼표 없이 이름을 늘어놓은 줄을 「정이현 편 / 혜영 저」로 자름 |
+| 감수, 기획, 사진, 해설 | 드묾 | 모름 | 낮음 |
+
+- 실제 데이터에서 그 글자로 시작하는 이름 수는 **모름** → 아래 SQL 6으로 셈
+
+### 안
+
+| | (c)-1 좁은 규칙: 저자 낱말 + 붙은 이름 + 다른 역할 낱말 | (c)-2 넓은 규칙: 공백 뒤 낱말이 역할 낱말로 시작하고 덩이가 역할 낱말로 끝나면 자름 |
+|---|---|---|
+| 규칙 | 한 덩이가 `^(.+?)\s+(저|저자|지음|지은이|글)([가-힣]{2,4})\s+(역|옮김|옮긴이|번역|역자|그림)$`일 때만 「앞 이름 + 첫 역할」/「붙은 이름 + 둘째 역할」 두 사람으로 나눔. 첫 낱말에 「편」·「그림」·「역」은 넣지 않음 | `ROLE_WORDS` 전체(긴 낱말부터)를 공백 뒤 낱말 머리에서 찾아, 뒤에 한글 이름이 붙고 덩이 끝에 역할 낱말이 있으면 나눔. 여러 번 반복(「A 저B 역C 그림」) |
+| 고치는 것 | 「루이스 캐럴 저이소연 역」 → AUTHOR 루이스 캐럴 / TRANSLATOR 이소연. 첫 저자가 생겨 ③·④ 키가 생기고, "루이스 캐럴" 저자 검색·"이소연" 옮긴이 정확 일치에 나옴 | (c)-1 전부 + 「A 편B 역」, 「A 그림B 글」, 셋 이상 붙은 줄 |
+| 깨질 수 있는 것 | 붙은 이름이 2~4자 한글이 아닐 때(외국 인명 「저메리 …」)는 안 잡힘(안전 쪽). 「저우…」 이름 앞에 공백으로 다른 이름이 오고 끝에 역할 낱말이 있으면 잘못 자름(드묾으로 보임) | 성 「편」·「그림 형제」를 잘못 자름 → 사람 이름이 바뀌어 저자 검색(단어·정확)과 첫 저자 키가 달라짐 → 같은 책이 갈리거나 다른 책이 합쳐짐 |
+| 같은 책이 모이는 대신 | 예 「이상한 나라의 앨리스」처럼 판이 다른 ISBN 없는 줄이 합쳐질 수 있음(R1-3, 받아들인 위험) | 같음 |
+| 검색 | `catalog.normalize`가 검색어에도 쓰이지만 `parse`는 저장 값에만 쓰이고 검색어는 `nameExact`/`words`(`C/CatalogText.java` 52~57·118~120행) — 검색어 쪽 바뀜 없음. 저장 값이 바뀌므로 다시 가져와야 함 | 같음 |
+| 잴 방법 | SQL 5로 해당 줄 수·표본 50 → 규칙 전후 `parse` 결과 비교(서로 다른 `author_raw`만 뽑아 작은 시험으로 돌림) → dry run + `regroup` | (c)-1 + SQL 6으로 역할 글자로 시작하는 이름 상위 100개를 사람이 봄 |
+
+SQL 5 (붙은 표기 줄 수):
+```sql
+SELECT count(*), count(DISTINCT author_raw) FROM catalog.holding
+WHERE author_raw ~ '\S\s+(저|저자|지음|지은이|글)[가-힣]{2,4}\s+(역|옮김|옮긴이|번역|역자|그림)$';
+-- (c)-2 범위: ROLE_WORDS 전체로 바꿔 같은 식, 표본 50줄은 ORDER BY random() LIMIT 50
+```
+SQL 6 (역할 글자로 시작하는 이름 — 잘못 자를 위험):
+```sql
+SELECT name, count(*) FROM catalog.book_contributor
+WHERE name ~ '(^|\s)(저|역|글|편|그림|지음|엮음|옮김)[가-힣]{1,3}($|\s)'
+GROUP BY name ORDER BY 2 DESC LIMIT 100;
+```
+
+## 세 가지를 같이 넣을 때 측정 순서 (방법만)
+
+1. SQL 1~6으로 규모와 위험 낱말 확인 (dev 세션)
+2. 바꾼 `Contributors`/`SameTextKey`로 dry run 한 번 → 사이클 12 기준값(책 1,563,167, 부제로 나뉨 12,389; scope.md 7번)과 `compare_grouping.py regroup` → 합쳐짐·나뉨 각 무작위 20권, 원인별(꺾쇠/a/b/c)로 나눠 셈
+3. 「백만장자 마인드」(율리시즈) 줄 수 전후 (지금 7줄, `PF` 3474행). 기대: 꺾쇠+(b)로 38469·421535·230325가 모임, (a) 안에 따라 980346, 402245와 저자·출판사 뒤바뀐 247114는 남음
+4. 사서추천 맞춘 수 72/108 다시 잼 (scope.md 8번)
+
+## 확인 필요
+
+| 항목 | 방법 |
+|---|---|
+| 「김근아」가 저자 칸 오류인지 | (a) 확인 방법 1~3 (DB 조회 + 사이트 열기) |
+| `holding.alt_code`가 여러 도서관에 같은 뜻인지 | SQL 2, dev 코드에서 수집기가 무엇을 넣는지 확인 |
+| 앞 괄호 낱말 중 책 종류 낱말 | SQL 3 |
+| 붙은 역할 표기 줄 수, 역할 글자로 시작하는 이름 | SQL 5·6 |
+| 목록 규칙에서 표제 앞 괄호(관제)의 공식 정의 | 국립중앙도서관 KORMARC 문서 확인 (이번엔 안 봄) |
+| 저자·출판사가 뒤바뀐 줄(247114) 처리 | 사용자에게 질문 (backlog 후보) |

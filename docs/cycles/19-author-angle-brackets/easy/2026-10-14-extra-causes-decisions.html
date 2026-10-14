@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 19 세 원인 고치기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}.an2{font-size:15px;font-weight:600;color:var(--muted)}.item h3:not(:has(.no)){font-size:19px;color:var(--muted)}
+
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0 6px}
+.shot{flex:none;max-width:100%}
+.shot .cap{font-size:15px;font-weight:700;color:var(--muted);margin:0 0 6px}
+.fr{position:relative;border:3px solid var(--muted);background:var(--bg);overflow:hidden;font-size:12px;line-height:1.45;color:var(--text)}
+.fr.pc{width:820px;max-width:100%;height:440px;border-radius:10px}
+.fr.tb{width:440px;max-width:100%;height:560px;border-radius:18px}
+.fr.ph{width:270px;max-width:100%;height:560px;border-radius:26px}
+.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+.hd b{font-size:14px}.sp{flex:1}
+.bt{display:inline-block;border-radius:6px;padding:5px 12px;border:1px solid var(--line);background:var(--card);white-space:nowrap;text-align:center}
+.bt.pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.bt.off{opacity:.45}
+.bt.nv{background:#03C75A;color:#fff;border-color:#03C75A;display:block;padding:9px;font-weight:700}
+.bt.kk{background:#FEE500;color:#191919;border-color:#FEE500;display:block;padding:9px;font-weight:700}
+.bt.dng{color:var(--no);border-color:var(--no)}
+.nt{display:flex;gap:8px;background:var(--warn-bg);padding:8px 14px;border-bottom:1px solid var(--line)}
+.bd{padding:16px 14px}.pc .bd{padding:18px 120px}.tb .bd{padding:18px 40px}
+.sb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 12px;color:var(--muted)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:4px 0}.bar.s{width:45%}.bar.m{width:70%}
+.ft{position:absolute;left:0;right:0;bottom:0;text-align:center;padding:8px;color:var(--muted);font-size:11px;background:var(--bg)}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.md{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow-lg)}
+.ph .md{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.md h4{margin:0 0 10px;font-size:14px;display:flex}.md h4 span{margin-left:auto;font-weight:400}
+.md p{margin:6px 0}.md .g{display:grid;gap:8px}.md .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hint{color:var(--muted);font-size:11px;text-align:center;margin-top:10px}
+.pg{max-width:360px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pg h4{margin:0 0 10px;font-size:14px}
+.box{background:var(--code-bg);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;margin-top:9px}.ck i{flex:none;width:13px;height:13px;border:2px solid var(--muted);border-radius:3px}.ck a{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}
+.ck.all{font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)}.ck.all i{border-color:var(--accent)}
+.sec{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}.sec b{display:block;margin-bottom:6px}
+.doc2{max-width:520px;margin:0 auto}.doc2 h4{font-size:15px;margin:0 0 4px}
+.note{font-size:17px;color:var(--muted)}
+.mk{border-top:1px solid var(--line);padding:16px 0 4px}.mkt{font-size:20px;font-weight:700;margin:0 0 2px}
+.src{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+.flow{display:grid;gap:10px;margin:10px 0 16px}.lane{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--card)}.lane b{display:block;margin-bottom:4px}.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{font-size:14px;border-radius:6px;padding:2px 8px;background:var(--code-bg)}.chip.new{background:var(--warn-bg)}.chip.dev{background:var(--ok-bg)}.arrow{text-align:center;color:var(--muted);font-size:18px;line-height:1}
+</style>
+<style>
+main{max-width:1080px}
+.pick{display:inline-block;font-size:14px;font-weight:700;color:var(--warn);background:var(--warn-bg);border-radius:6px;padding:1px 8px}
+.rec{display:inline-block;font-size:15px;font-weight:700;color:var(--ok);background:var(--ok-bg);border-radius:6px;padding:1px 8px}
+.ex{background:var(--ok-bg);border-radius:10px;padding:12px 16px;margin:10px 0}.ex b{color:var(--ok)}
+.alt{background:var(--code-bg);border-radius:10px;padding:12px 16px}
+.toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px 18px;font-size:18px;margin:6px 0 0;padding:0;list-style:none}
+.toc li{display:flex;gap:8px;align-items:baseline}
+figure{max-width:440px}
+figure svg text{font-family:"Noto Sans KR",system-ui,sans-serif}
+.card>figure{margin-left:auto;margin-right:auto}
+@media (min-width:980px){
+ .item{display:grid;grid-template-columns:minmax(0,1fr) 420px;column-gap:32px;align-items:start}
+ .item>*{grid-column:1}
+ .item>h3{grid-column:1 / -1}
+ .item>figure{grid-column:2;grid-row:2 / span 30;margin-top:4px}
+}
+@media (max-width:600px){body{font-size:18px}.card{padding:20px 16px}.lead{font-size:23px}}
+</style>
+</head><body><main class="doc">
+<p class="lead">"같이 고치자"고 하신 세 원인을<br>어떻게 고칠지 정해 주세요</p>
+<p class="sub">2026-10-14 · 사이클 19 범위 결정 #2의 이어서 묻기. 근거: <code>docs/cycles/19-author-angle-brackets/research.md</code> (dev 코드·사이클 12 조사 파일·국가서지 파일을 읽음, dev DB는 돌리지 않아 줄 수는 모름 — 명세 때 SQL로 셈).</p>
+<section class="card"><h2><span class="num">1</span>한 책이 어떻게 갈라져 있나</h2>
+<div class="gist">「백만장자 마인드」(율리시즈)는 지금 여러 줄로 보입니다. 꺾쇠 규칙만으로는 둘만 모이고, 나머지는 원인이 다릅니다.</div>
+<figure><svg viewBox="0 0 420 268" width="100%" role="img" aria-label="「백만장자 마인드」(율리시즈)의 따로 보이는 줄들과 각 규칙이 모으는 줄 (dev 사이클 12 조사 파일)"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs><rect x="0" y="4" width="420" height="38" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="10" y="28" font-size="13" text-anchor="start" fill="var(--text)" font-weight="400">백만장자 마인드 · 모리세 시게토모</text><text x="410" y="28" font-size="12" text-anchor="end" fill="var(--ok)" font-weight="700">기준 줄</text><rect x="0" y="48" width="420" height="38" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="10" y="72" font-size="13" text-anchor="start" fill="var(--text)" font-weight="400">백만장자 마인드 · &lt;모리세 시게토모&gt; 저/&lt;이민연&gt; 역</text><text x="410" y="72" font-size="12" text-anchor="end" fill="var(--ok)" font-weight="700">꺾쇠 → 모임</text><rect x="0" y="92" width="420" height="38" rx="8" fill="var(--accent-bg)" stroke="var(--accent)"/><text x="10" y="116" font-size="13" text-anchor="start" fill="var(--text)" font-weight="400">(부를 끌어 당기는) 백만장자 마인드 …</text><text x="410" y="116" font-size="12" text-anchor="end" fill="var(--accent)" font-weight="700">#2 앞 괄호 → 모임</text><rect x="0" y="136" width="420" height="38" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="10" y="160" font-size="13" text-anchor="start" fill="var(--text)" font-weight="400">백만장자 마인드 · 김근아 저자</text><text x="410" y="160" font-size="12" text-anchor="end" fill="var(--warn)" font-weight="700">#1 다른 이름 → 안에 따라</text><rect x="0" y="180" width="420" height="38" rx="8" fill="var(--no-bg)" stroke="var(--no)"/><text x="10" y="204" font-size="13" text-anchor="start" fill="var(--text)" font-weight="400">부를 끌어 당기는 백만장자 마인드 …</text><text x="410" y="204" font-size="12" text-anchor="end" fill="var(--no)" font-weight="700">괄호 없음 → 안 모임</text><rect x="0" y="224" width="420" height="38" rx="8" fill="var(--no-bg)" stroke="var(--no)"/><text x="10" y="248" font-size="13" text-anchor="start" fill="var(--text)" font-weight="400">저자 율리시즈 · 출판사 모리세 시게토모</text><text x="410" y="248" font-size="12" text-anchor="end" fill="var(--no)" font-weight="700">#4 뒤바뀜 → 안 모임</text></svg><figcaption>「백만장자 마인드」(율리시즈)의 따로 보이는 줄들과 각 규칙이 모으는 줄 (dev 사이클 12 조사 파일)</figcaption></figure>
+</section>
+<section class="card"><h2><span class="num">2</span>저자 칸에 다른 이름이 적힌 줄</h2>
+<div class="gist">「김근아 저자」는 국가서지에도, 꺾쇠 줄의 옮긴이에도 없는 이름입니다. 한 공급 데이터의 저자 칸 오류일 가능성이 높지만 확인 못 함(추정). 같은 모양의 오류가 사이클 12에서 이미 둘 확인됐습니다(「열 줌의 흙」, 「열국지 4」 — 공급사 상품 코드가 같은 같은 책).</div>
+<div class="item"><h3><span class="no">1</span>먼저 dev DB와 도서관 사이트로 김근아 줄이 무엇인지 확인하고, 공급사 상품 코드가 여러 도서관에서 같은 책을 가리키면 "코드가 같으면 저자를 보지 않고 모음", 아니면 "같은 날·같은 제목·같은 출판사면 모음"으로 고칩니다 [안]</h3>
+<p class="ex"><b>이렇게 되면</b>: 코드로 모으면 날짜가 달라도 같은 상품의 저자 칸 오류를 다 고칩니다. 같은 날 규칙은 김근아 줄처럼 꺾쇠 줄과 날짜가 같은 것만 고칩니다. 어느 쪽이든 합쳐진 책의 대표 저자는 가장 많은 표기(모리세 시게토모)가 되어, "김근아"로 검색하면 이 책이 더는 나오지 않습니다.</p>
+<p class="alt"><b>다른 선택</b>: 같은 날 규칙만 → 확인 없이 바로 넣지만, 같은 출판사가 같은 날 등록한 다른 저자의 같은 제목 책(번역본 둘 등)이 잘못 합쳐질 수 있습니다. / 코드 규칙만 → 코드가 도서관마다 다르면 효과가 없고, 재사용되면 다른 책을 합칩니다.</p>
+<p><span class="rec">추천</span> 확인하고 결과에 따라</p><figure><svg viewBox="0 0 420 222" width="100%" role="img" aria-label="먼저 확인하고, 결과에 따라 두 규칙 중 하나"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs><rect x="0" y="8" width="200" height="52" rx="8" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="1.5"/><text x="100.0" y="28.4" font-size="14" text-anchor="middle" fill="var(--text)" font-weight="400">김근아 줄</text><text x="100.0" y="49.4" font-size="14" text-anchor="middle" fill="var(--text)" font-weight="400">2022-04-11</text><rect x="220" y="8" width="200" height="52" rx="8" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="1.5"/><text x="320.0" y="28.4" font-size="14" text-anchor="middle" fill="var(--text)" font-weight="400">꺾쇠 줄</text><text x="320.0" y="49.4" font-size="14" text-anchor="middle" fill="var(--text)" font-weight="400">2022-04-11</text><rect x="60" y="90" width="300" height="40" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="1.5"/><text x="210.0" y="114.9" font-size="14" text-anchor="middle" fill="var(--text)" font-weight="400">① 사이트·DB로 무슨 줄인지 확인</text><line x1="100" y1="60" x2="160" y2="88" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ah)"/><line x1="320" y1="60" x2="260" y2="88" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ah)"/><rect x="0" y="160" width="200" height="52" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.5"/><text x="100.0" y="180.55" font-size="13" text-anchor="middle" fill="var(--text)" font-weight="400">공급사 상품 코드 같음</text><text x="100.0" y="200.55" font-size="13" text-anchor="middle" fill="var(--text)" font-weight="400">→ 코드로 모음</text><rect x="220" y="160" width="200" height="52" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="1.5"/><text x="320.0" y="180.55" font-size="13" text-anchor="middle" fill="var(--text)" font-weight="400">코드가 도서관마다 다름</text><text x="320.0" y="200.55" font-size="13" text-anchor="middle" fill="var(--text)" font-weight="400">→ 같은 날·제목·출판사</text><line x1="160" y1="130" x2="100" y2="158" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ah)"/><line x1="260" y1="130" x2="320" y2="158" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ah)"/></svg><figcaption>먼저 확인하고, 결과에 따라 두 규칙 중 하나</figcaption></figure>
+</div>
+</section>
+<section class="card"><h2><span class="num">3</span>제목 앞 괄호로 본제목이 달라지는 줄</h2>
+<div class="gist">「(부를 끌어 당기는) 백만장자 마인드」는 앞 괄호 때문에 본제목이 「백만장자 마인드」와 다르게 읽힙니다. 가져오기는 국가서지 쪽에서는 이미 앞 괄호를 떼고 있습니다.</div>
+<div class="item"><h3><span class="no">2</span>책 묶기의 비교 제목에서만 앞 괄호를 떼고, 책 종류를 뜻하는 괄호((만화), (큰글자책), (영문판), (오디오북) 등)는 떼지 않습니다 [안]</h3>
+<p class="ex"><b>이렇게 되면</b>: 화면에 보이는 제목과 검색은 그대로입니다. 「(만화) 삼국지」와 「삼국지」처럼 종류가 다른 책은 따로 남습니다. 빼는 낱말 목록은 명세 때 수집 데이터에서 앞 괄호 낱말 분포를 세어 정합니다. 괄호 없이 「부를 끌어 당기는 백만장자 마인드」로 적힌 줄은 이 규칙으로도 모이지 않습니다(두 키로 이어 붙이면 잘못 합침이 커져 넣지 않음).</p>
+<p class="alt"><b>다른 선택</b>: 본제목 규칙 자체에서 뗌 → 검색·화면 제목까지 바뀌어 확인할 곳이 커집니다.</p>
+<p><span class="rec">추천</span> 묶기 비교에서만, 종류 낱말은 빼고</p><figure><svg viewBox="0 0 420 170" width="100%" role="img" aria-label="앞 괄호는 묶기 비교에서만 떼고, 화면 제목과 검색은 그대로"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs><rect x="0" y="8" width="200" height="44" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="1.5"/><text x="100.0" y="24.55" font-size="13" text-anchor="middle" fill="var(--text)" font-weight="400">(부를 끌어 당기는)</text><text x="100.0" y="44.55" font-size="13" text-anchor="middle" fill="var(--text)" font-weight="400">백만장자 마인드</text><rect x="220" y="8" width="200" height="44" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="1.5"/><text x="320.0" y="34.9" font-size="14" text-anchor="middle" fill="var(--text)" font-weight="400">백만장자 마인드</text><line x1="100" y1="52" x2="180" y2="78" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ah)"/><line x1="320" y1="52" x2="240" y2="78" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ah)"/><rect x="110" y="80" width="200" height="36" rx="8" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="1.5"/><text x="210.0" y="102.55" font-size="13" text-anchor="middle" fill="var(--text)" font-weight="400">묶기 비교 제목이 같아짐</text><text x="210" y="140" font-size="12" text-anchor="middle" fill="var(--no)" font-weight="700">빼는 낱말 예: (만화) (큰글자책) (영문판) (오디오북)</text><text x="210" y="160" font-size="12" text-anchor="middle" fill="var(--muted)" font-weight="400">→ 다른 종류의 책이 합쳐지지 않게</text></svg><figcaption>앞 괄호는 묶기 비교에서만 떼고, 화면 제목과 검색은 그대로</figcaption></figure>
+</div>
+</section>
+<section class="card"><h2><span class="num">4</span>역할 낱말 뒤 띄어쓰기가 빠진 저자 칸</h2>
+<div class="gist">「루이스 캐럴 저이소연 역」은 지금 한 사람 이름처럼 읽혀 첫 저자가 생기지 않습니다. 참고: 이 예의 두 줄은 사이트에서 확인한 다른 판이라, 고쳐도 서로 합쳐지지는 않고 저자·옮긴이 검색이 맞게 됩니다.</div>
+<div class="item"><h3><span class="no">3</span>좁은 규칙으로 자릅니다: "저·지음·글" 뒤에 한글 2~4자 이름이 붙고 그 뒤가 "역·옮김·그림"일 때만 [안]</h3>
+<p class="ex"><b>이렇게 되면</b>: 「저이소연 역」 → 지은이 루이스 캐럴, 옮긴이 이소연. "편"으로 끝나는 이름이나 「그림 형제」처럼 역할 글자가 이름에 든 경우는 자르지 않습니다. 해당 줄 수와 표본 50줄은 명세 때 SQL로 확인합니다.</p>
+<p class="alt"><b>다른 선택</b>: 넓은 규칙(모든 역할 낱말) → 더 많이 고치지만 성씨 "편", "그림 형제" 같은 이름을 잘못 자를 수 있습니다.</p>
+<p><span class="rec">추천</span> 좁은 규칙</p><figure><svg viewBox="0 0 420 172" width="100%" role="img" aria-label="좁은 규칙: 역할 낱말 사이에 이름이 끼인 모양만 자릅니다"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs><rect x="0" y="8" width="420" height="36" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="1.5"/><text x="210.0" y="30.9" font-size="14" text-anchor="middle" fill="var(--text)" font-weight="400">「루이스 캐럴 저이소연 역」</text><rect x="0" y="74" width="200" height="46" rx="8" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="1.5"/><text x="100.0" y="91.4" font-size="14" text-anchor="middle" fill="var(--text)" font-weight="400">지은이</text><text x="100.0" y="112.4" font-size="14" text-anchor="middle" fill="var(--text)" font-weight="400">루이스 캐럴</text><rect x="220" y="74" width="200" height="46" rx="8" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="1.5"/><text x="320.0" y="91.4" font-size="14" text-anchor="middle" fill="var(--text)" font-weight="400">옮긴이</text><text x="320.0" y="112.4" font-size="14" text-anchor="middle" fill="var(--text)" font-weight="400">이소연</text><line x1="120" y1="44" x2="100" y2="72" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ah)"/><line x1="300" y1="44" x2="320" y2="72" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ah)"/><text x="210" y="142" font-size="12" text-anchor="middle" fill="var(--accent)" font-weight="700">자르는 경우: 저·지음·글 + 한글 2~4자 + 역·옮김·그림</text><text x="210" y="162" font-size="12" text-anchor="middle" fill="var(--muted)" font-weight="400">안 자름: "편"(성씨 편)·"그림 형제" 같은 이름</text></svg><figcaption>좁은 규칙: 역할 낱말 사이에 이름이 끼인 모양만 자릅니다</figcaption></figure>
+</div>
+</section>
+<section class="card"><h2><span class="num">5</span>조사 중 찾은 네 번째 원인</h2>
+<div class="gist">저자 칸과 출판사 칸이 뒤바뀐 줄이 있습니다: 저자 「율리시즈」, 출판사 「모리세 시게토모」. 위 세 규칙 어느 것으로도 모이지 않습니다.</div>
+<div class="item"><h3><span class="no">4</span>저자·출판사가 뒤바뀐 줄은 이번에 하지 않고 backlog에 한 줄로 보냅니다 [안]</h3>
+<p class="ex"><b>이렇게 되면</b>: 사이클 19는 위 세 가지와 꺾쇠까지만 합니다. 뒤바뀐 줄은 얼마나 있는지 세는 것부터 따로 합니다.</p>
+<p class="alt"><b>다른 선택</b>: 같이 고침 → 칸을 바꿔 읽는 규칙은 잘못 바꿀 위험이 커서 먼저 몇 줄인지 세어 봐야 합니다.</p>
+<p><span class="rec">추천</span> backlog로</p></div>
+</section>
+<p class="foot">원본: <code>docs/cycles/19-author-angle-brackets/research.md</code>, <code>scope.md</code>. 이 페이지는 요약이며 근거는 원본에 있습니다.</p>
+</main></body></html>
