@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 18 1차 조사</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.card h3.t{font-size:21px;margin:26px 0 8px}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font-size:15px;line-height:1.55;margin:8px 0 6px;word-break:normal}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+pre .cm{color:var(--muted)} pre .hl{background:var(--warn-bg);color:var(--warn);font-weight:700}
+.src{color:var(--muted);font-size:15px;margin:14px 0 0}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+.fig{overflow-x:auto;margin:8px 0 4px}
+.fig svg{width:100%;min-width:640px;height:auto;display:block}
+.mine{border:1px dashed var(--warn);background:var(--warn-bg);border-radius:8px;padding:10px 14px;font-size:18px;margin:10px 0}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0}
+.pc>div{border-radius:10px;padding:12px 16px;font-size:18px}
+.pc .p{background:var(--ok-bg)} .pc .c{background:var(--no-bg)}
+.pc h4{margin:0 0 6px;font-size:18px}
+.pc ul{margin:0;padding-left:20px}
+.pc li{margin:0 0 8px}
+@media (max-width:640px){.pc{grid-template-columns:1fr} body{font-size:18px} .lead{font-size:24px}}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">사이클 18 1차 조사 결과:<br>0권 도서관 대부분은 오디오북만 있는 곳이었습니다</p>
+<p class="sub">책이 0권인 22곳과 군포시도서관을 수집 기록, 서비스 DB, 사이트 첫 화면으로 확인했습니다. 원인이 다섯 가지로 갈렸고, 그중 두 가지는 범위를 정할 때 몰랐던 것이라 새로 정할 것이 5가지 생겼습니다. (2026-10-14)</p>
+
+<section class="card">
+<h2><span class="num">1</span>무엇이 원인이었나</h2>
+<p class="gist">23곳 중 14곳은 사이트에 오디오북만 있습니다. 우리는 오디오북을 가져오지 않기 때문에 서비스에서 0권으로 보였습니다.</p>
+<div class="fig">
+<svg viewBox="0 0 900 250" role="img" aria-label="원인별 도서관 수">
+<g font-size="15" fill="var(--text)">
+<text x="20" y="40">오디오북만 있음</text><rect x="260" y="24" width="560" height="24" rx="4" fill="var(--warn-bg)" stroke="var(--warn)"/><text x="830" y="42">14</text>
+<text x="20" y="80">교보 구독형, 수집 때 0권</text><rect x="260" y="64" width="160" height="24" rx="4" fill="var(--card)" stroke="var(--line)"/><text x="430" y="82">4</text>
+<text x="20" y="120">수집 안 함·옮김 (국회·김천·군포)</text><rect x="260" y="104" width="120" height="24" rx="4" fill="var(--card)" stroke="var(--line)"/><text x="390" y="122">3</text>
+<text x="20" y="160">사이트에 책이 없음 (느티나무)</text><rect x="260" y="144" width="40" height="24" rx="4" fill="var(--card)" stroke="var(--line)"/><text x="310" y="162">1</text>
+<text x="20" y="200">우리 가져오기가 주소를 못 읽음</text><rect x="260" y="184" width="40" height="24" rx="4" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="310" y="202">1</text>
+</g>
+<text x="20" y="238" font-size="13" fill="var(--muted)">막대 길이 = 도서관 수 (한 칸 40 = 1곳). 초록은 우리가 고치면 책이 다시 보이는 곳입니다.</text>
+</svg>
+</div>
+<p class="cap">14곳은 수집이 제대로 끝났고, 사이트가 보여 주는 권수와 모은 수가 같았습니다. 모은 것이 모두 오디오북이었습니다.</p>
+<table>
+<tr><th>원인</th><th>도서관</th><th>사이트에서 본 것 (2026-10-14)</th></tr>
+<tr><td>오디오북만 있음</td><td>울주도서관, 군산교육문화회관 대야분관 (교보 화면 2곳) / 대야분관 북큐브 화면, 남평, 정관, 강원대, 국립아시아문화전당, 명현중, 상관중, 인천연송고, 인천예술고, 인천청량중, 인천효성고, 휴맥 오디오북 (북큐브 12곳)</td><td>분류 메뉴가 "오디오북" 하나뿐. 예: 정관도서관 "전체 (2,982종) / 오디오북 (2,982종)"</td></tr>
+<tr><td>사이트에 책이 없음</td><td>느티나무도서관</td><td>"전체 (0종)"</td></tr>
+<tr><td>가져오기가 주소를 못 읽음</td><td>현대제철</td><td>사이트는 열림. 전자책 241권을 모아 두었는데 서비스에 하나도 안 들어감</td></tr>
+<tr><td>교보 구독형, 수집 때 0권</td><td>성남문화재단, SSAFY, 서울고은초, 청원대길초</td><td>열지 않음(우리 집 IP를 막은 서버). 막히기 전인 10월 4일 수집 때 사이트 권수가 0</td></tr>
+<tr><td>이미 알려짐</td><td>국회도서관, 김천시립도서관, 군포시도서관</td><td>범위 결정에서 끄기로 정함. 군포는 46번 군포시중앙도서관과 같은 사이트로 넘어감을 확인</td></tr>
+</table>
+<p class="src">자세한 근거: <code>docs/cycles/18-empty-library-holdings/research.md</code> 2절</p>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>오디오북만 있는 곳과 빈 곳</h2>
+<p class="gist">범위를 정할 때 승인한 규칙("오디오북 전용이면 끄고 이유를 적음")을 그대로 대는 안입니다.</p>
+<div class="item">
+<h3><span class="no">1</span>오디오북만 있는 14곳과 느티나무도서관을 끔</h3>
+<p>[안] 위 표의 15곳을 서비스에서 끄고, dev <code>library-site-issues.md</code>에 사이트 첫 화면의 분류 메뉴(원문)와 함께 "오디오북 전용" 또는 "책 0종"으로 적습니다. 범위 결정에서 끄기로 한 국회·김천·군포 3곳을 더하면 이 사이클에서 끄는 도서관은 18곳입니다.</p>
+<p class="alt"><b>다른 선택:</b> 켜 두고 기록만 → 이용자가 골라도 책이 계속 안 나옵니다. / 오디오북도 가져오기 → 우리는 오디오북을 다루지 않기로 했으므로(가져오기에서 뺌) 서비스 전체 규칙이 바뀝니다.</p>
+<p class="rec">추천: 끔.</p>
+</div>
+<div class="item">
+<h3><span class="no">2</span>다시 생기지 않게: 새 도서관을 넣을 때 전자책이 0권인 곳은 넣지 않음</h3>
+<p>[안] 이 15곳은 사이클 07에서 수집으로 찾은 도서관을 넣을 때 "수집 성공"만 보고 들어왔습니다. 앞으로 새 도서관 넣기 명령(사이클 13에서 만든 것)이 미리 보기 보고서를 만들 때, 모은 책이 모두 오디오북이거나 0권인 곳은 "넣지 않음"으로 빼게 합니다. 예: 다음에 오디오북만 있는 학교 사이트를 찾으면 보고서에 "전자책 0권으로 뺌"으로 나오고 서비스에는 안 들어갑니다.</p>
+<p class="alt"><b>다른 선택:</b> 이번에는 끄기만 하고 넣기 규칙은 backlog → 이번 사이클이 작아지지만, 다음 넣기 때 같은 일이 생길 수 있습니다.</p>
+<p class="rec">추천: 이번에 포함. 넣기 명령에 거름 하나를 더하는 일입니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>현대제철: 우리 쪽 문제</h2>
+<p class="gist">사이트 주소에 밑줄(<code>_</code>)이 들어 있어, 우리 가져오기 코드가 책 주소를 "읽을 수 없는 주소"로 보고 241권을 모두 건너뛰었습니다.</p>
+<div class="fig">
+<svg viewBox="0 0 900 150" role="img" aria-label="밑줄 주소가 건너뛰어지는 과정">
+<g font-size="15" fill="var(--text)">
+<rect x="20" y="40" width="250" height="70" rx="10" fill="var(--card)" stroke="var(--line)"/>
+<text x="145" y="70" text-anchor="middle">수집: 전자책 241권</text>
+<text x="145" y="94" text-anchor="middle" font-size="13" fill="var(--muted)">hs_partners.yes24library.com</text>
+<rect x="320" y="40" width="260" height="70" rx="10" fill="var(--warn-bg)" stroke="var(--warn)"/>
+<text x="450" y="70" text-anchor="middle">가져오기: 주소 읽기</text>
+<text x="450" y="94" text-anchor="middle" font-size="13" fill="var(--muted)">밑줄 → "호스트 없음"</text>
+<rect x="630" y="40" width="250" height="70" rx="10" fill="var(--no-bg)" stroke="var(--no)"/>
+<text x="755" y="70" text-anchor="middle">서비스: 0권</text>
+<text x="755" y="94" text-anchor="middle" font-size="13" fill="var(--muted)">241권 모두 건너뜀</text>
+</g>
+<g stroke="var(--text)" stroke-width="2"><line x1="270" y1="75" x2="320" y2="75"/><line x1="580" y1="75" x2="630" y2="75"/></g>
+</svg>
+</div>
+<p class="cap">우리 가져오기는 Java의 주소 읽기 기능을 씁니다. 이 기능은 호스트 이름에 영문·숫자·<code>-</code>만 받고, 밑줄이 있으면 호스트가 없는 주소로 봅니다.</p>
+<p class="src">근거: Java 21 <code>java.net.URI</code> 공식 문서, <code>getHost()</code> 절 "Each label consists of alphanum characters as well as hyphen characters", https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/net/URI.html (확인 2026-10-14). 우리 코드 dev <code>CollectedCatalog.httpHostOf</code></p>
+<div class="item">
+<h3><span class="no">3</span>가져오기 코드를 고쳐 현대제철 241권을 넣음</h3>
+<p>[안] 가져오기가 밑줄이 있는 호스트도 읽게 고치고, 다음 가져오기 때 현대제철 책이 들어가게 합니다. 수집은 다시 하지 않아도 됩니다(이미 모아 둠). 서비스의 대출 조회와 "도서관에서 직접 찾기"도 이 주소에서 같은 문제가 있는지는 설계 때 코드로 확인합니다(확인 못 함).</p>
+<p class="alt"><b>다른 선택:</b> 현대제철도 끔 → 코드 변경이 없지만, 책이 있는 도서관을 우리 문제로 빼게 됩니다.</p>
+<p class="rec">추천: 고침.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>교보 구독형 서버 4곳: 처음 정한 것과 다른 사실</h2>
+<p class="gist">범위를 정할 때는 "막혀서 못 모은 곳일 수 있다"고 보고 켜 두기로 했습니다. 조사해 보니 막히기 전(10월 4일)에 이미 사이트 권수가 0이었습니다.</p>
+<table>
+<tr><th>도서관</th><th>10월 4일 수집</th><th>지금</th></tr>
+<tr><td>성남문화재단 전자도서관 (1045)</td><td>성공, 사이트 0권</td><td>확인 못 함</td></tr>
+<tr><td>SSAFY(자율PJT) (1131)</td><td>성공, 사이트 0권</td><td>확인 못 함</td></tr>
+<tr><td>서울고은초등학교 (1620)</td><td>성공, 사이트 0권</td><td>확인 못 함</td></tr>
+<tr><td>청원대길초등학교 (2023)</td><td>성공, 사이트 0권</td><td>확인 못 함</td></tr>
+</table>
+<div class="item">
+<h3><span class="no">4</span>교보 구독형 4곳도 끔 (켜 둔다는 결정을 바꿈)</h3>
+<p>[안] 4곳 모두 끄고 "2026-10-04 수집 때 사이트 0권"으로 적습니다. 나중에 다른 IP에서 교보 구독형 서버를 다시 받을 때(backlog) 책이 생겼으면 다시 켭니다.</p>
+<p class="chg">범위 결정 #7 "원인만 적고 켜 둔 채 둠"(2026-10-14 승인)을 바꾸는 안입니다. 그때는 막혀서 빈 것일 수 있다고 봤습니다.</p>
+<p class="alt"><b>다른 선택:</b> 범위 결정대로 켜 둠 → 지금 책이 생겼을 가능성이 남지만, 그때까지 이용자가 골라도 책이 안 나옵니다.</p>
+<p class="rec">추천: 끔. 이러면 이 사이클에서 끄는 도서관은 모두 22곳입니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">5</span>조금 덜 모인 6곳</h2>
+<p class="gist">6곳은 덜 모인 것이 아니었습니다. 사이트 권수에 오디오북·동영상 책이 함께 세어져 있었고, 수집은 사이트 권수만큼 다 모았습니다.</p>
+<table>
+<tr><th>도서관</th><th>사이트 권수 = 모은 수</th><th>서비스에 안 들어가는 것</th></tr>
+<tr><td>마포나루 메타버스도서관</td><td>1,752</td><td>동영상 책 500</td></tr>
+<tr><td>부산광역시립시민도서관</td><td>6,129</td><td>오디오북 894, 동영상 책 200</td></tr>
+<tr><td>경상남도대표도서관</td><td>5,279</td><td>오디오북 865</td></tr>
+<tr><td>영광군립도서관</td><td>5,998</td><td>오디오북 796</td></tr>
+<tr><td>순창공공도서관</td><td>1,838</td><td>오디오북 214</td></tr>
+<tr><td>목포시통합도서관</td><td>7,947</td><td>오디오북 802</td></tr>
+</table>
+<div class="item">
+<h3><span class="no">5</span>6곳은 할 일 없음, 기록만</h3>
+<p>[안] 6곳은 고칠 것이 없다고 research.md에 적고 끝냅니다.</p>
+<p class="alt"><b>다른 선택:</b> 사이트 권수(<code>holdings_count</code>)를 전자책만 센 값으로 고침 → 이 값은 도서관 정렬에 쓰여, 고치면 순서가 바뀝니다. 이 사이클 범위 밖입니다.</p>
+<p class="rec">추천: 기록만.</p>
+</div>
+</section>
+
+<p class="foot">원문: <code>docs/cycles/18-empty-library-holdings/research.md</code>. 범위: <code>scope.md</code>.</p>
+</main>
+</body>
+</html>
