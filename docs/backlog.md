@@ -286,4 +286,4 @@
 - Modulith `Documenter` 출력이 2026-10-12 19:42 것뿐(사이클 13·14 전, `Popular` 있음) → dev main에서 `./gradlew build` 뒤 `docs/current/module-map.md`와 대조 (사이클 13 회고, 2026-10-14)
 - 사이클 12 dry run 설정 `exclude-candidate-libraries`(Java `excludeCandidateLibraries`, 건너뛴 이유 `library_excluded_candidate`)를 `addedLater`에 맞춘 이름으로 바꾸기 — 다음에 가져오기 코드를 고치는 dev 일(예: 사이클 18·19)과 함께 [확정] (사용자 승인, 2026-10-14, 회고 결정 #14) (사이클 13 회고 AC-11 예외, 2026-10-14)
 - 글 화면만 늦게 불러오기: 사이클 16에서 `react-markdown`을 넣어 첫 화면 JS가 170 → 208kB(gzip)로 커짐(HTTP Archive 2024 폰 중앙값 558KB보다 작음). 첫 배포 뒤 실제 속도를 보고 정함 [확정] (사용자 승인, 2026-10-15, 회고 결정 #9) (출처: 사이클 16 회고)
-- 도서관별 하루 응답 표(`usagelog.library_response_daily`)에 "캐시 답" 칸 더하기: 지금은 3분 캐시에서 나온 답이 어디에도 기록되지 않음(dev `BatchRunner.java` 334~338행) [확정] (사용자 제안: "도서관별 하루 표에 \"캐시 답\" 칸을 하나 더하자", 2026-10-15, 회고 결정 #3). 어느 사이클에서 만들지·칸 세부는 결정 페이지로 물음 (출처: 사이클 15 회고)
+- 도서관별 하루 응답 표(`usagelog.library_response_daily`)에 "캐시 답" 칸 더하기: 지금은 3분 캐시에서 나온 답이 어디에도 기록되지 않음(dev `BatchRunner.java` 334~338행) [확정] (사용자 제안: "도서관별 하루 표에 \"캐시 답\" 칸을 하나 더하자", 2026-10-15, 회고 결정 #3). → 사이클 19 인계서에 따로 하는 작은 일로, 칸 `cached_count`(0 이상, 캐시 답마다 1) [확정] (사용자 승인, 2026-10-15, 회고 이어서 #2) (출처: 사이클 15 회고)

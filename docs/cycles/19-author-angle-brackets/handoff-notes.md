@@ -36,4 +36,5 @@
 - dev에 알릴 것:
   - main에서 `./gradlew build` 뒤 Spring Modulith `Documenter` 출력(`build/spring-modulith-docs/`)을 새로 만들어 `usagelog`·`sitecontent`·`picks` 그림 확인 (15 회고 결정 #6)
   - dev `library-maintenance.md` 6-2 "꺼 둔 도서관" 표에 사이클 07에서 끈 135 전라북도교육청통합도서관·2194 장안대학교 (YES24)·2198 성균관대학교 (YES24) 세 줄 더하기 (18 회고 결정 #14)
+- 따로 하는 작은 일 (사이클 15 쪽): `usagelog.library_response_daily`에 칸 `cached_count integer NOT NULL DEFAULT 0 CHECK (cached_count >= 0)`를 더하고, 3분 캐시에서 답을 꺼낼 때마다 1(응답 시간·성공/실패 수에는 넣지 않음). 지금은 `BatchRunner.answered`가 캐시 답이면 바로 빠짐(dev `BatchRunner.java` 334~338행), 도서관별 더 보기(`LibraryEbookController.java` 96행)도 같음. 사용 기록 쪽 새 변경 파일(지금 master 마지막 `usagelog/001` 뒤) [확정] (사용자 제안 2026-10-15, 모양·때 사용자 승인 2026-10-15 회고 이어서 #2). 칸 이름은 [안]
 

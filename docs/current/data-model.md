@@ -822,6 +822,7 @@ erDiagram
 | `screen_event.kind` | `text` | CHECK (`picks_list_view`,`picks_book_view`,`region_change`,`my_library_add`,`my_library_remove`) | 화면 행동 | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2) |
 | `screen_event` 종류별 칸 | `picks_category`, `book_id`, 지역들, `library_id` | 종류에 맞지 않는 칸은 NULL (CHECK) | JSON 칸 없음, 회원 번호 없음 | [확정] ([늘린 기록 설계](../cycles/15-usage-log/easy/2026-10-13-more-actions-design.html) #3) |
 | `library_response_daily` | (day, library_id, source) PK, 수 `integer`, 시간 ms | `source` CHECK (`direct_search`,`holding_fill`), `day`는 서울 날짜 | 서비스 메모리에서 세다가 5초 묶음 때 `ON CONFLICT (day, library_id, source) DO UPDATE SET …_count = …_count + EXCLUDED…, ok_ms_total = … + EXCLUDED…, ok_ms_max = GREATEST(…)`. 보관 1년 | [확정] ([요약 방법](../cycles/15-usage-log/easy/2026-10-13-summary-method.html) #1~#3, [남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2) |
+| `library_response_daily.cached_count` (만들 것) | `integer` NOT NULL DEFAULT 0, CHECK `>= 0` | — | 3분 캐시에서 답을 꺼낼 때마다 1. 응답 시간·성공/실패 수에는 넣지 않음. 사이클 19 인계서에 따로 하는 작은 일로(사용 기록 쪽 새 변경 파일, 지금 마지막 파일 뒤) | [확정] (사용자 제안 2026-10-15 회고 결정 #3, 모양·때 사용자 승인 2026-10-15 회고 이어서 #2). 칸 이름은 [안] |
 | `rejected_event.reason` | `text` | CHECK | `unknown_library`,`invalid_place`,`invalid_screen`,`invalid_book_id`,`malformed`,`unknown_type`,`invalid_value` | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2, [검증](../cycles/15-usage-log/easy/2026-10-14-verify-decisions.html) #2) |
 | `rejected_event.raw_values` | `jsonb` | 2KB 넘으면 잘라 냄 | 받은 값 | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #4) |
 | `dropped_batch.reason` | `text` | CHECK (`db_failure`,`buffer_full`) | 버린 이유 | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2) |
@@ -883,7 +884,7 @@ erDiagram
 | notice_version.notice_id | bigint | NOT NULL, FK `notice_version_notice_id_fkey` → `sitecontent.notice(id)` (같은 모듈) | | [확정] |
 | notice_version.version_no | integer | NOT NULL, CHECK `notice_version_version_no_check (version_no >= 1)` | 판 순번, 주소 `?version=` | [확정] (사용자 제안, 2026-10-13) |
 | notice_version.effective_on | date | NOT NULL | 판 1 = 게시일, 그 뒤 = 고친 날. 앞날이면 그날부터 보임 | [확정] |
-| notice_version.title | text | NOT NULL, CHECK `notice_version_title_check (btrim(title, E' \t\r\n') <> '')` (회고 2026-10-15: dev가 줄바꿈·탭까지 지우게 바꿈, [안] 회고 결정 대기) | 그 판의 제목 | [확정] |
+| notice_version.title | text | NOT NULL, CHECK `notice_version_title_check (btrim(title, E' \t\r\n') <> '')` (회고 2026-10-15: dev가 줄바꿈·탭까지 지우게 바꿈, [확정] (사용자 승인, 2026-10-15, 회고 이어서 #1)) | 그 판의 제목 | [확정] |
 | notice_version.body | text | NOT NULL, CHECK `notice_version_body_check (btrim(body, E' \t\r\n') <> '')` | 제한된 마크다운 | [확정] |
 | notice_version.created_at | timestamptz | NOT NULL DEFAULT now() | | [확정] |
 | (PK) | | `notice_version_pkey (notice_id, version_no)` | 색인을 더 두지 않음. 공지가 많아지면 `WHERE NOT hidden` 부분 색인을 그때 질의 계획을 보고 더함 | [확정] |

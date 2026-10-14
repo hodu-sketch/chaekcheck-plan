@@ -109,4 +109,4 @@ dev 코드 대조에서 plan이 찾은 것
 | 9 | 화면 파일 +38kB·`npm audit` 경고는 백로그 두 줄로 [확정] (사용자 승인, 질문 "보통 이정도 크기야?"에 답: HTTP Archive 2024 중앙값 폰 558KB보다 작음) | `docs/backlog.md`, `to-cycle-17.md` 8항 |
 | 10 | 실제 카카오 가입·안내 기준일 줄은 첫 배포 뒤 확인 [확정] (사용자 승인) | `to-cycle-17.md` 6항 |
 
-- 달라진 것 #1·#2·#7·#8·#11(btrim, CHECK 이름, API·웹 세부, 운영 SQL 방식)은 회고 페이지에서 묻지 않아 [안]으로 남음 → 이어서 묻기
+- 달라진 것 #1·#2·#7·#8·#11(btrim, CHECK 이름, API·웹 세부, 운영 SQL 방식) 모두 [확정] (사용자 승인, 2026-10-15, 회고 이어서 #1, `docs/cycles/19-author-angle-brackets/easy/2026-10-15-retro-followup-decisions.html`)
