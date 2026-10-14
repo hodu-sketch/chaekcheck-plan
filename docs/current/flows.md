@@ -13,6 +13,7 @@
 사이클 14 회고 (2026-10-14): 흐름 24~26·"화면 공통" 구현됨, 요청 3년·남기는 범위 12개 달, 받기 판단 세부(오늘 성공이면 쉼, 시작 때는 목록 없음·7일만), 진짜 받기 시험 값 반영 (`docs/cycles/14-librarian-picks/retro.md`).
 사이클 13 회고 반영 (2026-10-14): 흐름 32·33과 S12 한 줄 — 구현됨 (사이클 13, 회고 2026-10-14). 흐름 32에 `nextId` 다시 확인·종료 5, 흐름 33에 "같은 번호가 다른 도서관이면 멈춤"을 더함(ADR-0107). 첫 실행(여주대 빈 곳 채우기)은 뺌(AC-1). 근거 `docs/cycles/13-crawler-to-dev/retro.md`.
 사이클 15 cycle-close (2026-10-14, 12·13·14 회고 뒤): 사용자 행동 기록 — 흐름 34(수집 목록 검색 기록), 35(직접 찾기 첫 묶음과 "더 보기" 기록), 36(사용 알림), 37(기록 쓰기와 지우기)을 더함 — 설계됨(미구현, 사이클 15). 근거 `docs/cycles/15-usage-log/design-delta.md` "주요 흐름", ADR-0096·0097·0102.
+사이클 16 cycle-close (2026-10-14, 12·13·14·15 회고·인계 뒤): 공지사항과 안내·약관 페이지를 DB로 — 흐름 38(공지 목록·공지 글), 39(서비스 안내·이용약관·처리방침 글), 40(가입 화면의 약관·동의문, 글을 못 불러올 때), 41(운영자가 새 판을 넣을 때)을 더하고 흐름 9에 문서 버전의 원본을 적음 — 설계됨(미구현, 사이클 16). 근거 `docs/cycles/16-notices-and-policies/design-delta.md` "주요 흐름", ADR-0098~0101.
 
 사이클 13 cycle-close (2026-10-12, 사이클 12와 나란히 미리 한 plan, 사이클 12 뒤에 개발): 새 도서관 넣기 — 흐름 32(넣기 미리 보기 → 넣기, 내 PC)와 흐름 33(운영 반영 판 2: 도서관 → 비교 → 책)을 더하고, "화면 공통"에 S12 `/about` 가입 조사 기준일 한 줄을 적음. 흐름 16·23-3의 seed로 넣기는 사이클 07~09 방식으로 남김 — 구현됨 (사이클 13, 회고 2026-10-14). 근거 `docs/cycles/13-crawler-to-dev/design-delta.md` "구조 그림", flow.md, ADR-0083~0088·0093.
 사이클 08 cycle-close (2026-10-11): 흐름 20(가져오기: 새 표에 쓰고 바꿔 끼우기), 21(검색 계획과 책 화면 소장 읽기), 22(막혔을 때 429·503)를 더하고, 흐름 6·16과 "화면 공통"에 바뀌는 점을 적음 — 구현됨 (사이클 08). 근거 `docs/cycles/08-polish-swap-memory/design-delta.md` "주요 흐름"(흐름 A~C), ADR-0065~0070.
@@ -334,6 +335,8 @@ sequenceDiagram
     A-->>W: 204 (연결 끊기 실패도 204, 기록만)
   end
 ```
+
+- 사이클 16 — 설계됨(미구현, 사이클 16) (ADR-0099): "동의할 문서 버전"은 서버 설정이 아니라 `sitecontent`의 지금 판 순번이고, S6은 그 판의 약관·동의문 글을 `sitecontent`에서 읽음. 자세한 것은 흐름 40
 
 ## 흐름 10: 토큰 갱신과 교체 — 구현됨(사이클 05, 2026-10-04 retro 반영)
 
@@ -1333,3 +1336,107 @@ sequenceDiagram
 - 메모리 큐 상한 1만 줄, 넘치면 버리고 `dropped_batch`(`buffer_full`) [확정] (ADR-0097). DB 실패는 `db_failure`
 - 도서관 번호 확인은 `LibraryCatalog.enabledLibraryRefs()`(켜진 도서관만) [확정]
 - 04:30 정리 설정 이름 `chaekcheck.usagelog.cleanup.cron`·`zone` [안: 이름]. DB 백업 매일 03:00(사이클 17)과 겹치지 않음
+
+## 흐름 38: 공지 목록과 공지 글 (S16·S17) — 설계됨(미구현, 사이클 16)
+
+ADR-0098. 모듈 구성은 `module-map.md` "공지·안내·약관 글", 표는 `data-model.md` 스키마 `sitecontent`, 주소는 `api.md` "공지·안내·약관 글".
+
+```mermaid
+sequenceDiagram
+  participant W as 웹 S16·S17
+  participant S as sitecontent
+  participant DB as sitecontent schema
+  W->>S: GET /api/v1/notices?page=n
+  S->>S: 오늘 = Asia/Seoul 날짜
+  S->>DB: 숨김 아니고 첫 판 게시일 ≤ 오늘인 일반 공지 수, 쪽 맞춤
+  S->>DB: 그 쪽의 공지별 시행 중인 최신 판 제목·첫 판 게시일 (1쪽이면 고정 공지도)
+  S-->>W: 200 pinned, items, page, pageSize, totalCount, hasMore
+  W->>S: GET /api/v1/notices/{id}?version=n
+  alt 없음·숨김·첫 판이 앞날
+    S-->>W: 404 notice_not_found → 찾을 수 없어요 + 목록 링크
+  else 판 없음·시행 전
+    S-->>W: 404 version_not_found → 찾을 수 없어요 + 지금 판 링크
+  else
+    S-->>W: 200 글 + 판 목록(effectiveOn, supersededOn)
+  end
+```
+
+- 로그인 없음, 캐시 없음 [확정]. 지금 판 = 시행일 ≤ 오늘(`Asia/Seoul`)인 판 중 순번 최대 [확정]
+- 목록 10개씩, 최신 게시일순(같으면 번호 큰 순). 고정 공지는 1쪽 맨 위 `pinned`에만, 10개 셈·총 개수에서 뺌. 없는 쪽(`?page=99`)은 마지막 쪽으로 맞춤 [확정]
+- 숨긴 공지·첫 판이 앞날인 공지는 목록과 주소 모두 404 [확정]
+
+## 흐름 39: 서비스 안내·이용약관·처리방침 글 (S8·S9·S12) — 설계됨(미구현, 사이클 16)
+
+ADR-0098·0100.
+
+```mermaid
+sequenceDiagram
+  participant W as 웹 S8·S9·S12
+  participant S as sitecontent
+  participant C as collection
+  W->>S: GET /api/v1/documents/{key}?version=n
+  alt 모르는 key
+    S-->>W: 404 document_not_found
+  else 판 없음·시행 전
+    S-->>W: 404 version_not_found
+  else
+    S-->>W: 200 판 본문·시행일·바뀐 점·판 목록
+  end
+  opt S12 서비스 안내일 때
+    W->>C: GET /api/v1/join-surveys/latest (사이클 13 그대로)
+    C-->>W: 조사 기준일 → 글 아래 한 줄
+  end
+```
+
+- `versions`에는 시행 중이거나 지난 판만(앞날 판 빠짐). 날짜 고르기 칸 문구: 지난 판 "A ~ (B-1일) 적용", 같은 날 바뀐 판 "A 적용 (같은 날 바뀜)", 지금 판 "A ~ 지금" [확정] (사용자 승인, 2026-10-13)
+- 이용약관 REST는 로그인 기능이 꺼져도 열어 두고, 웹 경로 `/terms`만 숨김 [확정]. 처리방침은 로그인 기능과 상관없이 공개 [확정] (ADR-0100)
+
+## 흐름 40: 가입 화면의 약관·동의문 (S6) — 설계됨(미구현, 사이클 16)
+
+ADR-0099. 흐름 9의 "동의할 문서 버전"이 어디서 오는지와 S6이 글을 읽는 순서입니다.
+
+```mermaid
+sequenceDiagram
+  participant W as 웹 S6
+  participant A as auth
+  participant S as sitecontent
+  W->>A: GET /api/v1/auth/signup
+  A->>S: SiteDocuments.currentVersion(TERMS_OF_SERVICE, PRIVACY_COLLECTION)
+  S-->>A: 1, 1
+  A-->>W: documents version "1", "1"
+  W->>S: GET /api/v1/documents/terms-of-service?version=1
+  W->>S: GET /api/v1/documents/privacy-collection?version=1
+  S-->>W: 약관 전문, 동의문 4항목 + 전문 (보인 글 = 동의할 판)
+  Note over W: 둘 중 하나라도 실패하면 체크 칸·가입 버튼 잠금 + 다시 시도 (flow S6)
+  W->>A: POST /api/v1/auth/signup consents version "1"
+  A->>S: 지금 판 다시 물음
+  alt 그사이 새 판이 시행됨
+    A-->>W: 409 document_version_mismatch → 약관이 바뀌었어요. 다시 확인해 주세요 → 처음부터
+  else 같음
+    A->>A: 계정·로그인 수단·동의 기록(판 순번)·갱신 토큰을 한 번에 저장
+    A-->>W: 201
+  end
+```
+
+- 문서 버전의 원본은 `sitecontent`(서버 설정 `chaekcheck.auth.documents`가 아님), 동의 기록 `document_version`은 판 순번 글자(`"1"`) [확정] (ADR-0099)
+- 약관·동의문 글을 못 불러오면 체크 칸과 가입 버튼을 잠그고 "약관 글을 불러오지 못했어요" + "다시 시도"(같은 판을 다시 읽음). 첫 화면으로 돌려보내지 않음 [확정] (사용자 승인, 2026-10-14)
+- 가입은 동기 읽기가 필요해 이벤트를 쓰지 않음
+
+## 흐름 41: 운영자가 공지·문서 새 판을 넣을 때 — 설계됨(미구현, 사이클 16)
+
+쓰기 API는 없음 [확정]. 실행 문장은 인계서의 예시 SQL(`docs/cycles/16-notices-and-policies/drafts/ops-sql.md`).
+
+```mermaid
+sequenceDiagram
+  participant U as 사용자
+  participant C as Claude
+  participant DB as 운영 DB sitecontent
+  U->>C: 점검 공지 올려 줘 / 처리방침에 ○○ 넣어 줘
+  C-->>U: 글·바뀐 점 초안
+  U->>C: 확인
+  C->>DB: 인계서 예시 SQL (판 번호 = 마지막 + 1, 시행일은 앞 판 이후)
+  Note over DB: 시행일이 되면 새로고침으로 보임, 배포 없음
+```
+
+- 새 공지: `notice` INSERT RETURNING id → `notice_version` 판 1 INSERT, 한 트랜잭션. 고치기: 판 = 마지막 + 1, 새 날짜 ≥ 마지막 판 날짜. 숨기기·고정: `UPDATE sitecontent.notice SET hidden = … / pinned = …`
+- 문서 새 판: 동의문은 4항목 필수. 약관·동의문을 바꿀 때 공지도 함께. 중요하거나 불리한 변경은 다시 동의 화면이 생기기 전에는 넣지 않음 (ADR-0101)

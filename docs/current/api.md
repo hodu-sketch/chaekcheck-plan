@@ -12,6 +12,7 @@
 사이클 14 회고 (2026-10-14): `GET /api/v1/picks`·`…/covers/{coverId}` 구현됨, `popular-books` 두 경로 지움, 범위 최근 12번(2년), 응답 칸 이름 설계 그대로(dev `PicksController.java` 130~143행) (`docs/cycles/14-librarian-picks/retro.md`).
 사이클 13 회고 반영 (2026-10-14): `GET /api/v1/join-surveys/latest`와 S12 `/about` 한 줄 — 구현됨 (사이클 13, 회고 2026-10-14). 경로·응답·인증 없음이 설계와 같음(`JoinSurveyController.java:25-37`, 시험 `joinSurveyDateNeedsNoLogin`). 근거 `docs/cycles/13-crawler-to-dev/retro.md`.
 사이클 15 cycle-close (2026-10-14, 12·13·14 회고 뒤): 새 요청 `POST /api/v1/usage-events`(모듈 `usagelog`, 로그인 요구 없음, 로그인 기능 켜짐이면 CSRF), 액세스 쿠키 `access_token` 경로 `/api/v1/me` → `/api/v1`(ADR-0102). 검색·책 상세·직접 찾기 요청 형식은 그대로(로그인 여부는 쿠키로 서버가 판별) — 설계됨(미구현, 사이클 15). 근거 `docs/cycles/15-usage-log/design-delta.md` "API", ADR-0096·0097·0102.
+사이클 16 cycle-close (2026-10-14, 12·13·14·15 회고·인계 뒤): 공지사항과 안내·약관 페이지를 DB로 — 새 요청 `GET /api/v1/notices`, `GET /api/v1/notices/{noticeId}`, `GET /api/v1/documents/{documentKey}`(모듈 `sitecontent`, 로그인 없음), 새 오류 코드 `notice_not_found`·`document_not_found`·`version_not_found`, 가입(`GET`/`POST /api/v1/auth/signup`)의 문서 `version` 값이 판 순번 글자(`"1"`)로 바뀜(요청·응답 모양 그대로) — 설계됨(미구현, 사이클 16). 근거 `docs/cycles/16-notices-and-policies/design-delta.md` "API", ADR-0098~0101.
 
 사이클 13 cycle-close (2026-10-12, 사이클 12와 나란히 미리 한 plan, 사이클 12 뒤에 개발): 새 요청 `GET /api/v1/join-surveys/latest`(모듈 `collection`, 인증 없음, 가입 조건 조사 기준일)와 S12 `/about` 공지 한 줄 — 구현됨 (사이클 13, 회고 2026-10-14). 다른 요청·응답·오류 코드는 그대로(새로 넣은 도서관은 `/libraries`·스트림에 지금 모양으로 나옴, 1215 이름은 "한화S&C"). 근거 `docs/cycles/13-crawler-to-dev/design-delta.md` "API", flow.md S12, ADR-0087·0093.
 사이클 08 cycle-close (2026-10-11): `GET /api/v1/libraries` 항목과 스트림 `targets.libraries[]`에 `mobileSiteDiffers`, 503 `server_busy`에 `Retry-After: 5`, 대출 현황 스트림의 도서관별 실패 코드 `holding_not_found`, 429·503 화면 안내 문구를 따로 둠 — 구현됨 (사이클 08). 요청 모양은 그대로. 근거 `docs/cycles/08-polish-swap-memory/design-delta.md` "API"·"웹", ADR-0070.
@@ -54,6 +55,9 @@
 | GET | `/api/v1/picks/covers/{coverId}` | `picks` | **사이클 14 — 구현됨 (사이클 14)** (ADR-0091). `/api/v1/popular-books/covers/{coverId}`를 대체(옛 경로 지움). 저장한 국립중앙도서관 표지(폭 200px JPEG로 줄인 것). 인증 없음. 200 그림(`Content-Type: image/jpeg`), `Cache-Control: public, max-age=2592000, immutable`(30일) [확정]. 없으면 404 `cover_not_found` [확정] → 웹은 제목 글자. 도서관 사이트를 부르지 않으므로 nginx `limit_req` 대상 아님. CSP는 바꾸지 않음(우리 주소) |
 | GET | `/api/v1/join-surveys/latest` | `collection` | **사이클 13 — 구현됨 (사이클 13, 회고 2026-10-14)** (ADR-0087·0093). 가입 조건 조사 기준일: 성공한 넣기 실행 기록(`collection.library_insert_run`, `status = 'SUCCEEDED'`) 중 `join_surveyed_on` 최댓값 [확정] (dev 구현 확인, 2026-10-14). 내 PC·운영 흉내 DB 모두 `2026-10-05` (AC-4·AC-7). 경로 [확정] (ADR-0093). 요청 파라미터 없음, 인증 없음(`SecurityConfiguration`은 `/api/v1/me/**`만 보호). 200 `{"surveyedOn": "2026-10-05"}`(`YYYY-MM-DD`), 기록이 없으면 200 `{"surveyedOn": null}`. 오류는 일반 500 `internal_error`(ProblemDetail). `collection` 컨트롤러(Java 공개 API는 없음). `/libraries`에 싣지 않음(큰 목록 약 874KB [안: architect 추정, 재지 않음], `library → collection` 의존 고리) (ADR-0087). 운영 DB에서도 값이 나오도록 운영 반영이 실행 기록 줄을 옮김 (ADR-0093, AC-7). 웹 S12 `/about`이 "가입 조건은 {YYYY}년 {M}월에 조사한 내용입니다."로 보임, 로딩 중 비움, `null`·오류면 줄 없음 [확정] (flow S12). 도서관 사이트를 부르지 않으므로 nginx `limit_req` 대상 아님 |
 | POST | `/api/v1/usage-events` | `usagelog` | **사이클 15 — 설계됨(미구현, 사이클 15)** (ADR-0097). 사용 알림(도서관 클릭·화면 행동)을 한 주소로 받음, 늘 204. 아래 "사용 알림" 절 |
+| GET | `/api/v1/notices?page=` | `sitecontent` | **사이클 16 — 설계됨(미구현, 사이클 16)** (ADR-0098). 공지 목록 10개씩, 1쪽이면 고정 공지를 `pinned`에. 아래 "공지·안내·약관 글" 절 |
+| GET | `/api/v1/notices/{noticeId}?version=` | `sitecontent` | **사이클 16 — 설계됨(미구현, 사이클 16)** (ADR-0098). 공지 글 한 판 + 판 목록. 아래 "공지·안내·약관 글" 절 |
+| GET | `/api/v1/documents/{documentKey}?version=` | `sitecontent` | **사이클 16 — 설계됨(미구현, 사이클 16)** (ADR-0098·0100). 서비스 안내·이용약관·처리방침·동의문 한 판 + 판 목록. 아래 "공지·안내·약관 글" 절 |
 | POST | 조회 서비스 `/v1/fetches` (내부) | 조회 서비스 | URL 한 개를 GET으로 가져와 `{outcome, status, contentType, location, body(base64), startedAt, endedAt}`. `outcome`: `RESPONDED \| TIMEOUT \| CONNECT_FAILED \| ERROR`. 조회 서버 자신이 정상이면 항상 200. 401 토큰 없음·틀림(헤더 `X-Fetch-Token` [안, 임시]), 400 잘못된 URL·사설 주소, 503 과부하·종료 중 (ADR-0015) |
 
 ## 사서추천도서 (`picks`) — 구현됨 (사이클 14, 회고 2026-10-14)
@@ -120,6 +124,65 @@
 - 기록 설정 `chaekcheck.usagelog.enabled`(기본 꺼짐) [확정]이 꺼져 있어도 이 주소는 204, 아무것도 남기지 않음 [안]
 - 로봇: nginx가 직접 찾기·대출 조회 location에서 User-Agent에 `bot`·`crawler`·`spider`가 있으면 거절(403 [안]) [확정], `robots.txt`가 `/api/`를 막음 [확정]. 검색 기록에서도 로봇 이름은 `usagelog`가 버림
 - 검색·책 상세·직접 찾기·도서관별 더 보기 요청(`/api/v1/books`, `/api/v1/books/{bookId}`, `/api/v1/ebook-searches/stream`, `…/batches/stream`, `/api/v1/availability/libraries/{id}/ebooks`)은 형식이 바뀌지 않음. 성공하면 서버가 기록을 남김(흐름 34·35)
+
+## 공지·안내·약관 글 (`sitecontent`) — 설계됨(미구현, 사이클 16)
+
+근거 `docs/cycles/16-notices-and-policies/design-delta.md` "API", ADR-0098~0101. 흐름은 `flows.md` 흐름 38~40.
+
+로그인 없음, 캐시 없음, 쓰기 API 없음 [확정]. 오늘 = `Asia/Seoul` 날짜, 지금 판 = 시행일 ≤ 오늘인 판 중 순번 최대 [확정].
+
+| 메서드 | 경로 | 설명 | 요청 | 응답 | 에러 |
+|---|---|---|---|---|---|
+| GET | `/api/v1/notices` | 공지 목록 10개씩, 최신 게시일순(같으면 번호 큰 순). 1쪽이면 고정 공지를 `pinned`에. 없는 쪽은 마지막 쪽으로 맞춤 | `page` (정수 ≥ 1, 기본 1) | 200 | 400 `validation_error` |
+| GET | `/api/v1/notices/{noticeId}` | 공지 글. 고친 공지면 `editedOn` | `version` (정수 ≥ 1, 없으면 지금 판) | 200 | 404 `notice_not_found`, 404 `version_not_found`, 400 `validation_error` |
+| GET | `/api/v1/documents/{documentKey}` | 문서 글. key = `about`, `terms-of-service`, `privacy-policy`, `privacy-collection` | `version` | 200 | 404 `document_not_found`, 404 `version_not_found`, 400 `validation_error` |
+
+목록 (`?page=99`, 일반 공지 23개 → 3쪽으로)
+
+```json
+{ "pinned": [],
+  "items": [ { "id": 3, "title": "도서관 12곳을 더했어요", "postedOn": "2026-10-20" } ],
+  "page": 3, "pageSize": 10, "totalCount": 23, "hasMore": false }
+```
+
+공지 글
+
+```json
+{ "id": 7, "title": "점검 안내(시간 바뀜)", "postedOn": "2026-11-03", "editedOn": "2026-11-04",
+  "version": { "number": 2, "effectiveOn": "2026-11-04", "current": true, "body": "…" },
+  "versions": [ { "number": 2, "effectiveOn": "2026-11-04", "supersededOn": null },
+                { "number": 1, "effectiveOn": "2026-11-03", "supersededOn": "2026-11-04" } ] }
+```
+
+문서 (`/api/v1/documents/privacy-collection?version=1`)
+
+```json
+{ "key": "privacy-collection",
+  "version": { "number": 1, "effectiveOn": "2026-10-04", "current": true, "body": "…", "changeSummary": null,
+               "consentItems": [ { "label": "목적", "text": "…" }, { "label": "항목", "text": "카카오 회원 식별 번호, …" },
+                                 { "label": "보유 기간", "text": "탈퇴 또는 마지막 로그인 뒤 1년" },
+                                 { "label": "거부할 권리", "text": "…" } ] },
+  "versions": [ { "number": 1, "effectiveOn": "2026-10-04", "supersededOn": null } ] }
+```
+
+오류
+
+```json
+{ "type": "about:blank", "title": "Not Found", "status": 404, "detail": "No such version",
+  "instance": "/api/v1/documents/terms-of-service", "code": "version_not_found" }
+```
+
+```json
+{ "type": "about:blank", "title": "Bad Request", "status": 400, "detail": "Invalid request",
+  "instance": "/api/v1/notices", "code": "validation_error",
+  "errors": [ { "field": "page", "message": "must be greater than or equal to 1", "code": "Min" } ] }
+```
+
+- `versions`에는 시행 중이거나 지난 판만(앞날 판 빠짐). 웹의 날짜 고르기 칸 문구: 지난 판 "A ~ (B-1일) 적용", 같은 날 바뀐 판 "A 적용 (같은 날 바뀜)", 지금 판 "A ~ 지금" [확정] (사용자 승인, 2026-10-13)
+- 숨긴 공지·첫 판이 앞날인 공지는 목록과 주소 모두 404 `notice_not_found`. 판 없음·시행 전 판은 404 `version_not_found`
+- 오류 처리: 루트 `ApiExceptionHandler`는 그대로(정수가 아닌 값은 400 `bad_request`), 모듈 오류는 `sitecontent/internal/web`의 `@RestControllerAdvice(basePackageClasses=…)` + `@Order(HIGHEST_PRECEDENCE)`로 400 `validation_error`(`errors[]`: `field`·`message`·`code`), 404 셋 [확정] (dev 방식 따름, 2026-10-14 dev main 확인)
+- 이용약관 REST는 로그인 기능이 꺼져도 열어 두고, 웹 경로 `/terms`만 숨김 [확정] (사용자 승인, 2026-10-13). 처리방침은 로그인 기능과 상관없이 공개 [확정] (ADR-0100)
+- 웹은 본문(제한된 마크다운)을 `react-markdown`으로 그림 [확인 필요: `react-markdown@10`과 dev React 판·묶음 크기, dev 설치 시험]. 서비스 안내(S12)는 그 아래에 가입 조사 기준일 한 줄(`GET /api/v1/join-surveys/latest`, 그대로)
 
 ## 검색 조건 파라미터 (ADR-0025, 도서관에서 직접 찾기)
 
@@ -231,6 +294,7 @@
 - 제공자 설정(`chaekcheck.auth.providers`, 기본 `naver,kakao`)에서 뺀 제공자의 로그인 시작·돌아올 주소·연결 끊김 웹훅도 없습니다(404, ADR-0046 덧붙임). 서블릿 필터가 보안 필터 체인 앞에서 답합니다(dev 구현).
 - 쿠키: 액세스 토큰 `access_token`(`Path=/api/v1/me`. 사이클 15에서 `Path=/api/v1`로 넓힘 [확정] (ADR-0102) — 설계됨(미구현, 사이클 15), 옛 경로 쿠키는 따로 지우지 않음), 리프레시 토큰 `refresh_token`(`Path=/api/v1/auth`), 둘 다 `Secure`·`HttpOnly`·`SameSite=Lax`. 로그인 도중의 세션 쿠키는 `Path=/api/v1`, 10분. CSRF는 `XSRF-TOKEN` 쿠키 → `X-XSRF-TOKEN` 헤더.
 - 사이클 15 — 설계됨(미구현, 사이클 15) (ADR-0102): 쿠키 경로가 넓어져 검색·책 상세·직접 찾기 요청에도 `access_token`이 함께 가고, `usagelog`가 `auth`의 공개 `LoginStatusReader` [안: 이름]로 로그인 상태를 판별함(서명 확인, 만료돼도 서명이 맞으면 로그인함, 로그인 기능이 꺼져 있으면 쿠키를 보지 않고 `login_off`). 보호 경로는 그대로 `/api/v1/me/**`만. `POST /api/v1/usage-events`는 로그인 없이 CSRF 검사만(위 "사용 알림")
+- 사이클 16 — 설계됨(미구현, 사이클 16) (ADR-0099): `GET /api/v1/auth/signup`의 `documents[].version`과 `POST`의 `consents[].version`은 `sitecontent`의 지금 판 순번 글자(`"1"` 같은 값, 지금까지의 `YYYY-MM-DD`를 바꿈) [확정] (사용자 승인, 2026-10-13). 서버는 `SiteDocuments.currentVersion`으로 받고 서버 설정 `chaekcheck.auth.documents`는 지움. 요청·응답 모양, 409 `document_version_mismatch` 동작은 그대로. S6은 받은 판 번호로 `GET /api/v1/documents/terms-of-service?version=`·`privacy-collection?version=`을 읽음(흐름 40)
 
 
 | 메서드 | 경로 | 인증 | CSRF | 성공 | 오류 |
@@ -256,6 +320,7 @@
 - 예시:
   - `GET /api/v1/auth/signup` → `{"provider":"KAKAO","documents":[{"type":"TERMS_OF_SERVICE","version":"<v>"},{"type":"PRIVACY_COLLECTION","version":"<v>"}]}`
   - `POST /api/v1/auth/signup` 요청 → `{"consents":[{"type":"TERMS_OF_SERVICE","version":"<v>"},{"type":"PRIVACY_COLLECTION","version":"<v>"},{"type":"AGE_OVER_14"}]}`
+  - `<v>`는 사이클 16부터 판 순번 글자 — 설계됨(미구현, 사이클 16): `{"provider":"KAKAO","documents":[{"type":"TERMS_OF_SERVICE","version":"1"},{"type":"PRIVACY_COLLECTION","version":"1"}]}`
   - `GET /api/v1/me` → `{"id":123,"loginMethods":["KAKAO"],"consents":[{"type":"TERMS_OF_SERVICE","version":"<v>","agreedAt":"2026-10-04T10:00:00Z"}]}`. `loginMethods`는 재인증 시작 주소를 고르는 데만 쓰고 화면에 보이지 않음
   - 401 → `{"title":"Unauthorized","status":401,"detail":"Login required","code":"unauthorized"}`
 
@@ -311,7 +376,7 @@
 
 | code | HTTP | 어디서 |
 |---|---|---|
-| `validation_error` | 400 | 지역 해석 API, 스트림의 지역 파라미터(숫자 아님, 20개 초과), `filter`·`scope` 값 오류, 다음 묶음의 `candidates`·`batchNo`, 세 API의 검색 조건 파라미터(없음·둘 이상·중복), 스트림의 `visit` 값 오류. 사이클 06(구현됨 (사이클 06)): 검색 API 네 곳의 `libraryIds`(`field: libraryIds`, `invalid_format`/`too_many`), `GET /api/v1/libraries`의 지역, `PUT /api/v1/me/regions` 본문. 사이클 07(구현됨 (사이클 07)): `POST /api/v1/me/library-imports` 본문(`field: libraryIds`, `invalid_format`/`too_many`/`required`). 사이클 10: `GET /api/v1/popular-books`의 계획 파라미터(`/books`와 같은 규칙) → 사이클 14부터 `GET /api/v1/picks` — 구현됨 (사이클 14), `popular-books`는 지움, 대출 현황 스트림의 `holdingLimit`(`invalid_format`/`duplicate`, 지역 형식 검사 뒤·계획 422 앞). `errors[].code`: `required`, `invalid_format`, `too_many`, `duplicate` |
+| `validation_error` | 400 | 지역 해석 API, 스트림의 지역 파라미터(숫자 아님, 20개 초과), `filter`·`scope` 값 오류, 다음 묶음의 `candidates`·`batchNo`, 세 API의 검색 조건 파라미터(없음·둘 이상·중복), 스트림의 `visit` 값 오류. 사이클 06(구현됨 (사이클 06)): 검색 API 네 곳의 `libraryIds`(`field: libraryIds`, `invalid_format`/`too_many`), `GET /api/v1/libraries`의 지역, `PUT /api/v1/me/regions` 본문. 사이클 07(구현됨 (사이클 07)): `POST /api/v1/me/library-imports` 본문(`field: libraryIds`, `invalid_format`/`too_many`/`required`). 사이클 10: `GET /api/v1/popular-books`의 계획 파라미터(`/books`와 같은 규칙) → 사이클 14부터 `GET /api/v1/picks` — 구현됨 (사이클 14), `popular-books`는 지움, 대출 현황 스트림의 `holdingLimit`(`invalid_format`/`duplicate`, 지역 형식 검사 뒤·계획 422 앞). 사이클 16 — 설계됨(미구현, 사이클 16): `GET /api/v1/notices`의 `page`, 공지·문서 글의 `version`(정수 1 미만, `errors[].code`는 Bean Validation 이름 예: `Min`; 정수가 아닌 값은 루트의 400 `bad_request`). `errors[].code`: `required`, `invalid_format`, `too_many`, `duplicate` |
 | `invalid_query` | 400 | 스트림(시작 전), 더 보기 — 정규화 후 2글자 미만 또는 50자 초과 |
 | `invalid_page` | 400 | 더 보기 |
 | `invalid_region` | 422 | 스트림(시작 전) — `errors[].code`: `abolished`, `not_found`, `not_sigungu`. 사이클 06(구현됨 (사이클 06)): `GET /api/v1/libraries`, `PUT /api/v1/me/regions`도 같은 모양(`errors[].value`). 사이클 10: `GET /api/v1/popular-books`(사이클 14에서 지움) → 사이클 14(구현됨 (사이클 14)): `GET /api/v1/picks` |
@@ -330,7 +395,10 @@
 | `forbidden` | 403 | 로그인·계정 — CSRF가 아닌 403(지금은 나오지 않음) |
 | `reauthentication_required`, `reauthentication_expired` | 403 | 탈퇴 — 본인 확인 기록 없음 / 5분 초과 |
 | `signup_not_found` | 404 | 가입 대기 없음·만료 |
-| `document_version_mismatch` | 409 | 가입 — 동의한 문서 버전이 현재와 다름 |
+| `document_version_mismatch` | 409 | 가입 — 동의한 문서 버전이 현재와 다름. 사이클 16 — 설계됨(미구현, 사이클 16): 버전 = `sitecontent`의 지금 판 순번(ADR-0099), 가입 화면을 연 뒤 새 판이 시행되면 |
+| `notice_not_found` | 404 | 사이클 16 — 설계됨(미구현, 사이클 16): `GET /api/v1/notices/{noticeId}` — 없음·숨김·첫 판이 앞날인 공지. 화면 "찾을 수 없어요" + 공지 목록 링크 |
+| `document_not_found` | 404 | 사이클 16 — 설계됨(미구현, 사이클 16): `GET /api/v1/documents/{documentKey}` — 모르는 key |
+| `version_not_found` | 404 | 사이클 16 — 설계됨(미구현, 사이클 16): 공지·문서 글의 `?version=` — 없는 판·시행 전 판. 화면 "찾을 수 없어요" + 지금 판 링크 |
 | `not_found` | 404 | 없는 경로 (Spring 기본 예외) |
 | `bad_request` | 400 | 형식이 틀린 요청 (Spring 기본 예외) |
 | `method_not_allowed` | 405 | 지원하지 않는 메서드 |
