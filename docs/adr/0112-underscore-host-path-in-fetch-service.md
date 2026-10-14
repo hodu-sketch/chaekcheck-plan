@@ -28,5 +28,7 @@ ADR-0111은 호스트에 밑줄이 있는 도서관 주소를 `collection`은 �
 - dev `fetch-service/`의 `UrlGuard`·`LibraryClient`, 별도 Gradle 빌드·시험
 - ADR-0111을 보완 (대체 아님)
 
+- 구현 (2026-10-15, 사이클 18 회고 결정 #15): 조회 서버 `UnderscoreHosts`, `UrlGuard`는 연결할 이름으로 DNS를 풀어 내부망이면 거부. 밑줄 주소는 registry-based authority라 `getRawUserInfo()`가 null이어서 `user@` 검사가 그냥 지나가므로 **authority의 `@`를 따로 거부**. `LibraryClient`는 본 서비스 밑줄 길과 같은 HttpClient 설정 (dev `UrlGuard.java` 21~57·95행)
+
 ## 나중에 분리할 때
 - 조회 서버는 이미 따로 도는 앱이라 그대로 따라감

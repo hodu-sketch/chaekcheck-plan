@@ -805,15 +805,15 @@ erDiagram
 | `*.received_at` | `timestamptz` | NOT NULL | 서버가 받은 시각 | [확정] (spec) |
 | `search_event.kind` | `text` | CHECK (`catalog`,`direct`) | 검색 종류 | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2) |
 | `title`/`author`/`publisher` | `text` | 셋 중 하나 이상 | 서버가 다듬은 검색어, 2~50자 | [확정] (spec) |
-| `exact`, `roles`, `sort` | `text[]`, `text[]`, `text` | 수집 목록만(CHECK `*_kind_fields_check`: `catalog`·`catalog_next_page`면 셋 다 NOT NULL, 아니면 NULL) | 받은 값, 없으면 기본값. `exact`는 정확히 찾을 칸 목록(`title`·`author`·`publisher` 중 여럿, 없으면 빈 배열) | `exact` 꼴: [안] (dev 구현, 회고 결정 대기 — 설계 `boolean`에서 바꿈, dev 까닭: 여러 칸이라 참·거짓 하나로는 받은 값을 못 남김). 나머지 [확정] |
-| `filter` | `text` | 직접 찾기만, CHECK (`all`,`available`) | `all`/`available` | [확정]. CHECK는 [안] (dev 구현, 회고 결정 대기) |
-| `scope`, `visit` | `text` | `search_event`는 NOT NULL, `search_more`는 NULL 가능(다음 묶음·도서관별 더 보기가 기록용 쿼리 값으로 받고, 없거나 틀리면 NULL). CHECK `scope IN ('all','joinable')`, `visit IN ('any','none')` | 받은 값 | [확정] (`search_more` NULL 허용: 사용자 "그래 이대로 해", 2026-10-14). CHECK는 [안] (dev 구현, 회고 결정 대기) |
+| `exact`, `roles`, `sort` | `text[]`, `text[]`, `text` | 수집 목록만(CHECK `*_kind_fields_check`: `catalog`·`catalog_next_page`면 셋 다 NOT NULL, 아니면 NULL) | 받은 값, 없으면 기본값. `exact`는 정확히 찾을 칸 목록(`title`·`author`·`publisher` 중 여럿, 없으면 빈 배열) | `exact` 꼴: [확정] (사용자 승인, 2026-10-15, 회고 결정 #1 — 설계 `boolean`에서 바꿈, dev 까닭: 여러 칸이라 참·거짓 하나로는 받은 값을 못 남김). 나머지 [확정] |
+| `filter` | `text` | 직접 찾기만, CHECK (`all`,`available`) | `all`/`available` | [확정]. CHECK는 [확정] (사용자 승인, 2026-10-15, 회고 결정 #4) |
+| `scope`, `visit` | `text` | `search_event`는 NOT NULL, `search_more`는 NULL 가능(다음 묶음·도서관별 더 보기가 기록용 쿼리 값으로 받고, 없거나 틀리면 NULL). CHECK `scope IN ('all','joinable')`, `visit IN ('any','none')` | 받은 값 | [확정] (`search_more` NULL 허용: 사용자 "그래 이대로 해", 2026-10-14). CHECK는 [확정] (사용자 승인, 2026-10-15, 회고 결정 #4) |
 | `residence_region_ids`, `work_region_ids`, `library_ids` | `bigint[]` | `search_event`·`book_view`·`search_more`는 NOT NULL DEFAULT `'{}'`, `screen_event`는 종류에 맞지 않으면 NULL | 받은 값 그대로 | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #3) |
-| `search_event.result_count` | `integer` | NULL 가능, CHECK `>= 0` | 직접 찾기가 첫 묶음 전 끊기면 NULL | [확정]. CHECK는 [안] (dev 구현, 회고 결정 대기) |
+| `search_event.result_count` | `integer` | NULL 가능, CHECK `>= 0` | 직접 찾기가 첫 묶음 전 끊기면 NULL | [확정]. CHECK는 [확정] (사용자 승인, 2026-10-15, 회고 결정 #4) |
 | `*.login_status` | `text` | CHECK (`signed_in`,`signed_out`,`login_off`) | `auth` 판별 부품(`LoginStatusReader`)이 정함 | [확정] ([로그인 판별](../cycles/15-usage-log/easy/2026-10-14-login-status.html) #2), 값 이름 [확정] (dev 구현 확인, 2026-10-15) |
 | `*.client_ip` | `inet` | NULL 가능 | `X-Real-IP`, 30일 뒤 NULL | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #3) |
 | `search_more.kind` | `text` | CHECK (`direct_next_batch`,`library_more`,`catalog_next_page`) | 더 보기 종류 | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2) |
-| `search_more.seq`, `library_id` | `integer`, `bigint` | `seq` NOT NULL CHECK `>= 1`. `search_more_library_id_check`: `library_id`는 `library_more`일 때만 NOT NULL | 묶음·쪽 번호, 도서관 | 칸 이름 [확정] (dev 구현 확인, 2026-10-15). CHECK는 [안] (dev 구현, 회고 결정 대기) |
+| `search_more.seq`, `library_id` | `integer`, `bigint` | `seq` NOT NULL CHECK `>= 1`. `search_more_library_id_check`: `library_id`는 `library_more`일 때만 NOT NULL | 묶음·쪽 번호, 도서관 | 칸 이름 [확정] (dev 구현 확인, 2026-10-15). CHECK는 [확정] (사용자 승인, 2026-10-15, 회고 결정 #4) |
 | `search_more` 조건 칸 | 검색 기록과 같은 조건 칸 전부 | | 더 보기 줄만으로 어떤 검색인지 알게 | [확정] ([늘린 기록 설계](../cycles/15-usage-log/easy/2026-10-13-more-actions-design.html) #4) |
 | `library_click.library_id` | `bigint` | NOT NULL, FK 없음 | 확인된 서비스 도서관 번호 | [확정] |
 | `library_click.place` | `text` | CHECK | `result_card`,`join_link`,`join_guide`,`home_page`,`logo`,`summary_bar` | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2) |
@@ -827,7 +827,8 @@ erDiagram
 | `dropped_batch.reason` | `text` | CHECK (`db_failure`,`buffer_full`) | 버린 이유 | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2) |
 | 색인 | BRIN `(received_at)` 각 표 | — | 지우기·기간 조회 | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #3) |
 | 부분 색인 | `<표>_ip_received_at_idx` `(received_at) WHERE client_ip IS NOT NULL` — 다섯 기록 표(`search_event`·`book_view`·`search_more`·`library_click`·`screen_event`) | — | 30일 IP 비우기 | [확정] (dev 구현 확인, 2026-10-15) |
-| 그 밖의 CHECK | `book_id`·`library_id` 등 번호 `>= 1`, `library_response_daily`·`dropped_batch`의 수 칸 `>= 0`, `screen_event` 종류에 따른 칸 CHECK | — | dev가 더 둠 (dev `001-usagelog-schema.yaml`) | [안] (dev 구현, 회고 결정 대기) |
+| 그 밖의 CHECK | `book_id`·`library_id` 등 번호 `>= 1`, `library_response_daily`·`dropped_batch`의 수 칸 `>= 0`, `screen_event` 종류에 따른 칸 CHECK | — | dev가 더 둠 (dev `001-usagelog-schema.yaml`) | [확정] (사용자 승인, 2026-10-15, 회고 결정 #4) |
+| `book_view` 겹침 | — | — | 책 페이지에서 거르기(전체/지금 빌릴 수 있는)를 바꾸면 책 정보를 다시 받아 한 줄 더 생김(운영 빌드 기준, 개발 모드는 첫 열기도 두 줄). 통계를 만들 때 "같은 사람·같은 책·몇 초 안"은 한 번으로 셈 | [확정] (사용자 승인, 2026-10-15, 회고 결정 #2) |
 
 - 쓰기 [확정] (ADR-0097): `usagelog`가 메모리 큐(상한 1만 줄)에 모았다가 5초마다 한 트랜잭션 — 묶음의 도서관 번호 확인 한 번(켜진 도서관만) → `SET LOCAL synchronous_commit TO OFF` → 표마다 `batchUpdate` → `library_response_daily` `ON CONFLICT … 더하기` → 지난번 버린 묶음을 `dropped_batch`에 → COMMIT. 실패하면 묶음을 버리고 버린 사실을 메모리에 들고 서버 로그(흐름 37)
 - 보관 [확정] (ADR-0096): `client_ip`는 30일 뒤 NULL, `rejected_event`는 30일 뒤 지움, 나머지는 1년 뒤 지움. 매일 04:30 (Asia/Seoul) 정리, 1만 줄씩(`chaekcheck.usagelog.cleanup.batch-size` 10000) [확정] (dev 구현 확인, 2026-10-15)

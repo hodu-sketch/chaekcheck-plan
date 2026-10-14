@@ -87,3 +87,14 @@ dev AC 확인표(`plan-feedback.md` 4323~4352행) 그대로, 모두 통과.
 - Documenter 출력 다시 만들기 (다음 인계서 "dev에 알릴 것")
 - 배포 뒤 확인: nginx realip와 실제 IP, 광고 차단 비율, 로봇의 API 호출 (사이클 17·운영)
 - ADR-0097 [확인 필요] Firefox 133 미만 keepalive (ADR에 이미 있음)
+
+## 회고 결정 (2026-10-15, 결정 페이지 `docs/cycles/19-author-angle-brackets/easy/2026-10-15-retro-15-16-18-decisions.html` #1~#6)
+
+| # | 결정 | 반영 |
+|---|---|---|
+| 1 | `exact`를 칸 목록(`text[]`)으로 [확정] (사용자 승인) | `data-model.md` |
+| 2 | 책 페이지 거르기로 `book_view`가 한 줄 더 생기는 것은 그대로, 통계 때 "같은 사람·같은 책·몇 초 안"은 한 번으로 셈 [확정] (사용자 승인) | `data-model.md` 메모 |
+| 3 | 3분 캐시 답을 응답 수에서 빼는 규칙 — 사용자 질문 "캐시에서 가져온 건 또 따로 기록이 되나?" (답: 따로 기록되지 않음). 결정 기다림 | 결정 페이지에 답 |
+| 4 | dev가 맡은 범위에서 정한 값(CHECK, 8KB·20개·20자, `max-dropped-notes` 100, `burst=20`, 가운데 버튼, 로그인 상태 모를 때 규칙, 실패 로그 두 줄) [확정] (사용자 승인) | `docs/current` |
+| 5 | S10 10곳씩은 ADR-0058 덧붙임만 [확정] (사용자 승인) | ADR-0058, `docs/current` |
+| 6 | Documenter 출력 다시 만들기를 다음 인계서 "dev에 알릴 것"에 [확정] (사용자 승인) | 사이클 19 `handoff-notes.md` |

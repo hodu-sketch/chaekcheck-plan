@@ -32,5 +32,7 @@ Supersedes: 없음
 - 교보 대여·혼합 판정은 그대로(책을 받지 않아 0권이므로 맨 먼저 봄)
 - 넣을 주소와 책 주소 호스트가 달라 0줄인 드문 경우도 "전자책 0권"(지금 0곳), 시험과 넣기 절차 한 줄로 확인
 
+- 구현 (2026-10-15, 사이클 18 회고 결정 #15): 빠진 이유 이름 `no_ebooks`("전자책 0권", 보고서 이유 목록 맨 끝, 묻지 않음, 종료 코드 그대로). 줄 세기는 `CollectedLibraries.importableRows(collectionId, libraryHost)`로 가져오기와 같은 거르기(`HoldingRowFilter`)를 씀. 검사는 규칙 파일 오류 검사(`library_kinds`·`final_origins`)보다 **앞**(dev 판단: 0권 곳 때문에 규칙 파일 오류로 멈추지 않게) (dev `LibraryInsertPlanner.java` 60·118~131행)
+
 ## 나중에 분리할 때
 - 수집·넣기 쪽 서비스 안에서 끝남

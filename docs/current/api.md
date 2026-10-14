@@ -120,8 +120,8 @@
 
 - `place` 값 `result_card`·`join_link`·`join_guide`·`home_page`·`logo`·`summary_bar`, `screen` 값 `direct_results`·`catalog_results`·`book_page`·`picks`·`my_libraries` [확정]
 - 검사: `libraryId`는 켜진 서비스 도서관만, `type`·`place`·`screen`은 정해진 값만. 아니면 `rejected_event`에 이유(`unknown_library`, `invalid_place`, `invalid_screen`, `invalid_book_id`, `malformed`, `unknown_type`, `invalid_value`)와 받은 값(2KB까지)을 30일 남기고 그래도 204 [확정]
-- 상한 [안] (dev 구현, 회고 결정 대기; dev `UsageEventController.java` `MAX_BODY_BYTES = 8 * 1024`): 본문 8KB를 넘으면 `malformed`, 지역 배열 각 20개, 분야 20자, `bookId`가 글자(`"7"`)면 `invalid_book_id`. 받은 값에 NUL 문자가 있으면 글자로 바꿔 넣음 [확정] (dev 시험, 2026-10-14)
-- 웹: 공용 함수 `web/src/api/usageEvents.ts` `sendUsageEvent`에서 `fetch` keepalive로 보내고 기다리지 않음, 실패해도 조용함 [확정] (dev 구현 확인, 2026-10-15). 도서관 클릭은 `web/src/lib/libraryClick.ts`. 링크는 새 탭으로 바로 열림. 로그인 기능 켜짐이면 `XSRF-TOKEN`이 없을 때 `GET /api/v1/auth/csrf-token`으로 받아 오고 403 `csrf_invalid`면 한 번 다시(지금 `api/auth.ts` `send` 방식) [확정] (dev 구현 확인, 2026-10-15). 로그인 기능 상태를 아직 모를 때는 쿠키가 있으면 표시를 붙이고 403이면 한 번 더 보냄 [안] (dev 구현, 회고 결정 대기). 로그인 여부는 보내지 않음(서버가 쿠키로 판별, ADR-0102)
+- 상한 [확정] (사용자 승인, 2026-10-15, 회고 결정 #4; dev `UsageEventController.java` `MAX_BODY_BYTES = 8 * 1024`): 본문 8KB를 넘으면 `malformed`, 지역 배열 각 20개, 분야 20자, `bookId`가 글자(`"7"`)면 `invalid_book_id`. 받은 값에 NUL 문자가 있으면 글자로 바꿔 넣음 [확정] (dev 시험, 2026-10-14)
+- 웹: 공용 함수 `web/src/api/usageEvents.ts` `sendUsageEvent`에서 `fetch` keepalive로 보내고 기다리지 않음, 실패해도 조용함 [확정] (dev 구현 확인, 2026-10-15). 도서관 클릭은 `web/src/lib/libraryClick.ts`. 링크는 새 탭으로 바로 열림. 로그인 기능 켜짐이면 `XSRF-TOKEN`이 없을 때 `GET /api/v1/auth/csrf-token`으로 받아 오고 403 `csrf_invalid`면 한 번 다시(지금 `api/auth.ts` `send` 방식) [확정] (dev 구현 확인, 2026-10-15). 로그인 기능 상태를 아직 모를 때는 쿠키가 있으면 표시를 붙이고 403이면 한 번 더 보냄 [확정] (사용자 승인, 2026-10-15, 회고 결정 #4). 로그인 여부는 보내지 않음(서버가 쿠키로 판별, ADR-0102)
 - CSRF: `auth`의 보호 경로(`/api/v1/me/**`, 로그인 요구)에 넣지 않고 CSRF 검사만 받게 함 [확정] (ADR-0102). 지금 `csrf.spa()` 설정이 웹훅 말고 모든 POST를 검사하는 모양이라 고칠 것이 없을 수 있음 → 시험으로 증명함, 고친 것 없음 [확정] (dev 시험, 2026-10-14). 로그인 기능이 꺼져 있으면 Spring Security가 빠져 검사 없음
 - 기록 설정 `chaekcheck.usagelog.enabled`(기본 꺼짐) [확정]이 꺼져 있어도 이 주소는 204, 아무것도 남기지 않음 [확정] (dev 구현 확인, 2026-10-15)
 - 로봇: nginx가 직접 찾기·대출 조회 스트림과 `/api/v1/availability/` location에서 User-Agent에 `bot`·`crawler`·`spider`가 있으면(map `$chaekcheck_named_bot`) 403 [확정], `robots.txt`(`web/public/robots.txt`)가 `/api/`를 막음 [확정]. nginx 한도는 zone `chaekcheck_usage_events` 60r/m, `burst=20 nodelay`, 넘치면 `@usage_events_limited` → 204 (dev `deploy/nginx/rate-limits.conf` 24~31행). 검색 기록에서도 로봇 이름은 `usagelog`가 버림
@@ -187,7 +187,7 @@
 - dev가 정한 응답 세부 [안] (dev 구현, 회고 결정 대기): 공지가 0개면 `page` 1, `items` [] / 고정 공지(`pinned`) 순서는 일반 공지와 같음(최신 게시일순, 같으면 번호 큰 순) / 옛 판을 볼 때 `title`은 그 판의 제목, `editedOn`은 지금 판 기준
 - 오류 처리: 루트 `ApiExceptionHandler`는 그대로, 모듈 오류는 `sitecontent/internal/web`의 `@RestControllerAdvice(basePackageClasses=…)` + `@Order(HIGHEST_PRECEDENCE)`(dev `sitecontent/internal/web/SitecontentErrors.java`)로 400 `validation_error`(`errors[]`: `field`·`message`·`code`), 404 셋 [확정] (dev 방식 따름, 2026-10-14 dev main 확인)
 - 이용약관 REST는 로그인 기능이 꺼져도 열어 두고, 웹 경로 `/terms`만 숨김 [확정] (사용자 승인, 2026-10-13). 처리방침은 로그인 기능과 상관없이 공개 [확정] (ADR-0100)
-- 웹은 본문(제한된 마크다운)을 `react-markdown` 10.1.0으로 그림 [확정] (dev 설치 시험, 2026-10-14: React 19.3과 경고 없음, JS gzip +38 kB). 그리는 요소는 `allowedElements` h1~h6·p·ul·ol·li·strong·a만, 나머지는 글자로만, 표는 그리지 않음 [안] (dev 구현, 회고 결정 대기). `<script>`·`<img onerror>`는 글자로, `javascript:` 링크는 `href`가 빈 값(AC-6). 서비스 안내(S12)는 그 아래에 가입 조사 기준일 한 줄(`GET /api/v1/join-surveys/latest`, 그대로)
+- 웹은 본문(제한된 마크다운)을 `react-markdown` 10.1.0으로 그림 [확정] (dev 설치 시험, 2026-10-14: React 19.3과 경고 없음, JS gzip +38 kB). 그리는 요소는 `allowedElements` h1~h6·p·ul·ol·li·strong·a만, 나머지는 글자로만, 표는 그리지 않음 [확정] (사용자 승인, 2026-10-15, 회고 결정 #7) — 코드 그대로, 바뀐 점·처리방침은 목록으로. `<script>`·`<img onerror>`는 글자로, `javascript:` 링크는 `href`가 빈 값(AC-6). 서비스 안내(S12)는 그 아래에 가입 조사 기준일 한 줄(`GET /api/v1/join-surveys/latest`, 그대로)
 
 ## 검색 조건 파라미터 (ADR-0025, 도서관에서 직접 찾기)
 

@@ -31,5 +31,7 @@ Supersedes: 없음
 - `collection`: `SiteHosts`(이름 [안]), `availability`: 사이트 요청 부품의 갈래 + 새 라이브러리
 - 근거: https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/net/URI.html, https://docs.oracle.com/en/java/javase/21/docs/api/java.base/javax/net/ssl/SNIHostName.html, https://github.com/openjdk/jdk21u/blob/master/src/java.net.http/share/classes/jdk/internal/net/http/HttpRequestBuilderImpl.java, https://bugs.openjdk.org/browse/JDK-8180809 (확인 2026-10-14)
 
+- 구현 (2026-10-15, 사이클 18 회고 결정 #15): availability `SiteHostNames`·`HostRoutingSiteFetcher`(`DirectSiteFetcher` 앞, 조건 "`getHost()` null + `_`")·`UnderscoreHostSiteFetcher`, collection `SiteHosts`(`host`·`httpHost`)·`HoldingRowFilter`. 라이브러리 Apache HttpClient 5 `httpclient5` 5.6.4. SNI 없음. **인증서 이름 검사는 JDK 기본이 아니라 HttpClient `DefaultHostnameVerifier`(`HostnameVerificationPolicy.CLIENT`)로 켬** — JDK `HostnameChecker`는 밑줄 이름을 거절하므로 검사를 끄지 않는 유일한 길(dev 시제품). redirect·자동 재시도·쿠키·압축 없음, 로그 `via=direct-underscore`. ADR-0095 나가는 길은 아직 이 길에 없음(사이클 17 몫)
+
 ## 나중에 분리할 때
 - 조회 서비스 안에서 끝남

@@ -608,7 +608,7 @@ sequenceDiagram
 - 로그인 전(로그인 기능이 꺼져 있어도) S10(`/my-libraries`)도 열리고, 직접 추가는 브라우저 키 `chaekcheck.chosenLibraries.v1` [확정] (dev 구현 확인, 2026-10-05)에 저장합니다 [확정] (ADR-0057). 이름 찾기에서 이미 추가한 곳은 "직접 추가함"(흐리게, 누를 수 없음), 없으면 "찾는 도서관이 없어요". S10 도서관 찾기는 `GET /api/v1/libraries`를 통째로 받아 화면에서 거릅니다(두 글자 이상, 앞 글자 맞는 것 먼저·가나다순, 20곳씩) [확정] (ADR-0058)
 - 사이클 07에서 넣은 도서관 이름을 누르면 열리는 가입 정보 창 맨 위에 가입 조사 상태별 안내가 있습니다 [확정] (ADR-0053). `joinSurvey`가 `SURVEYED`가 아니면 안내 문구 + (가입 방법·주의가 있으면 그것) + [도서관 첫 화면] 링크(`homepageUrl`)
 - 북큐브 사이트 그림의 "/xml/productView/?num=" 주소는 서비스 도서관 주소(https 최종 주소)의 scheme·포트로 옮겨 쓴 상세 주소에서 만듭니다(강동대학교 북큐브가 검색되지 않던 원인, 사이클 07 고침)
-- S10의 긴 목록(이름 찾기 결과·누구나 가입·지역 도서관)은 10곳씩 "더 보기" (세 목록, 직접 추가한 도서관은 그대로; 사용자 요청 2026-10-14, 회고 결정 대기 중인 ADR-0058 덧붙임). 사이클 07에서는 20곳씩. dev `MyLibrariesPage.tsx` `PAGE = 10` (사이클 15 회고 2026-10-15)
+- S10의 긴 목록(이름 찾기 결과·누구나 가입·지역 도서관)은 10곳씩 "더 보기" (세 목록, 직접 추가한 도서관은 그대로; 사용자 요청 2026-10-14, ADR-0058 덧붙임 [확정] (사용자 승인, 2026-10-15, 회고 결정 #5)). 사이클 07에서는 20곳씩. dev `MyLibrariesPage.tsx` `PAGE = 10` (사이클 15 회고 2026-10-15)
 
 ## 흐름 18: 직접 추가하지 않은 이용자 — 구현됨 (사이클 07)
 
@@ -1310,8 +1310,8 @@ sequenceDiagram
   end
 ```
 
-- 로그인 기능 켜짐에서 CSRF 표시가 없거나 틀리면 403 `csrf_invalid`(웹은 새 표시를 받아 한 번 다시; 로그인 기능 상태를 아직 모를 때는 쿠키가 있으면 표시를 붙이고 403이면 한 번 더 [안] (dev 구현, 회고 결정 대기)). 웹 함수 `web/src/api/usageEvents.ts` `sendUsageEvent`, 도서관 클릭 `web/src/lib/libraryClick.ts` [확정] (dev 구현 확인, 2026-10-15). 로그인은 요구하지 않음 [확정] (ADR-0102)
-- 값이 틀려도 204, `rejected_event`(IP와 받은 값, 30일) [확정]. 기록 설정이 꺼져 있어도 204 [확정] (dev 구현 확인, 2026-10-15). 본문 8KB 넘으면 `malformed` [안] (dev 구현, 회고 결정 대기)
+- 로그인 기능 켜짐에서 CSRF 표시가 없거나 틀리면 403 `csrf_invalid`(웹은 새 표시를 받아 한 번 다시; 로그인 기능 상태를 아직 모를 때는 쿠키가 있으면 표시를 붙이고 403이면 한 번 더 [확정] (사용자 승인, 2026-10-15, 회고 결정 #4)). 웹 함수 `web/src/api/usageEvents.ts` `sendUsageEvent`, 도서관 클릭 `web/src/lib/libraryClick.ts` [확정] (dev 구현 확인, 2026-10-15). 로그인은 요구하지 않음 [확정] (ADR-0102)
+- 값이 틀려도 204, `rejected_event`(IP와 받은 값, 30일) [확정]. 기록 설정이 꺼져 있어도 204 [확정] (dev 구현 확인, 2026-10-15). 본문 8KB 넘으면 `malformed` [확정] (사용자 승인, 2026-10-15, 회고 결정 #4)
 - nginx 한도 IP당 60r/m(zone `chaekcheck_usage_events`, `burst=20 nodelay`), 넘치면 `@usage_events_limited` → 204 [확정]. 로봇 User-Agent 거절(map `$chaekcheck_named_bot`, 403 [확정] (dev 구현 확인, 2026-10-15))은 직접 찾기·대출 조회 스트림과 `/api/v1/availability/` location에만 [확정]. dev 측정(AC-11): 같은 IP 약 10초에 80번 → 모두 204, 기록 31줄
 
 ## 흐름 37: 기록 쓰기와 지우기 — 구현됨 (사이클 15, 회고 2026-10-15)
@@ -1337,7 +1337,7 @@ sequenceDiagram
   Note over U,D: 매일 04:30 서울: 30일 지난 client_ip 비움, 30일 지난 rejected_event 지움, 1년 지난 줄 지움(1만 줄씩 [안])
 ```
 
-- 메모리 큐 상한 1만 줄, 넘치면 버리고 `dropped_batch`(`buffer_full`) [확정] (ADR-0097). DB 실패는 `db_failure`. 쓰기는 자기 단일 스레드 `usagelog-flush`, 버린 묶음 메모는 메모리에 100개까지(`chaekcheck.usagelog.max-dropped-notes`) [안] (dev 구현, 회고 결정 대기)
+- 메모리 큐 상한 1만 줄, 넘치면 버리고 `dropped_batch`(`buffer_full`) [확정] (ADR-0097). DB 실패는 `db_failure`. 쓰기는 자기 단일 스레드 `usagelog-flush`, 버린 묶음 메모는 메모리에 100개까지(`chaekcheck.usagelog.max-dropped-notes`) [확정] (사용자 승인, 2026-10-15, 회고 결정 #4)
 - 쓰기 전에 값의 NUL 문자를 뺌, NUL이 든 `raw_values`는 글자로 바꿔 넣음(PostgreSQL `text`·`jsonb`는 NUL을 받지 않아 묶음 전체가 실패) [확정] (dev 시험, 2026-10-14)
 - 정상 종료 순서: 웹 서버 정상 종료 → 남은 기록 씀 → Hikari 닫힘 [확정] (dev 시험 로그, 2026-10-14)
 - 도서관 번호 확인은 `LibraryCatalog.enabledLibraryRefs()`(켜진 도서관만) [확정]
@@ -1449,7 +1449,7 @@ sequenceDiagram
 - 새 공지: `notice` INSERT RETURNING id → `notice_version` 판 1 INSERT, 한 트랜잭션. 고치기: 판 = 마지막 + 1, 새 날짜 ≥ 마지막 판 날짜. 숨기기·고정: `UPDATE sitecontent.notice SET hidden = … / pinned = …`
 - 문서 새 판: 동의문은 4항목 필수. 약관·동의문을 바꿀 때 공지도 함께. 중요하거나 불리한 변경은 다시 동의 화면이 생기기 전에는 넣지 않음 (ADR-0101)
 - 운영 SQL은 "줄 수를 보고 확정하기"로 실행: psql에 파일을 한 번에 넣으면 `COMMIT;`까지 멈추지 않으므로 `\gset` + `\if :ok COMMIT \else ROLLBACK`으로 바뀐 줄 수를 확인한 뒤에만 확정 [안] (dev 구현, 회고 결정 대기; dev가 c16 개발 DB에서 1~6절 실행, 고친 문장 없음). 이 PC의 WSL psql은 한국어 오류가 깨져 `SET lc_messages = 'C'`
-- 공지 운영 규칙 [확정] (사용자: "근데 어짜피 기능 공유해서 이런거니까 공지 판 있는 설정으로 안 쓰면 되는거아닌가?", 2026-10-14; dev `docs/maintenance/5-sitecontent.md` 2절): 공지는 보통 고치지 않음. 꼭 고칠 때만 새 판, 아니면 숨기고 새 공지. 코드는 그대로, 공지 판 기능을 줄일지는 회고 결정 대기
+- 공지 운영 규칙 [확정] (사용자: "근데 어짜피 기능 공유해서 이런거니까 공지 판 있는 설정으로 안 쓰면 되는거아닌가?", 2026-10-14; dev `docs/maintenance/5-sitecontent.md` 2절): 공지는 보통 고치지 않음. 꼭 고칠 때만 새 판, 아니면 숨기고 새 공지. 코드는 그대로, 공지 판 기능은 줄이지 않음 [확정] (사용자 승인, 2026-10-15, 회고 결정 #8)
 
 ## 흐름 42: 새 도서관 넣기 미리 보기의 "전자책 0권" — 구현됨 (사이클 18 B, dev main `a0e438a`, 회고 2026-10-15)
 

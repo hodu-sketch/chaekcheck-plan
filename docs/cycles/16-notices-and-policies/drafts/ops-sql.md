@@ -11,6 +11,7 @@
 - **판은 고치지 않고 새로 넣는다**: `notice_version`, `document_version`은 `UPDATE`·`DELETE`하지 않는다. 바꾸는 것은 `notice`의 `pinned`·`hidden`뿐 ([ADR-0098](../../../adr/0098-sitecontent-module-versioned-documents.md))
 - **날짜 순서**: 새 판의 날짜는 그 글의 마지막 판 날짜보다 이르면 안 된다 (설계 결정 8, DB 검사 장치 없이 아래 조건으로 지킴)
 - **"오늘"은 한국 날짜**: `(now() AT TIME ZONE 'Asia/Seoul')::date`
+- **표를 쓰지 않는다**: 화면은 마크다운 표를 그리지 않음(`|`가 그대로 보임). 처리방침·바뀐 점도 목록으로 [확정] (사용자 승인, 2026-10-15, 사이클 16 회고 결정 #7)
 - **본문은 `$$ … $$`로 감싼다**: 글 안의 따옴표·세미콜론이 SQL을 깨지 않게
 - **다시 동의가 필요한 변경은 넣지 않는다**: 중요하거나 불리한 이용약관 변경, 동의문의 항목·목적·기간 변경은 다시 동의 화면이 생기기 전까지 넣지 않는다 ([ADR-0101](../../../adr/0101-terms-change-notice-or-reconsent.md), spec R7-3)
 - **약관·동의문·처리방침을 바꾸면 공지도 함께**: 같은 트랜잭션에 공지 하나 (spec R7-1)
@@ -134,4 +135,4 @@ ORDER BY n.id DESC;
 
 - 운영 DB 첫 판은 [drafts/](README.md)의 승인된 글이 Liquibase seed로 들어간다. 시행일·게시일 = 공개일 ([design-delta.md](../design-delta.md) "운영 첫 판", spec R2-3)
 - 첫 공지 [notice-first.md](notice-first.md)는 1번 SQL로 공개일 게시
-- 서버를 AWS에서 노트북으로 옮기는 날: 4번 SQL로 처리방침 새 판(위탁 표에서 AWS 줄 빼기, 안전 조치 문구 맞추기) + 알리는 공지
+- 서버를 AWS에서 노트북으로 옮기는 날: 4번 SQL로 처리방침 새 판(위탁 목록에서 AWS 줄 빼기, 안전 조치 문구 맞추기) + 알리는 공지

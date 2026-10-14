@@ -7,3 +7,5 @@
 3. **nginx `/notices`**: 16이 `deploy/nginx/chaekcheck-locations.conf`의 화면 주소 정규식에 `notices|notices/[0-9]+`를 더함 [확정] (사용자 승인, 2026-10-14). 17이 같은 파일을 고치면 합칠 때 겹칠 수 있음
 4. **처리방침 공개 전 값**: AWS 계약 법인, Cloudflare 연락처·보유 기간·쿠키 여부 — 배포 때 계정·계약서로 채워 16 [drafts/privacy-policy.md](drafts/privacy-policy.md)에 반영
 5. **첫 공지**: 공개일에 [drafts/notice-first.md](drafts/notice-first.md)를 운영 SQL로 올림
+6. **첫 배포 뒤 확인 두 줄** [확정] (사용자 승인, 2026-10-15, 사이클 16 회고 결정 #10 — 회고는 사이클 19 세션이 씀): ① 실제 카카오 가입 1번으로 동의 기록 판 번호가 `1`로 남는지(개발 때는 가짜 응답·서버 시험만, 사용자: "지금은 일단 가짜응답으로만확인") ② 운영 `/about`에 가입 조사 기준일 줄이 보이는지(개발 DB에 값이 없어 화면으로 못 봄). 근거 [retro.md](retro.md)
+7. **합친 커밋 번호 바로잡기**: 1항 등에서 "main에 합침 `5b9c69b`"로 적은 것은 정리 커밋이고, 합친 커밋은 `7ca62d3` (dev `.git/logs/HEAD`, 회고 2026-10-15)
