@@ -12,4 +12,4 @@
 | [2026-10-16-design-decisions.html](2026-10-16-design-decisions.html) | 설계 결정 12개: picks 한 모듈, 분야 파일, 가져오기 목차에 싣기(판 3), 10분마다 맞추기, 수집기가 DB 읽어 판 고르기, 서버가 표지, 사람 고정 판 보존, 올해의 책 영상 찾기, /api/v1/picks/{목록}, 기록 list 칸, 책 이름, 태블릿 | `../architect-proposal.md` | 12개 모두 |
 | [architect-proposal-original.html](architect-proposal-original.html) | architect-proposal.md 원문(그림 7개 그려 넣음) | `../architect-proposal.md` | — |
 | [2026-10-16-design-decisions-2.html](2026-10-16-design-decisions-2.html) | 사서추천도서도 수집기 → 가져오기 길로 옮길지(사용자 제안), 받는 때, 서버 받기 장치 지우기 | 사용자 제안 2026-10-16, `../architect-proposal.md` | 없음. 사용자가 거둠: "아니다 사서 추천은 따로 가자" (2026-10-16) → 사서추천도서는 지금처럼 서버가 받음 |
-| [2026-10-16-design-decisions-3.html](2026-10-16-design-decisions-3.html) | 사서추천도서는 서버가 받되 PICK 표를 없애고 책 줄 표 하나로 합칠지 (사용자 질문) | 사용자 질문 2026-10-16, `../architect-proposal.md` | 1개 |
+| [2026-10-16-design-decisions-3.html](2026-10-16-design-decisions-3.html) | 사서추천도서는 서버가 받되 PICK 표를 없애고 책 줄 표 하나로 합칠지 (사용자 질문) | 사용자 질문 2026-10-16, `../architect-proposal.md` | 없음. 승인 (2026-10-16): PICK 표 없애고 list_book 하나로 |
