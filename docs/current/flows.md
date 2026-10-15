@@ -15,6 +15,7 @@
 사이클 15 cycle-close (2026-10-14, 12·13·14 회고 뒤): 사용자 행동 기록 — 흐름 34(수집 목록 검색 기록), 35(직접 찾기 첫 묶음과 "더 보기" 기록), 36(사용 알림), 37(기록 쓰기와 지우기)을 더함 — 구현됨 (사이클 15, 회고 2026-10-15). 근거 `docs/cycles/15-usage-log/design-delta.md` "주요 흐름", ADR-0096·0097·0102.
 사이클 16 cycle-close (2026-10-14, 12·13·14·15 회고·인계 뒤): 공지사항과 안내·약관 페이지를 DB로 — 흐름 38(공지 목록·공지 글), 39(서비스 안내·이용약관·처리방침 글), 40(가입 화면의 약관·동의문, 글을 못 불러올 때), 41(운영자가 새 판을 넣을 때)을 더하고 흐름 9에 문서 버전의 원본을 적음 — 구현됨 (사이클 16, 회고 2026-10-15). 근거 `docs/cycles/16-notices-and-policies/design-delta.md` "주요 흐름", ADR-0098~0101.
 사이클 15·16·18 회고 (2026-10-15): 구현됨으로 바꾸고 실제 이름·값을 맞춤. 15 `usagelog`·16 `sitecontent` 구현됨, 18은 A1·A2·B 구현됨(dev main `a0e438a`), C(운영 반영)는 사이클 17 첫 배포 뒤. 근거 `docs/cycles/15-usage-log/retro.md`, `docs/cycles/16-notices-and-policies/retro.md`, `docs/cycles/18-empty-library-holdings/retro.md`, dev `plan-feedback.md` "# 사이클 15"·"# 사이클 16"·"# 사이클 18".
+사이클 19 cycle-close (2026-10-15): 저자·제목 표기 정리 — 설계됨(미구현, 사이클 19). ADR-0113~0117. 흐름 44(다시 가져오기 → 비교 → 반영 → 다시 켜기), 45(캐시 답 세기)를 더하고, 흐름 20·27에 `rules-dir` 읽기와 멈춤 줄을 더함. 근거 `docs/cycles/19-author-angle-brackets/design-delta.md` "구조 그림".
 
 사이클 13 cycle-close (2026-10-12, 사이클 12와 나란히 미리 한 plan, 사이클 12 뒤에 개발): 새 도서관 넣기 — 흐름 32(넣기 미리 보기 → 넣기, 내 PC)와 흐름 33(운영 반영 판 2: 도서관 → 비교 → 책)을 더하고, "화면 공통"에 S12 `/about` 가입 조사 기준일 한 줄을 적음. 흐름 16·23-3의 seed로 넣기는 사이클 07~09 방식으로 남김 — 구현됨 (사이클 13, 회고 2026-10-14). 근거 `docs/cycles/13-crawler-to-dev/design-delta.md` "구조 그림", flow.md, ADR-0083~0088·0093.
 사이클 08 cycle-close (2026-10-11): 흐름 20(가져오기: 새 표에 쓰고 바꿔 끼우기), 21(검색 계획과 책 화면 소장 읽기), 22(막혔을 때 429·503)를 더하고, 흐름 6·16과 "화면 공통"에 바뀌는 점을 적음 — 구현됨 (사이클 08). 근거 `docs/cycles/08-polish-swap-memory/design-delta.md` "주요 흐름"(흐름 A~C), ADR-0065~0070.
@@ -650,6 +651,8 @@ sequenceDiagram
 
 흐름 16의 쓰기 단계를 바꿉니다(ADR-0065, ADR-0069, ADR-0070). 공개 `CatalogLoad.replaceAll` 모양과 모듈 방향은 그대로입니다.
 
+- 사이클 19 — 설계됨(미구현, 사이클 19) (ADR-0115): 가져오기(모든 모드)는 사본을 읽기 전에 규칙 폴더 `chaekcheck.collection.import.rules-dir`(기본 `../scripts/library/rules`)의 `author_publisher_swapped.tsv`·`supplier_families.tsv`를 읽음. 파일이 없으면 읽기 전에 멈추고, 사본이 `swap_before` 뒤 것이면 멈춤(검증 스크립트로 다시 확인). 흐름 44
+
 ```mermaid
 sequenceDiagram
   participant Op as 운영자 (collection-import 실행)
@@ -939,6 +942,8 @@ sequenceDiagram
 
 
 가져오기를 내 PC에서 끝까지 돌려 `catalog_next`를 만들고, 그것을 `pg_dump -Fc` 파일 하나로 내보냅니다. 내 PC `catalog`는 그대로이고 새 표는 운영 반영을 기다리며 남습니다(ADR-0078). 운영 반영을 기다리는 새 표가 있으면 시작하지 않습니다(스펙 R-A7). 묶는 방식은 `grouping`으로 고릅니다(ADR-0079). 표·칸은 `data-model.md` "따로 하기".
+
+- 사이클 19 — 설계됨(미구현, 사이클 19) (ADR-0115): 내보내기도 먼저 `rules-dir`의 규칙 파일을 읽고, 없으면 멈추며 `swap_before` 뒤 사본이면 멈춤(흐름 20 줄과 같음). 저자·제목 정리 뒤 다시 가져오기는 흐름 44
 
 ```mermaid
 sequenceDiagram
@@ -1508,5 +1513,65 @@ sequenceDiagram
     N-->>U: 그 줄에 보유·대출 수
   else 인증서 검사 실패·시간 초과 등
     N-->>U: 그 줄만 "대출 가능 여부 확인 필요"
+  end
+```
+
+## 흐름 44: 저자·제목 정리 뒤 다시 가져오기 → 비교 → 반영 → 다시 켜기 — 설계됨(미구현, 사이클 19)
+
+- 근거: `docs/cycles/19-author-angle-brackets/design-delta.md` "주요 흐름: 다시 가져오기 → 비교 → 반영 → 다시 켜기", ADR-0069·0078·0113~0115
+- 사본은 2026-10-12 사본, 도서관 목록은 가져오기 기록 11번과 같음. 가져오기는 먼저 `rules-dir`(`chaekcheck.collection.import.rules-dir`)를 읽고, 규칙 파일이 없으면 읽기 전에 멈추고, `swap_before` 뒤 사본이면 멈춰 검증 스크립트로 다시 확인함(ADR-0115)
+- dry run 셈: 공급사 코드 잇기, 코드로 이었는데 ISBN이 둘 이상인 묶음, 뒤바꾼 줄, 앞 괄호 뗌(`ImportReport` 셈 넷). `compare_grouping.py`로 기록 11번 결과와 비교해 원인별 합쳐짐·나뉨 표본 각 20권
+- 잘못 합친 책이 1권 이상이거나 ISBN 둘 이상 묶음이 있으면 반영하지 않고 plan에 알림 [확정]. 반영은 사이클 11 방식(흐름 27~29), 바꿔 끼우자마자 새 코드로 다시 켬(짧은 틈 받아들임, ADR-0069, 설계 결정 #11) [확정]
+- 반영 뒤 확인: AC-3·7·9 검색, 반영 중 5xx 0, 사서추천 다시 잼(AC-14: 사서추천·이동진 추천도서·서울대 100선 세 목록)
+
+```mermaid
+sequenceDiagram
+  actor Dev as dev (내 PC)
+  participant Imp as 가져오기(새 코드)
+  participant Cmp as compare_grouping.py
+  participant PC as 내 PC 원래 DB(5432)
+  participant Prod as 운영 역할 DB
+  participant Svc as 운영 역할 서비스
+  Dev->>Imp: dry run (2026-10-12 사본, 기록 11번과 같은 도서관 목록)
+  Imp->>Imp: rules-dir 읽기 (파일 없음 → 멈춤, swap_before 뒤 사본 → 멈춤·다시 검증)
+  Imp-->>Dev: 덤프 + 셈(공급사 코드 잇기, ISBN 둘 이상 묶음, 뒤바꾼 줄, 앞 괄호 뗌)
+  Dev->>Cmp: 기록 11번 결과와 비교
+  Cmp-->>Dev: 원인별 합쳐짐·나뉨 표본 각 20권
+  alt 잘못 합친 책 1권 이상 또는 ISBN 둘 이상 묶음이 있음
+    Dev-->>Dev: 반영 멈춤, plan에 알림
+  else 0권
+    Dev->>PC: prepare (옛 서비스 켜 둔 채) → export
+    Dev->>Prod: apply(파일)
+    alt baseline 다름 (mismatch)
+      Prod-->>Dev: 아무것도 바꾸지 않음
+    else 같음
+      Prod->>Prod: restore → index → swap
+      Dev->>Svc: 바꿔 끼우자마자 새 코드로 다시 켬 (ADR-0069)
+      Dev->>PC: finish (내 PC도 바꿔 끼우고 서비스 다시 켬)
+      Dev->>Svc: AC-3·7·9 검색, 반영 중 5xx 0, 사서추천 다시 잼
+    end
+  end
+```
+
+## 흐름 45: 캐시 답 세기 — 설계됨(미구현, 사이클 19)
+
+- 근거: `docs/cycles/19-author-angle-brackets/design-delta.md` "주요 흐름: 캐시 답 세기", ADR-0116. 흐름 35(직접 찾기 기록)와 흐름 37(기록 쓰기)에 이어짐
+- 캐시 답을 꺼내는 두 곳: `BatchRunner.answered`(직접 찾기 묶음), `LibraryEbookController.fetch`(도서관별 더 보기). 결과 값 `CACHED`면 `cached_count`만 1 올리고 응답 시간·성공/실패 수·서버 로그 줄은 없음. 도서관 번호 확인은 다른 결과와 같음(켜진 도서관만, 꺼진 번호는 `rejected_event` `unknown_library`)
+
+```mermaid
+sequenceDiagram
+  participant W as 웹
+  participant A as availability (BatchRunner / LibraryEbookController)
+  participant C as 3분 캐시
+  participant U as usagelog
+  W->>A: 직접 찾기 묶음 / 도서관별 더 보기
+  A->>C: 같은 검색 페이지?
+  alt 캐시에 있음
+    C-->>A: 저장된 답
+    A->>U: recordLibraryResponse(library, source, CACHED, 0)
+    Note over U: cached_count +1 (응답 시간·성공/실패 수·로그 줄 없음)
+  else 없음
+    A->>A: 도서관에 요청
+    A->>U: recordLibraryResponse(library, source, OK/FAILED/TIMEOUT, ms)
   end
 ```

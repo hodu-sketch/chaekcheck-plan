@@ -14,6 +14,7 @@
 사이클 15 cycle-close (2026-10-14, 12·13·14 회고 뒤): 새 요청 `POST /api/v1/usage-events`(모듈 `usagelog`, 로그인 요구 없음, 로그인 기능 켜짐이면 CSRF), 액세스 쿠키 `access_token` 경로 `/api/v1/me` → `/api/v1`(ADR-0102). 검색·책 상세·직접 찾기 요청 형식은 그대로(로그인 여부는 쿠키로 서버가 판별) — 구현됨 (사이클 15, 회고 2026-10-15). 근거 `docs/cycles/15-usage-log/design-delta.md` "API", ADR-0096·0097·0102.
 사이클 16 cycle-close (2026-10-14, 12·13·14·15 회고·인계 뒤): 공지사항과 안내·약관 페이지를 DB로 — 새 요청 `GET /api/v1/notices`, `GET /api/v1/notices/{noticeId}`, `GET /api/v1/documents/{documentKey}`(모듈 `sitecontent`, 로그인 없음), 새 오류 코드 `notice_not_found`·`document_not_found`·`version_not_found`, 가입(`GET`/`POST /api/v1/auth/signup`)의 문서 `version` 값이 판 순번 글자(`"1"`)로 바뀜(요청·응답 모양 그대로) — 구현됨 (사이클 16, 회고 2026-10-15). 근거 `docs/cycles/16-notices-and-policies/design-delta.md` "API", ADR-0098~0101.
 사이클 15·16·18 회고 (2026-10-15): 구현됨으로 바꾸고 실제 이름·값을 맞춤. 15 `usagelog`·16 `sitecontent` 구현됨, 18은 A1·A2·B 구현됨(dev main `a0e438a`), C(운영 반영)는 사이클 17 첫 배포 뒤. 근거 `docs/cycles/15-usage-log/retro.md`, `docs/cycles/16-notices-and-policies/retro.md`, `docs/cycles/18-empty-library-holdings/retro.md`, dev `plan-feedback.md` "# 사이클 15"·"# 사이클 16"·"# 사이클 18".
+사이클 19 cycle-close (2026-10-15): 저자·제목 표기 정리 — 설계됨(미구현, 사이클 19). ADR-0113~0117. REST 모양 변경 없음, `GET /api/v1/books` 저자 검색어에 기호 떼기, 책 묶음·`author_display` 값만 바뀜. 근거 `docs/cycles/19-author-angle-brackets/design-delta.md` "API".
 
 사이클 13 cycle-close (2026-10-12, 사이클 12와 나란히 미리 한 plan, 사이클 12 뒤에 개발): 새 요청 `GET /api/v1/join-surveys/latest`(모듈 `collection`, 인증 없음, 가입 조건 조사 기준일)와 S12 `/about` 공지 한 줄 — 구현됨 (사이클 13, 회고 2026-10-14). 다른 요청·응답·오류 코드는 그대로(새로 넣은 도서관은 `/libraries`·스트림에 지금 모양으로 나옴, 1215 이름은 "한화S&C"). 근거 `docs/cycles/13-crawler-to-dev/design-delta.md` "API", flow.md S12, ADR-0087·0093.
 사이클 08 cycle-close (2026-10-11): `GET /api/v1/libraries` 항목과 스트림 `targets.libraries[]`에 `mobileSiteDiffers`, 503 `server_busy`에 `Retry-After: 5`, 대출 현황 스트림의 도서관별 실패 코드 `holding_not_found`, 429·503 화면 안내 문구를 따로 둠 — 구현됨 (사이클 08). 요청 모양은 그대로. 근거 `docs/cycles/08-polish-swap-memory/design-delta.md` "API"·"웹", ADR-0070.
@@ -60,6 +61,8 @@
 | GET | `/api/v1/notices/{noticeId}?version=` | `sitecontent` | **사이클 16 — 구현됨 (사이클 16, 회고 2026-10-15)** (ADR-0098). 공지 글 한 판 + 판 목록. 아래 "공지·안내·약관 글" 절 |
 | GET | `/api/v1/documents/{documentKey}?version=` | `sitecontent` | **사이클 16 — 구현됨 (사이클 16, 회고 2026-10-15)** (ADR-0098·0100). 서비스 안내·이용약관·처리방침·동의문 한 판 + 판 목록. 아래 "공지·안내·약관 글" 절 |
 | POST | 조회 서비스 `/v1/fetches` (내부) | 조회 서비스 | URL 한 개를 GET으로 가져와 `{outcome, status, contentType, location, body(base64), startedAt, endedAt}`. `outcome`: `RESPONDED \| TIMEOUT \| CONNECT_FAILED \| ERROR`. 조회 서버 자신이 정상이면 항상 200. 401 토큰 없음·틀림(헤더 `X-Fetch-Token` [안, 임시]), 400 잘못된 URL·사설 주소, 503 과부하·종료 중 (ADR-0015) |
+
+- 책 검색 저자 칸 — 설계됨(미구현, 사이클 19) (ADR-0113, spec R1-4): `GET /api/v1/books`의 `author` 검색어에도 가져오기와 같은 기호 떼기(`Contributors.stripMarks`: `<`·`>`·`＜＞` 모두, `〈〉「」《》` 표시만)를 함 → "<김정은>"과 "김정은"이 같은 결과(정확 일치·단어 모두). 요청·응답 모양·오류 코드 그대로, 값만 바뀜(`author_display`에 기호 없음·붙은 역할 띄움). 합쳐져 사라진 책 번호는 지금처럼 404 `book_not_found`(ADR-0062). `POST /api/v1/usage-events`와 도서관 직접 찾기·더 보기(`/api/v1/ebook-searches/…`, `/api/v1/availability/libraries/{id}/ebooks`)도 바깥 모양 그대로(캐시 답 셈은 서버 안쪽만, ADR-0116)
 
 ## 사서추천도서 (`picks`) — 구현됨 (사이클 14, 회고 2026-10-14)
 
