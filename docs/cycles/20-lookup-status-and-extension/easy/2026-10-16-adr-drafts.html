@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 20 ADR 초안</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+</style>
+</head>
+<body>
+<main class="doc">
+
+<p class="lead">사이클 20 결정을 ADR 4개로 남기려 합니다.<br>초안을 보고 승인해 주세요.</p>
+<p class="sub">ADR은 "왜 이렇게 정했나"를 나중에 찾아볼 수 있게 남기는 기록입니다. 설계 결정 13개 가운데 구조에 영향이 있는 것만 넷으로 묶었습니다(이름·문구·값 같은 것은 design-delta에만). 승인하면 파일 ADR-0118~0121을 쓰고 상태는 Proposed로, 인계 때 Accepted로 바꿉니다. 이유 칸에는 사용자가 한 말만 적고, 말이 없으면 [이유 미확인]입니다.</p>
+
+<div class="card item">
+<h2><span class="num">1</span>ADR-0118: 조회 상태 신호는 10초마다 묻고<br>서버는 자리·줄 선 호스트를 메모리에서 셈</h2>
+<p class="concl">[안] <b>결정</b>: 머리말 신호(초록/노랑/빨강)는 화면이 <code>GET /api/v1/lookup-status</code>를 10초마다 묻는 방식으로 하고(SSE 아님), 서버는 동시 검색 자리 사용 수·최근 503 시각·길(나가는 IP)마다 줄이 선 호스트를 메모리의 작은 부품(`HostQueueBoard`)에서 세어 1초 캐시로 돌려준다. 상태 주소는 nginx 도서관 호출 구역 밖. 확장 모드에서는 묻지 않는다.</p>
+<p><b>배경</b>: 지금은 동시 검색 20개가 차면 503으로 거절할 뿐 미리 알릴 길이 없고(dev `SearchSlots`), 한 도서관 호스트에 몰려 8초를 기다리다 실패해도 사용자는 이유를 모른다. 운영은 4GB EC2 한 대(사이클 17).</p>
+<p><b>이유(사용자 발언)</b>: "자원 비교해서 이 서비스는 메모리 점유가 더 문제라고 판단했다"(10초 묻기 vs SSE), "특정 도서관에 몰리는 경우도 좀 생각해야 할 것 같아", "계산할 때 조회 서버 여러대이면 그 여러대만큼으로 분류되는 거 생각해서 하고", "조회 서버마다 접근이 안 되는 곳들 따로 관리할건데 그곳은 또 빼야 해" (2026-10-15).</p>
+<table>
+<tr><th>대안</th><th>장점 / 단점</th><th>채택하지 않은 이유</th></tr>
+<tr><td>A 10초마다 묻기 (채택)</td><td>요청 뒤 서버에 남는 것 없음, 재연결 없음 / CPU 조금 더(100명에 1% 안쪽 추정)</td><td>—</td></tr>
+<tr><td>B SSE로 밀어 주기</td><td>CPU·데이터 적음 / 사람 수만큼 연결·메모리 유지, nginx `worker_connections` 512 한도(약 250명), 살아 있음 신호·재연결 코드</td><td>"메모리 점유가 더 문제"</td></tr>
+<tr><td>C 줄 선 호스트를 `InMemoryHostThrottle` 안에서 셈</td><td>클래스 안 늘어남 / 사이클 17이 같은 파일을 고쳐 겹침</td><td>[이유 미확인] (제안 → 승인)</td></tr>
+<tr><td>D 상태 주소를 `/api/v1/availability/status`로</td><td>이름 그대로 / nginx 예외 블록이 빠지면 429</td><td>[이유 미확인] (제안 → 승인)</td></tr>
+</table>
+<p class="ex"><b>결과</b>: 좋아지는 점 — 혼잡을 미리 보고, 몰린 도서관은 그 줄에서 알 수 있음. 감수하는 점 — 10초 지연, 서버 한 대 기준 메모리 값(여러 대가 되면 합치는 설계 필요). 나중에 되돌릴 때 — 주소 하나·부품 하나라 비용 작음. 근거: `research.md` 7절, 설계 결정 #1·#2, 범위 #2·#3·#8, 명세 #5.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">2</span>ADR-0119: 크롬 확장은 "사용자 쪽 조회 서버" —<br>화면이 올리고 서버가 해석·검사한다</h2>
+<p class="concl">[안] <b>결정</b>: 확장 모드에서 확장은 도서관 페이지를 GET만 하고 화면에 돌려주며(우리 API를 모름), 화면이 서버의 계획 입구 셋(<code>POST …/plans</code> → <code>POST …/lookup-plans/{planId}/items/{itemId}</code> → <code>…/close</code>)으로 원본 바이트를 올린다. 서버는 기존 fetcher에 `accept` 입구를 달아 해석·캐시·판정을 서버 모드와 같은 코드로 하고(포털 상세 조회는 2단계), 서버 자리(`SearchSlots`)와 호스트 throttle은 쓰지 않는다. 올라온 바이트는 ①~④ 검사(쪽 번호·1회, 4MB·200, adapter 해석, 빈 칸)에 더해 ⑤ 계획 번호를 만든 IP에 묶음 ⑥ Origin 검사 ⑦ IP별 계획 한도 ⑧ 캐시 출처 표시·비우기 명령 ⑨ 실패 기록·잠시 막기 ⑩ adapter는 계획 URL로만. 상한은 설정값 하나(`max-body-size`)로 Spring·nginx 양쪽에. 사용 기록은 `source=extension`.</p>
+<p><b>배경</b>: 조회 부담을 사용자 쪽으로 옮기되(범위 #5), 해석 코드(adapter 9종)는 한 곳에 두고 가짜 결과가 공유 캐시(3분)를 더럽히지 않게 해야 한다. 조회 서버(ADR-0015)와 같은 "URL을 받아 원본만 돌려주는" 약속을 확장에도 쓴다.</p>
+<p><b>이유(사용자 발언)</b>: "그런데 조작되지 않도록 보안에 신경써줘", "이것말고도 보안적으로 막을 수 있는 방법 있으면 넣어줘", "이거 상수인데 옵션으로 빼서 옵션으로도 가능하게 해주라", "확장에서 가져온 해당 도서관의 대출 정보를 캐시로 사용할 수 있었으면 해", 서버 해석 유지 "(가) 서버가 해석 (지금 결정)" (2026-10-15~16).</p>
+<table>
+<tr><th>대안</th><th>장점 / 단점</th><th>채택하지 않은 이유</th></tr>
+<tr><td>A 화면이 올림 + 서버 해석 + JSON 입구 셋 + accept (채택)</td><td>확장이 API를 몰라 재심사 불필요, 해석 코드 한 벌, 가짜 검사 가능 / 바이트가 메시지를 거침, 서버가 해석 메모리 잠깐 씀</td><td>—</td></tr>
+<tr><td>B 확장이 서버에 직접 올림</td><td>메시지 생략 / API 바뀔 때마다 재심사, CSRF·CORS 예외</td><td>[이유 미확인] (제안 → 승인)</td></tr>
+<tr><td>C 확장이 해석해 결과만 올림</td><td>서버 메모리 0 / adapter 두 언어, 가짜 검사 불가</td><td>사용자가 (가) 서버 해석을 고름 (설계 #13)</td></tr>
+<tr><td>D SSE 스트림에 확장 모드 끼우기</td><td>화면 코드 그대로 / 연결 35초 유지, 두 통로 짝</td><td>[이유 미확인] (제안 → 승인)</td></tr>
+<tr><td>E 기다리는 가짜 SiteFetcher</td><td>검색 코드 글자 그대로 / 서버 줄에 사용자 IP 섞임, 밀어주기 통로</td><td>[이유 미확인] (제안 → 승인)</td></tr>
+</table>
+<p class="ex"><b>결과</b>: 좋아지는 점 — 확장 사용자는 서버 자리와 무관(AC-12), 결과는 서버 캐시로 공유(AC-10). 감수하는 점 — 포털 2단계로 왕복이 늘고, 흉내 낸 가짜는 3분 노출. 나중에 — 확장 해석(C)으로 가려면 adapter를 JS로 옮기는 큰 일. 근거: 설계 결정 #3~#8·#13, 명세 #9~#11·#13.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">3</span>ADR-0120: 확장은 dev 저장소 `extension/` 폴더,<br>빌드 없음, 크롬만 먼저, 개발자 모드까지</h2>
+<p class="concl">[안] <b>결정</b>: 크롬 확장(Manifest V3)은 dev 저장소 맨 위 `extension/`에 빌드 도구 없이 두고(`manifest.json`에 ID 고정 `key`, 모든 http·https 사이트 권한, `externally_connectable`에 책첵 주소만), 호스트마다 동시 1건·1초를 지키며 동시 5·응답 머리까지 10초로 받아온다. 이번 사이클은 개발자 모드 설치로 동작 확인까지이고 웹스토어 등록·심사는 나중에, 그때도 크롬만 먼저. "backend/는 Spring Boot 앱 하나" 규칙은 그대로이고 `fetch-service/`처럼 한 줄을 dev CLAUDE.md에 더한다.</p>
+<p><b>배경</b>: 폰 크롬·사파리는 확장을 지원하지 않고(조사 2·8절), 엣지는 같은 파일을 올릴 수 있으나 뒤로. 웹스토어 심사는 며칠~몇 주이며 넓은 사이트 권한은 심사가 길어질 수 있음(공식 문서, 2026-10-15). 같은 구조의 선례 「Library Extension」.</p>
+<p><b>이유(사용자 발언)</b>: "크롬만 먼저 하자.", "크롬 확장은 돌아가게만 만들고 승인은 나중에 받을거야", 권한 "이걸 승인 요청 문서를 보낼 때 쓰면 될 것 같기도 하다. 아무튼 그렇게 하자", "근데 요청 시간 1초 간격 지켜" (2026-10-15).</p>
+<table>
+<tr><th>대안</th><th>장점 / 단점</th><th>채택하지 않은 이유</th></tr>
+<tr><td>A `extension/` 빌드 없음, 크롬만, 모든 사이트 권한 (채택)</td><td>압축 풀어 바로 로드, 도서관이 늘어도 재심사 없음 / 타입 검사 없음, 설치 경고</td><td>—</td></tr>
+<tr><td>B Vite·TS 빌드</td><td>타입 / 빌드 결과물 로드·설정</td><td>[이유 미확인] (제안 → 승인)</td></tr>
+<tr><td>C 크롬·엣지 동시 배포</td><td>엣지 사용자 / 올리는 곳 둘</td><td>"크롬만 먼저 하자."</td></tr>
+<tr><td>D 도서관 호스트 2,794개를 권한에 나열</td><td>경고 좁음 / 도서관이 늘 때마다 재심사</td><td>[이유 미확인] (제안 → 승인)</td></tr>
+<tr><td>E 사용자 스크립트·로컬 도우미·폰 앱</td><td>— / 설치 단계 많음·PC 전용·앱 두 벌</td><td>"백로그에도 쓰지 마 이 사이클에 조사했다고만 기록해" (스크립트·도우미), 폰 앱은 backlog</td></tr>
+</table>
+<p class="ex"><b>결과</b>: 좋아지는 점 — 작은 파일 몇 개로 바로 시험. 감수하는 점 — 폰 사용자는 못 씀, 웹스토어 뒤 갱신은 심사. 나중에 — 엣지·파이어폭스는 같은 WebExtension 규격이라 손질 작음. 근거: 범위 #6·#7, 방법 비교 #1·#2·#3, 설계 #8·#11.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">4</span>ADR-0121: 머리말은 모든 화면에서 같다<br>(약관·처리방침 예외 폐지)</h2>
+<p class="concl">[안] <b>결정</b>: 공통 머리말(사이클 21 메뉴 기준: 「책첵」·큰 메뉴·조회 상태 점·「로그인/로그아웃」·폰 ☰)은 약관(`/terms`)·처리방침(`/privacy`)을 포함한 모든 화면에서 같다. 사이클 05(2026-10-04)의 "S8·S9에는 로그인·로그아웃 버튼을 두지 않음"과 사이클 10·14가 따른 "사서추천도서 링크 숨김"을 없앤다(dev `AppLayout.tsx` `legal` 분기 제거).</p>
+<p><b>배경</b>: 사이클 20 화면 흐름 검토 중 사용자가 두 화면의 머리말이 다른 것을 지적. 사이클 05 결정의 이유는 문서에 없음.</p>
+<p><b>이유(사용자 발언)</b>: "왜 이용약관이랑 개인정보처리방침은 왜 머릿말이 달라? 그것들도 같아야지", "이렇게 가자" (2026-10-15).</p>
+<table>
+<tr><th>대안</th><th>장점 / 단점</th><th>채택하지 않은 이유</th></tr>
+<tr><td>A 모든 화면 같은 머리말 (채택)</td><td>일관됨, 코드 분기 하나 줄어듦 / 사이클 05 결정 변경</td><td>—</td></tr>
+<tr><td>B 지금대로 약관·처리방침만 다르게</td><td>바꿀 것 없음 / 사용자가 이상하다고 느낌</td><td>"그것들도 같아야지"</td></tr>
+</table>
+<p class="ex"><b>결과</b>: 좋아지는 점 — 신호·메뉴가 어느 화면에서나 보임. 감수하는 점 — 가입 중 약관을 볼 때도 로그인 버튼이 보임(사이클 05가 이를 피하려 했는지는 [이유 미확인]). 사이클 21이 머리말을 먼저 만들므로 21이 이 규칙대로 만들고 20은 점만 얹음. 근거: spec R14, flow H, 21 공유 파일.</p>
+</div>
+
+<p class="foot">원문: <code>docs/cycles/20-lookup-status-and-extension/architect-proposal.md</code> 결정 절, <code>spec.md</code>, <code>research.md</code>. 승인되면 <code>docs/adr/0118~0121</code>로 씁니다.</p>
+</main>
+</body>
+</html>
