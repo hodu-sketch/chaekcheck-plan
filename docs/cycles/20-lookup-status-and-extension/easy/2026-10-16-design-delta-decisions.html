@@ -51,7 +51,7 @@ svg .ah{fill:var(--accent)}
 .why{background:var(--code-bg);border-radius:8px;padding:10px 14px;margin:10px 0}
 </style>
 
-<p class="concl">#9 승인 반영 (2026-10-16): 확장 모드는 서버 캐시를 읽지 않고 자기 결과만 보며, 서버는 넣기만 합니다. design-delta·ADR-0119를 고쳤고, #5는 이것으로 정리되어 "확장 모드엔 캐시 답 없음"이 됐습니다(5번에 표시). 남은 것: #1~#4, #5(확인), #6~#8.</p>
+<p class="concl">#9 승인 반영 (2026-10-16): 확장 모드는 서버 캐시를 읽지 않고 자기 결과만 보며, 서버는 넣기만 합니다. design-delta·ADR-0119를 고쳤고, #5는 이것으로 정리되어 "확장 모드엔 캐시 답 없음"이 됐습니다(5번에 표시). 남은 것: #1~#4, #5(확인), #6~#8, 새로 #10(화면을 떠나면 서버 요청 멈추기 — 질문에 답).</p>
 <p class="lead">설계 문서 초안을 쓰면서<br>아직 정하지 않은 작은 값 7개가 남았습니다.</p>
 <p class="sub">앞 페이지에서 "어떻게 만들지"(설계 결정 13개)는 다 정했고 ADR 4개도 승인됐습니다. 이 페이지는 그것을 설계 문서로 적다 보니 숫자·이름을 넣어야 하는 자리 7곳을 묻는 것입니다. 먼저 확장 모드 검색 한 번이 어떻게 흘러가는지와 낱말을 풀고, 항목마다 (1) 이 값이 구조의 어디에 붙는지 그림 (2) 사용자 화면에서 무엇이 달라지는지 그림 (3) 숫자를 그렇게 잡은 계산 (4) 다른 선택과 그 결과를 적었습니다. 길지만 한 번 읽으면 설계 문서 전체가 보이도록 썼습니다.</p>
 
@@ -315,6 +315,32 @@ svg .ah{fill:var(--accent)}
 </table>
 <p class="concl">[안] <b>사용자 제안대로</b>: 확장 모드에서는 서버가 계획 때 캐시를 보지 않고 모든 주소를 확장에 주며, 사용자는 자기 브라우저가 받은 결과만 봅니다. 서버는 올라온 결과를 해석해 캐시에 넣어 다른 사용자가 씁니다(빈 칸이면 넣고, 서버 출처 값은 덮지 않고, 확장 출처 값은 새 값으로 갱신). 이에 따라 설계 #4의 "캐시에 있는 도서관은 결과 바로"를 빼고, #5는 "확장 모드에는 캐시 답이 없음"으로 정리하며, ADR-0119(Proposed)도 고칩니다.</p>
 <p class="alt">다른 선택: 지금 설계 그대로(캐시 먼저). 사용자 IP 요청이 조금 줄지만 결과가 섞이고 서버가 계획 때 캐시를 한 번 더 봐야 합니다.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">10</span>질문에 답: 화면을 떠나면<br>기다리던 조회 요청이 사라지나</h2>
+<p class="concl"><b>지금은 사라지지 않습니다 — 고려하지 못했던 부분입니다.</b> dev 코드를 확인해 보니(2026-10-16) 화면은 떠날 때 검색 스트림을 끊지만(`useSearch.ts` "leaving the page aborts the open stream"), <b>서버는 사용자가 떠난 것을 보지 않고</b> 그 묶음을 끝까지 돌립니다. 아직 시작 안 한 도서관도 시작 마감(3초)까지 계속 보내고, 호스트 줄(1건·1초)에서 기다리던 요청도 그대로 기다리며, 서버 자리(20개 중 1개)는 묶음 마감(8초, 포털 상세는 30초)까지 붙들립니다. 코드 주석에도 "Requests still count after the browser left"라고 적혀 있습니다(`BatchRunner.java` 70행). 결과를 보낼 곳이 없어 `send`가 false를 돌려줘도 실행 고리는 그 값을 보지 않습니다(`SseEventSink.java`, `BatchRunner.runTasks`).</p>
+<div class="fig wide"><svg viewBox="0 0 900 360" role="img" aria-label="떠난 뒤 서버에 남는 일">
+<defs><marker id="ah10" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="var(--accent)"/></marker></defs>
+<text class="s14" x="10" y="22">사용자가 검색 1초 뒤 다른 화면으로 감 — 지금 (서버 모드)</text>
+<line x1="10" y1="80" x2="890" y2="80" stroke="var(--line)" stroke-width="2"/>
+<text class="s13m" x="10" y="100">0초</text><text class="s13m" x="110" y="100">1초</text><text class="s13m" x="440" y="100">5초 (시작 마감)</text><text class="s13m" x="760" y="100">8초 (묶음 마감)</text>
+<circle cx="120" cy="80" r="7" fill="var(--no)"/><text class="s13 sred" x="128" y="66">화면 떠남 → 스트림 끊김</text>
+<rect x="10" y="112" width="760" height="22" rx="4" fill="var(--no-bg)" stroke="var(--no)"/><text class="s13" x="20" y="128">서버 자리 1개 계속 잡힘 (8초, 포털이면 30초까지)</text>
+<rect x="120" y="140" width="340" height="22" rx="4" fill="var(--no-bg)" stroke="var(--no)"/><text class="s13" x="130" y="156">아직 안 보낸 도서관도 계속 시작 (시작 마감까지)</text>
+<rect x="120" y="168" width="640" height="22" rx="4" fill="var(--no-bg)" stroke="var(--no)"/><text class="s13" x="130" y="184">호스트 줄(1건·1초)에서 기다리던 요청도 그대로 → 다른 사용자 앞을 막음</text>
+<text class="s14" x="10" y="226">제안 — 떠난 것을 알아채면 바로 멈춤</text>
+<line x1="10" y1="280" x2="890" y2="280" stroke="var(--line)" stroke-width="2"/>
+<circle cx="120" cy="280" r="7" fill="var(--ok)"/><text class="s13 sok" x="128" y="266">끊김을 알아챔(다음 이벤트 보내기 실패 또는 연결 끊김 신호)</text>
+<rect x="10" y="292" width="140" height="22" rx="4" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="18" y="308">자리 바로 돌려줌</text>
+<rect x="160" y="292" width="280" height="22" rx="4" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="168" y="308">새 도서관 시작 안 함 · 줄에서 기다리던 것 취소</text>
+<rect x="450" y="292" width="300" height="22" rx="4" fill="var(--bx, var(--card))" stroke="var(--line)"/><text class="s13m" x="458" y="308">이미 도서관에 간 요청(수 초)은 끝까지 받아 캐시에 넣음</text>
+<text class="s13m" x="10" y="342">이미 보낸 요청을 중간에 끊으면 도서관 쪽 일은 이미 했고 결과만 버리게 되므로, 받아서 3분 캐시에 넣는 편이 다른 사용자에게 이득</text>
+</svg><p class="cap">떠난 사용자의 묶음이 자리와 호스트 줄을 붙들지 않게, 알아챈 순간 새 시작과 줄 대기를 멈춥니다.</p></div>
+<p><b>왜 이번 사이클과 관계있나.</b> 이번 사이클은 "자리가 꽉 찼는지"(신호)와 "호스트 줄에 기다림이 있는지"(줄이 선 도서관)를 사용자에게 보여 줍니다. 떠난 사용자의 묶음이 자리와 줄을 계속 붙들면 신호가 실제보다 붉게, 「밀려요」가 실제보다 오래 보이고, 503도 그만큼 더 납니다. 화면을 오가며 검색어를 바꾸는 사람이 많을수록 커집니다.</p>
+<p class="concl">[안] 서버 모드에서 <b>사용자가 떠난 것을 알아채면 그 묶음을 멈춥니다</b>: (1) 알아채는 법 — 이벤트 보내기가 실패하거나(`send`가 false) 서블릿이 연결 끊김을 알릴 때(`SseEmitter` onError/onCompletion), (2) 멈추는 것 — 새 도서관 시작 안 함, 호스트 줄에서 아직 자리를 못 받은 요청은 취소, 서버 자리는 바로 반납, (3) 남기는 것 — 이미 도서관에 나간 요청은 끝까지 받아 캐시에 넣고(다른 사용자용) 사용 기록에도 셈, 시작 못 한 것은 "건너뜀". <b>확장 모드</b>는 화면이 떠나면 확장 port가 닫히므로 확장이 자기 줄의 남은 주소를 버리고, 서버의 계획은 그대로 10분 뒤 만료(올라올 것이 없으니 할 일 없음). 「더 보기」도 같은 규칙.</p>
+<p class="alt"><b>다른 선택과 결과.</b> ① 지금대로(끝까지 돌림) — 코드 변경이 없지만 위 문제(신호가 실제보다 붉음, 자리·줄 낭비)가 남습니다. ② 이미 도서관에 나간 요청까지 끊음 — 자리는 더 빨리 비지만 도서관은 이미 일했고 결과를 버리게 되어 캐시 재사용을 잃습니다. ③ 화면이 떠날 때 "그만" 요청을 따로 보냄 — 끊김을 더 확실히 알지만 새 주소가 필요하고, 브라우저를 그냥 닫으면 보내지 못할 수 있어 (1)과 함께 써야 합니다.</p>
+<p class="ex">근거: dev `web/src/features/search/useSearch.ts` 219·275행(떠나면 abort), `backend/.../search/BatchRunner.java` 70행 주석·`runTasks` 295~328행, `web/SseEventSink.java`(끊기면 send false) — 2026-10-16 확인. 이 동작은 이번 사이클 전부터 있던 것이라, 승인되면 이번 사이클 설계에 "떠난 묶음 멈추기"로 넣습니다.</p>
 </div>
 
 <p class="foot">원문: <code>docs/cycles/20-lookup-status-and-extension/design-delta.md</code>. 앞선 결정: 설계 결정 13개(<code>easy/2026-10-15-design-decisions.html</code>), ADR-0118~0121. 그림 원본 <code>easy/design-delta-original.html</code>.</p>

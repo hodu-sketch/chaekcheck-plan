@@ -124,3 +124,10 @@ dev seed의 도서관 주소 12곳 루트에 `Origin` 머리를 붙여 GET(curl,
 - **없는 것: 멈춘 뒤 다시 시도해 풀렸는지 확인하는 때.** ADR·17 문서 어디에도 없음 (2026-10-15 확인)
 - 제안 (결정 페이지 `easy/2026-10-15-blocked-ip-resume-decisions.html`): ① 10분 뒤 시험 요청 1건, 또 막히면 두 배(상한 24시간), 사용자 요청은 시험에 쓰지 않음 ② 로그 + Actuator 지표로 Grafana에서 봄, 수동 버튼 없음 ③ 사이클 17 인계에 넣고 17 폴더에 공유 파일로 넘김
 - **결정 (2026-10-15)**: ①②③ 모두 승인. ② 덧붙임: 관리 화면은 backlog (사용자). 사이클 17 공유 파일 `docs/cycles/17-first-deploy/from-cycle-20-blocked-ip-resume.md`
+
+## 10. 질문에 답 (2026-10-16): 화면을 떠나면 서버의 조회 요청이 사라지나
+
+- 사용자 질문: "화면에서 벗어나면 조회 서버에 보낸 요청이 사라지도록(대기 큐에 있다면) 이거 고려 했어?"
+- dev 확인(2026-10-16): 웹은 떠나면 스트림을 abort(`useSearch.ts` 219·275행). 서버는 끊김을 보지 않음 — `BatchRunner` 주석 "Requests still count after the browser left"(70행), `runTasks`(295~328행)는 시작 마감까지 계속 시작, `SseEventSink.send`는 끊기면 false를 돌려주지만 아무도 보지 않음. 자리는 스트림 끝(8초·포털 30초)까지, 호스트 줄 대기도 그대로
+- 영향: 상태 신호가 실제보다 붉고, 줄이 선 도서관 표시가 오래가며, 503이 더 남
+- 제안(결정 페이지 `easy/2026-10-16-design-delta-decisions.html` #10): 끊김을 알아채면(send false·emitter onError/onCompletion) 새 시작 중단, 호스트 줄 대기 취소, 자리 즉시 반납; 이미 나간 요청은 받아 캐시·사용 기록. 확장 모드는 port가 닫히면 확장이 남은 주소를 버림
