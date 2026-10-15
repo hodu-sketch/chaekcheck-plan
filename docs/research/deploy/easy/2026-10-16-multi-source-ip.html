@@ -109,7 +109,8 @@ table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,t
 
 <section class="card">
 <h2><span class="num">3</span>Webshare "월 $6에 20개"는<br>한국 IP 값인지 모릅니다</h2>
-<p class="gist">$6은 광고에 나온 가장 싼 값입니다. 한국 IP를 그 값에 살 수 있는지는 가입해서 플랜 화면의 나라 목록을 봐야 압니다.</p>
+<p class="gist">$6은 광고에 나온 가장 싼 값입니다. 그 값에 <b>한국 IP</b>를 살 수 있는지는 가입해서 플랜 화면의 나라 목록을 봐야 압니다.</p>
+<p>이 페이지에서 "한국 IP"는 <b>결제가 아니라 프록시 IP가 어느 나라에 있느냐</b>를 말합니다. 한국 IP여야 도서관 사이트가 보기에 한국에서 온 접속입니다. 미국 IP를 사면 한국 카드로 결제해도 도서관 사이트에는 미국에서 온 접속으로 보입니다.</p>
 <ul>
 <li><b>Webshare 공식 도움말:</b> 일부 나라는 $6 정적 주거용 플랜에서 제공되지 않을 수 있고, IP가 바뀌는 주거용 플랜에는 있을 수 있다고 적혀 있습니다.</li>
 <li><b>Webshare 요금표 페이지:</b> 데이터센터(공유) 100개 $2.99, 기본 250GB는 보이지만, 정적 주거용 값과 나라 목록은 보이지 않았습니다.</li>
@@ -134,7 +135,7 @@ table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,t
 
 <div class="item">
 <h3>질문: Webshare 정적 주거용을 찾아보면?</h3>
-<p class="chg">Webshare 정적 주거용은 20개 $6(IP당 $0.30)이 맞습니다. 그런데 공식 페이지에 적힌 통신사가 모두 미국 회사이고, 한국 IP로 살 수 있다는 문구는 찾지 못했습니다. 한국 IP가 꼭 필요하면 Webshare는 가입 화면에서 확인한 뒤에 사야 합니다.</p>
+<p class="chg">Webshare 정적 주거용은 20개 $6(IP당 $0.30)이 맞습니다. 그런데 공식 페이지에 적힌 통신사가 모두 미국 회사이고, 한국에 있는 IP를 고를 수 있다는 문구는 찾지 못했습니다. 한국 IP가 꼭 필요하면 Webshare는 가입 화면에서 확인한 뒤에 사야 합니다.</p>
 <table>
 <tr><th>무엇</th><th>Webshare 공식 페이지에 적힌 것</th></tr>
 <tr><td>값</td><td>20개부터, IP당 $0.30 → 한 달 $6. 많이 사면 IP당 $0.225까지 내려감</td></tr>
@@ -163,6 +164,16 @@ curl -x http://아이디:비밀번호@주소:포트 https://ipinfo.io/country
 curl -s -o /dev/null -w "%{http_code}\n" -x http://아이디:비밀번호@주소:포트 https://www.gdlibrary.or.kr/</code></pre>
 <ul>
 <li><b>프록시 없이는 지금 열립니다:</b> 이 PC(집 IP)에서 요청 한 번씩 보내 봤습니다(2026-10-16). 강동구립도서관 홈페이지 <code>www.gdlibrary.or.kr</code>은 302(다른 주소로 넘김, 0.1초), 전자도서관 <code>ebook.gdlibrary.or.kr</code>은 200(정상, 0.8초). 그래서 #3의 "먼저 프록시 없이" 순서와 맞습니다. 교보 구독형 서버는 이 집 IP를 막은 상태 그대로입니다(2026-10-07부터).</li>
+</ul>
+</div>
+
+<div class="item">
+<h3>질문: Visa·Mastercard가 있는데<br>왜 한국에서 못 산다는 건가?</h3>
+<p class="chg">한국에서 사는 것(결제)은 됩니다. 제가 확인하지 못한 것은 <b>사는 프록시 IP가 한국에 있는지</b>입니다. 말을 헷갈리게 써서 3번 카드 첫머리에 뜻을 적어 두었습니다.</p>
+<ul>
+<li><b>결제:</b> Webshare 페이지 아래쪽에 결제 수단(PAYMENT METHODS) 칸이 있고, 말씀하신 Visa·Mastercard로 한국에서 결제할 수 있다고 봅니다. 결제 수단 그림 목록은 직접 열어 보지 않았습니다.</li>
+<li><b>IP가 있는 나라:</b> 정적 주거용 페이지에 적힌 통신사가 AT&amp;T·Comcast 등 미국 회사뿐이라, $6에 사면 미국 IP가 나올 수 있습니다. 도서관 사이트에는 미국에서 온 접속으로 보이고, 해외 접속을 막는 도서관 사이트에서는 열리지 않을 수 있습니다.</li>
+<li><b>확인 방법:</b> 위 질문의 답대로, 가입 뒤 플랜 화면에서 South Korea를 고를 수 있는지 봅니다. 사고 나서 <code>https://ipinfo.io/country</code>가 KR을 돌려주면 한국 IP입니다.</li>
 </ul>
 </div>
 
