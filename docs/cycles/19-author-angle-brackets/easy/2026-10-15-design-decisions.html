@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 19 설계 결정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+</style>
+</head>
+<body>
+<main class="doc">
+
+<p class="lead">사이클 19 설계 결정입니다.<br>"어디를 어떻게 고칠지" 11개를 골라 주세요.</p>
+<p class="sub">무엇을 고칠지는 명세에서 모두 정했습니다. 여기서는 dev 코드의 어느 자리에 넣을지만 정합니다. 표 구조는 사용 기록 표에 칸 하나를 더하는 것뿐이고, 화면·API 모양은 바뀌지 않습니다. 원본은 <code>architect-proposal.md</code>(그림이 든 원본 페이지 따로)입니다.</p>
+
+<div class="card">
+<h2>어디가 바뀌나 (한눈에)</h2>
+<div class="fig"><svg viewBox="0 0 640 250" role="img" aria-label="바뀌는 자리">
+<rect class="bx" x="10" y="10" width="160" height="50" rx="8"/><text class="lb" x="90" y="32" text-anchor="middle">수집 사본</text><text class="sm" x="90" y="50" text-anchor="middle">도서관별 책 줄</text>
+<path class="ar" d="M172 35 H200"/><path class="ah" d="M198 28 L210 35 L198 42Z"/>
+<rect class="bxa" x="214" y="10" width="200" height="50" rx="8"/><text class="lb" x="314" y="32" text-anchor="middle">① 줄 읽기</text><text class="sm" x="314" y="50" text-anchor="middle">뒤바뀐 칸 바꾸기 · 공급사 코드</text>
+<path class="ar" d="M416 35 H444"/><path class="ah" d="M442 28 L454 35 L442 42Z"/>
+<rect class="bxa" x="458" y="10" width="172" height="50" rx="8"/><text class="lb" x="544" y="32" text-anchor="middle">② 같은 책 묶기</text><text class="sm" x="544" y="50" text-anchor="middle">코드로 잇기 · 앞 괄호</text>
+<path class="ar" d="M544 62 V86"/><path class="ah" d="M537 84 L544 96 L551 84Z"/>
+<rect class="bxa" x="398" y="100" width="232" height="50" rx="8"/><text class="lb" x="514" y="122" text-anchor="middle">③ 저자 정리 (catalog)</text><text class="sm" x="514" y="140" text-anchor="middle">기호 떼기 · 붙은 역할 나누기·띄우기</text>
+<path class="ar" d="M396 125 H370"/><path class="ah" d="M372 118 L360 125 L372 132Z"/>
+<rect class="bx" x="170" y="100" width="188" height="50" rx="8"/><text class="lb" x="264" y="122" text-anchor="middle">책 목록 표</text><text class="sm" x="264" y="140" text-anchor="middle">표 구조 그대로, 값만</text>
+<rect class="bxa" x="10" y="180" width="300" height="56" rx="8"/><text class="lb" x="160" y="204" text-anchor="middle">④ 사용 기록 "캐시 답" 칸</text><text class="sm" x="160" y="224" text-anchor="middle">표에 칸 하나 (유일한 표 변경)</text>
+<rect class="bxa" x="330" y="180" width="300" height="56" rx="8"/><text class="lb" x="480" y="204" text-anchor="middle">⑤ 수집기</text><text class="sm" x="480" y="224" text-anchor="middle">출판사가 먼저인 포털 셋</text>
+</svg></div>
+<p class="cap">파란 칸이 고치는 자리입니다. 책 목록 표의 모양은 그대로이고 들어가는 값만 바뀝니다.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">1</span>공급사 코드로 잇기를<br>지금 "ISBN 잇기" 단계에 함께 넣을지</h2>
+<p class="concl">지금 같은 책 묶기는 ① 화면 번호 → ② ISBN으로 잇기 → ③ 국가서지 → ④ 같은 글 순서입니다. 공급사 코드(예: 와이투북스 1210492004114)를 ②에서 ISBN과 같이 "같은 값이면 잇는 표"로 셉니다.</p>
+<div class="prop">② 단계를 넓혀 ISBN과 (공급사, 코드)로 함께 잇습니다. 다시 가져오기 전 미리 돌려 볼 때 "코드로 이었는데 ISBN이 둘 이상인 묶음" 수를 세어 0이 아니면 plan에 묻습니다. [안]</div>
+<p class="alt">다른 선택: ②와 ③ 사이에 새 단계를 두고 ISBN이 다른 묶음은 잇지 않음 → 더 안전하지만 세 묶는 방식(compact·objects·sql)을 모두 크게 고쳐야 해 공개일(10/18) 일정에 부담.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">2</span>목록에 없는 공급사 이름은<br>어떻게 다룰지</h2>
+<p class="concl">공급사 이름을 같은 묶음으로 모으는 목록을 둡니다(예: 「Y2Books 전자책」 = 「와이투북스」). 확인해 보니 「김근아 저자」 줄은 「Y2Books 전자책」, 같은 코드의 교보 줄은 「와이투북스」라서 이 묶음이 있어야 모입니다.</p>
+<div class="prop">목록에는 "다른 이름 → 같은 묶음"만 적고, 목록에 없는 이름은 다듬은 이름 그대로 한 공급사로 봅니다(예: 「교보문고」와 「(주)교보문고」는 다듬으면 같음). [안]</div>
+<p class="alt">다른 선택: 목록에 있는 공급사만 코드로 이음 → 더 조심스럽지만 dev가 공급사 이름을 모두 검토해 목록에 넣어야 함.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">3</span>세 도서관의 저자·출판사를<br>줄을 읽을 때 바꿀지</h2>
+<div class="fig"><svg viewBox="0 0 640 110" role="img" aria-label="줄 읽을 때 바꾸기">
+<rect class="bxno" x="10" y="20" width="250" height="70" rx="8"/><text class="sm" x="22" y="44">대구 수집 줄</text><text class="lb" x="22" y="66">저자 율리시즈 · 출판사 모리세 시게토모</text>
+<path class="ar" d="M262 55 H300"/><path class="ah" d="M298 48 L310 55 L298 62Z"/><text class="sm" x="270" y="44">읽을 때</text>
+<rect class="bxok" x="314" y="20" width="316" height="70" rx="8"/><text class="sm" x="326" y="44">이후 모든 곳(묶기·책 표·소장 줄)</text><text class="lb" x="326" y="66">저자 모리세 시게토모 · 출판사 율리시즈</text>
+</svg></div>
+<div class="prop">가져오기가 수집 줄을 읽는 순간 두 칸을 바꿉니다. 그래서 책 화면의 도서관 줄 정보까지 바른 값이 됩니다. 이 세 도서관의 소장 줄은 "수집 원문 그대로"가 아니게 되므로 데이터 모델 문서에 적어 둡니다. [안]</div>
+<p class="alt">다른 선택: 같은 책 묶기와 책 만들기에서만 바꿈 → 고칠 곳이 늘고, 책 화면 도서관 줄의 저자·출판사는 계속 뒤바뀜.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">4</span>규칙 파일 두 개를<br>어디에 어떻게 둘지</h2>
+<table>
+<tr><th>파일 (dev <code>scripts/library/rules/</code>)</th><th>칸</th><th>내용</th></tr>
+<tr><td><code>author_publisher_swapped.tsv</code></td><td>collection_id, name, decided_on, swap_before, note</td><td>수집 번호 11·12·15</td></tr>
+<tr><td><code>supplier_families.tsv</code></td><td>supplier, family, decided_on, note</td><td>같은 공급사 이름 묶음 (dev가 수집 DB에서 만들어 보고)</td></tr>
+</table>
+<div class="prop">위 두 파일을 사람이 정한 도서관 규칙 폴더에 두고, 가져오기 설정 <code>rules-dir</code>로 읽습니다. 파일이 없으면 가져오기가 멈춥니다. [안]</div>
+<p class="alt">다른 선택: 백엔드 코드 안 자료로 둠 → 설정은 필요 없지만 사람이 정하는 규칙이 두 곳으로 나뉨.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">5</span>세 도서관 줄을 지우는 것을<br>잊지 않게 막을지</h2>
+<p class="concl">명세에서 "고친 수집기로 새로 받은 사본을 가져올 때 이 규칙 줄을 지운다"고 정했습니다. 잊고 두면 바르게 받은 줄을 다시 뒤바꿉니다.</p>
+<div class="prop">규칙 줄에 "고친 수집기가 들어간 날"을 적고, 그 뒤에 받은 사본이면 가져오기가 "규칙 줄을 지우세요"로 멈춥니다. [안]</div>
+<p class="alt">다른 선택: 막는 장치 없이 dev 절차 문서에 한 줄만 적음 → 코드는 작지만 잊으면 세 도서관이 다시 뒤바뀜.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">6</span>저자 칸 정리 함수를<br>저자 정리 쪽(catalog)에 둘지</h2>
+<p class="concl">사람 이름을 나누는 규칙과 책 화면 저자 칸을 정리하는 규칙이 같아야 어긋나지 않습니다.</p>
+<div class="prop">저자 정리 공개 함수 둘을 둡니다: 기호만 떼는 <code>stripMarks</code>(이름 나누기 맨 처음, 저자 검색어에도 씀), 기호를 떼고 붙은 역할 뒤를 띄우는 <code>displayText</code>(가져오기가 책 표 저자 칸을 넣을 때 한 번 부름). 세 묶는 방식은 고치지 않습니다. [안]</div>
+<p class="alt">다른 선택: 책 표를 쓰는 쪽(catalog의 표 넣기)에서 정리 → 지금은 가져오기가 정리된 값을 넘기는 약속이라 그 뜻이 바뀜.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">7</span>제목 앞 괄호에서 남길 낱말 목록을<br>코드 상수로 둘지</h2>
+<p class="concl">지금 같은 책 묶기의 목록(판 낱말 11개, 꼬리 표시 등)은 모두 코드 상수이고, 바꾸면 다시 가져옵니다(ADR-0069).</p>
+<div class="prop">남길 낱말 목록도 같은 자리의 코드 상수로 둡니다. [안]</div>
+<p class="alt">다른 선택: 규칙 파일 → 빌드 없이 고칠 수 있지만 묶기 규칙의 원본이 둘로 나뉨.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">8</span>"캐시 답"을 알리는 방법</h2>
+<p class="concl">지금 사용 기록에 도서관 응답 결과는 넷(성공·실패·시간 초과·건너뜀)으로 알립니다.</p>
+<div class="prop">결과 값에 "캐시 답"(<code>CACHED</code>)을 하나 더합니다. 캐시에서 답을 꺼낸 두 곳이 이 값으로 알리고, 하루 표의 <code>cached_count</code>가 1 늘어납니다. 서버 로그 줄은 쓰지 않습니다. [안]</div>
+<p class="alt">다른 선택: 따로 알리는 새 함수 → 뜻은 더 분명하지만 공개 함수가 늘어남 / 기존 함수에 "캐시냐" 표시를 더함 → 부르는 곳이 모두 바뀜.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">9</span>"캐시 답" 칸을 더하는 변경 파일</h2>
+<p class="concl">공식 문서로 확인: 상수 기본값으로 칸을 더하면 표를 다시 쓰지 않아 빠릅니다(PostgreSQL 18 ALTER TABLE, <a href="https://www.postgresql.org/docs/current/sql-altertable.html">postgresql.org</a>, 확인 2026-10-15).</p>
+<div class="prop">사용 기록 쪽 새 변경 파일 하나(<code>usagelog/002-library-response-cached-count.yaml</code>)로 칸을 더하고, 기존 파일은 고치지 않습니다. [안]</div>
+<p class="alt">다른 선택: 아직 공개 전이니 기존 <code>usagelog/001</code>에 접어 넣음 → 이미 적용한 내 PC DB들과 어긋나 다시 만들어야 함.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">10</span>수집기의 포털 목록을<br>코드 상수로 둘지</h2>
+<p class="concl">수집기는 이미 사이트별 값(쪽 크기 등)을 코드 상수로 둡니다.</p>
+<div class="prop">"출판사가 먼저 나오는 포털" 세 곳(lib.goe.go.kr, library.daegu.go.kr, lib.jbe.go.kr)을 수집기 상수로 두고, 그 사이트만 두 칸을 바꿔 읽습니다. [안]</div>
+<p class="alt">다른 선택: 규칙 파일 → 수집기에 파일 읽기가 새로 생김.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">11</span>운영 반영 직후 잠깐의 틈을<br>받아들일지</h2>
+<p class="concl">새 책 목록으로 바꿔 끼운 뒤 서비스를 새 코드로 다시 켜기까지 짧은 틈이 있습니다(ADR-0069 "바꿔 끼우자마자 다시 켬").</p>
+<div class="prop">그 틈에는 "&lt;김정은&gt;"처럼 기호를 넣은 저자 검색만 잠깐 못 찾습니다. "김정은" 검색은 맞습니다. 이 정도는 받아들입니다. [안]</div>
+<p class="alt">다른 선택: 서비스를 먼저 내리고 바꿔 끼움 → 그동안 검색 전체가 멈춤.</p>
+</div>
+
+<p class="foot">원본: <code>docs/cycles/19-author-angle-brackets/architect-proposal.md</code>, <code>spec.md</code>. 2026-10-15.</p>
+</main>
+</body>
+</html>
