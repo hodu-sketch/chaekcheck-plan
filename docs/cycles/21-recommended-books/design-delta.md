@@ -2,7 +2,8 @@
 
 - 작성: 2026-10-16. 근거: [scope.md](scope.md), [spec.md](spec.md), [flow.md](flow.md), [architect-proposal.md](architect-proposal.md)(설계 결정 12개와 "확정 뒤 바뀐 데이터"), dev main 읽기만(`picks`·`catalog`·`collection`·`library`·`usagelog`, `web/src/components/AppLayout.tsx`)
 - 설계 결정 12개 모두 사용자 결정 (2026-10-16, [설계 결정](easy/2026-10-16-design-decisions.html), [결정 2](easy/2026-10-16-design-decisions-2.html) 거둠, [결정 3](easy/2026-10-16-design-decisions-3.html) PICK 표 없앰). 클래스·설정·파일·칸 이름은 따로 적지 않으면 [안: 이름] (dev가 바꿔도 됨)
-- 사이클 19와 나란히 개발함: 19는 `usagelog/002`, 반영 파일 판은 올리지 않음. 21이 판 3과 `usagelog/003`
+- 사이클 19와 나란히 개발함: 19는 `usagelog/002`, 반영 파일 형식 번호는 올리지 않음. 21이 형식 번호 3과 `usagelog/003`(사이클 20은 `004`)
+- 낱말: 이 문서에서 "판"은 **책의 판(출판사 판)**만 뜻함. 가져오기 파일 맨 앞의 번호는 **파일 형식 번호**라고 부름 (사용자 지적, 2026-10-16)
 - `docs/current/`는 아직 고치지 않음 (`/cycle-close`에서 합침)
 
 ## 한눈에 (지금 → 바뀐 뒤)
@@ -13,7 +14,7 @@
 | 책 줄 표 | `picks.pick` (사서만) | `picks.list_book` 하나, `list_key`로 나눔. `pick` 지움 | [확정] (ADR-0122) |
 | 분야 | 코드 상수 (사서 5분야) | `picks.list_field` (목록별 분야·순서) | [확정] (ADR-0122) |
 | 사서 받기 | 서버 주 1회 → `pick` | 서버 주 1회 → `list_book`의 `librarian` 줄 | [확정] (ADR-0122) |
-| 이동진·서울대 넣기 | — | 수집기 → 목록 파일 → export `notes.listPart`(판 3) → apply | [확정] (ADR-0123·0128) |
+| 이동진·서울대 넣기 | — | 수집기 → 목록 파일 → export `notes.listPart`(파일 형식 번호 3) → apply | [확정] (ADR-0123·0128) |
 | 우리 책 맞추기 | 서버가 캐시 때 ISBN → 제목+저자 | 사서: 그대로. 이동진·서울대: export 때 맞춰 `list_book.book_id` 저장, 서버는 읽기만 | [확정] (ADR-0124) |
 | 같은 책 고르기 | 가진 도서관 수 (구독형도 한 곳씩) | 구독형 아닌 수 + 구독형 있으면 1 | [확정] (ADR-0125) |
 | 표지 | 서버가 받아 200px JPEG | 사서: 그대로. 이동진·서울대: 수집기가 줄여 `listPart`에 실음 | [확정] (ADR-0123) |
@@ -83,15 +84,15 @@ sequenceDiagram
     C->>NI: 없는 표지만 받아 200px JPEG로 줄여 파일로
   end
   U->>X: export (prepare 뒤)
-  X->>PK: CuratedListTransfer.read(lists-dir)
+  X->>PK: CuratedListTransfer.read(lists-dir, preparedLookup)
   PK->>PK: 파일 검사 (분야 · 번호 · 연월 · 영상 ID · 표지 파일)
   alt 검사 실패
     PK-->>X: 오류 (파일 · 몇째 줄 · 무엇)
     X-->>U: 사본을 읽기 전에 멈춤
   else 통과
-    PK->>PK: 가져오기 표(catalog_next)에서 고정 판 → 책 번호
+    PK->>PK: X가 넘긴 찾기(새로 만든 책 표 catalog_next)로 고정 판 → 책 번호
     PK-->>X: listPart (줄 · 책 번호 · 표지) + 맞춘 수
-    X->>X: notes.listPart, 판 3 → 반영 파일
+    X->>X: notes.listPart, 파일 형식 번호 3 → 반영 파일
     X-->>U: 기록: 목록별 맞춘 책 · 못 맞춘 책
   end
   U->>O: 같은 파일로 apply
@@ -245,10 +246,10 @@ stateDiagram-v2
 
 | 모듈 | 신규/변경 | 책임 | 공개 API | 발행/구독 이벤트 | 소유 테이블 |
 |---|---|---|---|---|---|
-| `picks` | 변경 | 세 목록 보관·캐시·화면 API, 사서 받기(담는 표만 바뀜), 가져오기 목록 검사·맞추기·바꾸기, `BookChoice` 규칙 바뀜(켜진 도서관만, 1권 먼저), 화면 이름 판 표시 덜어 내기(ADR-0129) | 새 `CuratedListTransfer`: `read(Path listsDir)` → `ListPart`(JSON 글자 + 셈), `replace(String listPart)` (바꿔 끼운 뒤 자기 트랜잭션 하나로) [확정: ADR-0123, 이름 안] | 없음 (`collection`이 바꿔 끼운 뒤 직접 부름, 곧 내려가는 가져오기 프로세스라 비동기 이벤트로는 반영이 보장되지 않음) | `list_field`·`list_book`(새), `fetch_run`·`cover`(그대로), `pick`(지움) |
-| `catalog` | 변경 | 가져오기 표에서 책 찾기, 번호로 보유 도서관 | `BookLookup.byIds(Collection<Long>)` → `IsbnBook`과 같은 꼴(번호·보유 도서관). 가져오기 표(`catalog_next`)를 읽는 `BookLookup` 하나를 주는 `CatalogLoad.preparedLookup()` [안: 이름] | 없음 | 그대로 |
+| `picks` | 변경 | 세 목록 보관·캐시·화면 API, 사서 받기(담는 표만 바뀜), 가져오기 목록 검사·맞추기·바꾸기, `BookChoice` 규칙 바뀜(켜진 도서관만, 1권 먼저), 화면 이름 판 표시 덜어 내기(ADR-0129) | 새 `CuratedListTransfer`: `read(Path listsDir, BookLookup lookup)` → `ListPart`(JSON 글자 + 셈). 맞출 책 표는 `collection`이 고름: export는 `CatalogLoad.preparedLookup()`, in-place는 바꿔 끼운 뒤의 `BookLookup` — `picks`는 `CatalogLoad`를 부르지 않음 [확정] (사용자 승인, 2026-10-16, [설계 검토 3](easy/2026-10-16-review-decisions-3.html) #1), `replace(String listPart)` (바꿔 끼운 뒤 자기 트랜잭션 하나로) [확정: ADR-0123, 이름 안] | 없음 (`collection`이 바꿔 끼운 뒤 직접 부름, 곧 내려가는 가져오기 프로세스라 비동기 이벤트로는 반영이 보장되지 않음) | `list_field`·`list_book`(새), `fetch_run`·`cover`(그대로), `pick`(지움) |
+| `catalog` | 변경 | 가져오기 표에서 책 찾기, 번호로 찾기, 반영 파일 형식 번호 2 → 3 | `BookLookup.byIds(Collection<Long>)` 새로. 결과 레코드 셋(`IsbnBook`, `TitleAuthorBook`, `byIds` 결과)에 **`title`(책 제목)·`publisherNorm`(출판사 정리값)** 칸을 더함(책 이름 보정 ADR-0129, 출판사로 좁히기) [확정] (사용자 승인, 2026-10-16, [설계 검토 3](easy/2026-10-16-review-decisions-3.html) #1). 새로 만든 책 표(`catalog_next`)를 읽는 `BookLookup`을 주는 `CatalogLoad.preparedLookup()`. 반영 파일 형식 번호 `FORMAT_VERSION`(`catalog.internal`, 이 모듈 소유)을 2 → 3, 번호가 다르면 지금처럼 apply·finish 거절 [확정] (사용자 승인, 2026-10-16, [설계 검토 3](easy/2026-10-16-review-decisions-3.html) #2) [이름 안] | 없음 | 그대로 |
 | `library` | 변경 | 켜진 도서관과 구독형 여부 | `LibraryCatalog.lendingKinds()` → 켜진 도서관 번호마다 구독형인지 (`lending_model = SUBSCRIPTION`). 꺼진 도서관은 없음 [확정: ADR-0125, 설계 검토 #7, 이름 안] | 없음 | 그대로 |
-| `collection` | 변경 | export에 `listPart` 싣기, apply·finish·in-place 모두 책 표를 바꿔 끼운 **뒤** 작은 트랜잭션 하나로 `replace` [확정] (사용자 승인, 2026-10-16, [설계 검토 3](easy/2026-10-16-review-decisions-3.html) #3: "(B) 바꿔 끼운 뒤 작은 트랜잭션"; 같은 바꿔 끼우기 트랜잭션 안은 미승인 "나는 시간이 늘어나는게 싫어"), 반영 파일 판 3 | 없음 (안쪽: `ImportTransfer`, `Notes.listPart`, 설정 `chaekcheck.collection.import.lists-dir`) [안: 이름] | 없음 | 그대로 (`load_manifest.notes`에 칸이 하나 늘 뿐) |
+| `collection` | 변경 | export에 `listPart` 싣기, apply·finish·in-place 모두 책 표를 바꿔 끼운 **뒤** 작은 트랜잭션 하나로 `replace` [확정] (사용자 승인, 2026-10-16, [설계 검토 3](easy/2026-10-16-review-decisions-3.html) #3: "(B) 바꿔 끼운 뒤 작은 트랜잭션"; 같은 바꿔 끼우기 트랜잭션 안은 미승인 "나는 시간이 늘어나는게 싫어"), 반영 파일 형식 번호 3 | 없음 (안쪽: `ImportTransfer`, `Notes.listPart`, 설정 `chaekcheck.collection.import.lists-dir`) [안: 이름] | 없음 | 그대로 (`load_manifest.notes`에 칸이 하나 늘 뿐) |
 | `usagelog` | 변경 | 사용 알림 `list` 받기·검사, 칸 `picks_list` | 웹 API만 바뀜 | 없음 | `screen_event.picks_list`(새 칸) |
 | web | 변경 | 머리말 큰 메뉴, `/picks/:listKey` 셋, `/picks` → `/picks/librarian`, 목록별 표지 아래 글자·책 창 줄·출처 줄 | — | — | — |
 | 수집기 (`scripts/crawl`) | 변경 | 이동진 목록 모으기, 이동진·서울대 판 고르기, 표지 받아 줄이기 | 목록 파일 (아래 "목록 파일") | — | 목록 파일 |
@@ -312,7 +313,7 @@ erDiagram
 | `list_field.list_key` | text | PK 앞, CHECK IN (`librarian`,`leedongjin`,`snu100`) | 목록 이름 | [확정] (ADR-0122·0126) |
 | `list_field.code` | text | PK 뒤, CHECK `length(code) BETWEEN 1 AND 20` | 사서는 `drCode`(11·6·5·4·425, 모르는 코드도), 이동진·서울대는 `fields.tsv` 코드(예 `korean_fiction`, `korean_lit`) | [안] |
 | `list_field.name` | text | NOT NULL | 화면 이름. 사서의 모르는 새 코드는 받은 이름, 비면 코드 (C14 R2-5) | [안] |
-| `list_field.position` | smallint | NOT NULL, ≥ 1, UNIQUE(`list_key`,`position`) | 분류 목록 순서. 사서 새 코드는 끝에 붙임 | [안] |
+| `list_field.position` | smallint | NOT NULL, ≥ 1, UNIQUE(`list_key`,`position`) | 분류 목록 순서. 사서 새 코드는 끝에 붙임 (옮길 때는 6번째부터 코드 순서) | [안] |
 | `list_book.id` | bigint | PK, `GENERATED ALWAYS AS IDENTITY` | 이동진·서울대 응답 `id` (바꿀 때마다 새로 매김) | [안] |
 | `list_book.(list_key, field_code)` | text | NOT NULL, FK → `list_field` ON DELETE CASCADE, 색인 | 목록·분야 | [안] |
 | `list_book.position` | int | NOT NULL, ≥ 1 | 이동진: 같은 달 안 소개 순서, 서울대: 목차 번호와 같음, 사서: 받은 순서 | [안] |
@@ -339,22 +340,30 @@ erDiagram
 - 크기: 사서 108줄 + 이동진 44줄(월 1~4줄씩 늚) + 서울대 100줄 ≈ 250줄. 표지 약 250장, 3~4MB (사이클 14 실측 장당 4~22KB) [안]
 - Liquibase: 새 파일 `db/changelog/picks/002-curated-lists.yaml`, master 끝에 `# cycle 21` 주석과 include. 기존 changeset은 고치지 않음(사이클 17 첫 배포가 21보다 먼저일 수 있으므로) [안: 파일 이름]
   1. `list_field`·`list_book` 만들기 (CHECK·색인은 changeset 안 `sql`)
-  2. 사서 분야 넣기: 아는 다섯(11 문학, 6 인문, 5 사회, 4 자연, 425 테마, C14 순서) + `pick`에 있는 그 밖의 `dr_code`(이름은 `dr_code_name`, 비면 코드)
-  3. `INSERT INTO list_book (list_key='librarian', …) SELECT … FROM pick` — 옮기지 않으면 "목록 없음 → 받기"(dev `FetchDecision` 규칙 2)로 켜지자마자 다시 받는 1~2분 동안 비고, 그날 이미 받았으면(규칙 1) 다음 날 05:00까지 비므로 옮김 [확정] (사용자 승인, 2026-10-16, 설계 정리 #8)
+  2. 사서 분야 넣기: 아는 다섯(11 문학, 6 인문, 5 사회, 4 자연, 425 테마, C14 순서, `position` 1~5) + `pick`에 있는 그 밖의 `dr_code`를 `DISTINCT`로(이름은 `min(dr_code_name)`, 비면 코드), `position`은 6부터 코드 순서 [확정] (사용자 승인, 2026-10-16, [설계 검토 3](easy/2026-10-16-review-decisions-3.html) #1)
+  3. `INSERT INTO list_book (list_key='librarian', …) SELECT … FROM pick`, `position` = `ROW_NUMBER() OVER (PARTITION BY dr_code ORDER BY recom_month DESC, registered_on DESC NULLS LAST, recom_no DESC)` (dev `PicksCache.BOOK_ORDER` 52~55행과 같은 순서) [확정] (사용자 승인, 2026-10-16, [설계 검토 3](easy/2026-10-16-review-decisions-3.html) #1) — 옮기지 않으면 "목록 없음 → 받기"(dev `FetchDecision` 규칙 2)로 켜지자마자 다시 받는 1~2분 동안 비고, 그날 이미 받았으면(규칙 1) 다음 날 05:00까지 비므로 옮김 [확정] (사용자 승인, 2026-10-16, 설계 정리 #8)
   4. `DROP TABLE picks.pick`
+  - 함께 고칠 코드: `FetchDecision`의 "목록 없음"(`PicksStore.hasPicks()`)과 받기의 "같은 목록인가" 비교는 `list_book`의 `librarian` 줄만 봄 [확정] (사용자 승인, 2026-10-16, [설계 검토 3](easy/2026-10-16-review-decisions-3.html) #1)
 - 새 파일 `db/changelog/usagelog/003-screen-event-picks-list.yaml` (002는 사이클 19, **003은 21, 사이클 20은 004** [확정] (사용자 승인, 2026-10-16, [설계 검토](easy/2026-10-16-review-decisions.html) #4); 20에는 공유 파일로 알림): 칸 더함 → 있던 `picks_*` 줄을 `librarian`으로 채움 → CHECK [안: 파일 이름]. 21이 19보다 먼저 main에 들어가면 번호를 바꾸지 말고 master 순서만 맞춤(나중에 합치는 쪽이 자기 줄을 끝으로)
 
-### 반영 파일 `notes.listPart` (판 3)
+### 첫 목록 파일 만들기 (dev 작업 하나) [확정] (사용자 승인, 2026-10-16, [설계 검토 3](easy/2026-10-16-review-decisions-3.html) #1)
+
+1. 조사 문서를 목록 파일로 옮김: 이동진 44권 `docs/research/leedongjin-picks/picks.md`(영상 ID·연월·책), 서울대 100권 `docs/research/snu-100/picks.md`(목차 번호·분야·저자 열쇠) → `leedongjin.tsv`·`snu100.tsv`·`fields.tsv`. `pinned_by`는 비움(수집기가 처음 돌 때 `collector`로 채움). 서울대 "규칙으로 못 가리는 책" 2권(미국의 민주주의, 페더랄리스트)은 사람이 `manual`로 적음
+2. 이동진 44권 분야를 ISBN 서지 API KDC와 `kdc_fields.tsv`로 다시 매기고, **지금 분야와 달라지는 책 목록을 plan에 보내 사용자가 확정**한 뒤 파일에 씀 (spec R3-9)
+3. 수집기를 한 번 돌려 고정 판·표지 파일을 채우고, 맞춘 수(조사 때 이동진 36/44, 서울대 87/100)와 견줌
+
+### 반영 파일 `notes.listPart` (파일 형식 번호 3)
 
 | 칸 | 내용 | 태그 |
 |---|---|---|
-| `formatVersion` | 반영 파일 판 2 → 3. 판 3을 아는 앱만 apply·finish (판 2 파일은 판 3 앱이 받되 목록은 건드리지 않음 [안]) | [확정] (ADR-0123) |
+| `formatVersion` | 파일 형식 번호 2 → 3 (`catalog` 소유). 앱과 파일의 번호가 다르면 apply·finish 거절 — 지금 코드와 같음(dev `JdbcCatalogLoad` 76행) | [확정] (ADR-0123, 설계 검토 3 #2) |
+| 목록 폴더 없음 | 내 PC export 때 `lists-dir` 폴더나 그 안의 `fields.tsv`·`leedongjin.tsv`·`snu100.tsv`를 못 찾으면 사본을 읽기 전에 멈춤(사이클 19 `rules-dir`와 같음). 형식 번호 3 파일에는 늘 `listPart`가 있음 | [확정] (사용자 승인, 2026-10-16, [설계 검토 3](easy/2026-10-16-review-decisions-3.html) #2) |
 | `listPart.fields` | `fields.tsv`의 이동진·서울대 줄 | [안] |
 | `listPart.books` | 줄마다 목록 파일 칸(`pinned_by`·`note` 빼고) + 맞춘 `bookId` | [안] |
 | `listPart.covers` | `{sourceUrl, fetchedAt, jpegBase64}`, 줄이 쓰는 표지만 | [안] |
 | `listPart.counts` | 목록별 줄 수·맞춘 수·못 맞춘 수 (export·apply 기록에 씀) | [안] |
 
-- 크기: 표지 약 144장 1~3MB가 manifest JSON 하나에 들어감(TOAST) [안]. 판 3 배포 때 내 PC에 기다리는 판 2 내보내기가 있으면 `finish`가 거절됨 — 배포 전에 finish나 discard (ADR-0086과 같은 감수) [확정]
+- 크기: 표지 약 144장 1~3MB가 manifest JSON 하나에 들어감(TOAST) [안]. 형식 번호 3 배포 때 내 PC에 기다리는 형식 번호 2 내보내기가 있으면 `finish`가 거절됨 — 배포 전에 finish나 discard (ADR-0086과 같은 감수) [확정]
 
 ### 목록 파일 (dev `scripts/crawl/lists/`, UTF-8 TSV, 머리 줄) [확정: ADR-0128 위치, 칸 이름 안]
 
@@ -438,13 +447,13 @@ erDiagram
 | 6·7 | `BookChoice` 시험(구독형 셋 = 1, 꺼진 도서관은 세지 않음, 같으면 1권 먼저, 그다음 번호 작은 것) + 수집기 판 고르기 시험. **같은 입력으로 Java·Python 보유량 결과가 같은지** 비교 시험 |
 | 10 | 사서 받기 시험: `librarian` 줄만 바뀌고 이동진·서울대 줄 그대로, 표지 정리가 다른 목록 표지를 지우지 않음, Liquibase 002 뒤 사서 목록이 그대로 보임 |
 | 11·12·13·14 | 수집기 단위 시험(API 응답 저장본): 이미 있는 영상이 사라지면 → 줄 지움 + 기록, 남아 있으면 `checked_on` 고침, 새 영상 → 새 줄, 제목·설명 없음, `www.youtube.com` 요청 0건, 키 틀림 → 파일 그대로 + 기록, 책 이름 없음 → 확인 필요 |
-| 가져오기 | `CuratedListTransfer` 시험: 검사 실패 줄 번호, 고정 판 → 책 번호(ISBN·제목+저자+출판사·못 맞춤), `replace`가 사서 줄을 건드리지 않음, 지문 다름 → 목록 그대로, 바꿔 끼우기 실패 → 목록 그대로, 목록 넣기 실패 → 옛 목록 + 기록, 판 3 manifest 읽기 |
+| 가져오기 | `CuratedListTransfer` 시험: 검사 실패 줄 번호, 고정 판 → 책 번호(ISBN·제목+저자+출판사·못 맞춤), `replace`가 사서 줄을 건드리지 않음, 지문 다름 → 목록 그대로, 바꿔 끼우기 실패 → 목록 그대로, 목록 넣기 실패 → 옛 목록 + 기록, 형식 번호 3 manifest 읽기, 목록 폴더 없음 → 멈춤 |
 | 공통 | Modulith `verify`(`collection → picks` 허용), 사이클 19 반영 뒤 세 목록 맞은 수 다시 재기(19 AC-14) |
 
 ## 결정 기록
 
 - [ADR-0122](../../adr/0122-recommended-lists-one-module-one-table.md) 추천 목록 셋은 `picks` 하나, 책 줄은 `list_book` 하나 (`pick` 없앰) (Accepted)
-- [ADR-0123](../../adr/0123-curated-lists-ride-export-manifest.md) 이동진·서울대 목록과 표지는 반영 파일 목차 `listPart`(판 3)로 (Accepted)
+- [ADR-0123](../../adr/0123-curated-lists-ride-export-manifest.md) 이동진·서울대 목록과 표지는 반영 파일 목차 `listPart`(파일 형식 번호 3)로 (Accepted)
 - [ADR-0124](../../adr/0124-pinned-edition-matched-at-export.md) 고정 판은 수집기가 고르고 export 때 책 번호로 맞춰 저장, 서버는 읽기만 (Accepted)
 - [ADR-0125](../../adr/0125-book-choice-subscription-counts-once.md) 같은 책 고르기: 구독형은 몇 곳이든 1 (Accepted)
 - [ADR-0126](../../adr/0126-picks-api-per-list-and-usage-list.md) `GET /api/v1/picks/{listKey}`, 이용 기록 `picks_list` (Accepted)
@@ -465,7 +474,7 @@ erDiagram
 | 색인 없는 `catalog_next`에서 고정 판 맞추는 시간 | export 시간 | 프로토타입 (dev 측정) | 개발 |
 | 출판사 정리 함수 이름 | 고정 판 맞추기 ② | dev 코드 확인 | 개발 |
 | 수집기의 내 PC DB 접속 방법 | 판 고르기 | dev 확인 | 개발 |
-| 반영 파일 판 3과 사이클 19 병합 순서 (19는 판을 올리지 않음). 판 3 배포 전에 내 PC에 기다리는 판 2 내보내기가 없어야 함 | ADR-0086과 같은 감수 | 인계서에 적음 | 배포 |
+| 반영 파일 형식 번호 3과 사이클 19 병합 순서 (19는 번호를 올리지 않음). 형식 번호 3 배포 전에 내 PC에 기다리는 형식 번호 2 내보내기가 없어야 함 | ADR-0086과 같은 감수 | 인계서에 적음 | 배포 |
 | 사이클 19 `name_exact` 변경 뒤 세 목록 맞은 수 다시 재기 | 19 AC-14 | dev 측정 | 19 반영 뒤 |
 | ISBN 서지 표지·서지 이용 허락 범위, 서울대 100선 목록 게시 | spec 확인 필요 | 공식 문서 확인 · 사용자에게 질문 | 배포 |
 
