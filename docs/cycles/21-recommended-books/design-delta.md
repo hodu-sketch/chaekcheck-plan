@@ -251,7 +251,7 @@ stateDiagram-v2
 - 고정 판 맞추기 순서: ① `pinned_isbn13` → `byIsbn13` ② 없으면 `pinned_title`+`pinned_author`로 `byTitleAndAuthor`, 결과를 `pinned_publisher` 정리값으로 좁힘 ③ 그래도 여럿이면 `BookChoice` ④ 고정 판이 비면 목록 줄의 ISBN → 제목+저자. 못 맞추면 `book_id` NULL (흐린 제목 글자 표지, spec R2-4) [확정: ADR-0124, 출판사 정리 함수는 dev 코드 확인]
 - 사서 줄의 `book_id`는 비워 두고 지금처럼 캐시 때 맞춤 (따로 받으므로) [확정: ADR-0124]
 - 캐시: 시작 때·10분마다·사서 받기 직후·(운영) 다음 10분 안에 DB를 다시 읽음 — 맞추기가 아니라 메모리에 담아 화면 응답을 빠르게 하는 것 [확정] (사이클 14 그대로)
-- 책 창 제목은 목록의 책 이름(서울대는 목차 제목), 저자·출판사는 맞춘 우리 책 값 [확정: 설계 결정 #11]
+- 화면 책 이름 (설계 결정 #11을 바꿈): **우리 책을 맞춘 줄은 그 책의 제목에서 판 표시를 덜어 낸 이름**(끝 괄호 안 판·언어 표시, 끝 낱말 "오리지널판", 끝 권 번호 `1`·`(상)`, 앞 `[시리즈]`), 못 맞춘 줄은 목록 이름. 세 목록 모두. 목록 이름이 다르면 책 창에 "목록 이름 「…」" 한 줄. 캐시가 담을 때 맞춘 책 제목을 함께 읽어 덜어 냄(이동진·서울대는 `byIds`, 사서는 맞춘 결과). 저자·출판사는 맞춘 우리 책 값 그대로 [확정] (사용자 승인, 2026-10-16, [책 이름 보정](easy/2026-10-16-title-correction.html) #1·#2; 사용자 질문 "목록 책 이름 말이야... 우리 것대로 보정해주면 어떨가?"). 덜어 내는 규칙은 `picks` 안쪽 코드, 사이클 19 `SameTextKey` 앞 괄호 떼기와 같은 꼴 [안: 규칙 세부·이름]. 예: 「셰익스피어: 햄릿 외 3편」 → 「햄릿」, 「일리아스, 오디세이아」 → 「오디세이아」, 「토지. 1(1부 1권)」 → 「토지」
 
 ## 데이터
 
@@ -308,7 +308,7 @@ erDiagram
 | `list_book.id` | bigint | PK, `GENERATED ALWAYS AS IDENTITY` | 이동진·서울대 응답 `id` (바꿀 때마다 새로 매김) | [안] |
 | `list_book.(list_key, field_code)` | text | NOT NULL, FK → `list_field` ON DELETE CASCADE, 색인 | 목록·분야 | [안] |
 | `list_book.position` | int | NOT NULL, ≥ 1 | 이동진: 같은 달 안 소개 순서, 서울대: 목차 번호와 같음, 사서: 받은 순서 | [안] |
-| `list_book.title` | text | NOT NULL | 목록의 책 이름 (화면 제목, 설계 결정 #11) | [확정] |
+| `list_book.title` | text | NOT NULL | 목록의 책 이름 (못 맞춘 줄의 화면 제목, 맞춘 줄은 책 창의 "목록 이름") | [확정] (책 이름 보정 #1) |
 | `list_book.author`·`publisher` | text | NULL | 목록의 저자·출판사 | [안] |
 | `list_book.isbn13` | text | NULL, CHECK `^97[89][0-9]{10}$` | 목록의 ISBN | [안] |
 | `list_book.recommended_month` | date | NULL, CHECK 1일 | 이동진·사서 추천 연·월 | [안] |
@@ -382,7 +382,7 @@ erDiagram
       "code": "ALL",
       "name": "전체",
       "books": [
-        { "id": "57", "category": "science", "title": "히스토리아 비테이",
+        { "id": "57", "category": "science", "title": "히스토리아 비테이", "listTitle": null,
           "coverUrl": "/api/v1/picks/covers/140", "bookId": 1203344, "available": true,
           "recommendedMonth": "2026-06", "yearBook": null, "videoId": "<video-id>", "tocNo": null }
       ]
@@ -392,6 +392,7 @@ erDiagram
 ```
 
 - 책 칸: 사서 `id` = `source_no`(지금 `recomNo`), `recommendedMonth`만 값. 이동진 `id` = `list_book.id`, `recommendedMonth`·`yearBook`·`videoId`. 서울대 `tocNo`. `fetchedAt`은 사서만(마지막 성공 받기) [안: 칸 이름]
+- `title` = 화면 이름(덜어 낸 우리 제목, 못 맞추면 목록 이름), `listTitle` = 목록 이름이 `title`과 다를 때만 값 [안: 칸 이름] (책 이름 보정 #1·#2)
 - 칸 바뀜: `recomNo` → `id`(글자). 배포 전·웹만 부름 [안]
 - 사용 알림 예: `{"type":"picks_list_view","list":"snu100","category":"korean_lit"}`
 
@@ -403,7 +404,7 @@ erDiagram
 | PC 펼친 칸 정렬 | 결정 페이지 그림처럼 왼쪽에 몰지 않음. 정보나루처럼 각 칸이 자기 큰 메뉴 바로 아래, 칸 배경은 화면 전체 폭. dev가 실제 사이트를 열어 맞추고 화면 확인 때 보임 | [확정] (flow 화면 결정 #2 메모) |
 | 목록 화면 | 경로 셋, `/picks` → `/picks/librarian`. 맨 위 제목(PC·641px 이상 태블릿, flow #4 A), 폰은 머리말 메뉴로만(C). 이상하면 dev가 안 A~D를 화면으로 나란히 만들어 보임 | [확정] (flow #4, 설계 결정 #12) |
 | 표지 아래 글자 | 이동진 "26.06", 서울대 "3", 사서 그대로 | [확정] (spec R5) |
-| 책 창 | 목록별 한 줄, 이동진 [영상 보기](새 탭, 희망도서 안내에도) · " · 2025 올해의 책" | [확정] (spec R6) |
+| 책 창 | 제목 = 덜어 낸 우리 제목, 이름이 다르면 "목록 이름 「…」" 한 줄. 목록별 한 줄, 이동진 [영상 보기](새 탭, 희망도서 안내에도) · " · 2025 올해의 책" | [확정] (spec R6, 책 이름 보정) |
 | 출처 줄·기준 보기 | spec R5-5 문구, YouTube 서비스 약관 링크 | [확정] (spec R5-5) |
 | 자리 기억 | 목록마다 (C14 AC-20) | [확정] (spec R2-6) |
 
@@ -422,6 +423,7 @@ erDiagram
 |---|---|
 | 1·2·3 | 웹 시험: 머리말 0.5초 열기·닫기, 덮지 않음, 375px ☰·어둡게 덮기, 320px 한 줄, `/terms`·`/privacy` 같은 머리말. 화면 확인 때 PC 정렬 |
 | 4·5·8·9·15 | `PicksController` 시험(세 목록, 404 `list_not_found`), 웹 시험(목차 번호·"26.06"·책 창 줄·[영상 보기]·출처 줄·흐린 표지 → 희망도서 안내) |
+| 책 이름 | 판 표시 덜어 내기 단위 시험(위 예 셋 + 「위대한 유산(상)」 → 「위대한 유산」, 「백석의 사슴 오리지널판」 → 「백석의 사슴」, 덜어 내 빈 이름이면 그대로), 못 맞춘 줄은 목록 이름 |
 | 6·7 | `BookChoice` 시험(구독형 셋 = 1, 같으면 번호 작은 것, 여러 권짜리 1권) + 수집기 판 고르기 시험. **같은 입력으로 Java·Python 보유량 결과가 같은지** 비교 시험 |
 | 10 | 사서 받기 시험: `librarian` 줄만 바뀌고 이동진·서울대 줄 그대로, 표지 정리가 다른 목록 표지를 지우지 않음, Liquibase 002 뒤 사서 목록이 그대로 보임 |
 | 11·12·13·14 | 수집기 단위 시험(API 응답 저장본): 새 영상 → 새 줄, 제목·설명 없음, `www.youtube.com` 요청 0건, 키 틀림 → 파일 그대로 + 기록, 책 이름 없음 → 확인 필요 |
