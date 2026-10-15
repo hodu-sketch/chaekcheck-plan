@@ -23,7 +23,7 @@ ADR-0095의 세 길은 "서버 자기 IP 1개" 또는 "업체 프록시"였다. 
 | **Vultr 서울 추가 IPv4** | $3/개 [확인 필요] × 4 ≈ $12 + 서버 | 상한 [확인 필요] | 서울 리전 있음 [확인 필요: 주문 화면] | 예 | [확인 필요] | 중: 추가 시 서버 재시작 + OS 설정 | 예약 IP $0.004/h·$3/월 (https://docs.vultr.com/support/products/network/are-reserved-ips-free , 2026-10-16). 추가 IPv4가 같은 값인지·서울 값인지 [확인 필요] |
 | **Alibaba Cloud 서울 ECS + EIP** | [확인 필요] | 보조 ENI의 보조 사설 IP마다 EIP 1개 → 인스턴스 유형 한도 [확인 필요] | 예(서울 리전) | 예 | EIP 대역폭·트래픽 과금 [확인 필요] | 상: ENI·NAT 모드, 일부 이미지는 라우트 직접 | 방식 [확정] (https://www.alibabacloud.com/help/ja/eip/associate-an-eip-with-a-secondary-eni-1 , 2026-10-16). 서울 EIP 단가는 공식 페이지에서 못 찾음. 새 클라우드 계정·청구가 하나 더 생김 |
 | **Webshare 데이터센터(공유)** | 100개 $2.99 (최소 100개, 무료 10개) | 같음 | **확인 못 함** (50+개국이라고만) | [확인 필요] | 250GB 기본 | 하: 프록시 주소만 넣음 | https://www.webshare.io/pricing (2026-10-16). 공유 = 남도 같은 IP를 씀 → 남 때문에 막힐 수 있음 |
-| **Webshare 정적 주거용(ISP)** | 20개 $6 (광고 최저가) | 같음 | **확인 못 함**: 공식 도움말 "일부 국가는 $6 정적 주거용 플랜에서 제공되지 않을 수 있음" | 예(정적) | [확인 필요] | 하 | 도움말 https://help.webshare.io/en/articles/8596715-filtering-proxies-by-country (2026-10-16). 요금표 페이지에 정적 주거용 값이 안 보임. 제3자 글: 공유형 20개 $6, 전용 20개 $42 (https://proxidize.com/blog/webshare-pricing/ , 2차 출처) |
+| **Webshare 정적 주거용(ISP)** | 한국 20개 $6 (공유형) | 같음 | **예**: 공유형 한국 759개, Private 253개, Dedicated 없음 (5절 끝, Webshare API 2026-10-16) | 예(정적) | [확인 필요] | 하 | 도움말 https://help.webshare.io/en/articles/8596715-filtering-proxies-by-country (2026-10-16). 요금표 페이지에 정적 주거용 값이 안 보임. 제3자 글: 공유형 20개 $6, 전용 20개 $42 (https://proxidize.com/blog/webshare-pricing/ , 2차 출처) |
 | Oxylabs 한국 전용 데이터센터 | 월 $8.25부터 | [확인 필요] | 예 | 예 | [확인 필요] | 하 | 2026-10-12 업체 표기 (`hosting-options.md` 4-2절, ADR-0095) |
 
 메모의 "Webshare 월 8,400원에 한국 IP 20개"는 **광고 최저가일 뿐, 한국 IP가 그 값에 나오는지는 확인 못 함**. 가입 뒤 플랜 화면의 국가 목록을 봐야 알 수 있음 [확인 필요: 공식 화면 확인].
@@ -58,6 +58,12 @@ ADR-0095의 세 길은 "서버 자기 IP 1개" 또는 "업체 프록시"였다. 
 - 프록시 없이(집 IP) 한 번씩 요청 (2026-10-16): `https://www.gdlibrary.or.kr/` 302 0.1초, `https://ebook.gdlibrary.or.kr/` 200 0.8초 [확정] (직접 시험)
 
 - (2026-10-16, 사용자: "아니 가격이 webshare가 훨씬 매력적이라서이러는거자나") 2차 출처 AIMultiple(2026-10-02 갱신): Webshare ISP 나라 = 미국(약 3만), 이탈리아, 프랑스, 영국, 독일, 벨기에, 캐나다, 일본, 호주, 폴란드, 스웨덴, 루마니아 — 한국 없음 [확인 필요: 공식 화면] (https://aimultiple.com/isp-proxies). 같은 글에서 한국 ISP를 적은 곳은 Decodo(전용 ISP 3개 $9.99부터, 한국 값 없음). 한국 ISP 5개면 Oxylabs IP당 $1.10~1.50 → 약 $5.5~7.5 [안: 계산, 최소 수량 확인 필요]
+
+- **(2026-10-16, 사용자: "너가 보라고") Webshare 공개 API로 직접 확인 — 위 2차 출처의 "한국 없음"은 틀림** [확정]
+  - `GET https://proxy.webshare.io/api/v2/subscription/customize/?query=…` 인증 없이 200. proxy_subtype `isp`의 `available_countries`: 공유(shared) KR 759, Private(semidedicated) KR 253, Dedicated KR 없음
+  - `GET …/subscription/pricing/?query=…`(proxy_countries {"KR":20}, term monthly, 트래픽 250GB, 교체 10회, 하위 사용자 3명): 공유 $6.00(IP당 $0.30, US와 같음), Private $18.52, Dedicated $42.00(단 KR 재고 없음)
+  - 공유형 ISP 나라 전체: US 27586, DE 8602, IT 8593, FR 6078, GB 4048, SG 1518, HK 1265, JP·CA·AT 1012, BE 1009, KR·AU·CO·CZ·RO 759, BR·PL·SE 506
+  - 남은 확인: 실제 한국 통신사 IP인지, 강동구립도서관이 받아 주는지 [확인 필요: 사용자가 사서 `ipinfo.io/country`·도서관 상태 코드 시험]
 
 ## 확인 필요
 
