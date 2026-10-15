@@ -125,10 +125,10 @@
 | [ADR-0119](0119-extension-as-user-side-fetcher-server-parses-and-checks.md) | 크롬 확장은 사용자 쪽 조회 서버: GET만 하고 화면이 계획 입구 셋으로 원본을 올리며, 서버가 `accept` 입구로 같은 코드로 해석·캐시·판정하고 검사 ①~⑩으로 가짜를 거름, 상한은 설정 하나 | Proposed | 2026-10-16 | 20 |
 | [ADR-0120](0120-extension-folder-no-build-chrome-first-dev-mode.md) | 확장은 dev `extension/` 폴더에 빌드 없이, 모든 사이트 권한, 호스트 1건·1초, 크롬만 먼저, 이번엔 개발자 모드까지 | Proposed | 2026-10-16 | 20 |
 | [ADR-0121](0121-same-header-on-every-screen.md) | 공통 머리말은 약관·처리방침 포함 모든 화면에서 같음(사이클 05·10·14 예외 폐지, `legal` 분기 제거) | Proposed | 2026-10-16 | 20 |
-| [ADR-0122](0122-recommended-lists-one-module-one-table.md) | 추천 목록 셋(이동진·사서·서울대)은 `picks` 모듈 하나가 맡고, 책 줄은 표 `list_book` 하나에 담음 (`pick` 표 없앰) | Proposed | 2026-10-16 | 21 |
-| [ADR-0123](0123-curated-lists-ride-export-manifest.md) | 이동진·서울대 목록은 수집기가 만든 목록 파일을 가져오기 파일 목차(`notes.listPart`, 판 3)에 실어 운영 반영 때 넣고, 표지도 수집기가 줄여 함께 실음 | Proposed | 2026-10-16 | 21 |
-| [ADR-0124](0124-pinned-edition-matched-at-export.md) | 이동진·서울대의 판은 수집기가 내 PC DB를 읽어 고르고(고정 판), 가져오기 파일을 만들 때 같은 파일의 책 표에 대고 맞춰 책 번호를 저장함. 서버는 읽기만 | Proposed | 2026-10-16 | 21 |
-| [ADR-0125](0125-book-choice-subscription-counts-once.md) | 같은 책 여러 판 가운데 고를 때 보유량은 구독형이 아닌 도서관 수 + 구독형 도서관에 하나라도 있으면 1 | Proposed | 2026-10-16 | 21 |
-| [ADR-0126](0126-picks-api-per-list-and-usage-list.md) | 추천 목록 API는 `GET /api/v1/picks/{listKey}`(옛 `GET /api/v1/picks`는 지움), 이용 기록에 목록 이름 `list` | Proposed | 2026-10-16 | 21 |
-| [ADR-0127](0127-header-mega-menu.md) | 머리말은 도서관 정보나루식 큰 메뉴: 「추천도서」(이동진 추천도서·사서 추천도서·서울대 100선)·「마이페이지」(내 도서관 관리), PC는 올림 0.5초로 펼침(덮지 않음), 폰은 ☰ | Proposed | 2026-10-16 | 21 |
-| [ADR-0128](0128-leedongjin-list-by-collector-youtube-api.md) | 이동진 추천도서는 수집기가 YouTube Data API(공식)와 국립중앙도서관 ISBN 서지 API로 모아 목록 파일(dev `scripts/crawl/lists/` TSV)에 적음 | Proposed | 2026-10-16 | 21 |
+| [ADR-0122](0122-recommended-lists-one-module-one-table.md) | 추천 목록 셋(이동진·사서·서울대)은 `picks` 모듈 하나가 맡고, 책 줄은 표 `list_book` 하나에 담음 (`pick` 표 없앰) | Accepted | 2026-10-16 | 21 |
+| [ADR-0123](0123-curated-lists-ride-export-manifest.md) | 이동진·서울대 목록은 수집기가 만든 목록 파일을 가져오기 파일 목차(`notes.listPart`, 판 3)에 실어 운영 반영 때 넣고, 표지도 수집기가 줄여 함께 실음 | Accepted | 2026-10-16 | 21 |
+| [ADR-0124](0124-pinned-edition-matched-at-export.md) | 이동진·서울대의 판은 수집기가 내 PC DB를 읽어 고르고(고정 판), 가져오기 파일을 만들 때 같은 파일의 책 표에 대고 맞춰 책 번호를 저장함. 서버는 읽기만 | Accepted | 2026-10-16 | 21 |
+| [ADR-0125](0125-book-choice-subscription-counts-once.md) | 같은 책 여러 판 가운데 고를 때 보유량은 구독형이 아닌 도서관 수 + 구독형 도서관에 하나라도 있으면 1 | Accepted | 2026-10-16 | 21 |
+| [ADR-0126](0126-picks-api-per-list-and-usage-list.md) | 추천 목록 API는 `GET /api/v1/picks/{listKey}`(옛 `GET /api/v1/picks`는 지움), 이용 기록에 목록 이름 `list` | Accepted | 2026-10-16 | 21 |
+| [ADR-0127](0127-header-mega-menu.md) | 머리말은 도서관 정보나루식 큰 메뉴: 「추천도서」(이동진 추천도서·사서 추천도서·서울대 100선)·「마이페이지」(내 도서관 관리), PC는 올림 0.5초로 펼침(덮지 않음), 폰은 ☰ | Accepted | 2026-10-16 | 21 |
+| [ADR-0128](0128-leedongjin-list-by-collector-youtube-api.md) | 이동진 추천도서는 수집기가 YouTube Data API(공식)와 국립중앙도서관 ISBN 서지 API로 모아 목록 파일(dev `scripts/crawl/lists/` TSV)에 적음 | Accepted | 2026-10-16 | 21 |

@@ -1,6 +1,6 @@
 # ADR-0128: 이동진 추천도서는 수집기가 YouTube Data API(공식)와 국립중앙도서관 ISBN 서지 API로 모아 목록 파일(dev `scripts/crawl/lists/` TSV)에 적음
 
-Status: Proposed
+Status: Accepted (사용자 승인, 2026-10-16, 설계 정리 페이지)
 Date: 2026-10-16
 Cycle: 21-recommended-books
 Supersedes: 없음

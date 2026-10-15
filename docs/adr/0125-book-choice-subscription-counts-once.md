@@ -1,6 +1,6 @@
 # ADR-0125: 같은 책 여러 판 가운데 고를 때 보유량은 구독형이 아닌 도서관 수 + 구독형 도서관에 하나라도 있으면 1
 
-Status: Proposed
+Status: Accepted (사용자 승인, 2026-10-16, 설계 정리 페이지)
 Date: 2026-10-16
 Cycle: 21-recommended-books
 Supersedes: 없음

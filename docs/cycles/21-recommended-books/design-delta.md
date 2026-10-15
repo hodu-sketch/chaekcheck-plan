@@ -331,7 +331,7 @@ erDiagram
 - Liquibase: 새 파일 `db/changelog/picks/002-curated-lists.yaml`, master 끝에 `# cycle 21` 주석과 include. 기존 changeset은 고치지 않음(사이클 17 첫 배포가 21보다 먼저일 수 있으므로) [안: 파일 이름]
   1. `list_field`·`list_book` 만들기 (CHECK·색인은 changeset 안 `sql`)
   2. 사서 분야 넣기: 아는 다섯(11 문학, 6 인문, 5 사회, 4 자연, 425 테마, C14 순서) + `pick`에 있는 그 밖의 `dr_code`(이름은 `dr_code_name`, 비면 코드)
-  3. `INSERT INTO list_book (list_key='librarian', …) SELECT … FROM pick` — 옮기지 않으면 "목록 없음 → 받기"(dev `FetchDecision` 규칙 2)로 켜지자마자 다시 받는 1~2분 동안 비고, 그날 이미 받았으면(규칙 1) 다음 날 05:00까지 비므로 옮김 [안]
+  3. `INSERT INTO list_book (list_key='librarian', …) SELECT … FROM pick` — 옮기지 않으면 "목록 없음 → 받기"(dev `FetchDecision` 규칙 2)로 켜지자마자 다시 받는 1~2분 동안 비고, 그날 이미 받았으면(규칙 1) 다음 날 05:00까지 비므로 옮김 [확정] (사용자 승인, 2026-10-16, 설계 정리 #8)
   4. `DROP TABLE picks.pick`
 - 새 파일 `db/changelog/usagelog/003-screen-event-picks-list.yaml` (002는 사이클 19): 칸 더함 → 있던 `picks_*` 줄을 `librarian`으로 채움 → CHECK [안: 파일 이름]. 21이 19보다 먼저 main에 들어가면 번호를 바꾸지 말고 master 순서만 맞춤(나중에 합치는 쪽이 자기 줄을 끝으로)
 
@@ -430,13 +430,13 @@ erDiagram
 
 ## 결정 기록
 
-- [ADR-0122](../../adr/0122-recommended-lists-one-module-one-table.md) 추천 목록 셋은 `picks` 하나, 책 줄은 `list_book` 하나 (`pick` 없앰) (Proposed)
-- [ADR-0123](../../adr/0123-curated-lists-ride-export-manifest.md) 이동진·서울대 목록과 표지는 반영 파일 목차 `listPart`(판 3)로 (Proposed)
-- [ADR-0124](../../adr/0124-pinned-edition-matched-at-export.md) 고정 판은 수집기가 고르고 export 때 책 번호로 맞춰 저장, 서버는 읽기만 (Proposed)
-- [ADR-0125](../../adr/0125-book-choice-subscription-counts-once.md) 같은 책 고르기: 구독형은 몇 곳이든 1 (Proposed)
-- [ADR-0126](../../adr/0126-picks-api-per-list-and-usage-list.md) `GET /api/v1/picks/{listKey}`, 이용 기록 `picks_list` (Proposed)
-- [ADR-0127](../../adr/0127-header-mega-menu.md) 머리말 정보나루식 큰 메뉴 (Proposed)
-- [ADR-0128](../../adr/0128-leedongjin-list-by-collector-youtube-api.md) 이동진 목록은 수집기가 YouTube Data API·ISBN 서지 API로 (Proposed)
+- [ADR-0122](../../adr/0122-recommended-lists-one-module-one-table.md) 추천 목록 셋은 `picks` 하나, 책 줄은 `list_book` 하나 (`pick` 없앰) (Accepted)
+- [ADR-0123](../../adr/0123-curated-lists-ride-export-manifest.md) 이동진·서울대 목록과 표지는 반영 파일 목차 `listPart`(판 3)로 (Accepted)
+- [ADR-0124](../../adr/0124-pinned-edition-matched-at-export.md) 고정 판은 수집기가 고르고 export 때 책 번호로 맞춰 저장, 서버는 읽기만 (Accepted)
+- [ADR-0125](../../adr/0125-book-choice-subscription-counts-once.md) 같은 책 고르기: 구독형은 몇 곳이든 1 (Accepted)
+- [ADR-0126](../../adr/0126-picks-api-per-list-and-usage-list.md) `GET /api/v1/picks/{listKey}`, 이용 기록 `picks_list` (Accepted)
+- [ADR-0127](../../adr/0127-header-mega-menu.md) 머리말 정보나루식 큰 메뉴 (Accepted)
+- [ADR-0128](../../adr/0128-leedongjin-list-by-collector-youtube-api.md) 이동진 목록은 수집기가 YouTube Data API·ISBN 서지 API로 (Accepted)
 - 그대로 따름: ADR-0062(책 번호 잇기), ADR-0078(내 PC 가져오기 → 운영 반영), ADR-0086(목차 칸·판 올림 감수), ADR-0089(사서추천 출처), ADR-0090(사서 줄 맞추는 길 — 고르기 규칙만 0125로), ADR-0091(표지 200px, 정리 규칙을 한 표로), ADR-0121(모든 화면 같은 머리말)
 
 ## 확인 필요

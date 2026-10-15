@@ -1,6 +1,6 @@
 # ADR-0124: 이동진·서울대의 판은 수집기가 내 PC DB를 읽어 고르고(고정 판), 가져오기 파일을 만들 때 같은 파일의 책 표에 대고 맞춰 책 번호를 저장함. 서버는 읽기만
 
-Status: Proposed
+Status: Accepted (사용자 승인, 2026-10-16, 설계 정리 페이지)
 Date: 2026-10-16
 Cycle: 21-recommended-books
 Supersedes: 없음

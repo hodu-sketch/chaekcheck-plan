@@ -1,6 +1,6 @@
 # ADR-0123: 이동진·서울대 목록은 수집기가 만든 목록 파일을 가져오기 파일 목차(`notes.listPart`, 판 3)에 실어 운영 반영 때 넣고, 표지도 수집기가 줄여 함께 실음
 
-Status: Proposed
+Status: Accepted (사용자 승인, 2026-10-16, 설계 정리 페이지)
 Date: 2026-10-16
 Cycle: 21-recommended-books
 Supersedes: 없음

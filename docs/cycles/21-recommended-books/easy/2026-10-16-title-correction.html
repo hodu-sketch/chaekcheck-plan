@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 21 책 이름 보정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+
+.v-flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.v-box{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:7px 11px;font-size:15px;text-align:center;min-width:90px}
+.v-box small{display:block;color:var(--muted);font-size:12px}
+.v-hi{border-color:var(--accent);background:var(--accent-bg)}
+.v-warn{border-color:var(--warn);background:var(--warn-bg)}
+.v-ok{border-color:var(--ok);background:var(--ok-bg)}
+.v-arr{color:var(--muted);font-size:18px}
+.v-file{border:2px solid var(--line);border-radius:12px;background:var(--card);padding:10px;margin:10px 0;max-width:560px}
+.v-file .v-part{border:1px dashed var(--line);border-radius:8px;padding:8px 10px;margin:6px 0;font-size:14px}
+.v-file .v-part.v-new{border-color:var(--accent);background:var(--accent-bg)}
+.v-tl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0;font-size:13px;text-align:center}
+.v-tl div{border-top:4px solid var(--line);padding-top:6px}
+.v-tl div.v-hi{border-top-color:var(--accent);background:none}
+.v-cv{display:inline-flex;width:70px;aspect-ratio:2/3;border-radius:7px;border:1px solid var(--line);background:var(--accent-bg);align-items:center;justify-content:center;font-size:11px;text-align:center;padding:3px;vertical-align:top;margin:4px}
+.v-cv.v-img{background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 6px,var(--card) 6px,var(--card) 12px)}
+.v-mini{border:1px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;margin:8px 0;max-width:420px}
+.v-mini .v-bar{display:flex;gap:10px;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line);font-size:13px}
+.v-mini .v-body{padding:10px 12px;font-size:13px}
+.v-pill{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-weight:800;font-size:12px}
+@media (max-width:700px){main table{display:block;overflow-x:auto;max-width:100%}.v-tl{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.v-code{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:var(--code-bg);border-radius:8px;padding:8px 10px;overflow-x:auto;white-space:pre}
+</style>
+</head>
+
+<body>
+<main class="doc">
+<p class="lead">추천 목록의 책 이름을 우리 책 제목으로 보정할지<br>정할 것 3개를 골라 주세요.</p>
+<p class="sub">"목록 책 이름 말이야... 우리 것대로 보정해주면 어떨가?"라고 물으셔서 정리했습니다. 지금 설계(설계 결정 #11)는 표지 아래 · 책 창 제목에 <b>목록에 적힌 이름</b>을 씁니다. 바꾸면 <b>우리 DB에서 맞춘 책의 제목</b>을 씁니다.</p>
+<div class="card"><h2>어디에 보이는 이름인가</h2><p class="concl">표지가 없을 때 대신 보이는 글자 표지, 책 창 맨 위 제목, 화면 읽기 프로그램이 읽는 이름입니다. 표지 그림 속 제목은 원래 그 판의 것이라 바뀌지 않습니다.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px"><div><p style="font-weight:800;margin:0 0 4px">지금 (목록 이름)</p><div class="v-mini"><div class="v-bar"><b>책 창</b></div><div class="v-body"><b>셰익스피어: 햄릿 외 3편</b><br><small>셰익스피어 · 케이트북스</small><br>서울대 권장도서 100선</div></div></div><div><p style="font-weight:800;margin:0 0 4px">보정하면 (1번 A)</p><div class="v-mini"><div class="v-bar"><b>책 창</b></div><div class="v-body"><b>햄릿</b><br><small>셰익스피어 · 케이트북스</small><br>서울대 권장도서 100선 · 목록 이름 「셰익스피어: 햄릿 외 3편」</div></div></div></div><p class="cap">저자 · 출판사는 이미 맞춘 판의 값입니다(설계 결정 #11). 제목만 목록 이름이라, 지금은 「햄릿 외 3편」이라고 써 있는데 실제 판은 「햄릿」 하나인 어긋남이 생깁니다.</p></div>
+<div class="card"><h2>실제 예 (서울대 100선)</h2><table><tr><th>번호</th><th>목록 이름 (지금 화면)</th><th>맞춘 우리 책 제목 (그대로)</th><th>판 표시를 덜어 낸 우리 제목</th></tr><tr><td>29</td><td>셰익스피어: 햄릿 외 3편</td><td>햄릿(Hamlet)</td><td><b>햄릿</b></td></tr><tr><td>24</td><td>일리아스, 오디세이아</td><td>오디세이아(고대 그리스어 완역본)</td><td><b>오디세이아</b></td></tr><tr><td>14</td><td>백석시선집</td><td>백석의 사슴 오리지널판</td><td><b>백석의 사슴</b></td></tr><tr><td>13</td><td>정지용 시집</td><td>정지용 시집 향수 오리지널판</td><td><b>정지용 시집 향수</b></td></tr><tr><td>16</td><td>토지</td><td>토지. 1(1부 1권)</td><td><b>토지</b></td></tr><tr><td>30</td><td>위대한 유산</td><td>위대한 유산(상)</td><td><b>위대한 유산</b></td></tr><tr><td>31</td><td>주홍글자</td><td>주홍 글자</td><td><b>주홍 글자</b></td></tr><tr><td>5</td><td>한중록</td><td>한중록</td><td><b>한중록</b></td></tr></table><p class="cap">서울대 100선, 2026-10-15 조사 때 내 PC DB에서 맞춘 판(docs/research/snu-100/picks.md 표). 토지는 1권 규칙(범위 #7)을 적용한 이름. 덜어 내는 규칙은 예시로 만든 것이라 개발 때 다듬습니다.</p></div>
+<div class="card item"><h2><span class="num">1</span>맞은 책은 우리 제목에서 판 표시를 덜어 내고 보임</h2><p class="concl">[안] 우리 책을 맞춘 줄은 그 책의 제목에서 판 표시를 덜어 내 보입니다: 끝 괄호 안의 판 · 언어 표시(완역본, Hamlet 등), 끝 낱말 "오리지널판", 끝 권 번호(1, (상)), 앞 [시리즈] 표시. 서울대 · 이동진은 책 창에 "목록 이름 「…」"을 이름이 다를 때만 한 줄로 남깁니다. 못 맞춘 책은 목록 이름 그대로입니다.</p><p><b>어디서 정해지나:</b> 운영 서버가 10분마다 목록을 메모리에 담을 때 맞춘 책의 제목을 함께 읽어 덜어 냅니다(책 번호로 찾으므로 맞추기를 다시 하지 않음). 그래서 다시 가져오기로 책 제목이 바뀌어도 바로 따라갑니다. 덜어 내는 규칙은 사이클 19의 제목 앞 괄호 떼기와 같은 꼴로 코드에 둡니다.</p><p class="alt">다른 선택: (B) 우리 제목을 그대로 보임 — 「토지. 1(1부 1권)」 「오디세이아(고대 그리스어 완역본)」처럼 판 표시가 남습니다. (C) 지금대로 목록 이름 — 설계 결정 #11 그대로.</p></div>
+<div class="card item"><h2><span class="num">2</span>세 목록 모두 같은 방식</h2><p class="concl">[안] 사서 추천도서도 같은 방식으로 맞춘 책의 제목을 덜어 내 보입니다. 사서 목록 이름(국립중앙도서관이 적은 이름)은 책 창에 다를 때만 한 줄로 남깁니다.</p><p>사서 목록 이름은 대개 우리 제목과 같아(국립중앙도서관 서지라서) 바뀌는 책이 적습니다. 세 목록이 같은 규칙이면 화면 코드가 한 벌입니다.</p><p class="alt">다른 선택: 이동진 · 서울대만 보정하고 사서는 지금처럼 목록 이름.</p></div>
+<div class="card item"><h2><span class="num">3</span>이 답을 반영한 뒤 마무리로 감</h2><p class="concl">[안] 1 · 2번을 설계 변경서 · 명세(R6)에 반영하고, 설계 결정 #11의 기록을 고친 뒤 마무리(<code>/cycle-close</code>: 검토 → docs/current 고치기 → dev 인계서)로 넘어갑니다.</p><p>「사이클 21 설계 정리」의 9번을 대신합니다.</p></div>
+<p class="foot">원본: 사용자 질문 "아 그런대 목록 책 이름 말이야... 우리 것대로 보정해주면 어떨가?" (2026-10-16, 캔버스 「사이클 21 설계 정리」). 고치게 될 문서: design-delta.md 모듈 · API 절, spec.md R6, architect-proposal.md 설계 결정 #11. 예의 근거: docs/research/snu-100/picks.md.</p>
+</main></body></html>

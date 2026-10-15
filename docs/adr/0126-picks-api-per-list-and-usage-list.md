@@ -1,6 +1,6 @@
 # ADR-0126: 추천 목록 API는 `GET /api/v1/picks/{listKey}`(옛 `GET /api/v1/picks`는 지움), 이용 기록에 목록 이름 `list`
 
-Status: Proposed
+Status: Accepted (사용자 승인, 2026-10-16, 설계 정리 페이지)
 Date: 2026-10-16
 Cycle: 21-recommended-books
 Supersedes: 없음

@@ -1,6 +1,6 @@
 # ADR-0122: 추천 목록 셋(이동진·사서·서울대)은 `picks` 모듈 하나가 맡고, 책 줄은 표 `list_book` 하나에 담음 (`pick` 표 없앰)
 
-Status: Proposed
+Status: Accepted (사용자 승인, 2026-10-16, 설계 정리 페이지)
 Date: 2026-10-16
 Cycle: 21-recommended-books
 Supersedes: 없음

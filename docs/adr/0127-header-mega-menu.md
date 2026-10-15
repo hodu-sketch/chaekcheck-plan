@@ -1,6 +1,6 @@
 # ADR-0127: 머리말은 도서관 정보나루식 큰 메뉴: 「추천도서」(이동진 추천도서·사서 추천도서·서울대 100선)·「마이페이지」(내 도서관 관리), PC는 올림 0.5초로 펼침(덮지 않음), 폰은 ☰
 
-Status: Proposed
+Status: Accepted (사용자 승인, 2026-10-16, 설계 정리 페이지)
 Date: 2026-10-16
 Cycle: 21-recommended-books
 Supersedes: 없음
