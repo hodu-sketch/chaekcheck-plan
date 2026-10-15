@@ -66,50 +66,56 @@ svg .ah{fill:var(--accent)}
 <div class="card">
 <h2>답: 지금 구조에서 어느 모듈에 들어가나</h2>
 <p class="concl">새 모듈은 없습니다. 바뀌는 곳은 <b>web</b>, 본 서비스의 <b>availability</b>(대부분), <b>usagelog</b>(값 하나), 그리고 dev 저장소에 새로 생기는 폴더 <b>extension/</b>(조회 서버 `fetch-service/`처럼 본 서비스 밖)입니다. 모듈 사이 의존 방향(`availability → catalog, library, usagelog`)은 그대로이고 새 의존·새 이벤트는 없습니다.</p>
-<div class="fig"><svg viewBox="0 0 640 560" role="img" aria-label="현재 모듈 구성과 이번에 바뀌는 자리">
-<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="var(--accent)"/></marker></defs>
-<!-- browser -->
-<rect class="bxa" x="10" y="10" width="620" height="118" rx="10"/><text class="lb" x="22" y="32">사용자 브라우저</text>
-<rect class="bx" x="22" y="42" width="330" height="76" rx="8"/><text class="lb" x="32" y="62">web (React) — 변경</text>
-<text class="sm" x="32" y="80" font-size="12">+ 머리말 신호 HeaderSignal · 상태 묻기 useLookupStatus</text>
-<text class="sm" x="32" y="96" font-size="12">+ ExtensionBridge(확장 감지·port) · 「확인하지 못한 도서관」 묶음</text>
-<text class="sm" x="32" y="112" font-size="12">· AppLayout `legal` 분기 삭제(머리말 모든 화면 같게)</text>
-<rect class="bxok" x="372" y="42" width="246" height="76" rx="8"/><text class="lb" x="382" y="62">extension/ — 새 폴더</text>
-<text class="sm" x="382" y="80" font-size="12">크롬 확장(MV3) service worker</text>
-<text class="sm" x="382" y="96" font-size="12">도서관 GET · 호스트 1건·1초</text>
-<text class="sm" x="382" y="112" font-size="12">우리 API 모름(화면이 올림)</text>
-<path d="M352 80 H372" class="ar"/><path d="M372 96 H352" class="ar"/><text class="sm" x="356" y="74" font-size="10">port</text>
+<div class="fig" style="overflow-x:auto"><svg viewBox="0 0 900 690" role="img" aria-label="현재 모듈 구성과 이번에 바뀌는 자리" style="max-width:900px;min-width:640px">
+<defs><marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="var(--accent)"/></marker></defs>
+<style>.t13{font:400 13px "Noto Sans KR",sans-serif;fill:var(--text)} .t13m{font:400 13px "Noto Sans KR",sans-serif;fill:var(--muted)} .h14{font:700 14px "Noto Sans KR",sans-serif;fill:var(--text)} .h15{font:700 15px "Noto Sans KR",sans-serif;fill:var(--text)} .tag{font:700 12px "Noto Sans KR",sans-serif;fill:var(--accent)}</style>
+<!-- 사용자 브라우저 -->
+<rect class="bxa" x="10" y="10" width="880" height="134" rx="10"/><text class="h15" x="24" y="34">사용자 브라우저</text>
+<rect class="bx" x="24" y="46" width="520" height="86" rx="8"/>
+<text class="h14" x="36" y="66">web (React) — 변경</text>
+<text class="t13" x="36" y="86">+ 머리말 신호 · 상태 묻기(10초마다)</text>
+<text class="t13" x="36" y="104">+ 확장 감지와 연결(port) · 「확인하지 못한 도서관」 묶음</text>
+<text class="t13" x="36" y="122">· 약관·처리방침도 같은 머리말 (`legal` 분기 삭제)</text>
+<rect class="bxok" x="590" y="46" width="288" height="86" rx="8"/>
+<text class="h14" x="602" y="66">extension/ — 새 폴더</text>
+<text class="t13" x="602" y="86">크롬 확장(MV3) service worker</text>
+<text class="t13" x="602" y="104">도서관 GET · 호스트 1건 · 1초</text>
+<text class="t13" x="602" y="122">우리 API 모름 (화면이 올림)</text>
+<path d="M544 82 H590" class="ar" marker-end="url(#ah2)"/><path d="M590 100 H544" class="ar" marker-end="url(#ah2)"/><text class="t13m" x="553" y="76">port</text>
 <!-- nginx -->
-<rect class="bx" x="22" y="140" width="330" height="34" rx="8"/><text class="sm" x="32" y="162" font-size="12"><tspan font-weight="700">nginx</tspan> — 일반 /api/ 구역에 lookup-status · 업로드 경로 4MB·20r/s (사이클 17 conf와 맞춤)</text>
-<path d="M187 118 V140" class="ar" marker-end="url(#ah)"/>
-<!-- main service -->
-<rect class="bx" x="10" y="186" width="620" height="364" rx="10"/><text class="lb" x="22" y="208">본 서비스 (Spring Modulith, 1대)</text>
+<rect class="bx" x="24" y="160" width="854" height="36" rx="8"/>
+<text class="t13" x="36" y="183"><tspan font-weight="700">nginx</tspan> — 일반 /api/ 구역에 lookup-status · 올리는 경로 본문 4MB · 20r/s (사이클 17 운영 conf와 맞춤)</text>
+<path d="M284 132 V160" class="ar" marker-end="url(#ah2)"/>
+<path d="M284 196 V232" class="ar" marker-end="url(#ah2)"/><text class="t13m" x="294" y="220">GET lookup-status · POST plans · items · close</text>
+<!-- 본 서비스 -->
+<rect class="bx" x="10" y="232" width="880" height="432" rx="10"/><text class="h15" x="24" y="256">본 서비스 (Spring Modulith, 1대)</text>
 <!-- availability -->
-<rect class="bxa" x="22" y="220" width="400" height="220" rx="8"/><text class="lb" x="32" y="240">availability — 변경 (대부분 여기)</text>
-<text class="sm" x="32" y="260" font-size="12">있던 것: SearchSlots(자리 20) · BatchRunner · HostThrottle · adapter 9종 · 캐시 3분</text>
-<text class="sm" x="32" y="276" font-size="12">· SiteFetcher(직접 / 조회 서버) · LibraryPageFetcher · DetailPageFetcher</text>
-<rect class="bxok" x="32" y="288" width="380" height="144" rx="6"/>
-<text class="sm" x="42" y="306" font-size="12" font-weight="700">새로 넣는 것 (web 패키지·internal 안)</text>
-<text class="sm" x="42" y="324" font-size="12">+ LookupStatusController → LookupStatusService(1초 메모)  #1</text>
-<text class="sm" x="42" y="340" font-size="12">+ SearchSlots.lastRefusedAt(최근 503 시각)</text>
-<text class="sm" x="42" y="356" font-size="12">+ HostQueueBoard(길마다 기다리는 수·시간 초과) ← HostThrottle이 알림  #2</text>
-<text class="sm" x="42" y="372" font-size="12">+ LookupPlanController(계획·쪽 올리기·닫기) + SearchPlanStore(10분)  #4</text>
-<text class="sm" x="42" y="388" font-size="12">+ LibraryPageFetcher.accept / DetailPageFetcher.accept(받은 응답 입구)  #5</text>
-<text class="sm" x="42" y="404" font-size="12">+ 캐시 "빈 칸일 때만" 넣기  #6 · 상세 조회 2단계 나누기</text>
-<text class="sm" x="42" y="422" font-size="12">읽기: 사이클 17의 막힌 길 기록(R4 판정에 씀)</text>
-<!-- other modules -->
-<rect class="bxa" x="440" y="220" width="178" height="60" rx="8"/><text class="lb" x="450" y="240">usagelog — 변경(작음)</text><text class="sm" x="450" y="258" font-size="12">library_response_daily.source</text><text class="sm" x="450" y="274" font-size="12">+ 'extension' 값  #9</text>
-<rect class="bx" x="440" y="292" width="178" height="44" rx="8"/><text class="lb" x="450" y="312">library — 변경 없음</text><text class="sm" x="450" y="328" font-size="12">LibraryCatalog 읽기만</text>
-<rect class="bx" x="440" y="348" width="178" height="44" rx="8"/><text class="lb" x="450" y="368">catalog — 변경 없음</text><text class="sm" x="450" y="384" font-size="12">CatalogHoldings 읽기만</text>
-<rect class="bx" x="440" y="404" width="178" height="36" rx="8"/><text class="sm" x="450" y="427" font-size="12">auth · mylibrary · picks · sitecontent · collection · region — 변경 없음</text>
-<path d="M422 250 H440" class="ar" marker-end="url(#ah)"/><path d="M422 314 H440" class="ar" marker-end="url(#ah)"/><path d="M422 370 H440" class="ar" marker-end="url(#ah)"/>
-<!-- external -->
-<rect class="bx" x="22" y="456" width="190" height="80" rx="8"/><text class="lb" x="32" y="476">도서관 사이트들</text><text class="sm" x="32" y="494" font-size="12">서버 모드: availability가 부름</text><text class="sm" x="32" y="510" font-size="12">(직접 / 조회 서버 fetch-service)</text><text class="sm" x="32" y="526" font-size="12">확장 모드: extension/이 부름</text>
-<rect class="bx" x="230" y="456" width="190" height="44" rx="8"/><text class="lb" x="240" y="476">fetch-service/ (조회 서버)</text><text class="sm" x="240" y="492" font-size="12">변경 없음 — extension/과 같은 역할</text>
-<rect class="bx" x="440" y="456" width="178" height="44" rx="8"/><text class="lb" x="450" y="476">PostgreSQL</text><text class="sm" x="450" y="492" font-size="12">새 표 없음(changeset 1개: CHECK)</text>
-<path d="M120 440 V456" class="ar" marker-end="url(#ah)"/><path d="M300 440 V456" class="ar" marker-end="url(#ah)"/>
-<path d="M187 174 V220" class="ar" marker-end="url(#ah)"/><text class="sm" x="194" y="200" font-size="10">GET lookup-status · POST plans · items · close</text>
-</svg><p class="cap">파란 테두리 = 이번에 바뀌는 모듈, 초록 = 새로 넣는 것. 번호는 아래 결정 항목. 서버 모드의 길(availability → 도서관)은 그대로 남고, 확장 모드의 길(extension/ → 도서관, 화면 → availability 계획 입구)이 옆에 생깁니다.</p></div>
+<rect class="bxa" x="24" y="268" width="560" height="300" rx="8"/>
+<text class="h14" x="36" y="290">availability — 변경 (대부분 여기)</text>
+<text class="t13m" x="36" y="310">있던 것: SearchSlots(자리 20) · BatchRunner · HostThrottle · adapter 9종</text>
+<text class="t13m" x="36" y="328">· 캐시 3분 · SiteFetcher(직접/조회 서버) · LibraryPageFetcher · DetailPageFetcher</text>
+<rect class="bxok" x="36" y="340" width="536" height="216" rx="6"/>
+<text class="h14" x="48" y="360">새로 넣는 것</text>
+<text class="t13" x="48" y="382">+ 상태 컨트롤러 → 상태 서비스(1초 메모) <tspan class="tag">#1</tspan></text>
+<text class="t13" x="48" y="404">+ SearchSlots에 최근 503 시각</text>
+<text class="t13" x="48" y="426">+ HostQueueBoard(길마다 기다리는 수·시간 초과) ← HostThrottle이 알림 <tspan class="tag">#2</tspan></text>
+<text class="t13" x="48" y="448">+ 계획 컨트롤러(계획 · 쪽 올리기 · 닫기) + 계획 저장소(10분) <tspan class="tag">#4</tspan></text>
+<text class="t13" x="48" y="470">+ LibraryPageFetcher.accept / DetailPageFetcher.accept (받은 응답 입구) <tspan class="tag">#5</tspan></text>
+<text class="t13" x="48" y="492">+ 캐시 "빈 칸일 때만" 넣기 <tspan class="tag">#6</tspan> · 포털 상세 조회를 2단계로 나눔</text>
+<text class="t13" x="48" y="514">+ 「더 보기」도 계획 입구로 <tspan class="tag">#7</tspan></text>
+<text class="t13m" x="48" y="540">읽기만: 사이클 17의 막힌 길 기록 (줄이 선 도서관 판정에 씀)</text>
+<!-- right column -->
+<rect class="bxa" x="600" y="268" width="278" height="66" rx="8"/><text class="h14" x="612" y="288">usagelog — 변경(작음)</text><text class="t13" x="612" y="308">library_response_daily.source</text><text class="t13" x="612" y="326">+ 'extension' 값 <tspan class="tag">#9</tspan></text>
+<rect class="bx" x="600" y="346" width="278" height="50" rx="8"/><text class="h14" x="612" y="366">library — 변경 없음</text><text class="t13m" x="612" y="386">LibraryCatalog 읽기만</text>
+<rect class="bx" x="600" y="408" width="278" height="50" rx="8"/><text class="h14" x="612" y="428">catalog — 변경 없음</text><text class="t13m" x="612" y="448">CatalogHoldings 읽기만</text>
+<rect class="bx" x="600" y="470" width="278" height="70" rx="8"/><text class="h14" x="612" y="490">변경 없음</text><text class="t13m" x="612" y="510">auth · mylibrary · picks · region</text><text class="t13m" x="612" y="528">sitecontent · collection</text>
+<path d="M584 300 H600" class="ar" marker-end="url(#ah2)"/><path d="M584 371 H600" class="ar" marker-end="url(#ah2)"/><path d="M584 433 H600" class="ar" marker-end="url(#ah2)"/>
+<!-- external row -->
+<rect class="bx" x="24" y="586" width="276" height="66" rx="8"/><text class="h14" x="36" y="606">도서관 사이트들</text><text class="t13m" x="36" y="626">서버 모드: availability가 부름(직접/조회 서버)</text><text class="t13m" x="36" y="644">확장 모드: extension/이 부름</text>
+<rect class="bx" x="314" y="586" width="270" height="66" rx="8"/><text class="h14" x="326" y="606">fetch-service/ (조회 서버)</text><text class="t13m" x="326" y="626">변경 없음</text><text class="t13m" x="326" y="644">extension/과 같은 역할(원본만 돌려줌)</text>
+<rect class="bx" x="600" y="586" width="278" height="66" rx="8"/><text class="h14" x="612" y="606">PostgreSQL</text><text class="t13m" x="612" y="626">새 표 없음</text><text class="t13m" x="612" y="644">changeset 1개 (source CHECK 다시 걸기)</text>
+<path d="M160 568 V586" class="ar" marker-end="url(#ah2)"/><path d="M449 568 V586" class="ar" marker-end="url(#ah2)"/>
+</svg><p class="cap">파란 테두리 = 이번에 바뀌는 모듈, 초록 = 새로 넣는 것, #번호 = 아래 결정 항목. 폰에서는 옆으로 밀어 봅니다. 서버 모드의 길(availability → 도서관)은 그대로 남고, 확장 모드의 길(extension/ → 도서관, 화면 → availability 계획 입구)이 옆에 생깁니다.</p></div>
 <p class="ex">근거: `docs/current/module-map.md` 모듈 구성도(의존 `availability → catalog, library, usagelog`), architect-proposal.md 그림 1. 자세한 Mermaid 그림은 대화에 보낸 원본 파일.</p>
 </div>
 
