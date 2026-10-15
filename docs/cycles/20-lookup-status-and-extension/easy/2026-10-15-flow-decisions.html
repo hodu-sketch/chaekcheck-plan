@@ -47,7 +47,7 @@ svg .ah{fill:var(--accent)}
 <main class="doc">
 
 <p class="lead">화면 흐름을 그렸습니다.<br>정할 것 8개를 골라 주세요.</p>
-<p class="concl">답 반영 (2026-10-15): #1·2·3·6·8 승인. <b>#4·#5의 말씀대로 빨강 안내 줄은 완전히 뺐습니다</b>(spec R12, 명세 #3 문구 결정 되돌림). #4는 안내 줄과 함께 미승인으로 들어와, 원래 질문(머리말 신호를 사서추천·소개 등 모든 머리말 화면에 둘지)은 아래 #4에서 다시 골라 주세요. #7에 카드 그림을 넣었습니다. #8의 "확장도 캐싱"은 8번 아래에 답했습니다. #4는 "그것들도 같아야지"대로 모든 화면 머리말을 같게 정했습니다(답은 4번 아래). 남은 것: <b>#7</b>.</p>
+<p class="concl">답 반영 (2026-10-15): #1·2·3·6·8 승인. <b>#4·#5의 말씀대로 빨강 안내 줄은 완전히 뺐습니다</b>(spec R12, 명세 #3 문구 결정 되돌림). #4는 안내 줄과 함께 미승인으로 들어와, 원래 질문(머리말 신호를 사서추천·소개 등 모든 머리말 화면에 둘지)은 아래 #4에서 다시 골라 주세요. #7에 카드 그림을 넣었습니다. #8의 "확장도 캐싱"은 8번 아래에 답했습니다. #4는 "그것들도 같아야지"대로 모든 화면 머리말을 같게 정했습니다(답은 4번 아래). #7은 지적대로 「도서관에서 보기 →」 글을 빼고 "확인하지 못한 줄의 자리"로 다시 제안했습니다. 남은 것: <b>#7</b>.</p>
 <p class="sub">새 화면은 없습니다. 공통 머리말(H)에 신호가 붙고, 검색 결과(S1)·책 화면(S3)의 결과 카드에 두 가지(줄이 선 도서관 글, 빨강일 때 「도서관에서 보기 →」 글)가 더해지며, 확장 모드는 같은 화면이 다른 길로 결과를 받습니다. 아래 그림은 자리와 순서만 보이는 배치도이고, 지금 dev 화면(머리말 `AppLayout.tsx`, 결과 카드 `ResultRow.tsx`)을 2026-10-15에 확인해 그렸습니다. 흐름도 두 장(Mermaid)은 대화에 보낸 그림 원본 파일에 있습니다.</p>
 
 <div class="card">
@@ -75,15 +75,15 @@ svg .ah{fill:var(--accent)}
 <div class="card">
 <h2>결과 카드 S1·S3 — 더해지는 두 글</h2>
 <div class="fig"><svg viewBox="0 0 640 230" role="img" aria-label="결과 카드 PC와 폰">
-<text class="sm" x="10" y="16">PC · 빨강일 때</text>
+<text class="sm" x="10" y="16">PC · 줄이 선 도서관</text>
 <rect class="bx" x="10" y="58" width="620" height="70" rx="8"/>
 <text class="lb" x="22" y="82">백만장자 마인드</text><text class="sm" x="22" y="102">모리세 시게토모 · 율리시즈</text>
 <text class="lb" x="260" y="82">경기교육청 통합 전자도서관</text><text class="sm rt" x="260" y="102" font-size="12">지금 이 도서관 조회가 밀려요</text><text class="sm" x="260" y="120" font-size="12">교보 · 소장</text>
-<text class="sm" x="520" y="82">보유 2 · 대출 중 2</text><text class="sm" x="520" y="118" fill="var(--accent)" font-size="12">도서관에서 보기 →</text>
-<text class="sm" x="10" y="156">폰 · 빨강일 때 (배지는 이름 아래 줄, #3)</text>
+<text class="sm" x="520" y="82">보유 2 · 대출 중 2</text>
+<text class="sm" x="10" y="156">폰 (배지는 이름 아래 줄, #3)</text>
 <rect class="bx" x="10" y="164" width="300" height="60" rx="8"/>
-<text class="lb" x="20" y="184" font-size="14">경기교육청 통합 전자도서관</text><text class="sm rt" x="20" y="200" font-size="11">지금 이 도서관 조회가 밀려요</text><text class="sm" x="20" y="216" font-size="11">교보 · 소장 · 보유 2 · 대출 중 2</text><text class="sm" x="210" y="216" fill="var(--accent)" font-size="11">도서관에서 보기 →</text>
-</svg><p class="cap">카드 전체가 원래 도서관 페이지 링크입니다. 빨강일 때만 그 사실을 글(「도서관에서 보기 →」)로 보여 줍니다(#7). 안내 줄은 없습니다(사용자, 2026-10-15). 줄이 선 도서관 글은 신호 색과 무관하게 뜹니다.</p></div>
+<text class="lb" x="20" y="184" font-size="14">경기교육청 통합 전자도서관</text><text class="sm rt" x="20" y="200" font-size="11">지금 이 도서관 조회가 밀려요</text><text class="sm" x="20" y="216" font-size="11">교보 · 소장 · 보유 2 · 대출 중 2</text>
+</svg><p class="cap">카드 전체가 원래 도서관 페이지 링크이고 빨강이어도 카드는 바뀌지 않습니다(사용자, 2026-10-15). 줄이 선 도서관 글은 신호 색과 무관하게 뜹니다. 확인하지 못한 줄의 자리는 #7.</p></div>
 </div>
 
 <div class="card item">
@@ -125,26 +125,24 @@ svg .ah{fill:var(--accent)}
 </div>
 
 <div class="card item">
-<h2><span class="num">7</span>다시 제안: 빨강일 때 카드에<br>「도서관에서 보기 →」 글</h2>
-<p class="concl">앞서 승인한 "「도서관에서 보기」 링크를 앞세움"(방법 비교 #4, 명세 #3)은 <b>전제가 틀렸습니다</b>: dev 결과 카드에는 2026-10-05부터 따로 「도서관에서 보기」 버튼이 없고 <b>카드 전체가 도서관 페이지 링크</b>입니다(`ResultRow.tsx` 확인). 앞세울 링크가 없어 다시 제안합니다. [안] 빨강일 때만 카드 상태 칸 아래에 눈에 보이는 글 「도서관에서 보기 →」를 띄워, 카드를 누르면 도서관으로 간다는 것을 알려 줍니다. 초록·노랑에서는 지금처럼 글 없음(카드 전체 링크는 그대로). 안내 줄(명세 #3 문구)은 그대로입니다.</p>
-<h3 style="font-size:20px;margin:18px 0 6px">그림: 평소 카드와 빨강일 때 카드</h3>
-<div class="fig"><svg viewBox="0 0 640 330" role="img" aria-label="카드 전후 비교">
-<text class="sm" x="10" y="16">PC · 평소(초록·노랑): 카드 전체가 링크, 글 없음</text>
-<rect class="bx" x="10" y="24" width="620" height="70" rx="8"/>
-<text class="lb" x="22" y="48">백만장자 마인드</text><text class="sm" x="22" y="68">모리세 시게토모 · 율리시즈</text>
-<text class="lb" x="260" y="48">경기교육청 통합 전자도서관</text><text class="sm" x="260" y="68" font-size="12">교보 · 소장</text>
-<text class="sm" x="520" y="48">보유 2 · 대출 중 2</text>
-<text class="sm" x="10" y="124">PC · 빨강: 상태 칸 아래에 글이 생김 (카드 어디를 눌러도 도서관으로 감)</text>
-<rect class="bx" x="10" y="132" width="620" height="70" rx="8"/>
-<text class="lb" x="22" y="156">백만장자 마인드</text><text class="sm" x="22" y="176">모리세 시게토모 · 율리시즈</text>
-<text class="lb" x="260" y="156">경기교육청 통합 전자도서관</text><text class="sm" x="260" y="176" font-size="12">교보 · 소장</text>
-<text class="sm" x="520" y="156">보유 2 · 대출 중 2</text><text class="sm" x="520" y="190" fill="var(--accent)">도서관에서 보기 →</text>
-<text class="sm" x="10" y="232">폰 · 빨강 (375px)</text>
-<rect class="bx" x="10" y="240" width="300" height="80" rx="8"/>
-<text class="lb" x="20" y="262" font-size="14">백만장자 마인드</text><text class="sm" x="20" y="280" font-size="11">경기교육청 통합 전자도서관 · 교보 · 소장</text><text class="sm" x="20" y="297" font-size="11">보유 2 · 대출 중 2</text><text class="sm" x="200" y="312" fill="var(--accent)" font-size="11">도서관에서 보기 →</text>
-<text class="sm" x="330" y="262">누르면 →</text><rect class="bxa" x="400" y="245" width="220" height="60" rx="8"/><text class="sm" x="412" y="270" font-size="12">도서관 사이트의 그 책 페이지</text><text class="sm" x="412" y="290" font-size="11">(새 창, 지금과 같음)</text>
-</svg><p class="cap">빨강일 때 바뀌는 것은 「도서관에서 보기 →」 글 하나뿐입니다. 누르는 동작·가는 곳은 지금과 같습니다.</p></div>
-<p class="alt">다른 선택 ①: 안내 줄만 두고 카드는 그대로. 가장 단순하지만 "직접 확인"하는 방법(카드 누르기)을 알려 주지 않습니다. 다른 선택 ②: 모든 색에서 항상 글 표시. 혼잡 때만 보이는 변화가 없어지고 2026-10-05에 버튼을 뺀 결정과 어긋납니다.</p>
+<h2><span class="num">7</span>다시 제안: 빨강에도 카드는 그대로,<br>확인하지 못한 줄은 맨 아래 묶음</h2>
+<p class="concl">지적대로 「도서관에서 보기 →」 글은 뺍니다(카드가 같은데 글만 더하는 것은 뜻이 없음). 빨강이어도 조회가 되면 결과를 그대로 보입니다(지금도 503은 새 검색만 막고 받은 결과는 남김). 정할 것은 <b>대출 정보를 확인하지 못한 줄의 자리</b>입니다. [안] 결과 <b>맨 아래에 따로 묶음 「확인하지 못한 도서관」</b>(계획 순서), 줄 글은 「대출 정보를 확인하지 못했어요」, 「지금 빌릴 수 있는 책만」 거름에서도 보임(빌릴 수 있을지 모르는 줄이므로).</p>
+<p>지금은(dev `sortBatch.ts`·`holdingPlan.ts`, 2026-10-15 확인) 확인 못 한 줄이 「예약하고 기다려요」 묶음 <b>맨 아래에 섞여</b> 「확인 실패」로 나오고, 「지금 빌릴 수 있는 책만」을 켜면 <b>사라집니다</b>. 그래서 혼잡해서 못 본 도서관이 있는지 사용자가 알기 어렵습니다.</p>
+<div class="fig"><svg viewBox="0 0 640 300" role="img" aria-label="결과 묶음 순서">
+<text class="sm" x="10" y="16">지금</text>
+<rect class="bxok" x="10" y="24" width="290" height="40" rx="8"/><text class="sm" x="20" y="49">지금 빌릴 수 있어요</text>
+<rect class="bx" x="10" y="70" width="290" height="70" rx="8"/><text class="sm" x="20" y="92">예약하고 기다려요</text><text class="sm rt" x="20" y="112" font-size="12">… 맨 아래 「확인 실패」 줄 섞임</text><text class="sm" x="20" y="130" font-size="11">(빌릴 수 있는 책만 켜면 묶음째 숨김)</text>
+<text class="sm" x="340" y="16">제안</text>
+<rect class="bxok" x="340" y="24" width="290" height="40" rx="8"/><text class="sm" x="350" y="49">지금 빌릴 수 있어요</text>
+<rect class="bx" x="340" y="70" width="290" height="40" rx="8"/><text class="sm" x="350" y="95">예약하고 기다려요</text>
+<rect class="bxno" x="340" y="116" width="290" height="70" rx="8"/><text class="sm rt" x="350" y="138">확인하지 못한 도서관</text><text class="sm" x="350" y="158" font-size="12">경기교육청 통합 전자도서관 — 대출 정보를 확인하지 못했어요</text><text class="sm" x="350" y="176" font-size="11">(두 거름 모두에서 보임, 계획 순서)</text>
+<text class="sm" x="10" y="220">카드 안 (PC)</text>
+<rect class="bx" x="10" y="228" width="620" height="60" rx="8"/>
+<text class="lb" x="22" y="252">백만장자 마인드</text><text class="sm" x="22" y="272">모리세 시게토모 · 율리시즈</text>
+<text class="lb" x="260" y="252">경기교육청 통합 전자도서관</text><text class="sm rt" x="260" y="272" font-size="12">지금 이 도서관 조회가 밀려요</text>
+<text class="sm rt" x="470" y="252">대출 정보를 확인하지 못했어요</text>
+</svg><p class="cap">확인하지 못한 줄을 맨 아래 한 묶음으로 모으고, 왜 못 했는지(밀림)는 #3의 글이 같은 카드에 보입니다.</p></div>
+<p class="alt">다른 선택 ①: 지금처럼 예약 묶음 맨 아래, 거름에서는 숨김. 만들 것이 없지만 못 본 도서관이 있다는 것을 알 수 없습니다. 다른 선택 ②: 맨 아래 묶음은 두되 「지금 빌릴 수 있는 책만」에서는 숨김. 거름의 뜻에 충실하지만 혼잡 때 못 본 도서관이 그 거름에서 사라집니다. 다른 선택 ③: 맨 위에 두기. 눈에 띄지만 빌릴 수 있는 결과를 아래로 밀어냅니다.</p>
 </div>
 
 <div class="card item">
