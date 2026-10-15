@@ -234,9 +234,9 @@ erDiagram
 
 ## 결정 기록
 
-- [ADR-0113](../../adr/0113-author-marks-and-glued-roles-in-normalize.md) 저자 정리: 기호 떼기·붙은 역할 나누기·저자 칸 정리 [초안 확인 중]
-- [ADR-0114](../../adr/0114-grouping-supplier-codes-and-leading-notes.md) 같은 책 묶기: 같은 공급사 코드·제목 앞 괄호 [초안 확인 중]
-- [ADR-0115](../../adr/0115-swapped-author-publisher-portals.md) 저자·출판사가 뒤바뀐 세 포털 [초안 확인 중]
+- [ADR-0113](../../adr/0113-author-marks-and-glued-roles-in-normalize.md) 저자 정리: 기호 떼기·붙은 역할 나누기·저자 칸 정리 (Accepted)
+- [ADR-0114](../../adr/0114-grouping-supplier-codes-and-leading-notes.md) 같은 책 묶기: 같은 공급사 코드·제목 앞 괄호 (Accepted)
+- [ADR-0115](../../adr/0115-swapped-author-publisher-portals.md) 저자·출판사가 뒤바뀐 세 포털 (Accepted)
 - [ADR-0116](../../adr/0116-usagelog-cached-answer-count.md) 사용 기록 캐시 답 수 (Accepted)
 - 그대로 따름: ADR-0069(정리 규칙을 바꿀 때, 바꿔 끼우자마자 다시 켬 — 짧은 틈 받아들임, 설계 결정 #11), ADR-0078(내 PC 가져오기 → 운영 반영), ADR-0079·0105(세 묶는 방식 같은 결과), ADR-0085(사람이 정한 규칙은 dev git TSV)
 
