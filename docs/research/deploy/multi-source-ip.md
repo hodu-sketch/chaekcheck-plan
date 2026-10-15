@@ -57,6 +57,8 @@ ADR-0095의 세 길은 "서버 자기 IP 1개" 또는 "업체 프록시"였다. 
 - (2026-10-16, 사용자: "한국도 되는지 안 되는지 그리고 너가 직접 연결해서 테스트도 할 수 있으면 해봐") 공개 페이지(`/features/proxy-locations`)는 "50+ Countries"와 인기 나라 10곳만 보여 주고 상품별 나라 목록은 없음 [확정] (https://www.webshare.io/features/proxy-locations , 2026-10-16). 나라 목록은 가입 뒤 Plans & Pricing 화면 (https://help.webshare.io/en/articles/8596715-filtering-proxies-by-country). 계정 만들기·인증 값 입력은 Claude가 하지 않음 → 사용자가 무료 플랜(10개, 카드 없음)으로 가입해 확인 [확인 필요: 사용자 확인]. 산 뒤 시험: `curl -x http://아이디:비밀번호@주소:포트 https://ipinfo.io/country`(KR), 같은 프록시로 `https://www.gdlibrary.or.kr/` 상태 코드
 - 프록시 없이(집 IP) 한 번씩 요청 (2026-10-16): `https://www.gdlibrary.or.kr/` 302 0.1초, `https://ebook.gdlibrary.or.kr/` 200 0.8초 [확정] (직접 시험)
 
+- (2026-10-16, 사용자: "아니 가격이 webshare가 훨씬 매력적이라서이러는거자나") 2차 출처 AIMultiple(2026-10-02 갱신): Webshare ISP 나라 = 미국(약 3만), 이탈리아, 프랑스, 영국, 독일, 벨기에, 캐나다, 일본, 호주, 폴란드, 스웨덴, 루마니아 — 한국 없음 [확인 필요: 공식 화면] (https://aimultiple.com/isp-proxies). 같은 글에서 한국 ISP를 적은 곳은 Decodo(전용 ISP 3개 $9.99부터, 한국 값 없음). 한국 ISP 5개면 Oxylabs IP당 $1.10~1.50 → 약 $5.5~7.5 [안: 계산, 최소 수량 확인 필요]
+
 ## 확인 필요
 
 | 항목 | 확인 방법 |
