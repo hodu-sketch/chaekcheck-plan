@@ -101,3 +101,9 @@ dev seed의 도서관 주소 12곳 루트에 `Origin` 머리를 붙여 GET(curl,
 - 띄우기 자체를 막는 도서관 있음: 응답 머리 확인 7곳 중 `lib.ice.go.kr`이 `X-Frame-Options: SAMEORIGIN` — https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Frame-Options (확인 2026-10-15). `e-lib.sen.go.kr`은 CSP가 있으나 `frame-ancestors`는 없음. 나머지 5곳은 머리 없음
 - `http://` 도서관은 https 화면 안 iframe이 혼합 콘텐츠로 막힘
 - 결론: 읽기 불가 + 일부 막힘 + http 불가 → E보다 못해 제외. 쉬운 설명은 `easy/2026-10-15-offload-options.html` "질문에 답" 카드
+
+## 7. 질문에 답 (2026-10-15): 상태 신호를 10초마다 묻기 vs SSE
+
+- 10초마다 묻기: 보는 사람 1명당 1분에 요청 6번, 한 번 1KB 안쪽(숫자 셋), 서버에 남는 상태 없음, 재연결 문제 없음, 지연 최대 10초(503이면 즉시 빨강). 만들 것: 주소 하나 + 화면 타이머
+- SSE: 보는 사람마다 연결 1개를 계속 유지, 바뀔 때만 보내 바이트는 적음. nginx `proxy_read_timeout 120s`(dev `deploy/nginx/chaekcheck-locations.conf`) 안에 살아 있음 신호 필요, 폰 네트워크 변화·탭 잠듦에 재연결 필요, 열린 연결 목록·바뀜 알림 코드 필요. HTTP/1.1이면 도메인당 6연결 한도(MDN EventSource, https://developer.mozilla.org/en-US/docs/Web/API/EventSource, 확인 2026-10-15); 운영 nginx는 `http2 on`(dev `deploy/nginx/chaekcheck.conf`)이라 해당 없음
+- 결론: 10초 늦어도 되는 작은 값이라 묻기가 더 싸고 단순. 수치는 추정(실측 없음). 쉬운 설명은 `easy/2026-10-15-scope-decisions.html` 3번 "질문에 답"
