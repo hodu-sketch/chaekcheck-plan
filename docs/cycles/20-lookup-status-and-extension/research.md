@@ -116,3 +116,10 @@ dev seed의 도서관 주소 12곳 루트에 `Origin` 머리를 붙여 GET(curl,
 - 폰 크롬(안드로이드)·사파리(iOS)는 확장 미지원 → 이번 사이클의 폰은 서버 조회 + 신호 + 빨강일 때 도서관 링크
 - 길 ①: 안드로이드 파이어폭스에 같은 확장(3절 A, extensionworkshop 문서). 길 ②: 앱(안드로이드·iOS)이 책첵을 감싸고 도서관을 부름 — Google Play 등록 1회 US$25 + 신원 확인(https://support.google.com/googleplay/android-developer/answer/6112435, 확인 2026-10-15), Apple Developer Program 연 99 USD(3절 A). 길 ③ 웹만(PWA)은 CORS·혼합 콘텐츠로 불가(1절)
 - 결론: 이번에는 앱 없음. 앱은 backlog 후보(적을지 사용자에게 물음, 명세 결정 #4)
+
+## 9. 질문에 답 (2026-10-15): 막힌 조회 IP는 언제 풀리고 언제 확인하나
+
+- 사용자 질문: "현재 조회 서버 아이피 막히면 그거 언제 풀리나 언제 체크하는거지?"
+- 있는 것: 막힌 IP는 그 사이트에서 멈춤(ADR-0094·0095 결정, 사이클 17이 dev에 넘김, `docs/cycles/17-first-deploy/design-delta.md` 115행). dev 코드에는 아직 없음. 조회 서버 자체 장애(연결 거부·503)는 `rest-duration: 30s` 뒤 다시 보냄(dev `FetchServiceSiteFetcher.java`, `application.yml` 179행 TODO 확인 필요)
+- **없는 것: 멈춘 뒤 다시 시도해 풀렸는지 확인하는 때.** ADR·17 문서 어디에도 없음 (2026-10-15 확인)
+- 제안 (결정 페이지 `easy/2026-10-15-blocked-ip-resume-decisions.html`): ① 10분 뒤 시험 요청 1건, 또 막히면 두 배(상한 24시간), 사용자 요청은 시험에 쓰지 않음 ② 로그 + Actuator 지표로 Grafana에서 봄, 수동 버튼 없음 ③ 사이클 17 인계에 넣고 17 폴더에 공유 파일로 넘김
