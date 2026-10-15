@@ -18,7 +18,7 @@
 | 8 | `ResponseResult.CACHED` (5-1 A안) | [확정] (사용자 승인) |
 | 9 | 새 변경 파일 `usagelog/002-library-response-cached-count.yaml` | [확정] (사용자 승인) |
 | 10 | 수집기 상수 `PUBLISHER_FIRST_PORTAL_HOSTS` — 덧붙임: **수집 문서에 적어 다음 수집 때 이 규칙이 아직 맞는지(포털 칸 순서) 확인**하게 함: dev `docs/maintenance/2-crawl.md`·`platforms.md`의 통합 포털 절과 수집 전 점검 목록, plan `docs/research/ebook-catalog/platforms.md` | [확정] (사용자: "이거 md에서 기록해놔서 다음에 수집할 때 고려가 되어야하는지 잘 체크하게 해줘", 2026-10-15) |
-| 11 | 반영 직후 짧은 틈 받아들임 | 질문 답함, 기다림 |
+| 11 | 반영 직후 짧은 틈 받아들임 (질문 "그냥 수집에서 잘 하면 되는 거 아니야?"에 답한 뒤: 데이터는 끼우기 전에 다듬고, 틈은 검색어를 다듬는 서버 프로그램) | [확정] (사용자 승인) |
 
 ## 현재 상태 (요약)
 
