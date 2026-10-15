@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 21 설계 검토</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+
+.v-flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.v-box{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:7px 11px;font-size:15px;text-align:center;min-width:90px}
+.v-box small{display:block;color:var(--muted);font-size:12px}
+.v-hi{border-color:var(--accent);background:var(--accent-bg)}
+.v-warn{border-color:var(--warn);background:var(--warn-bg)}
+.v-ok{border-color:var(--ok);background:var(--ok-bg)}
+.v-arr{color:var(--muted);font-size:18px}
+.v-file{border:2px solid var(--line);border-radius:12px;background:var(--card);padding:10px;margin:10px 0;max-width:560px}
+.v-file .v-part{border:1px dashed var(--line);border-radius:8px;padding:8px 10px;margin:6px 0;font-size:14px}
+.v-file .v-part.v-new{border-color:var(--accent);background:var(--accent-bg)}
+.v-tl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0;font-size:13px;text-align:center}
+.v-tl div{border-top:4px solid var(--line);padding-top:6px}
+.v-tl div.v-hi{border-top-color:var(--accent);background:none}
+.v-cv{display:inline-flex;width:70px;aspect-ratio:2/3;border-radius:7px;border:1px solid var(--line);background:var(--accent-bg);align-items:center;justify-content:center;font-size:11px;text-align:center;padding:3px;vertical-align:top;margin:4px}
+.v-cv.v-img{background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 6px,var(--card) 6px,var(--card) 12px)}
+.v-mini{border:1px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;margin:8px 0;max-width:420px}
+.v-mini .v-bar{display:flex;gap:10px;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line);font-size:13px}
+.v-mini .v-body{padding:10px 12px;font-size:13px}
+.v-pill{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-weight:800;font-size:12px}
+@media (max-width:700px){main table{display:block;overflow-x:auto;max-width:100%}.v-tl{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.v-code{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:var(--code-bg);border-radius:8px;padding:8px 10px;overflow-x:auto;white-space:pre}
+</style>
+</head>
+
+<body>
+<main class="doc">
+<p class="lead">설계 검토에서 나온 것 가운데<br>정할 것 9개를 골라 주세요.</p>
+<p class="sub">마무리 첫 단계로 검토 담당(design-reviewer)이 설계 변경서·명세·ADR·dev 코드를 맞춰 봤습니다. "반드시 고칠 것" 8개, "고치면 좋은 것" 11개가 나왔습니다. 그대로 고치면 되는 것은 1번·9번에 묶었고, 방향을 고르셔야 하는 것은 2~8번에 하나씩 두었습니다. 다 고르시면 고친 뒤 지금 설계 문서(docs/current)를 고치고 dev 인계서로 넘어갑니다.</p>
+<div class="card"><h2>낱말 풀이</h2><table><tr><th>낱말</th><th>뜻</th></tr><tr><td>가져오기 (export · apply)</td><td>내 PC에서 전자책 목록 파일을 만들고(export), 운영 서버에서 그 파일을 반영(apply)하는 일</td></tr><tr><td>바꿔 끼우기</td><td>반영 때 새 책 표를 다 만든 뒤 옛 책 표와 한 번에 바꾸는 마지막 단계. 이때부터 새 책 번호가 운영에서 보임</td></tr><tr><td>파일 판</td><td>가져오기 파일 형식 번호. 이번에 목록을 실으면서 2 → 3</td></tr><tr><td>Liquibase 변경 파일</td><td>DB 표를 바꾸는 파일. 번호 순서대로 한 번씩 돎 (예: <code>usagelog/003</code>)</td></tr><tr><td>구독형 도서관</td><td>교보·북큐브 구독형처럼 여러 도서관이 같은 목록을 함께 쓰는 곳 (11곳)</td></tr></table></div>
+<div class="card item"><h2><span class="num">1</span>반드시 고칠 것 중 그대로 고치면 되는 4개</h2><p class="concl">[안] 아래 넷을 설계 변경서에 고쳐 적습니다. 새로 정하는 것은 없고, 정한 것을 dev가 만들 수 있게 빠진 칸 · 자리를 채우는 일입니다.</p><table><tr><th>무엇이 빠졌나</th><th>고침</th></tr><tr><td>책 이름 보정(ADR-0129)과 출판사로 좁히기에 필요한 <b>책 제목 · 출판사</b>가 <code>catalog</code>가 주는 값에 없음 (dev <code>IsbnBook</code> 등은 번호 · 보유 도서관만)</td><td><code>catalog</code> 공개 값 셋과 <code>BookChoice</code> 후보에 제목 · 출판사 정리값 칸을 더한다고 적음</td></tr><tr><td>가져오기 파일을 만들 때 <b>어느 책 표</b>(새로 만든 표 / 지금 표)로 맞출지 목록 쪽이 알 길이 없음</td><td><code>collection</code>이 맞출 책 표를 골라 넘겨 줌 (<code>read(목록 폴더, 찾기)</code>)</td></tr><tr><td>사서추천 108줄을 옮길 때 <b>순서 칸 · 새 분야 번호</b>를 매기는 법이 없음</td><td>지금 화면 순서(추천 월 · 등록일 늦은 순)대로 번호를 매기고, 모르는 분야는 6번부터 붙임. 받기 판단("목록 없음")도 사서 줄만 봄</td></tr><tr><td>첫 목록 파일(이동진 44권 · 서울대 100권)을 <b>만드는 단계</b>가 없음</td><td>조사 문서 → 목록 파일 바꾸기, 이동진 44권 분야를 국립중앙도서관 분류로 다시 매긴 결과를 보여 드리고 확정하는 단계(명세 R3-9)를 dev 작업에 넣음</td></tr></table></div>
+<div class="card item"><h2><span class="num">2</span>파일 판이 다르면 반영을 거절, 목록 폴더가 없으면 만들기를 멈춤</h2><p class="concl">[안] 가져오기 파일 판이 앱과 다르면 지금처럼 반영을 거절합니다("판 2 파일도 받는다"는 문장은 지움). 내 PC에서 파일을 만들 때 목록 폴더가 없으면 만들기를 멈춥니다.</p><p><b>어디서 생기는 일:</b> 설계 변경서 한 곳은 "판 2 파일도 받되 목록은 건드리지 않음", 다른 곳과 ADR-0123은 "판이 다르면 거절"이라 서로 어긋났습니다. dev 코드는 판이 정확히 같아야 받습니다(<code>JdbcCatalogLoad</code>).</p><p><b>예:</b> 목록 폴더 경로를 잘못 적고 파일을 만들면 — 멈추면 바로 알아챕니다. 멈추지 않으면 목록 없이 반영돼 운영의 이동진 · 서울대 목록이 비게 됩니다. 사이클 19의 규칙 폴더도 없으면 멈춥니다.</p><p class="alt">다른 선택: 목록 폴더가 없으면 목록만 건드리지 않고 나머지는 반영. 덜 막히지만 빠뜨린 것을 늦게 알게 됩니다.</p></div>
+<div class="card item"><h2><span class="num">3</span>여러 권짜리는 1권: 이동진 · 서울대는 수집기가, 사서는 서버 고르기가</h2><p class="concl">[안] 판을 고를 때 여러 권짜리면 1권을 고릅니다. 이동진 · 서울대는 수집기가 고정 판을 고를 때, 사서는 서버의 같은 책 고르기(<code>BookChoice</code>)가 제목 끝 권 번호(1, (상))를 보고 1권(또는 권 번호 없는 판)을 먼저 고릅니다.</p><p><b>어디서 생기는 일:</b> 명세 R2-2(세 목록 공통)는 "여러 권짜리는 그 판의 1권"인데, 서버 고르기에는 책 제목이 없어 권을 모릅니다. 1번에서 제목 칸이 더해지므로 쓸 수 있게 됩니다.</p><p><b>예:</b> 서울대 「토지」 — 지금 규칙만이면 보유 도서관이 가장 많은 「토지. 2(1부 2권)」이 뽑혔습니다(조사 2026-10-15). 1권 규칙으로 「토지. 1(1부 1권)」.</p><p class="alt">다른 선택: 사서는 권 규칙 없이 지금처럼 (사서추천에 여러 권짜리가 드묾). 명세 R2-2를 "이동진 · 서울대만"으로 고칩니다.</p></div>
+<div class="card item"><h2><span class="num">4</span>DB 변경 파일 번호: 21이 usagelog/003, 사이클 20은 004로</h2><p class="concl">[안] 이용 기록 표 변경 파일 번호를 21이 <code>usagelog/003</code>으로 쓰고, 사이클 20 쪽에 <code>004</code>로 바꿔 달라고 공유 파일로 알립니다.</p><p><b>어디서 생기는 일:</b> 사이클 19가 <code>002</code>, 21과 20이 둘 다 <code>003</code>을 적었습니다. 파일 이름이 달라 DB가 깨지지는 않지만 번호가 겹쳐 헷갈립니다. dev는 21을 먼저 만든다고 하셨습니다(2026-10-15).</p><p class="alt">다른 선택: 둘 다 003 그대로 두고 "이름이 달라 충돌 없음, 합치는 순서만 맞춤"이라고 적음.</p></div>
+<div class="card item"><h2><span class="num">5</span>유튜브 30일 규칙: 수집할 때마다 이미 넣은 영상도 다시 확인</h2><p class="concl">[안] 수집기가 돌 때마다 재생목록 전체를 다시 읽어, 목록 파일에 있는 영상이 아직 공개돼 있는지 확인하고 확인한 날을 적습니다. 사라지거나 비공개가 된 영상의 줄은 지우고 기록에 남깁니다.</p><p><b>어디서 생기는 일:</b> 유튜브 개발자 정책은 API로 받은 정보를 30일이 지나면 새로 받거나 지우라고 합니다(III.E.4, https://developers.google.com/youtube/terms/developer-policies , 2026-10-15 확인). 설계는 "매달 다시 읽어 지킴"이라고만 했는데, 수집기는 새 영상만 보게 그려져 있었습니다.</p><p><b>비용:</b> 재생목록 「이달의 책」 약 30개 · 업로드 목록은 한 번에 50개씩 읽으므로 몇 번의 요청(각 1단위)이면 됩니다. 하루 한도는 10,000단위입니다.</p><p class="alt">다른 선택: "영상 ID는 30일 규칙 대상이 아니라고 본다"로 두고 확인 필요로 남김. 정책에 ID를 따로 적은 곳이 없어 확실하지 않습니다.</p></div>
+<div class="card item"><h2><span class="num">6</span>ADR-0129 (책 이름 보정) 초안 그대로 확정</h2><p class="concl">[안] 책 이름 보정 페이지에서 고르신 것을 결정 기록 ADR-0129로 남겼습니다. 초안 그대로 확정합니다 (Proposed → Accepted).</p><p><b>정하는 것:</b> 맞춘 책은 그 책 제목에서 판 표시를 덜어 낸 이름, 못 맞춘 책은 목록 이름, 세 목록 모두, 다르면 책 창에 목록 이름 한 줄. 검토 담당이 "구조에 영향을 주는 결정인데 ADR이 없다"고 짚었습니다. 기록: docs/adr/0129-picks-shown-title-from-matched-book.md</p></div>
+<div class="card item"><h2><span class="num">7</span>보유량은 켜진 도서관만 셈</h2><p class="concl">[안] 같은 책 고르기의 보유량은 지금 켜진 도서관만 셉니다(구독형도 켜진 곳만 보고 1). 사이클 14 사서추천도서도 이 셈으로 바뀝니다.</p><p><b>어디서 생기는 일:</b> 책마다 가진 도서관 목록에는 지금 꺼진 도서관도 남아 있습니다(dev <code>IsbnBook</code> 설명). 구독형 번호를 켜진 곳만 받으면, 꺼진 구독형 도서관이 일반 도서관 한 곳으로 세져 보유량이 부풀 수 있습니다.</p><p><b>예:</b> 판 A는 켜진 일반 3곳, 판 B는 켜진 일반 2곳 + 꺼진 구독형 2곳. 지금 셈이면 B가 4로 이기고, 켜진 곳만 세면 A(3) 대 B(2)로 A입니다. 꺼진 도서관에서는 빌릴 수 없으니 A가 맞습니다.</p><p class="alt">다른 선택: 구독형 번호만 꺼진 곳까지 받아 셈을 맞춤. 꺼진 일반 도서관은 여전히 셉니다.</p></div>
+<div class="card item"><h2><span class="num">8</span>목록은 책 표를 바꿔 끼운 뒤 넣기</h2><p class="concl">[안] 운영 반영에서 이동진 · 서울대 목록은 새 책 표로 바꿔 끼운 <b>뒤</b> 작은 트랜잭션 하나로 넣습니다. ADR-0123의 "도서관 정보와 같은 첫 트랜잭션"을 이렇게 고칩니다.</p><p><b>어디서 생기는 일:</b> 목록 줄의 책 번호는 새 책 표 기준입니다. 첫 트랜잭션에서 넣으면 그 뒤 복원 · 색인이 끝나 바꿔 끼울 때까지 운영은 옛 책 표인데 목록은 새 번호를 가리킵니다.</p><div class="v-flow"><div class="v-box ">첫 트랜잭션<br><small>도서관 정보 · 비교</small></div><span class="v-arr">→</span><div class="v-box v-warn">복원 · 색인<br><small>몇 분 이상</small></div><span class="v-arr">→</span><div class="v-box ">바꿔 끼우기</div><span class="v-arr">→</span><div class="v-box v-hi">목록 넣기<br><small>새로 옮긴 자리</small></div><span class="v-arr">→</span><div class="v-box v-ok">10분 안 화면</div></div><p><b>예:</b> 새로 들어온 책은 그동안 흐린 표지로 보이고, 복원이 실패하면 다시 반영할 때까지 그대로입니다. 바꿔 끼운 뒤에 넣으면 이 틈이 없고, 목록 넣기가 실패해도 옛 목록이 남습니다(책 번호는 이어지므로 대개 그대로 맞음, ADR-0062).</p><p class="alt">다른 선택: 첫 트랜잭션 그대로 두고 그 틈과 "실패하면 다시 반영"을 인계서에 적음.</p></div>
+<div class="card item"><h2><span class="num">9</span>고치면 좋은 것 나머지 그대로 고침</h2><p class="concl">[안] 아래를 그대로 고칩니다.</p><ul><li>ADR-0124 결과에 "ADR-0090의 '짝은 저장하지 않음'이 이동진 · 서울대 줄에 한해 바뀜" 추가</li><li>명세 · 화면 · 범위의 옛 문장 정리 (R3-4 "서버는 고정 판 칸을 그대로 씀", 끝난 확인 필요 둘, 범위 "제외"에 남은 자동 받기, 범위 상태 줄), 책 이름 보정 수용 기준 AC-16 추가</li><li>머리말 행에 "ADR-0121(모든 화면 같은 머리말)은 사이클 20이 확정할 초안"이라고 적고 인계서에 넣음</li><li>backlog에 세 줄: 도서관 클릭 기록에 목록 이름, 목록 반영 기록 표, 보유량 공식 공통 시험 자료. 참고 문서 목록 6절에 "책 · 도서관 칸이 바뀌면 수집기 판 고르기도 고침"</li><li>표 제약을 세 목록 대칭으로, 표지 넣기는 이미 있으면 건너뜀, 수집기 표지도 폭 200px · 품질 0.8 · http는 https로</li><li>목록 잠금 이유 한 줄, 정책 주소 · 5MB 한도 태그, 제안서 맨 위에 "옛 그림, 최신은 설계 변경서"</li></ul></div>
+<p class="foot">원본: design-reviewer 검토 (2026-10-16), docs/cycles/21-recommended-books/design-delta.md, docs/adr/0129. dev 근거(읽기만): JdbcCatalogLoad.java, ImportTransfer.java, IsbnBook.java, BookChoice.java, PicksStore.java, FetchDecision.java.</p>
+</main></body></html>
