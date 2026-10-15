@@ -3,6 +3,7 @@
 - 시작: 2026-10-15 (원격 세션 `chaekcheck-plan-cycle-20`). 사용자 요청: "조회 제한이 있어서 동시에 여러 사람이 조회 요청하면 잘 안 되자나 그래서 그걸 알려주는 기능을 만들려고 해 상단에 조회 서버 상태 알려주는 거 해서 조회 서버에 할 일이 많이 쌓이면 빨간불 괜찮으면 초록불해서 / 그리고 그것도 같이 할까 해 구글 확장 프로그램으로 깔면 사용자의 프론트에서 접근하도록 해서 우리 조회 서버 안 거치도록 하는거" (2026-10-15)
 - 폴더 이름 `20-lookup-status-and-extension` [안]
 - 범위 결정 페이지: [`easy/2026-10-15-scope-decisions.html`](easy/2026-10-15-scope-decisions.html) (원격용 Artifact https://claude.ai/artifact/EHAwjsJpERieZvtP9z4rAw, 사본 `easy/2026-10-15-scope-decisions-artifact.html`)
+- 조사: [`research.md`](research.md) (조회 부담을 사용자 쪽으로 옮기는 방법 7가지, 2026-10-15; 결정 페이지 `easy/2026-10-15-offload-options.html`, Artifact https://claude.ai/artifact/8ZTCT3Xefgccw6vkLfMgas)
 - 앞 사이클과의 순서: 17(첫 배포, 공개 2026-10-18)·19(꺾쇠 저자) 뒤 [안]. 17·19는 각자 세션이 맡고 있어 이 사이클은 범위·명세·화면·설계 대안을 미리 하고, 설계 확정·인계는 그 뒤 ([[plan-ahead-while-dev-runs]] 방식)
 
 ## 목표 (한 문장) [안]

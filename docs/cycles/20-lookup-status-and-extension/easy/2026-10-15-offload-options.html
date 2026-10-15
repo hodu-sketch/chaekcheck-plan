@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>조회 부담 옮기기 방법 비교</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+</style>
+</head>
+<body>
+<main class="doc">
+
+<p class="lead">조회 부담을 사용자 쪽으로 옮기는 방법을<br>일곱 가지 살펴봤습니다. 정할 것 5개입니다.</p>
+<p class="sub">"크롬 확장 말고도 다른 방식이 있으면 좋아"에 대한 조사 결과입니다. 결론부터: <b>설치 없이 웹 페이지만으로 사용자 브라우저가 도서관을 부르게 하는 길은 없습니다</b>(도서관 사이트 12곳을 실제로 불러 확인). 사용자 PC에 무언가를 설치하는 방법이 셋(확장, 사용자 스크립트, 도우미 프로그램), 설치 없이 부담만 덜어 주는 방법이 하나(도서관 사이트로 바로 보내기) 남습니다. 판정은 각 항목의 승인·미승인·기타 버튼으로 고르고 "저장"을 눌러 주세요. 앞 페이지(범위 결정 7개)는 그대로 유효합니다.</p>
+
+<div class="card">
+<h2>왜 웹 페이지만으로는 안 되는가</h2>
+<p class="concl">브라우저는 다른 사이트의 응답을, <b>그 사이트가 허락 머리(<code>Access-Control-Allow-Origin</code>)를 보낼 때만</b> 페이지 스크립트에 보여 줍니다. 도서관 사이트 12곳의 첫 페이지를 우리 사이트인 척(Origin 머리) 불러 보니, <b>응답한 8곳 모두 그 머리가 없었습니다</b>. 4곳은 응답 자체가 오지 않았습니다(인증서나 차단으로 추정, 원인은 확인 못 함).</p>
+<p>또 우리 사이트는 https인데 도서관 몇 곳(예: 전주 전자도서관 <code>ebook.jeonju.go.kr:8095</code>)은 <code>http://</code>라서, 페이지 스크립트가 부르면 브라우저가 "혼합 콘텐츠"로 막습니다. 예외는 내 컴퓨터 자신(<code>127.0.0.1</code>)만입니다.</p>
+<p class="ex">근거: MDN CORS, MDN Mixed content (2026-10-15 확인). 호출 시험 표는 `research.md` 1.1절. 도서관 수백 곳 전부를 본 것은 아닙니다(아래 #5).</p>
+</div>
+
+<div class="card">
+<h2>일곱 가지 방법 한눈에</h2>
+<table>
+<tr><th>방법</th><th>사용자가 할 일</th><th>되는 곳</th><th>판정</th></tr>
+<tr><td><b>A 브라우저 확장</b></td><td>스토어에서 설치 1회</td><td>크롬·엣지(같은 파일), 파이어폭스(PC·안드로이드), 사파리(별도 포장·연 99달러)</td><td class="okc">가능</td></tr>
+<tr><td><b>B 사용자 스크립트</b> (Tampermonkey 같은 관리자 확장 + 우리 스크립트)</td><td>관리자 확장 설치 → 스크립트 설치 → 도메인 허용 (3단계)</td><td>관리자 확장이 되는 브라우저</td><td class="okc">가능, 설치가 길다</td></tr>
+<tr><td><b>C 로컬 도우미 프로그램</b> (PC에 설치, 우리 페이지가 <code>127.0.0.1</code>로 말함)</td><td>설치 파일 내려받아 실행</td><td>PC 전부, 폰 불가</td><td style="color:var(--warn);font-weight:700">조건부: 크롬의 사설망 접근 제한, 운영체제 경고·서명</td></tr>
+<tr><td>D 웹 페이지가 직접 부르기</td><td>없음</td><td>—</td><td class="red">불가 (위 시험)</td></tr>
+<tr><td><b>E 도서관 사이트로 바로 보내기</b> (결과 줄의 "도서관에서 보기" 링크를 혼잡일 때 앞세움)</td><td>링크 클릭</td><td>전부, 폰 포함</td><td class="okc">가능, 대출 가능 판정은 못 보여 줌</td></tr>
+<tr><td>F 조회 서버·업체 프록시 늘리기</td><td>없음</td><td>전부</td><td>부담이 사용자로 가지 않음(사이클 17에 이미 있음)</td></tr>
+<tr><td>G 캐시 길게·인기 책 미리 조회</td><td>없음</td><td>전부</td><td>부담을 줄이기만 함(보조)</td></tr>
+</table>
+<p class="ex">제외한 생각: iframe(다른 사이트 내용은 못 읽음), 북마클릿(D와 같은 제한), 공개 CORS 프록시(남의 서버), 데스크톱 앱으로 서비스 통째 포장(과함).</p>
+<div class="fig"><svg viewBox="0 0 640 230" role="img" aria-label="세 가지 설치 방법의 공통 구조">
+<rect class="bxa" x="10" y="20" width="190" height="190" rx="10"/><text class="lb" x="105" y="46" text-anchor="middle">사용자 PC</text>
+<rect class="bx" x="22" y="60" width="166" height="40" rx="8"/><text class="sm" x="105" y="85" text-anchor="middle">책첵 화면 (우리 웹)</text>
+<rect class="bxok" x="22" y="112" width="166" height="86" rx="8"/><text class="sm" x="105" y="134" text-anchor="middle">A 확장 / B 스크립트 /</text><text class="sm" x="105" y="152" text-anchor="middle">C 도우미 프로그램</text><text class="sm" x="105" y="178" text-anchor="middle">= "사용자 쪽 조회 서버"</text>
+<rect class="bx" x="270" y="60" width="150" height="70" rx="10"/><text class="lb" x="345" y="88" text-anchor="middle">우리 서버</text><text class="sm" x="345" y="110" text-anchor="middle">주소 목록 · 해석 · 캐시</text>
+<rect class="bx" x="490" y="120" width="140" height="60" rx="10"/><text class="lb" x="560" y="145" text-anchor="middle">도서관 사이트</text><text class="sm" x="560" y="167" text-anchor="middle">사용자 IP로 GET</text>
+<path class="ar" d="M270 80 H200"/><path class="ah" d="M202 73 L190 80 L202 87Z"/><text class="sm" x="235" y="72" text-anchor="middle">① 볼 주소</text>
+<path class="ar" d="M188 150 H488"/><path class="ah" d="M486 143 L498 150 L486 157Z"/><text class="sm" x="338" y="168" text-anchor="middle">② 직접 받아옴</text>
+<path class="ar" d="M200 125 L270 108"/><path class="ah" d="M266 102 L280 106 L270 115Z"/><text class="sm" x="250" y="140" text-anchor="middle" font-size="12">③ 원본 올림</text>
+<text class="sm" x="320" y="215" text-anchor="middle">④ 해석 결과 → 화면 · 서버 자리 20개를 쓰지 않음</text>
+</svg><p class="cap">A·B·C 어느 쪽을 골라도 서버 입구는 하나입니다: 주소를 주고, 받아온 원본을 돌려받아 서버가 해석합니다(앞 페이지 #5와 같음).</p></div>
+</div>
+
+<div class="card item">
+<h2><span class="num">1</span>첫 번째로 만들 것:<br>브라우저 확장(A), 크롬·엣지 함께</h2>
+<p class="concl">[안] <b>브라우저 확장을 먼저</b> 만들고, 같은 파일을 <b>Chrome Web Store와 Microsoft Edge Add-ons 두 곳</b>에 올립니다. 엣지는 크롬 확장을 그대로 받으며 심사는 최대 7영업일(마이크로소프트 문서, 2026-10-15). 파이어폭스는 같은 규격(WebExtension)이라 뒤에 작은 손질로 올릴 수 있고, 안드로이드 폰에서는 파이어폭스만 확장을 지원합니다(공식 문서, PC와 기능 차이 있음). 사파리는 앱으로 포장하고 연 99달러가 들어 뺍니다.</p>
+<p>이유: 설치가 한 번이고, 스토어가 갱신을 자동으로 밀어 주며, 우리 사이트에서 "설치" 버튼 하나로 안내할 수 있습니다. 세 설치 방법 중 사용자가 할 일이 가장 적습니다.</p>
+<p class="alt">다른 선택 ①: 크롬만. 올리는 곳이 하나 줄지만 엣지 사용자는 못 씁니다(엣지는 같은 파일이라 추가 일이 거의 없음). 다른 선택 ②: 파이어폭스까지 처음부터. 안드로이드 폰 일부가 들어오지만 Manifest V2 권장·service worker 미지원이라 코드를 두 갈래로 다듬어야 합니다. 뒤로 미루는 쪽을 추천합니다.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">2</span>사용자 스크립트(B)는<br>만들지 않고 backlog</h2>
+<p class="concl">[안] <b>지금은 만들지 않습니다.</b> 확장과 같은 일을 하지만 사용자가 관리자 확장(Tampermonkey 등, 남의 제품)을 먼저 깔고, 우리 스크립트를 깔고, 도메인 허용 창을 지나야 합니다. 확장(A)이 있으면 같은 사람들이 쓸 수 있는 더 쉬운 길이 이미 있습니다.</p>
+<p>살릴 때: 스토어 심사가 막히거나 오래 걸릴 때의 우회로. 확장과 같은 메시지 약속을 쓰면 스크립트 하나를 더 쓰는 정도의 일입니다. backlog에 한 줄 남깁니다.</p>
+<p class="alt">다른 선택: 확장과 함께 제공. 심사 없이 바로 배포되고 고치면 바로 반영되지만, 설치 안내 페이지가 두 갈래가 되어 사용자가 고르기 어렵습니다.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">3</span>로컬 도우미 프로그램(C)은<br>만들지 않고 backlog</h2>
+<p class="concl">[안] <b>지금은 만들지 않습니다.</b> 브라우저와 상관없이 PC 전체에서 되는 장점이 있지만, 설치 파일을 내려받아 실행해야 하고(윈도·맥 경고를 피하려면 코드 서명 비용), 폰에서는 못 쓰며, 크롬이 준비 중인 "사설망 접근 제한"(공개 사이트가 내 컴퓨터의 프로그램에 말을 걸 때 확인 절차)에 걸릴 수 있어 프로토타입으로 확인해야 합니다(크롬 블로그: 배포 보류 중, 2026-10-15 확인).</p>
+<p class="alt">다른 선택: 확장과 같이 만들기. 확장을 못 깔게 막힌 회사 PC 등에서 유용하지만 설치형 프로그램 두 운영체제 빌드·서명·갱신을 우리가 떠안습니다. 개인 서버 규모에는 과하다고 봅니다.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">4</span>설치 없는 길(E)을<br>사이클 20(신호)에 함께 넣기</h2>
+<p class="concl">[안] 신호가 <b>빨강(혼잡)일 때</b> 결과 줄에 이미 있는 "도서관에서 보기" 링크(<code>detailUrl</code>, 없으면 도서관 검색 페이지)를 앞세우고 한 줄 안내를 붙입니다: "지금 찾는 사람이 많아요. 도서관 사이트에서 직접 확인할 수 있어요". 설치가 없어 <b>폰 사용자도</b> 바로 쓰고, 우리 서버는 그 조회를 하지 않습니다. 대출 가능 판정은 사용자가 도서관 사이트에서 직접 봅니다.</p>
+<p>이미 있는 것: 결과 줄마다 도서관 상세 주소 링크(`api.md` items[] `detailUrl`, 없으면 `librarySearchUrl`). 새로 만드는 것은 빨강일 때의 안내 문구와 자리뿐입니다.</p>
+<p class="alt">다른 선택: 넣지 않음. 신호만 보고 사용자가 기다리게 됩니다. 비용이 거의 없어 넣기를 추천합니다.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">5</span>확장 사이클(21) 전에<br>확인 시험 두 가지</h2>
+<p class="concl">[안] dev에 작은 시험 둘을 먼저 부탁합니다. ① <b>확장 프로토타입</b>: 빈 확장 하나로 `http://` 도서관(전주), 중간 인증서가 빠진 도서관, 보통 https 도서관 3곳을 받아와 우리 서버 adapter로 해석되는지. ② <b>전체 도서관 호스트 CORS 일괄 확인</b>: 수백 곳 전부에 Origin 머리를 붙여 허락 머리가 있는지. 전부 없으면 "웹 페이지가 직접 부르기(D)"는 완전히 제외하고, 있는 곳이 있으면 그 도서관만 설치 없이 직접 부르는 길이 생깁니다.</p>
+<p>두 시험은 사이클 20(신호) 개발과 같이 돌릴 수 있고, 결과가 사이클 21 명세의 전제가 됩니다.</p>
+<p class="alt">다른 선택: 시험 없이 바로 21 설계. 확장 안에서 http 사이트가 열리지 않는 경우 설계를 되돌려야 합니다(공식 문서에 이 경우가 적혀 있지 않아 확인 못 함).</p>
+</div>
+
+<p class="foot">원문: <code>docs/cycles/20-lookup-status-and-extension/research.md</code>. 공식 문서 확인 주소와 날짜는 그 문서 3절. 호출 시험 2026-10-15.</p>
+</main>
+</body>
+</html>
