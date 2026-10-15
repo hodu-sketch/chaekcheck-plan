@@ -54,6 +54,9 @@ ADR-0095의 세 길은 "서버 자기 IP 1개" 또는 "업체 프록시"였다. 
 - 환불: 결제 48시간 안, 쓴 양 1GB 미만(정적 주거용), 프록시 1,000개 미만 [확정] (https://help.webshare.io/en/articles/8370527-requesting-a-refund , 2026-10-16)
 - 한국 정적 주거용(ISP) 대안: Oxylabs 한국 포함, IP당 $1.10~1.50 (2026-10-12 업체 표기, `hosting-options.md` 4-2절) → 20개 월 약 $22~30 [안: 계산]
 
+- (2026-10-16, 사용자: "한국도 되는지 안 되는지 그리고 너가 직접 연결해서 테스트도 할 수 있으면 해봐") 공개 페이지(`/features/proxy-locations`)는 "50+ Countries"와 인기 나라 10곳만 보여 주고 상품별 나라 목록은 없음 [확정] (https://www.webshare.io/features/proxy-locations , 2026-10-16). 나라 목록은 가입 뒤 Plans & Pricing 화면 (https://help.webshare.io/en/articles/8596715-filtering-proxies-by-country). 계정 만들기·인증 값 입력은 Claude가 하지 않음 → 사용자가 무료 플랜(10개, 카드 없음)으로 가입해 확인 [확인 필요: 사용자 확인]. 산 뒤 시험: `curl -x http://아이디:비밀번호@주소:포트 https://ipinfo.io/country`(KR), 같은 프록시로 `https://www.gdlibrary.or.kr/` 상태 코드
+- 프록시 없이(집 IP) 한 번씩 요청 (2026-10-16): `https://www.gdlibrary.or.kr/` 302 0.1초, `https://ebook.gdlibrary.or.kr/` 200 0.8초 [확정] (직접 시험)
+
 ## 확인 필요
 
 | 항목 | 확인 방법 |
