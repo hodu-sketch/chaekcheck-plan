@@ -14,7 +14,7 @@
 | 4 | 규칙 파일 두 개 + `rules-dir` 설정 + `ImportRules` (2-2) | [확정] (사용자 승인) |
 | 5 | 잊음 막는 장치 (`swap_before` 뒤 사본이면 멈춤) — 덧붙임: 멈췄을 때 그냥 줄을 지우지 말고 **그 새 사본에서 세 도서관이 아직 뒤바뀌어 있는지 다시 검증**(research.md 실험 (d) 방법: 이름이 다른 도서관에서 저자로 쓰이는 비율과 출판사로 쓰이는 비율)한 뒤, 바르게 들어왔으면 줄을 지우고 아직 뒤바뀌었으면 수집기를 다시 봄 | [확정] (사용자: "잊지 않게 막되 다음에도 이 규칙이 맞는가 검증은 해야 해 지금이 뜻하는 데이터 가공 방향으로", 2026-10-15) |
 | 6 | `Contributors.stripMarks`·`displayText`를 `catalog.normalize`에 (3 A안) | [확정] (사용자 승인) |
-| 7 | 남길 낱말 목록을 코드 상수로 | 질문 답함, 기다림 |
+| 7 | 남길 낱말 목록을 코드 상수로 (DB·규칙 파일보다 코드 상수, 질문 "이거 db에 정보 두는 건 이상하나"에 답한 뒤) | [확정] (사용자 승인) |
 | 8 | `ResponseResult.CACHED` (5-1 A안) | [확정] (사용자 승인) |
 | 9 | 새 변경 파일 `usagelog/002-library-response-cached-count.yaml` | [확정] (사용자 승인) |
 | 10 | 수집기 상수 `PUBLISHER_FIRST_PORTAL_HOSTS` — 덧붙임: **수집 문서에 적어 다음 수집 때 이 규칙이 아직 맞는지(포털 칸 순서) 확인**하게 함: dev `docs/maintenance/2-crawl.md`·`platforms.md`의 통합 포털 절과 수집 전 점검 목록, plan `docs/research/ebook-catalog/platforms.md` | [확정] (사용자: "이거 md에서 기록해놔서 다음에 수집할 때 고려가 되어야하는지 잘 체크하게 해줘", 2026-10-15) |
