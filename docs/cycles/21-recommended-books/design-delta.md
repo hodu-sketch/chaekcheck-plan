@@ -312,7 +312,7 @@ erDiagram
 |---|---|---|---|---|
 | `list_field.list_key` | text | PK 앞, CHECK IN (`librarian`,`leedongjin`,`snu100`) | 목록 이름 | [확정] (ADR-0122·0126) |
 | `list_field.code` | text | PK 뒤, CHECK `length(code) BETWEEN 1 AND 20` | 사서는 `drCode`(11·6·5·4·425, 모르는 코드도), 이동진·서울대는 `fields.tsv` 코드(예 `korean_fiction`, `korean_lit`) | [안] |
-| `list_field.name` | text | NOT NULL | 화면 이름. 사서의 모르는 새 코드는 받은 이름, 비면 코드 (C14 R2-5) | [안] |
+| `list_field.name` | text | NOT NULL | 화면 이름. 사서의 모르는 새 코드는 받은 이름, 비면 "기타" [확정] (C14 R2-5, dev `PicksCache.OTHER_NAME`) | [안] |
 | `list_field.position` | smallint | NOT NULL, ≥ 1, UNIQUE(`list_key`,`position`) | 분류 목록 순서. 사서 새 코드는 끝에 붙임 (옮길 때는 6번째부터 코드 순서) | [안] |
 | `list_book.id` | bigint | PK, `GENERATED ALWAYS AS IDENTITY` | 이동진·서울대 응답 `id` (바꿀 때마다 새로 매김) | [안] |
 | `list_book.(list_key, field_code)` | text | NOT NULL, FK → `list_field` ON DELETE CASCADE, 색인 | 목록·분야 | [안] |
@@ -340,7 +340,7 @@ erDiagram
 - 크기: 사서 108줄 + 이동진 44줄(월 1~4줄씩 늚) + 서울대 100줄 ≈ 250줄. 표지 약 250장, 3~4MB (사이클 14 실측 장당 4~22KB) [안]
 - Liquibase: 새 파일 `db/changelog/picks/002-curated-lists.yaml`, master 끝에 `# cycle 21` 주석과 include. 기존 changeset은 고치지 않음(사이클 17 첫 배포가 21보다 먼저일 수 있으므로) [안: 파일 이름]
   1. `list_field`·`list_book` 만들기 (CHECK·색인은 changeset 안 `sql`)
-  2. 사서 분야 넣기: 아는 다섯(11 문학, 6 인문, 5 사회, 4 자연, 425 테마, C14 순서, `position` 1~5) + `pick`에 있는 그 밖의 `dr_code`를 `DISTINCT`로(이름은 `min(dr_code_name)`, 비면 코드), `position`은 6부터 코드 순서 [확정] (사용자 승인, 2026-10-16, [설계 검토 3](easy/2026-10-16-review-decisions-3.html) #1)
+  2. 사서 분야 넣기: 아는 다섯(11 문학, 6 인문, 5 사회, 4 자연, 425 테마, C14 순서, `position` 1~5) + `pick`에 있는 그 밖의 `dr_code`를 `DISTINCT`로(이름은 `min(dr_code_name)`, 비면 "기타" — C14 R2-5 [확정]), `position`은 6부터 코드 순서 [확정] (사용자 승인, 2026-10-16, [설계 검토 3](easy/2026-10-16-review-decisions-3.html) #1)
   3. `INSERT INTO list_book (list_key='librarian', …) SELECT … FROM pick`, `position` = `ROW_NUMBER() OVER (PARTITION BY dr_code ORDER BY recom_month DESC, registered_on DESC NULLS LAST, recom_no DESC)` (dev `PicksCache.BOOK_ORDER` 52~55행과 같은 순서) [확정] (사용자 승인, 2026-10-16, [설계 검토 3](easy/2026-10-16-review-decisions-3.html) #1) — 옮기지 않으면 "목록 없음 → 받기"(dev `FetchDecision` 규칙 2)로 켜지자마자 다시 받는 1~2분 동안 비고, 그날 이미 받았으면(규칙 1) 다음 날 05:00까지 비므로 옮김 [확정] (사용자 승인, 2026-10-16, 설계 정리 #8)
   4. `DROP TABLE picks.pick`
   - 함께 고칠 코드: `FetchDecision`의 "목록 없음"(`PicksStore.hasPicks()`)과 받기의 "같은 목록인가" 비교는 `list_book`의 `librarian` 줄만 봄 [확정] (사용자 승인, 2026-10-16, [설계 검토 3](easy/2026-10-16-review-decisions-3.html) #1)
@@ -442,7 +442,7 @@ erDiagram
 |---|---|
 | 1·2·3 | 웹 시험: 머리말 0.5초 열기·닫기, 덮지 않음, 375px ☰·어둡게 덮기, 320px 한 줄, `/terms`·`/privacy` 같은 머리말. 화면 확인 때 PC 정렬 |
 | 4·5·8·9·15 | `PicksController` 시험(세 목록, 404 `list_not_found`), 웹 시험(목차 번호·"26.06"·책 창 줄·[영상 보기]·출처 줄·흐린 표지 → 희망도서 안내) |
-| 책 이름 | 판 표시 덜어 내기 단위 시험(위 예 셋 + 「위대한 유산(상)」 → 「위대한 유산」, 「백석의 사슴 오리지널판」 → 「백석의 사슴」, 덜어 내 빈 이름이면 그대로), 못 맞춘 줄은 목록 이름 |
+| 책 이름 | 판 표시 덜어 내기 단위 시험(입력은 목록 이름이 아니라 맞춘 우리 책 제목: 「햄릿(Hamlet)」 → 「햄릿」, 「오디세이아(고대 그리스어 완역본)」 → 「오디세이아」, 「토지. 1(1부 1권)」 → 「토지」 + 「위대한 유산(상)」 → 「위대한 유산」, 「백석의 사슴 오리지널판」 → 「백석의 사슴」, 덜어 내 빈 이름이면 그대로), 못 맞춘 줄은 목록 이름 |
 | 16 | 판 표시 덜어 내기(위 "책 이름" 행), 책 창 "목록 이름" 줄 |
 | 6·7 | `BookChoice` 시험(구독형 셋 = 1, 꺼진 도서관은 세지 않음, 같으면 1권 먼저, 그다음 번호 작은 것) + 수집기 판 고르기 시험. **같은 입력으로 Java·Python 보유량 결과가 같은지** 비교 시험 |
 | 10 | 사서 받기 시험: `librarian` 줄만 바뀌고 이동진·서울대 줄 그대로, 표지 정리가 다른 목록 표지를 지우지 않음, Liquibase 002 뒤 사서 목록이 그대로 보임 |

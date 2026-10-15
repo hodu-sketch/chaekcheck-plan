@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 21 인계서 검토</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+
+.v-flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.v-box{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:7px 11px;font-size:15px;text-align:center;min-width:90px}
+.v-box small{display:block;color:var(--muted);font-size:12px}
+.v-hi{border-color:var(--accent);background:var(--accent-bg)}
+.v-warn{border-color:var(--warn);background:var(--warn-bg)}
+.v-ok{border-color:var(--ok);background:var(--ok-bg)}
+.v-arr{color:var(--muted);font-size:18px}
+.v-file{border:2px solid var(--line);border-radius:12px;background:var(--card);padding:10px;margin:10px 0;max-width:560px}
+.v-file .v-part{border:1px dashed var(--line);border-radius:8px;padding:8px 10px;margin:6px 0;font-size:14px}
+.v-file .v-part.v-new{border-color:var(--accent);background:var(--accent-bg)}
+.v-tl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0;font-size:13px;text-align:center}
+.v-tl div{border-top:4px solid var(--line);padding-top:6px}
+.v-tl div.v-hi{border-top-color:var(--accent);background:none}
+.v-cv{display:inline-flex;width:70px;aspect-ratio:2/3;border-radius:7px;border:1px solid var(--line);background:var(--accent-bg);align-items:center;justify-content:center;font-size:11px;text-align:center;padding:3px;vertical-align:top;margin:4px}
+.v-cv.v-img{background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 6px,var(--card) 6px,var(--card) 12px)}
+.v-mini{border:1px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;margin:8px 0;max-width:420px}
+.v-mini .v-bar{display:flex;gap:10px;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line);font-size:13px}
+.v-mini .v-body{padding:10px 12px;font-size:13px}
+.v-pill{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-weight:800;font-size:12px}
+@media (max-width:700px){main table{display:block;overflow-x:auto;max-width:100%}.v-tl{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.v-code{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:var(--code-bg);border-radius:8px;padding:8px 10px;overflow-x:auto;white-space:pre}
+</style>
+</head>
+
+<body>
+<main class="doc">
+<p class="lead">dev에 넘길 인계서를 확인해 주세요.<br>고를 것은 2개입니다.</p>
+<p class="sub">인계서는 설계 변경서를 dev가 그대로 따라 만들 수 있게 순서 · 확인 방법 · 보고할 것을 적은 문서입니다. 새로 정한 설계는 없고, dev가 일하는 방식 하나(1번)만 여쭙니다. 이 페이지에서 "판"은 책의 판만 뜻하고, 가져오기 파일 맨 앞 번호는 "파일 형식 번호"라고 부릅니다.</p>
+<div class="card"><h2>dev가 하는 순서</h2><p class="concl">먼저 바깥 API를 시험해 결과를 보내고, DB 표 → 서버 → 수집기 → 첫 목록 파일 → 화면 → 실제 데이터 반영 순으로 만듭니다.</p><div class="v-flow"><div class="v-box v-hi">0 API 시험<br><small>유튜브 · 국립중앙도서관</small></div><span class="v-arr">→</span><div class="v-box ">1 DB 표<br><small>새 표 둘, 사서 108줄 옮김</small></div><span class="v-arr">→</span><div class="v-box ">2~6 서버<br><small>책 찾기 · 고르기 · 목록 넣기 · API</small></div><span class="v-arr">→</span><div class="v-box ">7 수집기<br><small>이동진 모으기 · 판 고르기 · 표지</small></div></div><div class="v-flow"><div class="v-box v-hi">8 첫 목록 파일<br><small>이동진 44 · 서울대 100</small></div><span class="v-arr">→</span><div class="v-box ">9 화면<br><small>머리말 메뉴 · 목록 셋</small></div><span class="v-arr">→</span><div class="v-box v-ok">10 실제 데이터<br><small>연습 → 운영 역할 반영</small></div></div><p class="cap">파란 칸(0 · 8)은 결과를 plan에 보내 사용자 확인을 받는 단계입니다.</p></div>
+<div class="card"><h2>사용자가 하실 일</h2><table><tr><th>할 일</th><th>언제</th></tr><tr><td>YouTube Data API 키를 만들어 dev <code>.env</code>에 넣기 (Google Cloud)</td><td>0단계 전</td></tr><tr><td>사서추천 키로 국립중앙도서관 ISBN API가 안 되면, 그 API 인증키 신청</td><td>0단계 결과 뒤</td></tr><tr><td>국립중앙도서관 분류 · 표지가 빈 책이 많으면 분야 규칙 다시 정하기 (plan이 여쭘)</td><td>0단계 결과 뒤</td></tr><tr><td>이동진 44권을 국립중앙도서관 분류로 다시 매겼을 때 <b>분야가 바뀌는 책</b> 확정</td><td>8단계</td></tr><tr><td>서울대 「미국의 민주주의」 · 「페더랄리스트」에 보일 책의 판 고르기 (dev가 후보와 보유량을 보냄)</td><td>8단계</td></tr><tr><td>화면 확인: PC 메뉴 펼친 칸 정렬, "어느 목록인지"(PC 맨 위 제목, 폰 떠 있는 버튼) — 이상하면 A~D 네 안을 나란히 봄</td><td>9단계 끝</td></tr><tr><td>내 폰(Samsung Internet)으로 확인</td><td>9단계 끝</td></tr><tr><td>운영 역할 DB 반영 승인</td><td>10단계</td></tr></table></div>
+<div class="card"><h2>다른 사이클과의 순서</h2><table><tr><th>무엇</th><th>어떻게</th></tr><tr><td>사이클 19와</td><td>21을 먼저 만들고 19는 나란히. 21이 10-17까지 dev main에 못 들어가면 19만 먼저 반영 (이미 정하신 대로)</td></tr><tr><td>21을 main에 넣는 조건</td><td>이동진 44권 분야 확정이 끝나 첫 목록 파일이 함께 들어갈 때. 목록 파일 없이는 가져오기 파일을 만들지 않기로 하셨기 때문 (설계 검토 3 #2)</td></tr><tr><td>파일 형식 번호 3</td><td>21 프로그램을 쓰기 전에, 내 PC에 반영을 기다리는 옛 형식(2) 파일이 있으면 먼저 끝내거나 버리고, 21 프로그램으로 새로 만듦</td></tr><tr><td>DB 변경 파일 번호</td><td>19 = 002, 21 = 003, 20 = 004 (이용 기록 표)</td></tr></table><p class="cap">검토하다 고친 것 하나: 사서추천에 이름 없는 새 분야가 오면 화면에 "기타" — 사이클 14에서 정하신 규칙(R2-5)과 지금 코드가 이미 그렇습니다. 설계 변경서에 "코드를 이름으로"라고 잘못 적었던 것을 고쳤습니다.</p></div>
+<div class="card item"><h2><span class="num">1</span>21의 실제 데이터 연습은 21 전용 DB 복사본에서만</h2><p class="concl">[안] dev는 21의 가져오기 파일 만들기 연습을 원래 DB(내 PC 5432)에서 하지 않고, 21 작업용으로 복사한 DB에서만 합니다.</p><p><b>어디서 생기는 일:</b> 가져오기 파일을 만들면 내 PC DB에 "반영을 기다리는 새 책 표"가 남습니다. 그것이 원래 DB에 남아 있으면, 나란히 돌고 있는 사이클 19가 자기 파일을 만들려 할 때 "기다리는 것이 있다"며 멈춥니다(dev <code>ImportTransfer</code>).</p><div class="v-flow"><div class="v-box ">21 연습</div><span class="v-arr">→</span><div class="v-box v-warn">원래 DB에<br><small>기다리는 새 책 표</small></div><span class="v-arr">→</span><div class="v-box v-warn">19 파일 만들기<br><small>멈춤</small></div></div><div class="v-flow"><div class="v-box ">21 연습</div><span class="v-arr">→</span><div class="v-box v-ok">21 복사본 DB</div><span class="v-arr">→</span><div class="v-box v-ok">19는 원래 DB에서<br><small>그대로 진행</small></div></div><p><b>감수할 것:</b> 복사본 DB를 하나 더 띄우므로 내 PC 디스크 · 메모리를 더 씁니다(사이클 13 · 14 · 19도 같은 방식으로 따로 띄움).</p><p class="alt">다른 선택: 원래 DB에서 하되 연습 뒤 바로 버리기(discard). 복사본이 필요 없지만, 버리기를 잊으면 19가 멈춥니다.</p></div>
+<div class="card item"><h2><span class="num">2</span>이 인계서대로 dev에 넘김</h2><p class="concl">[안] 인계서(handoff.md)를 확정하고 dev 사이클 21 세션이 읽게 합니다. 지금 설계 문서의 인계서 자리는 사이클 19 것이라, 거기에는 21 인계서를 가리키는 한 줄만 더합니다.</p><p>넘긴 뒤: CLAUDE.md의 지금 사이클 줄에 "21 인계함"을 적고, dev 21 세션에 알립니다. dev가 0단계 결과 · 분야 차이 · 서울대 두 권 후보를 보내면 그때 여쭙니다.</p></div>
+<p class="foot">원본: docs/cycles/21-recommended-books/handoff.md (planner, 2026-10-16), design-delta.md. 근거(dev, 읽기만): ImportTransfer.java(requireNoWaitingExport), PicksCache.java(OTHER_NAME).</p>
+</main></body></html>

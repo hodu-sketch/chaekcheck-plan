@@ -691,7 +691,7 @@ erDiagram
 |---|---|---|---|---|
 | `list_field.list_key` | text | PK 앞, CHECK IN (`librarian`,`leedongjin`,`snu100`) | 목록 이름 | [확정] (ADR-0122·0126) |
 | `list_field.code` | text | PK 뒤, CHECK `length(code) BETWEEN 1 AND 20` | 사서는 `drCode`(11·6·5·4·425, 모르는 코드도), 이동진·서울대는 `fields.tsv` 코드(예 `korean_fiction`, `korean_lit`) | [안] |
-| `list_field.name` | text | NOT NULL | 화면 이름. 사서의 모르는 새 코드는 받은 이름, 비면 코드 (C14 R2-5) | [안] |
+| `list_field.name` | text | NOT NULL | 화면 이름. 사서의 모르는 새 코드는 받은 이름, 비면 "기타" [확정] (C14 R2-5, dev `PicksCache.OTHER_NAME`) | [안] |
 | `list_field.position` | smallint | NOT NULL, ≥ 1, UNIQUE(`list_key`,`position`) | 분류 목록 순서. 사서 새 코드는 끝에 붙임 (옮길 때는 6번째부터 코드 순서) | [안] |
 | `list_book.id` | bigint | PK, `GENERATED ALWAYS AS IDENTITY` | 이동진·서울대 응답 `id` (바꿀 때마다 새로 매김) | [안] |
 | `list_book.(list_key, field_code)` | text | NOT NULL, FK → `list_field` ON DELETE CASCADE, 색인 | 목록·분야 | [안] |
@@ -719,7 +719,7 @@ erDiagram
 - 크기: 사서 108줄 + 이동진 44줄(월 1~4줄씩 늚) + 서울대 100줄 ≈ 250줄. 표지 약 250장, 3~4MB (사이클 14 실측 장당 4~22KB) [안]
 - Liquibase: 새 파일 `db/changelog/picks/002-curated-lists.yaml`, master 끝에 `# cycle 21` 주석과 include. 기존 changeset은 고치지 않음(사이클 17 첫 배포가 21보다 먼저일 수 있으므로) [안: 파일 이름]
   1. `list_field`·`list_book` 만들기 (CHECK·색인은 changeset 안 `sql`)
-  2. 사서 분야 넣기: 아는 다섯(11 문학, 6 인문, 5 사회, 4 자연, 425 테마, C14 순서, `position` 1~5) + `pick`에 있는 그 밖의 `dr_code`를 `DISTINCT`로(이름은 `min(dr_code_name)`, 비면 코드), `position`은 6부터 코드 순서 [확정] (사용자 승인, 2026-10-16, 설계 검토 3 #1)
+  2. 사서 분야 넣기: 아는 다섯(11 문학, 6 인문, 5 사회, 4 자연, 425 테마, C14 순서, `position` 1~5) + `pick`에 있는 그 밖의 `dr_code`를 `DISTINCT`로(이름은 `min(dr_code_name)`, 비면 "기타" — C14 R2-5 [확정]), `position`은 6부터 코드 순서 [확정] (사용자 승인, 2026-10-16, 설계 검토 3 #1)
   3. `INSERT INTO list_book (list_key='librarian', …) SELECT … FROM pick`, `position` = `ROW_NUMBER() OVER (PARTITION BY dr_code ORDER BY recom_month DESC, registered_on DESC NULLS LAST, recom_no DESC)` (dev `PicksCache.BOOK_ORDER` 52~55행과 같은 순서) [확정] (사용자 승인, 2026-10-16, 설계 검토 3 #1) — 옮기지 않으면 "목록 없음 → 받기"(dev `FetchDecision` 규칙 2)로 켜지자마자 다시 받는 1~2분 동안 비고, 그날 이미 받았으면(규칙 1) 다음 날 05:00까지 비므로 옮김 [확정] (사용자 승인, 2026-10-16, 설계 정리 #8)
   4. `DROP TABLE picks.pick`
 - 목록 파일(이동진·서울대 줄의 원본)은 DB가 아니라 dev `scripts/crawl/lists/`(UTF-8 TSV, 머리 줄): `fields.tsv`(`list, code, name, position`), `leedongjin.tsv`(`month, position, year_book, video_id, field, title, author, publisher, isbn13, cover_url, pinned_title, pinned_author, pinned_publisher, pinned_isbn13, pinned_by, checked_on, note`), `snu100.tsv`(`toc_no, field, title, author, cover_url, pinned_*, pinned_by, note`), `covers/<sha1(cover_url)>.jpg`(폭 200px, JPEG 품질 0.8, 원본 5MB 넘으면 받지 않음 [확정]; `http://` 주소는 `https://`로 바꿔 적음 [안, 확인 필요: API 호출 시험]) — 여기까지 export에 실림(`pinned_by`·`checked_on`·`note` 빼고). `kdc_fields.tsv`(`kdc_prefix, field, note`)·`leedongjin_pending.tsv`(`video_id, month, reason`)는 수집기만 씀 [확정: ADR-0128 위치, 칸 이름 안]. 영상 제목·설명은 어느 파일에도 두지 않음 [확정] (spec R4-5)
