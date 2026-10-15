@@ -95,13 +95,19 @@ sequenceDiagram
     X-->>U: 기록: 목록별 맞춘 책 · 못 맞춘 책
   end
   U->>O: 같은 파일로 apply
-  O->>ODB: 첫 트랜잭션: 도서관 부분
-  O->>PK: replace(listPart) (같은 트랜잭션)
-  O->>ODB: 지문 비교
+  O->>ODB: 첫 트랜잭션: 도서관 부분 · 지문 비교
   alt 다름
-    O->>ODB: 되돌림 (목록도 그대로)
+    O->>ODB: 되돌림 (목록 그대로)
   else 같음
     O->>ODB: 커밋 → 복원 · 색인 · 바꿔 끼우기
+    alt 바꿔 끼우기 실패
+      O-->>U: 책 표 · 목록 모두 옛것 그대로
+    else 성공
+      O->>PK: replace(listPart) (바꿔 끼운 뒤 작은 트랜잭션)
+      alt 목록 넣기 실패
+        PK-->>U: 옛 목록 그대로 (책 번호는 이어지므로 대개 맞음), 기록 남김
+      end
+    end
   end
   S->>ODB: 10분마다 다시 읽기 (메모리, 응답 속도용)
   Note over S: 이동진 · 서울대 줄은 저장된 책 번호를 그대로 씀
@@ -239,10 +245,10 @@ stateDiagram-v2
 
 | 모듈 | 신규/변경 | 책임 | 공개 API | 발행/구독 이벤트 | 소유 테이블 |
 |---|---|---|---|---|---|
-| `picks` | 변경 | 세 목록 보관·캐시·화면 API, 사서 받기(담는 표만 바뀜), 가져오기 목록 검사·맞추기·바꾸기, `BookChoice` 규칙 바뀜(켜진 도서관만, 1권 먼저), 화면 이름 판 표시 덜어 내기(ADR-0129) | 새 `CuratedListTransfer`: `read(Path listsDir)` → `ListPart`(JSON 글자 + 셈), `replace(String listPart)` (부르는 쪽 트랜잭션 안에서) [확정: ADR-0123, 이름 안] | 없음 (`collection`이 같은 트랜잭션에서 직접 부름, 곧 내려가는 가져오기 프로세스라 비동기 이벤트로는 반영이 보장되지 않음) | `list_field`·`list_book`(새), `fetch_run`·`cover`(그대로), `pick`(지움) |
+| `picks` | 변경 | 세 목록 보관·캐시·화면 API, 사서 받기(담는 표만 바뀜), 가져오기 목록 검사·맞추기·바꾸기, `BookChoice` 규칙 바뀜(켜진 도서관만, 1권 먼저), 화면 이름 판 표시 덜어 내기(ADR-0129) | 새 `CuratedListTransfer`: `read(Path listsDir)` → `ListPart`(JSON 글자 + 셈), `replace(String listPart)` (바꿔 끼운 뒤 자기 트랜잭션 하나로) [확정: ADR-0123, 이름 안] | 없음 (`collection`이 바꿔 끼운 뒤 직접 부름, 곧 내려가는 가져오기 프로세스라 비동기 이벤트로는 반영이 보장되지 않음) | `list_field`·`list_book`(새), `fetch_run`·`cover`(그대로), `pick`(지움) |
 | `catalog` | 변경 | 가져오기 표에서 책 찾기, 번호로 보유 도서관 | `BookLookup.byIds(Collection<Long>)` → `IsbnBook`과 같은 꼴(번호·보유 도서관). 가져오기 표(`catalog_next`)를 읽는 `BookLookup` 하나를 주는 `CatalogLoad.preparedLookup()` [안: 이름] | 없음 | 그대로 |
 | `library` | 변경 | 켜진 도서관과 구독형 여부 | `LibraryCatalog.lendingKinds()` → 켜진 도서관 번호마다 구독형인지 (`lending_model = SUBSCRIPTION`). 꺼진 도서관은 없음 [확정: ADR-0125, 설계 검토 #7, 이름 안] | 없음 | 그대로 |
-| `collection` | 변경 | export에 `listPart` 싣기, apply·finish·in-place 첫 트랜잭션에서 `replace`, 반영 파일 판 3 | 없음 (안쪽: `ImportTransfer`, `Notes.listPart`, 설정 `chaekcheck.collection.import.lists-dir`) [안: 이름] | 없음 | 그대로 (`load_manifest.notes`에 칸이 하나 늘 뿐) |
+| `collection` | 변경 | export에 `listPart` 싣기, apply·finish·in-place 모두 책 표를 바꿔 끼운 **뒤** 작은 트랜잭션 하나로 `replace` [확정] (사용자 승인, 2026-10-16, [설계 검토 3](easy/2026-10-16-review-decisions-3.html) #3: "(B) 바꿔 끼운 뒤 작은 트랜잭션"; 같은 바꿔 끼우기 트랜잭션 안은 미승인 "나는 시간이 늘어나는게 싫어"), 반영 파일 판 3 | 없음 (안쪽: `ImportTransfer`, `Notes.listPart`, 설정 `chaekcheck.collection.import.lists-dir`) [안: 이름] | 없음 | 그대로 (`load_manifest.notes`에 칸이 하나 늘 뿐) |
 | `usagelog` | 변경 | 사용 알림 `list` 받기·검사, 칸 `picks_list` | 웹 API만 바뀜 | 없음 | `screen_event.picks_list`(새 칸) |
 | web | 변경 | 머리말 큰 메뉴, `/picks/:listKey` 셋, `/picks` → `/picks/librarian`, 목록별 표지 아래 글자·책 창 줄·출처 줄 | — | — | — |
 | 수집기 (`scripts/crawl`) | 변경 | 이동진 목록 모으기, 이동진·서울대 판 고르기, 표지 받아 줄이기 | 목록 파일 (아래 "목록 파일") | — | 목록 파일 |
@@ -327,7 +333,7 @@ erDiagram
 | `fetch_run` | | 그대로. "목록 없음" 판단은 `list_book`의 `librarian` 줄로 | 사서 받기 기록 | [확정] (ADR-0122) |
 | `usagelog.screen_event.picks_list` | text | NULL, CHECK IN (`librarian`,`leedongjin`,`snu100`), `picks_*` 종류일 때만 NOT NULL (종류별 칸 CHECK 고침) | 어느 목록 | [확정] (ADR-0126) |
 
-- 누가 어느 줄을 바꾸나 [확정: ADR-0122]: 서버 사서 받기는 `list_key = 'librarian'` 줄만(지우고 넣기 + `fetch_run` 한 트랜잭션, 지금과 같은 규칙), 가져오기 `replace`는 `leedongjin`·`snu100` 줄만(`list_book` 지우기 → `list_field` 지우기 → 넣기, 부르는 쪽 트랜잭션 안). 두 쓰기가 겹칠 때는 `list_book` 줄 잠금 대신 목록별 `pg_advisory_xact_lock` 하나 [안]
+- 누가 어느 줄을 바꾸나 [확정: ADR-0122]: 서버 사서 받기는 `list_key = 'librarian'` 줄만(지우고 넣기 + `fetch_run` 한 트랜잭션, 지금과 같은 규칙), 가져오기 `replace`는 `leedongjin`·`snu100` 줄만(`list_book` 지우기 → `list_field` 지우기 → 넣기, 바꿔 끼운 뒤 한 트랜잭션). 두 쓰기가 겹칠 때는 `list_book` 줄 잠금 대신 목록별 `pg_advisory_xact_lock` 하나 [안]
 - 잠금 [안]: 목록별 `pg_advisory_xact_lock`은 넣는 트랜잭션 끝까지 잡힘. 가져오기 프로필(`collection-import`)은 사서 받기를 끄므로(dev `application-collection-import.yml` 14~17행) 같은 프로세스 안에서 겹치지 않고, 운영 서버의 사서 받기(월요일 05:00)와 반영이 겹칠 때만 잠깐 기다림
 - 표지 정리: 사서 받기 뒤와 `replace` 뒤 모두 "어느 `list_book.cover_source`도 쓰지 않는 `cover`"를 지움 [확정: ADR-0091 규칙을 한 표로]
 - 크기: 사서 108줄 + 이동진 44줄(월 1~4줄씩 늚) + 서울대 100줄 ≈ 250줄. 표지 약 250장, 3~4MB (사이클 14 실측 장당 4~22KB) [안]
@@ -432,7 +438,7 @@ erDiagram
 | 6·7 | `BookChoice` 시험(구독형 셋 = 1, 꺼진 도서관은 세지 않음, 같으면 1권 먼저, 그다음 번호 작은 것) + 수집기 판 고르기 시험. **같은 입력으로 Java·Python 보유량 결과가 같은지** 비교 시험 |
 | 10 | 사서 받기 시험: `librarian` 줄만 바뀌고 이동진·서울대 줄 그대로, 표지 정리가 다른 목록 표지를 지우지 않음, Liquibase 002 뒤 사서 목록이 그대로 보임 |
 | 11·12·13·14 | 수집기 단위 시험(API 응답 저장본): 이미 있는 영상이 사라지면 → 줄 지움 + 기록, 남아 있으면 `checked_on` 고침, 새 영상 → 새 줄, 제목·설명 없음, `www.youtube.com` 요청 0건, 키 틀림 → 파일 그대로 + 기록, 책 이름 없음 → 확인 필요 |
-| 가져오기 | `CuratedListTransfer` 시험: 검사 실패 줄 번호, 고정 판 → 책 번호(ISBN·제목+저자+출판사·못 맞춤), `replace`가 사서 줄을 건드리지 않음, 지문 다름 → 목록도 되돌림, 판 3 manifest 읽기 |
+| 가져오기 | `CuratedListTransfer` 시험: 검사 실패 줄 번호, 고정 판 → 책 번호(ISBN·제목+저자+출판사·못 맞춤), `replace`가 사서 줄을 건드리지 않음, 지문 다름 → 목록 그대로, 바꿔 끼우기 실패 → 목록 그대로, 목록 넣기 실패 → 옛 목록 + 기록, 판 3 manifest 읽기 |
 | 공통 | Modulith `verify`(`collection → picks` 허용), 사이클 19 반영 뒤 세 목록 맞은 수 다시 재기(19 AC-14) |
 
 ## 결정 기록
