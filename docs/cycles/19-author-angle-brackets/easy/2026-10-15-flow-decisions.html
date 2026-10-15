@@ -118,6 +118,49 @@ svg .ah{fill:var(--accent)}
 <p class="concl">「루이스 캐럴 저이소연 역」은 검색할 때는 두 사람(루이스 캐럴, 이소연)으로 나눠 찾히게 고칩니다. 그런데 화면 저자 칸은 원문 한 줄을 보여 주므로, 이 글은 그대로 「…저이소연 역」으로 보입니다.</p>
 <div class="prop">화면 저자 칸은 원문대로 둡니다(기호만 뗌). 띄어쓰기는 고치지 않습니다. [안]</div>
 <p class="alt">다른 선택: 나눈 결과로 띄어 보여 줌(「루이스 캐럴 저 이소연 역」) → 보기에는 낫지만 가져올 때 원문을 고쳐 쓰는 규칙이 하나 더 생김(1,264줄 + 셋째 역할 40줄).</p>
+<div class="concl" style="margin-top:18px;background:var(--ok-bg)"><b>요청: 더 구체적인 예시랑 같이 설명해 줘</b><br>
+결론부터: 띄어쓰기가 빠진 표기는 <b>대부분 같은 책의 다른 표기에 묻혀 화면에 안 보이고</b>, 그 책을 그 표기로만 가진 도서관밖에 없을 때만 화면에 보입니다. 아래 두 실제 책으로 보입니다(수집 DB 2026-10-12).</div>
+
+<h3 style="margin:22px 0 8px">예 ① 「만약 시간이 존재하지 않는다면」(쌤앤파커스) — 같은 책을 도서관마다 이렇게 적음</h3>
+<table>
+<tr><th>저자 칸 원문</th><th>도서관 줄</th></tr>
+<tr><td>카를로 로벨리</td><td>154</td></tr>
+<tr><td>카를로 로벨리 저/김현주 역/이중원 감수</td><td>33</td></tr>
+<tr><td>&lt;카를로 로벨리&gt; 저/&lt;김현주&gt; 역/&lt;이중원&gt; 감수</td><td>11</td></tr>
+<tr><td><span class="red">카를로 로벨리 저김현주 역이중원 감수</span> (띄어쓰기 빠짐)</td><td>2</td></tr>
+</table>
+<div class="mocks">
+<div class="mock w-pc"><div class="bar2">지금 검색 결과 (PC)</div>
+<div class="mcard"><b>만약 시간이 존재하지 않는다면</b> <span class="au">· 카를로 로벨리 · 쌤앤파커스</span><div class="lib">도서관 여러 곳 (198줄 쪽)</div></div>
+<div class="mcard bad"><b>만약 시간이 존재하지 않는다면</b> <span class="au">· 카를로 로벨리 저김현주 역이중원 감수 · 쌤앤파커스</span><div class="lib">도서관 2곳만 — 따로 한 장</div></div>
+</div>
+<div class="mock w-pc"><div class="bar2">고친 뒤 (PC)</div>
+<div class="mcard"><b>만약 시간이 존재하지 않는다면</b> <span class="au">· 카를로 로벨리 · 쌤앤파커스</span><div class="lib">도서관 200줄이 한 장에 모두</div></div>
+<p class="ex" style="margin:6px 4px">띄어쓰기 빠진 2줄도 첫 저자가 「카를로 로벨리」로 읽혀 같은 책으로 모입니다. 화면 저자 칸은 가장 많은 표기 「카를로 로벨리」라서 <b>띄어쓰기 빠진 글은 보이지 않습니다</b>. 1번을 어느 쪽으로 정해도 이 책 화면은 같습니다.</p>
+</div>
+</div>
+
+<h3 style="margin:22px 0 8px">예 ② 「밥 프록터 부의 원리」(윌북) — 이 표기 하나뿐인 책</h3>
+<p>이 책은 수집 DB에서 저자 칸이 <span class="red">「밥 프록터 저이재경 역조성희 감수」</span> 한 줄뿐입니다. 그래서 가장 많은 표기가 곧 이 글이고, <b>1번 결정이 화면에 보이는 경우는 이런 책</b>입니다.</p>
+<div class="mocks">
+<div class="mock w-pc"><div class="bar2">1번 안 (원문대로, 기호만 뗌)</div>
+<div class="mcard"><b>밥 프록터 부의 원리</b> <span class="au">· 밥 프록터 저이재경 역조성희 감수 · 윌북willbook</span></div>
+<p class="ex" style="margin:6px 4px">화면 글은 지금과 같습니다. 대신 검색은 고쳐져서 저자 "밥 프록터", 옮긴이 "이재경"으로 찾으면 나옵니다(지금은 안 나옴).</p>
+</div>
+<div class="mock w-pc"><div class="bar2">다른 선택 (띄어 보여 줌)</div>
+<div class="mcard"><b>밥 프록터 부의 원리</b> <span class="au">· 밥 프록터 저 이재경 역 조성희 감수 · 윌북willbook</span></div>
+<p class="ex" style="margin:6px 4px">보기는 낫지만, 가져올 때 저자 원문을 고쳐 써야 합니다. 원문과 화면 글이 달라지는 규칙이 하나 더 생깁니다.</p>
+</div>
+</div>
+
+<h3 style="margin:22px 0 8px">검색은 어느 쪽이든 똑같이 고쳐짐</h3>
+<table>
+<tr><th>찾는 말</th><th>지금</th><th>고친 뒤 (1번과 상관없음)</th></tr>
+<tr><td>저자 "카를로 로벨리"</td><td>띄어쓰기 빠진 2줄 쪽 책은 안 나옴(통째로 감수자 한 사람 「카를로 로벨리 저김현주 역이중원」으로 읽혀 저자가 없음)</td><td>나옴 (같은 책 한 장)</td></tr>
+<tr><td>저자 "밥 프록터"</td><td>안 나옴</td><td>나옴</td></tr>
+<tr><td>옮긴이 "이재경"</td><td>안 나옴</td><td>나옴</td></tr>
+</table>
+<p class="ex">숫자로: 수집 DB에서 띄어쓰기 빠진 표기는 1,264줄(셋째 역할까지 40줄 더). 이 가운데 화면 저자 칸에 실제로 보이는 것은 ②처럼 그 표기가 가장 많은 책뿐이고, 그 수는 dev가 다시 가져올 때 셉니다(확인 못 함).</p>
 </div>
 
 <div class="card">
