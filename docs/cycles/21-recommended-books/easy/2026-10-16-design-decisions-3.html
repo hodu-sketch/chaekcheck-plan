@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 21 설계 결정 3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+
+.v-flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.v-box{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:7px 11px;font-size:15px;text-align:center;min-width:90px}
+.v-box small{display:block;color:var(--muted);font-size:12px}
+.v-hi{border-color:var(--accent);background:var(--accent-bg)}
+.v-warn{border-color:var(--warn);background:var(--warn-bg)}
+.v-ok{border-color:var(--ok);background:var(--ok-bg)}
+.v-arr{color:var(--muted);font-size:18px}
+.v-file{border:2px solid var(--line);border-radius:12px;background:var(--card);padding:10px;margin:10px 0;max-width:560px}
+.v-file .v-part{border:1px dashed var(--line);border-radius:8px;padding:8px 10px;margin:6px 0;font-size:14px}
+.v-file .v-part.v-new{border-color:var(--accent);background:var(--accent-bg)}
+.v-tl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0;font-size:13px;text-align:center}
+.v-tl div{border-top:4px solid var(--line);padding-top:6px}
+.v-tl div.v-hi{border-top-color:var(--accent);background:none}
+.v-cv{display:inline-flex;width:70px;aspect-ratio:2/3;border-radius:7px;border:1px solid var(--line);background:var(--accent-bg);align-items:center;justify-content:center;font-size:11px;text-align:center;padding:3px;vertical-align:top;margin:4px}
+.v-cv.v-img{background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 6px,var(--card) 6px,var(--card) 12px)}
+.v-mini{border:1px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;margin:8px 0;max-width:420px}
+.v-mini .v-bar{display:flex;gap:10px;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line);font-size:13px}
+.v-mini .v-body{padding:10px 12px;font-size:13px}
+.v-pill{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-weight:800;font-size:12px}
+@media (max-width:700px){main table{display:block;overflow-x:auto;max-width:100%}.v-tl{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.v-code{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:var(--code-bg);border-radius:8px;padding:8px 10px;overflow-x:auto;white-space:pre}
+</style>
+</head>
+
+<body>
+<main class="doc">
+<p class="lead">사서추천도서는 서버가 따로 받되,<br>PICK 표는 없애고 책 줄 표 하나로 합칠지 골라 주세요.</p>
+<p class="sub">"지금 구조로 가되 PICK 테이블은 없앨 수 있는 거 아니야?"라고 물으셔서 따져 봤습니다. <b>됩니다.</b> 서버가 매주 받는 사서추천 목록을, 이동진·서울대가 쓰는 책 줄 표(<code>list_book</code>)에 "사서" 목록으로 적으면 됩니다. 받는 길(서버가 국립중앙도서관에서 주 1회)은 그대로이고, 담는 표만 하나가 됩니다.</p>
+<div class="card"><h2>지금 설계와 합친 모습</h2><p class="concl">책 줄을 담는 표가 둘(<code>pick</code>, <code>list_book</code>)에서 하나(<code>list_book</code>)로 줄어듭니다.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px"><div><p style="font-weight:800;margin:0 0 4px">지금 설계</p><div class="v-flow"><div class="v-box ">서버 주 1회 받기</div><span class="v-arr">→</span><div class="v-box v-warn"><code>pick</code><br><small>사서 108줄</small></div></div><div class="v-flow"><div class="v-box ">내 PC 가져오기</div><span class="v-arr">→</span><div class="v-box "><code>list_book</code><br><small>이동진 · 서울대</small></div></div><p class="cap">표 둘을 서버가 따로 읽어 화면을 만듦</p></div><div><p style="font-weight:800;margin:0 0 4px">합치면</p><div class="v-flow"><div class="v-box ">서버 주 1회 받기</div><span class="v-arr">→</span><div class="v-box v-ok"><code>list_book</code><br><small>목록 = 사서</small></div></div><div class="v-flow"><div class="v-box ">내 PC 가져오기</div><span class="v-arr">→</span><div class="v-box v-ok"><code>list_book</code><br><small>목록 = 이동진 · 서울대</small></div></div><p class="cap">표 하나, 목록 이름 칸으로 나눔. 서버 받기는 "사서" 줄만, 가져오기는 "이동진·서울대" 줄만 바꿈</p></div></div><table><tr><th><code>pick</code> 칸 (지금)</th><th>뜻</th><th>합친 뒤 <code>list_book</code> 칸</th></tr><tr><td><code>recom_no</code></td><td>국립중앙도서관 추천 번호</td><td>원래 번호 칸 하나(예: <code>source_no</code>, 사서만)</td></tr><tr><td><code>dr_code</code>, <code>dr_code_name</code></td><td>분야 코드·이름</td><td><code>field_code</code> + 분야 목록 표 <code>list_field</code>(목록 = 사서: 문학·인문·사회·자연·테마, 새 분야가 오면 서버가 더함)</td></tr><tr><td><code>recom_month</code></td><td>추천 연·월</td><td><code>recommended_month</code> (이동진과 같은 칸)</td></tr><tr><td><code>registered_on</code></td><td>등록일 (같은 달 안 순서)</td><td><code>registered_on</code> 또는 <code>position</code></td></tr><tr><td><code>title</code>·<code>author</code>·<code>publisher</code>·<code>isbn13</code>·<code>cover_source</code></td><td>책 정보·표지</td><td>같은 이름 칸</td></tr></table><p>받기 기록 표 <code>fetch_run</code>은 서버 받기가 그대로라 남습니다. 근거: 지금 <code>picks</code> 표 구조 (docs/current/data-model.md 스키마 <code>picks</code>, 사이클 14 구현).</p></div>
+<div class="card item"><h2><span class="num">1</span>PICK 표를 없애고 책 줄 표 하나로</h2><p class="concl">[안] 사서추천도서 받기는 지금처럼 서버가 주 1회 하되, 받은 목록을 <code>pick</code>이 아니라 책 줄 표 <code>list_book</code>에 목록 이름 "사서"(<code>librarian</code>)로 적습니다. <code>pick</code> 표는 지웁니다.</p><table><tr><th></th><th>좋은 점</th><th>걸리는 점</th></tr><tr><td>표</td><td>책 줄 표가 하나라 화면·API가 같은 곳을 읽음</td><td>사이클 14에서 만든 받기(쓰기)와 캐시(읽기) 코드를 고쳐야 함</td></tr><tr><td>바꾸는 범위</td><td>서버 받기는 "사서" 줄만, 가져오기는 "이동진·서울대" 줄만 바꾸도록 나눔</td><td>둘이 같은 표를 건드리므로 서로의 줄을 지우지 않게 규칙이 필요</td></tr><tr><td>우리 책 맞추기</td><td>—</td><td>사서 줄은 지금처럼 서버가 맞추고(따로 받으므로), 이동진·서울대 줄은 가져오기 때 맞춘 책 번호를 씀 (설계 #4 새 제안). 한 표 안에 두 방식이 섞임</td></tr><tr><td>때</td><td>아직 배포 전이라 표를 바꾸기 가장 쉬운 때</td><td>—</td></tr></table><p>예: 매주 월요일 서버가 사서추천 108권을 받으면, 책 줄 표에서 목록이 "사서"인 줄만 지우고 새로 넣습니다. 이동진 44줄과 서울대 100줄은 건드리지 않습니다.</p><p class="alt">다른 선택: 지금 설계대로 <code>pick</code> 표를 따로 둠. 이미 만든 코드를 덜 고치지만, 책 줄을 담는 표가 둘이라 화면을 만들 때 두 곳을 읽습니다.</p></div>
+<p class="foot">원본: 사용자 질문 "지금 구조로 가되 PICK 테이블은 없앨 수 있는 거 아니야?" (2026-10-16, 캔버스). 고치게 될 문서: architect-proposal.md 데이터 절, design-delta.md. 바탕: docs/current/data-model.md 스키마 picks.</p>
+</main></body></html>
