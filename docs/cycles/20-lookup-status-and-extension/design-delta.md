@@ -15,7 +15,7 @@ flowchart TB
     web["web (React) — 변경<br/>HeaderSignal · useLookupStatus (10초)<br/>ExtensionBridge (인사 · port)<br/>sortBatch: 「확인하지 못한 도서관」 묶음<br/>AppLayout: legal 분기 제거 (ADR-0121)"]
     ext["extension/ — 새 폴더 (ADR-0120)<br/>MV3 service worker<br/>도서관 GET · 호스트 1건·1초 · 동시 5<br/>우리 API 모름"]
   end
-  nginx["nginx — 변경<br/>/api/v1/lookup-status: 일반 구역<br/>/api/v1/lookup-plans/: 본문 ${LOOKUP_MAX_BODY_MB}m · zone 20r/s (템플릿)"]
+  nginx["nginx — 변경<br/>/api/v1/lookup-status: 일반 구역<br/>/api/v1/lookup-plans/: 본문 ${LOOKUP_MAX_BODY_MB}m · zone ${LOOKUP_UPLOAD_RATE}r/s (템플릿)"]
   subgraph main["본 서비스 (Spring Modulith, 1대)"]
     av["availability — 변경<br/>+ LookupStatusController · LookupStatusService (1초 메모)<br/>+ SearchSlots.lastRefusedAt<br/>+ HostQueueBoard (길마다 대기·시간 초과)<br/>+ LookupPlanController · SearchPlanStore (10분)<br/>+ LibraryPageFetcher.accept · DetailPageFetcher.accept<br/>+ 캐시 via=extension · 넣기만(확장 모드는 캐시를 읽지 않음) · 검사 ①~⑩<br/>(있던 것: SearchSlots · BatchRunner · HostThrottle · adapter 9종 · 캐시 3분)"]
     ul["usagelog — 변경(작음)<br/>library_response_daily.source + 'extension'<br/>rejected_event에 계획 검사 실패"]
@@ -156,7 +156,7 @@ classDiagram
 | `library`·`catalog` | 변경 없음 | `LibraryCatalog`·`CatalogHoldings` 읽기만 | — | — | — |
 | web | 변경 | 머리말 신호(`HeaderSignal`, `useLookupStatus` TanStack Query `refetchInterval: 10_000`, Provider는 `AppLayout`), 확장 연결(`features/extension/`: 인사 500ms [안], port), 확장 모드 검색 reducer(계획 → 업로드 → close, 이벤트는 SSE와 같은 이름·데이터), `sortBatch`에 네 번째 묶음 「확인하지 못한 도서관」(`failed`·`UNKNOWN` 줄, 계획 순서, 두 거름 모두), `AppLayout` `legal` 분기 제거, 결과 카드 「지금 이 도서관 조회가 밀려요」 | — | — | — |
 | `extension/` | 신규(본 서비스 밖, dev 저장소 맨 위) | MV3 service worker: 인사 응답, port로 items 받아 호스트 1건·1초·동시 5로 GET, `{itemId,status,contentType,base64,ms}` 돌려줌. 빌드 없음 | 웹 ↔ 확장 메시지(아래 "외부 연동") | — | — |
-| nginx (deploy) | 변경 | `/api/v1/lookup-plans/` location 조각을 `.template`로: `client_max_body_size ${LOOKUP_MAX_BODY_MB}m`, 별도 zone `chaekcheck_lookup_uploads` 20r/s burst 60 [안], 413·429는 Problem Details JSON. `/api/v1/lookup-status`는 일반 구역 | — | — | — |
+| nginx (deploy) | 변경 | `/api/v1/lookup-plans/` location 조각을 `.template`로: `client_max_body_size ${LOOKUP_MAX_BODY_MB}m`, 별도 zone `chaekcheck_lookup_uploads` `${LOOKUP_UPLOAD_RATE}`r/s burst `${LOOKUP_UPLOAD_BURST}` (20·60, `prod.env` 변수) [확정] (사용자: "같은 변수 방식으로하고", 2026-10-16), 413·429는 Problem Details JSON. `/api/v1/lookup-status`는 일반 구역 | — | — | — |
 
 - 모듈 의존 방향은 그대로(`availability → catalog, library, usagelog`), 새 모듈·새 이벤트 없음. `ModularityTests`·`DocumentationTests` 변경 없음
 - 사이클 17 의존: `HostQueueBoard`는 17의 길(lane) 개념과 막힌 길 기록을 읽음. 17이 먼저 들어가지 않으면 길은 하나(직접)로 두고 막힌 길은 빈 목록 [확정] (전제)
@@ -228,7 +228,7 @@ erDiagram
 |---|---|---|---|---|
 | 도서관 사이트 (확장 모드) | 확장 service worker `fetch()` GET, `host_permissions` http·https 전체, `credentials:'omit'`, `redirect:'manual'`, User-Agent는 브라우저 것 | 호스트마다 동시 1건·앞 요청 끝 +1초, 동시 5, 응답 머리 10초·본문 묶음 마감까지, 상한 `max-body-size`(4MB) | `outcome=TIMEOUT\|ERROR`로 올림 → 그 줄 "확인하지 못한 도서관", 서버가 다시 부르지 않음 | [확정] (명세 #7·#10, 설계 #8) |
 | 웹 ↔ 확장 | `externally_connectable.matches`에 책첵 운영·개발 주소; 화면이 `chrome.runtime.sendMessage(VITE_EXTENSION_ID, {type:'hello'})` → `{version}`; 조회는 `chrome.runtime.connect(id)` port로 `{type:'fetch', items}` ↔ `{type:'page', itemId, status, contentType, base64, ms}` | 확장 ID는 manifest `key`로 고정, 웹 설정 `VITE_EXTENSION_ID`. 메시지 64MiB 한도(바이트 base64) | 인사 500ms 답 없음·port 끊김 → 서버 모드 (R6) | [확정] (공식 문서, scope 외부 확인) / 메시지 이름 [안] |
-| nginx | 템플릿 `lookup-plans.conf.template`(`client_max_body_size ${LOOKUP_MAX_BODY_MB}m`, zone 20r/s burst 60), `prod.env`의 `LOOKUP_MAX_BODY_MB=4`를 compose가 Spring(`CHAEKCHECK_AVAILABILITY_MAX_BODY_SIZE=${LOOKUP_MAX_BODY_MB}MB`)과 nginx 양쪽에 | 공식 nginx 이미지 envsubst(`/etc/nginx/templates` → `conf.d`, 2026-10-16 확인) | 413·429 Problem Details JSON | [확정] (설계 #12, 사용자 "이걸로 해줘") |
+| nginx | 템플릿 `lookup-plans.conf.template`(`client_max_body_size ${LOOKUP_MAX_BODY_MB}m`, zone `${LOOKUP_UPLOAD_RATE}`r/s burst `${LOOKUP_UPLOAD_BURST}`), `prod.env`의 `LOOKUP_MAX_BODY_MB=4`를 compose가 Spring(`CHAEKCHECK_AVAILABILITY_MAX_BODY_SIZE=${LOOKUP_MAX_BODY_MB}MB`)과 nginx 양쪽에 | 공식 nginx 이미지 envsubst(`/etc/nginx/templates` → `conf.d`, 2026-10-16 확인) | 413·429 Problem Details JSON | [확정] (설계 #12, 사용자 "이걸로 해줘") |
 | 사이클 17 막힌 길 기록·길마다 throttle | `HostQueueBoard`가 읽음 | 17 인계(`from-cycle-20-blocked-ip-resume.md`) | 17 없으면 길 하나·막힌 길 없음 | 전제 [확정] |
 
 ## 웹 (화면)

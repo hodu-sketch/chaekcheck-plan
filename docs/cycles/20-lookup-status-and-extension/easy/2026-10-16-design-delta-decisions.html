@@ -51,7 +51,7 @@ svg .ah{fill:var(--accent)}
 .why{background:var(--code-bg);border-radius:8px;padding:10px 14px;margin:10px 0}
 </style>
 
-<p class="concl">#9 승인 반영 (2026-10-16): 확장 모드는 서버 캐시를 읽지 않고 자기 결과만 보며, 서버는 넣기만 합니다. design-delta·ADR-0119를 고쳤고, #5는 이것으로 정리되어 "확장 모드엔 캐시 답 없음"이 됐습니다(5번에 표시). 남은 것: #1~#4, #5(확인), #6~#8, 새로 #10(화면을 떠나면 서버 요청 멈추기 — 질문에 답). #1 승인, #2 질문(변수 방식 성능)은 2번 아래에 답함.</p>
+<p class="concl">#9 승인 반영 (2026-10-16): 확장 모드는 서버 캐시를 읽지 않고 자기 결과만 보며, 서버는 넣기만 합니다. design-delta·ADR-0119를 고쳤고, #5는 이것으로 정리되어 "확장 모드엔 캐시 답 없음"이 됐습니다(5번에 표시). 남은 것: #1~#4, #5(확인), #6~#8, 새로 #10(화면을 떠나면 서버 요청 멈추기 — 질문에 답). #1 승인, #2 변수 방식으로 정함. 질문 "올리기가 정확히 뭔가"는 맨 위 낱말 풀이 아래에 그림으로 답했고, "정해진 값 문서화"는 새 11번으로 묻습니다.</p>
 <p class="lead">설계 문서 초안을 쓰면서<br>아직 정하지 않은 작은 값 7개가 남았습니다.</p>
 <p class="sub">앞 페이지에서 "어떻게 만들지"(설계 결정 13개)는 다 정했고 ADR 4개도 승인됐습니다. 이 페이지는 그것을 설계 문서로 적다 보니 숫자·이름을 넣어야 하는 자리 7곳을 묻는 것입니다. 먼저 확장 모드 검색 한 번이 어떻게 흘러가는지와 낱말을 풀고, 항목마다 (1) 이 값이 구조의 어디에 붙는지 그림 (2) 사용자 화면에서 무엇이 달라지는지 그림 (3) 숫자를 그렇게 잡은 계산 (4) 다른 선택과 그 결과를 적었습니다. 길지만 한 번 읽으면 설계 문서 전체가 보이도록 썼습니다.</p>
 
@@ -86,6 +86,26 @@ svg .ah{fill:var(--accent)}
 <tr><td><b>사용 기록</b></td><td>사이클 15에서 만든 통계표(`usagelog`). 도서관마다 하루에 성공·실패·건너뜀 몇 번인지 셉니다. 사이클 19가 "캐시로 답한 수" 칸을 더하는 중</td><td>⑤</td></tr>
 <tr><td><b>nginx</b></td><td>모든 요청이 서버에 닿기 전에 지나는 문지기 프로그램. 요청 수 제한과 본문 크기 제한을 여기서 겁니다(사이클 07·17)</td><td>①④ 앞</td></tr>
 </table>
+<h3 style="font-size:20px;margin:18px 0 6px">질문에 답: "올리기"가 정확히 뭔가</h3>
+<p class="concl"><b>"올리기" = 확장이 도서관에서 받아온 검색 결과 페이지(HTML 글자 덩어리)를, 사용자 브라우저가 우리 서버로 그대로 보내 주는 요청 하나</b>입니다. 서버가 그 페이지를 읽어(해석) "이 책이 몇 권, 대출 가능한가"를 뽑아 화면에 돌려주고, 캐시에 넣어 둡니다. 확장 모드에서 도서관 한 곳의 한 쪽마다 한 번씩 일어납니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 300" role="img" aria-label="올리기 한 번의 내용">
+<defs><marker id="ahu" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="var(--accent)"/></marker></defs>
+<rect class="bx" x="10" y="20" width="210" height="120" rx="8"/><text class="s14" x="20" y="42">도서관 사이트</text><text class="s13m" x="20" y="62" font-size="12">경기교육청 전자도서관</text><text class="s13m" x="20" y="80" font-size="12">「백만장자 마인드」 검색 결과</text><text class="s13m" x="20" y="98" font-size="12">HTML 약 120KB</text><text class="s13m" x="20" y="116" font-size="12">(사람이 보면 책 목록 화면)</text>
+<rect class="bxok" x="250" y="20" width="200" height="120" rx="8"/><text class="s14" x="260" y="42">확장</text><text class="s13m" x="260" y="62" font-size="12">③ 위 페이지를 GET으로</text><text class="s13m" x="260" y="80" font-size="12">받아옴 (사용자 IP)</text><text class="s13m" x="260" y="98" font-size="12">→ 화면에 넘김</text><text class="s13m" x="260" y="116" font-size="12">(해석은 안 함)</text>
+<rect class="bxa" x="480" y="20" width="410" height="120" rx="8"/><text class="s14" x="490" y="42">④ 올리기 = 화면 → 우리 서버로 보내는 요청 1번</text>
+<text class="s13" x="490" y="64" font-size="12">POST /api/v1/lookup-plans/{계획 번호}/items/{쪽 번호}</text>
+<text class="s13m" x="490" y="84" font-size="12">본문: 받은 HTML 120KB 그대로</text>
+<text class="s13m" x="490" y="102" font-size="12">덧붙인 것: 도서관이 준 상태 코드 200, 걸린 시간 812ms,</text>
+<text class="s13m" x="490" y="120" font-size="12">글자 인코딩(EUC-KR 등)</text>
+<path d="M220 80 H250" class="ar" marker-end="url(#ahu)"/><path d="M450 80 H480" class="ar" marker-end="url(#ahu)"/>
+<rect class="bxa" x="480" y="160" width="410" height="120" rx="8"/><text class="s14" x="490" y="182">서버가 하는 일 (지금 서버 모드와 같은 코드)</text>
+<text class="s13m" x="490" y="202" font-size="12">검사: 계획에 있는 쪽인가, 4MB 이하인가, 그 도서관 모양인가 …</text>
+<text class="s13m" x="490" y="220" font-size="12">해석: adapter가 HTML에서 책 줄·보유·대출 수를 뽑음</text>
+<text class="s13m" x="490" y="238" font-size="12">캐시: 3분 칸에 넣음 → 다른 사용자도 씀</text>
+<text class="s13m" x="490" y="256" font-size="12">응답: 결과 줄·대출 판정(JSON) → 화면이 카드를 그림</text>
+<path d="M685 140 V160" class="ar" marker-end="url(#ahu)"/>
+<rect class="bx" x="10" y="160" width="440" height="120" rx="8"/><text class="s14" x="20" y="182">비교: 서버 모드(지금)</text><text class="s13m" x="20" y="202" font-size="12">서버가 도서관에서 직접 HTML을 받아옴 → 올리기 없음</text><text class="s13m" x="20" y="220" font-size="12">확장 모드는 "받아오기"만 사용자 쪽으로 옮겼으므로,</text><text class="s13m" x="20" y="238" font-size="12">받아온 것을 서버에 넘겨주는 단계가 하나 생김 = 올리기</text><text class="s13m" x="20" y="256" font-size="12">검색 한 번(도서관 5곳) = 올리기 약 5번</text>
+</svg><p class="cap">올리기는 "확장이 받아온 도서관 페이지를 서버에 넘겨 해석시키는 요청"입니다. 서버 모드에는 없는 단계입니다.</p></div>
 </div>
 
 <h2 style="font-size:22px;margin:0 0 12px">서버가 계획을 들고 있는 방법 (①)</h2>
@@ -138,7 +158,8 @@ svg .ah{fill:var(--accent)}
 </svg><p class="cap">올리기 경로만 세 번째 구역으로 떼어 초당 20번까지 받습니다. 다른 두 구역은 그대로입니다.</p></div>
 <p><b>사용자 화면에서는.</b> 한도 안이면 아무 차이가 없습니다. 한도를 넘으면 nginx가 429를 돌려주고, 화면은 지금 있는 안내 줄 "검색을 너무 자주 했어요. 1분쯤 뒤에 다시 해 주세요."(사이클 08)를 보이고 받은 결과는 남깁니다. 제안 값이면 보통 사용은 절대 닿지 않고, 스크립트로 수백 번 올리는 경우에만 걸립니다.</p>
 <div class="why"><b>숫자 계산.</b> 묶음 하나 = 도서관 5곳 동시 → 쪽 5개가 0.3~1초 사이에 올라옴 → 초당 약 5번. 포털 상세 2단계와 다음 묶음이 겹치는 순간 7~8번. 그래서 평소의 4배인 20을 두고, 순간 몰림을 위해 60까지 몰아서(burst) 허용합니다. 사이클 17의 일반 구역 값(5/30)과 같은 비율입니다.</div>
-<p class="concl">[안] IP당 <b>초당 20번, 몰아서 60번</b>. 이 값은 #12에서 변수로 뺀 "페이지 크기 상한"과 달리 바꿀 일이 적어 nginx 설정의 상수로 둡니다(원하시면 같은 변수 방식으로).</p>
+<p class="concl" style="border:2px solid var(--ok)"><b>정함(2026-10-16)</b>: 초당 20번·몰아서 60번을 <b>페이지 크기 상한과 같은 변수 방식</b>으로(`prod.env`의 `LOOKUP_UPLOAD_RATE=20`·`LOOKUP_UPLOAD_BURST=60` → nginx 템플릿). 사용자: "같은 변수 방식으로하고". 정해진 값들을 찾기 쉽게 문서화하는 방법은 새 11번에서 고릅니다.</p>
+<p class="concl">[안] (처음 제안) IP당 <b>초당 20번, 몰아서 60번</b>. 이 값은 #12에서 변수로 뺀 "페이지 크기 상한"과 달리 바꿀 일이 적어 nginx 설정의 상수로 둡니다(원하시면 같은 변수 방식으로).</p>
 <h3 style="font-size:20px;margin:18px 0 6px">질문에 답: 변수 방식으로 해도 성능 문제는 없나</h3>
 <p class="concl"><b>없습니다.</b> 변수는 nginx 컨테이너가 <b>켜질 때 한 번</b> 공식 이미지의 시작 스크립트가 템플릿에 값을 채워 보통 설정 파일(`/etc/nginx/conf.d/…conf`)로 써 두는 것이고, 그 뒤 nginx는 숫자가 박힌 보통 설정을 읽습니다. 요청을 처리할 때마다 변수를 찾는 일이 없어 상수로 적은 것과 처리 속도·메모리가 같습니다(hub.docker.com/_/nginx "Using environment variables in nginx configuration": 템플릿을 `envsubst`로 처리해 `/etc/nginx/conf.d`에 출력, 2026-10-16 확인).</p>
 <div class="fig wide"><svg viewBox="0 0 900 150" role="img" aria-label="변수가 채워지는 때">
@@ -352,6 +373,27 @@ svg .ah{fill:var(--accent)}
 <p class="concl">[안] 서버 모드에서 <b>사용자가 떠난 것을 알아채면 그 묶음을 멈춥니다</b>: (1) 알아채는 법 — 이벤트 보내기가 실패하거나(`send`가 false) 서블릿이 연결 끊김을 알릴 때(`SseEmitter` onError/onCompletion), (2) 멈추는 것 — 새 도서관 시작 안 함, 호스트 줄에서 아직 자리를 못 받은 요청은 취소, 서버 자리는 바로 반납, (3) 남기는 것 — 이미 도서관에 나간 요청은 끝까지 받아 캐시에 넣고(다른 사용자용) 사용 기록에도 셈, 시작 못 한 것은 "건너뜀". <b>확장 모드</b>는 화면이 떠나면 확장 port가 닫히므로 확장이 자기 줄의 남은 주소를 버리고, 서버의 계획은 그대로 10분 뒤 만료(올라올 것이 없으니 할 일 없음). 「더 보기」도 같은 규칙.</p>
 <p class="alt"><b>다른 선택과 결과.</b> ① 지금대로(끝까지 돌림) — 코드 변경이 없지만 위 문제(신호가 실제보다 붉음, 자리·줄 낭비)가 남습니다. ② 이미 도서관에 나간 요청까지 끊음 — 자리는 더 빨리 비지만 도서관은 이미 일했고 결과를 버리게 되어 캐시 재사용을 잃습니다. ③ 화면이 떠날 때 "그만" 요청을 따로 보냄 — 끊김을 더 확실히 알지만 새 주소가 필요하고, 브라우저를 그냥 닫으면 보내지 못할 수 있어 (1)과 함께 써야 합니다.</p>
 <p class="ex">근거: dev `web/src/features/search/useSearch.ts` 219·275행(떠나면 abort), `backend/.../search/BatchRunner.java` 70행 주석·`runTasks` 295~328행, `web/SseEventSink.java`(끊기면 send false) — 2026-10-16 확인. 이 동작은 이번 사이클 전부터 있던 것이라, 승인되면 이번 사이클 설계에 "떠난 묶음 멈추기"로 넣습니다.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">11</span>정해 둔 값들을 사람·AI가 찾기 쉽게:<br>dev에 "설정값 목록" 문서 하나</h2>
+<p><b>무엇을 묻나.</b> #2에서 "이런 정해진 값들을 문서화 구조를 잘 해서 AI나 사람이 잘 찾도록 했으면 해"라고 하셨습니다. 지금 이런 값들은 여러 곳에 흩어져 있습니다: Spring 설정(`application.yml`, 예: 동시 검색 20·호스트 1초·페이지 4MB), 배포 변수(`prod.env`, 사이클 17), nginx 설정(요청 수 한도), 확장 코드(동시 5·머리 10초), 그리고 그 값을 왜 그렇게 정했는지는 plan 문서·ADR에 있습니다. "올리기 한도를 바꾸고 싶다"고 할 때 어디를 고치고, 함께 고칠 곳은 어디이며, 누가 왜 정했는지를 한 번에 찾을 수 없습니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 330" role="img" aria-label="설정값 목록 문서의 구조">
+<defs><marker id="ah11" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="var(--accent)"/></marker></defs>
+<rect class="bxok" x="300" y="10" width="300" height="70" rx="8"/><text class="s14" x="310" y="34">dev docs/maintenance/settings-index.md</text><text class="s13m" x="310" y="54" font-size="12">값마다 한 줄 (표)</text><text class="s13m" x="310" y="70" font-size="12">AI·사람이 먼저 여는 곳</text>
+<rect class="bx" x="10" y="130" width="200" height="70" rx="8"/><text class="s13" x="20" y="152">backend application.yml</text><text class="s13m" x="20" y="172" font-size="12">chaekcheck.availability.*</text><text class="s13m" x="20" y="188" font-size="12">키 옆 주석: "settings-index 참고"</text>
+<rect class="bx" x="230" y="130" width="200" height="70" rx="8"/><text class="s13" x="240" y="152">deploy/prod/prod.env</text><text class="s13m" x="240" y="172" font-size="12">LOOKUP_MAX_BODY_MB</text><text class="s13m" x="240" y="188" font-size="12">LOOKUP_UPLOAD_RATE …</text>
+<rect class="bx" x="450" y="130" width="200" height="70" rx="8"/><text class="s13" x="460" y="152">nginx templates/*.template</text><text class="s13m" x="460" y="172" font-size="12">${LOOKUP_…} 자리</text>
+<rect class="bx" x="670" y="130" width="220" height="70" rx="8"/><text class="s13" x="680" y="152">extension/config.js</text><text class="s13m" x="680" y="172" font-size="12">동시 5 · 1초 · 머리 10초</text><text class="s13m" x="680" y="188" font-size="12">(확장 안 상수 한 파일)</text>
+<path d="M450 80 L110 130" class="ar" marker-end="url(#ah11)"/><path d="M450 80 L330 130" class="ar" marker-end="url(#ah11)"/><path d="M450 80 L550 130" class="ar" marker-end="url(#ah11)"/><path d="M450 80 L780 130" class="ar" marker-end="url(#ah11)"/>
+<rect class="bxa" x="10" y="230" width="880" height="90" rx="8"/><text class="s14" x="20" y="252">한 줄의 모양 (예)</text>
+<text class="s13" x="20" y="274" font-size="12">올리기 요청 수 한도 | 값 20r/s · burst 60 | 어디: prod.env LOOKUP_UPLOAD_RATE/BURST → nginx templates/lookup-plans.conf.template</text>
+<text class="s13" x="20" y="292" font-size="12">| 함께 바꿀 곳: 없음 | 왜: 한 사람 초당 약 5번의 4배 | 정한 곳: plan 사이클 20 design-delta, ADR-0119 | 바꾸면: nginx만 재시작</text>
+<text class="s13m" x="20" y="312" font-size="12">사이클 19의 "규칙 목록 문서"(ADR-0117, rules-index.md)와 같은 방식 — 규칙은 rules-index, 숫자 설정은 settings-index</text>
+</svg><p class="cap">값의 실제 자리는 그대로 두고, 문서 하나가 모든 값을 한 줄씩 가리킵니다. 값 옆 주석은 다시 그 문서를 가리킵니다.</p></div>
+<p><b>사용자·운영에서는.</b> "올리기 한도를 30으로 올려 줘"라고 하면 AI 세션이 이 문서 한 장에서 값의 자리(`prod.env`), 함께 고칠 곳, 다시 켤 것(nginx만), 원래 이유를 찾아 바로 고칠 수 있습니다. plan의 `docs/reference-index.md`가 이 문서를 가리킵니다.</p>
+<p class="concl">[안] dev에 <b>`docs/maintenance/settings-index.md`</b> 하나를 두고, 운영에서 바꿀 수 있는 값마다 한 줄(값 / 어디 있나 / 함께 바꿀 곳 / 왜 / 정한 plan 문서·ADR / 바꾸면 무엇을 다시 켜나). 사이클 19의 규칙 목록(ADR-0117 `rules-index.md`)과 같은 방식으로, 이번 사이클 값(동시 검색 20, 호스트 1초, 페이지 4MB, 올리기 20/60, 계획 10분·2,000개, IP 한도 20·30·10분, 상태 캐시 1초·묻기 10초, 확장 동시 5·머리 10초)부터 적고 이미 있는 `chaekcheck.availability.*` 값도 한 번 옮겨 적음. 값 옆에는 "settings-index 참고" 주석. 확장의 상수는 `extension/config.js` 한 파일에 모음.</p>
+<p class="alt"><b>다른 선택과 결과.</b> ① 사이클 19의 `rules-index.md`에 같이 넣기 — 문서가 하나로 줄지만 "사람이 정한 수집 규칙"과 "운영 숫자"가 섞여 찾기 어려워짐. ② 값 옆 주석만 — 파일마다 흩어져 "함께 바꿀 곳"을 못 찾음. ③ plan 쪽에 두기 — 값을 실제로 고치는 곳은 dev인데, 운영 중 고칠 때마다 다른 저장소(plan)를 열어야 해 불편합니다.</p>
 </div>
 
 <p class="foot">원문: <code>docs/cycles/20-lookup-status-and-extension/design-delta.md</code>. 앞선 결정: 설계 결정 13개(<code>easy/2026-10-15-design-decisions.html</code>), ADR-0118~0121. 그림 원본 <code>easy/design-delta-original.html</code>.</p>
