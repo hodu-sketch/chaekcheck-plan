@@ -9,3 +9,5 @@
 | [2026-10-15-spec-decisions.html](2026-10-15-spec-decisions.html) | 명세 결정 13개: 메뉴 여닫기, 못 찾은 책, 주소·이용 기록, 애매한 판 고정, 이동진 범위, KDC 분야, 수집기 때, 기준 보기·출처 줄, 책 창, 상태 문구 | `../spec.md` | 없음. 13개 모두 정함 (2026-10-15): #4 "/picks 아래", #6 겹치면 최신만, #10 가져오기에 실어 보내기, #5 수집기가 판 고름 |
 | [2026-10-15-flow-decisions.html](2026-10-15-flow-decisions.html) | 화면 흐름 결정 5개: 메뉴 누르면 닫힘, 지금 목록 표시, 키보드, 목록 이름 보이기, [영상 보기] 자리. 흐름 그림 | `../flow.md` | 없음. 5개 모두 정함 (2026-10-15): #2 PC 칸 정렬은 개발 때 실제 사이트 보고, #4 PC는 맨 위 제목·폰은 버튼에 함께, 네 안은 dev에 넘김 |
 | [flow-original.html](flow-original.html) | flow.md 원문(그림 그려 넣음) | `../flow.md` | — |
+| [2026-10-16-design-decisions.html](2026-10-16-design-decisions.html) | 설계 결정 12개: picks 한 모듈, 분야 파일, 가져오기 목차에 싣기(판 3), 10분마다 맞추기, 수집기가 DB 읽어 판 고르기, 서버가 표지, 사람 고정 판 보존, 올해의 책 영상 찾기, /api/v1/picks/{목록}, 기록 list 칸, 책 이름, 태블릿 | `../architect-proposal.md` | 12개 모두 |
+| [architect-proposal-original.html](architect-proposal-original.html) | architect-proposal.md 원문(그림 7개 그려 넣음) | `../architect-proposal.md` | — |
