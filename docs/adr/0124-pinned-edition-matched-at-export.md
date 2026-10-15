@@ -27,5 +27,6 @@ Supersedes: 없음
 - 채택하지 않은 이유: [이유 미확인] (추천하지 않은 안, "수집기가"를 그대로 따름)
 
 ## 결과
+- ADR-0090의 "짝은 저장하지 않음(캐시를 만들 때 맞춤)"이 이동진·서울대 줄에 한해 바뀜(`list_book.book_id` 저장). 사서 줄은 그대로. 저장된 번호가 낡는 길(목록 없이 책 번호만 바꾸는 가져오기)은 없음: 가져오기마다 목록도 다시 실려 맞춤 (설계 검토 #9, 2026-10-16)
 - `reference-index.md` 6절에 "`catalog.book`·`book_contributor`·`library.lending_model` 칸이 바뀌면 수집기 판 고르기도 고침"을 더함
 - 근거 문서: `docs/cycles/21-recommended-books/architect-proposal.md`, `design-delta.md`

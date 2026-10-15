@@ -232,15 +232,16 @@ stateDiagram-v2
   PinUnknown --> PinnedManual: 사람이 고정 판을 적음
   PinnedAuto --> PinnedAuto: 실행할 때마다 다시 고름
   PinnedManual --> PinnedManual: 수집기가 덮어쓰지 않음
+  Listed --> [*]: 다시 읽을 때 영상이 사라짐 · 비공개 → 줄 지움
 ```
 
 ## 모듈
 
 | 모듈 | 신규/변경 | 책임 | 공개 API | 발행/구독 이벤트 | 소유 테이블 |
 |---|---|---|---|---|---|
-| `picks` | 변경 | 세 목록 보관·캐시·화면 API, 사서 받기(담는 표만 바뀜), 가져오기 목록 검사·맞추기·바꾸기, `BookChoice` 규칙 바뀜 | 새 `CuratedListTransfer`: `read(Path listsDir)` → `ListPart`(JSON 글자 + 셈), `replace(String listPart)` (부르는 쪽 트랜잭션 안에서) [확정: ADR-0123, 이름 안] | 없음 (`collection`이 같은 트랜잭션에서 직접 부름, 곧 내려가는 가져오기 프로세스라 비동기 이벤트로는 반영이 보장되지 않음) | `list_field`·`list_book`(새), `fetch_run`·`cover`(그대로), `pick`(지움) |
+| `picks` | 변경 | 세 목록 보관·캐시·화면 API, 사서 받기(담는 표만 바뀜), 가져오기 목록 검사·맞추기·바꾸기, `BookChoice` 규칙 바뀜(켜진 도서관만, 1권 먼저), 화면 이름 판 표시 덜어 내기(ADR-0129) | 새 `CuratedListTransfer`: `read(Path listsDir)` → `ListPart`(JSON 글자 + 셈), `replace(String listPart)` (부르는 쪽 트랜잭션 안에서) [확정: ADR-0123, 이름 안] | 없음 (`collection`이 같은 트랜잭션에서 직접 부름, 곧 내려가는 가져오기 프로세스라 비동기 이벤트로는 반영이 보장되지 않음) | `list_field`·`list_book`(새), `fetch_run`·`cover`(그대로), `pick`(지움) |
 | `catalog` | 변경 | 가져오기 표에서 책 찾기, 번호로 보유 도서관 | `BookLookup.byIds(Collection<Long>)` → `IsbnBook`과 같은 꼴(번호·보유 도서관). 가져오기 표(`catalog_next`)를 읽는 `BookLookup` 하나를 주는 `CatalogLoad.preparedLookup()` [안: 이름] | 없음 | 그대로 |
-| `library` | 변경 | 구독형 도서관 번호 | `LibraryCatalog.subscriptionLibraryIds()` → `lending_model = SUBSCRIPTION`인 번호 (켜진 도서관만) [확정: ADR-0125, 이름 안] | 없음 | 그대로 |
+| `library` | 변경 | 켜진 도서관과 구독형 여부 | `LibraryCatalog.lendingKinds()` → 켜진 도서관 번호마다 구독형인지 (`lending_model = SUBSCRIPTION`). 꺼진 도서관은 없음 [확정: ADR-0125, 설계 검토 #7, 이름 안] | 없음 | 그대로 |
 | `collection` | 변경 | export에 `listPart` 싣기, apply·finish·in-place 첫 트랜잭션에서 `replace`, 반영 파일 판 3 | 없음 (안쪽: `ImportTransfer`, `Notes.listPart`, 설정 `chaekcheck.collection.import.lists-dir`) [안: 이름] | 없음 | 그대로 (`load_manifest.notes`에 칸이 하나 늘 뿐) |
 | `usagelog` | 변경 | 사용 알림 `list` 받기·검사, 칸 `picks_list` | 웹 API만 바뀜 | 없음 | `screen_event.picks_list`(새 칸) |
 | web | 변경 | 머리말 큰 메뉴, `/picks/:listKey` 셋, `/picks` → `/picks/librarian`, 목록별 표지 아래 글자·책 창 줄·출처 줄 | — | — | — |
@@ -250,12 +251,13 @@ stateDiagram-v2
 - 내 PC에서 고정 판을 맞추는 표는 export하는 바로 그 `catalog_next`(prepare가 책 번호를 정한 표, ADR-0078). 색인 없이 채운 표라 한 번에 묶은 쿼리 둘(ISBN, 제목+저자)로 찾음 [안], 시간은 dev 측정 [확인 필요: 프로토타입]. `in-place`(내 PC에서 바로 바꿔 끼우기)는 바꿔 끼운 뒤의 `catalog`로 같은 맞추기 [안]
 - 고정 판 맞추기 순서: ① `pinned_isbn13` → `byIsbn13` ② 없으면 `pinned_title`+`pinned_author`로 `byTitleAndAuthor`, 결과를 `pinned_publisher` 정리값으로 좁힘 ③ 그래도 여럿이면 `BookChoice` ④ 고정 판이 비면 목록 줄의 ISBN → 제목+저자. 못 맞추면 `book_id` NULL (흐린 제목 글자 표지, spec R2-4) [확정: ADR-0124, 출판사 정리 함수는 dev 코드 확인]
 - 사서 줄의 `book_id`는 비워 두고 지금처럼 캐시 때 맞춤 (따로 받으므로) [확정: ADR-0124]
+- 같은 책 고르기(`BookChoice`, 세 목록, 수집기 Python도 같은 공식): 보유량 = **켜진 도서관만** 보아 구독형 아닌 수 + 켜진 구독형이 하나라도 있으면 1. 보유량이 같으면 **여러 권짜리는 1권**(판 표시를 덜어 낸 제목 끝 권 번호가 `1`·`(상)`이거나 권 번호 없는 판)을 먼저, 그다음 책 번호 작은 것. 이동진·서울대는 수집기가 고정 판을 고를 때, 사서는 캐시의 `BookChoice`가 함 [확정] (사용자 승인, 2026-10-16, [설계 검토](easy/2026-10-16-review-decisions.html) #3·#7)
 - 캐시: 시작 때·10분마다·사서 받기 직후·(운영) 다음 10분 안에 DB를 다시 읽음 — 맞추기가 아니라 메모리에 담아 화면 응답을 빠르게 하는 것 [확정] (사이클 14 그대로)
 - 화면 책 이름 (설계 결정 #11을 바꿈): **우리 책을 맞춘 줄은 그 책의 제목에서 판 표시를 덜어 낸 이름**(끝 괄호 안 판·언어 표시, 끝 낱말 "오리지널판", 끝 권 번호 `1`·`(상)`, 앞 `[시리즈]`), 못 맞춘 줄은 목록 이름. 세 목록 모두. 목록 이름이 다르면 책 창에 "목록 이름 「…」" 한 줄. 캐시가 담을 때 맞춘 책 제목을 함께 읽어 덜어 냄(이동진·서울대는 `byIds`, 사서는 맞춘 결과). 저자·출판사는 맞춘 우리 책 값 그대로 [확정] (사용자 승인, 2026-10-16, [책 이름 보정](easy/2026-10-16-title-correction.html) #1·#2; 사용자 질문 "목록 책 이름 말이야... 우리 것대로 보정해주면 어떨가?"). 덜어 내는 규칙은 `picks` 안쪽 코드, 사이클 19 `SameTextKey` 앞 괄호 떼기와 같은 꼴 [안: 규칙 세부·이름]. 예: 「셰익스피어: 햄릿 외 3편」 → 「햄릿」, 「일리아스, 오디세이아」 → 「오디세이아」, 「토지. 1(1부 1권)」 → 「토지」
 
 ## 데이터
 
-- 스키마 `picks` (소유 `picks`). 다른 모듈과 FK·조인 없음 (`book_id`는 값으로만, ADR-0090과 같은 규칙) [확정]
+- 스키마 `picks` (소유 `picks`). 다른 모듈과 FK·조인 없음 (`book_id`는 값으로만, FK 없음 → `catalog` 바꿔 끼우기의 바깥 FK 검사에 걸리지 않음). 이동진·서울대는 짝(`book_id`)을 저장함 — ADR-0090의 "짝은 저장하지 않음"을 이 두 목록에 한해 바꿈(ADR-0124). 사서는 그대로 저장하지 않음 [확정]
 
 ```mermaid
 erDiagram
@@ -320,12 +322,13 @@ erDiagram
 | `list_book.pinned_title`·`pinned_author`·`pinned_publisher`·`pinned_isbn13` | text | NULL, ISBN CHECK 같음 | 수집기가 고른 판(또는 사람이 적은 판). `pinned_by`는 목록 파일에만 | [확정] (ADR-0124), 칸 [안] |
 | `list_book.book_id` | bigint | NULL | 이동진·서울대: export 때 맞춘 우리 책 번호(`catalog.book.id` 값, FK 없음). 사서는 늘 NULL | [확정] (ADR-0124) |
 | `list_book.cover_source` | text | NULL. 사서 ⇒ `LIKE 'https://www.nl.go.kr/afile/%'`, 그 밖 ⇒ `LIKE 'https://%'` | `cover.source_url`과 맞춤 | [안], 이동진·서울대 접두 [확인 필요: API 호출 시험] |
-| 목록별 CHECK | | `librarian` ⇒ `source_no`·`recommended_month` NOT NULL, `book_id`·`toc_no`·`video_id` NULL. `leedongjin` ⇒ `recommended_month`·`video_id` NOT NULL. `snu100` ⇒ `toc_no` NOT NULL | 이름 `list_book_<list>_check` | [안] |
-| `cover` | | 그대로 (`source_url` UNIQUE, 200px JPEG) | 이동진·서울대 표지는 `replace`가 넣음(`fetched_at` = 수집기가 받은 때) | [확정] (ADR-0123) |
+| 목록별 CHECK | | 대칭으로: `librarian` ⇒ `source_no`·`recommended_month` NOT NULL, `book_id`·`toc_no`·`video_id`·`year_book` NULL. `leedongjin` ⇒ `recommended_month`·`video_id` NOT NULL, `source_no`·`registered_on`·`toc_no` NULL. `snu100` ⇒ `toc_no` NOT NULL, `source_no`·`registered_on`·`recommended_month`·`video_id`·`year_book` NULL | 이름 `list_book_<list>_check` | [안] |
+| `cover` | | 그대로 (`source_url` UNIQUE, 200px JPEG) | 이동진·서울대 표지는 `replace`가 넣음: `ON CONFLICT (source_url) DO NOTHING`, `content_type = image/jpeg`, `byte_size` = 그림 길이, `fetched_at` = 수집기가 받은 때 | [확정] (ADR-0123) |
 | `fetch_run` | | 그대로. "목록 없음" 판단은 `list_book`의 `librarian` 줄로 | 사서 받기 기록 | [확정] (ADR-0122) |
 | `usagelog.screen_event.picks_list` | text | NULL, CHECK IN (`librarian`,`leedongjin`,`snu100`), `picks_*` 종류일 때만 NOT NULL (종류별 칸 CHECK 고침) | 어느 목록 | [확정] (ADR-0126) |
 
 - 누가 어느 줄을 바꾸나 [확정: ADR-0122]: 서버 사서 받기는 `list_key = 'librarian'` 줄만(지우고 넣기 + `fetch_run` 한 트랜잭션, 지금과 같은 규칙), 가져오기 `replace`는 `leedongjin`·`snu100` 줄만(`list_book` 지우기 → `list_field` 지우기 → 넣기, 부르는 쪽 트랜잭션 안). 두 쓰기가 겹칠 때는 `list_book` 줄 잠금 대신 목록별 `pg_advisory_xact_lock` 하나 [안]
+- 잠금 [안]: 목록별 `pg_advisory_xact_lock`은 넣는 트랜잭션 끝까지 잡힘. 가져오기 프로필(`collection-import`)은 사서 받기를 끄므로(dev `application-collection-import.yml` 14~17행) 같은 프로세스 안에서 겹치지 않고, 운영 서버의 사서 받기(월요일 05:00)와 반영이 겹칠 때만 잠깐 기다림
 - 표지 정리: 사서 받기 뒤와 `replace` 뒤 모두 "어느 `list_book.cover_source`도 쓰지 않는 `cover`"를 지움 [확정: ADR-0091 규칙을 한 표로]
 - 크기: 사서 108줄 + 이동진 44줄(월 1~4줄씩 늚) + 서울대 100줄 ≈ 250줄. 표지 약 250장, 3~4MB (사이클 14 실측 장당 4~22KB) [안]
 - Liquibase: 새 파일 `db/changelog/picks/002-curated-lists.yaml`, master 끝에 `# cycle 21` 주석과 include. 기존 changeset은 고치지 않음(사이클 17 첫 배포가 21보다 먼저일 수 있으므로) [안: 파일 이름]
@@ -333,7 +336,7 @@ erDiagram
   2. 사서 분야 넣기: 아는 다섯(11 문학, 6 인문, 5 사회, 4 자연, 425 테마, C14 순서) + `pick`에 있는 그 밖의 `dr_code`(이름은 `dr_code_name`, 비면 코드)
   3. `INSERT INTO list_book (list_key='librarian', …) SELECT … FROM pick` — 옮기지 않으면 "목록 없음 → 받기"(dev `FetchDecision` 규칙 2)로 켜지자마자 다시 받는 1~2분 동안 비고, 그날 이미 받았으면(규칙 1) 다음 날 05:00까지 비므로 옮김 [확정] (사용자 승인, 2026-10-16, 설계 정리 #8)
   4. `DROP TABLE picks.pick`
-- 새 파일 `db/changelog/usagelog/003-screen-event-picks-list.yaml` (002는 사이클 19): 칸 더함 → 있던 `picks_*` 줄을 `librarian`으로 채움 → CHECK [안: 파일 이름]. 21이 19보다 먼저 main에 들어가면 번호를 바꾸지 말고 master 순서만 맞춤(나중에 합치는 쪽이 자기 줄을 끝으로)
+- 새 파일 `db/changelog/usagelog/003-screen-event-picks-list.yaml` (002는 사이클 19, **003은 21, 사이클 20은 004** [확정] (사용자 승인, 2026-10-16, [설계 검토](easy/2026-10-16-review-decisions.html) #4); 20에는 공유 파일로 알림): 칸 더함 → 있던 `picks_*` 줄을 `librarian`으로 채움 → CHECK [안: 파일 이름]. 21이 19보다 먼저 main에 들어가면 번호를 바꾸지 말고 master 순서만 맞춤(나중에 합치는 쪽이 자기 줄을 끝으로)
 
 ### 반영 파일 `notes.listPart` (판 3)
 
@@ -352,13 +355,14 @@ erDiagram
 | 파일 | 칸 | export에 실림 |
 |---|---|---|
 | `fields.tsv` | `list, code, name, position` | 예 |
-| `leedongjin.tsv` | `month, position, year_book, video_id, field, title, author, publisher, isbn13, cover_url, pinned_title, pinned_author, pinned_publisher, pinned_isbn13, pinned_by, note` | 예 (`pinned_by`·`note` 빼고) |
+| `leedongjin.tsv` | `month, position, year_book, video_id, field, title, author, publisher, isbn13, cover_url, pinned_title, pinned_author, pinned_publisher, pinned_isbn13, pinned_by, checked_on, note` | 예 (`pinned_by`·`checked_on`·`note` 빼고) |
 | `snu100.tsv` | `toc_no, field, title, author, cover_url, pinned_*, pinned_by, note` | 예 (같음) |
-| `covers/<sha1(cover_url)>.jpg` | 수집기가 줄인 표지 (폭 200px, 원본 5MB 넘으면 받지 않음) | 예 (`listPart.covers`) |
+| `covers/<sha1(cover_url)>.jpg` | 수집기가 줄인 표지: 폭 200px, JPEG 품질 0.8, 원본 5MB 넘으면 받지 않음 [확정] (ADR-0091과 같게). `http://` 주소는 `https://`로 바꿔 적음 [안, 확인 필요: API 호출 시험] | 예 (`listPart.covers`) |
 | `kdc_fields.tsv` | `kdc_prefix, field, note` | 아니오 (수집기만) |
 | `leedongjin_pending.tsv` | `video_id, month, reason` | 아니오 |
 
 - 영상 제목·설명은 어느 파일에도 두지 않음 (spec R4-5) [확정]
+- 30일 규칙: 수집기가 돌 때마다 「이달의 책」·업로드 재생목록을 **처음부터 끝까지 다시 읽어**, 목록 파일에 있는 영상이 아직 공개인지 확인하고 `checked_on`(확인한 날)을 고침. 사라지거나 비공개가 된 영상의 줄은 지우고 수집 기록에 남김. 30일 넘게 확인 못 한 줄(수집을 오래 안 돌림)은 export가 경고 [확정] (사용자 승인, 2026-10-16, [설계 검토](easy/2026-10-16-review-decisions.html) #5) (YouTube 개발자 정책 III.E.4, https://developers.google.com/youtube/terms/developer-policies , 2026-10-15 확인)
 - `pinned_by` = `collector` | `manual`. `manual` 줄은 수집기가 덮어쓰지 않음, `collector` 줄은 실행할 때마다 다시 고름 [확정: 설계 결정 #7]
 - 서울대 판 거르기: 출판사 "어린이", 저자 "번역AI", "[100분 고전]" 같은 요약 시리즈 뺌. 못 가리는 책(미국의 민주주의, 페더랄리스트)은 사람이 `manual`로 [확정] (spec R3-4)
 
@@ -400,7 +404,7 @@ erDiagram
 
 | 자리 | 바뀜 | 태그 |
 |---|---|---|
-| 머리말 (`AppLayout`) | 큰 메뉴 「추천도서」(이동진 추천도서 → `/picks/leedongjin`, 사서 추천도서 → `/picks/librarian`, 서울대 100선 → `/picks/snu100`)·「마이페이지」(내 도서관 관리 → `/my-libraries`). PC 0.5초 열기·닫기, 덮지 않음(그림자·선), 글자 누르면 첫 항목, Tab·Enter·↓·Esc. 640px 이하 ☰ + 어둡게 덮기. 조회 상태 점은 「로그인」 왼쪽(폰 ☰ 왼쪽). `legal` 분기 없음(약관·처리방침도 같은 머리말) | [확정] (ADR-0121·0127) |
+| 머리말 (`AppLayout`) | 큰 메뉴 「추천도서」(이동진 추천도서 → `/picks/leedongjin`, 사서 추천도서 → `/picks/librarian`, 서울대 100선 → `/picks/snu100`)·「마이페이지」(내 도서관 관리 → `/my-libraries`). PC 0.5초 열기·닫기, 덮지 않음(그림자·선), 글자 누르면 첫 항목, Tab·Enter·↓·Esc. 640px 이하 ☰ + 어둡게 덮기. 조회 상태 점은 「로그인」 왼쪽(폰 ☰ 왼쪽). `legal` 분기 없음(약관·처리방침도 같은 머리말) | [확정] (ADR-0127, spec R1-6). ADR-0121(모든 화면 같은 머리말)은 사이클 20이 확정할 초안(Proposed) — 20이 방향을 바꾸면 이 행을 다시 봄 |
 | PC 펼친 칸 정렬 | 결정 페이지 그림처럼 왼쪽에 몰지 않음. 정보나루처럼 각 칸이 자기 큰 메뉴 바로 아래, 칸 배경은 화면 전체 폭. dev가 실제 사이트를 열어 맞추고 화면 확인 때 보임 | [확정] (flow 화면 결정 #2 메모) |
 | 목록 화면 | 경로 셋, `/picks` → `/picks/librarian`. 맨 위 제목(PC·641px 이상 태블릿, flow #4 A), 폰은 머리말 메뉴로만(C). 이상하면 dev가 안 A~D를 화면으로 나란히 만들어 보임 | [확정] (flow #4, 설계 결정 #12) |
 | 표지 아래 글자 | 이동진 "26.06", 서울대 "3", 사서 그대로 | [확정] (spec R5) |
@@ -412,7 +416,7 @@ erDiagram
 
 | 대상 | 방식 | 제한·키 관리 | 실패 시 동작 | 상태 태그 |
 |---|---|---|---|---|
-| YouTube Data API v3 (수집기) | `playlistItems.list`: 「이달의 책」(`PLUpgTv3bu9rGxQBAMVaMvam27P0YbiY29`), 채널 업로드 재생목록(12월 "올해의 책"·"베스트북"). `search.list`는 쓰지 않음(100단위) | 하루 10,000단위, 재생목록 읽기 1단위 (https://developers.google.com/youtube/v3/determine_quota_cost , 2026-10-15 확인). 키는 dev `.env`. 페이지 자동 접근 금지 (https://www.youtube.com/t/terms). 30일 저장 규칙은 매달 다시 읽어 지킴 (개발자 정책 III.E.4.d) | 키 거절·할당량·응답 없음 → 목록 파일 그대로, 수집 기록 한 줄 | [확정] (ADR-0128). 업로드 재생목록 ID 얻는 법 [확인 필요: 공식 문서 확인] |
+| YouTube Data API v3 (수집기) | `playlistItems.list`: 「이달의 책」(`PLUpgTv3bu9rGxQBAMVaMvam27P0YbiY29`), 채널 업로드 재생목록(12월 "올해의 책"·"베스트북"). `search.list`는 쓰지 않음(100단위) | 하루 10,000단위, 재생목록 읽기 1단위 (https://developers.google.com/youtube/v3/determine_quota_cost , 2026-10-15 확인). 키는 dev `.env`. 페이지 자동 접근 금지 (https://www.youtube.com/t/terms). 30일 저장 규칙은 수집 때마다 이미 넣은 영상도 다시 확인해 지킴 (개발자 정책 III.E.4, https://developers.google.com/youtube/terms/developer-policies , 2026-10-15 확인) | 키 거절·할당량·응답 없음 → 목록 파일 그대로, 수집 기록 한 줄 | [확정] (ADR-0128). 업로드 재생목록 ID 얻는 법 [확인 필요: 공식 문서 확인] |
 | 국립중앙도서관 ISBN 서지 API (수집기) | `https://www.nl.go.kr/seoji/SearchApi.do`: 책 이름 → ISBN·저자·출판사·KDC·`TITLE_URL`(표지 이미지 URL) | 키는 dev `.env`. 하루 한도·이용 허락 범위 확인 못 함 | 못 찾음·여럿·KDC 없음 → 확인 필요 파일. 표지 안 열림 → 표지 없이(제목 글자 표지) | 항목 [확정] (https://www.nl.go.kr/NL/contents/N31101030500.do , 2026-10-15 확인), 한도·조건 [확인 필요: API 호출 시험·공식 문서 확인] |
 | 국립중앙도서관 `saseoApi.do`·표지 (운영 서버) | 사이클 14 그대로 (주 1회, 실패 뒤 매일) | 그대로 | 그대로 | [확정] |
 | 내 PC 서비스 DB (수집기) | `catalog.book`·`book_contributor`·`library.library.lending_model` SELECT만 | 접속은 dev `.env` 주소 [안] | 접속 실패 → 고정 판 칸 그대로, 기록 한 줄 [안] | [확정] (ADR-0124) |
@@ -424,9 +428,10 @@ erDiagram
 | 1·2·3 | 웹 시험: 머리말 0.5초 열기·닫기, 덮지 않음, 375px ☰·어둡게 덮기, 320px 한 줄, `/terms`·`/privacy` 같은 머리말. 화면 확인 때 PC 정렬 |
 | 4·5·8·9·15 | `PicksController` 시험(세 목록, 404 `list_not_found`), 웹 시험(목차 번호·"26.06"·책 창 줄·[영상 보기]·출처 줄·흐린 표지 → 희망도서 안내) |
 | 책 이름 | 판 표시 덜어 내기 단위 시험(위 예 셋 + 「위대한 유산(상)」 → 「위대한 유산」, 「백석의 사슴 오리지널판」 → 「백석의 사슴」, 덜어 내 빈 이름이면 그대로), 못 맞춘 줄은 목록 이름 |
-| 6·7 | `BookChoice` 시험(구독형 셋 = 1, 같으면 번호 작은 것, 여러 권짜리 1권) + 수집기 판 고르기 시험. **같은 입력으로 Java·Python 보유량 결과가 같은지** 비교 시험 |
+| 16 | 판 표시 덜어 내기(위 "책 이름" 행), 책 창 "목록 이름" 줄 |
+| 6·7 | `BookChoice` 시험(구독형 셋 = 1, 꺼진 도서관은 세지 않음, 같으면 1권 먼저, 그다음 번호 작은 것) + 수집기 판 고르기 시험. **같은 입력으로 Java·Python 보유량 결과가 같은지** 비교 시험 |
 | 10 | 사서 받기 시험: `librarian` 줄만 바뀌고 이동진·서울대 줄 그대로, 표지 정리가 다른 목록 표지를 지우지 않음, Liquibase 002 뒤 사서 목록이 그대로 보임 |
-| 11·12·13·14 | 수집기 단위 시험(API 응답 저장본): 새 영상 → 새 줄, 제목·설명 없음, `www.youtube.com` 요청 0건, 키 틀림 → 파일 그대로 + 기록, 책 이름 없음 → 확인 필요 |
+| 11·12·13·14 | 수집기 단위 시험(API 응답 저장본): 이미 있는 영상이 사라지면 → 줄 지움 + 기록, 남아 있으면 `checked_on` 고침, 새 영상 → 새 줄, 제목·설명 없음, `www.youtube.com` 요청 0건, 키 틀림 → 파일 그대로 + 기록, 책 이름 없음 → 확인 필요 |
 | 가져오기 | `CuratedListTransfer` 시험: 검사 실패 줄 번호, 고정 판 → 책 번호(ISBN·제목+저자+출판사·못 맞춤), `replace`가 사서 줄을 건드리지 않음, 지문 다름 → 목록도 되돌림, 판 3 manifest 읽기 |
 | 공통 | Modulith `verify`(`collection → picks` 허용), 사이클 19 반영 뒤 세 목록 맞은 수 다시 재기(19 AC-14) |
 
@@ -439,7 +444,9 @@ erDiagram
 - [ADR-0126](../../adr/0126-picks-api-per-list-and-usage-list.md) `GET /api/v1/picks/{listKey}`, 이용 기록 `picks_list` (Accepted)
 - [ADR-0127](../../adr/0127-header-mega-menu.md) 머리말 정보나루식 큰 메뉴 (Accepted)
 - [ADR-0128](../../adr/0128-leedongjin-list-by-collector-youtube-api.md) 이동진 목록은 수집기가 YouTube Data API·ISBN 서지 API로 (Accepted)
-- 그대로 따름: ADR-0062(책 번호 잇기), ADR-0078(내 PC 가져오기 → 운영 반영), ADR-0086(목차 칸·판 올림 감수), ADR-0089(사서추천 출처), ADR-0090(사서 줄 맞추는 길 — 고르기 규칙만 0125로), ADR-0091(표지 200px, 정리 규칙을 한 표로), ADR-0121(모든 화면 같은 머리말)
+- [ADR-0129](../../adr/0129-picks-shown-title-from-matched-book.md) 화면 책 이름은 맞춘 책 제목에서 판 표시를 덜어 낸 이름 (Accepted)
+- 사이클 20 초안: ADR-0121 모든 화면 같은 머리말 (Proposed, 사이클 20이 확정)
+- 그대로 따름: ADR-0062(책 번호 잇기), ADR-0078(내 PC 가져오기 → 운영 반영), ADR-0086(목차 칸·판 올림 감수), ADR-0089(사서추천 출처), ADR-0090(사서 줄 맞추는 길 — 고르기 규칙만 0125로), ADR-0091(표지 200px, 정리 규칙을 한 표로)
 
 ## 확인 필요
 

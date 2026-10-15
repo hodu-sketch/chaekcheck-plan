@@ -132,4 +132,4 @@
 | [ADR-0126](0126-picks-api-per-list-and-usage-list.md) | 추천 목록 API는 `GET /api/v1/picks/{listKey}`(옛 `GET /api/v1/picks`는 지움), 이용 기록에 목록 이름 `list` | Accepted | 2026-10-16 | 21 |
 | [ADR-0127](0127-header-mega-menu.md) | 머리말은 도서관 정보나루식 큰 메뉴: 「추천도서」(이동진 추천도서·사서 추천도서·서울대 100선)·「마이페이지」(내 도서관 관리), PC는 올림 0.5초로 펼침(덮지 않음), 폰은 ☰ | Accepted | 2026-10-16 | 21 |
 | [ADR-0128](0128-leedongjin-list-by-collector-youtube-api.md) | 이동진 추천도서는 수집기가 YouTube Data API(공식)와 국립중앙도서관 ISBN 서지 API로 모아 목록 파일(dev `scripts/crawl/lists/` TSV)에 적음 | Accepted | 2026-10-16 | 21 |
-| [ADR-0129](0129-picks-shown-title-from-matched-book.md) | 추천 목록 화면의 책 이름은 맞춘 우리 책 제목에서 판 표시를 덜어 낸 이름 (못 맞추면 목록 이름) | Proposed | 2026-10-16 | 21 |
+| [ADR-0129](0129-picks-shown-title-from-matched-book.md) | 추천 목록 화면의 책 이름은 맞춘 우리 책 제목에서 판 표시를 덜어 낸 이름 (못 맞추면 목록 이름) | Accepted | 2026-10-16 | 21 |

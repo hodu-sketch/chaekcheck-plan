@@ -196,6 +196,7 @@
 - 목록 상수(꼬리 넷, 자리 채움, 판 낱말 11개, 짧은 부제 8자)는 `SameTextKey.java` 36~69행. 바꾸면 dry run → `regroup`으로 합쳐짐·나뉨 표본을 봄(dry run 2~4의 교훈: 끝 숫자·앞의 0 규칙은 같은 책을 수천 권 갈랐음)
 - 받아들인 위험: 판 표시·ISBN 없는 다른 판(「이상한 나라의 앨리스」 펭귄클래식 2010/2020)은 합쳐짐, 꺾쇠 저자 표기(「<김정은>,<김지혜> 저」)는 지금 코드에서 안 합쳐짐 → 사이클 19에서 고침: 저자 정리에서 꺾쇠를 떼고 붙은 역할 낱말을 나눠 다시 가져옴 — 설계됨(미구현, 사이클 19) (ADR-0113, 사이클 17 첫 배포 전 [확정] (사용자 결정, 2026-10-14)), 저자 이름이 상표와 같으면(「사이다경제」) 두 줄
 - 사이클 19 규칙(설계됨(미구현)): 다시 가져올 때 기록 11번과 비교(`compare_grouping.py`, 원인별 합쳐짐·나뉨 표본 각 20권)하고 셈 넷(`supplierCodeJoins`·`codeJoinedIsbnConflicts`·`authorPublisherSwappedRows`·`leadingNoteCut` [안: 이름])을 봄. 코드로 이었는데 ISBN이 둘 이상인 묶음이나 잘못 합친 책이 있으면 반영하지 않고 plan에 물음. 공급사 이름이 새로 생기면 `supplier_families.tsv`에 더함, 남길 낱말 상수(`LEADING_NOTE_KEEP_WORDS`)를 바꾸면 dry run → 비교: `flows.md` 흐름 44, ADR-0114. `Contributors`를 바꾸므로 사서추천 맞추기 수도 다시 잼(위 줄)
+- 추천 목록 판 고르기(사이클 21, 설계됨(미구현)): 수집기(Python)가 내 PC DB의 `catalog.book`·`book_contributor`·`library.library.lending_model`을 읽어 보유량으로 고름. 이 칸들이나 서버 `BookChoice` 공식(켜진 도서관만, 구독형 1, 1권 먼저)을 바꾸면 수집기 판 고르기도 함께 고치고 같은 입력 비교 시험을 돌림 (ADR-0124·0125)
 
 ## 7. dev 문서에 알릴 것 (plan에서 못 고침 → 다음 인계서·회고에 넣음)
 

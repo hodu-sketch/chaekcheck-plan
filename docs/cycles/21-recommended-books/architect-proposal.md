@@ -1,5 +1,7 @@
 # 설계 제안: 사이클 21 추천도서 (architect, 2026-10-16)
 
+> 결정 기록입니다. 아래 "구조 그림"·"데이터" 절은 옛 모양(`pick` 표, 캐시가 고정 판을 맞춤)입니다. **최신은 `design-delta.md`**이고, dev 인계도 그 문서를 따릅니다.
+
 - 만든 곳: `architect` 서브에이전트 (2026-10-16), 메인 세션이 사실 두 가지를 고침(아래 "고친 것"). spec·scope·flow의 [확정]은 다시 열지 않음
 - 근거: `scope.md`·`spec.md`·`flow.md`, `from-cycle-20-header-light.md`, `../19-author-angle-brackets/to-cycle-21.md`, `docs/current/`(module-map `picks`·가져오기 따로 하기, data-model `catalog`·`collection`·`picks`·`usagelog`, api `picks`), ADR-0065·0078·0086·0089·0090·0091, `docs/reference-index.md` 3·3-1·4·4-1·6, dev 코드(읽기만, 끝에 목록), dev 스킬 spring-modulith·postgres-patterns·api-design
 - 결정 페이지: `easy/2026-10-16-design-decisions.html`

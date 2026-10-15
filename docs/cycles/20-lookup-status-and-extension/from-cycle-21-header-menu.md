@@ -11,6 +11,10 @@
 - 순서: 「책첵」 … 조회 상태 점 · 「로그인」 · ☰ (320px에서 한 줄 확인: `../21-recommended-books/easy/2026-10-15-menu-decisions-2.html`)
 - 추천도서 주소: 세 목록 모두 `/picks` 아래(`/picks/leedongjin`·`/picks/librarian`·`/picks/snu100`, 끝 이름은 설계), 예전 `/picks`는 사서 추천도서로 넘겨 줌
 
+## DB 변경 파일 번호 (2026-10-16 더함)
+
+- 사이클 21이 `usagelog/003-screen-event-picks-list.yaml`을 씀. **사이클 20의 `usagelog/003-library-response-source-extension.yaml`은 `004`로** 바꿔 주세요 [확정] (사용자 승인, 2026-10-16, 사이클 21 설계 검토 #4, `../21-recommended-books/easy/2026-10-16-review-decisions.html`). 19는 `002`. 나중에 main에 합치는 쪽이 include를 master 끝으로
+
 ## dev 순서
 
 - 사용자: "순서는 안 중요해 이거 먼저 할거야" (2026-10-15, 21 범위 결정 #8) → **21을 먼저 개발**. 20의 머리말 코드는 21이 바꾼 머리말(AppLayout) 위에 점만 얹으면 됨. 20 쪽 문서에 "머리말 = 21 메뉴 기준"만 맞춰 주면 됨

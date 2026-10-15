@@ -1,6 +1,6 @@
 # ADR-0129: 추천 목록 화면의 책 이름은 맞춘 우리 책 제목에서 판 표시를 덜어 낸 이름 (못 맞추면 목록 이름)
 
-Status: Proposed
+Status: Accepted (사용자 승인, 2026-10-16, 설계 검토 페이지 #6)
 Date: 2026-10-16
 Cycle: 21-recommended-books
 Supersedes: 없음 (ADR-0090의 "화면에는 목록 이름" 부분만 바꿈)
