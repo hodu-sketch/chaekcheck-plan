@@ -312,3 +312,6 @@ plan 15가 `docs/cycles/15-usage-log/to-cycle-17.md` "5차"에 올린 실제 값
 - sitecontent 쓰기 DB 계정 권한(dev 16): `sitecontent.notice`·`notice_version`·`document_version` `SELECT·INSERT·UPDATE` + 시퀀스 `sitecontent.notice_id_seq` `USAGE` → design-delta 데이터 절에 반영
 - nginx: `deploy/nginx/chaekcheck-locations.conf` 화면 주소 정규식에 `notices|notices/[0-9]+` 더함(16 9단계) → 17이 nginx 합칠 때 이 파일 그대로 씀(research 13절)
 - 첫 공지(dev `drafts/notice-first.md`)는 공개일(2026-10-18)에 운영 SQL 1절로(dev `docs/maintenance/5-sitecontent.md`) → 공개일 체크리스트
+
+### Cloudflare Tunnel 유지 확정 (2026-10-15)
+- 사용자 선택 ① "터널 유지"(원격 노트북 claude.ai 페이지 `FeYpG6XqGhgQbabEgwWYB8`, 메모 없음). EC2에서도 cloudflared 터널로 들어오게 함 → ADR-0103(열린 포트 없음·Tunnel) 그대로 유지, 설계 변경 없음. 검토한 대안 ②CF프록시·③DNS만·④AWS CloudFront·⑤ALB는 안 고름(궁금증 답은 `easy/2026-10-14-cloudflare-tunnel-decision.html`). 집 이전 때도 같은 설정 그대로 씀
