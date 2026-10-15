@@ -1,0 +1,77 @@
+# 사이클 20: 조회 상태 신호와 브라우저 확장 조회 (초안)
+
+- 시작: 2026-10-15 (원격 세션 `chaekcheck-plan-cycle-20`). 사용자 요청: "조회 제한이 있어서 동시에 여러 사람이 조회 요청하면 잘 안 되자나 그래서 그걸 알려주는 기능을 만들려고 해 상단에 조회 서버 상태 알려주는 거 해서 조회 서버에 할 일이 많이 쌓이면 빨간불 괜찮으면 초록불해서 / 그리고 그것도 같이 할까 해 구글 확장 프로그램으로 깔면 사용자의 프론트에서 접근하도록 해서 우리 조회 서버 안 거치도록 하는거" (2026-10-15)
+- 폴더 이름 `20-lookup-status-and-extension` [안]
+- 범위 결정 페이지: [`easy/2026-10-15-scope-decisions.html`](easy/2026-10-15-scope-decisions.html) (원격용 Artifact https://claude.ai/artifact/EHAwjsJpERieZvtP9z4rAw, 사본 `easy/2026-10-15-scope-decisions-artifact.html`)
+- 앞 사이클과의 순서: 17(첫 배포, 공개 2026-10-18)·19(꺾쇠 저자) 뒤 [안]. 17·19는 각자 세션이 맡고 있어 이 사이클은 범위·명세·화면·설계 대안을 미리 하고, 설계 확정·인계는 그 뒤 ([[plan-ahead-while-dev-runs]] 방식)
+
+## 목표 (한 문장) [안]
+
+조회가 몰려 503 `server_busy`가 나기 전에 사용자가 머리말에서 "지금 조회가 원활한지"를 보고, 원하면 크롬 확장을 설치해 도서관 조회를 자기 브라우저에서 직접 하게 하여 우리 서버의 조회 한도에 묶이지 않게 한다.
+
+## 지금 상태 (dev 코드 확인, 2026-10-15)
+
+- 대기열은 없음. 동시 검색 슬롯 `SearchSlots`(Semaphore, 기다리지 않음) `chaekcheck.availability.max-concurrent-searches: 20` [안], 꽉 차면 바로 503 `server_busy`, `Retry-After: 5`. 슬롯을 쓰는 곳: 검색 묶음·소장 묶음·도서관별 더 보기 (`backend/.../availability/internal/search/SearchSlots.java`, `BatchRunner.java:152,211`, `LibraryEbookController.java:80`)
+- 호스트별 제한 `InMemoryHostThrottle`: 호스트마다 동시 1건·최소 간격 1초, 마감(8초)까지 기다렸다 시간 초과 → SSE `library-failed`
+- 웹: 503이면 노란 안내 "지금 찾는 사람이 많아요. 잠시 뒤에 다시 해 주세요." (`web/src/features/search/blocked.ts`). 사전에 알려 주는 표시는 없음
+- 남은 슬롯 수를 밖으로 내는 엔드포인트 없음(`SearchSlots.available()`은 테스트·로그용). Actuator·`/health` 없음(사이클 17이 Actuator 지표를 붙이기로 함)
+- 도서관 요청은 모두 GET, 쿠키 없음, `User-Agent: chaekcheck/0.0.1`(사이클 17 ADR-0095로 일반 브라우저 값으로 바뀜). 일부 사이트는 `http://`, EUC-KR, 중간 인증서 빠짐
+- 조회 서버 경유 모드(`fetch-service`, ADR-0011·0015): 조회 서버는 URL을 GET으로 받아 상태 코드와 원본 바이트만 돌려줌. 해석(adapter)은 본 서비스
+- 우리 쪽 CORS 설정 없음(웹과 `/api`가 한 origin). 도서관 사이트의 CORS 헤더는 확인한 기록 없음
+
+## 포함 [안]
+
+### A. 조회 상태 신호 (머리말)
+
+1. 머리말에 조회 상태 표시: 초록(원활) / 빨강(혼잡) 두 단계 [안]. 기준은 동시 검색 슬롯 사용량 [안]
+2. 상태를 주는 API `GET /api/v1/availability/status` [안] (슬롯 수·사용 중 수·단계). 캐시 가능, 도서관을 부르지 않음, nginx 한도 밖
+3. 웹이 검색 화면이 열려 있는 동안 주기적으로 묻고, 503을 받으면 바로 빨강으로 바꿈 [안]
+
+### B. 크롬 확장으로 사용자 브라우저에서 조회
+
+4. 크롬 확장(Manifest V3) 설치 시 도서관 사이트 요청을 사용자의 브라우저가 보냄 [안]. 방식은 결정 페이지 #5
+5. 확장이 있으면 우리 서버의 조회 슬롯을 쓰지 않음(묶음 계획·판정은 서버가 그대로) [안]
+6. 확장 배포는 Chrome Web Store [안] (등록비 1회, 심사 며칠~몇 주)
+
+## 제외 (backlog.md로) [안]
+
+- 파이어폭스·엣지·사파리 확장, 폰 브라우저(크롬 폰은 확장 미지원)
+- 조회 대기열(줄 세우기) 도입 — 지금은 거절(503)만 있고 사용자가 묻지 않음
+- 도서관별 혼잡(호스트 1건·1초 제한) 표시 — 신호는 전체 슬롯만
+- 조회 서버(fetch-service) 쉼 상태를 신호에 합치기 — 사이클 17이 조회 서버를 꺼 두고 배포하므로 뒤로
+
+## 완료 기준 (사용자가 화면에서 확인할 수 있는 것) [안]
+
+- 검색 화면 머리말에 초록/빨강 표시가 있고, 동시 검색을 한도까지 띄우면 빨강으로 바뀌며, 끝나면 초록으로 돌아온다
+- 빨강일 때 검색을 시작하면 지금처럼 503 안내가 나오고, 표시도 빨강이다
+- 확장을 설치한 크롬에서 검색하면 도서관 요청이 사용자 브라우저에서 나가고(확장의 네트워크 탭에서 확인), 우리 서버 로그에 그 사용자의 도서관 요청이 없다
+- 확장이 없는 브라우저(폰 포함)는 지금처럼 동작한다
+
+## 먼저 조사할 것 [확인 필요]
+
+| 항목 | 확인 방법 |
+|---|---|
+| 확장 service worker에서 `http://` 도서관 사이트를 GET 할 수 있는지(mixed content 여부), 중간 인증서 빠진 사이트가 열리는지 | 프로토타입 (확장 하나 만들어 사이트 3곳 호출) |
+| 확장이 받은 원본 바이트(EUC-KR 포함)를 우리 서버에 올려 지금 adapter로 해석되는지 | 프로토타입 |
+| `host_permissions`를 `http://*/*`·`https://*/*`로 둘 때 설치 경고 문구와 심사 영향 | 공식 문서 확인 (권한 경고 목록) |
+| Chrome Web Store 등록비 금액, 심사 기간 | 공식 문서 확인 (등록 페이지는 "1회 등록비"만 적고 금액 없음, 2026-10-15) |
+| 사용자의 IP로 도서관을 부를 때도 호스트 1건·1초 간격을 확장 안에서 지킬지 | 사용자에게 질문 (결정 페이지 #7) |
+| 신호 임계값(슬롯 20 중 몇 개부터 빨강) | 사용자에게 질문 (결정 페이지 #2) |
+
+## 외부 확인 (2026-10-15)
+
+- 확장 안(service worker·확장 페이지)은 `host_permissions`가 있으면 다른 origin에 요청 가능. content script는 host_permissions가 있어도 CORS 적용 — https://developer.chrome.com/docs/extensions/develop/concepts/network-requests (확인 2026-10-15)
+- 일반 웹 페이지 → 확장 메시지: 확장 manifest `externally_connectable`에 사이트를 적고 페이지가 `runtime.sendMessage(확장 ID, …)`; 확장 → 페이지 방향은 불가 — https://developer.chrome.com/docs/extensions/develop/concepts/messaging (확인 2026-10-15)
+- `host_permissions` 패턴을 더하거나 바꾸면 설치·갱신 경고 — https://developer.chrome.com/docs/extensions/develop/concepts/declare-permissions (확인 2026-10-15)
+- 웹스토어 심사 "대부분 며칠, 길면 몇 주", 넓은 host 권한은 심사가 길어질 수 있음 — https://developer.chrome.com/docs/webstore/review-process (확인 2026-10-15); 등록은 1회 등록비 — https://developer.chrome.com/docs/webstore/register (확인 2026-10-15, 금액은 페이지에 없음)
+
+## 슬라이스 선택 기록
+
+- 사용자가 직접 고름 (2026-10-15, 위 발언). ICE 표 없음
+- 두 부분(신호 / 확장)을 한 사이클로 할지는 결정 페이지 #1
+
+## 영향 받을 모듈 [안]
+
+- `availability`: 상태 API, 확장 모드(받은 바이트를 해석하는 입구, 슬롯을 쓰지 않는 길)
+- 웹(`web/`): 머리말 신호, 확장 감지와 메시지 주고받기
+- 새 폴더 `extension/` [안] (크롬 확장, dev 저장소 안)
