@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 19 명세 결정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+</style>
+</head>
+<body>
+<main class="doc">
+
+<p class="lead">사이클 19 명세를 썼습니다.<br>정할 것 10개를 골라 주세요.</p>
+<p class="sub">고칠 것 다섯 가지와 그 방법은 이미 정했습니다. 명세를 쓰면서 새로 생긴 세부 규칙과, 공개일(2026-10-18) 일정 질문만 모았습니다. 판정은 "설계 진행 가능"입니다.</p>
+
+<div class="card">
+<h2><span class="num">1</span>공개일 10월 18일 전에<br>사이클 19를 끝낼지</h2>
+<p class="concl">사이클 17 문서에 공개일(모르는 사람에게 여는 날)이 <b>2026-10-18</b>로 정해져 있습니다(사용자 결정 2026-10-14). 그리고 실제 공개는 19가 반영된 뒤라고 정했습니다. 오늘은 10월 15일이라 남은 날이 사흘입니다.</p>
+<div class="fig"><svg viewBox="0 0 640 120" role="img" aria-label="남은 일정">
+<rect class="bxa" x="10" y="30" width="140" height="60" rx="10"/><text class="lb" x="80" y="56" text-anchor="middle">10/15 오늘</text><text class="sm" x="80" y="76" text-anchor="middle">화면·설계·인계서</text>
+<path class="ar" d="M152 60 H172"/><path class="ah" d="M170 53 L182 60 L170 67Z"/>
+<rect class="bx" x="186" y="30" width="140" height="60" rx="10"/><text class="lb" x="256" y="56" text-anchor="middle">10/16~17</text><text class="sm" x="256" y="76" text-anchor="middle">dev 개발·시험</text>
+<path class="ar" d="M328 60 H348"/><path class="ah" d="M346 53 L358 60 L346 67Z"/>
+<rect class="bx" x="362" y="30" width="140" height="60" rx="10"/><text class="lb" x="432" y="56" text-anchor="middle">10/17</text><text class="sm" x="432" y="76" text-anchor="middle">다시 가져오기·반영</text>
+<path class="ar" d="M504 60 H524"/><path class="ah" d="M522 53 L534 60 L522 67Z"/>
+<rect class="bxok" x="538" y="30" width="92" height="60" rx="10"/><text class="lb" x="584" y="56" text-anchor="middle">10/18</text><text class="sm" x="584" y="76" text-anchor="middle">공개</text>
+</svg></div>
+<p class="cap">가져오기와 내보내기는 약 22분, 운영 반영은 약 5분이 걸립니다(사이클 11 측정). 개발이 하루 안에 끝나야 맞출 수 있습니다.</p>
+<div class="prop">10월 18일 전에 끝내도록 서두릅니다. 화면·설계·인계서는 오늘 끝내고, dev가 늦어지면 공개일을 19 반영 다음 날로 미룹니다. [안]</div>
+<p class="alt">다른 선택: ① 처음부터 공개일을 미룸(여유는 있지만 공지·약관 시행일 등 17이 맞춘 날짜를 모두 바꿔야 함) ② 10월 18일에 그대로 공개하고 19는 공개 뒤 반영(앞서 정한 "공개는 19 반영 뒤"를 바꾸는 것, 공개 첫날 같은 책이 여러 줄로 보임).</p>
+</div>
+
+<div class="card">
+<h2><span class="num">2</span>짝이 맞지 않는 꺾쇠도 뗄지</h2>
+<p class="concl">「＜율곡 이이,신사임당 저/이근오 편」처럼 여는 꺾쇠만 있는 표기가 있습니다. 꺾쇠를 짝으로 찾지 않고, 저자 칸의 <code>&lt;</code>·<code>&gt;</code> 글자를 하나씩 모두 빼면 이런 것도 같이 정리됩니다.</p>
+<div class="prop">짝과 상관없이 저자 칸의 꺾쇠 글자를 모두 뺍니다. [안]</div>
+<p class="alt">다른 선택: 짝이 맞는 꺾쇠만 뗌 → 규칙이 복잡해지고 짝 없는 표기는 남음.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">3</span>저자 검색어도 같은 규칙으로 정리할지</h2>
+<p class="concl">책 쪽 이름은 꺾쇠·괄호 표시를 뗀 채로 저장됩니다. 그러면 사용자가 "&lt;김정은&gt;"이나 "KBS 〈슈퍼차이나〉"처럼 기호를 넣어 찾을 때 못 찾을 수 있습니다.</p>
+<div class="prop">저자 검색어에도 같은 규칙을 써서, 기호를 넣어 찾아도 맞게 합니다. [안]</div>
+<p class="alt">다른 선택: 검색어는 그대로 → 기호를 넣어 찾는 경우만 못 찾음(드묾).</p>
+</div>
+
+<div class="card">
+<h2><span class="num">4</span>책 화면 저자 칸에서도 기호를 뗄지</h2>
+<p class="concl">책 화면의 저자 칸은 같은 책 줄들 가운데 가장 많이 쓰인 원문 표기를 그대로 보여 줍니다. 그 표기가 「&lt;김정은&gt;,&lt;김지혜&gt; 저」면 기호가 그대로 보입니다. 범위에서 "저자 칸에는 꺾쇠를 뗀 이름"으로 정했으니, 보여 줄 때 기호를 떼야 합니다.</p>
+<div class="prop">대표 표기는 지금처럼 고르고, 보여 줄 때 꺾쇠와 〈 〉 「 」 《 》 표시를 뗍니다. 예: 「김정은,김지혜 저」. [안]</div>
+<p class="alt">다른 선택: 정리한 사람 이름들로 저자 칸을 새로 만듦(「김정은, 김지혜」) → 역할 낱말(저·역)이 빠지고 화면 모양이 바뀜.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">5</span>목록에 없는 "○○판"도 판으로 보고 남길지</h2>
+<p class="concl">제목 앞 괄호에서 남길 낱말 목록은 정했습니다. 그런데 「(개정3판)」, 「(한글판)」, 「(3rd EDITION)」처럼 목록에 없는 판 표시도 있을 수 있습니다.</p>
+<div class="prop">괄호 안 글자가 "…판"으로 끝나거나 "EDITION"이 들어 있으면 목록에 없어도 판으로 보아 남깁니다. [안]</div>
+<p class="alt">다른 선택: 목록 낱말만 남김 → 「(개정3판) X」와 「X」가 합쳐질 수 있음.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">6</span>상품 코드로 모을 때<br>제목도 같아야 하게 할지</h2>
+<p class="concl">공급사 상품 코드가 같으면 저자를 보지 않고 모으기로 했습니다. 그런데 교보·YES24·북큐브의 번호가 서로 다른 체계라 우연히 같은 번호가 다른 책일 수 있습니다(아직 dev DB로 확인 못 함).</p>
+<div class="prop">코드가 같고 견줄 제목(앞 괄호를 뗀 본제목)과 권 표시도 같을 때만 모읍니다. 「김근아 저자」 줄은 제목이 같아 그대로 모입니다. [안]</div>
+<p class="alt">다른 선택: 코드만 같으면 모음 → 더 많이 모이지만, 번호가 우연히 겹치면 다른 책이 합쳐짐.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">7</span>기호를 떼고 나니 저자 칸이 비면</h2>
+<p class="concl">저자 칸에 「&lt;&gt;」처럼 기호만 있는 줄은 정리하면 빈 칸이 됩니다.</p>
+<div class="prop">저자 없음으로 둡니다(지금 저자 빈 줄과 같게 처리). [안]</div>
+<p class="alt">다른 선택: 원문 기호를 그대로 남김 → 화면에 「&lt;&gt;」가 보임.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">8</span>잘못 합쳐진 책이 나오면 어떻게 할지</h2>
+<p class="concl">dev가 다시 가져오기 전에 미리 돌려 보고, 원인마다(꺾쇠·다른 괄호·붙은 역할·제목 앞 괄호·상품 코드·뒤바뀐 칸) 합쳐진 책 20권씩을 봅니다.</p>
+<div class="prop">잘못 합쳐진 책이 한 권이라도 나오면 dev가 진짜 반영 전에 plan에 알려 규칙을 고칩니다. 0권이면 그대로 반영합니다. [안]</div>
+<p class="alt">다른 선택: 몇 권까지는 받아들임 → 공개일은 지키기 쉽지만 같은 책이 아닌 것이 한 줄로 보일 수 있음.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">9</span>운영 역할 DB 반영 중 검색 실패 기준</h2>
+<p class="concl">사이클 11에서 운영 반영 중에도 검색 실패(서버 오류)가 0번이었습니다.</p>
+<div class="prop">이번에도 반영 중 검색 실패 0번을 완료 기준으로 둡니다. [안]</div>
+<p class="alt">다른 선택: 기준 없이 재기만 함.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">10</span>"캐시 답" 칸 이름</h2>
+<p class="concl">도서관별 하루 응답 표에 더할 칸입니다. 모양과 때는 정했고 이름만 남았습니다.</p>
+<div class="prop">칸 이름은 <code>cached_count</code>로 합니다(옆 칸들이 <code>…_count</code> 꼴). [안]</div>
+<p class="alt">다른 선택: 다른 이름을 "기타"에 적어 주세요.</p>
+</div>
+
+<p class="foot">원본: <code>docs/cycles/19-author-angle-brackets/spec.md</code>, <code>scope.md</code>, 공개일은 <code>docs/cycles/17-first-deploy/research.md</code> 310행. 2026-10-15.</p>
+</main>
+</body>
+</html>
