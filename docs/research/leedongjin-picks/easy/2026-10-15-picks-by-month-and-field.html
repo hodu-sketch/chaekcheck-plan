@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>이동진 추천도서 분류</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.gist.ok{background:var(--ok-bg)}.gist.warn{background:var(--warn-bg)}.gist.no{background:var(--no-bg)}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.tw{overflow-x:auto}
+ul.ic{list-style:none;margin:0;padding:0}
+ul.ic li{display:flex;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
+ul.ic li:first-child{border-top:none}
+ul.ic svg{flex:0 0 28px;width:28px;height:28px;margin-top:4px;stroke:var(--accent);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.s{display:block;color:var(--muted);font-size:17px}
+h4{font-size:19px;margin:18px 0 4px;color:var(--muted)}
+.tag{font-size:15px;font-weight:700;border-radius:6px;padding:1px 7px;white-space:nowrap}
+.t-ok{background:var(--ok-bg);color:var(--ok)}.t-warn{background:var(--warn-bg);color:var(--warn)}.t-no{background:var(--no-bg);color:var(--no)}
+</style>
+</head>
+
+<body>
+<main class="doc">
+<p class="lead">이동진 평론가가 유튜브에서 추천한 책 44권을<br>연·월과 분야로 나눴습니다.</p>
+<p class="sub">「B tv 이동진의 파이아키아」 채널의 이달의 책(2024년 1월~2026년 6월)과 연말 올해의 책(2023~2025)입니다. 분야를 나누는 방법은 제가 정한 제안이니, 보시고 바꾸고 싶은 곳만 알려 주세요. 2026-10-15에 확인했습니다.</p>
+<section class="card"><h2><span class="num">1</span>한눈에</h2>
+<div class="gist">문학 18권, 비문학 26권입니다. 외국 소설과 한국 소설이 가장 많고, 인문·철학이 그다음입니다.</div>
+<figure><svg viewBox="0 0 800 334" role="img" aria-label="분야별 권수"><text x="0" y="30" font-size="18" fill="var(--text)">한국 소설</text><rect x="170" y="12" width="480" height="24" rx="4" fill="var(--accent)"/><text x="660" y="30" font-size="18" fill="var(--text)">8권</text><text x="0" y="66" font-size="18" fill="var(--text)">외국 소설</text><rect x="170" y="48" width="540" height="24" rx="4" fill="var(--accent)"/><text x="720" y="66" font-size="18" fill="var(--text)">9권</text><text x="0" y="102" font-size="18" fill="var(--text)">그래픽노블</text><rect x="170" y="84" width="60" height="24" rx="4" fill="var(--accent)"/><text x="240" y="102" font-size="18" fill="var(--text)">1권</text><text x="0" y="138" font-size="18" fill="var(--text)">에세이</text><rect x="170" y="120" width="240" height="24" rx="4" fill="var(--ok)"/><text x="420" y="138" font-size="18" fill="var(--text)">4권</text><text x="0" y="174" font-size="18" fill="var(--text)">인문·철학</text><rect x="170" y="156" width="420" height="24" rx="4" fill="var(--ok)"/><text x="600" y="174" font-size="18" fill="var(--text)">7권</text><text x="0" y="210" font-size="18" fill="var(--text)">역사</text><rect x="170" y="192" width="240" height="24" rx="4" fill="var(--ok)"/><text x="420" y="210" font-size="18" fill="var(--text)">4권</text><text x="0" y="246" font-size="18" fill="var(--text)">사회·정치</text><rect x="170" y="228" width="240" height="24" rx="4" fill="var(--ok)"/><text x="420" y="246" font-size="18" fill="var(--text)">4권</text><text x="0" y="282" font-size="18" fill="var(--text)">경제·자기계발</text><rect x="170" y="264" width="180" height="24" rx="4" fill="var(--ok)"/><text x="360" y="282" font-size="18" fill="var(--text)">3권</text><text x="0" y="318" font-size="18" fill="var(--text)">과학·의학</text><rect x="170" y="300" width="240" height="24" rx="4" fill="var(--ok)"/><text x="420" y="318" font-size="18" fill="var(--text)">4권</text></svg><figcaption>파란 막대는 문학, 초록 막대는 비문학입니다. 소설이 17권으로 가장 큰 덩어리입니다.</figcaption></figure>
+<table><tr><th>연도</th><th>권수</th><th>무엇</th></tr>
+<tr><td>2023</td><td>7권</td><td>12월 올해의 책만 있습니다. 이달의 책은 2024년 1월에 시작했습니다.</td></tr>
+<tr><td>2024</td><td>16권</td><td>이달의 책 14권과 올해의 책에만 나온 2권입니다.</td></tr>
+<tr><td>2025</td><td>16권</td><td>이달의 책 14권과 올해의 책에만 나온 2권입니다.</td></tr>
+<tr><td>2026</td><td>5권</td><td>1~4월과 6월 이달의 책입니다. 5월과 7~10월은 영상이 없습니다.</td></tr></table></section>
+<section class="card"><h2><span class="num">2</span>어디서 모았나</h2>
+<div class="gist ok">책 이름과 달은 유튜브 영상에서, 저자·출판사·분야는 알라딘에서 가져왔습니다.</div>
+<ul class="ic">
+<li><div><b>유튜브 재생목록 「이달의 책」</b> 영상 29개의 제목, 올린 날, 설명란에 적힌 책 이름을 읽었습니다.<span class="s">youtube.com/playlist?list=PLUpgTv3bu9rGxQBAMVaMvam27P0YbiY29</span></div></li>
+<li><div><b>재생목록 밖 2023년 연말 영상 2개</b> 채널에서 "베스트북", "이달의 책", "최고의 책"으로 검색해 찾았습니다. 2023년 올해의 책 7권이 여기서 나왔습니다.</div></li>
+<li><div><b>알라딘 분류 「이동진 Btv 파이아키아 추천도서」</b> 알라딘이 따로 모아 둔 41권입니다. 저자, 출판사, ISBN, 분야를 여기서 가져왔습니다. 2026년 2월 영상은 설명란에 책 이름이 없어서 이 분류로 「부동산은 어떻게 권력이 되었나」임을 맞췄습니다.<span class="s">aladin.co.kr/shop/wbrowse.aspx?CID=243946</span></div></li>
+<li><div><b>알라딘 검색</b> 분류에 없는 3권을 찾았습니다. 「괴테는 모든 것을 말했다」와 「소란한 속삭임」은 찾았고, 예소연의 「마음 깊은 숨」은 실린 책을 찾지 못했습니다.</div></li>
+</ul><p class="alt">영상의 설명 글과 이동진 평론가의 말은 옮기지 않았습니다. 책 이름, 저자, 출판사, 영상 주소만 적었습니다.</p></section>
+<section class="card"><h2><span class="num">3</span>분야를 나누는 방법</h2>
+<div class="gist warn">먼저 문학과 비문학으로 나누고, 그 안을 알라딘 분류에 맞춰 9개 분야로 나누는 방법을 제안합니다.</div>
+<div class="item"><h3>문학과 비문학으로 먼저 나누고,<br>알라딘 분류로 9개 분야 [안]</h3>
+<p>이동진 평론가도 올해의 책을 문학과 비문학으로 나눕니다. 2024년 연말 영상 제목이 "문학 3권 + 비문학 3권"입니다.</p>
+<p>분야는 알라딘이 책마다 붙인 분류의 첫 경로를 묶었습니다. 예를 들어 알라딘이 "사회과학"에 둔 「컬트」는 사회·정치로 갑니다. 한 책에 분류가 여러 개면 첫 번째를 씁니다.</p>
+<table><tr><th>큰 갈래</th><th>분야</th><th>알라딘 첫 분류</th></tr>
+<tr><td>문학</td><td>한국 소설</td><td>소설 &gt; 한국소설</td></tr>
+<tr><td>문학</td><td>외국 소설</td><td>소설 &gt; 영미·아일랜드·프랑스·일본 소설</td></tr>
+<tr><td>문학</td><td>그래픽노블</td><td>만화 &gt; 그래픽노블</td></tr>
+<tr><td>비문학</td><td>에세이</td><td>에세이</td></tr>
+<tr><td>비문학</td><td>인문·철학</td><td>인문학</td></tr>
+<tr><td>비문학</td><td>역사</td><td>역사</td></tr>
+<tr><td>비문학</td><td>사회·정치</td><td>사회과학</td></tr>
+<tr><td>비문학</td><td>경제·자기계발</td><td>경제경영, 자기계발</td></tr>
+<tr><td>비문학</td><td>과학·의학</td><td>과학</td></tr>
+</table>
+<p class="alt">다른 선택: 알라딘 분류를 그대로 쓰면 이 44권에서도 경로가 20개가 넘어 한 분야에 한두 권씩 흩어집니다. 도서관 청구기호 앞자리인 한국십진분류(KDC)는 책첵의 도서관 자료와 같은 기준이지만, 책마다 국립중앙도서관 서지에서 번호를 찾아야 합니다. 서비스에 넣게 되면 그때 KDC를 다시 볼 만합니다.</p></div>
+<div class="item"><h3>달은 영상 제목·설명란의 달,<br>없으면 올린 달 [안]</h3>
+<p>2025년 5월부터 영상 제목에 달이 빠진 경우가 있습니다. 설명란에 달이 있으면 그 달을, 없으면 영상을 올린 달을 씁니다. 올린 달을 쓴 영상은 2025년 6·7·8·9월, 2026년 1·6월 여섯 개입니다.</p></div>
+</section>
+<section class="card"><h2><span class="num">4</span>연·월별 목록</h2>
+<div class="gist">한 달에 보통 한 권입니다. 2024년 1~3월은 두 권, 2025년 3월은 예소연 작가의 소설 4편입니다.</div>
+<p class="alt">책 이름을 누르면 알라딘, 날짜를 누르면 그 영상으로 갑니다. "올해의 책"은 12월 연말 영상입니다.</p>
+<h4>2023년</h4><div class="tw"><table><tr><th>달</th><th>책</th><th>저자</th><th>분야</th><th>영상</th></tr>
+<tr><td>12월 <span class="tag t-warn">올해의 책</span></td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=352359000">나는 메트로폴리탄 미술관의 경비원입니다</a></td><td>패트릭 브링리<span class="s">웅진지식하우스</span></td><td>에세이</td><td><a href="https://www.youtube.com/watch?v=tCF80BMAGOs">12-22</a></td></tr>
+<tr><td>12월 <span class="tag t-warn">올해의 책</span></td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=320952568">이주하는 인류</a></td><td>샘 밀러<span class="s">미래의창</span></td><td>역사</td><td><a href="https://www.youtube.com/watch?v=tCF80BMAGOs">12-22</a></td></tr>
+<tr><td>12월 <span class="tag t-warn">올해의 책</span></td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=325850674">세상은 이야기로 만들어졌다</a></td><td>자미라 엘 우아실·프리데만 카릭<span class="s">원더박스</span></td><td>인문·철학</td><td><a href="https://www.youtube.com/watch?v=tCF80BMAGOs">12-22</a></td></tr>
+<tr><td>12월 <span class="tag t-warn">올해의 책</span></td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=311803088">트러스트</a></td><td>에르난 디아스<span class="s">문학동네</span></td><td>외국 소설</td><td><a href="https://www.youtube.com/watch?v=ZZuD0EDOfwY">12-29</a></td></tr>
+<tr><td>12월 <span class="tag t-warn">올해의 책</span></td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=315552626">맡겨진 소녀</a></td><td>클레어 키건<span class="s">다산책방</span></td><td>외국 소설</td><td><a href="https://www.youtube.com/watch?v=ZZuD0EDOfwY">12-29</a></td></tr>
+<tr><td>12월 <span class="tag t-warn">올해의 책</span></td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=321294005">아주 희미한 빛으로도</a></td><td>최은영<span class="s">문학동네</span></td><td>한국 소설</td><td><a href="https://www.youtube.com/watch?v=ZZuD0EDOfwY">12-29</a></td></tr>
+<tr><td>12월 <span class="tag t-warn">올해의 책</span></td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=320204475">부처스 크로싱</a></td><td>존 윌리엄스<span class="s">구픽</span></td><td>외국 소설</td><td><a href="https://www.youtube.com/watch?v=ZZuD0EDOfwY">12-29</a></td></tr>
+</table></div>
+<h4>2024년</h4><div class="tw"><table><tr><th>달</th><th>책</th><th>저자</th><th>분야</th><th>영상</th></tr>
+<tr><td>1월</td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=330655969">우리가 작별 인사를 할 때마다</a></td><td>마거릿 렌클<span class="s">을유문화사</span></td><td>에세이</td><td><a href="https://www.youtube.com/watch?v=l3S9DBuy3HI">01-24</a></td></tr>
+<tr><td>1월</td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=328851865">그래서 우리는 음악을 듣는다</a></td><td>히사이시 조·요로 다케시<span class="s">현익출판</span></td><td>에세이</td><td><a href="https://www.youtube.com/watch?v=l3S9DBuy3HI">01-24</a></td></tr>
+<tr><td>2월</td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=331480497">철학은 날씨를 바꾼다</a><span class="s">2024 올해의 책에도 듦</span></td><td>서동욱<span class="s">김영사</span></td><td>인문·철학</td><td><a href="https://www.youtube.com/watch?v=yEFHj9BOaAw">02-23</a></td></tr>
+<tr><td>2월</td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=333457924">컬처, 문화로 쓴 세계사</a></td><td>마틴 푸크너<span class="s">어크로스</span></td><td>역사</td><td><a href="https://www.youtube.com/watch?v=yEFHj9BOaAw">02-23</a></td></tr>
+<tr><td>3월</td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=331619107">흐르는 강물처럼</a></td><td>셸리 리드<span class="s">다산책방</span></td><td>외국 소설</td><td><a href="https://www.youtube.com/watch?v=g0E-ss5dyak">03-29</a></td></tr>
+<tr><td>3월</td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=331963818">센세이셔널</a></td><td>애슐리 워드<span class="s">상상스퀘어</span></td><td>과학·의학</td><td><a href="https://www.youtube.com/watch?v=g0E-ss5dyak">03-29</a></td></tr>
+<tr><td>4월</td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=337050090">컬트</a></td><td>맥스 커틀러·케빈 콘리<span class="s">을유문화사</span></td><td>사회·정치</td><td><a href="https://www.youtube.com/watch?v=iMSLz5RJlYQ">04-26</a></td></tr>
+<tr><td>5월</td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=338990710">두 사람의 인터내셔널</a><span class="s">2024 올해의 책에도 듦</span></td><td>김기태<span class="s">문학동네</span></td><td>한국 소설</td><td><a href="https://www.youtube.com/watch?v=STqsSFsU3AE">05-29</a></td></tr>
+<tr><td>6월</td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=340357889">세계를 움직인 열 가지 프레임</a></td><td>수바드라 다스<span class="s">북하우스</span></td><td>역사</td><td><a href="https://www.youtube.com/watch?v=ME33bx1S5F0">06-26</a></td></tr>
+<tr><td>7월</td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=339233701">소비 본능</a></td><td>개드 사드<span class="s">데이원</span></td><td>경제·자기계발</td><td><a href="https://www.youtube.com/watch?v=ssTBdxzdi58">07-19</a></td></tr>
+<tr><td>8월</td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=343364894">지도로 보아야 보인다</a></td><td>에밀리 오브리 외<span class="s">사이</span></td><td>사회·정치</td><td><a href="https://www.youtube.com/watch?v=HmmlllU86a0">08-30</a></td></tr>
+<tr><td>9월</td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=346116543">예술 도둑</a><span class="s">2024 올해의 책에도 듦</span></td><td>마이클 핀클<span class="s">생각의힘</span></td><td>에세이</td><td><a href="https://www.youtube.com/watch?v=etq7FUdn7Cs">09-27</a></td></tr>
+<tr><td>10월</td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=345584561">내가 알던 사람</a></td><td>샌디프 자우하르<span class="s">글항아리</span></td><td>과학·의학</td><td><a href="https://www.youtube.com/watch?v=wAmTzFH60nU">10-31</a></td></tr>
+<tr><td>11월</td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=347122460">대온실 수리 보고서</a><span class="s">2024 올해의 책에도 듦</span></td><td>김금희<span class="s">창비</span></td><td>한국 소설</td><td><a href="https://www.youtube.com/watch?v=j7Nenw7asS8">11-29</a></td></tr>
+<tr><td>12월 <span class="tag t-warn">올해의 책</span></td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=346254386">우연은 비켜 가지 않는다</a></td><td>줄리언 반스<span class="s">다산책방</span></td><td>외국 소설</td><td><a href="https://www.youtube.com/watch?v=qSGsZPWBEY0">12-20</a></td></tr>
+<tr><td>12월 <span class="tag t-warn">올해의 책</span></td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=343339827">페이크와 팩트</a></td><td>데이비드 로버트 그라임스<span class="s">디플롯</span></td><td>사회·정치</td><td><a href="https://www.youtube.com/watch?v=qSGsZPWBEY0">12-20</a></td></tr>
+<tr><td>12월 <span class="tag t-warn">올해의 책</span></td><td colspan="3">이달의 책에서 다시 고른 4권: 철학은 날씨를 바꾼다, 두 사람의 인터내셔널, 대온실 수리 보고서, 예술 도둑</td><td><a href="https://www.youtube.com/watch?v=qSGsZPWBEY0">12-20</a></td></tr>
+</table></div>
+<h4>2025년</h4><div class="tw"><table><tr><th>달</th><th>책</th><th>저자</th><th>분야</th><th>영상</th></tr>
+<tr><td>1월</td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=354087370">악마와 함께 춤을</a></td><td>크리스타 K. 토마슨<span class="s">흐름출판</span></td><td>인문·철학</td><td><a href="https://www.youtube.com/watch?v=btnslifL1Pw">01-31</a></td></tr>
+<tr><td>2월</td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=353317038">이것이 새입니까?</a></td><td>아르노 네바슈<span class="s">바람북스</span></td><td>그래픽노블</td><td><a href="https://www.youtube.com/watch?v=NvvTmXFG3hM">02-21</a></td></tr>
+<tr><td>3월</td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=358328336">그 개와 혁명 (2025 이상문학상 작품집)</a><span class="s">예소연 소설 4편 중 하나</span></td><td>예소연 외<span class="s">다산책방</span></td><td>한국 소설</td><td><a href="https://www.youtube.com/watch?v=X69cIEmNXDM">03-26</a></td></tr>
+<tr><td>3월</td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=357133154">영원에 빚을 져서</a><span class="s">예소연 소설 4편 중 하나</span></td><td>예소연<span class="s">현대문학</span></td><td>한국 소설</td><td><a href="https://www.youtube.com/watch?v=X69cIEmNXDM">03-26</a></td></tr>
+<tr><td>3월</td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=397084642">소란한 속삭임</a><span class="s">예소연 소설 4편 중 하나. 알라딘 상품은 2025-06 리커버판</span></td><td>예소연<span class="s">위즈덤하우스</span></td><td>한국 소설</td><td><a href="https://www.youtube.com/watch?v=X69cIEmNXDM">03-26</a></td></tr>
+<tr><td>3월</td><td>마음 깊은 숨<span class="s">예소연 소설 4편 중 하나. 실린 책을 알라딘에서 못 찾음</span></td><td>예소연<span class="s">확인 못 함</span></td><td>한국 소설</td><td><a href="https://www.youtube.com/watch?v=X69cIEmNXDM">03-26</a></td></tr>
+<tr><td>4월</td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=358401966">페이머스: 왜 그들만 유명할까</a></td><td>캐스 선스타인<span class="s">한국경제신문</span></td><td>경제·자기계발</td><td><a href="https://www.youtube.com/watch?v=PkWZPbB5dis">04-23</a></td></tr>
+<tr><td>5월</td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=360727651">그녀를 지키다</a><span class="s">2025 올해의 책에도 듦</span></td><td>장바티스트 앙드레아<span class="s">열린책들</span></td><td>외국 소설</td><td><a href="https://www.youtube.com/watch?v=LyxjnkXw-F4">05-23</a></td></tr>
+<tr><td>6월</td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=364235991">경험의 멸종</a></td><td>크리스틴 로젠<span class="s">어크로스</span></td><td>인문·철학</td><td><a href="https://www.youtube.com/watch?v=BW8_53HmVKY">06-25</a></td></tr>
+<tr><td>7월</td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=366122829">편안함의 습격</a><span class="s">2025 올해의 책에도 듦</span></td><td>마이클 이스터<span class="s">수오서재</span></td><td>인문·철학</td><td><a href="https://www.youtube.com/watch?v=BSNWzfB0-QY">07-25</a></td></tr>
+<tr><td>8월</td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=368012771">외계인 자서전</a></td><td>마리-헐린 버티노<span class="s">은행나무</span></td><td>외국 소설</td><td><a href="https://www.youtube.com/watch?v=YXHXTui-L4o">08-27</a></td></tr>
+<tr><td>9월</td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=368677022">왜의 쓸모</a></td><td>찰스 틸리<span class="s">유유</span></td><td>인문·철학</td><td><a href="https://www.youtube.com/watch?v=CnV5idNaufQ">09-30</a></td></tr>
+<tr><td>10월</td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=372768680">역사는 어떻게 진보하고 왜 퇴보하는가</a><span class="s">2025 올해의 책에도 듦</span></td><td>파리드 자카리아<span class="s">부키</span></td><td>역사</td><td><a href="https://www.youtube.com/watch?v=IZnGeDlw6Vg">10-29</a></td></tr>
+<tr><td>11월</td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=399902905">괴테는 모든 것을 말했다</a><span class="s">2025 올해의 책에도 듦. 알라딘 상품은 여름 에디션</span></td><td>스즈키 유이<span class="s">리프</span></td><td>외국 소설</td><td><a href="https://www.youtube.com/watch?v=PYpp4XmOX1c">11-19</a></td></tr>
+<tr><td>12월 <span class="tag t-warn">올해의 책</span></td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=365665217">안녕이라 그랬어</a></td><td>김애란<span class="s">문학동네</span></td><td>한국 소설</td><td><a href="https://www.youtube.com/watch?v=6fhNgxzKaLE">12-24</a></td></tr>
+<tr><td>12월 <span class="tag t-warn">올해의 책</span></td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=361600601">한국이란 무엇인가</a></td><td>김영민<span class="s">어크로스</span></td><td>인문·철학</td><td><a href="https://www.youtube.com/watch?v=6fhNgxzKaLE">12-24</a></td></tr>
+<tr><td>12월 <span class="tag t-warn">올해의 책</span></td><td colspan="3">이달의 책에서 다시 고른 4권: 그녀를 지키다, 괴테는 모든 것을 말했다, 편안함의 습격, 역사는 어떻게 진보하고 왜 퇴보하는가</td><td><a href="https://www.youtube.com/watch?v=6fhNgxzKaLE">12-24</a></td></tr>
+</table></div>
+<h4>2026년</h4><div class="tw"><table><tr><th>달</th><th>책</th><th>저자</th><th>분야</th><th>영상</th></tr>
+<tr><td>1월</td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=372464482">인간 제국 쇠망사</a></td><td>헨리 지<span class="s">까치</span></td><td>과학·의학</td><td><a href="https://www.youtube.com/watch?v=pkAb6fhKifo">01-28</a></td></tr>
+<tr><td>2월</td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=383905344">부동산은 어떻게 권력이 되었나</a><span class="s">영상에 책 이름 없음, 알라딘 분류로 맞춤</span></td><td>마이크 버드<span class="s">알에이치코리아</span></td><td>경제·자기계발</td><td><a href="https://www.youtube.com/watch?v=UvJAIskB0qg">02-25</a></td></tr>
+<tr><td>3월</td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=385047811">인터메초</a></td><td>샐리 루니<span class="s">은행나무</span></td><td>외국 소설</td><td><a href="https://www.youtube.com/watch?v=UxW-Sab0uDo">03-31</a></td></tr>
+<tr><td>4월</td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=388889017">가족이라는 사치</a></td><td>진미정<span class="s">김영사</span></td><td>사회·정치</td><td><a href="https://www.youtube.com/watch?v=p0RSM2ZDXos">04-30</a></td></tr>
+<tr><td>6월</td><td><a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=393310095">히스토리아 비테이</a><span class="s">영상 제목에 달 없음, 올린 달</span></td><td>최재천<span class="s">지식서재</span></td><td>과학·의학</td><td><a href="https://www.youtube.com/watch?v=lMx0zEd1qtY">06-24</a></td></tr>
+</table></div><p class="alt">2026년 5월, 7월, 8월, 9월, 10월은 이달의 책 영상이 없습니다.</p></section>
+<section class="card"><h2><span class="num">5</span>분야별 목록</h2>
+<div class="gist">같은 책을 분야로 다시 모았습니다. 괄호는 추천한 연·월입니다.</div>
+<h4>문학</h4><div class="tw"><table><tr><th>분야</th><th>권수</th><th>책</th></tr>
+<tr><td>한국 소설</td><td>8권</td><td>아주 희미한 빛으로도 (23.12), 두 사람의 인터내셔널 (24.05), 대온실 수리 보고서 (24.11), 그 개와 혁명 (2025 이상문학상 작품집) (25.03), 영원에 빚을 져서 (25.03), 소란한 속삭임 (25.03), 마음 깊은 숨 (25.03), 안녕이라 그랬어 (25.12)</td></tr>
+<tr><td>외국 소설</td><td>9권</td><td>트러스트 (23.12), 맡겨진 소녀 (23.12), 부처스 크로싱 (23.12), 흐르는 강물처럼 (24.03), 우연은 비켜 가지 않는다 (24.12), 그녀를 지키다 (25.05), 외계인 자서전 (25.08), 괴테는 모든 것을 말했다 (25.11), 인터메초 (26.03)</td></tr>
+<tr><td>그래픽노블</td><td>1권</td><td>이것이 새입니까? (25.02)</td></tr>
+</table></div>
+<h4>비문학</h4><div class="tw"><table><tr><th>분야</th><th>권수</th><th>책</th></tr>
+<tr><td>에세이</td><td>4권</td><td>나는 메트로폴리탄 미술관의 경비원입니다 (23.12), 우리가 작별 인사를 할 때마다 (24.01), 그래서 우리는 음악을 듣는다 (24.01), 예술 도둑 (24.09)</td></tr>
+<tr><td>인문·철학</td><td>7권</td><td>세상은 이야기로 만들어졌다 (23.12), 철학은 날씨를 바꾼다 (24.02), 악마와 함께 춤을 (25.01), 경험의 멸종 (25.06), 편안함의 습격 (25.07), 왜의 쓸모 (25.09), 한국이란 무엇인가 (25.12)</td></tr>
+<tr><td>역사</td><td>4권</td><td>이주하는 인류 (23.12), 컬처, 문화로 쓴 세계사 (24.02), 세계를 움직인 열 가지 프레임 (24.06), 역사는 어떻게 진보하고 왜 퇴보하는가 (25.10)</td></tr>
+<tr><td>사회·정치</td><td>4권</td><td>컬트 (24.04), 지도로 보아야 보인다 (24.08), 페이크와 팩트 (24.12), 가족이라는 사치 (26.04)</td></tr>
+<tr><td>경제·자기계발</td><td>3권</td><td>소비 본능 (24.07), 페이머스: 왜 그들만 유명할까 (25.04), 부동산은 어떻게 권력이 되었나 (26.02)</td></tr>
+<tr><td>과학·의학</td><td>4권</td><td>센세이셔널 (24.03), 내가 알던 사람 (24.10), 인간 제국 쇠망사 (26.01), 히스토리아 비테이 (26.06)</td></tr>
+</table></div>
+</section>
+<section class="card"><h2><span class="num">6</span>빠진 달과 확인 못 한 것</h2>
+<div class="gist warn">2026년 5월과 7월 이후는 이달의 책 영상이 없고, 책 한 권은 실린 책을 찾지 못했습니다.</div>
+<div class="tw"><table><tr><th>무엇</th><th>지금 상태</th><th>확인할 방법</th></tr>
+<tr><td>2026년 5월, 7~10월 이달의 책</td><td>재생목록과 채널 검색에 없습니다. 코너가 멈췄는지 이름이 바뀌었는지는 확인 못 함</td><td>채널 공지 확인, 다음 달 재생목록 다시 보기</td></tr>
+<tr><td>2026년 5월 8일 영상 「누군가 전쟁의 이유를 묻거든 석유를 알게 하라」</td><td>책을 다루는 영상이지만 "베스트북" 표시가 없어 목록에 넣지 않았습니다 [안]</td><td>넣고 싶으시면 말씀해 주세요</td></tr>
+<tr><td>예소연 「마음 깊은 숨」</td><td>2025년 3월 영상의 4편 중 하나입니다. 실린 책과 ISBN은 확인 못 함</td><td>영상 해당 부분 보기, 국립중앙도서관 검색</td></tr>
+<tr><td>「괴테는 모든 것을 말했다」, 「소란한 속삭임」의 첫 판</td><td>알라딘에 보이는 것은 각각 여름 에디션, 2025년 6월 리커버판입니다</td><td>첫 판 ISBN을 따로 검색</td></tr></table></div></section>
+<section class="card"><h2><span class="num">7</span>책첵에 넣을 때</h2>
+<div class="gist ok">앞서 정하신 대로, 책 이름·저자와 영상 링크만 보여 주고 관계없음 한 줄을 둡니다.</div>
+<ul class="ic"><li><div>추천 글이나 영상 속 말은 옮기지 않습니다.</div></li><li><div>"이동진 평론가가 「파이아키아」 영상에서 추천 (2025년 9월)"처럼 사실로 적습니다.</div></li><li><div>"책첵은 이동진 평론가·파이아키아와 관계가 없어요" 한 줄을 둡니다.</div></li><li><div>공식 API가 없어서 목록은 이번처럼 손으로 모아야 합니다. 알라딘 분류 페이지를 자동으로 가져오는 것은 알라딘 이용약관을 보기 전에는 하지 않습니다 [안].</div></li></ul></section>
+<p class="foot">원본: docs/research/leedongjin-picks/picks.md (2026-10-15). 근거: 유튜브 「B tv 이동진의 파이아키아」 재생목록·영상, 알라딘 분류 CID=243946, 2026-10-15 확인.</p>
+</main></body></html>
