@@ -4,6 +4,22 @@
 - spec의 [확정]은 다시 열지 않음. 새로 정하는 것은 모두 [안]이며 이름은 dev가 바꿔도 됨
 - 결정 페이지: [easy/2026-10-15-design-decisions.html](easy/2026-10-15-design-decisions.html)
 
+## 결정 결과 (2026-10-15, [설계 결정](easy/2026-10-15-design-decisions.html))
+
+| # | 결정 | 결과 |
+|---|---|---|
+| 1 | 공급사 코드 잇기를 ② 단계에 함께 (A안), ISBN 둘 이상 묶음 수를 세어 0이 아니면 plan에 물음 | [확정] (사용자 승인) |
+| 2 | 목록에 없는 공급사 이름은 다듬은 이름 그대로 한 묶음 | [확정] (사용자 승인) |
+| 3 | 세 도서관 뒤바뀜은 줄을 읽을 때 바꿈 (2-1 A안) | [확정] (사용자 승인) |
+| 4 | 규칙 파일 두 개 + `rules-dir` 설정 + `ImportRules` (2-2) | [확정] (사용자 승인) |
+| 5 | 잊음 막는 장치 (`swap_before` 뒤 사본이면 멈춤) — 덧붙임: 멈췄을 때 그냥 줄을 지우지 말고 **그 새 사본에서 세 도서관이 아직 뒤바뀌어 있는지 다시 검증**(research.md 실험 (d) 방법: 이름이 다른 도서관에서 저자로 쓰이는 비율과 출판사로 쓰이는 비율)한 뒤, 바르게 들어왔으면 줄을 지우고 아직 뒤바뀌었으면 수집기를 다시 봄 | [확정] (사용자: "잊지 않게 막되 다음에도 이 규칙이 맞는가 검증은 해야 해 지금이 뜻하는 데이터 가공 방향으로", 2026-10-15) |
+| 6 | `Contributors.stripMarks`·`displayText`를 `catalog.normalize`에 (3 A안) | [확정] (사용자 승인) |
+| 7 | 남길 낱말 목록을 코드 상수로 | 질문 답함, 기다림 |
+| 8 | `ResponseResult.CACHED` (5-1 A안) | [확정] (사용자 승인) |
+| 9 | 새 변경 파일 `usagelog/002-library-response-cached-count.yaml` | [확정] (사용자 승인) |
+| 10 | 수집기 상수 `PUBLISHER_FIRST_PORTAL_HOSTS` — 덧붙임: **수집 문서에 적어 다음 수집 때 이 규칙이 아직 맞는지(포털 칸 순서) 확인**하게 함: dev `docs/maintenance/2-crawl.md`·`platforms.md`의 통합 포털 절과 수집 전 점검 목록, plan `docs/research/ebook-catalog/platforms.md` | [확정] (사용자: "이거 md에서 기록해놔서 다음에 수집할 때 고려가 되어야하는지 잘 체크하게 해줘", 2026-10-15) |
+| 11 | 반영 직후 짧은 틈 받아들임 | 질문 답함, 기다림 |
+
 ## 현재 상태 (요약)
 
 - 모듈 의존은 바뀌지 않음: `collection → catalog, catalog :: normalize, library`, `availability → usagelog`

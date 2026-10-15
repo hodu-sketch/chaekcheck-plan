@@ -46,3 +46,8 @@
 - 사이클 18 C 운영 반영은 backlog로 (사용자 지시). 19의 운영 반영(첫 배포 전)과 함께 끝날 수 있음
 - **끝남 (2026-10-15, dev 18 알림)**: 원래 DB(5432) 가져오기 기록 11번 SUCCEEDED(2026-10-12 사본, main `a0e438a` 판). 2624 241권 들어감, 켜진 0권 도서관 0곳, `detail_url_not_http` 42. **19 dev는 이 DB와 dev main `0a75f7a`(GitHub에도 올림) 위에서 시작**. 19 비교 기준 = 이 기록 11번 결과. 사이클 18 C(운영 반영)는 backlog에 있음
 
+## 설계 결정에서 온 것 (2026-10-15)
+
+- dev 문서에 더할 것 (설계 결정 #10, 사용자 요청): `docs/maintenance/2-crawl.md`·`docs/maintenance/platforms.md` 통합 포털 절에 "목록 `div.info` 칸 순서가 사이트마다 다름, 출판사가 먼저인 포털 = 경기도교육청·대구·전북교육청(`PUBLISHER_FIRST_PORTAL_HOSTS`)"과, **수집 전 점검 목록에 "포털 새 책 목록 한 쪽을 열어 칸 순서가 상수와 맞는지 확인"** 한 줄
+- 규칙 줄 지우기 전 검증 (설계 결정 #5, 사용자 요청): `swap_before` 뒤 사본에서 가져오기가 멈추면, 그 사본으로 세 도서관의 저자·출판사 비율 검사(plan `research.md` 실험 (d))를 다시 돌려 바르게 들어왔을 때만 `author_publisher_swapped.tsv` 줄을 지움. 아직 뒤바뀌었으면 수집기·사이트를 다시 봄. 이 절차를 dev `docs/maintenance/3-import.md`에 적음
+
