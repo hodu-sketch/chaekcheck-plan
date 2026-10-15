@@ -47,7 +47,7 @@ svg .ah{fill:var(--accent)}
 <main class="doc">
 
 <p class="lead">설계 대안이 나왔습니다.<br>정할 것 12개를 골라 주세요.</p>
-<p class="concl">답 반영 (2026-10-15): #1·2·3·4·7·8 승인(#3에 "조작되지 않도록 보안에 신경써줘" 조건을 적었습니다). #5는 그림과 함께 다시 설명했고, #6은 질문("3분 안이면 캐시로 하니까 의미 없지 않나")에 답하고 선택지를 다시 적었습니다. 남은 것: <b>#5, #6, #9~#12</b>.</p>
+<p class="concl">답 반영 (2026-10-15): #1·2·3·4·7·8 승인(#3에 "조작되지 않도록 보안에 신경써줘" 조건을 적었습니다). #5는 그림과 함께 다시 설명했고, #6은 질문("3분 안이면 캐시로 하니까 의미 없지 않나")에 답하고 선택지를 다시 적었습니다. #9·10·11 승인. #12 질문("무엇을 어디에 올리는 경로인지")은 12번 아래에 그림과 함께 답했습니다. 남은 것: <b>#5, #6, #12</b>.</p>
 <p class="sub">architect가 dev 코드와 사이클 17 설계를 읽고 낸 대안입니다. 명세·화면 흐름은 그대로이고, "어떻게 만들지"만 정합니다. 그림 네 장(모듈 구성, 상태 묻기 순서, 확장 모드 순서, 개념 모델)은 대화에 보낸 원본 파일에 렌더링해 두었습니다. 원문은 `architect-proposal.md`.</p>
 
 <div class="card">
@@ -224,6 +224,33 @@ svg .ah{fill:var(--accent)}
 <div class="card item">
 <h2><span class="num">12</span>올리는 경로의 nginx 한도:<br>본문 4MB, 별도 구역 20r/s</h2>
 <p class="concl">[안] 바이트를 올리는 경로(<code>/api/v1/lookup-plans/</code>)에 <code>client_max_body_size 4m</code>(기본 1m)과 JSON 모양의 413 응답을 두고, 요청 수 한도는 일반 `/api/` 구역(사이클 17: 초당 5번, 몰아서 30번)과 따로 <b>초당 20번, 몰아서 60번</b>으로 둡니다. 쪽마다 한 번 올리면 초당 약 5번이라 일반 구역에 딱 걸칩니다. 사이클 17의 운영 nginx 파일과 맞춰 넣습니다.</p>
+<h3 style="font-size:20px;margin:18px 0 6px">그림으로 답: 무엇을, 어디에 올리는 경로인가</h3>
+<p class="concl">"올리는 경로"는 확장 모드에서 <b>사용자 브라우저가 도서관에서 받아온 페이지 원본(HTML·XML 바이트)</b>을 <b>우리 서버</b>에 넘겨 주는 주소 하나, <code>POST /api/v1/lookup-plans/{계획 번호}/items/{쪽 번호}</code>입니다(#4의 ②). 서버는 그 바이트를 해석해 결과 줄을 돌려줍니다. nginx는 모든 요청이 먼저 지나는 문지기인데, 이 주소만 두 가지를 다르게 둡니다: 본문 크기 상한(기본 1MB → 4MB)과 요청 수 한도(일반 `/api/` 구역과 따로).</p>
+<div class="fig" style="overflow-x:auto"><svg viewBox="0 0 900 420" role="img" aria-label="올리는 경로" style="max-width:900px;min-width:640px">
+<defs><marker id="ah4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="var(--accent)"/></marker></defs>
+<style>.u13{font:400 13px "Noto Sans KR",sans-serif;fill:var(--text)} .u13m{font:400 13px "Noto Sans KR",sans-serif;fill:var(--muted)} .u14{font:700 14px "Noto Sans KR",sans-serif;fill:var(--text)} .u12a{font:700 12px "Noto Sans KR",sans-serif;fill:var(--accent)}</style>
+<rect class="bx" x="10" y="20" width="200" height="90" rx="8"/><text class="u14" x="20" y="42">도서관 사이트</text><text class="u13m" x="20" y="62">검색 결과 페이지 HTML</text><text class="u13m" x="20" y="80">보통 50~300KB, 최대 4MB</text><text class="u13m" x="20" y="98">(지금 서버 상한과 같음)</text>
+<rect class="bxok" x="250" y="20" width="200" height="90" rx="8"/><text class="u14" x="260" y="42">확장 → 화면</text><text class="u13m" x="260" y="62">확장이 GET으로 받아</text><text class="u13m" x="260" y="80">화면에 넘김(port, base64)</text><text class="u13m" x="260" y="98">화면이 원본 그대로 올림</text>
+<path d="M210 65 H250" class="ar" marker-end="url(#ah4)"/>
+<rect class="bxa" x="490" y="10" width="400" height="110" rx="8"/><text class="u14" x="500" y="32">nginx — 이 주소만 따로 두는 두 가지</text>
+<text class="u13" x="500" y="54">location /api/v1/lookup-plans/</text>
+<text class="u13" x="500" y="74">① client_max_body_size 4m <tspan class="u13m">(기본 1m이면 큰 페이지가 413)</tspan></text>
+<text class="u13" x="500" y="94">② limit_req zone 올리기 20r/s burst 60 <tspan class="u13m">(일반 /api/는 5r/s burst 30)</tspan></text>
+<text class="u13m" x="500" y="112">413·429 응답은 JSON(Problem Details)으로</text>
+<path d="M450 65 H490" class="ar" marker-end="url(#ah4)"/>
+<text class="u12a" x="300" y="150">POST /api/v1/lookup-plans/{planId}/items/{itemId}</text>
+<text class="u13m" x="300" y="168">본문: 원본 바이트 그대로 · 쿼리: 상태 코드, 걸린 시간, Content-Type</text>
+<path d="M690 120 V190" class="ar" marker-end="url(#ah4)"/>
+<rect class="bxa" x="490" y="190" width="400" height="100" rx="8"/><text class="u14" x="500" y="212">본 서비스 availability — LookupPlanController</text>
+<text class="u13m" x="500" y="232">계획 번호·쪽 번호 확인(틀리면 400 invalid_plan)</text>
+<text class="u13m" x="500" y="250">4MB 검사 → accept(받은 응답) → adapter 해석 → 캐시 → 결과 줄</text>
+<text class="u13m" x="500" y="268">응답: events[] (결과 줄·판정), detailItems[] (상세 주소), stop</text>
+<path d="M490 240 H300" class="ar" marker-end="url(#ah4)"/><text class="u13m" x="300" y="232">응답 JSON → 화면이 결과 줄을 그림</text>
+<rect class="bx" x="10" y="320" width="880" height="86" rx="8"/><text class="u14" x="20" y="342">왜 일반 /api/ 구역으로는 모자란가</text>
+<text class="u13m" x="20" y="362">검색 한 묶음은 도서관 5곳을 동시에 부르고, 쪽 하나마다 올리기 한 번 → 한 사람이 1초에 약 5번 올림. 일반 구역 한도 5r/s(몰아서 30)에 딱 걸쳐,</text>
+<text class="u13m" x="20" y="380">상태 묻기·책 상세 같은 다른 요청과 겹치면 429가 납니다. 올리기 구역을 따로 두면(20r/s) 확장 모드 검색이 끊기지 않고, 일반 구역은 그대로입니다.</text>
+<text class="u13m" x="20" y="398">사이클 17이 운영 nginx 파일(prod.conf)을 만들므로, 이 두 줄은 그 파일에 함께 들어갑니다.</text>
+</svg><p class="cap">올리는 것 = 도서관 페이지 원본 바이트. 가는 곳 = 우리 서버의 계획 입구 ②. nginx에서 그 주소만 본문 4MB·요청 수 20r/s로 둡니다.</p></div>
 <p class="alt">다른 선택: 일반 구역 그대로. 설정이 없지만 묶음이 빠르게 돌면 429가 나서 확장 모드 검색이 끊깁니다.</p>
 </div>
 
