@@ -1,0 +1,134 @@
+<title>배포 현황과 결정</title>
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1a1c1e;--card:#242729;--text:#e8e8e6;--muted:#a3a9b2;--line:#3a3e42;--accent:#7bb0e0;--accent-bg:#1f2d3a;--ok:#5fcf8e;--ok-bg:#16301f;--warn:#e3b760;--warn-bg:#332814;--no:#e88a82;--no-bg:#331a18;--code-bg:#2c2f31;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1a1c1e;--card:#242729;--text:#e8e8e6;--muted:#a3a9b2;--line:#3a3e42;--accent:#7bb0e0;--accent-bg:#1f2d3a;--ok:#5fcf8e;--ok-bg:#16301f;--warn:#e3b760;--warn-bg:#332814;--no:#e88a82;--no-bg:#331a18;--code-bg:#2c2f31;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,-apple-system,sans-serif;font-size:17px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+.wrap{max-width:800px;margin:0 auto;padding-block:26px 72px;padding-left:16px;padding-right:16px}
+h1{font-size:24px;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 10px}
+.status{font-size:14px;color:var(--muted);background:var(--code-bg);border-radius:8px;padding:8px 12px;margin:12px 0 22px}
+.status b{color:var(--text)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 20px;margin:0 0 20px}
+.card h2{font-size:20px;margin:0 0 6px;display:flex;gap:9px;align-items:baseline}
+.cn{flex:none;display:inline-grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--accent);color:#fff;font-size:15px}
+.gist{background:var(--accent-bg);border-radius:9px;padding:11px 14px;margin:8px 0 14px;font-weight:500;font-size:16px}
+table{border-collapse:collapse;width:100%;font-size:15.5px;margin:8px 0}th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+td.cok{background:var(--ok-bg)}td.cwarn{background:var(--warn-bg)}td.cno{background:var(--no-bg)}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.opts{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 6px}
+button.o{appearance:none;border:1.5px solid var(--line);background:var(--card);color:var(--text);font-family:inherit;font-size:15px;font-weight:600;padding:9px 14px;border-radius:9px;cursor:pointer;text-align:left}
+button.o:hover{border-color:var(--accent)}
+button.o:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.o.sel{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
+.note{width:100%;margin:8px 0 0;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--text);font-family:inherit;font-size:15px;resize:vertical;min-height:38px}
+.chosen{font-size:14px;color:var(--muted);margin-top:8px}
+.chosen.on{color:var(--text)}
+ul{margin:6px 0;padding-left:20px}li{margin:5px 0}
+.ro{color:var(--muted);font-size:13px;font-weight:700;letter-spacing:.03em;text-transform:uppercase}
+.done{color:var(--ok);font-weight:600}
+.foot{color:var(--muted);font-size:14px;margin-top:24px}
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap">
+<div class="wrap">
+<h1>책첵 첫 배포 — 현황과 결정</h1>
+<p class="sub">노트북에서 보시라고 올린 페이지입니다. 1번은 버튼을 누르면 저장되어 제가 읽습니다. 2·3번은 보기용입니다.</p>
+<div class="status" id="status">저장소 연결 확인 중…</div>
+
+<section class="card" data-item="tunnel">
+<h2><span class="cn">1</span>정할 것: AWS에서 Cloudflare Tunnel 유지?</h2>
+<p class="gist">AWS에 계속 둘 거라 "터널이 꼭 필요한가"가 생긴 질문입니다. 아래 중 하나를 눌러 주세요. 추천은 ① 유지입니다(열린 포트 0개 + 집 이전 때 재작업 없음).</p>
+<table>
+<tr><th>선택</th><th>비용</th><th>열린 포트</th><th>특징</th></tr>
+<tr><td>① Cloudflare Tunnel 유지</td><td class="cok">$0</td><td class="cok">없음</td><td>집 이전 때 재작업 없음</td></tr>
+<tr><td>② Cloudflare 프록시(터널 X)</td><td class="cok">$0</td><td class="cwarn">443(CF)</td><td>조금 단순, 집 이전 때 터널 다시</td></tr>
+<tr><td>③ DNS만 + 서버 직접 TLS</td><td class="cok">$0</td><td class="cno">443 공개</td><td>가장 단순, 보호 없음</td></tr>
+<tr><td>④ AWS Route53+CloudFront</td><td class="cwarn">약 $0.5/월</td><td class="cwarn">443(CF)</td><td>AWS 네이티브, 운영 경험으로 남길 거리</td></tr>
+<tr><td>⑤ AWS ALB</td><td class="cno">약 $22/월</td><td class="cwarn">443(ALB)</td><td>서버 한 대엔 과함</td></tr>
+</table>
+<div class="opts">
+<button class="o" onclick="pick('① 터널 유지',this)">① 터널 유지</button>
+<button class="o" onclick="pick('② CF 프록시',this)">② CF 프록시</button>
+<button class="o" onclick="pick('③ DNS만',this)">③ DNS만</button>
+<button class="o" onclick="pick('④ AWS CloudFront',this)">④ AWS CloudFront</button>
+<button class="o" onclick="pick('⑤ AWS ALB',this)">⑤ AWS ALB</button>
+</div>
+<textarea class="note" id="note-tunnel" placeholder="메모(선택)"></textarea>
+<div class="chosen" id="chosen-tunnel">아직 선택 안 함</div>
+</section>
+
+<section class="card">
+<h2><span class="cn">2</span>당신이 콘솔에서 할 일 <span class="ro">보기용</span></h2>
+<p class="gist">로그인·결제·계정 설정은 제가 못 하는 5가지입니다. 정확한 값(보안그룹·권한 범위·Redirect URI)은 각 단계에서 제가 드립니다.</p>
+<ul>
+<li><b>AWS 안에서 (순서대로)</b>
+  <ul>
+  <li>① <b>Budgets 예산 1개</b> — 크레딧 알림 + 적립 활동 하나</li>
+  <li>② <b>EC2 서버</b> — 서울(ap-northeast-2) · t4g.medium(4GB) · Ubuntu, 키 페어 받기</li>
+  <li>③ <b>IAM 역할</b> — Parameter Store 읽기 권한만, ②서버에 연결</li>
+  </ul></li>
+<li><b>AWS 밖에서 (아무 때나)</b>
+  <ul>
+  <li>④ <b>chaekcheck.com</b> 도메인 Cloudflare에서 사기</li>
+  <li>⑤ <b>카카오</b> 개발자 콘솔에 운영 주소·Redirect URI(<code>https://chaekcheck.com</code>) 등록</li>
+  </ul></li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="cn">3</span>배포 직전 확인할 것 <span class="ro">보기용</span></h2>
+<p class="gist">대부분 제가/개발이 배포 때 확인합니다. 당신은 공개일과 데이터 판만 알아 두시면 됩니다.</p>
+<ul>
+<li><b>공개일 = 2026-10-18</b>(모르는 사람에게 여는 날). 이 날 사용 기록 켜고 첫 공지 올림.</li>
+<li>첫 배포 데이터에 <b>도서관 22곳 끄기(016)</b>·<b>현대제철 2624 전자책 241권</b>이 들어갈지 — 사이클 19 반영 뒤 목록 기준으로 배포 전 확인.</li>
+<li>처리방침·약관 글(sitecontent) seed를 검토본·공개일로 고치는 일을 <b>DB 비우기 전에</b> 함.</li>
+<li>터널로 들어온 IP가 실제 사용자 IP로 찍히는지(<code>CF-Connecting-IP</code>), Cloudflare "Remove visitor IP headers" 꺼짐 — 배포 때 시험.</li>
+<li>EC2 4GB에 서비스·DB·모니터링이 다 들어가는지 — 서버에서 측정.</li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="cn">✓</span>이미 정해진 것 <span class="ro">참고</span></h2>
+<ul>
+<li class="done">호스트 = AWS EC2 t4g.medium(4GB·서울), 무료 크레딧으로 최대 6개월</li>
+<li class="done">비밀값 = EC2 IAM 역할(접근 키 없이)</li>
+<li class="done">조회 = 프록시 안 쓰고 본 서버 직접(집 이전은 나중에)</li>
+</ul>
+</section>
+
+<p class="foot">근거: scope.md, research 12~15절, ADR-0103·0104. 선택은 저장되어 작성자가 읽습니다. 2026-10-15.</p>
+</div>
+<script>
+  var COLLN="decisions", ID="tunnel", db=null;
+  var statusEl=document.getElementById("status");
+  function setStatus(m){ statusEl.innerHTML=m; }
+  function applyState(d){
+    var chosen=document.getElementById("chosen-"+ID);
+    var btns=document.querySelectorAll('[data-item="'+ID+'"] button.o');
+    btns.forEach(function(b){ b.classList.remove("sel"); });
+    if(!d||!d.choice){ chosen.textContent="아직 선택 안 함"; chosen.classList.remove("on"); return; }
+    btns.forEach(function(b){ if(b.textContent.trim()===d.choice) b.classList.add("sel"); });
+    var n=document.getElementById("note-"+ID);
+    if(n&&d.note&&!n.value) n.value=d.note;
+    chosen.textContent="선택: "+d.choice+(d.note?" · 메모 있음":"");
+    chosen.classList.add("on");
+  }
+  window.pick=function(choice,btn){
+    if(!db){ setStatus("저장소에 연결되지 않아 저장 못 했습니다. 로그인 상태로 열어 주세요."); return; }
+    var n=document.getElementById("note-"+ID); var note=n?n.value:"";
+    applyState({choice:choice,note:note});
+    db.doc(COLLN+"/"+ID).set({choice:choice,note:note,at:new Date().toISOString()})
+      .then(function(){ setStatus("저장됨 · 마지막 선택이 기록되었습니다."); })
+      .catch(function(e){ setStatus("저장 실패("+((e&&e.code)||"오류")+"). 다시 눌러 주세요."); });
+  };
+  (async function(){
+    try{
+      if(!window.claude||!window.claude.use){ setStatus("이 환경에선 저장소를 쓸 수 없습니다. 1번 버튼은 보기용입니다."); return; }
+      db=await window.claude.use("db");
+      if(!db){ setStatus("로그인하지 않으면 선택을 저장할 수 없습니다. 로그인 상태로 열어 주세요."); return; }
+      setStatus("<b>연결됨.</b> 1번에서 선택을 누르면 바로 저장됩니다.");
+      db.doc(COLLN+"/"+ID).onSnapshot(function(s){ applyState(s.exists?s.data():null); }, function(err){ setStatus("저장소 구독 오류("+((err&&err.code)||"")+")."); });
+    }catch(e){ setStatus("저장소 초기화 중 문제가 생겼습니다."); }
+  })();
+</script>
