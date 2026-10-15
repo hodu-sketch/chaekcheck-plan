@@ -12,5 +12,5 @@
 | [2026-10-15-spec-decisions.html](2026-10-15-spec-decisions.html) | 명세 결정 10개: 공개일 일정, 짝 없는 꺾쇠, 검색어 정리, 저자 칸 표시, …판, 상품 코드 안전 조건, 빈 저자, 잘못 합침 기준, 검색 실패 기준, 캐시 답 칸 이름 | `../spec.md` | 모두 정함 (2026-10-15) |
 | [2026-10-15-spec-decisions-artifact.html](2026-10-15-spec-decisions-artifact.html) | 위 페이지의 원격용 사본 (claude.ai Artifact https://claude.ai/artifact/5Em2wD7fCCo1jybcQxVZyn, 저장 → db `choices`) | 위와 같음 | 모두 정함 (2026-10-15) |
 | (위 artifact 2판) | #4·#5·#6 질문 답을 넣어 같은 주소로 다시 올림 (2026-10-15) | | 모두 정함 (2026-10-15) |
-| [2026-10-15-flow-decisions.html](2026-10-15-flow-decisions.html) | 화면 흐름 결정 2개 (붙은 역할 표기 화면 그대로, 설계로 넘어감), S1·S3 화면 예시 | `../flow.md` (그림: `flow-original.html`) | 2개 기다림 |
-| [2026-10-15-flow-decisions-artifact.html](2026-10-15-flow-decisions-artifact.html) | 위 페이지의 원격용 사본 (https://claude.ai/artifact/K7U5RX9f7byckJpLsLBRv8) | 위와 같음 | 2개 기다림 |
+| [2026-10-15-flow-decisions.html](2026-10-15-flow-decisions.html) | 화면 흐름 결정 2개 (붙은 역할 표기 화면 그대로, 설계로 넘어감), S1·S3 화면 예시 | `../flow.md` (그림: `flow-original.html`) | 모두 정함 (2026-10-15, #1 미승인 → 띄어 보임) |
+| [2026-10-15-flow-decisions-artifact.html](2026-10-15-flow-decisions-artifact.html) | 위 페이지의 원격용 사본 (https://claude.ai/artifact/K7U5RX9f7byckJpLsLBRv8) | 위와 같음 | 모두 정함 (2026-10-15, #1 미승인 → 띄어 보임) |
