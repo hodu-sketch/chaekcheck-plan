@@ -192,3 +192,5 @@ classDiagram
 - #13 (가) 서버가 해석 유지 [확정] (사용자 승인, 2026-10-16)
 - #6 (나′) 빈 칸만 + 올라온 바이트 검사 ①②③④ [확정] (사용자 승인, 2026-10-16; 조건 "보안적으로 막을 수 있는 방법 있으면 넣어줘" → 더함: ⑤ 계획 번호를 만든 IP에 묶음 ⑥ Origin/Referer가 책첵 주소가 아니면 거절 ⑦ IP별 계획 만들기 한도(1분 20개 [안]) ⑧ 캐시 값에 출처 `via=extension`·시각, 운영 명령으로 확장 출처 칸 비우기 ⑨ 검사 실패를 usagelog rejected_event에 IP별로 세고 1분 30번 [안] 넘으면 그 IP 계획 만들기 잠시 막음 ⑩ 해석 adapter는 계획의 URL로만 결정)
 - #12 질문 "한 변수로 nginx까지?" → 답: `deploy/prod/prod.env`의 `LOOKUP_MAX_BODY_MB` 하나를 compose가 Spring 환경 변수와 nginx 템플릿(공식 이미지 envsubst, https://hub.docker.com/_/nginx 확인 2026-10-16)에 넘김. 결정 기다림
+- #12 올리기 경로 nginx: 본문 상한은 `prod.env` 변수 하나(`LOOKUP_MAX_BODY_MB`)로 Spring·nginx 템플릿 양쪽에, 요청 수 별도 zone 20r/s burst 60 [확정] (사용자: "이걸로 해줘", 2026-10-16)
+- **설계 결정 13개 모두 확정 (2026-10-16)** → ADR·design-delta로
