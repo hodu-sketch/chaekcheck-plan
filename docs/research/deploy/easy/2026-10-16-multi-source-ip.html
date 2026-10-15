@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>여러 출처 IP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.card h3.t{font-size:21px;margin:26px 0 8px}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font-size:15px;line-height:1.55;margin:8px 0 6px;word-break:normal}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+pre .cm{color:var(--muted)} pre .hl{background:var(--warn-bg);color:var(--warn);font-weight:700}
+.src{color:var(--muted);font-size:15px;margin:14px 0 0}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+.fig{overflow-x:auto;margin:8px 0 4px}
+.fig svg{width:100%;min-width:640px;height:auto;display:block}
+.mine{border:1px dashed var(--warn);background:var(--warn-bg);border-radius:8px;padding:10px 14px;font-size:18px;margin:10px 0}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0}
+.pc>div{border-radius:10px;padding:12px 16px;font-size:18px}
+.pc .p{background:var(--ok-bg)} .pc .c{background:var(--no-bg)}
+.pc h4{margin:0 0 6px;font-size:18px}
+.pc ul{margin:0;padding-left:20px}
+.pc li{margin:0 0 8px}
+@media (max-width:640px){.pc{grid-template-columns:1fr} body{font-size:18px} .lead{font-size:24px}}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">대출 조회 IP를 늘리려면<br>지금 EC2 서버에 IP를 더 붙이는 것이 가장 쌉니다</p>
+<p class="sub">사용자 말씀(2026-10-16): "조회 서버에서 여러 출처 아이피를 설정으로 하는 것도 고려 중이야 (조회 서버 따로 두지 않고 자체 서버에서 할 때도)", "정적 주거용도 괜찮은 것 같아". 방법별 값을 비교하고, 정할 것 세 가지를 4번 카드에 두었습니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>무엇을 하려는가: 서버 한 대가<br>여러 IP로 나눠 나가기</h2>
+<p class="gist">서버 한 대(본 서비스 서버든 조회 서버든)에 공인 IP를 여러 개 붙이고, 도서관 사이트에 요청을 보낼 때마다 어느 IP로 나갈지 설정에 따라 고릅니다. 도서관 사이트에는 IP가 여러 개로 보이고, 우리는 IP마다 따로 셉니다.</p>
+<div class="fig">
+<svg viewBox="0 0 900 300" role="img" aria-label="서버 한 대가 IP 세 개로 나가는 그림과 업체 프록시를 거치는 그림">
+<rect x="20" y="100" width="200" height="100" rx="12" fill="var(--accent-bg)" stroke="var(--accent)"/>
+<text x="120" y="140" text-anchor="middle" font-size="18" fill="var(--text)">우리 EC2 서버</text>
+<text x="120" y="166" text-anchor="middle" font-size="14" fill="var(--muted)">본 서비스 + 조회 서버</text>
+<rect x="320" y="30" width="150" height="50" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="395" y="61" text-anchor="middle" font-size="16" fill="var(--text)">IP A (지금)</text>
+<rect x="320" y="110" width="150" height="50" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="395" y="141" text-anchor="middle" font-size="16" fill="var(--text)">IP B (추가)</text>
+<rect x="320" y="190" width="150" height="50" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="395" y="221" text-anchor="middle" font-size="16" fill="var(--text)">IP C (추가)</text>
+<rect x="560" y="190" width="150" height="50" rx="8" fill="var(--warn-bg)" stroke="var(--warn)" stroke-dasharray="6 4"/><text x="635" y="221" text-anchor="middle" font-size="16" fill="var(--text)">업체 프록시 IP</text>
+<rect x="740" y="90" width="140" height="100" rx="12" fill="var(--card)" stroke="var(--line)"/>
+<text x="810" y="134" text-anchor="middle" font-size="17" fill="var(--text)">도서관</text><text x="810" y="158" text-anchor="middle" font-size="17" fill="var(--text)">사이트</text>
+<line x1="220" y1="130" x2="320" y2="55" stroke="var(--text)" stroke-width="2"/>
+<line x1="220" y1="140" x2="320" y2="135" stroke="var(--text)" stroke-width="2"/>
+<line x1="220" y1="160" x2="320" y2="215" stroke="var(--text)" stroke-width="2"/>
+<line x1="470" y1="55" x2="740" y2="115" stroke="var(--ok)" stroke-width="2"/>
+<line x1="470" y1="135" x2="740" y2="140" stroke="var(--ok)" stroke-width="2"/>
+<line x1="470" y1="215" x2="740" y2="165" stroke="var(--ok)" stroke-width="2"/>
+<path d="M220 185 C 300 285, 500 285, 560 225" fill="none" stroke="var(--warn)" stroke-width="2" stroke-dasharray="6 4"/>
+<line x1="710" y1="215" x2="740" y2="180" stroke="var(--warn)" stroke-width="2" stroke-dasharray="6 4"/>
+</svg>
+</div>
+<p class="cap">초록 실선은 우리 서버에 붙인 우리 IP, 노란 점선은 업체가 빌려주는 IP(ADR-0095의 업체 프록시)입니다. 도서관 사이트는 맨 끝에서 나간 IP만 봅니다.</p>
+<ul>
+<li><b>이미 정한 것과의 관계:</b> ADR-0095는 나가는 길을 세 가지(서버 직접 / 서버 + 업체 프록시 / 조회 서버)로 정했고, 나가는 IP마다 따로 세며, 막힌 IP만 그 사이트에서 멈춥니다. 서버에 붙인 IP 여러 개도 이 규칙을 그대로 따릅니다.</li>
+<li><b>앱에서 쓰는 방법(시험 안 함):</b> 서버 안에서 IP마다 작은 전달 프록시(tinyproxy, 메모리 약 2MB)를 하나씩 띄우고 각자 다른 IP로 나가게 합니다. 그러면 앱은 업체 프록시 목록과 같은 모양으로 "우리 프록시 목록"을 받기만 하면 됩니다. Java HTTP 클라이언트에서 나가는 주소를 직접 고르는 방법도 있는데, dev가 쓰는 클라이언트가 이를 지원하는지는 확인 못 함.</li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>방법별 한 달 값과<br>IP를 몇 개까지 붙일 수 있나</h2>
+<p class="gist">지금 운영 서버(AWS EC2 t4g.medium, 서울)에는 IP를 최대 18개까지 붙일 수 있고, 하나에 한 달 약 $3.65입니다. 같은 AWS라도 Lightsail은 서버 한 대에 IP 하나뿐입니다.</p>
+<table>
+<tr><th>방법</th><th>IP 5개일 때 한 달</th><th>상한</th><th>판정</th></tr>
+<tr><td>AWS EC2 서울에 IP 추가</td><td>4개 추가 약 $14.6</td><td>18개 (네트워크 연결 3개 × 6개)</td><td style="background:var(--ok-bg)">가능, 지금 서버</td></tr>
+<tr><td>AWS Lightsail</td><td>서버를 IP 수만큼 ($5부터/대)</td><td>서버 한 대에 1개</td><td style="background:var(--no-bg)">한 대에는 불가</td></tr>
+<tr><td>iwinv(국내) IP 추가</td><td>3개 추가 9,900원 (5개는 안 됨)</td><td>서버당 3개 추가</td><td style="background:var(--warn-bg)">4개까지</td></tr>
+<tr><td>Vultr 서울 IP 추가</td><td>약 $3/개로 보임</td><td>확인 못 함</td><td style="background:var(--warn-bg)">값 확인 필요</td></tr>
+<tr><td>Alibaba Cloud 서울 ECS + EIP</td><td>확인 못 함</td><td>서버 종류마다 다름</td><td style="background:var(--warn-bg)">값 확인 필요, 계정 하나 더</td></tr>
+<tr><td>Webshare 정적 주거용</td><td>20개 $6 (광고 최저가)</td><td>—</td><td style="background:var(--warn-bg)">한국 IP 확인 못 함</td></tr>
+<tr><td>Webshare 데이터센터(공유)</td><td>100개 $2.99</td><td>—</td><td style="background:var(--warn-bg)">한국 IP 확인 못 함, 남과 같이 씀</td></tr>
+</table>
+<ul>
+<li><b>EC2에서 붙이는 순서:</b> AWS 콘솔에서 서버의 네트워크 연결에 사설 IP를 더 받고, 그 사설 IP마다 고정 공인 IP(Elastic IP)를 하나씩 연결합니다. 서버 안 Linux에도 새 주소를 알려 줘야 합니다.</li>
+<li><b>AWS 계정 한도:</b> 서울 지역에서 고정 공인 IP를 기본 5개까지 받을 수 있다고 알려져 있으나 확인 못 함(콘솔 Service Quotas 화면에서 봄). 더 필요하면 늘려 달라고 신청합니다.</li>
+<li><b>2주 뒤 집 노트북으로 옮기면:</b> 집 인터넷은 보통 공인 IP가 하나라 이 방법이 안 됩니다(추론). 그때는 업체 프록시나 바깥 작은 서버가 필요합니다.</li>
+</ul>
+<p class="src">근거: AWS 인스턴스 네트워크 표 https://docs.aws.amazon.com/ec2/latest/instancetypes/gp.html · AWS 공인 IPv4 $0.005/시간 https://aws.amazon.com/vpc/pricing/ · Lightsail FAQ https://docs.aws.amazon.com/lightsail/latest/userguide/amazon-lightsail-faq-networking.html · iwinv IP 추가 https://docs.iwinv.kr/service/network/add-ip/add-ip-overview · Vultr 예약 IP https://docs.vultr.com/support/products/network/are-reserved-ips-free · Alibaba 보조 ENI에 EIP https://www.alibabacloud.com/help/ja/eip/associate-an-eip-with-a-secondary-eni-1 (모두 2026-10-16 확인)</p>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>Webshare "월 $6에 20개"는<br>한국 IP 값인지 모릅니다</h2>
+<p class="gist">$6은 광고에 나온 가장 싼 값입니다. 한국 IP를 그 값에 살 수 있는지는 가입해서 플랜 화면의 나라 목록을 봐야 압니다.</p>
+<ul>
+<li><b>Webshare 공식 도움말:</b> 일부 나라는 $6 정적 주거용 플랜에서 제공되지 않을 수 있고, IP가 바뀌는 주거용 플랜에는 있을 수 있다고 적혀 있습니다.</li>
+<li><b>Webshare 요금표 페이지:</b> 데이터센터(공유) 100개 $2.99, 기본 250GB는 보이지만, 정적 주거용 값과 나라 목록은 보이지 않았습니다.</li>
+<li><b>다른 사이트 글(공식 아님):</b> 정적 주거용이 공유 20개 $6, 전용 20개 $42라고 적혀 있습니다. 공유면 다른 사용자와 같은 IP를 씁니다.</li>
+<li><b>이미 조사한 다른 업체:</b> Oxylabs 한국 전용 데이터센터 월 $8.25부터, ISP(고정 주거용) IP당 $1.10~1.50 (2026-10-12 업체 표기, <code>hosting-options.md</code> 4-2절).</li>
+</ul>
+<p class="src">근거: https://www.webshare.io/pricing · https://help.webshare.io/en/articles/8596715-filtering-proxies-by-country · https://proxidize.com/blog/webshare-pricing/ (2차 출처) (2026-10-16 확인)</p>
+</section>
+
+<section class="card">
+<h2><span class="num">4</span>정할 것 세 가지</h2>
+<p class="gist">#1은 이전 결정(ADR-0095)을 바꿉니다. #2·#3은 새로 더하는 것입니다.</p>
+
+<div class="item">
+<h3><span class="no">#1</span>업체 프록시로 "정적 주거용"도 쓸 수 있게 함</h3>
+<p class="chg">2026-10-13에 정한 ADR-0095는 업체 프록시를 "IP가 바뀌지 않는 고정 IP 상품"만 쓰고, 주거용·IP가 바뀌는 상품은 뺐습니다(G안 기각). 이 제안은 그중 <b>정적 주거용(통신사 가정 대역 IP를 고정으로 빌림)</b>만 허용으로 바꿉니다. 요청마다 IP가 바뀌는 주거용은 계속 뺍니다.</p>
+<p>[안] 업체 프록시 목록에 정적 주거용 상품도 넣을 수 있게 하고, 조건은 지금처럼 "IP가 고정"인 상품만으로 둡니다. 사용자 말씀: "정적 주거용도 괜찮은 것 같아" (2026-10-16).</p>
+<p><b>그러면:</b> Webshare 정적 주거용이나 Oxylabs ISP 상품에서 한국 IP를 사서 설정에 주소를 넣으면, 그 IP로 나가고 IP마다 따로 셉니다. 도서관 사이트에는 클라우드 IP가 아니라 통신사 IP로 보입니다.</p>
+<p class="alt"><b>다른 선택:</b> 지금처럼 데이터센터 고정 IP만 → 값은 비슷하지만, 사이트가 클라우드 대역을 막으면 함께 막힘. / 바뀌는 주거용까지 허용 → IP가 매번 달라져 "IP마다 따로 세기·막힌 IP만 멈추기"가 맞지 않음.</p>
+<p class="rec">추천: 정적 주거용까지만 허용. 법적 부담(막힌 뒤 다른 IP로 들어가는 모양, 대법원 2021도1533)은 ADR-0095의 "감수하는 점" 그대로입니다.</p>
+</div>
+
+<div class="item">
+<h3>질문: Webshare 정적 주거용을 찾아보면?</h3>
+<p class="chg">Webshare 정적 주거용은 20개 $6(IP당 $0.30)이 맞습니다. 그런데 공식 페이지에 적힌 통신사가 모두 미국 회사이고, 한국 IP로 살 수 있다는 문구는 찾지 못했습니다. 한국 IP가 꼭 필요하면 Webshare는 가입 화면에서 확인한 뒤에 사야 합니다.</p>
+<table>
+<tr><th>무엇</th><th>Webshare 공식 페이지에 적힌 것</th></tr>
+<tr><td>값</td><td>20개부터, IP당 $0.30 → 한 달 $6. 많이 사면 IP당 $0.225까지 내려감</td></tr>
+<tr><td>IP가 어느 회사 것인가</td><td>"AT&amp;T, Sprint &amp; Cox Communications", "Comcast, RCN" 등 미국 통신사만 적혀 있음</td></tr>
+<tr><td>한국</td><td>정적 주거용 페이지에 나라 목록이 없음. 한국 페이지(<code>/proxy-locations/kr</code>)는 "IP 바뀌는 주거용·데이터센터·ISP 중 고르라"고만 하고, 한국 값은 IP당 $0.029부터(데이터센터 값과 같음), 한국 주거용 1GB 한 달 $7부터. 한국 정적 주거용 값은 없음</td></tr>
+<tr><td>혼자 쓰나</td><td>세 종류: 공유(다른 Webshare 사용자와 같이 씀), Private(다른 고객 0~2명과 같이), Dedicated(혼자). $6은 공유 쪽으로 보임(구매 주소에 <code>shared</code>). Private·Dedicated 값은 공식 페이지에서 확인 못 함</td></tr>
+<tr><td>IP가 얼마나 그대로인가</td><td>"IP는 계속 고정". 원하면 Auto-Refresh를 켜거나 직접 바꿀 수 있음</td></tr>
+<tr><td>트래픽</td><td>"Up to Unlimited", 공정 사용 정책을 따름. 넘을 때 값은 안 적힘</td></tr>
+<tr><td>환불</td><td>결제 뒤 48시간 안, 쓴 양 1GB 미만, 프록시 1,000개 미만일 때만</td></tr>
+</table>
+<p><b>그래서:</b> #1을 승인해도 Webshare $6 상품이 한국 IP라는 보장은 없습니다. 한국 정적 주거용(ISP)은 이미 조사한 Oxylabs가 한국을 포함하고 IP당 $1.10~1.50이었습니다(2026-10-12 업체 표기). 20개면 한 달 약 $22~30입니다. 사 보고 한국이 아니면 48시간 안, 1GB 미만으로 환불을 받을 수 있습니다.</p>
+<p class="src">근거: https://www.webshare.io/static-residential-proxy · https://www.webshare.io/proxy-locations/kr · https://help.webshare.io/en/articles/8625115-what-types-of-static-residential-proxies-do-you-have · https://help.webshare.io/en/articles/8370527-requesting-a-refund (2026-10-16 확인)</p>
+</div>
+
+<div class="item">
+<h3><span class="no">#2</span>서버에 붙인 IP 여러 개를<br>나가는 길 한 종류로 더함</h3>
+<p>[안] ADR-0095의 나가는 길에 "서버 자기 IP 여러 개(설정으로 목록)"를 더합니다. 본 서비스 서버와 조회 서버 모두 같은 설정을 씁니다. 사용자 말씀: "조회 서버 따로 두지 않고 자체 서버에서 할 때도" (2026-10-16).</p>
+<p><b>그러면:</b> EC2에 IP B·C를 붙이고 설정 목록에 넣으면, 본 서비스가 IP A·B·C를 나눠 쓰고 IP마다 동시 1건·1초(교보 구독형 서버는 IP마다 동시 3건)로 셉니다. 한 IP가 막히면 그 IP만 그 사이트에서 멈춥니다.</p>
+<p class="alt"><b>다른 선택:</b> 서버 IP는 하나로 두고 업체 프록시만 → 서버 설정은 쉽지만 업체 값과 약관을 따라야 함. / 조회 서버를 여러 대 띄움 → 서버마다 관리할 것이 늘어남.</p>
+<p class="rec">추천: 더함. 우리 고정 IP라 원칙 안이고, 업체 프록시 목록과 같은 모양으로 넣으면 dev 일이 적습니다.</p>
+</div>
+
+<div class="item">
+<h3><span class="no">#3</span>쓰는 순서: 프록시 없이 → 막히면<br>EC2에 IP 추가 → 그래도 안 되면 업체</h3>
+<p>[안] 첫 배포는 프록시 없이 서버 IP 하나로 운영하며 어느 사이트에서 막히는지 봅니다(조회 기록, 사이클 20 상태등). 막히면 EC2에 IP를 2~4개 더 붙입니다(한 달 약 $7~15). 그래도 막히면 업체 고정 IP(#1이 승인되면 정적 주거용 포함)를 사되, 가입 화면에서 한국 IP를 먼저 확인합니다.</p>
+<p><b>그러면:</b> 막힘이 없으면 비용 0입니다. 지금까지 우리를 막은 곳은 교보 구독형 서버 한 곳(집 IP, 2026-10-07, 이틀 약 8만 건·동시 4건)입니다.</p>
+<p class="alt"><b>다른 선택:</b> 처음부터 정적 주거용을 삼 → 한 달 약 $6부터(한국 IP 값은 확인 못 함), 막힘이 없으면 쓰지 않는 값. / 처음부터 EC2에 IP를 붙임 → 한 달 약 $7~15.</p>
+<p class="rec">추천: 이 순서. 정적 주거용을 먼저 시험해 보고 싶으시면 둘째와 셋째 순서를 바꿔도 됩니다(기타에 적어 주세요).</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">5</span>아직 확인 못 한 것</h2>
+<table>
+<tr><th>무엇</th><th>어떻게 확인</th></tr>
+<tr><td>Webshare 정적 주거용·데이터센터에 한국 IP가 있는지, 그 값</td><td>가입 뒤 플랜 화면의 나라 목록</td></tr>
+<tr><td>AWS 서울 고정 공인 IP 한도(기본 5개로 알려짐)</td><td>AWS 콘솔 Service Quotas</td></tr>
+<tr><td>Vultr 서울 IP 추가 값·상한, Alibaba 서울 EIP 값</td><td>주문 화면, 가격 계산기</td></tr>
+<tr><td>dev HTTP 클라이언트가 나가는 주소를 고를 수 있는지</td><td>dev 코드 확인, 시험</td></tr>
+</table>
+</section>
+
+<p class="foot">이 글은 요약이며 근거는 <code>docs/research/deploy/multi-source-ip.md</code>와 ADR-0095에 있습니다.</p>
+</main>
+</body>
+</html>

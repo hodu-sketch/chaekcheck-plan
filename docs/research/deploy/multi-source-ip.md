@@ -43,6 +43,17 @@ ADR-0095의 세 길은 "서버 자기 IP 1개" 또는 "업체 프록시"였다. 
 
 - 설정 모양(제안): 나가는 길 목록에 "서버 자기 IP(주소 지정)"를 한 종류로 더함 → 본 서비스 서버와 조회 서버 모두 같은 설정으로. 설계는 해당 사이클에서 정함(이 문서는 조사만)
 
+## 5. Webshare 정적 주거용 더 찾아봄 (2026-10-16, 사용자: "Webshare 정적 주거용 이거 검색해봐")
+
+- 사용자: "정적 주거용도 괜찮은 것 같아" (2026-10-16) → ADR-0095 G안(주거용 제외)을 "정적 주거용은 허용"으로 바꾸는 제안 [안] (결정 페이지 `easy/2026-10-16-multi-source-ip.html` #1)
+- 값: 20개부터 IP당 $0.30(월 $6), 많이 사면 $0.225 [확정] (https://www.webshare.io/static-residential-proxy , 2026-10-16)
+- IP 출처: 페이지에 적힌 통신사는 AT&T, Sprint, Cox, Comcast, RCN, Lumen 등 미국 회사뿐 [확정] (같은 페이지). 한국 정적 주거용이 있다는 공식 문구는 못 찾음 [확인 필요: 가입 화면]
+- 한국 페이지: "Rotating Residential, Datacenter or ISP" 중 고르라는 일반 문구, 한국 값은 IP당 $0.029부터(데이터센터 표와 같음)·주거용 1GB 월 $7부터, 한국 IP 230,263개 표시 [확정] (https://www.webshare.io/proxy-locations/kr , 2026-10-16). 한국 정적 주거용 값은 없음
+- 종류: 공유(Premium, 다른 사용자와 같이), Private(다른 고객 0~2명), Dedicated(혼자) [확정] (https://help.webshare.io/en/articles/8625115-what-types-of-static-residential-proxies-do-you-have , 2026-10-16). $6 구매 주소에 `shared` → 공유로 보임 [확인 필요]. Private·Dedicated 값은 공식 페이지에서 못 찾음(2차 출처: Private 25개 $23.16, Dedicated 20개 $42)
+- 고정: "IP는 계속 고정", Auto-Refresh·직접 교체 가능. 트래픽 "Up to Unlimited"(공정 사용 정책) [확정] (정적 주거용 페이지)
+- 환불: 결제 48시간 안, 쓴 양 1GB 미만(정적 주거용), 프록시 1,000개 미만 [확정] (https://help.webshare.io/en/articles/8370527-requesting-a-refund , 2026-10-16)
+- 한국 정적 주거용(ISP) 대안: Oxylabs 한국 포함, IP당 $1.10~1.50 (2026-10-12 업체 표기, `hosting-options.md` 4-2절) → 20개 월 약 $22~30 [안: 계산]
+
 ## 확인 필요
 
 | 항목 | 확인 방법 |

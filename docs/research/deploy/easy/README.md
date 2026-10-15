@@ -13,3 +13,4 @@
 | [2026-10-13-lookup-proxy-decisions.html](2026-10-13-lookup-proxy-decisions.html) | 대출 조회에 프록시 쓰기: 쓰는 방법(조회 서버 여러 대·업체 프록시), 프록시 종류, 여러 IP로 나눌 때 도서관이 받는 양, 한 IP가 막혔을 때, User-Agent | `../../ebook-catalog/crawl-method.md` 1절, ADR-0011, ADR-0094 | 4개 |
 | [2026-10-13-lookup-ua-decisions.html](2026-10-13-lookup-ua-decisions.html) | 대출 조회 요청의 User-Agent: 우리 이름을 둘지 일반 브라우저처럼 보낼지, 앞 결정(IP마다 따로 세기, 막힌 IP만 멈추기)과 합쳤을 때 사이트가 보는 모습, 배경 자료 | `../hosting-options.md` 결정 줄, `../../ebook-catalog/crawl-method.md` 1절 | 1개 |
 | [2026-10-13-adr-0095-draft.html](2026-10-13-adr-0095-draft.html) | ADR-0095 초안: 서비스 대출 조회의 세 나가는 길, IP마다 따로 세기, 막힌 IP만 멈춤, 일반 브라우저 User-Agent, ADR-0094 서비스 조회 부분 고침 | 초안(scratchpad), `../hosting-options.md` 결정 줄 | 1개 |
+| [2026-10-16-multi-source-ip.html](2026-10-16-multi-source-ip.html) | 서버 한 대에 IP를 여러 개 붙여 대출 조회를 나눠 보내기: EC2·Lightsail·iwinv·Vultr·Alibaba·Webshare 값과 상한, 정적 주거용 허용 | `../multi-source-ip.md`, ADR-0095 | 3개 |
