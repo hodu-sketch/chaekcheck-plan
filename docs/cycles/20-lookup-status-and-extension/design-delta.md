@@ -236,7 +236,7 @@ erDiagram
 - 머리말: 사이클 21 메뉴 위에 점+글(`HeaderSignal`), 「로그인」 왼쪽, 폰은 점만·☰ 왼쪽·팝오버 설명. 상태: 빈 자리(첫 응답 전) / GREEN·YELLOW·RED / GRAY(30초) / BLUE(확장 모드, 묻지 않음). 움직임 없음 (flow #1·#2·#4, ADR-0121)
 - 결과 카드: 줄이 선 도서관 글(PC 이름 옆, 폰 이름 아래). 빨강에도 카드 변화 없음. 네 번째 묶음 「확인하지 못한 도서관」(`failed` + `UNKNOWN`, 계획 순서, 두 거름 모두), 줄 글 「대출 정보를 확인하지 못했어요」(지금 「확인 실패」를 바꿈) (flow #3·#7, 설계 #10)
 - 확장 모드: `features/extension/` — 감지·port·업로드·이벤트를 기존 reducer(`useSearch`·`useHoldings`)에 넣음. 「더 보기」도 계획 입구. 400 `invalid_plan`은 일반 오류 문구 (flow #6)
-- 설정: `VITE_EXTENSION_ID` [안 이름]
+- 설정: `VITE_EXTENSION_ID` [확정] (사용자 승인, 2026-10-16, design-delta 결정 #6)
 
 ## 확장 꾸러미 (`extension/`)
 
