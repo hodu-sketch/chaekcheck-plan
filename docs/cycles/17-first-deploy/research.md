@@ -341,3 +341,11 @@ plan 15가 `docs/cycles/15-usage-log/to-cycle-17.md` "5차"에 올린 실제 값
 - 시사점: **시드니라 한국 사용자 지연 ~150ms**(체험엔 허용). go.kr은 시드니 AWS IP로 대부분 접속(research 12절 테스트, 부산만 차단). **집 노트북(가정용 한국 IP) 이전 시 지연·부산 둘 다 해소** → 집 이전 동기가 더 분명해짐
 - 2GB 적합성: 모니터링을 Grafana Cloud로 뺐으므로 2GB에 앱+PG+nginx+cloudflared+가벼운 에이전트. **구독형 캐시가 2GB에 들어가는지는 배포 뒤 측정** [확인 필요]
 - 남은 콘솔·배포: IAM 역할(사용자), 서버 접속(SSH + .pem) → Docker·cloudflared 설치 → 비밀값 → 서비스 띄우기. 도메인·카카오·cycle 19 책목록 반영은 별개로 진행
+
+### 서버 기본 세팅 완료 (2026-10-15, SSH로 직접)
+- 접속: `ssh -i chaekcheck-key.pem ubuntu@<서버 IP>` (SSH 보안그룹=사용자 IP만). 키는 `C:\Users\yujun\Downloads\chaekcheck-key.pem`
+- 설치: Docker 29.9.1, Docker Compose v5.6.0, cloudflared 2026.10.0. Docker 부팅 자동 시작(enabled). hello-world arm64 동작 확인
+- 폴더: `/srv/chaekcheck`, `/srv/backup` (ubuntu 소유)
+- 메모리 2GB(여유 ~1.3Gi), 디스크 30GB(여유 26G)
+- **[중요] 이 서버는 arm64(Graviton)** → 앱 이미지도 **arm64로 빌드**해야 함. PC(x86)에서 그냥 빌드한 이미지는 안 뜸. 인계서에 반영: `docker buildx`로 arm64(멀티아치) 빌드하거나 서버에서 직접 빌드 [확인 필요: dev 빌드 방식]
+- 아직 못 하는 것(선행 조건): Cloudflare Tunnel 설정(도메인 chaekcheck.com 필요), 앱 배포(dev 인계서·arm64 이미지·compose·비밀값 필요), 비밀값(IAM 역할은 사용자), cycle 19 책목록 반영
