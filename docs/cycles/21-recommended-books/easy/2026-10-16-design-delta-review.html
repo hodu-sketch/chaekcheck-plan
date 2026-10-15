@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 21 설계 정리</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+
+.v-flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.v-box{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:7px 11px;font-size:15px;text-align:center;min-width:90px}
+.v-box small{display:block;color:var(--muted);font-size:12px}
+.v-hi{border-color:var(--accent);background:var(--accent-bg)}
+.v-warn{border-color:var(--warn);background:var(--warn-bg)}
+.v-ok{border-color:var(--ok);background:var(--ok-bg)}
+.v-arr{color:var(--muted);font-size:18px}
+.v-file{border:2px solid var(--line);border-radius:12px;background:var(--card);padding:10px;margin:10px 0;max-width:560px}
+.v-file .v-part{border:1px dashed var(--line);border-radius:8px;padding:8px 10px;margin:6px 0;font-size:14px}
+.v-file .v-part.v-new{border-color:var(--accent);background:var(--accent-bg)}
+.v-tl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0;font-size:13px;text-align:center}
+.v-tl div{border-top:4px solid var(--line);padding-top:6px}
+.v-tl div.v-hi{border-top-color:var(--accent);background:none}
+.v-cv{display:inline-flex;width:70px;aspect-ratio:2/3;border-radius:7px;border:1px solid var(--line);background:var(--accent-bg);align-items:center;justify-content:center;font-size:11px;text-align:center;padding:3px;vertical-align:top;margin:4px}
+.v-cv.v-img{background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 6px,var(--card) 6px,var(--card) 12px)}
+.v-mini{border:1px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;margin:8px 0;max-width:420px}
+.v-mini .v-bar{display:flex;gap:10px;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line);font-size:13px}
+.v-mini .v-body{padding:10px 12px;font-size:13px}
+.v-pill{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-weight:800;font-size:12px}
+@media (max-width:700px){main table{display:block;overflow-x:auto;max-width:100%}.v-tl{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.v-code{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:var(--code-bg);border-radius:8px;padding:8px 10px;overflow-x:auto;white-space:pre}
+</style>
+</head>
+
+<body>
+<main class="doc">
+<p class="lead">정한 설계를 한 문서(설계 변경서)와 결정 기록 7개로 모았습니다.<br>기록 7개를 확정할지, 새로 생긴 세부 1개를 골라 주세요.</p>
+<p class="sub">지금까지 고르신 설계 결정 12개(설계 결정 · 결정 3 페이지)를 그대로 옮긴 것이라, 7개 기록에는 새로 정하는 내용이 없습니다. 문서를 쓰다가 하나가 새로 생겼습니다: 사서추천 목록을 새 표로 <b>옮길지</b>(8번). 다 고르시면 마무리(검토 → 지금 설계 문서 고치기 → dev 인계서)로 넘어갑니다.</p>
+<div class="card"><h2>낱말 풀이</h2><table><tr><th>낱말</th><th>뜻</th></tr><tr><td>결정 기록 (ADR)</td><td>무엇을 왜 골랐는지 남기는 짧은 문서. 지금은 "초안(Proposed)"이고, 승인하시면 "확정(Accepted)"이 됩니다</td></tr><tr><td>설계 변경서 (design-delta)</td><td>이번 사이클에서 모듈·표·API가 어떻게 바뀌는지 적은 문서. dev 인계서의 바탕</td></tr><tr><td>책 줄 표 <code>list_book</code></td><td>세 추천 목록의 책이 한 줄씩 들어가는 표. "어느 목록"인지는 <code>list_key</code> 칸(librarian · leedongjin · snu100)으로 나눔</td></tr><tr><td>분야 표 <code>list_field</code></td><td>목록마다 분야 이름과 순서 (예: 서울대 = 한국문학 · 외국문학 · …)</td></tr><tr><td>가져오기 파일</td><td>내 PC에서 만들어 운영 서버에 반영하는 전자책 목록 파일 하나. 그 목차 칸(<code>listPart</code>)에 이동진·서울대 목록과 표지가 함께 실림</td></tr><tr><td>고정 판</td><td>판이 여러 개인 책에서 화면에 보일 판(출판사·ISBN). 수집기가 보유량으로 고르고, 사람이 적은 판은 그대로 둠</td></tr></table></div>
+<div class="card"><h2>세 목록이 화면까지 오는 길</h2><p class="concl">세 목록이 한 표에 모이고, 운영 서버는 이동진·서울대 목록을 바깥에서 받지 않고 DB만 읽습니다.</p><p style="font-weight:800;margin:10px 0 0">이동진 추천도서 · 서울대 100선 (한 달에 한 번, 사람이 수집을 돌릴 때)</p><div class="v-flow"><div class="v-box v-hi">내 PC 수집기<br><small>유튜브 API · 국립중앙도서관 API</small></div><span class="v-arr">→</span><div class="v-box ">목록 파일<br><small>분야 · 고정 판 · 줄인 표지</small></div><span class="v-arr">→</span><div class="v-box v-hi">가져오기 파일 만들 때<br><small>책 번호 맞춰 저장</small></div><span class="v-arr">→</span><div class="v-box ">운영 반영</div><span class="v-arr">→</span><div class="v-box v-ok"><code>list_book</code></div><span class="v-arr">→</span><div class="v-box ">화면</div></div><p style="font-weight:800;margin:10px 0 0">사서 추천도서 (지금처럼 매주 월요일 서버가)</p><div class="v-flow"><div class="v-box ">운영 서버<br><small>국립중앙도서관 사서추천 API</small></div><span class="v-arr">→</span><div class="v-box ">표지 받아 줄이기</div><span class="v-arr">→</span><div class="v-box v-ok"><code>list_book</code><br><small>librarian 줄만 바꿈</small></div><span class="v-arr">→</span><div class="v-box ">화면<br><small>책 맞추기는 서버가</small></div></div><table><tr><th></th><th>지금 (사이클 14)</th><th>바뀐 뒤</th></tr><tr><td>책 줄 표</td><td><code>pick</code> (사서만)</td><td><code>list_book</code> 하나 (<code>pick</code> 지움)</td></tr><tr><td>같은 책 고르기</td><td>가진 도서관 수, 구독형도 한 곳씩</td><td>구독형 아닌 도서관 수 + 구독형이 있으면 1</td></tr><tr><td>화면 API</td><td><code>/api/v1/picks</code></td><td><code>/api/v1/picks/leedongjin</code> 처럼 목록마다</td></tr><tr><td>머리말</td><td>링크 「사서추천도서」</td><td>큰 메뉴 「추천도서」 · 「마이페이지」</td></tr></table><p class="cap">그림 7개(모듈 · 흐름 셋 · 개념 · 수집기 상태 · 표)는 설계 변경서 원본 보기 페이지(design-delta-original.html)에 있습니다.</p></div>
+<div class="card item"><h2><span class="num">1</span>ADR-0122 추천 목록 셋은 <code>picks</code> 모듈 하나, 책 줄은 표 하나</h2><p class="concl">[안] 초안 그대로 확정합니다 (Proposed → Accepted).</p><p><b>정하는 것:</b> 세 목록을 사서추천도서를 맡던 <code>picks</code> 모듈이 함께 맡고, 책 줄은 <code>list_book</code> 하나에 담습니다. 사서추천 받기는 서버가 주 1회 그대로, 담는 표만 바뀝니다.</p><p class="cap">고르신 것: 설계 결정 #1 승인, "아니다 사서 추천은 따로 가자", "지금 구조로 가되 PICK 테이블은 없앨 수 있는 거 아니야?" → 결정 3 #1 승인 (2026-10-16). 기록: docs/adr/0122-….md</p></div>
+<div class="card item"><h2><span class="num">2</span>ADR-0123 이동진·서울대 목록과 표지는 가져오기 파일 목차에</h2><p class="concl">[안] 초안 그대로 확정합니다 (Proposed → Accepted).</p><p><b>정하는 것:</b> 가져오기 파일을 만들 때 목록 파일과 줄인 표지를 목차 칸에 싣고(파일 판 2 → 3), 운영 반영의 첫 단계에서 도서관 정보와 함께 넣습니다. 반영이 비교에서 멈추면 목록도 함께 되돌아갑니다.</p><p class="cap">고르신 것: 명세 결정 #10 "② 전자책 목록 가져오기에 실어 보내기", 설계 결정 #3 승인, #6 "수집기가 표지를 받아 줄여서 가져오기 파일에 싣기" (2026-10-15~16). 기록: docs/adr/0123-….md</p></div>
+<div class="card item"><h2><span class="num">3</span>ADR-0124 판은 수집기가 고르고, 가져오기 파일을 만들 때 책 번호로 맞춰 저장</h2><p class="concl">[안] 초안 그대로 확정합니다 (Proposed → Accepted).</p><p><b>정하는 것:</b> 수집기가 내 PC DB를 읽어 판을 고르고, 가져오기 파일을 만들 때 그 판을 우리 책 번호로 바꿔 저장합니다. 운영 서버는 저장된 번호를 읽기만 합니다. 사람이 적은 판은 수집기가 덮어쓰지 않습니다.</p><p class="cap">고르신 것: "수집기가", "왜 10분마다 맞춰줘야 해? 같이 맞춰주면 되는 거 아니야?" → 새 제안 선택, 설계 결정 #5 · #7 승인 (2026-10-15~16). 기록: docs/adr/0124-….md</p></div>
+<div class="card item"><h2><span class="num">4</span>ADR-0125 같은 책 고르기: 구독형은 몇 곳이든 1</h2><p class="concl">[안] 초안 그대로 확정합니다 (Proposed → Accepted).</p><p><b>정하는 것:</b> 판이 여럿이면 보유량이 가장 많은 판. 보유량 = 구독형이 아닌 도서관 수 + 구독형 도서관에 하나라도 있으면 1. 사서추천도서도 이 규칙으로 바뀝니다.</p><p class="cap">고르신 것: "같은 책으로 검색되되 보유량이 가장 많은 것 기준으로 해줘 구독형은 1권으로 세" (2026-10-15). 기록: docs/adr/0125-….md</p></div>
+<div class="card item"><h2><span class="num">5</span>ADR-0126 화면 API는 목록마다, 이용 기록에 목록 이름</h2><p class="concl">[안] 초안 그대로 확정합니다 (Proposed → Accepted).</p><p><b>정하는 것:</b> <code>GET /api/v1/picks/{목록}</code>(모르는 목록은 404), 옛 <code>/api/v1/picks</code>는 지웁니다(배포 전). 이용 기록의 분야 보기 · 책 창 열기에 어느 목록인지 칸을 더합니다.</p><p class="cap">고르신 것: 명세 결정 #4 "/picks 아래", 설계 결정 #9 · #10 승인 (2026-10-15~16). 기록: docs/adr/0126-….md</p></div>
+<div class="card item"><h2><span class="num">6</span>ADR-0127 머리말은 도서관 정보나루식 큰 메뉴</h2><p class="concl">[안] 초안 그대로 확정합니다 (Proposed → Accepted).</p><p><b>정하는 것:</b> 「추천도서」(이동진 · 사서 · 서울대) · 「마이페이지」(내 도서관 관리). PC는 0.5초 올리면 펼침(아래를 덮지 않음), 폰은 ☰. PC 칸 정렬은 개발 때 실제 사이트를 보고 맞춤.</p><p class="cap">고르신 것: "전체 탭이 아래로 늘어나는 걸 생각해 도서관 정보나루처럼", "내 도서관을 마이페이지로", "그 pc버전 정렬은 이 예시처럼이면 안 돼" (2026-10-15). 기록: docs/adr/0127-….md</p></div>
+<div class="card item"><h2><span class="num">7</span>ADR-0128 이동진 목록은 수집기가 공식 API로</h2><p class="concl">[안] 초안 그대로 확정합니다 (Proposed → Accepted).</p><p><b>정하는 것:</b> 수집기가 유튜브 공식 API로 「이달의 책」 · 올해의 책 영상을 읽고, 국립중앙도서관 ISBN API로 책 · 분야 · 표지를 찾습니다. 유튜브 페이지는 프로그램으로 읽지 않고, 영상 제목 · 설명은 저장하지 않습니다.</p><p class="cap">고르신 것: "수집 서비스가 이것도 같이 하도록 했으면 좋겠어", "분야도 맘대로 첨삭하고", 수집기 결정 #1 · #2 · #4 승인 (2026-10-15). 기록: docs/adr/0128-….md</p></div>
+<div class="card item"><h2><span class="num">8</span>사서추천 목록을 새 표로 옮기고 옛 표를 지움 (새로 생긴 세부)</h2><p class="concl">[안] DB 변경 파일(<code>picks/002</code>)이 지금 <code>pick</code> 표의 사서추천 108줄을 <code>list_book</code>으로 옮기고 나서 <code>pick</code>을 지웁니다.</p><p><b>어디서 생기는 일:</b> 사서추천 줄을 담을 표가 <code>pick</code>에서 <code>list_book</code>으로 바뀌므로(1번), 이미 받아 둔 108줄을 어떻게 할지 정해야 합니다. 첫 배포(사이클 17)가 21보다 먼저일 수 있어 옛 변경 파일을 고치지 않고 새 파일로 합니다.</p><p><b>예:</b> 배포 뒤 서버가 켜졌을 때 — 옮기면 사서 추천도서가 그대로 보입니다. 옮기지 않으면 목록이 비어 서버가 켜지자마자 사서추천을 새로 받습니다(지금 받기 규칙 "목록 없음 → 받기"). 받는 1~2분 동안 빈 화면이고, 그날 이미 한 번 받았다면 <b>다음 날 새벽 5시까지</b> 빈 화면입니다.</p><div class="v-flow"><div class="v-box v-warn"><code>pick</code> 108줄</div><span class="v-arr">→</span><div class="v-box v-hi"><code>list_book</code>로 복사<br><small>목록 = librarian</small></div><span class="v-arr">→</span><div class="v-box "><code>pick</code> 지움</div><span class="v-arr">→</span><div class="v-box v-ok">화면 그대로</div></div><p class="alt">다른 선택: 옮기지 않고 지움. 변경 파일이 짧아지지만 위처럼 잠깐(때로는 다음 날까지) 사서 추천도서가 비고, 국립중앙도서관에 한 번 더 요청합니다.</p></div>
+<div class="card item"><h2><span class="num">9</span>이 설계 변경서대로 마무리로 감</h2><p class="concl">[안] 설계 변경서(design-delta.md)대로 마무리(<code>/cycle-close</code>)로 넘어갑니다: 검토 → 지금 설계 문서(docs/current) 고치기 → dev 인계서.</p><p>인계서에 함께 넣을 것: 폰 화면 안 A~D(이상하면 dev가 나란히 만들어 보여 줌), PC 펼친 칸 정렬 주의, 사이클 19와 합치는 순서(19는 <code>usagelog/002</code>, 21은 <code>usagelog/003</code>과 파일 판 3), 개발 전 시험(ISBN API 키 · KDC · 표지 빈 값).</p></div>
+<p class="foot">원본: docs/cycles/21-recommended-books/design-delta.md, docs/adr/0122~0128 (2026-10-16). 바탕: architect-proposal.md, 설계 결정 · 결정 3 페이지.</p>
+</main></body></html>
