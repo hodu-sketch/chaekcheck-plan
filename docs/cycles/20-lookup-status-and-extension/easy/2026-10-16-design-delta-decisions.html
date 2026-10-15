@@ -51,7 +51,7 @@ svg .ah{fill:var(--accent)}
 .why{background:var(--code-bg);border-radius:8px;padding:10px 14px;margin:10px 0}
 </style>
 
-<p class="concl">#9 승인 반영 (2026-10-16): 확장 모드는 서버 캐시를 읽지 않고 자기 결과만 보며, 서버는 넣기만 합니다. design-delta·ADR-0119를 고쳤고, #5는 이것으로 정리되어 "확장 모드엔 캐시 답 없음"이 됐습니다(5번에 표시). 남은 것: #1~#4, #5(확인), #6~#8, 새로 #10(화면을 떠나면 서버 요청 멈추기 — 질문에 답).</p>
+<p class="concl">#9 승인 반영 (2026-10-16): 확장 모드는 서버 캐시를 읽지 않고 자기 결과만 보며, 서버는 넣기만 합니다. design-delta·ADR-0119를 고쳤고, #5는 이것으로 정리되어 "확장 모드엔 캐시 답 없음"이 됐습니다(5번에 표시). 남은 것: #1~#4, #5(확인), #6~#8, 새로 #10(화면을 떠나면 서버 요청 멈추기 — 질문에 답). #1 승인, #2 질문(변수 방식 성능)은 2번 아래에 답함.</p>
 <p class="lead">설계 문서 초안을 쓰면서<br>아직 정하지 않은 작은 값 7개가 남았습니다.</p>
 <p class="sub">앞 페이지에서 "어떻게 만들지"(설계 결정 13개)는 다 정했고 ADR 4개도 승인됐습니다. 이 페이지는 그것을 설계 문서로 적다 보니 숫자·이름을 넣어야 하는 자리 7곳을 묻는 것입니다. 먼저 확장 모드 검색 한 번이 어떻게 흘러가는지와 낱말을 풀고, 항목마다 (1) 이 값이 구조의 어디에 붙는지 그림 (2) 사용자 화면에서 무엇이 달라지는지 그림 (3) 숫자를 그렇게 잡은 계산 (4) 다른 선택과 그 결과를 적었습니다. 길지만 한 번 읽으면 설계 문서 전체가 보이도록 썼습니다.</p>
 
@@ -139,6 +139,17 @@ svg .ah{fill:var(--accent)}
 <p><b>사용자 화면에서는.</b> 한도 안이면 아무 차이가 없습니다. 한도를 넘으면 nginx가 429를 돌려주고, 화면은 지금 있는 안내 줄 "검색을 너무 자주 했어요. 1분쯤 뒤에 다시 해 주세요."(사이클 08)를 보이고 받은 결과는 남깁니다. 제안 값이면 보통 사용은 절대 닿지 않고, 스크립트로 수백 번 올리는 경우에만 걸립니다.</p>
 <div class="why"><b>숫자 계산.</b> 묶음 하나 = 도서관 5곳 동시 → 쪽 5개가 0.3~1초 사이에 올라옴 → 초당 약 5번. 포털 상세 2단계와 다음 묶음이 겹치는 순간 7~8번. 그래서 평소의 4배인 20을 두고, 순간 몰림을 위해 60까지 몰아서(burst) 허용합니다. 사이클 17의 일반 구역 값(5/30)과 같은 비율입니다.</div>
 <p class="concl">[안] IP당 <b>초당 20번, 몰아서 60번</b>. 이 값은 #12에서 변수로 뺀 "페이지 크기 상한"과 달리 바꿀 일이 적어 nginx 설정의 상수로 둡니다(원하시면 같은 변수 방식으로).</p>
+<h3 style="font-size:20px;margin:18px 0 6px">질문에 답: 변수 방식으로 해도 성능 문제는 없나</h3>
+<p class="concl"><b>없습니다.</b> 변수는 nginx 컨테이너가 <b>켜질 때 한 번</b> 공식 이미지의 시작 스크립트가 템플릿에 값을 채워 보통 설정 파일(`/etc/nginx/conf.d/…conf`)로 써 두는 것이고, 그 뒤 nginx는 숫자가 박힌 보통 설정을 읽습니다. 요청을 처리할 때마다 변수를 찾는 일이 없어 상수로 적은 것과 처리 속도·메모리가 같습니다(hub.docker.com/_/nginx "Using environment variables in nginx configuration": 템플릿을 `envsubst`로 처리해 `/etc/nginx/conf.d`에 출력, 2026-10-16 확인).</p>
+<div class="fig wide"><svg viewBox="0 0 900 150" role="img" aria-label="변수가 채워지는 때">
+<defs><marker id="ah2b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="var(--accent)"/></marker></defs>
+<rect class="bxok" x="10" y="30" width="230" height="80" rx="8"/><text class="s14" x="20" y="54">컨테이너 켤 때 1번</text><text class="s13m" x="20" y="74" font-size="12">템플릿 rate=${LOOKUP_UPLOAD_RATE}r/s</text><text class="s13m" x="20" y="92" font-size="12">→ envsubst → rate=20r/s</text>
+<rect class="bx" x="290" y="30" width="250" height="80" rx="8"/><text class="s14" x="300" y="54">conf.d/ 보통 설정 파일</text><text class="s13m" x="300" y="74" font-size="12">숫자가 박힌 상태</text><text class="s13m" x="300" y="92" font-size="12">(상수로 적은 것과 같은 모양)</text>
+<rect class="bxa" x="590" y="30" width="300" height="80" rx="8"/><text class="s14" x="600" y="54">요청마다</text><text class="s13m" x="600" y="74" font-size="12">nginx는 읽어 둔 숫자만 씀</text><text class="s13m" x="600" y="92" font-size="12">변수 찾기 없음 → 비용 0</text>
+<path d="M240 70 H290" class="ar" marker-end="url(#ah2b)"/><path d="M540 70 H590" class="ar" marker-end="url(#ah2b)"/>
+<text class="s13m" x="10" y="140">값을 바꾸려면 prod.env를 고치고 nginx 컨테이너만 다시 켬(수 초). 상수 방식도 바꿀 때는 파일 고치고 다시 켜는 것은 같음</text>
+</svg><p class="cap">변수는 켤 때 한 번 채워지고, 그 뒤로는 상수와 똑같습니다.</p></div>
+<p>그래서 요청 수 한도도 페이지 크기처럼 변수로 빼는 편이 일관됩니다. 원하시면 이 항목을 <b>"초당 20번·몰아서 60번, `prod.env`의 `LOOKUP_UPLOAD_RATE=20`·`LOOKUP_UPLOAD_BURST=60` 변수로"</b>로 고쳐 승인해 주세요(기타에 "변수로"라고만 적어도 됩니다).</p>
 <p class="alt"><b>다른 선택과 결과.</b> ① 초당 10번, 몰아서 30 — 더 조이지만 포털 상세가 겹치는 순간 429가 나 그 묶음이 끊깁니다. ② 올리기도 일반 구역에 — 설정이 하나 줄지만 초당 5번에 딱 걸쳐 확장 모드 검색이 자주 끊깁니다(앞 페이지 #12에서 이미 따로 두기로 함). ③ 한도 없음 — 가짜 올리기 폭주를 nginx에서 못 막아 서버가 다 받습니다.</p>
 </div>
 
