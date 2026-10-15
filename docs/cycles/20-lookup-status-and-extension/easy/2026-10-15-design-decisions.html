@@ -47,7 +47,7 @@ svg .ah{fill:var(--accent)}
 <main class="doc">
 
 <p class="lead">설계 대안이 나왔습니다.<br>정할 것 12개를 골라 주세요.</p>
-<p class="concl">답 반영 (2026-10-15): #1·2·3·4·7·8 승인(#3에 "조작되지 않도록 보안에 신경써줘" 조건을 적었습니다). #5는 그림과 함께 다시 설명했고, #6은 질문("3분 안이면 캐시로 하니까 의미 없지 않나")에 답하고 선택지를 다시 적었습니다. #9·10·11 승인. #12 질문("무엇을 어디에 올리는 경로인지")은 12번 아래에 그림과 함께 답했습니다. 남은 것: <b>#5, #6, #12</b>.</p>
+<p class="concl">답 반영 (2026-10-15): #1·2·3·4·7·8 승인(#3에 "조작되지 않도록 보안에 신경써줘" 조건을 적었습니다). #5는 그림과 함께 다시 설명했고, #6은 질문("3분 안이면 캐시로 하니까 의미 없지 않나")에 답하고 선택지를 다시 적었습니다. #9·10·11 승인. #12 질문("무엇을 어디에 올리는 경로인지")은 12번 아래에 그림과 함께 답했습니다. #6 "그림과 도식으로" → 6번 아래에 캐시 칸 그림과 검사 흐름도를 넣었습니다. 남은 것: <b>#5, #6, #12</b>.</p>
 <p class="sub">architect가 dev 코드와 사이클 17 설계를 읽고 낸 대안입니다. 명세·화면 흐름은 그대로이고, "어떻게 만들지"만 정합니다. 그림 네 장(모듈 구성, 상태 묻기 순서, 확장 모드 순서, 개념 모델)은 대화에 보낸 원본 파일에 렌더링해 두었습니다. 원문은 `architect-proposal.md`.</p>
 
 <div class="card">
@@ -184,6 +184,39 @@ svg .ah{fill:var(--accent)}
 <h3 style="font-size:20px;margin:18px 0 6px">질문에 답: 3분 안이면 어차피 캐시로 답하니 의미 없지 않나</h3>
 <p class="concl"><b>거의 맞습니다.</b> #4대로 서버는 캐시에 있는 도서관은 확장에 주소를 보내지 않으므로, 확장이 올리는 결과는 원래 <b>빈 칸</b>에만 들어갑니다. "빈 칸일 때만"이 실제로 작동하는 때는 딱 하나, 계획을 준 뒤 업로드가 오기까지 몇 초 사이에 다른 사용자의 서버 조회가 같은 칸을 먼저 채운 경우뿐입니다(그때 서버가 본 값을 지킴). 그래서 이 규칙은 "가짜가 서버 값을 덮는 것"만 막고, <b>빈 칸에 가짜를 넣어 3분간 보이게 하는 것</b>은 막지 못합니다 — 이것이 architect가 말한 한계입니다.</p>
 <p>가짜가 들어오는 것 자체를 줄이려면 올라온 바이트를 서버가 받으면서 <b>검사</b>하는 수밖에 없습니다: 계획에 적힌 주소의 도서관 adapter로 해석이 되는지(해석 실패면 버림), 상태 코드 200인지, item은 한 번만, 4MB 이하. 이 검사는 ③의 해석 과정에서 공짜로 얻어지므로 비용이 거의 없습니다. 그래도 "그 도서관 페이지 모양을 흉내 낸 HTML"까지는 못 걸러내고, 그런 것은 3분 뒤 사라집니다.</p>
+<h3 style="font-size:20px;margin:18px 0 6px">그림으로: 캐시 칸과 가짜가 들어오는 길</h3>
+<p>서버 캐시는 "검색어 × 도서관" 칸마다 그 도서관 페이지의 해석 결과를 <b>3분</b> 들고 있는 표입니다. 모든 사용자가 같은 표를 봅니다. 확장 모드에서 서버는 이 표를 먼저 보고, <b>이미 찬 칸은 결과를 바로 주고 빈 칸만 확장에 주소를 보냅니다</b>.</p>
+<div class="fig" style="overflow-x:auto"><svg viewBox="0 0 900 300" role="img" aria-label="캐시 칸과 확장 모드" style="max-width:900px;min-width:640px">
+<defs><marker id="ah5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="var(--accent)"/></marker></defs>
+<style>.c13{font:400 13px "Noto Sans KR",sans-serif;fill:var(--text)} .c13m{font:400 13px "Noto Sans KR",sans-serif;fill:var(--muted)} .c14{font:700 14px "Noto Sans KR",sans-serif;fill:var(--text)}</style>
+<text class="c14" x="10" y="22">서버 캐시 (검색어 「백만장자 마인드」 줄, 3분)</text>
+<rect class="bx" x="10" y="34" width="140" height="50" rx="6"/><text class="c13" x="20" y="54">서울교육청</text><text class="c13m" x="20" y="72">찬 칸 (2분 전, 서버)</text>
+<rect class="bx" x="160" y="34" width="140" height="50" rx="6"/><text class="c13" x="170" y="54">부산 전자도서관</text><text class="c13m" x="170" y="72">찬 칸 (1분 전, 확장)</text>
+<rect class="bxno" x="310" y="34" width="140" height="50" rx="6"/><text class="c13" x="320" y="54">경기교육청 포털</text><text class="c13m" x="320" y="72">빈 칸</text>
+<rect class="bxno" x="460" y="34" width="140" height="50" rx="6"/><text class="c13" x="470" y="54">군산시립</text><text class="c13m" x="470" y="72">빈 칸</text>
+<text class="c13m" x="610" y="60">… 도서관마다 한 칸</text>
+<rect class="bxok" x="10" y="110" width="300" height="80" rx="8"/><text class="c14" x="20" y="132">확장 모드 사용자가 같은 검색을 하면</text><text class="c13m" x="20" y="152">찬 칸 2개 → 결과를 바로 돌려줌 (확장이 할 일 없음)</text><text class="c13m" x="20" y="170">빈 칸 2개 → 확장에 그 두 도서관 주소만 보냄</text>
+<path d="M80 84 V110" class="ar" marker-end="url(#ah5)"/><path d="M380 84 V110" class="ar" marker-end="url(#ah5)"/>
+<rect class="bxa" x="340" y="110" width="550" height="80" rx="8"/><text class="c14" x="350" y="132">그래서 "빈 칸일 때만 넣기"는</text><text class="c13m" x="350" y="152">확장 결과가 원래 빈 칸에만 오므로 거의 늘 참. 계획을 준 뒤 몇 초 사이에</text><text class="c13m" x="350" y="170">다른 사람의 서버 조회가 그 칸을 먼저 채운 경우에만 "서버 값을 지킴"</text>
+<rect class="bx" x="10" y="210" width="880" height="80" rx="8"/><text class="c14" x="20" y="232">남는 위험 (architect가 말한 한계)</text><text class="c13m" x="20" y="252">계획을 받은 사람이 빈 칸(예: 군산시립)에 <tspan fill="var(--no)" font-weight="700">가짜 페이지</tspan>를 올리면, 해석된 가짜 결과가 그 칸에 3분 동안 남아 다른 사용자도 봅니다.</text><text class="c13m" x="20" y="272">계획 번호(명세 #11)는 "모르는 사람이 아무 때나 올리기"는 막지만 이것은 못 막습니다. → 아래 검사로 줄입니다.</text>
+</svg><p class="cap">찬 칸은 확장을 거치지 않고, 빈 칸만 확장이 채웁니다. 위험은 "빈 칸에 가짜를 넣는 것"입니다.</p></div>
+<div class="fig" style="overflow-x:auto"><svg viewBox="0 0 900 250" role="img" aria-label="올라온 바이트 검사 흐름" style="max-width:900px;min-width:640px">
+<defs><marker id="ah6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="var(--accent)"/></marker></defs>
+<style>.d13{font:400 13px "Noto Sans KR",sans-serif;fill:var(--text)} .d13m{font:400 13px "Noto Sans KR",sans-serif;fill:var(--muted)} .d14{font:700 14px "Noto Sans KR",sans-serif;fill:var(--text)}</style>
+<text class="d14" x="10" y="22">제안 (나′): 올라온 바이트를 받으면서 네 가지를 검사, 통과한 것만 빈 칸에 넣음</text>
+<rect class="bx" x="10" y="40" width="150" height="60" rx="8"/><text class="d13" x="20" y="64">올라온 바이트</text><text class="d13m" x="20" y="84">계획 번호 + 쪽 번호</text>
+<rect class="bxa" x="190" y="40" width="130" height="60" rx="8"/><text class="d13" x="200" y="58">① 쪽 번호가</text><text class="d13" x="200" y="76">계획에 있고</text><text class="d13" x="200" y="94">처음 올라옴?</text>
+<rect class="bxa" x="350" y="40" width="130" height="60" rx="8"/><text class="d13" x="360" y="58">② 4MB 이하,</text><text class="d13" x="360" y="76">상태 코드</text><text class="d13" x="360" y="94">200?</text>
+<rect class="bxa" x="510" y="40" width="150" height="60" rx="8"/><text class="d13" x="520" y="58">③ 그 도서관의</text><text class="d13" x="520" y="76">adapter로 해석이</text><text class="d13" x="520" y="94">되는 페이지?</text>
+<rect class="bxa" x="690" y="40" width="130" height="60" rx="8"/><text class="d13" x="700" y="58">④ 캐시 칸이</text><text class="d13" x="700" y="76">아직 비어</text><text class="d13" x="700" y="94">있음?</text>
+<path d="M160 70 H190" class="ar" marker-end="url(#ah6)"/><path d="M320 70 H350" class="ar" marker-end="url(#ah6)"/><path d="M480 70 H510" class="ar" marker-end="url(#ah6)"/><path d="M660 70 H690" class="ar" marker-end="url(#ah6)"/>
+<rect class="bxok" x="690" y="130" width="200" height="50" rx="8"/><text class="d13" x="700" y="150">모두 예 → 칸에 넣음(3분)</text><text class="d13m" x="700" y="168">결과 줄을 화면에, 다른 사용자도 봄</text>
+<path d="M755 100 V130" class="ar" marker-end="url(#ah6)"/>
+<rect class="bxno" x="190" y="130" width="470" height="50" rx="8"/><text class="d13" x="200" y="150">①②③ 중 하나라도 아니오 → 400 invalid_plan, 캐시에 아무것도 안 넣음, 그 줄은 "확인하지 못한 도서관"으로</text><text class="d13m" x="200" y="168">④만 아니오(몇 초 사이에 서버가 먼저 채움) → 캐시는 그대로 두고 서버 값으로 결과 줄을 돌려줌</text>
+<path d="M255 100 V130" class="ar" marker-end="url(#ah6)"/><path d="M415 100 V130" class="ar" marker-end="url(#ah6)"/><path d="M585 100 V130" class="ar" marker-end="url(#ah6)"/>
+<text class="d13m" x="10" y="210">③이 핵심입니다: 아무 글자나 올리면 adapter가 "검색 결과 모양이 아님"으로 버립니다. 그 도서관 페이지를 그대로 흉내 낸 가짜만 통과하고, 그것도 3분 뒤 사라집니다.</text>
+<text class="d13m" x="10" y="230">검사 ①②③은 해석 과정에서 어차피 하는 일이라 새 비용이 거의 없습니다.</text>
+</svg><p class="cap">네 검사 중 ①②③은 가짜를 거르고, ④는 서버가 먼저 넣은 값을 지킵니다.</p></div>
 <p>다시 고르는 선택지(제안) 추천: <b>(나′) 빈 칸일 때만 + 해석 검사</b>(위 네 가지 검사에 걸리면 400 `invalid_plan`으로 버리고 캐시에 넣지 않음). 3분 노출은 받아들입니다.</p>
 <p class="alt">다른 선택 ①: 검사만 하고 "빈 칸일 때만"은 뺌 — 몇 초 사이 경쟁은 드물어 실질 차이는 거의 없음. 다른 선택 ②: 확장 결과는 그 사람에게만(공유 안 함) — 가짜 노출 0이지만 "확장도 캐싱"(AC-10)과 어긋남. 다른 선택 ③: 아무것도 안 함(3분이면 사라짐).</p>
 <p class="alt">다른 선택 ①: 그대로 둠(3분이면 사라짐). 가장 단순하지만 그 3분 동안 다른 사용자가 가짜를 봅니다. 다른 선택 ②: 확장 결과는 그 사람에게만 보이고 공유하지 않음. 가짜 걱정은 없지만 "다른 사용자도 캐시에서 본다"(명세 AC-10, 사용자 요청 "확장도 캐싱")와 어긋납니다.</p>
