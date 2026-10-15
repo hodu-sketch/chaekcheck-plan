@@ -17,3 +17,4 @@
 | [2026-10-15-design-decisions.html](2026-10-15-design-decisions.html) | 설계 결정 11개 (공급사 코드 잇기 자리, 공급사 이름 묶음, 뒤바뀐 칸, 규칙 파일, 잊음 장치, 저자 칸 정리 함수, 남길 낱말 상수, CACHED, 변경 파일, 수집기 상수, 반영 틈) | `../architect-proposal.md` (그림: `architect-proposal-original.html`) | 모두 정함 (2026-10-15) |
 | [2026-10-15-adr-drafts.html](2026-10-15-adr-drafts.html) | ADR-0113~0116 초안 확인 | 설계 결정들 | 모두 정함 (2026-10-15) |
 | [2026-10-15-design-followup-decisions.html](2026-10-15-design-followup-decisions.html) | 설계 이어서: ADR-0117 방향 지침, 추천 목록 맞춘 수, 21 먼저에 따른 일정 | ADR-0117 초안, `../from-cycle-21-matching.md` | 모두 정함 (2026-10-15, #3 미승인 → 21과 나란히 개발) |
+| [2026-10-15-design-delta-review.html](2026-10-15-design-delta-review.html) | design-delta 한 장 요약, 마무리로 넘어갈지 | `../design-delta.md` | 1개 기다림 |

@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 19 설계 검토</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+</style>
+</head>
+<body>
+<main class="doc">
+
+<p class="lead">사이클 19 설계(design-delta)가 다 정해졌습니다.<br>이대로 마무리 단계로 넘어갈지만 골라 주세요.</p>
+<p class="sub">설계 결정 11개, ADR 5개(0113~0117), 이어서 정할 것 3개를 모두 반영했습니다. 그림이 든 원본은 따로 보낸 <code>design-delta-original.html</code>입니다.</p>
+
+<div class="card">
+<h2>무엇이 바뀌나 (한 장 요약)</h2>
+<table>
+<tr><th>자리</th><th>바뀌는 것</th><th>기록</th></tr>
+<tr><td>저자 정리 (catalog, 내 PC 가져오기 + 검색어)</td><td>꺾쇠 뗌, 〈〉「」《》 표시만 뗌, [ ] 그대로, 붙은 역할 나누기, 책 저자 칸은 기호 떼고 띄워 넣음</td><td>ADR-0113</td></tr>
+<tr><td>같은 책 묶기 (collection, 내 PC)</td><td>같은 공급사 상품 코드로 잇기, 견줄 제목에서 앞 괄호 뗌(판·원서·형태·뒷권·"…판"은 남김)</td><td>ADR-0114</td></tr>
+<tr><td>뒤바뀐 세 포털 (가져오기 + 수집기)</td><td>규칙 파일로 바꿔 읽기, 수집기 상수, 고친 수집기 뒤엔 검증 스크립트로 확인하고 규칙 줄 지움</td><td>ADR-0115</td></tr>
+<tr><td>사용 기록 (운영 서버)</td><td>도서관별 하루 표에 <code>cached_count</code> 칸, 결과 값 <code>CACHED</code></td><td>ADR-0116</td></tr>
+<tr><td>dev 문서</td><td>규칙 목록 문서(<code>rules-index.md</code>), 상수 주석, 수집·가져오기 시작 점검</td><td>ADR-0117</td></tr>
+<tr><td>일정</td><td>사이클 21과 나란히 개발, 다시 가져오기·반영은 둘 다 들어간 뒤 한 번(안), 10/18 넘기면 공개일 미룸</td><td>spec "일정"</td></tr>
+</table>
+<p class="ex">표는 사용 기록 칸 하나만 더하고, 책 목록 표·API·화면 구성은 그대로입니다. 남은 확인(공급사 이름 묶음 목록, 교보 구독형 번호 공간, ISBN 둘 이상 묶음 수, 검증 날짜)은 dev가 개발하며 재서 알려 줍니다.</p>
+</div>
+
+<div class="card">
+<h2>다음 단계: 마무리(<code>/cycle-close</code>)에서 하는 일</h2>
+<ul>
+<li>설계 검토 에이전트가 범위 밖 일·빠진 기준·모듈 경계·기록 안 된 결정·태그 없는 값을 점검</li>
+<li><code>docs/current</code>(모듈·데이터·흐름)에 이번 설계를 합침</li>
+<li>dev 인계서(<code>handoff.md</code>) 작성: 지금 모아 둔 <code>handoff-notes.md</code> 내용(18 B 뒤 시작, 21과 나란히, dev 문서 고칠 것, 공통 제약 등)을 옮김 → 결정 페이지로 확인</li>
+</ul>
+<div class="prop">이 설계대로 마무리(<code>/cycle-close</code>)로 넘어갑니다. [안]</div>
+<p class="alt">다른 선택: 더 볼 곳이 있으면 "기타"에 적어 주세요.</p>
+</div>
+
+<p class="foot">원본: <code>docs/cycles/19-author-angle-brackets/design-delta.md</code>, ADR-0113~0117. 2026-10-15.</p>
+</main>
+</body>
+</html>
