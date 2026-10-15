@@ -120,3 +120,4 @@
 | [ADR-0113](0113-author-marks-and-glued-roles-in-normalize.md) | 저자 정리에서 꺾쇠·괄호 표시를 떼고 붙은 역할 낱말을 나누며, 책 저자 칸도 같은 규칙으로 정리(`catalog.normalize`) | Accepted | 2026-10-15 | 19 |
 | [ADR-0114](0114-grouping-supplier-codes-and-leading-notes.md) | 같은 책 묶기에서 같은 공급사의 상품 코드로 잇고, 제목 앞 괄호(관제)를 떼고 견줌 (ADR-0106에 덧붙임) | Accepted | 2026-10-15 | 19 |
 | [ADR-0115](0115-swapped-author-publisher-portals.md) | 저자·출판사가 뒤바뀐 세 포털은 가져올 때 규칙 파일로 바꿔 읽고, 수집기도 고치며, 검증 스크립트로 다시 확인하고 지움 | Accepted | 2026-10-15 | 19 |
+| [ADR-0117](0117-human-rules-index-for-ai.md) | 사람이 정한 수집·가져오기·도서관 규칙은 코드·표 파일에 두고 dev 규칙 목록 문서로 찾고 검증 (ADR-0085를 넓힘) | Accepted | 2026-10-15 | 19 |
