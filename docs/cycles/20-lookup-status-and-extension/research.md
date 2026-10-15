@@ -110,3 +110,9 @@ dev seed의 도서관 주소 12곳 루트에 `Origin` 머리를 붙여 GET(curl,
 - (이어서, 사용자 "순수하게 비용") 돈: 둘 다 0원에 가까움. EC2는 인스턴스 고정 요금, Cloudflare 무료 요금제·터널에 요청 과금 항목 없음(과금 없음은 추정), 나가는 데이터는 AWS "매달 100GB 무료"(https://aws.amazon.com/ko/ec2/pricing/on-demand/, 확인 2026-10-15) 안. 묻기: 1명 3KB/분(추정) → 하루 1,000명×30분 ≈ 90MB/일 ≈ 2.7GB/월. SSE: 그 1/10 안쪽(추정). 100GB 초과 시 서울 GB당 단가는 확인 못 함. Cloudflare 뒤 SSE는 기본 125초 안에 응답이 흘러야 함(Error 524, https://developers.cloudflare.com/support/troubleshooting/http-status-codes/cloudflare-5xx-errors/error-524/, 확인 2026-10-15)
 - (이어서, 사용자 "서버 리소스를 어느 것이 더 적게 먹는가") CPU·보내는 양: SSE가 덜(연결 중 0, 바뀔 때·살아 있음 신호만). 메모리·연결 수·서버 코드: 묻기가 덜(요청 뒤 남는 것 없음). nginx `worker_connections` 기본 512이며 프록시 연결 포함(https://nginx.org/en/docs/ngx_core_module.html#worker_connections, 확인 2026-10-15) → SSE 1명 = 2연결 → 약 250명 한도; dev `deploy/nginx/`에 이 설정 없음. Tomcat `maxConnections` 기본 8192(https://tomcat.apache.org/tomcat-11.0-doc/config/http.html, 확인 2026-10-15). 추천 유지: 묻기(100명에 CPU 1% 안쪽 추정). SSE로 가면 `worker_connections` 상향 포함
 - **결정 (2026-10-15)**: 10초마다 묻기 [확정] (범위 결정 #3 승인). 이유 (사용자): "자원 비교해서 이 서비스는 메모리 점유가 더 문제라고 판단했다" — 4GB 서버 한 대(사이클 17)에서 SSE가 사람 수만큼 연결·메모리를 붙드는 쪽이 CPU 몇 % 차이보다 무겁다고 봄
+
+## 8. 질문에 답 (2026-10-15): 폰은 앱을 만들어야 하나
+
+- 폰 크롬(안드로이드)·사파리(iOS)는 확장 미지원 → 이번 사이클의 폰은 서버 조회 + 신호 + 빨강일 때 도서관 링크
+- 길 ①: 안드로이드 파이어폭스에 같은 확장(3절 A, extensionworkshop 문서). 길 ②: 앱(안드로이드·iOS)이 책첵을 감싸고 도서관을 부름 — Google Play 등록 1회 US$25 + 신원 확인(https://support.google.com/googleplay/android-developer/answer/6112435, 확인 2026-10-15), Apple Developer Program 연 99 USD(3절 A). 길 ③ 웹만(PWA)은 CORS·혼합 콘텐츠로 불가(1절)
+- 결론: 이번에는 앱 없음. 앱은 backlog 후보(적을지 사용자에게 물음, 명세 결정 #4)
