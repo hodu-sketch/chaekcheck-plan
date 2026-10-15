@@ -47,7 +47,7 @@ svg .ah{fill:var(--accent)}
 <main class="doc">
 
 <p class="lead">설계 대안이 나왔습니다.<br>정할 것 12개를 골라 주세요.</p>
-<p class="concl">답 반영 (2026-10-15): #1·2·3·4·7·8 승인(#3에 "조작되지 않도록 보안에 신경써줘" 조건을 적었습니다). #5는 그림과 함께 다시 설명했고, #6은 질문("3분 안이면 캐시로 하니까 의미 없지 않나")에 답하고 선택지를 다시 적었습니다. #9·10·11 승인. #12 질문("무엇을 어디에 올리는 경로인지")은 12번 아래에 그림과 함께 답했습니다. #6 "그림과 도식으로" → 6번 아래에 캐시 칸 그림과 검사 흐름도를 넣었습니다. #5 승인. 채팅 질문 둘(상한 충분한가·옵션으로 / 해석을 확장에 넘길 수 있나)에 6번 아래와 새 13번에서 답했습니다. 남은 것: <b>#6, #12, #13</b>.</p>
+<p class="concl">답 반영 (2026-10-15): #1·2·3·4·7·8 승인(#3에 "조작되지 않도록 보안에 신경써줘" 조건을 적었습니다). #5는 그림과 함께 다시 설명했고, #6은 질문("3분 안이면 캐시로 하니까 의미 없지 않나")에 답하고 선택지를 다시 적었습니다. #9·10·11 승인. #12 질문("무엇을 어디에 올리는 경로인지")은 12번 아래에 그림과 함께 답했습니다. #6 "그림과 도식으로" → 6번 아래에 캐시 칸 그림과 검사 흐름도를 넣었습니다. #5 승인. 채팅 질문 둘(상한 충분한가·옵션으로 / 해석을 확장에 넘길 수 있나)에 6번 아래와 새 13번에서 답했습니다. #6·#13 승인(#6에 보안 장치 ⑤~⑩을 더 적음). #12 질문(한 변수로 nginx까지)에 답했습니다. 남은 것: <b>#12</b>.</p>
 <p class="sub">architect가 dev 코드와 사이클 17 설계를 읽고 낸 대안입니다. 명세·화면 흐름은 그대로이고, "어떻게 만들지"만 정합니다. 그림 네 장(모듈 구성, 상태 묻기 순서, 확장 모드 순서, 개념 모델)은 대화에 보낸 원본 파일에 렌더링해 두었습니다. 원문은 `architect-proposal.md`.</p>
 
 <div class="card">
@@ -224,6 +224,18 @@ svg .ah{fill:var(--accent)}
 <p class="concl"><b>충분해 보이고, 이미 상수가 아니라 설정값입니다.</b> 서버 모드가 지금까지 같은 4MB 상한으로 도서관 페이지를 받아 왔고, 오늘(2026-10-16) 도서관 사이트 몇 곳을 받아 보니 페이지 하나가 42KB~220KB였습니다(강남 220KB, 전주 48KB, 서울교육청 42KB; 표본이라 전체를 본 것은 아님). 4MB는 그 18배입니다. 값은 dev `application.yml`의 <code>chaekcheck.availability.max-body-size: 4MB</code>(`AvailabilityProperties.maxBodySize`)로 이미 설정이며, 말씀대로 <b>올리기 상한도 이 설정값을 그대로 쓰고</b> nginx의 `client_max_body_size`는 배포 설정 변수로 같은 값을 넣어 한 곳만 바꾸면 둘 다 바뀌게 합니다(사용자: "옵션으로 빼서 옵션으로도 가능하게", 2026-10-16 → 설계에 적음).</p>
 
 <p>다시 고르는 선택지(제안) 추천: <b>(나′) 빈 칸일 때만 + 해석 검사</b>(위 네 가지 검사에 걸리면 400 `invalid_plan`으로 버리고 캐시에 넣지 않음). 3분 노출은 받아들입니다.</p>
+<h3 style="font-size:20px;margin:18px 0 6px">승인 조건에 답: 더 막을 수 있는 보안 장치</h3>
+<p class="concl">네 검사에 더해 설계에 넣는 것(사용자: "보안적으로 막을 수 있는 방법 있으면 넣어줘", 2026-10-16):</p>
+<table>
+<tr><th>장치</th><th>막는 것</th><th>비용</th></tr>
+<tr><td>⑤ 계획 번호를 <b>만든 사람의 IP</b>에 묶음 — 다른 IP에서 오는 업로드는 400</td><td>계획 번호를 훔쳐 다른 곳에서 올리기</td><td>계획에 IP 한 칸</td></tr>
+<tr><td>⑥ 업로드 요청의 <code>Origin</code>(또는 `Referer`)이 책첵 주소가 아니면 거절</td><td>다른 사이트 스크립트가 사용자 브라우저를 시켜 올리기</td><td>머리 검사 한 줄 (사이클 15의 CSRF 방식과 같은 생각)</td></tr>
+<tr><td>⑦ IP마다 계획 만들기 한도(예: 1분에 20개 [안]), 계획마다 업로드는 item 수만큼만</td><td>계획을 대량으로 만들어 캐시를 채우기</td><td>nginx zone 하나 더 또는 서버 카운터</td></tr>
+<tr><td>⑧ 캐시 칸에 <b>출처 표시</b>(`via=extension`)와 넣은 시각을 남기고, 확장 출처 칸은 운영 명령으로 한 번에 비울 수 있게</td><td>가짜가 발견됐을 때 바로 치우기</td><td>캐시 값에 칸 하나, 관리 명령 하나</td></tr>
+<tr><td>⑨ `invalid_plan`·검사 실패를 IP별로 세어 usagelog `rejected_event`에 남기고, 1분에 N번 넘으면 그 IP의 계획 만들기를 잠시 막음 [안 N=30]</td><td>반복 시도 알아채기</td><td>이미 있는 rejected_event 재사용</td></tr>
+<tr><td>⑩ 서버가 해석할 때 <b>계획의 URL 호스트와 adapter 종류</b>로만 해석(올린 쪽이 adapter를 고를 수 없음)</td><td>다른 도서관 adapter로 해석시켜 엉뚱한 칸 채우기</td><td>이미 #4 설계에 포함</td></tr>
+</table>
+<p class="ex">하지 않는 것: 로그인 필수(로그인 없이 쓰는 사람이 많음, #6 다른 선택과 같은 이유), 확장 서명 검증(확장이 우리 API를 모르는 #3 구조라 의미 없음). 이 장치들은 design-delta "외부 연동·보안" 절에 적고, 값(⑦·⑨의 숫자)은 [안]으로 둡니다.</p>
 <p class="alt">다른 선택 ①: 검사만 하고 "빈 칸일 때만"은 뺌 — 몇 초 사이 경쟁은 드물어 실질 차이는 거의 없음. 다른 선택 ②: 확장 결과는 그 사람에게만(공유 안 함) — 가짜 노출 0이지만 "확장도 캐싱"(AC-10)과 어긋남. 다른 선택 ③: 아무것도 안 함(3분이면 사라짐).</p>
 <p class="alt">다른 선택 ①: 그대로 둠(3분이면 사라짐). 가장 단순하지만 그 3분 동안 다른 사용자가 가짜를 봅니다. 다른 선택 ②: 확장 결과는 그 사람에게만 보이고 공유하지 않음. 가짜 걱정은 없지만 "다른 사용자도 캐시에서 본다"(명세 AC-10, 사용자 요청 "확장도 캐싱")와 어긋납니다.</p>
 </div>
@@ -290,6 +302,17 @@ svg .ah{fill:var(--accent)}
 <text class="u13m" x="20" y="380">상태 묻기·책 상세 같은 다른 요청과 겹치면 429가 납니다. 올리기 구역을 따로 두면(20r/s) 확장 모드 검색이 끊기지 않고, 일반 구역은 그대로입니다.</text>
 <text class="u13m" x="20" y="398">사이클 17이 운영 nginx 파일(prod.conf)을 만들므로, 이 두 줄은 그 파일에 함께 들어갑니다.</text>
 </svg><p class="cap">올리는 것 = 도서관 페이지 원본 바이트. 가는 곳 = 우리 서버의 계획 입구 ②. nginx에서 그 주소만 본문 4MB·요청 수 20r/s로 둡니다.</p></div>
+<h3 style="font-size:20px;margin:18px 0 6px">질문에 답: 한 변수로 Spring과 nginx 둘 다 바꿀 수 있나</h3>
+<p class="concl"><b>됩니다.</b> 사이클 17의 배포 구성은 값을 `deploy/prod/prod.env`(비밀 아님) 파일에 두고 `up.sh`가 compose에 넘깁니다. 거기에 <code>LOOKUP_MAX_BODY_MB=4</code> 한 줄을 두면, compose가 (1) Spring 컨테이너에는 환경 변수 <code>CHAEKCHECK_AVAILABILITY_MAX_BODY_SIZE=${LOOKUP_MAX_BODY_MB}MB</code>로, (2) nginx 컨테이너에는 같은 변수를 넘기고 nginx 설정은 <b>템플릿</b>(<code>client_max_body_size ${LOOKUP_MAX_BODY_MB}m;</code>)으로 둡니다. 공식 nginx 도커 이미지는 띄울 때 `/etc/nginx/templates/*.template`를 `envsubst`로 채워 `/etc/nginx/conf.d`에 써 줍니다(hub.docker.com/_/nginx "Using environment variables in nginx configuration", 2026-10-16 확인). 그래서 한 곳만 고치고 다시 띄우면 두 값이 같이 바뀌고, 서로 달라질 일이 없습니다.</p>
+<div class="fig" style="overflow-x:auto"><svg viewBox="0 0 900 170" role="img" aria-label="한 변수로 두 값" style="max-width:900px;min-width:640px">
+<defs><marker id="ah7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="var(--accent)"/></marker></defs>
+<style>.e13{font:400 13px "Noto Sans KR",sans-serif;fill:var(--text)} .e13m{font:400 13px "Noto Sans KR",sans-serif;fill:var(--muted)} .e14{font:700 14px "Noto Sans KR",sans-serif;fill:var(--text)}</style>
+<rect class="bxok" x="10" y="40" width="220" height="80" rx="8"/><text class="e14" x="20" y="64">deploy/prod/prod.env</text><text class="e13" x="20" y="86">LOOKUP_MAX_BODY_MB=4</text><text class="e13m" x="20" y="106">한 곳만 고침 → up.sh → compose</text>
+<rect class="bxa" x="330" y="10" width="560" height="60" rx="8"/><text class="e14" x="340" y="32">Spring (availability)</text><text class="e13m" x="340" y="52">환경 변수 CHAEKCHECK_AVAILABILITY_MAX_BODY_SIZE=${LOOKUP_MAX_BODY_MB}MB → 서버 받기·올리기 상한</text>
+<rect class="bxa" x="330" y="90" width="560" height="60" rx="8"/><text class="e14" x="340" y="112">nginx (공식 이미지)</text><text class="e13m" x="340" y="132">templates/lookup-plans.conf.template: client_max_body_size ${LOOKUP_MAX_BODY_MB}m; → envsubst → conf.d</text>
+<path d="M230 70 H330 V40" class="ar" marker-end="url(#ah7)"/><path d="M230 90 H330 V120" class="ar" marker-end="url(#ah7)"/>
+</svg><p class="cap">같은 변수 하나가 Spring과 nginx 양쪽 상한이 됩니다.</p></div>
+<p class="ex">사이클 17이 만드는 nginx 설정 파일 중 이 location 조각만 `.template`로 두면 됩니다(나머지 파일은 그대로). 요청 수 한도(20r/s)도 같은 방식으로 변수로 뺄 수 있지만, 바꿀 일이 적어 지금은 상수로 둡니다(원하시면 같이 변수로).</p>
 <p class="alt">다른 선택: 일반 구역 그대로. 설정이 없지만 묶음이 빠르게 돌면 429가 나서 확장 모드 검색이 끊깁니다.</p>
 </div>
 
