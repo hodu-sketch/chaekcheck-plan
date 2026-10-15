@@ -15,3 +15,4 @@
 | [2026-10-15-flow-decisions.html](2026-10-15-flow-decisions.html) | 화면 흐름 결정 2개 (붙은 역할 표기 화면 그대로, 설계로 넘어감), S1·S3 화면 예시 | `../flow.md` (그림: `flow-original.html`) | 모두 정함 (2026-10-15, #1 미승인 → 띄어 보임) |
 | [2026-10-15-flow-decisions-artifact.html](2026-10-15-flow-decisions-artifact.html) | 위 페이지의 원격용 사본 (https://claude.ai/artifact/K7U5RX9f7byckJpLsLBRv8) | 위와 같음 | 모두 정함 (2026-10-15, #1 미승인 → 띄어 보임) |
 | [2026-10-15-design-decisions.html](2026-10-15-design-decisions.html) | 설계 결정 11개 (공급사 코드 잇기 자리, 공급사 이름 묶음, 뒤바뀐 칸, 규칙 파일, 잊음 장치, 저자 칸 정리 함수, 남길 낱말 상수, CACHED, 변경 파일, 수집기 상수, 반영 틈) | `../architect-proposal.md` (그림: `architect-proposal-original.html`) | 모두 정함 (2026-10-15) |
+| [2026-10-15-adr-drafts.html](2026-10-15-adr-drafts.html) | ADR-0113~0116 초안 확인 | 설계 결정들 | 4개 기다림 |
