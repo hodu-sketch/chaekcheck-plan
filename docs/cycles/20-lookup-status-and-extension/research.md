@@ -83,3 +83,10 @@ dev seed의 도서관 주소 12곳 루트에 `Origin` 머리를 붙여 GET(curl,
 | Firefox for Android에서 우리 확장 설치·동작 | 시험 |
 | 크롬 웹스토어 등록비 금액 | 등록 페이지(로그인 뒤) 확인 |
 | 사용자 중 설치할 사람 비율 | 알 수 없음. 배포 뒤 usagelog로 셈 |
+
+## 6. 질문에 답 (2026-10-15): iframe은 왜 제외했나
+
+- 다른 출처 iframe 안의 문서는 우리 스크립트가 읽을 수 없음(같은 출처 정책: `iframe.contentWindow` 등은 Window·Location에 "매우 제한된 접근"만, DOM 읽기 없음; 소통은 양쪽이 `postMessage`를 써야 함) — https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy (확인 2026-10-15). 읽지 못하면 판정·캐시·공유가 불가 → 부담을 옮기는 길이 아니라 E(사용자가 눈으로 보기)와 같음
+- 띄우기 자체를 막는 도서관 있음: 응답 머리 확인 7곳 중 `lib.ice.go.kr`이 `X-Frame-Options: SAMEORIGIN` — https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Frame-Options (확인 2026-10-15). `e-lib.sen.go.kr`은 CSP가 있으나 `frame-ancestors`는 없음. 나머지 5곳은 머리 없음
+- `http://` 도서관은 https 화면 안 iframe이 혼합 콘텐츠로 막힘
+- 결론: 읽기 불가 + 일부 막힘 + http 불가 → E보다 못해 제외. 쉬운 설명은 `easy/2026-10-15-offload-options.html` "질문에 답" 카드
