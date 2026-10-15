@@ -16,3 +16,4 @@
 | [2026-10-16-design-delta-decisions.html](2026-10-16-design-delta-decisions.html) | design-delta 초안의 남은 값 7개(계획 저장 상한, 올리기 구역 20r/s, IP별 한도·검사 실패 거절, 캐시 비우기는 재시작, 캐시 답 셈, 메시지·설정 이름, 못 여는 도서관은 서버 모드) + 이 문서대로 마무리 | `../design-delta.md` | #1·2·4·5·6·9 정함, 나머지는 세 관점 검토 페이지로 옮기고 닫음 (2026-10-16) |
 | [design-delta-original.html](design-delta-original.html) | design-delta.md 원문 + 그림 5장(모듈 구성, 상태 묻기, 확장 모드 검색, 개념 모델, 표) 렌더링 | `../design-delta.md` | — |
 | [2026-10-16-review-decisions.html](2026-10-16-review-decisions.html) | 세 관점(사용자·서버 자원·보안/안정성) 검토 결과: 바로 고친 것 21줄 + 정할 것 19개(화면 6, 서버 메모리 4, 보안 3, 앞 페이지에서 넘어온 6) | `../design-delta.md`(◆), `../spec.md`, `../flow.md`, ADR-0119 | 19개 기다림 |
+| [2026-10-16-review-decisions-artifact.html](2026-10-16-review-decisions-artifact.html) | 위 검토 페이지의 원격용 사본 (claude.ai Artifact https://claude.ai/artifact/9RHphpwGhriqZ6um2sqhyh, 저장 → db `choices`) | 위와 같음 | 19개 기다림 |

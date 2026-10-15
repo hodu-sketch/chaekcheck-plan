@@ -1,0 +1,352 @@
+<title>사이클 20 세 관점 검토</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+
+:root{color-scheme:light}
+body{background:var(--bg);color:var(--text)}
+.chip{display:inline-block;font-size:15px;font-weight:700;color:var(--warn);background:var(--warn-bg);border:1px solid var(--warn);border-radius:999px;padding:0 10px;margin-right:6px;line-height:1.6}
+.chip.done{color:var(--ok);background:var(--ok-bg);border-color:var(--ok)}
+.dec{margin:12px 0 18px;padding:14px 16px;border:1px solid var(--line);border-radius:10px;background:var(--code-bg);display:flex;flex-direction:column;gap:10px}
+.dec .btns{display:flex;flex-wrap:wrap;gap:8px}
+.dec button{font:inherit;font-size:17px;padding:6px 16px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer}
+.dec button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.dec button[aria-pressed="true"][data-c="승인"]{background:var(--ok-bg);border-color:var(--ok);color:var(--ok);font-weight:700}
+.dec button[aria-pressed="true"][data-c="미승인"]{background:var(--no-bg);border-color:var(--no);color:var(--no);font-weight:700}
+.dec button[aria-pressed="true"][data-c="기타"]{background:var(--accent-bg);border-color:var(--accent);color:var(--accent);font-weight:700}
+.dec textarea{font:inherit;font-size:17px;width:100%;min-height:64px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--text);resize:vertical}
+.dec .save{background:var(--accent);color:var(--card);border-color:var(--accent);font-weight:700}
+.dec .st{font-size:15px;color:var(--muted)}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:0 0 24px;font-size:17px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.bar b{font-variant-numeric:tabular-nums}
+</style>
+<main class="doc">
+<div class="bar" id="bar">불러오는 중</div>
+
+<style>
+.s13{font:400 13px "Noto Sans KR",sans-serif;fill:var(--text)} .s13m{font:400 13px "Noto Sans KR",sans-serif;fill:var(--muted)} .s14{font:700 14px "Noto Sans KR",sans-serif;fill:var(--text)} .sred{fill:var(--no);font-weight:700} .sok{fill:var(--ok);font-weight:700}
+.wide{overflow-x:auto} .wide svg{max-width:900px;min-width:640px}
+.why{background:var(--code-bg);border-radius:8px;padding:10px 14px;margin:10px 0}
+.grp{font-size:22px;margin:28px 0 12px}
+</style>
+
+<p class="lead">세 관점으로 설계 전체를 검토했습니다.<br>답이 하나뿐인 것은 고쳤고(아래 표 21줄), 정할 것 19개만 모았습니다.</p>
+<p class="sub">요청하신 대로 사용자 관점, 서버 자원 관점, 보안·안정성 관점에서 따로따로 검토했습니다. 각 관점마다 dev 코드와 사이클 17·19·21 문서까지 읽었고, 외부 사실은 공식 문서로 확인했습니다. 답이 하나뿐인 것(빠뜨린 처리, 문서끼리 어긋난 곳, 보안 구멍)은 설계 문서에 바로 고쳤습니다. 무엇을 고쳤는지는 아래 첫 카드에 있습니다. 진짜로 고를 것이 있는 항목만 아래에 묻습니다. 앞 페이지에서 아직 정하지 않았던 6개(계획 한도, 못 여는 도서관, 설정값 목록, 앞 계획 지우기, 떠난 묶음, 다음 단계)도 검토 결과에 맞게 고쳐 이 페이지로 옮겼습니다. 앞 페이지는 닫습니다.</p>
+
+<div class="card">
+<h2>검토로 찾고 바로 고친 것 (결정 없이)</h2>
+<p class="concl">가장 큰 것 셋: <b>① 가짜 페이지에 다른 사이트 주소를 넣어 서버가 그 주소를 부르게 하는 구멍</b>(서버 모드에도 원래 있던 것), <b>② 로그인 기능을 켜면 새 POST 셋이 CSRF 때문에 모두 403이 나는 문제</b>, <b>③ 도서관 화면이 바뀐 것뿐인데 검색 전체가 오류가 되고 그 IP가 잠기는 문제</b>. 셋 다 고쳤습니다.</p>
+<table>
+<tr><th>관점</th><th>찾은 것</th><th>고친 내용</th></tr>
+<tr><td>보안</td><td>올린 페이지의 「도서관에서 보기」 주소가 다른 사이트여도 그대로 캐시에 들어가, 다른 사용자 화면의 링크가 되고 서버가 그 주소(예: 서버 내부 주소)를 부를 수 있음. 서버 모드 상세 조회에도 같은 검사가 빠져 있음 (dev `DetailLookupResolver.java:54`)</td><td>상세 주소는 그 도서관과 같은 호스트일 때만 저장·사용. 서버 모드에도 같은 검사</td></tr>
+<tr><td>보안</td><td>새 POST 셋(계획·올리기·닫기)에 CSRF 처리가 없어 로그인 기능을 켜면 403 (dev `SecurityConfiguration.java:75`, Spring 공식 문서)</td><td>웹이 사용 기록 알림과 같은 방식으로 CSRF 머리를 붙임</td></tr>
+<tr><td>사용자·보안</td><td>도서관이 차단 안내나 바뀐 화면을 주면 400 → 화면 전체 오류 + IP 잠금에 셈</td><td>그 도서관만 실패(200 `library-failed`) → 「확인하지 못한 도서관」. 400은 계획 번호·IP·Origin 문제에만</td></tr>
+<tr><td>보안</td><td>서버가 읽는 IP가 nginx 주소라 모든 사용자가 같은 IP로 보임. IPv6는 주소를 바꿔 가며 한도를 피할 수 있음</td><td>IP는 Cloudflare가 준 진짜 IP(`X-Real-IP`)로, IPv6는 앞 /64로 셈</td></tr>
+<tr><td>보안</td><td>운영 확장 설정에 `localhost:5173`이 들어 있어 사용자 PC의 아무 개발 서버가 확장을 부를 수 있음. 확장이 받은 주소를 검사 없이 부름(우리 사이트에 XSS가 생기면 사용자 공유기·사내망을 읽는 통로)</td><td>운영 설정은 `chaekcheck.com`만. 확장은 보낸 쪽을 다시 확인하고, http(s)·공개 호스트·기본 포트만 부름(사설망·localhost·IP 주소 거절), 한 번에 100개·주소 2KB까지</td></tr>
+<tr><td>보안·자원</td><td>가짜 올리기 하나마다 4MB를 다 읽은 뒤에야 거절. 압축 본문으로 크기 검사를 피할 수 있음. 확장도 압축 풀린 크기를 안 셈</td><td>본문 읽기 전에 Origin → IP 잠금 → 계획·쪽 번호 → 크기·압축 순으로 거름. 확장은 읽으면서 세다가 상한에서 중단</td></tr>
+<tr><td>자원</td><td>확장 모드 처리 중 포털 상세를 서버가 직접 부를 수 있는 경로가 남아 있음(최대 30초 스레드 점유)</td><td>받은 응답 입구는 서버 호출을 절대 하지 않음(시험으로 지킴)</td></tr>
+<tr><td>자원</td><td>`HostQueueBoard` 대기 수가 예외 경로에서 줄지 않아 신호가 노랑에 머물 수 있음</td><td>대기 시작·끝을 한 짝(try/finally)으로, 응답의 줄 선 도서관은 최대 200개</td></tr>
+<tr><td>자원</td><td>`rejected_event`를 한 줄씩 INSERT → 가짜 시도면 IP 하나가 1분에 수천 줄</td><td>공개 메서드 `recordRejected`를 새로 두고 IP·이유마다 1분 1줄, 원본 없음</td></tr>
+<tr><td>자원</td><td>계획에 받은 본문이 10분 남는 모양, 캐시에 원본 바이트</td><td>본문은 요청 중에만, 캐시는 해석 값만. 진행 중인 서버 조회 값은 덮지 않음</td></tr>
+<tr><td>자원</td><td>nginx 본문 버퍼 기본 16KB → 큰 쪽은 디스크 임시 파일</td><td>버퍼 512KB(실제 쪽 ≤ 322KB는 메모리), 받은 뒤 넘김 켬, 본문 10초</td></tr>
+<tr><td>사용자</td><td>"지금 빌릴 수 있는 책만"을 켜면 확인 못 한 줄만 있는 묶음에 "찾지 못했습니다"와 줄이 함께 보임</td><td>네 번째 묶음은 거름 대상 밖, 문구에 "N곳은 확인하지 못했어요"</td></tr>
+<tr><td>사용자</td><td>주소로 바로 검색이 시작되면 확장 인사 답(500ms) 전이라 모드가 정해지지 않음</td><td>첫 검색은 인사 답까지 최대 500ms 기다림, 결과는 앱 전체에 보관</td></tr>
+<tr><td>사용자</td><td>탭 두 개면 확장의 "호스트 1건·1초"가 탭마다 따로 → 같은 도서관에 2건</td><td>확장 안 호스트 줄을 하나로(모든 탭 공유), AC에 탭 두 개 경우</td></tr>
+<tr><td>사용자·안정성</td><td>확장 service worker는 30초 쉬면 멈춤(크롬 공식 문서) → port 끊김을 "확장 꺼짐"으로 오판</td><td>끊기면 인사를 한 번 다시, 답 있으면 이어서. 끊긴 묶음의 남은 도서관 처리만 #4에서 고름</td></tr>
+<tr><td>사용자</td><td>탭을 오래 숨겼다 오면 오래된 초록이 보임</td><td>회색 판정은 마지막 성공 시각부터, 돌아왔을 때 이미 30초 지났으면 바로 회색</td></tr>
+<tr><td>사용자</td><td>점이 색으로만 상태를 알림, 화면 낭독기 규칙 없음</td><td>점에 "조회 상태: 원활" 이름, 단계가 바뀔 때만 한 번 알림, 대비 4.5:1</td></tr>
+<tr><td>사용자</td><td>앞 검색의 늦은 응답이 지금 검색 화면을 바꿀 수 있음, 업로드 429 때 동작 없음</td><td>지금 계획 번호가 아닌 응답은 버림. 429면 남은 도서관 건너뜀 + 지금 429 안내 줄</td></tr>
+<tr><td>사용자</td><td>사서추천 창(도서관 3곳)이 명세에 없음</td><td>줄 글만 바뀜, 묶음·배지 없음, 확장 모드는 3곳만 계획</td></tr>
+<tr><td>안정성</td><td>확장 `redirect:'manual'`이면 리다이렉트하는 도서관은 상태 0 → 늘 실패</td><td>상태 0은 실패로, 리다이렉트 도서관은 프로토타입 확인 목록에</td></tr>
+<tr><td>문서</td><td>명세의 낡은 문장 다섯(도서관 직접 확인 이야기, 확장 결과 "캐시", 시간 제한 5초·5초, R6 끊김, AC-1 「사서추천도서」), 범위의 3-1·제외 줄, flow 머리말, changeset 번호(21이 003을 써서 20은 004), API 오류 칸</td><td>모두 지금 결정에 맞춤. AC 다섯(AC-10a·16~20) 더함</td></tr>
+</table>
+<p class="ex">자세한 근거(파일·행·공식 문서 주소)는 design-delta.md에 ◆ 표시로 남겼습니다. 이 표의 고침은 앞서 정한 방향을 바꾸지 않고 빠진 처리를 채운 것입니다.</p>
+</div>
+
+<h2 class="grp">A. 화면에서 고를 것</h2>
+
+<div class="card item">
+<h2><span class="num">1</span>"도서관에서 직접 찾기"에서<br>실패한 도서관도 한 줄로 보이기</h2>
+<p><b>어디서 생기나.</b> 검색에는 두 방식이 있습니다. 책 목록에서 찾기(결과가 책마다 한 줄)와 도서관 사이트에서 직접 찾기(설정의 "직접 찾기")입니다. 직접 찾기에서는 도서관 한 곳이 실패하면 결과 줄이 하나도 생기지 않고, 그 도서관은 위쪽 「N곳」 요약에만 들어갑니다(dev `useSearch.ts:177-185`). 그래서 「확인하지 못한 도서관」 묶음에 넣을 줄이 없습니다. 실패가 섞여 있어도 "조회한 도서관 N곳에 이 제목의 전자책이 없습니다"가 나옵니다. 말씀하신 "없으면 없다고, 못 찾으면 어디에"와 반대입니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 200" role="img" aria-label="직접 찾기 실패 도서관 표시">
+<text class="s14" x="10" y="22">지금</text>
+<rect class="bx" x="10" y="32" width="430" height="56" rx="8"/><text class="s13" x="20" y="54">조회한 도서관 5곳에 이 제목의 전자책이 없습니다</text><text class="s13m" x="20" y="74" font-size="12">(2곳은 실패였는데 "없다"로 보임)</text>
+<text class="s14" x="460" y="22">제안</text>
+<rect class="bx" x="460" y="32" width="430" height="40" rx="8"/><text class="s13" x="470" y="57">조회한 3곳에 이 제목의 전자책이 없어요 · 2곳은 확인하지 못했어요</text>
+<rect class="bxno" x="460" y="80" width="430" height="44" rx="6"/><text class="s14" x="470" y="100">확인하지 못한 도서관</text><text class="s13m" x="640" y="100" font-size="12">(묶음)</text>
+<rect class="bx" x="460" y="128" width="430" height="30" rx="6"/><text class="s13" x="470" y="148">경기교육청 통합 전자도서관 · 대출 정보를 확인하지 못했어요</text>
+<rect class="bx" x="460" y="162" width="430" height="30" rx="6"/><text class="s13" x="470" y="182">전주 전자도서관 · 대출 정보를 확인하지 못했어요</text>
+</svg><p class="cap">직접 찾기에서도 실패한 도서관을 도서관 단위 한 줄로 맨 아래 묶음에 넣고, "없다" 문구는 확인한 곳만 셉니다.</p></div>
+<p class="concl"><span class="chip" data-n="1">안 #1</span> 직접 찾기에서 실패한 도서관은 <b>도서관 하나를 한 줄</b>(책 제목 없이 「○○도서관 · 대출 정보를 확인하지 못했어요」, 누르면 그 도서관 검색 페이지)로 「확인하지 못한 도서관」 묶음에 넣고, "없습니다" 문구는 실패를 뺀 곳만 센 뒤 "N곳은 확인하지 못했어요"를 붙입니다.</p>
+<p class="alt">다른 선택: 직접 찾기는 지금처럼 「N곳」 요약에만. 만들 것이 없지만 실패를 "없음"으로 오해합니다.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">2</span>「확인하지 못한 도서관」의 자리:<br>목록 전체의 맨 아래</h2>
+<p><b>어디서 생기나.</b> 결과는 묶음(도서관 5곳씩)마다 구역으로 쌓이고, 「더 보기」를 누르면 다음 묶음이 아래에 붙습니다(dev `BatchSection.tsx`). "맨 아래"를 묶음마다로 하면 1차 묶음의 확인 못 한 줄이 목록 중간에 남고 2차 결과가 그 아래에 옵니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 220" role="img" aria-label="묶음마다 vs 전체 맨 아래">
+<text class="s14" x="10" y="22">(가) 묶음마다 맨 아래</text>
+<rect class="bxok" x="10" y="32" width="420" height="28" rx="6"/><text class="s13" x="20" y="51">1차: 빌릴 수 있어요 · 예약</text>
+<rect class="bxno" x="10" y="64" width="420" height="28" rx="6"/><text class="s13" x="20" y="83">1차: 확인하지 못한 도서관 (목록 중간)</text>
+<rect class="bxok" x="10" y="96" width="420" height="28" rx="6"/><text class="s13" x="20" y="115">2차: 빌릴 수 있어요 · 예약</text>
+<rect class="bxno" x="10" y="128" width="420" height="28" rx="6"/><text class="s13" x="20" y="147">2차: 확인하지 못한 도서관</text>
+<text class="s14" x="470" y="22">(나) 모든 묶음을 모아 목록 맨 아래 (제안)</text>
+<rect class="bxok" x="470" y="32" width="420" height="28" rx="6"/><text class="s13" x="480" y="51">1차: 빌릴 수 있어요 · 예약</text>
+<rect class="bxok" x="470" y="64" width="420" height="28" rx="6"/><text class="s13" x="480" y="83">2차: 빌릴 수 있어요 · 예약</text>
+<rect class="bxno" x="470" y="96" width="420" height="44" rx="6"/><text class="s13" x="480" y="115">확인하지 못한 도서관 (1차+2차, 계획 순서)</text><text class="s13m" x="480" y="132" font-size="12">「더 보기」 단추 바로 위</text>
+<rect class="bx" x="470" y="146" width="420" height="28" rx="6"/><text class="s13" x="480" y="165">[더 보기]</text>
+</svg><p class="cap">(나)는 확인 못 한 것을 한곳에 모아 "맨 아래"라는 말과 맞습니다.</p></div>
+<p class="concl"><span class="chip" data-n="2">안 #2</span> (나) 모든 묶음의 확인 못 한 줄을 모아 <b>목록 맨 아래, 「더 보기」 바로 위</b>에 한 묶음으로. 새 묶음이 오면 그 묶음에 합쳐집니다.</p>
+<p class="alt">다른 선택: (가) 묶음마다 맨 아래. 코드가 단순하지만 확인 못 한 줄이 목록 중간에 흩어집니다.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">3</span>"목록에서 빠진 책" 줄은<br>이 묶음에 넣지 않기</h2>
+<p><b>어디서 생기나.</b> 책 화면에는 실패 줄과 별개로 "이 도서관 목록에서 빠졌어요" 줄(`gone`, 책 목록을 다시 받으면서 그 도서관에서 빠진 책)이 있습니다. 지금은 둘 다 실패로 처리돼 같은 자리에 섞입니다(dev `ResultRow.tsx:57`). 확인을 못 한 것이 아니라 "없어진 것"이라 뜻이 다릅니다. 판정이 "모름"(UNKNOWN)인 줄의 지금 글 「대출 가능 여부 확인 필요」도 묶음 안에서 글이 셋으로 갈립니다.</p>
+<p class="concl"><span class="chip" data-n="3">안 #3</span> `gone` 줄은 「확인하지 못한 도서관」에 넣지 않고 <b>지금처럼 예약 묶음 맨 아래에 「이 도서관 목록에서 빠졌어요」</b>로 둡니다. 묶음 안의 실패·모름 줄은 모두 같은 글 「대출 정보를 확인하지 못했어요」로 통일합니다.</p>
+<p class="alt">다른 선택: `gone`도 이 묶음에 넣고 글만 다르게. 한곳에 모이지만 "확인 못 함"과 "없어짐"이 섞여 헷갈립니다.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">4</span>확장이 검색 도중 꺼지면<br>남은 도서관은 "확인 못 함"으로</h2>
+<p><b>어디서 생기나.</b> 확장 모드 검색 중에 사용자가 확장을 끄거나, 확장이 업데이트되거나, 크롬이 확장을 쉬게 하면 화면과 확장의 연결(port)이 끊깁니다. 이번 검토로 "끊기면 인사를 한 번 다시 해서 살아 있으면 이어서 한다"는 것은 고쳐 넣었습니다. 다시 인사해도 답이 없을 때, 그 검색에서 아직 받아오지 못한 도서관을 어떻게 할지가 남았습니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 170" role="img" aria-label="확장 끊김 처리">
+<defs><marker id="ah4r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="var(--accent)"/></marker></defs>
+<rect class="bx" x="10" y="20" width="200" height="56" rx="8"/><text class="s13" x="20" y="42">5곳 중 2곳 받음</text><text class="s13m" x="20" y="62" font-size="12">port 끊김</text>
+<rect class="bxa" x="240" y="20" width="200" height="56" rx="8"/><text class="s13" x="250" y="42">인사 한 번 다시</text><text class="s13m" x="250" y="62" font-size="12">(고침, 결정 아님)</text>
+<rect class="bxok" x="470" y="10" width="420" height="40" rx="8"/><text class="s13" x="480" y="35">답 있음 → 남은 3곳 이어서 (확장)</text>
+<rect class="bxno" x="470" y="60" width="420" height="56" rx="8"/><text class="s13" x="480" y="80">답 없음 → [제안] 남은 3곳 「확인하지 못한 도서관」</text><text class="s13m" x="480" y="100" font-size="12">받은 2곳은 그대로, 다음 검색부터 서버 모드(상태 묻기 바로 1회)</text>
+<path d="M210 48 H240" class="ar" marker-end="url(#ah4r)"/><path d="M440 40 H470" class="ar" marker-end="url(#ah4r)"/><path d="M440 60 L470 85" class="ar" marker-end="url(#ah4r)"/>
+<text class="s13m" x="10" y="150">명세 #10 "확장이 받아오지 못한 도서관은 서버가 다시 부르지 않음"과 같은 원칙</text>
+</svg><p class="cap">끊기면 다시 확인하고, 그래도 없으면 남은 도서관은 확인 못 함으로 둡니다.</p></div>
+<p class="concl"><span class="chip" data-n="4">안 #4</span> 다시 인사해도 답이 없으면 그 검색의 남은 도서관은 <b>「확인하지 못한 도서관」</b>으로 두고(닫기로 서버에 건너뜀으로 알림), 이미 받은 결과는 그대로, 파란 불은 지우고 <b>다음 검색부터 서버 모드</b>(상태 묻기 바로 1회 → 10초 주기).</p>
+<p class="alt">다른 선택: 남은 도서관을 그 자리에서 서버가 이어서 부름. 결과가 더 채워지지만 그 순간 서버 자리가 필요하고(빨강이면 503), 명세 #10 "서버가 다시 부르지 않음"과 어긋납니다.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">5</span>「지금 이 도서관 조회가 밀려요」를<br>붙이는 줄과 지속 시간</h2>
+<p><b>어디서 생기나.</b> 지금 설계는 상태 응답의 "줄이 선 도서관" 목록에 있으면 그 도서관의 모든 결과 줄에 글을 붙이고, 60초 뒤 목록에서 빠지면 지웁니다. 그런데 (1) 결과를 정상으로 받은 줄에도 붙어 헷갈리고, (2) 정작 실패한 줄에서는 60초 뒤 사라져 나중에 보면 왜 실패했는지 모르고, (3) 확장 모드는 상태를 묻지 않아 이 글이 영영 나오지 않습니다(문서에 없음).</p>
+<p class="concl"><span class="chip" data-n="5">안 #5</span> 이 글은 <b>아직 조회 중인 줄과 「확인하지 못한 도서관」 줄에만</b> 붙이고, 실패로 끝난 순간 붙어 있었으면 <b>그 줄에서는 계속 유지</b>(검색을 새로 할 때까지). 정상으로 받은 줄에는 붙이지 않습니다. 확장 모드에서는 쓰지 않는다고 문서에 적습니다. 직접 찾기는 #1의 도서관 줄에 붙입니다.</p>
+<p class="alt">다른 선택: 지금 설계대로(목록에 있는 동안 모든 줄). 단순하지만 위 (1)(2)가 남습니다.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">6</span>폰에서 점을 누르면 나오는 말을<br>색마다 다르게</h2>
+<p><b>어디서 생기나.</b> 폰은 점만 보이고 누르면 말풍선이 뜹니다(화면 흐름 #1). 명세는 말풍선 글을 「지금 찾는 사람이 많아 검색이 거절될 수 있어요」 하나로 적어, 초록일 때 눌러도 이 말이 나옵니다. 회색·파랑의 글도 없습니다. 크롬 창을 640px 이하로 줄이면 PC 확장 사용자도 점만 봅니다.</p>
+<table>
+<tr><th>색</th><th>점 옆 글(이미 정함)</th><th>말풍선 둘째 줄 [제안]</th></tr>
+<tr><td>초록</td><td>조회 원활</td><td>지금 바로 찾을 수 있어요</td></tr>
+<tr><td>노랑</td><td>조회 붐빔</td><td>찾는 사람이 늘고 있어요. 조금 느릴 수 있어요</td></tr>
+<tr><td>빨강</td><td>조회 혼잡</td><td>지금 찾는 사람이 많아 검색이 거절될 수 있어요</td></tr>
+<tr><td>회색</td><td>상태 모름</td><td>조회 상태를 받아오지 못했어요</td></tr>
+<tr><td>파랑</td><td>내 브라우저에서 조회 중</td><td>확장 프로그램이 도서관을 직접 조회해요</td></tr>
+</table>
+<p class="concl"><span class="chip" data-n="6">안 #6</span> 위 표의 둘째 줄을 색마다 씁니다(빨강은 이미 정한 문장 그대로).</p>
+<p class="alt">다른 선택: 말풍선에는 점 옆 글만(둘째 줄 없음). 짧지만 노랑·빨강이 무슨 뜻인지 설명이 없습니다.</p>
+</div>
+
+<h2 class="grp">B. 서버 메모리를 지키는 값</h2>
+
+<div class="card item">
+<h2><span class="num">7</span>올라온 페이지를 동시에 몇 개까지 해석할지<br>(서버 전체 상한)</h2>
+<p><b>어디서 생기나.</b> 서버가 올라온 페이지 하나를 해석할 때 힙을 잠깐 씁니다. 본문 4MB면 한글 문자열 약 6MB + HTML 구조(Jsoup) 5~10배 → 최악 30~50MB입니다. nginx 올리기 구역은 IP당 초당 20번(몰아서 60)이라, <b>IP가 여럿이면 서버 전체로는 상한이 없습니다</b>. 서비스 힙은 512MB입니다(data-model.md). 실제 도서관 쪽은 대부분 50~300KB라 평소엔 문제없지만, 큰 쪽이 한꺼번에 오면 메모리가 부족해 서비스가 죽을 수 있습니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 200" role="img" aria-label="올리기 동시 해석 상한">
+<defs><marker id="ah7r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="var(--accent)"/></marker></defs>
+<rect class="bx" x="10" y="20" width="200" height="140" rx="8"/><text class="s14" x="20" y="44">여러 사용자의 올리기</text><text class="s13m" x="20" y="66" font-size="12">IP A, B, C … 각자 초당 20</text><text class="s13m" x="20" y="86" font-size="12">nginx: IP당 동시 연결 6 (제안)</text>
+<rect class="bxa" x="260" y="20" width="300" height="140" rx="8"/><text class="s14" x="270" y="44">서버: 동시 해석 자리 8개 (제안)</text><text class="s13m" x="270" y="66" font-size="12">자리가 나면 해석 (보통 수십 ms)</text><text class="s13m" x="270" y="86" font-size="12">2초 안에 자리를 못 받으면 503</text><text class="s13m" x="270" y="106" font-size="12">→ 화면은 그 도서관만 확인 못 함</text><text class="s13m" x="270" y="134" font-size="12">최악 8 × 50MB = 400MB → 힙 512MB 안</text>
+<rect class="bx" x="610" y="20" width="280" height="140" rx="8"/><text class="s14" x="620" y="44">상한이 없으면</text><text class="s13m" x="620" y="66" font-size="12">큰 쪽 20개가 동시에 오면</text><text class="s13m" x="620" y="86" font-size="12">20 × 50MB = 1GB → 힙 초과</text><text class="s13m sred" x="620" y="106" font-size="12">서비스 전체가 멈출 수 있음</text>
+<path d="M210 90 H260" class="ar" marker-end="url(#ah7r)"/>
+</svg><p class="cap">서버 전체에서 동시에 해석하는 수를 묶어 힙을 넘지 않게 합니다. 숫자는 dev 측정으로 맞춥니다.</p></div>
+<p class="concl"><span class="chip" data-n="7">안 #7</span> 서버 전체에서 올라온 페이지를 <b>동시에 8개까지</b> 해석(넘치면 2초 기다리고 못 받으면 503 → 화면은 그 도서관만 「확인하지 못한 도서관」), nginx는 올리기 경로에 <b>IP당 동시 연결 6개</b>. 두 값은 변수(`LOOKUP_UPLOAD_CONN`, `max-concurrent-uploads`)로 두고, 인계 때 dev가 4MB 쪽 해석의 힙 최대치를 재서 8을 맞춥니다.</p>
+<p class="alt">다른 선택 ①: 확장 올리기만 본문 상한을 1MB로 낮춤(실제 최대 쪽 322KB) — 최악이 1/4로 줄지만 "상한은 설정 하나"(설계 #12, ADR-0119)와 어긋나 값이 둘이 됩니다. ② 상한 없음 — 평소엔 괜찮지만 몰리면 서비스가 멈출 수 있어 추천하지 않습니다.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">8</span>계획 보관함 상한을 "개수"가 아니라<br>"크기"로, IP당 열린 계획 20개 (#1 고침)</h2>
+<p><b>앞 페이지 #1(최대 2,000개, 승인)을 고치는 것입니다.</b> 검토에서 두 가지가 나왔습니다. ① 계획 하나는 "몇 KB"가 아니라 도서관 수에 비례합니다. 첫 묶음 계획은 계획 전체 도서관 주소를 담는데(dev `EbookSearchStreamController.java:78`), 도서관 200곳이면 약 80KB입니다. 2,000개면 약 160MB로 힙의 1/3입니다. ② IP 몇 개로 2,000개를 채우면 <b>다른 사용자의 진행 중인 계획이 밀려나</b> 그 사람 검색이 실패합니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 170" role="img" aria-label="계획 보관함 상한 비교">
+<rect class="bxno" x="10" y="20" width="420" height="120" rx="8"/><text class="s14" x="20" y="44">지금(#1 승인): 최대 2,000개</text><text class="s13m" x="20" y="66" font-size="12">계획 크기 무시 → 최악 2,000 × 80KB ≈ 160MB</text><text class="s13m" x="20" y="86" font-size="12">넘치면 가장 오래된 것부터 → 남의 계획도 밀려남</text><text class="s13m" x="20" y="106" font-size="12">IP 4~10개로 채울 수 있음</text>
+<rect class="bxok" x="460" y="20" width="430" height="120" rx="8"/><text class="s14" x="470" y="44">제안: 무게 상한 + IP당 열린 계획 20</text><text class="s13m" x="470" y="66" font-size="12">무게 = 주소 수, 전체 100,000 ≈ 40MB</text><text class="s13m" x="470" y="86" font-size="12">한 IP가 계획 21개째를 만들면 그 IP의 가장 오래된 것만 지움</text><text class="s13m" x="470" y="106" font-size="12">→ 다른 IP의 계획을 밀어내지 않음</text>
+</svg><p class="cap">크기로 묶어 메모리를 정확히 지키고, 한 IP가 남의 계획을 밀어내지 못하게 합니다.</p></div>
+<p class="concl"><span class="chip" data-n="8">안 #8</span> 계획 보관함은 <b>주소 수 기준 무게 100,000(약 40MB)</b>, 쓴 뒤 10분. 한 IP(/64)가 <b>열어 둔 계획은 20개까지</b>, 넘으면 그 IP의 가장 오래된 계획을 지움. 앞 #1의 "최대 2,000개"는 이것으로 바꿉니다.</p>
+<p class="alt">다른 선택: 2,000개 그대로(승인값). 단순하지만 위 두 문제가 남습니다.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">9</span>확장이 넣는 캐시 칸을<br>서버 캐시와 따로 두기</h2>
+<p><b>어디서 생기나.</b> 검색 결과 캐시는 지금 "최대 1,000칸"이고(dev `application.yml:116-118`) 서버와 확장이 같이 씁니다. 확장 모드는 캐시를 읽지 않고 넣기만 하므로(#9 결정), 확장 사용자가 많이 검색하면 서버가 받아 둔 칸이 밀려나 서버 모드 사용자의 캐시 적중이 떨어지고 도서관 요청이 늘 수 있습니다(한 IP가 1분에 최대 1,200칸).</p>
+<p class="concl"><span class="chip" data-n="9">안 #9</span> 확장이 넣는 칸은 <b>따로 둔 캐시(최대 1,000칸)</b>에 넣습니다. 서버 모드는 서버 칸을 먼저 보고 없으면 확장 칸을 봅니다. 그러면 확장이 아무리 많이 넣어도 서버 칸은 밀려나지 않습니다. 메모리는 칸당 해석 값(수 KB)이라 1,000칸 ≈ 수 MB.</p>
+<p class="alt">다른 선택: 지금처럼 함께 쓰고 캐시의 자동 판단(자주 쓰는 칸을 남김)과 IP 한도에 맡김. 코드가 줄지만 서버 칸이 밀릴 수 있습니다.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">10</span>확장 값을 다시 넣어도<br>3분 만료를 늘리지 않기</h2>
+<p><b>어디서 생기나.</b> #9 결정에서 "확장 출처 값은 새 값으로 갱신"이라고 적었습니다. 그런데 캐시는 "쓴 뒤 3분" 만료라, 갱신할 때마다 만료가 다시 3분 뒤로 밀립니다. 공격자가 2분마다 같은 가짜를 다시 올리면 가짜가 <b>끝없이</b> 남고, 서버 모드는 캐시가 맞으면 도서관을 부르지 않아 진짜 값이 들어올 틈도 없습니다.</p>
+<p class="concl"><span class="chip" data-n="10">안 #10</span> 확장 값은 갱신하되 만료는 <b>처음 넣은 시각 + 3분으로 고정</b>합니다(값마다 만료 시각을 들고 있음). 그러면 어떤 값도 3분 넘게 살지 못하고, 3분 뒤 서버 모드가 도서관을 다시 부릅니다.</p>
+<p class="alt">다른 선택: 확장 값은 갱신하지 않음(빈 칸일 때만 넣음). 더 단순하지만 확장 사용자가 방금 본 새 값이 3분 동안 반영되지 않습니다.</p>
+</div>
+
+<h2 class="grp">C. 보안에서 고를 것</h2>
+
+<div class="card item">
+<h2><span class="num">11</span>IP를 10분 막을 때 세는 실패의 종류</h2>
+<p><b>어디서 생기나.</b> 보안 장치 ⑨는 "검사 실패가 1분 30번이면 그 IP를 10분 막음"입니다. 그런데 학교·회사처럼 IP 하나를 여럿이 쓰면, 계획 만료(10분 지난 탭)나 서버 재시작으로 사라진 계획처럼 <b>정상 사용에서도 나는 실패</b>가 쌓여 그 IP 전체의 확장 모드가 막힐 수 있습니다. (해석 실패·상태 코드는 이번 검토로 아예 400이 아니게 고쳤습니다.)</p>
+<table>
+<tr><th>실패</th><th>정상에서도 나나</th><th>셈에 넣나 [제안]</th></tr>
+<tr><td>모르는 계획 번호(만들지 않은 번호)</td><td>거의 없음(재시작 직후 제외)</td><td class="okc">넣음</td></tr>
+<tr><td>같은 쪽을 두 번 올림</td><td>거의 없음</td><td class="okc">넣음</td></tr>
+<tr><td>Origin 다름(우리 화면이 아닌 곳)</td><td>없음</td><td class="okc">넣음</td></tr>
+<tr><td>계획 만료·지워짐(#18)·재시작</td><td>있음(오래 둔 탭, 새 검색)</td><td class="red">안 넣음</td></tr>
+<tr><td>IP 다름(와이파이↔LTE 전환)</td><td>있음(폰)</td><td class="red">안 넣음</td></tr>
+</table>
+<p class="concl"><span class="chip" data-n="11">안 #11</span> 잠금에는 <b>모르는 계획 번호·같은 쪽 두 번·Origin 다름</b>만 셉니다. 계획 만료·지워짐·IP 다름은 400만 주고 세지 않습니다(화면은 남은 줄을 확인 못 함으로).</p>
+<p class="alt">다른 선택: 모든 400을 셈. 공격을 더 빨리 막지만 IP를 나눠 쓰는 곳의 정상 사용자가 막힐 수 있습니다.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">12</span>확장이 부를 수 있는 호스트를<br>서버가 서명한 목록으로 묶을지</h2>
+<p><b>어디서 생기나.</b> 확장은 모든 사이트 권한을 가지고(범위 #6), 책첵 화면이 준 주소를 부릅니다. 이번 검토로 사설망·localhost·IP 주소·비표준 포트는 확장이 거절하도록 고쳤습니다. 그래도 <b>우리 사이트에 XSS가 생기면</b> 공격자가 사용자 브라우저와 IP로 아무 공개 사이트나 읽을 수 있습니다(로그인 쿠키는 안 보냄). 이를 더 막으려면 확장이 "도서관 호스트 목록"과 맞는 주소만 부르게 할 수 있습니다.</p>
+<p class="concl"><span class="chip" data-n="12">안 #12</span> <b>이번에는 기본 거르기까지만</b>(위 표에서 고친 것), 서명 목록은 backlog. 이유: 지금 확장은 개발자 모드 시험용이고 웹스토어에 올리기 전(범위 #6), 도서관 호스트 2,794개를 서명·배포·갱신하는 일이 큽니다. 웹스토어에 올릴 때 다시 봅니다.</p>
+<p class="alt">다른 선택: 이번에 서명 목록까지 — 서버가 도서관 호스트 목록에 서명(Ed25519)해 주고, 확장은 안에 든 공개키로 확인한 목록의 호스트만 부름. XSS가 생겨도 도서관 사이트밖에 못 부르지만, 서명 키 관리·목록 갱신·확장 코드가 늘어납니다.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">13</span>「더 보기」 계획 주소를<br>도서관 호출 구역 밖으로</h2>
+<p><b>어디서 생기나.</b> 「더 보기」 계획 주소(`/api/v1/availability/libraries/{id}/ebooks/plans`)는 이름이 `/api/v1/availability/`로 시작해, 지금 nginx 설정상 <b>도서관 호출 구역</b>(IP당 1분 30번, 로봇 거절)에 들어갑니다. 계획은 도서관을 부르지 않는데 그 한도를 씁니다.</p>
+<p class="concl"><span class="chip" data-n="13">안 #13</span> 세 계획 주소(`…/ebook-searches/plans`, `…/book-availabilities/plans`, `…/ebooks/plans`)를 <b>정규식 location 하나로 묶어 계획 구역(#15)</b>에 둡니다. 도서관 호출 구역보다 앞에 둬서 「더 보기」 계획도 계획 한도만 받습니다.</p>
+<p class="alt">다른 선택: 그대로 두고 "「더 보기」 계획은 도서관 호출 한도에 셈"이라고 적기. 설정이 줄지만 확장 모드 「더 보기」가 서버 모드와 같은 한도를 씁니다.</p>
+</div>
+
+<h2 class="grp">D. 앞 페이지에서 넘어온 것 (검토 결과로 고침)</h2>
+
+<div class="card item">
+<h2><span class="num">14</span>화면을 떠나면 서버 묶음 멈추기<br>(앞 #10을 고친 안)</h2>
+<p><b>앞 페이지 #10을 다듬은 것입니다.</b> 앞 안은 "줄에서 기다리던 요청도 취소"였는데, dev 코드를 보니 <b>안전하게 취소할 수 없습니다</b>. 줄 대기는 캐시 안에서 일어나고, 같은 도서관·같은 검색어를 기다리는 <b>다른 사용자와 같은 요청을 공유</b>할 수 있어 취소하면 그 사람 결과까지 실패합니다(dev `CaffeineSearchPageCache.java:41-43`). 또 자리를 바로 돌려주면 떠난 묶음의 요청이 계속 도는 동안 새 묶음이 자리를 받아 "자리 20 × 동시 5 = 최대 100건" 약속이 깨집니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 190" role="img" aria-label="떠난 묶음 멈추기 수정안">
+<text class="s14" x="10" y="22">사용자가 1초 뒤 떠남</text>
+<line x1="10" y1="60" x2="890" y2="60" stroke="var(--line)" stroke-width="2"/>
+<circle cx="120" cy="60" r="7" fill="var(--ok)"/><text class="s13 sok" x="128" y="48">알아챔(다음 이벤트 보내기 실패)</text>
+<rect x="120" y="74" width="340" height="24" rx="4" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="130" y="91">새 도서관 안 띄움 · 포털 상세 새로 시작 안 함</text>
+<rect x="120" y="104" width="640" height="24" rx="4" fill="var(--card)" stroke="var(--line)"/><text class="s13m" x="130" y="121">이미 넘긴 요청(줄 대기 포함)은 끝까지 → 캐시에 (다른 사용자와 공유일 수 있어 취소 안 함)</text>
+<rect x="120" y="134" width="640" height="24" rx="4" fill="var(--card)" stroke="var(--line)"/><text class="s13m" x="130" y="151">자리는 넘긴 요청이 모두 끝날 때 반납 (최대 8초, 포털 상세 30초)</text>
+<text class="s13m" x="10" y="182">지금보다 나아지는 점: 떠난 뒤 새로 띄우던 도서관(최대 시작 마감까지)이 사라짐 → 줄·도서관 요청이 줄고, 자리는 대체로 더 빨리 빔</text>
+</svg><p class="cap">"취소"가 아니라 "새로 시작하지 않음"으로 바꿉니다. 이미 나간 일은 끝까지 해 캐시에 남깁니다.</p></div>
+<p class="concl"><span class="chip" data-n="14">안 #14</span> 서버 모드에서 사용자가 떠난 것을 알아채면(이벤트 보내기 실패 또는 연결 오류·시간 초과 알림) <b>새 도서관을 띄우지 않고 포털 상세도 새로 시작하지 않음</b>(남은 후보는 건너뜀). <b>이미 넘긴 요청은 줄 대기 포함 취소하지 않고</b> 끝까지 받아 캐시에 넣음. 자리는 넘긴 요청이 모두 끝날 때 반납. 책 화면(소장) 흐름도 같은 규칙. 「더 보기」 서버 모드는 쪽 하나·8초 상한이라 대상 아님. 확장 모드는 떠날 때 화면이 마지막 계획을 닫기(keepalive)로 알리고 확장은 남은 주소를 버림.</p>
+<p class="alt">다른 선택: 앞 안대로 줄 대기까지 취소 — 공유된 요청을 다른 사용자까지 실패시켜 추천하지 않습니다. 지금대로(아무것도 안 함) — 떠난 뒤에도 새 도서관을 계속 띄웁니다.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">15</span>계획 만들기 한도: 1분 60개, 몰아서 30<br>(앞 #3 다시 낸 값) + nginx에서</h2>
+<p><b>앞 페이지 #3에서 다시 낸 값입니다</b>("일반 사용자가 연타하면 1분 20개는 넘지 않을까"에 답해 60개로 올림). 검토에서 하나를 더했습니다: 이 한도를 서버 메모리의 IP별 카운터가 아니라 <b>nginx 계획 구역</b>에서 세면 앱 메모리가 0이고, #2처럼 변수로 둘 수 있습니다.</p>
+<p class="concl"><span class="chip" data-n="15">안 #15</span> 세 계획 주소는 nginx 계획 구역 <code>chaekcheck_lookup_plans</code>에서 IP당 <b>1분 60개, 몰아서 30</b>(`LOOKUP_PLAN_PER_MIN`·`LOOKUP_PLAN_BURST` 변수). 화면은 같은 검색어 엔터를 1초 안에 다시 받으면 무시. 넘으면 지금 429 안내 줄.</p>
+<p class="alt">다른 선택: 처음 안(1분 20개) — 엔터 연타에 닿습니다. 서버 카운터에서 세기 — 앱 메모리를 조금 쓰고 변수 방식과 다릅니다.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">16</span>확장이 못 여는 도서관은<br>그 도서관만 서버가 대신 (앞 #7)</h2>
+<p><b>앞 페이지 #7 그대로입니다</b>(검토에서 바뀐 것 없음, 리다이렉트하는 도서관도 시험 목록에 더함). 인계 전 프로토타입에서 확장이 `http://` 도서관(전주 등), 인증서가 빠진 도서관, 리다이렉트하는 도서관을 열지 못하면, 계획을 만들 때 그 도서관은 확장 주소 목록에서 빼고 서버가 직접 부른 결과를 함께 돌려줍니다(그때만 서버 자리 1개, 목록은 설정). 모두 열리면 이 규칙은 넣지 않습니다.</p>
+<p class="concl"><span class="chip" data-n="16">안 #16</span> 위 규칙을 설계에 "조건부"로 넣습니다.</p>
+<p class="alt">다른 선택: 못 여는 도서관은 확장 모드에서 「확인하지 못한 도서관」으로. 규칙이 하나 줄지만 그 도서관 결과를 확장 사용자는 영영 못 봅니다.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">17</span>정해 둔 값들을 찾기 쉽게: dev에<br>"설정값 목록" 문서 하나 (앞 #11)</h2>
+<p><b>앞 페이지 #11 그대로입니다</b>("이런 정해진 값들을 문서화 구조를 잘 해서 AI나 사람이 잘 찾도록"). 이번 검토로 값이 더 늘었습니다(동시 해석 8, IP당 연결 6, 계획 무게 100,000, IP당 열린 계획 20, 확장 캐시 1,000칸, 잠금 카운터 50,000, items 100개·URL 2KB, 포트 예외 목록). dev에 `docs/maintenance/settings-index.md` 하나를 두고 값마다 한 줄(값 / 어디 있나 / 함께 바꿀 곳 / 왜 / 정한 plan 문서·ADR / 바꾸면 무엇을 다시 켜나), 값 옆 주석은 이 문서를 가리키고, 확장 상수는 `extension/config.js` 한 파일. 사이클 19 규칙 목록(ADR-0117)과 같은 방식.</p>
+<p class="concl"><span class="chip" data-n="17">안 #17</span> 위대로 dev에 설정값 목록 문서를 둡니다.</p>
+<p class="alt">다른 선택: 사이클 19의 규칙 목록에 함께(문서 하나지만 수집 규칙과 운영 숫자가 섞임), 값 옆 주석만(흩어짐).</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">18</span>새 검색을 하면 앞 계획을 지움<br>(앞 #12)</h2>
+<p><b>앞 페이지 #12 그대로입니다</b>("한 사용자가 요청을 새로 보내면 이전의 계획은 없애도록"). 새 검색(첫 묶음)의 계획 요청에 앞 검색의 계획 번호를 함께 보내면(<code>replaces</code>) 서버가 그것을 지움 — 요청 IP가 만든 IP와 같을 때만, 같은 검색의 다음 묶음은 안 지움. 화면을 떠날 때도 마지막 계획을 닫기로 지움. 검토에서 더한 것: 지워진 계획으로 늦게 올라온 응답은 화면이 지금 계획 번호가 아니므로 버리고, 잠금 셈에도 넣지 않음(#11). #8의 "IP당 열린 계획 20"과 함께 쓰면 연타해도 계획이 쌓이지 않습니다.</p>
+<p class="concl"><span class="chip" data-n="18">안 #18</span> 위대로 새 검색이 앞 계획을 지웁니다.</p>
+<p class="alt">다른 선택: 같은 IP의 앞 계획을 모두 지움 — 번호를 안 보내도 되지만 IP를 함께 쓰는 집·회사에서 옆 사람 검색을 끊습니다. 지우지 않음 — #8 상한에 맡김.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">19</span>이 문서대로 다음 단계로 (앞 #8)</h2>
+<p><b>무엇을 묻나.</b> 위 1~18이 정해지면 설계 문서(design-delta.md)가 끝납니다. 다음은 설계 검토(design-reviewer) → <code>docs/current/</code> 반영 → dev 인계서이고, 반영과 인계는 규칙대로 사이클 17 회고 뒤에 합니다. 이번 세 관점 검토로 dev가 인계 전에 재야 할 것(4MB 해석의 힙 최대치, SSE 끊김을 알아채는 시점)과 시험할 것(확장 프로토타입)이 확인 필요 표에 들어갔습니다.</p>
+<p class="concl"><span class="chip" data-n="19">안 #19</span> 이 문서대로 다음 단계로 갑니다. 지금은 설계 검토만 돌리고, 반영과 인계서는 사이클 17 회고 뒤.</p>
+</div>
+
+<p class="foot">원문: <code>docs/cycles/20-lookup-status-and-extension/design-delta.md</code>(◆ = 이번 검토로 고친 곳), <code>spec.md</code>(AC-10a·16~20 추가), <code>flow.md</code>, ADR-0119(Proposed, 검사 순서 고침). 검토는 사용자·서버 자원·보안/안정성 세 관점, dev 코드와 공식 문서(크롬 확장 service worker 수명, Spring CSRF, nginx) 확인 2026-10-16.</p>
+
+</main>
+
+<script>
+(function(){
+  const items=[...document.querySelectorAll('.chip')].map(ch=>{
+    const n=+ch.dataset.n; const box=ch.closest('.item')||ch.parentElement;
+    const h=box.querySelector('h3'); const t=(h?h.textContent:'').replace(/^\s*\d+/, '').trim();
+    const d=document.createElement('div'); d.className='dec';
+    d.innerHTML='<div class="btns" role="group" aria-label="안 #'+n+' 결정">'+
+      ['승인','미승인','기타'].map(c=>'<button type="button" data-c="'+c+'" aria-pressed="false">'+c+'</button>').join('')+'</div>'+
+      '<textarea id="note-'+n+'" placeholder="덧붙일 말 (미승인 이유, 질문, 제안)"></textarea>'+
+      '<div class="btns"><button type="button" class="save">저장</button><span class="st" aria-live="polite">아직 고르지 않았습니다</span></div>';
+    box.appendChild(d);
+    const st={n,title:t,chip:ch,el:d,pick:null};
+    d.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{st.pick=b.dataset.c;paint(st);d.querySelector('.st').textContent='"저장"을 눌러야 기록됩니다';});
+    d.querySelector('.save').onclick=()=>save(st);
+    return st;
+  });
+  const bar=document.getElementById('bar');
+  function paint(st){st.el.querySelectorAll('[data-c]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.c===st.pick)));}
+  let db=null; const saved={};
+  function count(){const k=Object.keys(saved).length;bar.innerHTML='고른 것 <b>'+k+' / '+items.length+'</b>'+(db?' · 저장하면 Claude가 읽습니다':' · 저장 기능을 아직 불러오지 못했습니다');}
+  count();
+  async function save(st){
+    const s=st.el.querySelector('.st');
+    if(!st.pick){s.textContent='먼저 승인·미승인·기타 중 하나를 고르세요';return;}
+    if(!db){s.textContent='저장할 수 없습니다. 로그인한 채로 claude.ai에서 열어 주세요';return;}
+    const note=st.el.querySelector('textarea').value.trim();
+    s.textContent='저장하는 중…';
+    try{await db.doc('choices/q'+st.n).set({n:st.n,title:st.title,choice:st.pick,note,savedAt:new Date().toISOString()});s.textContent='저장했습니다';}
+    catch(e){s.textContent='저장하지 못했습니다 ('+(e&&e.code||'오류')+'). 잠시 뒤 다시 눌러 주세요';}
+  }
+  (async()=>{
+    try{db=window.claude&&await window.claude.use('db');}catch(e){db=null;}
+    count(); if(!db) return;
+    db.collection('choices').onSnapshot(snap=>{
+      snap.docs.forEach(doc=>{const v=doc.data();const st=items.find(i=>i.n===v.n);if(!st)return;saved[v.n]=v;
+        if(document.activeElement!==st.el.querySelector('textarea')) st.el.querySelector('textarea').value=v.note||'';
+        st.pick=v.choice;paint(st);st.chip.classList.add('done');st.chip.textContent='안 #'+v.n+' · '+v.choice;
+        st.el.querySelector('.st').textContent='저장됨: '+v.choice+' ('+new Date(v.savedAt).toLocaleString('ko-KR')+')';});
+      count();
+    },()=>{});
+  })();
+})();
+</script>
