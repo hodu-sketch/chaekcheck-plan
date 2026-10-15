@@ -53,6 +53,9 @@ dev seed의 도서관 주소 12곳 루트에 `Origin` 머리를 붙여 GET(curl,
 - Safari: 확장을 macOS/iOS 앱 안에 담아 App Store로 배포, Apple Developer Program 연 99 USD — https://developer.apple.com/programs/whats-included/ (확인 2026-10-15). 배포 절차 페이지(developer.apple.com/documentation/safariservices/distributing-your-safari-web-extension)는 본문을 받아오지 못해 확인 못 함
 - 크롬(안드로이드)·사파리(iOS) 폰 브라우저: 크롬 안드로이드는 확장 미지원(공식 문서 미확인, 일반 지식) [확인 필요]
 
+- **같은 일을 하는 확장의 선례**: 「Library Extension」(Quotidian LLC) — 아마존·Goodreads 등에서 사용자가 고른 공공도서관 온라인 목록을 확인해 소장·대출 가능을 같은 페이지에 표시. Chrome Web Store 사용자 10만 명, 평점 4.9(3.8천), "5,000곳 넘는 도서관", 크롬·파이어폭스·엣지 — https://chromewebstore.google.com/detail/library-extension/chkgcmmjoejpekoegkedcpifgfhpjmec, https://www.libraryextension.com/ (확인 2026-10-15). 변경 기록 2026.810.1: 일부 도서관 시스템(SirsiDynix)이 확장 검색을 자동 트래픽으로 의심해 막음 → 사용자가 그 사이트를 직접 방문하면 다시 됨(부분 해결) — https://www.libraryextension.com/release-notes/2026.810.1/ (확인 2026-10-15). 국내 서점·전자도서관용 같은 종류의 확장은 검색에서 찾지 못함
+- Chrome Web Store 정책·심사: "기능에 필요한 가장 좁은 권한을 요청"(https://developer.chrome.com/docs/webstore/program-policies/permissions), 넓은 host 권한은 "심사가 더 오래 걸릴 수 있음", 거절은 정책 위반이 발견될 때(https://developer.chrome.com/docs/webstore/review-process), 심사 창에 권한마다 사유 칸·단일 목적 설명 칸(https://developer.chrome.com/docs/webstore/cws-dashboard-privacy) (확인 2026-10-15). dev seed의 서로 다른 도서관 호스트 2,794개(`*.dkyobobook.co.kr` 491개 포함, 2026-10-15 셈). `optional_host_permissions`는 "설치 때가 아니라 쓸 때 사용자가 허용"(declare-permissions 문서)
+
 ### B. 사용자 스크립트
 - Tampermonkey `GM_xmlhttpRequest`: "userscript가 HTTP 요청을 보내고 응답을 다룰 수 있게 함", `@connect`에 적은 도메인(하위 도메인 포함)만 허용, `@connect *`를 더하면 "항상 모든 도메인 허용" 버튼 제공, 적지 않은 도메인은 확인 창(문서는 "대부분 사용자의 확인 창을 피하려면 알려진 도메인을 적으라"고 함) — https://www.tampermonkey.net/documentation.php?q=GM_xmlhttpRequest, https://www.tampermonkey.net/documentation.php?q=connect (확인 2026-10-15)
 - 사용자 입장: 관리자 확장(남의 제품) 설치 → 우리 스크립트 설치 → 도메인 허용. 확장 A보다 단계가 많음. 장점: 스토어 심사 없음, 수정이 바로 반영(스크립트 자동 갱신)
