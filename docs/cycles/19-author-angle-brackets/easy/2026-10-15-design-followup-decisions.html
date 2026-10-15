@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 19 설계 이어서</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+</style>
+</head>
+<body>
+<main class="doc">
+
+<p class="lead">사이클 19 설계에서 이어서 정할 것 3개입니다.</p>
+<p class="sub">ADR-0113~0116은 썼습니다. 남은 것은 승인하신 "방향 지침"을 따로 적은 ADR-0117 초안, 그리고 사이클 21 세션이 보내온 메모(<code>from-cycle-21-matching.md</code>)에서 생긴 두 가지입니다.</p>
+
+<div class="card">
+<h2><span class="num">1</span>ADR-0117 방향 지침:<br>규칙은 코드·표 파일에, 찾기·검증은 규칙 목록 문서로</h2>
+<table>
+<tr><th>정한 것</th><th>이유 (하신 말)</th></tr>
+<tr><td>사람이 정한 수집·가져오기·도서관 규칙의 내용은 지금처럼 코드 상수·규칙 표 파일에 둠</td><td>"python 코드에 있되 그것을 ai가 파악하기 쉽도록"</td></tr>
+<tr><td>dev 규칙 목록 문서 하나: 규칙마다 어디에 / 뜻 / 데이터로 확인하는 법 / 바꾸는 법과 그 뒤 할 일</td><td>"규칙 목록 문서 하나를 두는 것을 이 결정에 더하기로 해줘"</td></tr>
+<tr><td>상수마다 목록 줄을 가리키는 주석, 수집기는 사람이 정한 값을 파일 맨 위 "규칙" 묶음에</td><td>"문서랑 python코드랑 잘 구조화 되어 있도록 방향 지침을 했으면 해"</td></tr>
+<tr><td>수집·가져오기 문서의 시작 점검이 목록의 "확인하는 법"을 돌림</td><td>"다른 세션에서 수집기 md로 검증할 때 규칙에 포함되었으면"</td></tr>
+</table>
+<p class="ex">결과: 사이클 19 인계서에 규칙 목록 만들기와 상수 주석, 시작 점검 한 줄을 넣고, 19의 규칙부터 적은 뒤 이미 있는 규칙도 한 번 옮겨 적습니다. 다른 선택(모든 규칙을 표 파일로 옮김, 그대로 둠)과 채택하지 않은 이유도 적었습니다.</p>
+<div class="prop">이 초안대로 ADR-0117을 씁니다. [안]</div>
+</div>
+
+<div class="card">
+<h2><span class="num">2</span>19 반영 뒤 추천 목록 두 개의<br>맞춘 수도 다시 잴지</h2>
+<p class="concl">사이클 21의 추천 목록들이 사서추천과 같은 맞추기(ISBN → 본제목 + 첫 저자)를 씁니다. 19가 저자 정리를 바꾸면 맞춘 수가 달라질 수 있습니다.</p>
+<table>
+<tr><th>목록</th><th>2026-10-15 기준</th></tr>
+<tr><td>사서추천 (이미 19 완료 기준 AC-14)</td><td>108권 중 72권</td></tr>
+<tr><td>이동진 추천도서 (사이클 21)</td><td>44권 중 36권</td></tr>
+<tr><td>서울대 100선 (사이클 21)</td><td>100권 중 87권</td></tr>
+</table>
+<div class="prop">AC-14에 이동진 추천도서와 서울대 100선을 더해, 19 반영 뒤 세 목록의 맞춘 수를 함께 재고 줄어든 것은 원인을 적습니다. [안]</div>
+<p class="alt">다른 선택: 사서추천만 잼 → 21 목록이 줄어도 모름.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">3</span>사이클 21을 먼저 개발하면<br>19 일정은 어떻게 할지</h2>
+<p class="concl">사용자 결정으로 사이클 21을 먼저 개발하고 19는 그 뒤입니다("순서는 안 중요해 이거 먼저 할거야"). 19 명세 일정은 "공개일 10/18 전에 19 반영, dev가 늦어지면 공개일을 19 반영 다음 날로 미룸"입니다. 21이 앞에 들어오면 10/18이 더 빠듯해집니다.</p>
+<div class="fig"><svg viewBox="0 0 640 110" role="img" aria-label="개발 순서">
+<rect class="bx" x="10" y="30" width="170" height="50" rx="8"/><text class="lb" x="95" y="60" text-anchor="middle">사이클 21 개발</text>
+<path class="ar" d="M182 55 H206"/><path class="ah" d="M204 48 L216 55 L204 62Z"/>
+<rect class="bxa" x="220" y="30" width="200" height="50" rx="8"/><text class="lb" x="320" y="52" text-anchor="middle">사이클 19 개발</text><text class="sm" x="320" y="70" text-anchor="middle">+ 다시 가져오기·반영</text>
+<path class="ar" d="M422 55 H446"/><path class="ah" d="M444 48 L456 55 L444 62Z"/>
+<rect class="bxw" x="460" y="30" width="170" height="50" rx="8"/><text class="lb" x="545" y="52" text-anchor="middle">공개</text><text class="sm" x="545" y="70" text-anchor="middle">10/18 또는 그 뒤</text>
+</svg></div>
+<div class="prop">정한 규칙 그대로 둡니다: 21 다음에 19를 하고, 19 반영이 10/18을 넘기면 공개일을 19 반영 다음 날로 미룹니다. 공개일이 미뤄지면 사이클 17에 공유 파일로 바로 알립니다. [안]</div>
+<p class="alt">다른 선택: ① 19를 21과 나란히 개발(작업 폴더를 따로, 사이클 14 때처럼) → 10/18을 지킬 가능성은 높지만 둘이 가져오기 코드를 함께 고쳐 합칠 때 충돌을 풀어야 함 ② 10/18에 그대로 공개하고 19는 공개 뒤 반영 → 앞서 정한 "공개는 19 반영 뒤"를 바꿈.</p>
+</div>
+
+<p class="foot">원본: ADR-0117 초안(세션 임시 폴더 <code>adr/</code>), <code>docs/cycles/19-author-angle-brackets/from-cycle-21-matching.md</code>, <code>spec.md</code> "일정". 2026-10-15.</p>
+</main>
+</body>
+</html>
