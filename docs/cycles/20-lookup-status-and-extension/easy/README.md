@@ -13,3 +13,5 @@
 | [2026-10-15-design-decisions.html](2026-10-15-design-decisions.html) | 설계 결정 12개: 상태 주소, HostQueueBoard, 화면이 올림, JSON 계획 입구 셋, accept 입구, 캐시 빈 칸만, 더 보기도 확장, 동시 5·머리 10초, usagelog 제약, UNKNOWN 줄 포함, extension/ 빌드 없음, nginx 4m·20r/s | `../architect-proposal.md` | 모두 정함 (2026-10-16; 질문 답 6개·보안 장치·#13 확장 해석 비교 추가) |
 | [architect-proposal-original.html](architect-proposal-original.html) | architect 제안 원문 + Mermaid 그림 4장 렌더링 | `../architect-proposal.md` | — |
 | [2026-10-16-adr-drafts.html](2026-10-16-adr-drafts.html) | ADR 초안 4개: 0118 상태 신호 10초 묻기·메모리 셈, 0119 확장은 사용자 쪽 조회 서버(화면이 올림·서버 해석·검사·보안), 0120 extension/ 빌드 없음·크롬만·개발자 모드, 0121 머리말 모든 화면 같게 | `../architect-proposal.md`, `../spec.md` | 모두 승인 (2026-10-16) → `docs/adr/0118~0121` Proposed |
+| [2026-10-16-design-delta-decisions.html](2026-10-16-design-delta-decisions.html) | design-delta 초안의 남은 값 7개(계획 저장 상한, 올리기 구역 20r/s, IP별 한도·검사 실패 거절, 캐시 비우기는 재시작, 캐시 답 셈, 메시지·설정 이름, 못 여는 도서관은 서버 모드) + 이 문서대로 마무리 | `../design-delta.md` | 8개 기다림 |
+| [design-delta-original.html](design-delta-original.html) | design-delta.md 원문 + 그림 5장(모듈 구성, 상태 묻기, 확장 모드 검색, 개념 모델, 표) 렌더링 | `../design-delta.md` | — |
