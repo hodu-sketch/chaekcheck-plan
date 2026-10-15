@@ -17,7 +17,7 @@ flowchart TB
   end
   nginx["nginx — 변경<br/>/api/v1/lookup-status: 일반 구역<br/>/api/v1/lookup-plans/: 본문 ${LOOKUP_MAX_BODY_MB}m · zone 20r/s (템플릿)"]
   subgraph main["본 서비스 (Spring Modulith, 1대)"]
-    av["availability — 변경<br/>+ LookupStatusController · LookupStatusService (1초 메모)<br/>+ SearchSlots.lastRefusedAt<br/>+ HostQueueBoard (길마다 대기·시간 초과)<br/>+ LookupPlanController · SearchPlanStore (10분)<br/>+ LibraryPageFetcher.accept · DetailPageFetcher.accept<br/>+ 캐시 via=extension · 빈 칸만 · 검사 ①~⑩<br/>(있던 것: SearchSlots · BatchRunner · HostThrottle · adapter 9종 · 캐시 3분)"]
+    av["availability — 변경<br/>+ LookupStatusController · LookupStatusService (1초 메모)<br/>+ SearchSlots.lastRefusedAt<br/>+ HostQueueBoard (길마다 대기·시간 초과)<br/>+ LookupPlanController · SearchPlanStore (10분)<br/>+ LibraryPageFetcher.accept · DetailPageFetcher.accept<br/>+ 캐시 via=extension · 넣기만(확장 모드는 캐시를 읽지 않음) · 검사 ①~⑩<br/>(있던 것: SearchSlots · BatchRunner · HostThrottle · adapter 9종 · 캐시 3분)"]
     ul["usagelog — 변경(작음)<br/>library_response_daily.source + 'extension'<br/>rejected_event에 계획 검사 실패"]
     lib["library — 변경 없음<br/>LibraryCatalog 읽기만"]
     cat["catalog — 변경 없음<br/>CatalogHoldings 읽기만"]
@@ -73,7 +73,7 @@ sequenceDiagram
   W->>N: POST /api/v1/ebook-searches/plans (검색 조건)
   N->>P: (일반 구역)
   P->>P: 계획 저장 (planId · 만든 IP · 10분) · SearchSlots 안 잡음
-  P-->>W: 201 {planId, items[주소], events[캐시에 있던 결과]}
+  P-->>W: 201 {planId, items[모든 주소]} (캐시 안 봄, 설계 #9)
   W->>X: port: items
   loop 호스트 1건 · 1초, 동시 5
     X->>L: GET (머리 10초, 본문 마감까지)
@@ -83,7 +83,7 @@ sequenceDiagram
     N->>P: (본문 ≤ ${LOOKUP_MAX_BODY_MB}m · zone 20r/s · Origin 검사)
     P->>P: 검사 ①쪽 번호·1회 ②크기·200 ⑤IP ⑩adapter=계획 URL
     P->>F: accept(target, SiteResponse via=extension)
-    F->>F: ③ adapter 해석 (실패 → 400) · ④ 캐시 빈 칸만 넣음
+    F->>F: ③ adapter 해석 (실패 → 400) · ④ 캐시에 넣음(빈 칸 또는 확장 출처 갱신, 서버 출처는 안 덮음)
     F-->>P: page · verdict · detailItems
     P-->>W: 200 {events[library-result | library-failed | row-verdict], detailItems[], stop}
   end
@@ -186,19 +186,20 @@ erDiagram
 | (메모리) 캐시 값 `FetchedPage` | 기존 | + `via` (`server`\|`extension`), `storedAt` | 확장 출처 칸을 비우는 운영 명령 `availability` 관리 엔드포인트 없이 **JMX/Actuator 없이** 재시작으로 갈음 [안] 또는 Actuator 사용자 정의 엔드포인트 [안] | 보안 ⑧ [확정] / 비우는 방법 [안] |
 
 - Liquibase: `usagelog/003-library-response-source-extension.yaml` [안] 새 changeset(기존 changeset 수정 없음). 사이클 19의 `usagelog/002`(cached_count)와 같은 표 → 나중에 main에 합치는 쪽이 include를 master 맨 끝으로
-- 확장 모드의 캐시 답 셈 [안]: 계획 응답이 서버 캐시에서 답한 도서관은 사이클 19의 `ResponseResult.CACHED`로 세고 `source=extension`(그 검색이 확장 모드였으므로). 확장이 받아와 해석된 것은 `SUCCESS`/`FAILURE`, 보내지 못한 것은 `SKIPPED`(close의 `notSent`)
+- 확장 모드의 사용 기록 [확정] (사용자: "확장은 어짜피 사용자로 접근하는거니 사용자걸로 보여주고 그 결과만 우리 서버가 캐시로 가져가면 되는 거 아닐까?", 2026-10-16, design-delta 결정 #9 승인): 확장 모드는 서버 캐시를 보지 않으므로 **캐시 답(`CACHED`)이 없음**. 확장이 받아와 해석된 것은 `SUCCESS`/`FAILURE`, 보내지 못한 것은 `SKIPPED`(close의 `notSent`), 출처는 모두 `extension`
 
 ## API
 
 | 메서드 | 경로 | 설명 | 요청 | 응답 | 에러 |
 |---|---|---|---|---|---|
 | GET | `/api/v1/lookup-status` | 상태 신호 값. 도서관을 부르지 않음. nginx 일반 구역. 서버 1초 메모 | 없음 | 200 `{slots, inUse, level, queuedLibraryIds[], serverTime}`, `Cache-Control: no-cache` | — |
-| POST | `/api/v1/ebook-searches/plans` | 확장 모드 검색 묶음 계획(자리 안 잡음). 첫 묶음은 지금 `ebook-searches/stream`과 같은 조건, 다음 묶음은 `batchNo`·`candidates` 추가 | JSON `{title|author|publisher, residenceRegionIds, workRegionIds, filter, scope, visit, libraryIds, batchNo?, candidates?}` | 201 `{planId, batchNo, deadlineMs:8000, rowLimit:20, targets?(첫 묶음), items[{itemId, libraryId, page, url}], events[]}` — 3분 캐시에 있는 도서관은 `items`에서 빼고 `events`의 `library-result`로 | 400 검증(지금과 같음), 429 (⑦ IP별 계획 한도 1분 20개 [안]) |
+| POST | `/api/v1/ebook-searches/plans` | 확장 모드 검색 묶음 계획(자리 안 잡음). 첫 묶음은 지금 `ebook-searches/stream`과 같은 조건, 다음 묶음은 `batchNo`·`candidates` 추가 | JSON `{title|author|publisher, residenceRegionIds, workRegionIds, filter, scope, visit, libraryIds, batchNo?, candidates?}` | 201 `{planId, batchNo, deadlineMs:8000, rowLimit:20, targets?(첫 묶음), items[{itemId, libraryId, page, url}]}` — **캐시를 보지 않고 모든 도서관 주소를 줌**, 사용자는 자기 브라우저가 받은 결과만 봄 [확정] (사용자: "확장은 어짜피 사용자로 접근하는거니 사용자걸로 보여주고 그 결과만 우리 서버가 캐시로 가져가면 되는 거 아닐까?", 2026-10-16, design-delta 결정 #9 승인) | 400 검증(지금과 같음), 429 (⑦ IP별 계획 한도 1분 20개 [안]) |
 | POST | `/api/v1/book-availabilities/plans` | 책 화면(소장) 계획. items는 상세 주소 | `{bookIds, …, batchNo?, candidates?(holdingId)}` | 같은 모양(이벤트는 `holding-*`) | 같음 |
 | POST | `/api/v1/availability/libraries/{libraryId}/ebooks/plans` [안] | 「더 보기」 계획(설계 #7) | `{title|…, page}` | `{planId, items[1], events[]}` | 같음 |
 | POST | `/api/v1/lookup-plans/{planId}/items/{itemId}` | 받아온 원본 올리기 | 본문 `application/octet-stream`(원본 그대로); 쿼리 `status`, `ms`, `outcome=RESPONDED\|TIMEOUT\|ERROR`, `contentType`(사이트가 준 값). URL은 받지 않음 | 200 `{events[library-result\|library-failed\|row-verdict\|holding-*], detailItems[{itemId, libraryId, url, kind:DETAIL}], stop}` | 400 `invalid_plan`(계획 없음·만료·쪽 번호 없음·이미 받음·IP 다름·Origin 다름·adapter 해석 실패), 413 `payload_too_large`, 429 |
 | POST | `/api/v1/lookup-plans/{planId}/close` | 묶음 끝 | `{notSent:[itemId]}` | 200 `{events:[batch-done]}` (usagelog SKIPPED·recordSearch는 여기서) | 400 `invalid_plan` |
 
+- **확장 모드는 서버 캐시를 읽지 않고 넣기만 함** [확정] (사용자: "확장은 어짜피 사용자로 접근하는거니 사용자걸로 보여주고 그 결과만 우리 서버가 캐시로 가져가면 되는 거 아닐까?", 2026-10-16, design-delta 결정 #9 승인): 넣는 규칙 = 빈 칸이면 넣음, 확장 출처 값은 새 값으로 갱신, 서버 출처 값은 덮지 않음(#6 검사는 그대로)
 - 이벤트 이름·데이터는 지금 SSE(`docs/current/api.md` 스트림 절)와 같음. `done`은 상세 단계가 끝나거나 30초가 지나면 화면이 만듦 [확정] (architect 2-3)
 - 올리기 검사(ADR-0119): ① 쪽 번호가 계획에 있고 처음 ② 본문 ≤ `max-body-size`·`status` 200 ③ adapter 해석 ④ 캐시 빈 칸만 ⑤ 계획을 만든 IP와 같음 ⑥ `Origin`(없으면 `Referer`)이 책첵 주소 ⑦ IP별 계획 만들기 1분 20개 [안] ⑧ 캐시 `via=extension`·`storedAt` ⑨ 검사 실패를 IP별 `rejected_event`(종류 `invalid_plan` [안])에 세고 1분 30번 [안] 넘으면 그 IP의 계획 만들기 10분 거절 [안] ⑩ adapter는 계획의 URL 호스트로만
 - 요청/응답 예시
@@ -211,7 +212,7 @@ erDiagram
 {"planId":"p_8f3a…","batchNo":1,"deadlineMs":8000,"rowLimit":20,
  "targets":{"libraries":[…]},
  "items":[{"itemId":1,"libraryId":1215,"page":1,"url":"https://…/searchList.ink?schTxt=…"}],
- "events":[{"event":"library-result","data":{…캐시에 있던 결과…}}]}
+ }
 
 // POST /api/v1/lookup-plans/p_8f3a…/items/1?status=200&ms=812&outcome=RESPONDED&contentType=text%2Fhtml%3Bcharset%3DEUC-KR → 200
 {"events":[{"event":"library-result","data":{…}},{"event":"row-verdict","data":{…}}],

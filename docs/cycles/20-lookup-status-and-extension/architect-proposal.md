@@ -194,3 +194,4 @@ classDiagram
 - #12 질문 "한 변수로 nginx까지?" → 답: `deploy/prod/prod.env`의 `LOOKUP_MAX_BODY_MB` 하나를 compose가 Spring 환경 변수와 nginx 템플릿(공식 이미지 envsubst, https://hub.docker.com/_/nginx 확인 2026-10-16)에 넘김. 결정 기다림
 - #12 올리기 경로 nginx: 본문 상한은 `prod.env` 변수 하나(`LOOKUP_MAX_BODY_MB`)로 Spring·nginx 템플릿 양쪽에, 요청 수 별도 zone 20r/s burst 60 [확정] (사용자: "이걸로 해줘", 2026-10-16)
 - **설계 결정 13개 모두 확정 (2026-10-16)** → ADR·design-delta로
+- (2026-10-16, design-delta 결정 #9) 확장 모드는 서버 캐시를 읽지 않고 넣기만 함 [확정] (사용자 제안 → 승인). #4의 "캐시에 있는 도서관은 결과로 바로"를 바꿈. 확장 모드 사용 기록에는 `CACHED` 없음
