@@ -121,7 +121,24 @@ svg .ah{fill:var(--accent)}
 <h2><span class="num">7</span>제목 앞 괄호에서 남길 낱말 목록을<br>코드 상수로 둘지</h2>
 <p class="concl">지금 같은 책 묶기의 목록(판 낱말 11개, 꼬리 표시 등)은 모두 코드 상수이고, 바꾸면 다시 가져옵니다(ADR-0069).</p>
 <div class="prop">남길 낱말 목록도 같은 자리의 코드 상수로 둡니다. [안]</div>
-<p class="alt">다른 선택: 규칙 파일 → 빌드 없이 고칠 수 있지만 묶기 규칙의 원본이 둘로 나뉨.</p>
+<p class="alt">다른 선택: 규칙 파일 → 빌드 없이 고칠 수 있지만 묶기 규칙의 원본이 둘로 나뉨.</p><div class="concl" style="margin-top:18px;background:var(--ok-bg)"><b>질문: 이거 무슨 말이야? 그림과 표로 어느 DB에서 어느 값으로 사용하는지 알려줘</b><br>
+"남길 낱말 목록"은 <b>어느 DB에도 저장되지 않고 가져오기 프로그램 코드 안에 적힌 목록</b>입니다. 가져올 때 한 번 쓰이고, 그 결과(어떤 줄을 한 책으로 모았는지)만 책 목록 DB에 남습니다.</div>
+<div class="fig"><svg viewBox="0 0 640 200" role="img" aria-label="남길 낱말 목록이 쓰이는 곳">
+<rect class="bx" x="10" y="20" width="180" height="76" rx="8"/><text class="lb" x="100" y="44" text-anchor="middle">수집 사본 (sqlite)</text><text class="sm" x="100" y="64" text-anchor="middle">holding.title</text><text class="sm" x="100" y="82" text-anchor="middle">「(만화) 삼국지」</text>
+<path class="ar" d="M192 58 H222"/><path class="ah" d="M220 51 L232 58 L220 65Z"/>
+<rect class="bxa" x="236" y="10" width="200" height="96" rx="8"/><text class="lb" x="336" y="34" text-anchor="middle">가져오기 프로그램</text><text class="sm" x="336" y="54" text-anchor="middle">같은 책 견줄 제목 만들기</text><text class="sm" x="336" y="74" text-anchor="middle">코드 안 목록: 만화·개정판·속…</text><text class="sm" x="336" y="94" text-anchor="middle">→ 「(만화)」는 남김</text>
+<path class="ar" d="M438 58 H468"/><path class="ah" d="M466 51 L478 58 L466 65Z"/>
+<rect class="bxok" x="482" y="20" width="148" height="76" rx="8"/><text class="lb" x="556" y="44" text-anchor="middle">책 목록 DB</text><text class="sm" x="556" y="64" text-anchor="middle">catalog.book</text><text class="sm" x="556" y="82" text-anchor="middle">「삼국지」와 따로 한 권</text>
+<text class="sm" x="336" y="140" text-anchor="middle">견줄 제목은 계산에만 쓰고 저장하지 않음 (지금 판 낱말 11개도 같은 방식)</text>
+<text class="sm" x="336" y="162" text-anchor="middle">화면 제목·검색은 원문 제목 그대로 (book.title)</text>
+</svg></div>
+<table>
+<tr><th>수집 사본의 제목 (<code>holding.title</code>)</th><th>프로그램이 만드는 견줄 제목 (저장 안 함)</th><th>책 목록 DB 결과 (<code>catalog.book</code>)</th></tr>
+<tr><td>(부를 끌어 당기는) 백만장자 마인드</td><td>백만장자마인드</td><td>「백만장자 마인드」와 <b>한 권</b></td></tr>
+<tr><td>(만화) 삼국지</td><td>(만화)삼국지 — 목록 낱말이라 남김</td><td>「삼국지」와 <b>따로</b></td></tr>
+<tr><td>(3판) 사회복지 행정실무</td><td>(3판)사회복지행정실무 — "…판"이라 남김</td><td>다른 판과 <b>따로</b></td></tr>
+</table>
+<p class="ex">"코드 상수로 둔다"는 이 목록을 프로그램 코드 안에 적는다는 뜻입니다. 다른 선택인 "규칙 파일"은 같은 목록을 dev 폴더의 표 파일(<code>scripts/library/rules/</code>)에 적고 가져올 때 읽게 하는 것입니다. 어느 쪽이든 DB에는 들어가지 않고, 목록을 바꾸면 책 목록을 다시 가져와야 효과가 납니다.</p>
 </div>
 
 <div class="card">
@@ -149,7 +166,22 @@ svg .ah{fill:var(--accent)}
 <h2><span class="num">11</span>운영 반영 직후 잠깐의 틈을<br>받아들일지</h2>
 <p class="concl">새 책 목록으로 바꿔 끼운 뒤 서비스를 새 코드로 다시 켜기까지 짧은 틈이 있습니다(ADR-0069 "바꿔 끼우자마자 다시 켬").</p>
 <div class="prop">그 틈에는 "&lt;김정은&gt;"처럼 기호를 넣은 저자 검색만 잠깐 못 찾습니다. "김정은" 검색은 맞습니다. 이 정도는 받아들입니다. [안]</div>
-<p class="alt">다른 선택: 서비스를 먼저 내리고 바꿔 끼움 → 그동안 검색 전체가 멈춤.</p>
+<p class="alt">다른 선택: 서비스를 먼저 내리고 바꿔 끼움 → 그동안 검색 전체가 멈춤.</p><div class="concl" style="margin-top:18px;background:var(--ok-bg)"><b>질문: 그냥 수집에서 잘 하면 되는 거 아니야? 새 책 목록으로 끼우기 전에 다듬으면 되고 왜 그래?</b><br>
+맞습니다. <b>책 목록(데이터)은 끼우기 전에 이미 다 다듬어집니다.</b> 틈이 생기는 곳은 데이터가 아니라 <b>사용자가 검색창에 친 글자를 다듬는 서버 프로그램</b>입니다.</div>
+<div class="fig"><svg viewBox="0 0 640 170" role="img" aria-label="데이터와 프로그램이 바뀌는 때">
+<text class="sm" x="10" y="20">시간 →</text>
+<rect class="bxok" x="10" y="34" width="620" height="40" rx="8"/><text class="lb" x="20" y="60">책 목록(데이터): 끼우기 전에 새 규칙으로 다 다듬어 둠 → 끼우는 순간 새 목록</text>
+<rect class="bx" x="10" y="90" width="300" height="40" rx="8"/><text class="lb" x="20" y="116">서버 프로그램: 옛 판 (검색어 기호 안 뗌)</text>
+<rect class="bxno" x="310" y="90" width="90" height="40" rx="8"/><text class="sm" x="355" y="115" text-anchor="middle">틈 (몇 초~분)</text>
+<rect class="bxa" x="400" y="90" width="230" height="40" rx="8"/><text class="lb" x="410" y="116">새 판 (검색어 기호 뗌)</text>
+<text class="sm" x="355" y="152" text-anchor="middle">끼우기 → 다시 켜기 사이</text>
+</svg></div>
+<ul>
+<li>책 이름 「&lt;김정은&gt;」은 새 목록에서 이미 「김정은」으로 저장돼 있음 → "김정은"으로 찾으면 틈에도 찾아짐</li>
+<li>사용자가 검색창에 「&lt;김정은&gt;」처럼 <b>기호까지 쳐서</b> 찾을 때만, 옛 프로그램은 기호를 떼지 않아 못 찾음 — 프로그램을 새 판으로 다시 켜면 해결</li>
+<li>프로그램을 먼저 새 판으로 켜도 같은 크기의 틈이 반대쪽에 생깁니다(새 프로그램 + 옛 목록). 그래서 "끼우자마자 다시 켜기"(ADR-0069)가 틈이 가장 짧습니다</li>
+</ul>
+<p class="ex">그래서 11번은 "그 짧은 틈에 기호를 넣은 검색만 잠깐 못 찾는 것을 받아들인다"는 확인입니다. 데이터를 미리 다듬는 것은 말씀하신 대로 이미 그렇게 합니다.</p>
 </div>
 
 <p class="foot">원본: <code>docs/cycles/19-author-angle-brackets/architect-proposal.md</code>, <code>spec.md</code>. 2026-10-15.</p>
