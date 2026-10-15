@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 21 설계 결정 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+
+.v-flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.v-box{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:7px 11px;font-size:15px;text-align:center;min-width:90px}
+.v-box small{display:block;color:var(--muted);font-size:12px}
+.v-hi{border-color:var(--accent);background:var(--accent-bg)}
+.v-warn{border-color:var(--warn);background:var(--warn-bg)}
+.v-ok{border-color:var(--ok);background:var(--ok-bg)}
+.v-arr{color:var(--muted);font-size:18px}
+.v-file{border:2px solid var(--line);border-radius:12px;background:var(--card);padding:10px;margin:10px 0;max-width:560px}
+.v-file .v-part{border:1px dashed var(--line);border-radius:8px;padding:8px 10px;margin:6px 0;font-size:14px}
+.v-file .v-part.v-new{border-color:var(--accent);background:var(--accent-bg)}
+.v-tl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0;font-size:13px;text-align:center}
+.v-tl div{border-top:4px solid var(--line);padding-top:6px}
+.v-tl div.v-hi{border-top-color:var(--accent);background:none}
+.v-cv{display:inline-flex;width:70px;aspect-ratio:2/3;border-radius:7px;border:1px solid var(--line);background:var(--accent-bg);align-items:center;justify-content:center;font-size:11px;text-align:center;padding:3px;vertical-align:top;margin:4px}
+.v-cv.v-img{background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 6px,var(--card) 6px,var(--card) 12px)}
+.v-mini{border:1px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;margin:8px 0;max-width:420px}
+.v-mini .v-bar{display:flex;gap:10px;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line);font-size:13px}
+.v-mini .v-body{padding:10px 12px;font-size:13px}
+.v-pill{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-weight:800;font-size:12px}
+@media (max-width:700px){main table{display:block;overflow-x:auto;max-width:100%}.v-tl{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.v-code{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:var(--code-bg);border-radius:8px;padding:8px 10px;overflow-x:auto;white-space:pre}
+</style>
+</head>
+
+<body>
+<main class="doc">
+<p class="lead">사서추천도서도 가져오기 길로 옮길지<br>정할 것 3개를 골라 주세요.</p>
+<p class="sub">"사서추천도서도 가져오기로 같이 하는게 어떨까해"라고 하셔서 따져 봤습니다. 그렇게 하면 세 추천 목록이 모두 한 길(수집기 → 가져오기 파일 → 운영 DB → 서버는 읽기만)로 모입니다. 대신 범위·명세에서 정한 "사서추천도서는 지금처럼 서버가 주 1회 받음"과, 사이클 14에서 이미 만든 서버 받기 장치가 바뀝니다. 앞 페이지 「사이클 21 설계 결정」의 #4·#11은 그대로 열려 있습니다.</p>
+<div class="card"><h2>지금과 제안</h2><p class="concl">지금은 사서추천도서만 서버가 직접 받아 옵니다. 제안대로 하면 서버는 바깥에 아무것도 받으러 가지 않고 DB만 읽습니다.</p><p style="font-weight:800;margin:10px 0 0">지금 (사이클 14에서 만든 것)</p><div class="v-flow"><div class="v-box v-warn">운영 서버<br><small>매주 월요일 05시</small></div><span class="v-arr">→</span><div class="v-box ">국립중앙도서관 사서추천 API<br><small>목록 108권</small></div><span class="v-arr">→</span><div class="v-box ">표지 받아 줄이기</div><span class="v-arr">→</span><div class="v-box v-warn">서버가 우리 책 맞추기</div><span class="v-arr">→</span><div class="v-box ">화면</div></div><p style="font-weight:800;margin:10px 0 0">제안 (세 목록이 한 길)</p><div class="v-flow"><div class="v-box v-hi">내 PC 수집기<br><small>이동진 · 서울대 · <b>사서</b></small></div><span class="v-arr">→</span><div class="v-box v-hi">가져오기 파일 만들 때<br><small>책 번호 맞추기 · 표지 줄이기</small></div><span class="v-arr">→</span><div class="v-box ">운영 반영</div><span class="v-arr">→</span><div class="v-box v-ok">서버는 읽기만</div><span class="v-arr">→</span><div class="v-box ">화면</div></div><table><tr><th></th><th>지금</th><th>제안</th></tr><tr><td>사서 목록을 받는 곳</td><td>운영 서버</td><td>내 PC 수집기</td></tr><tr><td>국립중앙도서관 인증키</td><td>운영 서버 .env</td><td>내 PC .env만 (운영 서버에는 없음)</td></tr><tr><td>우리 책 맞추기·표지</td><td>서버가 함</td><td>가져오기 파일 만들 때 (설계 #4 새 제안, #6 B와 같은 길)</td></tr><tr><td>새 추천이 화면에 나오는 때</td><td>등록 뒤 최대 1주</td><td>등록 뒤 다음 수집·반영 때</td></tr><tr><td>코드</td><td>목록 둘은 수집기, 사서는 서버 — 길이 둘</td><td>길이 하나</td></tr></table><p class="cap">근거: 사이클 14 명세 R1-2(주 1회 월요일 05시), dev picks 모듈(FetchScheduler, PicksCache) 2026-10-15 확인.</p></div>
+<div class="card item"><h2><span class="num">1</span>사서추천도서도 수집기 → 가져오기 길로</h2><p class="concl">[안] 사서추천도서 목록도 내 PC 수집기가 국립중앙도서관 API에서 받아 목록 파일에 적고, 가져오기 파일에 실어 운영으로 보냅니다. 세 목록이 같은 표·같은 맞추기·같은 표지 길을 씁니다.</p><p>좋은 점: 운영 서버는 바깥 사이트에 요청하지 않고 DB만 읽습니다(국립중앙도서관 키도 운영에 둘 필요 없음). 맞추는 길이 하나라 설계 #4 새 제안이 사서추천도서에도 그대로 들어맞습니다.</p><p>바뀌는 것: 범위 "포함 4"와 명세 R3-1의 "사서 추천도서는 지금처럼 서버가 주 1회 받음", 사이클 14 명세 R1(받기 규칙)이 이 길로 바뀝니다. 사이클 14에서 이미 만든 서버 쪽 받기 장치를 고쳐야 합니다(3번).</p><p class="alt">다른 선택: 지금처럼 사서추천도서만 서버가 받기. 이미 만든 것을 건드리지 않지만, 길이 둘이고 사서추천도서만 서버가 따로 맞춥니다.</p></div>
+<div class="card item"><h2><span class="num">2</span>받는 때: 수집기를 돌릴 때마다</h2><p class="concl">[안] 사람이 수집기를 돌릴 때마다 사서추천 목록도 받고, 가져오기 반영 때 화면에 나옵니다. 매주 월요일 자동 받기와 "실패하면 매일 다시"는 없어집니다.</p><div class="v-tl"><div>국립중앙도서관이 새 추천 등록<br><small>보통 2달에 한 번, 8권</small></div><div>다음 수집 실행<br><small>사람이 돌릴 때</small></div><div>가져오기 반영</div><div class="v-hi">화면에 새 추천</div></div><p>국립중앙도서관은 보통 2달에 한 번 8권을 추천하고, 등록일도 며칠에 걸쳐 들쭉날쭉합니다(사이클 14 조사: 2026년 10월 추천 등록 9월 22~28일). 수집을 한 달에 한 번 이상 돌리면 새 추천은 늦어도 한 달 안에 화면에 나옵니다.</p><p class="alt">다른 선택: 수집기 대신 내 PC에 예약 작업을 두어 매주 자동으로 받기. 빨리 반영되지만 반영(apply)은 어차피 사람이 하므로 화면에 나오는 때는 크게 다르지 않습니다.</p></div>
+<div class="card item"><h2><span class="num">3</span>서버의 사서추천 받기 장치는 지움</h2><p class="concl">[안] 운영 서버의 사서추천 받기 예약(매주 월요일), 받기 기록 표(<code>fetch_run</code>), 서버의 국립중앙도서관 키 설정을 지웁니다. 아직 배포 전이라 남겨 둘 까닭이 없습니다.</p><p>사이클 14에서 출판유통통합전산망 받기를 지울 때도 배포 전이라 옛 장치를 남기지 않았습니다(ADR-0089). 받기가 잘 됐는지는 수집 기록과 가져오기 기록으로 봅니다.</p><p class="alt">다른 선택: 서버 받기 장치를 꺼 둔 채 남겨 두기(예비). 수집기가 안 될 때 다시 켤 수 있지만, 쓰지 않는 코드와 표가 남습니다.</p></div>
+<p class="foot">원본: 사용자 제안 "사서추천도서도 가져오기로 같이 하는게어떨까해" (2026-10-16, 캔버스). 고치게 될 문서: scope.md 포함 4, spec.md R3-1·R4, architect-proposal.md. 바탕: docs/cycles/14-librarian-picks/spec.md R1, ADR-0089·0090·0091.</p>
+</main></body></html>
