@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 19 화면 흐름 결정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+</style>
+</head>
+<style>
+.mock{border:2px solid var(--line);border-radius:12px;padding:10px;background:var(--bg);margin:8px 0}
+.mock .bar2{font-size:13px;color:var(--muted);margin-bottom:6px}
+.mcard{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin:6px 0;font-size:15px;line-height:1.45}
+.mcard b{font-size:16px}
+.mcard .au{color:var(--muted)}
+.mcard .lib{font-size:13px;color:var(--accent)}
+.mcard.bad .au{color:var(--no)}
+.mocks{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.w-pc{max-width:100%}.w-tab{max-width:420px}.w-ph{max-width:260px}
+@media (max-width:700px){.mocks{grid-template-columns:1fr}}
+</style>
+<body>
+<main class="doc">
+
+<p class="lead">사이클 19 화면 흐름입니다.<br>새 화면은 없고, 보이는 글과 모이는 줄 수만 바뀝니다.</p>
+<p class="sub">정할 것은 2개입니다. 아래 화면 예시는 위치와 순서를 보이는 것이지 디자인이 아닙니다. 지금 화면(검색 결과 카드 S1, 책 페이지 S3)의 구성을 그대로 따랐습니다.</p>
+
+<div class="card">
+<h2>화면 사이 이동 (바뀌지 않음)</h2>
+<div class="fig"><svg viewBox="0 0 640 150" role="img" aria-label="화면 흐름">
+<rect class="bx" x="10" y="40" width="140" height="60" rx="10"/><text class="lb" x="80" y="66" text-anchor="middle">S1 검색</text><text class="sm" x="80" y="86" text-anchor="middle">제목·저자 입력</text>
+<path class="ar" d="M152 70 H180"/><path class="ah" d="M178 63 L190 70 L178 77Z"/>
+<rect class="bxa" x="194" y="40" width="150" height="60" rx="10"/><text class="lb" x="269" y="66" text-anchor="middle">S1 결과 카드</text><text class="sm" x="269" y="86" text-anchor="middle">같은 책은 한 장</text>
+<path class="ar" d="M346 70 H374"/><path class="ah" d="M372 63 L384 70 L372 77Z"/>
+<rect class="bxa" x="388" y="40" width="130" height="60" rx="10"/><text class="lb" x="453" y="66" text-anchor="middle">S3 책 페이지</text><text class="sm" x="453" y="86" text-anchor="middle">저자 칸·도서관 줄</text>
+<path class="ar" d="M520 70 H544"/><path class="ah" d="M542 63 L554 70 L542 77Z"/>
+<rect class="bx" x="558" y="40" width="72" height="60" rx="10"/><text class="lb" x="594" y="66" text-anchor="middle">도서관</text><text class="sm" x="594" y="86" text-anchor="middle">사이트</text>
+</svg></div>
+<p class="cap">파란 두 칸(S1 결과 카드, S3 책 페이지)에서 글과 줄 수가 바뀝니다. 이동은 지금과 같습니다.</p>
+</div>
+
+<div class="card">
+<h2>「백만장자 마인드」를 찾으면 (PC · 태블릿 · 폰)</h2>
+<p class="concl">지금은 같은 책이 여러 장으로 나뉘어 보이고, 고친 뒤에는 한 장으로 모입니다. 도서관 수는 한 장에 모입니다.</p>
+<div class="mocks">
+<div class="mock w-pc"><div class="bar2">지금 (PC)</div>
+<div class="mcard"><b>백만장자 마인드</b> <span class="au">· 모리세 시게토모 · 율리시즈</span><div class="lib">가진 도서관 여러 곳</div></div>
+<div class="mcard bad"><b>백만장자 마인드</b> <span class="au">· &lt;모리세 시게토모&gt; 저/&lt;이민연&gt; 역 · 율리시즈</span><div class="lib">도서관 몇 곳</div></div>
+<div class="mcard bad"><b>백만장자 마인드</b> <span class="au">· 김근아 저자 · 율리시즈</span><div class="lib">도서관 1곳</div></div>
+<div class="mcard bad"><b>백만장자 마인드</b> <span class="au">· 율리시즈 · 모리세 시게토모</span><div class="lib">대구·경기도교육청</div></div>
+<div class="mcard bad"><b>(부를 끌어 당기는) 백만장자 마인드 : …</b> <span class="au">· 모리세 시게토모</span></div>
+</div>
+<div class="mock w-pc"><div class="bar2">고친 뒤 (PC)</div>
+<div class="mcard"><b>백만장자 마인드</b> <span class="au">· 모리세 시게토모 · 율리시즈</span><div class="lib">가진 도서관이 한 장에 모두</div></div>
+<div class="mcard"><b>부를 끌어 당기는 백만장자 마인드 : …</b> <span class="au">· 모리세 시게토모</span><div class="lib">괄호 없는 수식어 제목은 따로 남음(이번에 안 함)</div></div>
+</div>
+</div>
+<div class="mocks" style="margin-top:10px">
+<div class="mock w-tab"><div class="bar2">고친 뒤 (태블릿) — 카드 모양은 지금 그대로</div>
+<div class="mcard"><b>백만장자 마인드</b><br><span class="au">모리세 시게토모 · 율리시즈</span><div class="lib">가진 도서관이 한 장에 모두</div></div>
+</div>
+<div class="mock w-ph"><div class="bar2">고친 뒤 (폰)</div>
+<div class="mcard"><b>백만장자 마인드</b><br><span class="au">모리세 시게토모<br>율리시즈</span><div class="lib">가진 도서관 모두</div></div>
+</div>
+</div>
+<p class="cap">빨간 저자 글이 지금 같은 책을 갈라 놓는 표기입니다. 도서관 수는 실제 화면에서 숫자로 보이고, 여기서는 위치만 보였습니다.</p>
+</div>
+
+<div class="card">
+<h2>책 페이지(S3) 저자 칸</h2>
+<table>
+<tr><th>원문(가장 많은 표기)</th><th>지금 보이는 글</th><th>고친 뒤</th></tr>
+<tr><td>&lt;김정은&gt;,&lt;김지혜&gt; 저</td><td><span class="red">&lt;김정은&gt;,&lt;김지혜&gt; 저</span></td><td>김정은,김지혜 저</td></tr>
+<tr><td>KBS 〈슈퍼차이나〉 제작팀</td><td>KBS 〈슈퍼차이나〉 제작팀</td><td>KBS 슈퍼차이나 제작팀</td></tr>
+<tr><td>존 버거 [지음]</td><td>존 버거 [지음]</td><td>존 버거 [지음] (그대로)</td></tr>
+<tr><td>루이스 캐럴 저이소연 역</td><td>루이스 캐럴 저이소연 역</td><td>아래 1번에서 정함</td></tr>
+</table>
+</div>
+
+<div class="card">
+<h2><span class="num">1</span>띄어쓰기가 빠진 저자 글은<br>화면에서 원문대로 둘지</h2>
+<p class="concl">「루이스 캐럴 저이소연 역」은 검색할 때는 두 사람(루이스 캐럴, 이소연)으로 나눠 찾히게 고칩니다. 그런데 화면 저자 칸은 원문 한 줄을 보여 주므로, 이 글은 그대로 「…저이소연 역」으로 보입니다.</p>
+<div class="prop">화면 저자 칸은 원문대로 둡니다(기호만 뗌). 띄어쓰기는 고치지 않습니다. [안]</div>
+<p class="alt">다른 선택: 나눈 결과로 띄어 보여 줌(「루이스 캐럴 저 이소연 역」) → 보기에는 낫지만 가져올 때 원문을 고쳐 쓰는 규칙이 하나 더 생김(1,264줄 + 셋째 역할 40줄).</p>
+</div>
+
+<div class="card">
+<h2><span class="num">2</span>이 흐름대로 설계로 넘어갈지</h2>
+<p class="concl">새 화면·새 이동이 없고, 명세의 수용 기준 16개가 모두 S1·S3·S13 또는 DB·시험으로 확인됩니다(원본 <code>flow.md</code> "수용 기준 대응" 표). 명세 AC-7은 책 페이지가 역할별 이름을 보여 주지 않아 "옮긴이 검색으로 찾힘"으로 고쳤습니다.</p>
+<div class="prop">이 흐름대로 설계(<code>/design-delta</code>)로 넘어갑니다. [안]</div>
+<p class="alt">다른 선택: 고칠 화면이 있으면 "기타"에 적어 주세요.</p>
+</div>
+
+<p class="foot">원본: <code>docs/cycles/19-author-angle-brackets/flow.md</code> (그림이 든 원본 <code>easy/flow-original.html</code>), <code>spec.md</code>. 2026-10-15.</p>
+</main>
+</body>
+</html>
