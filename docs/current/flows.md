@@ -16,6 +16,7 @@
 사이클 16 cycle-close (2026-10-14, 12·13·14·15 회고·인계 뒤): 공지사항과 안내·약관 페이지를 DB로 — 흐름 38(공지 목록·공지 글), 39(서비스 안내·이용약관·처리방침 글), 40(가입 화면의 약관·동의문, 글을 못 불러올 때), 41(운영자가 새 판을 넣을 때)을 더하고 흐름 9에 문서 버전의 원본을 적음 — 구현됨 (사이클 16, 회고 2026-10-15). 근거 `docs/cycles/16-notices-and-policies/design-delta.md` "주요 흐름", ADR-0098~0101.
 사이클 15·16·18 회고 (2026-10-15): 구현됨으로 바꾸고 실제 이름·값을 맞춤. 15 `usagelog`·16 `sitecontent` 구현됨, 18은 A1·A2·B 구현됨(dev main `a0e438a`), C(운영 반영)는 사이클 17 첫 배포 뒤. 근거 `docs/cycles/15-usage-log/retro.md`, `docs/cycles/16-notices-and-policies/retro.md`, `docs/cycles/18-empty-library-holdings/retro.md`, dev `plan-feedback.md` "# 사이클 15"·"# 사이클 16"·"# 사이클 18".
 사이클 19 cycle-close (2026-10-15): 저자·제목 표기 정리 — 설계됨(미구현, 사이클 19). ADR-0113~0117. 흐름 44(다시 가져오기 → 비교 → 반영 → 다시 켜기), 45(캐시 답 세기)를 더하고, 흐름 20·27에 `rules-dir` 읽기와 멈춤 줄을 더함. 근거 `docs/cycles/19-author-angle-brackets/design-delta.md` "구조 그림".
+사이클 21 cycle-close (2026-10-16): 추천도서 세 목록 — 설계됨(미구현, 사이클 21). ADR-0122~0129. 흐름 46(이동진·서울대: 수집기 → export → apply → 화면), 47(사서 추천도서 주 1회 받기, 담는 표와 고르기 규칙만 바뀜), 48(목록 화면 요청)을 더하고, 흐름 24·25·27·28·33에 바뀐 그림을 가리키는 줄을 더함. 근거 `docs/cycles/21-recommended-books/design-delta.md` "구조 그림".
 
 사이클 13 cycle-close (2026-10-12, 사이클 12와 나란히 미리 한 plan, 사이클 12 뒤에 개발): 새 도서관 넣기 — 흐름 32(넣기 미리 보기 → 넣기, 내 PC)와 흐름 33(운영 반영 판 2: 도서관 → 비교 → 책)을 더하고, "화면 공통"에 S12 `/about` 가입 조사 기준일 한 줄을 적음. 흐름 16·23-3의 seed로 넣기는 사이클 07~09 방식으로 남김 — 구현됨 (사이클 13, 회고 2026-10-14). 근거 `docs/cycles/13-crawler-to-dev/design-delta.md` "구조 그림", flow.md, ADR-0083~0088·0093.
 사이클 08 cycle-close (2026-10-11): 흐름 20(가져오기: 새 표에 쓰고 바꿔 끼우기), 21(검색 계획과 책 화면 소장 읽기), 22(막혔을 때 429·503)를 더하고, 흐름 6·16과 "화면 공통"에 바뀌는 점을 적음 — 구현됨 (사이클 08). 근거 `docs/cycles/08-polish-swap-memory/design-delta.md` "주요 흐름"(흐름 A~C), ADR-0065~0070.
@@ -811,6 +812,8 @@ sequenceDiagram
 
 ADR-0089(출처: 국립중앙도서관 사서추천도서 Open API, 모듈 `picks`, `popular` 지움), ADR-0091(표지 받아 200px JPEG). 사이클 10의 "인기 도서 매달 받기"(출판유통통합전산망)를 대체합니다. 표는 `data-model.md` 스키마 `picks`, 판단 규칙은 `module-map.md` "`picks` 도메인 모델".
 
+사이클 21 — 설계됨(미구현, 사이클 21): 받기 판단·요청·실패 처리는 이 그림 그대로이고, 담는 표가 `pick`에서 `list_book`의 `librarian` 줄로, 새 분야는 `list_field`에 더하는 것으로 바뀝니다. 바뀐 그림은 흐름 47.
+
 ```mermaid
 sequenceDiagram
   autonumber
@@ -883,6 +886,8 @@ stateDiagram-v2
 
 ## 흐름 25: 사서추천도서 화면 열기와 공용 캐시 (S13) — 구현됨 (사이클 14, 회고 2026-10-14)
 
+사이클 21 — 설계됨(미구현, 사이클 21): 주소가 `GET /api/v1/picks/{listKey}`로, 캐시가 세 목록을 담고(이동진·서울대는 저장된 `book_id`를 `byIds`로), 같은 책 고르기가 ADR-0125 규칙으로 바뀝니다. 캐시는 흐름 47 끝, 화면 요청은 흐름 48. 아래 그림은 사이클 14 구현 그대로입니다.
+
 ```mermaid
 sequenceDiagram
   autonumber
@@ -938,6 +943,8 @@ sequenceDiagram
 
 ## 흐름 27: 가져오기 내보내기 (내 PC) — 구현됨 (사이클 11, 회고 2026-10-14)
 
+사이클 21 — 설계됨(미구현, 사이클 21): export는 prepare 뒤 목록 폴더(`lists-dir`)를 `picks`의 `CuratedListTransfer.read`로 읽어 `notes.listPart`에 싣고 파일 형식 번호 3으로 냅니다. 목록 폴더가 없거나 검사가 실패하면 사본을 읽기 전에 멈춤. 그림은 흐름 46.
+
 실측(새 사본, `current`(지금 이름 `objects`), `-Xmx6g`, 사이클 12 규칙 전): 약 26분 43초 — 읽기 8분 32초, 묶기 6초, 국가서지 2분 14초 + 키 21초, 같은 글 1분 15초, 임시 표 COPY·둘째 읽기 9분 20초, 번호 잇기 1분 21초, 쓰기 2분 9초, 덤프와 되읽기 약 1분 22초. 파일 606,053,524 B. 책 번호 이어 씀 1,615,124 / 새 4,544 / 사라짐 1 (dev, 2026-10-12) 사이클 11 측정(2026-10-12): `compact` 2GB 약 21분, `sql` 1GB 약 34분, 세 방식 번호까지 같음 — 기본 `compact` [확정] (사용자 결정 2026-10-12, `docs/cycles/11-separate-import/retro.md` "최종 회고")
 
 
@@ -977,6 +984,8 @@ sequenceDiagram
 - 기준값 6개는 내보낼 때 내 PC `catalog`(마지막 반영분)의 값 [확정] (설계 #2)
 
 ## 흐름 28: 가져오기 반영 (운영 역할 DB, 다름·실패 포함) — 구현됨 (사이클 11, 회고 2026-10-14)
+
+사이클 21 — 설계됨(미구현, 사이클 21): apply·finish·in-place 모두 책 표를 바꿔 끼운 **뒤** 작은 트랜잭션 하나로 이동진·서울대 목록을 넣습니다(`CuratedListTransfer.replace`). 앱과 파일의 형식 번호가 다르면 거절. 그림은 흐름 46.
 
 실측(`db-ops`, 상한 1GB, `maintenance_work_mem` 256MB): 비교 3.2초, 복원 65초, 색인 2분 30초, ANALYZE 52초, 바꿔 끼우기 0.08초, 전체 4분 35초. 반영하는 동안 서비스 검색 194번 실패 0, p95 760ms, 최대 1,522ms(색인 중). 다름 시험(도서관 주소, 연결표 한 줄, 옛 파일, 표 칸 하나) 모두 `mismatch`로 멈추고 아무것도 안 바뀜 (dev, 2026-10-12)
 
@@ -1206,6 +1215,8 @@ sequenceDiagram
 - 같은 보고서로 다시 넣으면 0곳(부분 UNIQUE `library_insert_run_report_id_succeeded_key`, AC-8). 같은 사본으로 다시 미리 보기 → "넣을 도서관 없음"(보고서 `b2174dfd426d`) [확정] (dev 9단계, 2026-10-14)
 
 ## 흐름 33: 운영 반영 판 2 — 도서관 → 비교 → 책 — 구현됨 (사이클 13, 회고 2026-10-14)
+
+사이클 21 — 설계됨(미구현, 사이클 21): 파일 형식 번호가 3이 되고, 책을 바꿔 끼운 뒤 목록을 넣는 단계가 끝에 붙습니다(첫 트랜잭션의 도서관 부분·비교는 그대로). 그림은 흐름 46.
 
 ADR-0086(반영 파일 판 2), ADR-0093(실행 기록 줄도 옮김). 흐름 27·28(사이클 11 내보내기·반영)에 도서관 부분이 앞에 붙습니다.
 
@@ -1573,5 +1584,142 @@ sequenceDiagram
   else 없음
     A->>A: 도서관에 요청
     A->>U: recordLibraryResponse(library, source, OK/FAILED/TIMEOUT, ms)
+  end
+```
+
+## 흐름 46: 이동진·서울대 목록 — 수집기 → export → apply → 화면 — 설계됨(미구현, 사이클 21)
+
+- 근거: `docs/cycles/21-recommended-books/design-delta.md` "흐름 (a)", ADR-0123·0124·0128. 흐름 27(내보내기)·28(반영)·33(형식 번호 2 반영)에 이어짐
+- 수집기는 사람이 다른 수집과 같이 돌릴 때, 지난 목록 갱신 뒤 한 달 넘었으면 함께 함. 실패(키 거절·할당량·응답 없음)면 목록 파일 그대로, 수집 기록 한 줄 [확정] (spec R4-6)
+- 고정 판 → 책 번호: export가 넘긴 찾기(그 export가 새로 만든 책 표 `catalog_next`, `CatalogLoad.preparedLookup()`)로 맞춤. in-place는 바꿔 끼운 뒤의 `BookLookup` [확정] (사용자 승인, 2026-10-16, 설계 검토 3 #1)
+- 목록 폴더(`lists-dir`)나 그 안의 `fields.tsv`·`leedongjin.tsv`·`snu100.tsv`가 없으면 사본을 읽기 전에 멈춤 [확정] (설계 검토 3 #2). 파일 형식 번호가 앱과 다르면 apply·finish 거절 [확정]
+- 목록 넣기는 첫 트랜잭션이 아니라 책 표를 바꿔 끼운 **뒤** 작은 트랜잭션 하나 [확정] (사용자 승인, 2026-10-16, 설계 검토 3 #3: "(B) 바꿔 끼운 뒤 작은 트랜잭션")
+- 서버는 재시작·커밋 없이 다음 캐시 새로 읽기(10분) 안에 새 목록을 보임 [확정] (spec R4-7)
+
+```mermaid
+sequenceDiagram
+  actor U as 사용자
+  participant C as 수집기 (Python)
+  participant YT as YouTube Data API
+  participant NI as ISBN 서지 API
+  participant PDB as 내 PC DB
+  participant F as 목록 파일
+  participant X as export (collection)
+  participant PK as picks
+  participant O as 운영 apply (collection)
+  participant ODB as 운영 DB
+  participant S as 운영 서버 (PicksCache)
+  U->>C: 수집 실행 (지난 목록 갱신 뒤 한 달 넘었으면 함께)
+  C->>YT: 「이달의 책」 · 업로드 재생목록 읽기
+  alt 키 거절 · 할당량 · 응답 없음
+    C-->>U: 수집 기록에 실패 한 줄, 목록 파일 그대로
+  else 성공
+    C->>NI: 괄호 안 책 이름으로 ISBN · 저자 · 출판사 · KDC · 표지 주소
+    alt 책 이름 없음 · 여럿 · KDC 없음
+      C->>F: 확인 필요 파일에 영상 ID · 연월 · 까닭만
+    else 하나 맞음
+      C->>F: 새 줄 + 분야 (KDC 대응표), 같은 분야 겹치면 최신만
+    end
+    C->>PDB: 같은 책 판들의 보유량 (SELECT만)
+    C->>F: 고정 판 (사람이 적은 판은 그대로)
+    C->>NI: 없는 표지만 받아 200px JPEG로 줄여 파일로
+  end
+  U->>X: export (prepare 뒤)
+  X->>PK: CuratedListTransfer.read(lists-dir, preparedLookup)
+  PK->>PK: 파일 검사 (분야 · 번호 · 연월 · 영상 ID · 표지 파일)
+  alt 검사 실패
+    PK-->>X: 오류 (파일 · 몇째 줄 · 무엇)
+    X-->>U: 사본을 읽기 전에 멈춤
+  else 통과
+    PK->>PK: X가 넘긴 찾기(새로 만든 책 표 catalog_next)로 고정 판 → 책 번호
+    PK-->>X: listPart (줄 · 책 번호 · 표지) + 맞춘 수
+    X->>X: notes.listPart, 파일 형식 번호 3 → 반영 파일
+    X-->>U: 기록: 목록별 맞춘 책 · 못 맞춘 책
+  end
+  U->>O: 같은 파일로 apply
+  O->>ODB: 첫 트랜잭션: 도서관 부분 · 지문 비교
+  alt 다름
+    O->>ODB: 되돌림 (목록 그대로)
+  else 같음
+    O->>ODB: 커밋 → 복원 · 색인 · 바꿔 끼우기
+    alt 바꿔 끼우기 실패
+      O-->>U: 책 표 · 목록 모두 옛것 그대로
+    else 성공
+      O->>PK: replace(listPart) (바꿔 끼운 뒤 작은 트랜잭션)
+      alt 목록 넣기 실패
+        PK-->>U: 옛 목록 그대로 (책 번호는 이어지므로 대개 맞음), 기록 남김
+      end
+    end
+  end
+  S->>ODB: 10분마다 다시 읽기 (메모리, 응답 속도용)
+  Note over S: 이동진 · 서울대 줄은 저장된 책 번호를 그대로 씀
+```
+
+## 흐름 47: 사서 추천도서 주 1회 받기와 공용 캐시 (세 목록) — 설계됨(미구현, 사이클 21)
+
+- 근거: `docs/cycles/21-recommended-books/design-delta.md` "흐름 (b)", ADR-0122·0124·0125. 받기 판단·요청·실패 처리는 흐름 24 그대로이고, 담는 표와 고르기 규칙만 바뀜
+- 사서 받기는 `list_book`의 `librarian` 줄만 지우고 넣음. "목록 없음"·"같은 목록인가"도 `librarian` 줄만 봄 [확정] (ADR-0122, 설계 검토 3 #1). 표지 정리는 어느 `list_book`도 쓰지 않는 `cover`만 지움(다른 목록 표지는 남음) [확정]
+- 같은 책 고르기 `BookChoice`: 켜진 도서관만 보아 구독형 아닌 수 + 켜진 구독형이 하나라도 있으면 1, 같으면 1권 먼저 → 책 번호 작은 것 [확정] (ADR-0125). 구독형 여부는 `LibraryCatalog.lendingKinds()`(켜진 도서관 번호마다 구독형인지) [확정: ADR-0125, 설계 검토 #7, 이름 안]
+- 캐시가 담을 때 맞춘 책 제목을 함께 읽어 판 표시를 덜어 낸 화면 이름을 만듦(이동진·서울대는 `byIds`, 사서는 맞춘 결과) [확정] (ADR-0129)
+
+```mermaid
+sequenceDiagram
+  participant J as 받기 (주 1회, 그대로)
+  participant N as saseoApi.do
+  participant DB as picks 스키마
+  participant CA as PicksCache
+  participant L as library
+  participant CT as catalog BookLookup
+  J->>N: 요청 1건
+  alt 실패
+    J->>DB: fetch_run FAILED, 앞 목록 그대로
+  else 성공 · 목록이 다름
+    J->>DB: 한 트랜잭션: list_book의 librarian 줄만 지우고 넣기, 새 분야는 list_field에 더함, fetch_run
+    J->>DB: 저장 안 된 표지만 받아 넣고, 어느 list_book도 안 쓰는 표지 지움
+    J->>CA: picksChanged()
+  end
+  CA->>CT: librarian 줄: byIsbn13 → byTitleAndAuthor
+  CA->>CT: leedongjin · snu100 줄: byIds(book_id) (보유 도서관 · 제목)
+  CA->>L: lendingKinds() (새)
+  CA->>CA: BookChoice — 구독형 아닌 수 + 구독형 있으면 1 (바뀜)
+```
+
+## 흐름 48: 추천 목록 화면 요청 (S13 `/picks/:listKey`) — 설계됨(미구현, 사이클 21)
+
+- 근거: `docs/cycles/21-recommended-books/design-delta.md` "흐름 (c)", ADR-0126·0127. 흐름 25(사이클 14 화면 열기)를 목록별 주소로 바꿈. 그림의 예는 이동진, 사서·서울대도 같은 꼴
+- 예전 주소 `/picks`는 `/picks/librarian`으로 넘김, 모르는 목록 이름은 404 `list_not_found` [확정] (spec R2-6, ADR-0126)
+- 상태 문구: 목록 없음 "아직 이동진 추천도서를 준비하고 있어요", 요청 실패 "이동진 추천도서를 불러오지 못했어요. 잠시 뒤에 다시 해 주세요." [확정] (spec R7-1)
+- 사용 알림 `picks_list_view`·`picks_book_view`에 `list` [확정] (ADR-0126)
+
+```mermaid
+sequenceDiagram
+  actor B as 브라우저
+  participant W as web
+  participant PC as PicksController
+  participant L as library
+  participant CA as PicksCache
+  participant UL as usagelog
+  B->>W: /picks (예전 주소)
+  W-->>B: /picks/librarian 으로 넘김
+  B->>W: /picks/leedongjin
+  W->>PC: GET /api/v1/picks/leedongjin?지역…
+  alt 모르는 목록 이름
+    PC-->>W: 404 list_not_found
+  else 아는 목록
+    PC->>L: planSearch
+    alt 지역 번호가 틀림
+      PC-->>W: 422 invalid_region
+    else 계획 만듦
+      PC->>CA: snapshot(leedongjin) (메모리)
+      PC-->>W: 200 {list, categories}
+    end
+  end
+  alt categories 비어 있음
+    W-->>B: 아직 이동진 추천도서를 준비하고 있어요
+  else 요청 실패
+    W-->>B: 이동진 추천도서를 불러오지 못했어요
+  else 목록 있음
+    W-->>B: 전체 3×3, 표지 아래 26.06
+    W->>UL: 사용 알림 {picks_list_view, list, category}
   end
 ```

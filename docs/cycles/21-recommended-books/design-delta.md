@@ -44,7 +44,7 @@ flowchart TB
     collection -->|LibraryCatalog| library
     collection -->|"CuratedListTransfer (새)"| picks
     picks -->|"BookLookup (+ 가져오기 표에서 찾기, + 번호로)"| catalog
-    picks -->|"planSearch · subscriptionLibraryIds (새)"| library
+    picks -->|"planSearch · lendingKinds (새)"| library
     usagelog
   end
   TSV -->|export 때 읽음| collection
@@ -134,7 +134,7 @@ sequenceDiagram
   end
   CA->>CT: librarian 줄: byIsbn13 → byTitleAndAuthor
   CA->>CT: leedongjin · snu100 줄: byIds(book_id) (보유 도서관만)
-  CA->>L: subscriptionLibraryIds() (새)
+  CA->>L: lendingKinds() (새, 켜진 도서관 · 구독형인지)
   CA->>CA: BookChoice — 구독형 아닌 수 + 구독형 있으면 1 (바뀜)
 ```
 
