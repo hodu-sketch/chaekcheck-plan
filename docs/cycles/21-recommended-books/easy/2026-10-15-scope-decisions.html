@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 21 범위 결정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+
+.m-dev{border:1px solid var(--line);border-radius:14px;background:var(--bg);overflow:hidden;margin:8px auto 4px;position:relative}
+.m-pc{max-width:820px}.m-tab{max-width:560px}.m-ph{max-width:330px}
+.m-bar{display:flex;gap:14px;align-items:center;padding:10px 16px;background:var(--card);border-bottom:1px solid var(--line);font-size:15px;position:relative}
+.m-bar b{font-size:18px}.m-bar .m-on{color:var(--accent);font-weight:800;border-bottom:2px solid var(--accent)}.m-bar .m-r{margin-left:auto;color:var(--muted);display:flex;gap:10px;align-items:center}
+.m-dot{display:inline-block;width:9px;height:9px;border-radius:9px;background:var(--ok);margin-right:4px}
+.m-menu{position:absolute;top:40px;background:var(--card);border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 26px rgba(0,0,0,.14);padding:6px;z-index:2;min-width:150px}
+.m-menu div{padding:7px 12px;border-radius:7px;font-size:15px}.m-menu div.m-cur{background:var(--accent-bg);font-weight:800;color:var(--accent)}
+.m-body{padding:70px 16px 22px;color:var(--muted);font-size:14px;text-align:center}
+.m-hand{font-size:13px;color:var(--warn);font-weight:700}
+.m-pn{width:fit-content;margin:14px auto 50px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 16px 10px}
+.m-ph2{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:8px}.m-ph2 strong{font-size:20px}.m-ph2 span{color:var(--muted);font-size:13px}
+.m-gr{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;list-style:none;margin:0;padding:0;width:var(--gw,300px)}
+.m-cv{aspect-ratio:2/3;border-radius:8px;background:var(--accent-bg);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;padding:4px;text-align:center;font-size:12px;line-height:1.3;font-weight:700}
+.m-cv[data-off]{opacity:.32}
+.m-gr em{display:block;text-align:center;font-style:normal;font-size:11px;color:var(--muted)}
+.m-pill{position:absolute;left:50%;bottom:12px;translate:-50% 0;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 14px;font-size:14px;font-weight:800;box-shadow:0 4px 12px rgba(0,0,0,.12);white-space:nowrap}
+.m-ph .m-gr{--gw:250px;gap:5px}.m-ph .m-cv{font-size:10px}
+.m-win{max-width:520px;margin:8px auto;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:16px 18px}
+.m-win h4{margin:0 0 4px;font-size:19px}.m-win .m-pick{color:var(--accent);font-weight:700;font-size:15px;margin:2px 0}.m-win .m-meta{color:var(--muted);font-size:14px;margin:2px 0 8px}
+.m-btn{display:inline-block;border:1px solid var(--line);border-radius:8px;padding:3px 10px;font-size:14px;margin-right:6px}.m-btn.m-pri{background:var(--accent);color:var(--card);border-color:var(--accent)}
+.m-row{display:flex;justify-content:space-between;border-top:1px solid var(--line);padding:6px 0;font-size:14px}
+@media (max-width:700px){.m-pc .m-gr,.m-tab .m-gr{--gw:200px}.m-cv{font-size:10px}.m-bar{gap:8px;font-size:13px;padding:8px 10px}.m-menu{min-width:130px}}
+</style>
+</head>
+
+<body>
+<main class="doc">
+<p class="lead">사이클 21 범위를 새 방향으로 잡았습니다.<br>정할 것 8개를 골라 주세요.</p>
+<p class="sub">말씀하신 대로 머리말의 「사서추천도서」를 「추천도서」로 바꾸고, 올리거나 누르면 이동진 추천도서 · 사서 추천도서 · 서울대 100선이 나오게 했습니다. 서울대 100선은 서울대학교 기초교육원의 공식 목록을 찾았고, 모은 도서관에 100권 중 87권이 있습니다. 아래 정한 것은 칩 없이 적었습니다.</p>
+<div class="card"><h2>이미 정한 것</h2>
+<p class="concl">머리말 메뉴, 같은 책 고르기, 이동진 추천도서 화면은 말씀하신 대로 적었습니다.</p>
+<table><tr><th>무엇</th><th>정한 내용</th></tr>
+<tr><td>머리말</td><td>「사서추천도서」 → 「추천도서」. 마우스를 올리거나 누르면 아래로 메뉴: 이동진 추천도서, 사서 추천도서, 서울대 100선. 사이클 14에서 정한 머리말 이름이 이것으로 바뀝니다</td></tr>
+<tr><td>같은 책 고르기</td><td>같은 책으로 찾히는 여러 판 가운데 보유량이 가장 많은 판. 구독형은 1권으로 셉니다</td></tr>
+<tr><td>세 목록 화면</td><td>지금 사서추천도서와 같은 모양(분야 한 화면, 표지 3×3, ◀ ▶, 아래 [분야 ▾], 전자책 없는 책은 흐리게)</td></tr>
+<tr><td>이동진 추천도서</td><td>책 이름·저자와 영상 링크만, 관계없음 한 줄, 분야 9개, 최근 추천이 앞, 표지 아래 추천 연·월</td></tr></table>
+<p class="cap">원본: 범위 문서 scope.md "이미 정한 것" 표.</p>
+<div class="fig"><div class="m-dev m-pc"><div class="m-bar"><b>책첵</b><span class="m-on">추천도서 &#9662;</span><span class="m-r"><span><i class="m-dot"></i>원활</span><span>로그인</span></span><div class="m-menu" style="left:58px"><div class="m-cur">이동진 추천도서</div><div>사서 추천도서</div><div>서울대 100선</div></div></div><div class="m-body"><span class="m-hand">PC: 「추천도서」에 마우스를 올리면 메뉴가 열림</span></div></div><p class="cap">PC. 머리말 오른쪽 점과 "원활"은 사이클 20에서 정한 조회 상태 표시 자리입니다.</p><div class="m-dev m-tab"><div class="m-bar"><b>책첵</b><span class="m-on">추천도서 &#9662;</span><span class="m-r"><span><i class="m-dot"></i>원활</span><span>로그인</span></span><div class="m-menu" style="left:58px"><div class="m-cur">이동진 추천도서</div><div>사서 추천도서</div><div>서울대 100선</div></div></div><div class="m-body"><span class="m-hand">태블릿: 「추천도서」를 누르면 메뉴가 열림</span></div></div><p class="cap">태블릿. 마우스가 없어 누르면 열립니다.</p><div class="m-dev m-ph"><div class="m-bar"><b>책첵</b><span class="m-on">추천도서 &#9662;</span><span class="m-r"><span><i class="m-dot"></i>원활</span><span>로그인</span></span><div class="m-menu" style="left:50px"><div class="m-cur">이동진 추천도서</div><div>사서 추천도서</div><div>서울대 100선</div></div></div><div class="m-body"><span class="m-hand">폰: 누르면 열림, 다시 누르거나 바깥을 누르면 닫힘</span></div></div><p class="cap">폰(320~375px). 「추천도서」는 지금 「사서추천도서」보다 두 글자 짧아 자리가 남습니다. 그림은 위치와 순서만 보여 줍니다.</p></div></div>
+<div class="card item"><h2><span class="num">1</span>구독형을 1권으로 세는 법</h2><p class="concl">[안] <b>보유량 = 구독형이 아닌 도서관 수 + 구독형 도서관에 하나라도 있으면 1</b>로 셉니다. 구독형은 도서관 대출 방식이 "구독"인 11곳(교보 7곳, 북큐브 4곳)입니다.</p><p>예: 「한중록」 스타북스 판은 일반 도서관 125곳과 구독형 도서관 몇 곳에 있습니다. 구독형이 몇 곳이든 1을 더해 보유량 126이 됩니다.</p><p>지금 사서추천도서도 같은 책 여러 판 가운데 가진 도서관이 가장 많은 판을 고릅니다. 다른 점은 구독형 도서관도 한 곳씩 센다는 것뿐이라, 세 목록이 함께 이 규칙으로 바뀝니다.</p><p class="alt">다른 선택: 구독형 도서관 한 곳마다 1(지금 방식 그대로). 이 경우 "1권으로 센다"는 말씀과 달라집니다. 말씀하신 뜻이 다르면 기타에 적어 주세요.</p></div>
+<div class="card item"><h2><span class="num">2</span>목록을 서비스에 넣는 방법</h2><p class="concl">[안] <b>책 목록 파일</b>(목록 이름, 분야, 순서, 책 이름, 저자, ISBN, 이동진은 연·월과 영상 주소)을 dev 저장소에 두고, 서버가 켜질 때 DB에 넣습니다. 새 이달의 책은 한 달에 한 번 파일에 한 줄 더합니다.</p><p>서울대 100선은 2005년 목록이라 거의 바뀌지 않고, 이동진 추천도서는 한 달에 한 권 안팎이라 손으로 더해도 일이 작습니다. 이번처럼 이 세션에서 영상을 읽어 줄을 만들어 드릴 수 있습니다.</p><p class="alt">다른 선택 ①: 관리 화면을 만들어 브라우저에서 입력. 관리자 로그인과 화면이 새로 필요해 한 사이클이 더 걸립니다. ② 유튜브 Data API로 영상을 자동으로 읽기. 키와 호출 한도가 필요하고, 영상 설명란에 책 이름이 없는 달(2026년 2월)은 어차피 사람이 봐야 합니다.</p></div>
+<div class="card item"><h2><span class="num">3</span>서울대 100선의 &quot;같은 책&quot; 범위</h2><p class="concl">[안] 제목에서 괄호·부제·권 번호·"세트"·"완역본"을 떼고 남은 <b>본제목과 저자가 같은 책</b>을 같은 책으로 봅니다. 영어 원서, 어린이·만화·논술용 책은 뺍니다. 선집 15권(연암집, 퇴계문선 등)은 같은 저자의 선집 가운데서 고릅니다.</p><p>이 규칙으로 100권 중 <b>87권</b>을 찾았습니다. 예: 「구운몽」은 55개 판이 찾혔고, 가장 많은 494곳에 있는 판이 뽑힙니다. 못 찾은 13권(광장, 감시와 처벌, 슬픈 열대 등)은 해설서·요약본만 있었습니다.</p><p>규칙으로 거르지 못한 판이 5권 있습니다. 「연암집」은 「100분 고전」 시리즈, 「춘향전」은 어린이책 출판사 판, 「실천이성비판」·「페더랄리스트」·「미국의 민주주의」는 부제가 붙은 판이 뽑혔습니다. 줄인 판일 수 있습니다.</p><p class="alt">다른 선택: 이 5권처럼 애매한 책은 사람이 판을 직접 정해 목록 파일에 ISBN으로 적기. 정확하지만 책마다 확인이 필요합니다.</p></div>
+<div class="card item"><h2><span class="num">4</span>서울대 100선 화면</h2><p class="concl">[안] 분야는 목록 그대로 <b>한국문학, 외국문학, 동양사상, 서양사상, 과학기술</b> 5개와 맨 앞 「전체」입니다. 분야 안 순서는 목차 번호 순, 표지 아래에는 번호(예: "3")를 작게 적습니다.</p><p>서울대 100선은 추천한 날이 없어 "최근이 앞"을 쓸 수 없습니다. 목차 번호는 한국문학이 고전시가부터 광장까지 시대순이라 그 순서를 그대로 씁니다.</p><p class="alt">다른 선택: 보유량이 많은 책이 앞. 빌릴 수 있는 책이 먼저 보이지만 목록의 원래 순서가 사라집니다.</p></div>
+<div class="m-dev m-pc"><div class="m-bar"><b>책첵</b><span class="m-on">추천도서 &#9662;</span><span class="m-r"><span>로그인</span></span></div><div class="m-pn"><div class="m-ph2"><strong>한국문학</strong><span><b>1 - 9</b> / 17</span></div><ol class="m-gr"><li><div class="m-cv">고전시가선집</div><em>1</em></li><li><div class="m-cv">연암집</div><em>2</em></li><li><div class="m-cv">구운몽</div><em>3</em></li><li><div class="m-cv">춘향전</div><em>4</em></li><li><div class="m-cv">한중록</div><em>5</em></li><li><div class="m-cv">청구야담</div><em>6</em></li><li><div class="m-cv">무정</div><em>7</em></li><li><div class="m-cv">삼대</div><em>8</em></li><li><div class="m-cv">천변풍경</div><em>9</em></li></ol></div><div class="m-pill">한국문학 &#9662;</div></div><p class="cap">PC: 서울대 100선 한국문학 첫 9권. 모은 도서관에 없는 책은 흐리게 그렸습니다.</p>
+<div class="m-dev m-tab"><div class="m-bar"><b>책첵</b><span class="m-on">추천도서 &#9662;</span><span class="m-r"><span>로그인</span></span></div><div class="m-pn"><div class="m-ph2"><strong>한국문학</strong><span><b>1 - 9</b> / 17</span></div><ol class="m-gr"><li><div class="m-cv">고전시가선집</div><em>1</em></li><li><div class="m-cv">연암집</div><em>2</em></li><li><div class="m-cv">구운몽</div><em>3</em></li><li><div class="m-cv">춘향전</div><em>4</em></li><li><div class="m-cv">한중록</div><em>5</em></li><li><div class="m-cv">청구야담</div><em>6</em></li><li><div class="m-cv">무정</div><em>7</em></li><li><div class="m-cv">삼대</div><em>8</em></li><li><div class="m-cv">천변풍경</div><em>9</em></li></ol></div><div class="m-pill">한국문학 &#9662;</div></div><p class="cap">태블릿: 서울대 100선 한국문학 첫 9권. 모은 도서관에 없는 책은 흐리게 그렸습니다.</p>
+<div class="m-dev m-ph"><div class="m-bar"><b>책첵</b><span class="m-on">추천도서 &#9662;</span><span class="m-r"><span>로그인</span></span></div><div class="m-pn"><div class="m-ph2"><strong>한국문학</strong><span><b>1 - 9</b> / 17</span></div><ol class="m-gr"><li><div class="m-cv">고전시가선집</div><em>1</em></li><li><div class="m-cv">연암집</div><em>2</em></li><li><div class="m-cv">구운몽</div><em>3</em></li><li><div class="m-cv">춘향전</div><em>4</em></li><li><div class="m-cv">한중록</div><em>5</em></li><li><div class="m-cv">청구야담</div><em>6</em></li><li><div class="m-cv">무정</div><em>7</em></li><li><div class="m-cv">삼대</div><em>8</em></li><li><div class="m-cv">천변풍경</div><em>9</em></li></ol></div><div class="m-pill">한국문학 &#9662;</div></div><p class="cap">폰: 서울대 100선 한국문학 첫 9권. 모은 도서관에 없는 책은 흐리게 그렸습니다.</p>
+<div class="card item"><h2><span class="num">5</span>표지</h2><p class="concl">[안] 국립중앙도서관 ISBN 서지 API의 표지를 받아 사서추천도서처럼 폭 200px로 줄여 저장하고, 표지가 없거나 이용 조건이 안 맞으면 <b>제목 글자 표지</b>로 보입니다.</p><p>사서추천도서는 국립중앙도서관 API의 표지를 이미 이렇게 쓰고 있습니다. 다만 ISBN 서지 API의 표지 이용 조건은 2026-10-15에 공식 문서에서 확인하지 못했습니다. 개발 전에 API 안내서와 시험 호출로 확인합니다.</p><p class="alt">다른 선택: 처음부터 제목 글자 표지만. 조사가 필요 없지만 화면이 단조롭습니다. 알라딘 표지는 이용 조건을 확인하지 못해 권하지 않습니다.</p></div>
+<div class="card item"><h2><span class="num">6</span>책 창에 더할 한 줄</h2><p class="concl">[안] 사서추천도서 책 창(대출 줄 최대 3곳, "책 검색 >>") 그대로에, 목록마다 한 줄을 더합니다.</p><div class="m-win"><h4>인터메초</h4><p class="m-pick">이동진 평론가가 「파이아키아」 영상에서 추천 (2026년 3월)</p><p class="m-meta">샐리 루니 · 은행나무</p><span class="m-btn m-pri">책 검색 &gt;</span><span class="m-btn">영상 보기</span><div class="m-row"><span>○○시립도서관</span><span>대출 가능</span></div></div><div class="m-win"><h4>구운몽</h4><p class="m-pick">서울대 권장도서 100선 · 한국문학 3</p><p class="m-meta">김만중 · 명현 global soft</p><span class="m-btn m-pri">책 검색 &gt;</span><div class="m-row"><span>○○구립도서관</span><span>대출 중</span></div></div><p class="cap">책 창 그림. 위치와 내용만 보여 줍니다. [영상 보기]는 유튜브를 새 탭으로 엽니다. 올해의 책이면 "2025 올해의 책"으로 적습니다.</p><p class="alt">다른 선택: 사서추천도서 창 그대로(한 줄 없음). 왜 이 책이 목록에 있는지 창에서 알 수 없습니다.</p></div>
+<div class="card item"><h2><span class="num">7</span>여러 권짜리 책</h2><p class="concl">[안] 「토지」(20권)·「탁류」·「카라마조프가의 형제들」처럼 권이 나뉜 책은 보유량이 가장 많은 출판사 판의 <b>1권</b>을 보입니다.</p><p>지금 규칙대로면 권마다 다른 책으로 잡혀 「토지」 2권, 「탁류」 3권처럼 중간 권이 뽑힙니다. 1권이 오면 처음부터 읽을 수 있습니다.</p><p class="alt">다른 선택: 보유량이 가장 많은 권을 그대로(지금 결과). 규칙은 단순하지만 중간 권이 표지로 나옵니다.</p></div>
+<div class="card item"><h2><span class="num">8</span>dev 순서</h2><p class="concl">[안] <b>공개 배포 다음</b>에 개발합니다. 순서는 사이클 17 첫 배포 → 19 적용 → 공개 → 21입니다.</p><p>사이클 20(조회 상태·확장)도 같은 머리말을 고칩니다. 20이 먼저 들어가면 21은 그 머리말 위에 메뉴만 바꿉니다.</p><p class="alt">다른 선택: 공개 전에 넣기. 공개 첫날부터 보이지만 17·19 일정이 밀릴 수 있습니다.</p></div>
+<p class="foot">원본: docs/cycles/21-recommended-books/scope.md "먼저 정할 것" (2026-10-15). 근거: docs/research/snu-100/picks.md, docs/research/leedongjin-picks/picks.md. 서울대 100선 출처: 서울대학교출판문화원 『권장도서 해제집』 목차 https://www.snupress.com/book/category?md=view&goodsidx=2676 (2026-10-15 확인). 화면 바탕: dev web/src/features/picks, 2026-10-15 확인.</p>
+</main></body></html>
