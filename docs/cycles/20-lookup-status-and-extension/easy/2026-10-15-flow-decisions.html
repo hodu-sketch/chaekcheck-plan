@@ -47,6 +47,7 @@ svg .ah{fill:var(--accent)}
 <main class="doc">
 
 <p class="lead">화면 흐름을 그렸습니다.<br>정할 것 8개를 골라 주세요.</p>
+<p class="concl">답 반영 (2026-10-15): #1·2·3·6·8 승인. <b>#4·#5의 말씀대로 빨강 안내 줄은 완전히 뺐습니다</b>(spec R12, 명세 #3 문구 결정 되돌림). #4는 안내 줄과 함께 미승인으로 들어와, 원래 질문(머리말 신호를 사서추천·소개 등 모든 머리말 화면에 둘지)은 아래 #4에서 다시 골라 주세요. #7에 카드 그림을 넣었습니다. #8의 "확장도 캐싱"은 8번 아래에 답했습니다. 남은 것: <b>#4, #7</b>.</p>
 <p class="sub">새 화면은 없습니다. 공통 머리말(H)에 신호가 붙고, 검색 결과(S1)·책 화면(S3)의 결과 카드에 두 가지(줄이 선 도서관 글, 빨강일 때 「도서관에서 보기 →」 글)가 더해지며, 확장 모드는 같은 화면이 다른 길로 결과를 받습니다. 아래 그림은 자리와 순서만 보이는 배치도이고, 지금 dev 화면(머리말 `AppLayout.tsx`, 결과 카드 `ResultRow.tsx`)을 2026-10-15에 확인해 그렸습니다. 흐름도 두 장(Mermaid)은 대화에 보낸 그림 원본 파일에 있습니다.</p>
 
 <div class="card">
@@ -75,7 +76,6 @@ svg .ah{fill:var(--accent)}
 <h2>결과 카드 S1·S3 — 더해지는 두 글</h2>
 <div class="fig"><svg viewBox="0 0 640 230" role="img" aria-label="결과 카드 PC와 폰">
 <text class="sm" x="10" y="16">PC · 빨강일 때</text>
-<rect class="bxno" x="10" y="24" width="620" height="26" rx="6"/><text class="sm rt" x="20" y="42">지금 찾는 사람이 많아요. 도서관 사이트에서 직접 확인할 수 있어요</text>
 <rect class="bx" x="10" y="58" width="620" height="70" rx="8"/>
 <text class="lb" x="22" y="82">백만장자 마인드</text><text class="sm" x="22" y="102">모리세 시게토모 · 율리시즈</text>
 <text class="lb" x="260" y="82">경기교육청 통합 전자도서관</text><text class="sm rt" x="260" y="102" font-size="12">지금 이 도서관 조회가 밀려요</text><text class="sm" x="260" y="120" font-size="12">교보 · 소장</text>
@@ -83,7 +83,7 @@ svg .ah{fill:var(--accent)}
 <text class="sm" x="10" y="156">폰 · 빨강일 때 (배지는 이름 아래 줄, #3)</text>
 <rect class="bx" x="10" y="164" width="300" height="60" rx="8"/>
 <text class="lb" x="20" y="184" font-size="14">경기교육청 통합 전자도서관</text><text class="sm rt" x="20" y="200" font-size="11">지금 이 도서관 조회가 밀려요</text><text class="sm" x="20" y="216" font-size="11">교보 · 소장 · 보유 2 · 대출 중 2</text><text class="sm" x="210" y="216" fill="var(--accent)" font-size="11">도서관에서 보기 →</text>
-</svg><p class="cap">카드 전체가 원래 도서관 페이지 링크입니다. 빨강일 때만 그 사실을 글(「도서관에서 보기 →」)로 보여 줍니다(#7). 줄이 선 도서관 글은 신호 색과 무관하게 뜹니다.</p></div>
+</svg><p class="cap">카드 전체가 원래 도서관 페이지 링크입니다. 빨강일 때만 그 사실을 글(「도서관에서 보기 →」)로 보여 줍니다(#7). 안내 줄은 없습니다(사용자, 2026-10-15). 줄이 선 도서관 글은 신호 색과 무관하게 뜹니다.</p></div>
 </div>
 
 <div class="card item">
@@ -106,7 +106,7 @@ svg .ah{fill:var(--accent)}
 
 <div class="card item">
 <h2><span class="num">4</span>검색 밖 화면(사서추천·소개·내 도서관·가입)에는<br>머리말 신호만</h2>
-<p class="concl">[안] 머리말이 있는 모든 화면(`/terms`·`/privacy` 제외)에서 신호가 보이고 10초마다 묻습니다. 안내 줄·카드 글은 결과 카드가 있는 S1·S3에만 있습니다.</p>
+<p class="concl">안내 줄은 뺐습니다(확정). 남은 질문은 <b>머리말 신호 자체</b>입니다: [안] 머리말이 있는 모든 화면(사서추천·소개·내 도서관·가입, `/terms`·`/privacy` 제외)에서 점+글이 보이고 10초마다 묻습니다. 카드 글(#7)은 결과 카드가 있는 S1·S3에만 있습니다.</p>
 <p class="alt">다른 선택: 검색 화면(S1·S3)에서만 묻기. 요청은 줄지만 사서추천에서 검색으로 넘어올 때 신호가 비어 있다가 채워집니다.</p>
 </div>
 
@@ -125,11 +125,29 @@ svg .ah{fill:var(--accent)}
 <div class="card item">
 <h2><span class="num">7</span>다시 제안: 빨강일 때 카드에<br>「도서관에서 보기 →」 글</h2>
 <p class="concl">앞서 승인한 "「도서관에서 보기」 링크를 앞세움"(방법 비교 #4, 명세 #3)은 <b>전제가 틀렸습니다</b>: dev 결과 카드에는 2026-10-05부터 따로 「도서관에서 보기」 버튼이 없고 <b>카드 전체가 도서관 페이지 링크</b>입니다(`ResultRow.tsx` 확인). 앞세울 링크가 없어 다시 제안합니다. [안] 빨강일 때만 카드 상태 칸 아래에 눈에 보이는 글 「도서관에서 보기 →」를 띄워, 카드를 누르면 도서관으로 간다는 것을 알려 줍니다. 초록·노랑에서는 지금처럼 글 없음(카드 전체 링크는 그대로). 안내 줄(명세 #3 문구)은 그대로입니다.</p>
+<h3 style="font-size:20px;margin:18px 0 6px">그림: 평소 카드와 빨강일 때 카드</h3>
+<div class="fig"><svg viewBox="0 0 640 330" role="img" aria-label="카드 전후 비교">
+<text class="sm" x="10" y="16">PC · 평소(초록·노랑): 카드 전체가 링크, 글 없음</text>
+<rect class="bx" x="10" y="24" width="620" height="70" rx="8"/>
+<text class="lb" x="22" y="48">백만장자 마인드</text><text class="sm" x="22" y="68">모리세 시게토모 · 율리시즈</text>
+<text class="lb" x="260" y="48">경기교육청 통합 전자도서관</text><text class="sm" x="260" y="68" font-size="12">교보 · 소장</text>
+<text class="sm" x="520" y="48">보유 2 · 대출 중 2</text>
+<text class="sm" x="10" y="124">PC · 빨강: 상태 칸 아래에 글이 생김 (카드 어디를 눌러도 도서관으로 감)</text>
+<rect class="bx" x="10" y="132" width="620" height="70" rx="8"/>
+<text class="lb" x="22" y="156">백만장자 마인드</text><text class="sm" x="22" y="176">모리세 시게토모 · 율리시즈</text>
+<text class="lb" x="260" y="156">경기교육청 통합 전자도서관</text><text class="sm" x="260" y="176" font-size="12">교보 · 소장</text>
+<text class="sm" x="520" y="156">보유 2 · 대출 중 2</text><text class="sm" x="520" y="190" fill="var(--accent)">도서관에서 보기 →</text>
+<text class="sm" x="10" y="232">폰 · 빨강 (375px)</text>
+<rect class="bx" x="10" y="240" width="300" height="80" rx="8"/>
+<text class="lb" x="20" y="262" font-size="14">백만장자 마인드</text><text class="sm" x="20" y="280" font-size="11">경기교육청 통합 전자도서관 · 교보 · 소장</text><text class="sm" x="20" y="297" font-size="11">보유 2 · 대출 중 2</text><text class="sm" x="200" y="312" fill="var(--accent)" font-size="11">도서관에서 보기 →</text>
+<text class="sm" x="330" y="262">누르면 →</text><rect class="bxa" x="400" y="245" width="220" height="60" rx="8"/><text class="sm" x="412" y="270" font-size="12">도서관 사이트의 그 책 페이지</text><text class="sm" x="412" y="290" font-size="11">(새 창, 지금과 같음)</text>
+</svg><p class="cap">빨강일 때 바뀌는 것은 「도서관에서 보기 →」 글 하나뿐입니다. 누르는 동작·가는 곳은 지금과 같습니다.</p></div>
 <p class="alt">다른 선택 ①: 안내 줄만 두고 카드는 그대로. 가장 단순하지만 "직접 확인"하는 방법(카드 누르기)을 알려 주지 않습니다. 다른 선택 ②: 모든 색에서 항상 글 표시. 혼잡 때만 보이는 변화가 없어지고 2026-10-05에 버튼을 뺀 결정과 어긋납니다.</p>
 </div>
 
 <div class="card item">
 <h2><span class="num">8</span>이 흐름대로<br>설계(design-delta)로 넘어가기</h2>
+<p class="concl">답: "확장도 캐싱" — 확장이 받아온 도서관 결과는 서버가 해석해 <b>서버 3분 캐시</b>에 넣고 다른 사용자도 봅니다(spec R7·AC-10, 사용자 요청으로 적힘). 그 뜻이면 이미 들어 있습니다. 만약 <b>확장 자체가 받아온 페이지를 사용자 브라우저 안에 3분 기억</b>해 같은 도서관을 다시 부르지 않게 하라는 뜻이면 새 규칙이라 채팅으로 알려 주세요 — 지금은 서버 캐시가 먼저 맞으면 확장에 주소를 보내지 않으므로 겹치는 일이 없다고 봅니다.</p>
 <p class="concl">[안] flow.md의 흐름도 두 장(신호·확장 모드 순서도)과 화면별 내용, AC 15개 ↔ 화면 대응표대로 다음 단계인 설계로 갑니다. 그림 원본은 대화에 보낸 `flow-original.html`에 있습니다.</p>
 </div>
 
