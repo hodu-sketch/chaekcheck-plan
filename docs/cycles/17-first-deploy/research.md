@@ -333,8 +333,8 @@ plan 15가 `docs/cycles/15-usage-log/to-cycle-17.md` "5차"에 올린 실제 값
 |---|---|---|---|
 | 리전 | 서울 ap-northeast-2 | **시드니 ap-southeast-2** | 무료 플랜은 시드니 한 곳만 할당, 다른 리전은 유료 전환 필요(콘솔 "서울 리전 사용 불가") |
 | 인스턴스 | t4g.medium 4GB | **t4g.small 2GB** | t4g.medium은 "무료 요금제에서 사용 불가"(유료 전환 필요). 무료 최대 t4g.small |
-| 모니터링 | Prometheus·Grafana·cAdvisor 서버에 직접 | **Grafana Cloud 무료 등급 + 가벼운 에이전트**(서버엔 node_exporter·push만) | 2GB에 자체 모니터링까지 올리기 빠듯 → 저장·대시보드는 Grafana Cloud(무료: 1만 시계열·로그 50GB·14일, 확인 2026-10-15)로 뺌. 사용자 승인(2026-10-15) |
-| 비밀값 IAM 역할 | EC2 IAM 역할 | 동일(아직 안 붙임, 사용자가 함) | 보안 설정이라 사용자가 직접 |
+| 모니터링 | Prometheus·Grafana·cAdvisor 서버에 직접 | **AWS CloudWatch**(CloudWatch 에이전트 + 자동 EC2 지표) | 2GB에 자체 모니터링까지 올리기 빠듯 → 저장·대시보드는 밖으로 뺌. 처음엔 Grafana Cloud 승인(2026-10-15)했으나 **최종은 CloudWatch 선택(사용자 안 B, 2026-10-16)**: AWS 안에서 끝나 설정 단순, 추가 서버 자원 거의 없음 |
+| 비밀값 IAM 역할 | EC2 IAM 역할 | **붙임 완료**(인스턴스 프로파일 chaekcheck-ec2-role, 2026-10-16) | 보안 설정이라 역할 생성·정책 연결은 사용자가 콘솔에서 직접(자동 모드 분류기가 IAM 변경 차단) |
 
 - 만든 것: 예산 My Zero-Spend Budget(지출 $0.01 초과 시 `<알림 메일>` 알림), EC2 `chaekcheck`(`i-0de8222bab1c8c073`, running), 고정 IP **<서버 IP>**(연결됨), 키 `chaekcheck-key.pem`(사용자 PC), 보안그룹 launch-wizard-1(SSH=사용자 IP만, 80/443 안 엶), 디스크 30GB gp3
 - 계정: Moonshot Mode(계정 ID 135274608857), 무료 플랜 크레딧 $100·남은 182일(2027-04-14)
@@ -349,6 +349,15 @@ plan 15가 `docs/cycles/15-usage-log/to-cycle-17.md` "5차"에 올린 실제 값
 - 메모리 2GB(여유 ~1.3Gi), 디스크 30GB(여유 26G)
 - **[중요] 이 서버는 arm64(Graviton)** → 앱 이미지도 **arm64로 빌드**해야 함. PC(x86)에서 그냥 빌드한 이미지는 안 뜸. 인계서에 반영: `docker buildx`로 arm64(멀티아치) 빌드하거나 서버에서 직접 빌드 [확인 필요: dev 빌드 방식]
 - 아직 못 하는 것(선행 조건): Cloudflare Tunnel 설정(도메인 chaekcheck.com 필요), 앱 배포(dev 인계서·arm64 이미지·compose·비밀값 필요), 비밀값(IAM 역할은 사용자), cycle 19 책목록 반영
+
+### CloudWatch 모니터링 설정 완료 (2026-10-16, SSH + 콘솔)
+앱 배포 전에 모니터링부터 켬(사용자 요청). 설계의 자체 Grafana 묶음 대신 **CloudWatch**(사용자 안 B, 2026-10-16).
+- **IAM**: 역할 `chaekcheck-ec2-role`이 인스턴스에 이미 연결돼 있었음(인스턴스 프로파일, "마지막 활동" 확인). 거기에 관리형 정책 **CloudWatchAgentServerPolicy**를 더함(에이전트가 측정값을 CloudWatch로 보낼 `cloudwatch:PutMetricData`·`ec2:DescribeTags` 허용). 기존 인라인 정책(`/chaekcheck/prod/*` SSM 읽기)은 그대로. **정책 연결은 사용자가 콘솔에서 직접**(자동 모드 분류기가 IAM 변경을 차단해 내가 못 누름)
+- **에이전트**: EC2 Instance Connect(브라우저 터미널)는 보안그룹이 SSH를 사용자 IP만 허용해 실패 → **노트북에서 `.pem`으로 SSH**(IP 허용됨)로 설치. `amazon-cloudwatch-agent` arm64 .deb(ap-southeast-2 버킷) 설치, 설정 `/opt/aws/amazon-cloudwatch-agent/etc/custom-config.json`: `mem_used_percent`·`disk_used_percent`(루트 `/`만), 60초 주기, 네임스페이스 CWAgent, InstanceId로 집계. `fetch-config`로 시작, systemd 부팅 자동 시작(enabled). 로그 "Everything is ready", AccessDenied 없음
+- **대시보드 chaekcheck**(시드니): 기존 EC2 자동 지표(CPU·네트워크·상태검사·디스크I·O) 위젯에 더해, CWAgent의 **메모리·디스크 사용률(%)** 위젯 1개 추가·저장. (EC2 네임스페이스의 DiskRead/WriteBytes는 "데이터 없음"이 정상 — 루트가 EBS라 그 I/O는 EBS 네임스페이스에 있음. 지금은 안 넣음)
+- 서버 OS가 **Ubuntu 26.04 LTS**(설계 안내문엔 24.04로 적었으나 실제 26.04), arm64 확인. 설치 당시 메모리 1.8Gi 중 사용 ~0.97Gi(앱 전·Docker/스냅 등), 루트 디스크 29G 중 18%
+- **[확인 필요]** 루트 디스크가 `df`에서 **29~30G**로 보임(EBS는 40GiB로 설정했을 수 있음) → 파티션이 볼륨보다 작은지 배포 때 `lsblk`로 확인하고 필요 시 `growpart`
+- 비용: EC2 기본 지표·CloudWatch 에이전트 커스텀 지표는 소량이라 프리티어·크레딧 범위. 메모리·디스크 사용률은 에이전트가 있어야만 나옴(EC2 기본 지표엔 없음)
 
 ## 18. 사이클 21 → 17 전달 (2026-10-15, `from-cycle-21.md`)
 
