@@ -78,7 +78,19 @@ ADR-0095의 세 길은 "서버 자기 IP 1개" 또는 "업체 프록시"였다. 
 - #1 첫 배포부터 나가는 길 세 가지: EC2 자기 IP 1개, Webshare 한국 정적 주거용 공유 20개(한 달 $6), Webshare 한국 바뀌는 주거용 1GB(한 달 $3.50). 모두 설정 목록, 업체 주소·비밀번호는 서버 비밀 값 [확정] (사용자 승인, 2026-10-16)
 - #2 도서관 사이트마다 고정 IP 21개(EC2 1 + 정적 20) 중 보낼 수 있는 IP 먼저(IP마다 동시 1건·1초, 교보 구독형 서버는 IP마다 동시 3건), 21개가 모두 그 사이트에서 바쁘거나 막혔을 때만 바뀌는 주거용 [확정] (사용자 승인, 2026-10-16)
 - #3 바뀌는 주거용 접속 주소 하나 = 나가는 길 하나, 도서관 사이트마다 동시 5건(설정), 1초 간격 없음 [확정] (사용자 승인, 2026-10-16). 5는 Claude가 고른 시작 숫자 [이유 미확인]
-- #4 연달아 5번 막히면 그 사이트에서만 쉼, #5 GB 90%에서 바뀌는 주거용만 멈춤: [안] 결정 기다림
+- #4 바뀌는 주거용: 같은 사이트에서 연달아 5번 막히면 그 사이트로만 쉼, 10분부터 두 배·최대 7일로 다시 시험 [확정] (사용자 승인, 2026-10-16). 조건: "이런데 나한테 알려주기가 잘 되어야 해"
+- #5 바뀌는 주거용: 그 달 산 양의 90%를 넘으면 이 길만 멈춤, 기록에 남김 [확정] (사용자 승인, 2026-10-16). 조건: 같음
+
+## 8. 한도와 알림 (2026-10-16, 사용자: "고정 IP 21개도 용량 제한이 있지 않아? 이것도 막히기 전에 그만 하고 나한테 잘 알려줘야 해 … 너가 꼼꼼히 지금 설계/개발 안에서 고려해봐")
+
+- EC2 자기 IP: 데이터 한도 없음. 인터넷으로 나가는 데이터 AWS 전체 매달 100GB 무료 [확정] (https://aws.amazon.com/ec2/pricing/on-demand/ , 2026-10-16). 이미 AWS 예산 메일(지출 $0.01 초과 → <알림 메일>, 사이클 17 research 339행)
+- Webshare 데이터: "bandwidth limit covers your entire plan", 넘으면 "will stop your proxies from functioning", 다음 달로 안 넘어감 [확정] (https://help.webshare.io/en/articles/8370524-how-does-the-bandwidth-limit-work , 2026-10-16). 정적 20개 플랜 기본 250GB(구매 API 기본값). 한도 메일 여부 확인 못 함
+- Webshare 동시 연결: 너무 많으면 429 `client_connect_high_concurrency`, High Concurrency 기능을 더 살 수 있음 (https://help.webshare.io/en/articles/8570214-what-are-the-configuration-errors). 기본 숫자 확인 못 함 [확인 필요]
+- Webshare 정부 사이트: "Government Websites"는 사용량 기준 분야, 넘으면 KYC 포함 확인 절차·계정 제한·정지 가능 (https://help.webshare.io/en/articles/9987853-restricted-activities-with-webshare-proxies). 바뀌는 주거용에서는 제한 분야, KYC 뒤 풀 수 있음 (https://help.webshare.io/en/articles/10068143-restricted-websites-on-our-rotating-residential-proxy-network) (2026-10-16)
+- Webshare 사용량 API: `GET https://proxy.webshare.io/api/v2/stats/aggregate/` → `bandwidth_total`, 성공·실패 요청 수, `error_reasons` 등, API 키 필요 (https://apidocs.webshare.io/proxystats/aggregate , 2026-10-16)
+- CloudWatch 경보 무료 10개/달, 그 뒤 $0.10/경보 지표 [확정] (https://aws.amazon.com/cloudwatch/pricing/ , 2026-10-16). SNS 메일 값 확인 못 함
+- 지금 설계: 사이클 17 모니터링 "알림은 두지 않음"(flow.md 52행), CloudWatch는 메모리·디스크만, 막힌 길은 로그·지표만 → 메일 없음
+- 제안 5개 [안] (결정 페이지 `easy/2026-10-16-proxy-limits-alerts.html`, 원격용 Artifact): #1 CloudWatch 경보 → SNS 메일(1시간에 한 번), #2 메일 보낼 일 다섯 가지(길 쉼·풀림·7일 상한, 모든 길 막힘, 데이터 80%·90%, 업체 계정 문제, 매일 아침 요약), #3 정적 20개도 250GB의 90%에서 멈춤 + Webshare 사용량 API 1시간마다 비교해 큰 값, #4 업체 쪽 오류(407·429 동시 연결·계정 확인)면 Webshare 길 전체 즉시 멈춤, #5 `.go.kr` 도서관은 바뀌는 주거용으로 보내지 않음
 
 ## 확인 필요
 
