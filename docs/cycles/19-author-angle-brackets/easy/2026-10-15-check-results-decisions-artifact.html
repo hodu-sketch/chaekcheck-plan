@@ -1,0 +1,257 @@
+<title>사이클 19 확인 결과 결정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+
+:root{color-scheme:light}
+body{background:var(--bg);color:var(--text)}
+.chip{display:inline-block;font-size:15px;font-weight:700;color:var(--warn);background:var(--warn-bg);border:1px solid var(--warn);border-radius:999px;padding:0 10px;margin-right:6px;line-height:1.6}
+.chip.done{color:var(--ok);background:var(--ok-bg);border-color:var(--ok)}
+.dec{margin:12px 0 18px;padding:14px 16px;border:1px solid var(--line);border-radius:10px;background:var(--code-bg);display:flex;flex-direction:column;gap:10px}
+.dec .btns{display:flex;flex-wrap:wrap;gap:8px}
+.dec button{font:inherit;font-size:17px;padding:6px 16px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer}
+.dec button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.dec button[aria-pressed="true"][data-c="승인"]{background:var(--ok-bg);border-color:var(--ok);color:var(--ok);font-weight:700}
+.dec button[aria-pressed="true"][data-c="미승인"]{background:var(--no-bg);border-color:var(--no);color:var(--no);font-weight:700}
+.dec button[aria-pressed="true"][data-c="기타"]{background:var(--accent-bg);border-color:var(--accent);color:var(--accent);font-weight:700}
+.dec textarea{font:inherit;font-size:17px;width:100%;min-height:64px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--text);resize:vertical}
+.dec .save{background:var(--accent);color:var(--card);border-color:var(--accent);font-weight:700}
+.dec .st{font-size:15px;color:var(--muted)}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:0 0 24px;font-size:17px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.bar b{font-variant-numeric:tabular-nums}
+</style>
+<main class="doc">
+<div class="bar" id="bar">불러오는 중</div>
+
+
+<p class="lead">확인 넷을 끝냈습니다.<br>결과로 생긴 결정 아홉 개를 골라 주세요.</p>
+<p class="sub">수집 DB(2026-10-12 19:47판, 26,144,778줄)를 읽기만 해서 세었고, 세 도서관 사이트는 직접 열어 확인했습니다(2026-10-14). 모두 정하면 명세(<code>/feature-spec</code>)를 씁니다. 자세한 숫자는 <code>research.md</code> 끝 "사이클 19 세션 확인" 절에 있습니다.</p>
+
+<div class="card">
+<h2><span class="num">1</span>이 범위로 명세를 시작할지</h2>
+<p class="concl">고칠 것은 처음 정한 다섯 가지 그대로입니다. 아래 2~9번 결정을 반영해 명세를 씁니다.</p>
+<table>
+<tr><th>고칠 것</th><th>이번 확인으로 바뀐 점</th></tr>
+<tr><td>꺾쇠로 감싼 저자 이름</td><td>다른 괄호는 사람 이름을 감싸지 않음 (2번)</td></tr>
+<tr><td>저자 칸의 다른 사람 이름</td><td>상품 코드로 모을 수 있음을 확인 (4번)</td></tr>
+<tr><td>제목 앞 괄호</td><td>남겨 둘 낱말 목록 (3번)</td></tr>
+<tr><td>띄어쓰기 빠진 역할 낱말</td><td>셋째 사람까지 붙은 40줄을 더할지 (5번)</td></tr>
+<tr><td>저자·출판사가 뒤바뀐 세 도서관</td><td>원인 확인, 수집기 고치는 방법 (7번)</td></tr>
+</table>
+<p>「묘왕동주」는 고장이 아니라 설계대로라서(대학 도서관을 직접 추가해야 보임, ADR-0053) 넣지 않습니다.</p>
+<div class="prop">이 범위로 명세를 시작합니다. <span class="chip" data-n="1">안 #1</span></div>
+<p class="alt">다른 선택: 범위를 더 줄이거나 늘림 → 무엇을 바꿀지 "기타"에 적어 주세요.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">2</span>저자 칸의 다른 괄호 〈 〉 「 」 《 》 [ ]는<br>그대로 둘지</h2>
+<p class="concl">이 괄호들은 사람 이름이 아니라 단체 이름 안의 프로그램·잡지 이름을 감쌉니다. 떼지 않고 그대로 두기를 권합니다. <b>앞서 정한 "실제로 있으면 같이 뗌"(범위 결정 #3)을 바꾸는 제안</b>입니다.</p>
+<table>
+<tr><th>괄호</th><th>줄 수</th><th>실제 모양</th></tr>
+<tr><td>&lt; &gt;</td><td>438,635</td><td>「&lt;김정은&gt;,&lt;김지혜&gt; 저」 — 사람 이름을 감쌈 (이번에 뗌)</td></tr>
+<tr><td>＜ ＞ (넓은 꺾쇠)</td><td>12</td><td>「＜이현욱＞역」 — 비교용 글자 바꿈에서 &lt; &gt;와 같은 글자가 되어 함께 떼어짐</td></tr>
+<tr><td>〈 〉</td><td>6,006</td><td>「KBS 〈과학카페〉 제작팀」</td></tr>
+<tr><td>[ ]</td><td>8,165</td><td>「존 버거 [지음]」, 「김구 [金九]」, 「[pseud.] …」</td></tr>
+<tr><td>「 」</td><td>386</td><td>「tvN 「벌거벗은 세계사」 제작진」</td></tr>
+<tr><td>《 》</td><td>107</td><td>「월간《논》편집팀」</td></tr>
+</table>
+<div class="prop">꺾쇠 &lt; &gt;(넓은 꺾쇠 포함)만 떼고, 〈 〉 「 」 《 》 [ ]는 그대로 둡니다. <span class="chip" data-n="2">안 #2</span></div>
+<p class="alt">다른 선택: 〈 〉 「 」 《 》의 괄호 표시만 떼고 글자는 남김 → 「tvN 〈벌거벗은 세계사〉 제작진」과 「tvN 「벌거벗은 세계사」 제작진」이 같은 단체로 모임. 대신 규칙과 시험이 늘어남. [ ]까지 떼면 「김구 [金九]」가 「김구 金九」가 되어 권하지 않음.</p>
+<div class="concl" style="margin-top:18px;background:var(--ok-bg)"><b>질문: 맥락상 떼는 게 더 옳은 책으로 가는지 더 조사해 봐</b><br>
+조사해 보니 <b>괄호 표시만 떼는 쪽이 옳습니다. 추천을 바꿉니다.</b> 이 칩은 "미승인"을 누르시면 "〈 〉 「 」 《 》 [ ]의 괄호 표시만 떼고 안의 글자는 남김"으로 하겠습니다.</div>
+<p>수집 DB에서 이 괄호가 든 저자 칸 14,639줄(제목·출판사 짝 3,670개)을 같은 제목·같은 출판사의 다른 줄과 견줬습니다. <b>괄호 표시만 떼면 같아지는 저자 표기가 36쌍</b>이고, 모두 같은 책이었습니다(제목·출판사가 같음).</p>
+<table>
+<tr><th>책 (출판사)</th><th>괄호 있는 줄</th><th>괄호 없는 줄</th></tr>
+<tr><td>슈퍼차이나 (가나출판사)</td><td>KBS 〈슈퍼차이나〉 제작팀</td><td>KBS 슈퍼차이나 제작팀</td></tr>
+<tr><td>대학입시의 진실 (다산에듀)</td><td>EBS「대학입시의 진실」 제작팀</td><td>EBS 대학입시의 진실 제작팀</td></tr>
+<tr><td>노인지옥 (율리시즈)</td><td>《아사히 신문》경제부</td><td>아사히 신문 경제부</td></tr>
+<tr><td>연애의 발견 포토에세이 (예담)</td><td>KBS [연애의 발견] 제작팀</td><td>KBS 연애의 발견 제작팀</td></tr>
+<tr><td>예의 바른 비즈니스 영어 (베이직북스)</td><td>[Hyogo Okada] 저</td><td>Hyogo Okada 저</td></tr>
+</table>
+<p class="ex">잘못 합쳐질 위험: 글자는 그대로 두고 괄호 표시만 빼므로, 원래 다른 이름이 같아지는 경우는 없습니다. 「김구 [金九]」는 「김구 金九」가 되어 「김구」와는 여전히 따로입니다(지금과 같음). 「존 버거 [지음]」은 「존 버거 지음」이 되어 끝의 역할 낱말이 떼어지므로 오히려 「존 버거」로 바르게 읽힙니다. 이번 조사는 같은 제목·출판사 안에서만 견줬고, 실제로 합쳐지는 책 수는 dev가 고친 규칙으로 해 볼 때 다시 셉니다.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">3</span>제목 앞 괄호를 뗄 때<br>남겨 둘 낱말 목록</h2>
+<p class="concl">제목 앞 괄호는 60,970줄, 3,207가지입니다. 대부분 「(부를 끌어 당기는)」 같은 꾸밈말이라 떼도 되지만, 아래 낱말은 다른 판·다른 형태를 뜻하므로 남겨서 따로 둡니다.</p>
+<table>
+<tr><th>묶음</th><th>낱말 (줄 수)</th><th>남기는 이유</th></tr>
+<tr><td>판</td><td>개정판 3,592 · 개정2판 647 · 증보 136 · 증보판 100 · 4판 112 · 리커버 111 · 2nd EDITION 148 · 4th EDITION 126</td><td>다른 판</td></tr>
+<tr><td>원서·번역</td><td>영어원서 1,235 · 영어 원서 133 · 영문 번역판 180 · 한영대역 156 · 원문 104 · 완역 502 · 고본완역 539</td><td>원서와 번역은 다른 책</td></tr>
+<tr><td>형태</td><td>오디오북 685 · 전자책 623 · 체험판 403 · 무료체험판 388 · (만화)·(큰글자책)(앞서 정함)</td><td>체험판은 일부만 든 책</td></tr>
+<tr><td>뒷권</td><td>속 169 (「(속) 에이번리 연대기」)</td><td>다음 권</td></tr>
+</table>
+<p class="ex">떼어도 되는 예: 「(청소년을 위한) 제주 4·3」, 「(한권으로 끝내는) 세계문학 절대상식」, 「(김홍도)금강사군첩1」. 「(2022) 생태계서비스 평가지도」처럼 숫자는 지금도 권 표시로 따로 읽혀 따로 남습니다.</p>
+<div class="prop">위 표의 낱말이 제목 앞 괄호에 있으면 떼지 않습니다. dev가 고친 규칙으로 해 볼 때 상위 낱말을 다시 보고 빠진 것을 더합니다. <span class="chip" data-n="3">안 #3</span></div>
+<p class="alt">다른 선택: 판 묶음만 남김 → 「(영어원서) 오즈의 마법사」와 번역본 「오즈의 마법사」가 저자·출판사가 같으면 합쳐질 수 있음.</p>
+<div class="concl" style="margin-top:18px;background:var(--ok-bg)"><b>질문: 따로 규칙이 있어? 아니면 너의 임의 판단이야?</b><br>
+반반입니다. <b>"제목 앞 괄호를 떼고 견준다"는 공식 목록 규칙에 근거가 있고, "남겨 둘 낱말 목록"은 제가 수집 데이터를 보고 정한 것</b>입니다.</div>
+<ul>
+<li><b>공식 규칙:</b> 국립중앙도서관 한국문헌자동화목록형식(KORMARC) 245 필드는 제목 앞 꾸밈말(관제)을 원괄호로 묶어 적고, 정렬·배열에서 뺄 수 있다고 정합니다. 예로 「(디자이너를 위한) 圖學의 原理와 技法」, 「(최신) 행정학개론」을 듭니다. 출처: <a href="https://librarian.nl.go.kr/kormarc/KSX6006-0/sub/20X_24X_245.html">librarian.nl.go.kr KORMARC 245</a> (확인 2026-10-15)</li>
+<li><b>규칙에 없는 것:</b> 그 문서에는 "개정판·영어원서·오디오북·체험판처럼 떼면 안 되는 낱말" 목록이 없습니다. 목록 규칙에서 판 정보는 제목이 아니라 따로 적는 자리(판사항)에 두므로, 우리 데이터의 「(개정판) …」은 공급사가 제목에 붙인 비표준 표기입니다. 그래서 남겨 둘 낱말은 수집 DB의 앞 괄호 낱말 3,207가지를 많은 순으로 보고 "다른 판·다른 형태·다른 권을 뜻하는 것"을 제가 고른 것입니다 — 근거는 데이터, 판단은 제 것입니다.</li>
+</ul>
+<p class="ex">그래서 dev가 고친 규칙으로 해 볼 때 합쳐진 책 표본을 보고 목록을 다시 확인하는 단계를 넣어 두었습니다.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">4</span>「김근아 저자」 줄은<br>공급사 상품 코드로 모을지</h2>
+<p class="concl">목원대 북큐브 줄(저자 「김근아 저자」)의 공급사 상품 코드 1210492004114가, 명지대·부천 교보 줄(저자 「모리세 시게토모」)의 상품 번호와 같습니다. 같은 책이고, 김근아는 다른 책(「숏폼 영상 편집 3일 만에 마스터하기」)의 실제 저자 이름이 잘못 들어간 것입니다.</p>
+<div class="fig"><svg viewBox="0 0 640 170" role="img" aria-label="상품 코드가 같은 세 줄">
+<rect class="bxno" x="10" y="14" width="300" height="60" rx="8"/><text class="sm" x="22" y="36">목원대 · 북큐브</text><text class="lb" x="22" y="60">저자 <tspan class="rt">김근아 저자</tspan></text>
+<rect class="bx" x="10" y="96" width="300" height="60" rx="8"/><text class="sm" x="22" y="118">명지대·부천 · 교보</text><text class="lb" x="22" y="142">저자 모리세 시게토모</text>
+<path class="ar" d="M312 44 C370 44 370 85 410 85M312 126 C370 126 370 85 410 85"/><path class="ah" d="M408 78 L420 85 L408 92Z"/>
+<rect class="bxok" x="424" y="50" width="206" height="70" rx="10"/><text class="lb" x="527" y="80" text-anchor="middle">상품 코드</text><text class="lb" x="527" y="104" text-anchor="middle">1210492004114</text>
+</svg></div>
+<p class="cap">북큐브 화면의 공급사 코드가 교보 화면의 상품 번호와 같은 값입니다. YES24 상품 번호 108608605도 북큐브 공급사 코드로 똑같이 나옵니다.</p>
+<div class="prop">이미 정한 두 방법 중 "공급사 상품 코드가 같으면 저자를 보지 않고 모음"으로 갑니다. 같은 날·제목·출판사로 모으는 방법은 쓰지 않습니다. <span class="chip" data-n="4">안 #4</span></div>
+<p class="alt">다른 선택: 같은 날·같은 제목·같은 출판사면 모음 → 코드가 없는 줄도 모이지만, 같은 날 같은 제목을 낸 다른 저자의 책이 잘못 합쳐질 수 있음. 코드가 다른 책을 가리키는 경우가 없는지는 dev가 해 볼 때 셉니다(<code>research.md</code> SQL 2).</p>
+</div>
+
+<div class="card">
+<h2><span class="num">5</span>역할 낱말이 셋째 사람까지 붙은 저자 칸도<br>이번에 고칠지</h2>
+<p class="concl">「마키타 겐지 저전선영 역강재헌 감수」 모양은 실제로 40줄, 32가지뿐입니다(처음 넓게 센 12,370줄보다 훨씬 적음). 지금 정한 좁은 규칙을 셋째 사람까지 늘리면 함께 고쳐집니다.</p>
+<table>
+<tr><th>지금 읽히는 것</th><th>고친 뒤</th></tr>
+<tr><td>지은이 「마키타 겐지」, 옮긴이 「<span class="red">전선영 역강재헌</span>」(감수 낱말만 뗌)</td><td>지은이 마키타 겐지 · 옮긴이 전선영 · 감수 강재헌</td></tr>
+</table>
+<p class="ex">다른 예: 「카를로 로벨리 저김현주 역이중원 감수」, 「안네마리 노르덴 저원유미 그림배정희 역」.</p>
+<div class="prop">좁은 규칙(저·지음·글 + 한글 2~4자 + 역·옮김·그림)을 한 번 더 이어 셋째 역할(감수·편집·엮음·그림·역 등)까지 자릅니다. 백로그 줄은 "→ 사이클 19"로 옮깁니다. <span class="chip" data-n="5">안 #5</span></div>
+<p class="alt">다른 선택: 이번엔 안 함 → 40줄은 옮긴이 이름이 틀린 채 남음. 첫 저자는 맞게 읽혀 같은 책 묶기에는 영향 없음.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">6</span>사이트 직접 찾기의 「김달 저」 문제는<br>19에 넣지 않을지</h2>
+<p class="concl">부산 같은 통합 포털에서 저자 "김달"로 찾으면 「김달 저」로 적힌 줄이 빠지는 문제는 지금도 남아 있습니다. 하지만 우리 책 목록이 아니라 도서관 사이트의 "정확히 일치" 거르기를 그대로 쓰는 부분이라 저자 정리와 관계없습니다.</p>
+<p class="ex">이 거르기를 쓰기로 한 것은 사용자 결정입니다(ADR-0026, 사이클 03). 코드는 dev <code>ElibPortalV1Adapter</code> 39~41행.</p>
+<div class="prop">19에 넣지 않고 백로그에 그대로 둡니다. <span class="chip" data-n="6">안 #6</span></div>
+<p class="alt">다른 선택: 19에 넣음 → 도서관 사이트 실시간 조회 쪽 코드를 고쳐야 해서 19 범위가 다른 모듈로 넓어짐.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">7</span>세 도서관 수집기는<br>"출판사가 먼저인 포털" 목록으로 고칠지</h2>
+<p class="concl">원인을 확인했습니다. 같은 통합 포털 화면인데 사이트마다 목록의 칸 순서가 다르고, 이름표가 없습니다. 수집기는 첫 칸을 언제나 저자로 읽습니다.</p>
+<table>
+<tr><th>사이트</th><th>목록에 보이는 순서 (2026-10-14 확인)</th><th>지금 결과</th></tr>
+<tr><td>부산·강원·인천·경북</td><td>저자 │ 출판사 │ 날짜 (예: 「이중석 │ 다반 │ 2026-06-20」)</td><td><span class="okc">바름</span></td></tr>
+<tr><td>경기도교육청·대구·전북교육청</td><td>출판사 │ 저자 │ 날짜 (예: 「미래의창 │ 이준용 │ 2026-08-03」)</td><td><span class="red">뒤바뀜</span></td></tr>
+</table>
+<p class="ex">확인한 곳: lib.goe.go.kr/elib, library.daegu.go.kr/elib, lib.jbe.go.kr/elib, library.busan.go.kr/elib의 새 책 목록. 서비스의 실시간 조회는 상세 화면의 "저자 :"·"출판사 :" 이름표를 읽어 영향이 없습니다.</p>
+<div class="prop">수집기에 "출판사가 먼저 나오는 포털" 세 곳을 적은 목록을 두고, 그 사이트만 두 칸을 바꿔 읽습니다. 가져오기 규칙 파일로 지금 사본을 바로잡는 것은 앞서 정한 대로 합니다. <span class="chip" data-n="7">안 #7</span></div>
+<p class="alt">다른 선택: 수집기가 사이트마다 상세 화면 하나를 열어 이름표로 순서를 알아냄 → 새 포털이 생겨도 저절로 맞지만, 수집할 때 요청이 늘고 코드가 커짐.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">8</span>19를 반영한 뒤 숫자를<br>무엇과 견줄지</h2>
+<p class="concl">순서가 바뀌었습니다. 사용자 결정(2026-10-14, dev 18 세션)으로 사이클 18 B가 19보다 먼저 들어가고, 18 B 끝에 내 PC 가져오기를 한 번 합니다(2026-10-12 사본). 18은 도서관 22곳도 껐습니다.</p>
+<div class="prop">19의 결과(책 수, 합쳐짐·나뉨, 「백만장자 마인드」 줄 수)는 사이클 12 숫자가 아니라 18 B 가져오기 결과와 견줍니다. 같은 사본·같은 도서관 목록이라 19 규칙 때문에 바뀐 것만 보입니다. <span class="chip" data-n="8">안 #8</span></div>
+<p class="alt">다른 선택: 사이클 12 숫자와 견줌 → 22곳을 끈 영향과 18 B의 밑줄 주소 도서관 영향이 섞여, 19 때문에 바뀐 수를 따로 볼 수 없음.</p>
+<p class="ex">덧붙임(2026-10-14, dev 18 알림): 18 B는 dev main에 들어갔고(dev 커밋 a0e438a), 18 가져오기는 복사본 DB에서만 했습니다. 원래 DB에는 아직 안 들어가서, 19가 원래 DB에 다시 가져오면 밑줄 주소 도서관(2624)의 241권도 함께 들어옵니다. 그래서 기준은 "18 B 복사본 DB의 결과"입니다.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">9</span>dev 문서에서 틀린 두 곳을<br>19 인계서로 고치게 할지</h2>
+<p class="concl">수집·묶기 문서를 점검하다 dev 쪽 문서에서 낡은 안내 둘을 찾았습니다. plan은 dev에 쓰지 않으므로 인계서에 넣어야 고쳐집니다.</p>
+<table>
+<tr><th>dev 파일</th><th>지금 적힌 것</th><th>실제</th></tr>
+<tr><td><code>docs/maintenance/3-import.md</code> 32·34·177행, <code>backend/build.gradle</code> 74행</td><td>가져오기는 메모리 6GB(<code>-PbootRunXmx=6g</code>)로</td><td>기본 묶는 방식 <code>compact</code>는 2GB로 끝까지 됨(사이클 11 측정, ADR-0105). 6GB는 <code>objects</code> 방식에만 필요</td></tr>
+<tr><td><code>3-import.md</code> 41행과 오류 문구</td><td>"약 2,394곳"</td><td>지금 수와 다름. 사이클 18이 설정 이름을 바꿀 때 같이 고칠 수 있음</td></tr>
+</table>
+<div class="prop">두 곳을 19 인계서의 "dev 문서 고칠 것"에 넣습니다. <span class="chip" data-n="9">안 #9</span></div>
+<p class="alt">다른 선택: 다음 가져오기 사이클 때 → 그때까지 6GB 안내가 남음.</p>
+</div>
+
+<div class="card">
+<h2>참고: plan 문서에서 이미 고친 것 (결정 없음)</h2>
+<p class="concl">수집·분류·묶기 문서에서 낡은 내용을 고쳐 커밋했습니다(2026-10-14).</p>
+<table>
+<tr><th>문서</th><th>고친 것</th></tr>
+<tr><td><code>reference-index.md</code></td><td>이미 만든 것을 "설계됨(미구현)"으로 적은 6줄 → 구현됨, 사이클 18이 끈 22곳·꺼 둔 곳 27곳, 인계서·ADR 번호</td></tr>
+<tr><td><code>current/data-model.md</code></td><td>사이클 18 변경 파일 이름 <code>library/016…</code>, 구현됨</td></tr>
+<tr><td><code>platforms.md</code></td><td>포털 목록 칸 순서가 사이트마다 다름</td></tr>
+<tr><td><code>search-and-normalization.md</code></td><td>같은 책 묶기 ④가 사이클 12부터 본제목 + 권 표시 + 첫 저자 + 출판사를 씀, 코드 경로</td></tr>
+<tr><td><code>crawl-method.md</code>·<code>crawl-runbook.md</code>·<code>catalog-refresh.md</code>·<code>periodic-tasks.md</code>·<code>1-libraries.md</code></td><td>수집기가 dev로 옮겨진 것, 가져오기 흐름 번호, 옛 명령 표시, 도서관 넣기가 사이클 13부터 넣기 명령·규칙 파일로 바뀐 것</td></tr>
+</table>
+<p class="ex">아직 안 고친 것: <code>1-libraries.md</code>·<code>2-books.md</code>·<code>collection-areas.md</code>의 "후보/등록 도서관" 이름(24곳 넘음). 뜻을 바꾸지 않고 이름만 바꾸는 일이라 따로 하겠습니다.</p>
+</div>
+
+<p class="foot">원본: <code>docs/cycles/19-author-angle-brackets/research.md</code> "사이클 19 세션 확인" 절, <code>scope.md</code>, <code>handoff-notes.md</code>. 2026-10-14.</p>
+
+</main>
+
+<script>
+(function(){
+  const items=[...document.querySelectorAll('.chip')].map(ch=>{
+    const n=+ch.dataset.n; const box=ch.closest('.item')||ch.parentElement;
+    const h=box.querySelector('h3'); const t=(h?h.textContent:'').replace(/^\s*\d+/, '').trim();
+    const d=document.createElement('div'); d.className='dec';
+    d.innerHTML='<div class="btns" role="group" aria-label="안 #'+n+' 결정">'+
+      ['승인','미승인','기타'].map(c=>'<button type="button" data-c="'+c+'" aria-pressed="false">'+c+'</button>').join('')+'</div>'+
+      '<textarea id="note-'+n+'" placeholder="덧붙일 말 (미승인 이유, 질문, 제안)"></textarea>'+
+      '<div class="btns"><button type="button" class="save">저장</button><span class="st" aria-live="polite">아직 고르지 않았습니다</span></div>';
+    box.appendChild(d);
+    const st={n,title:t,chip:ch,el:d,pick:null};
+    d.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{st.pick=b.dataset.c;paint(st);d.querySelector('.st').textContent='"저장"을 눌러야 기록됩니다';});
+    d.querySelector('.save').onclick=()=>save(st);
+    return st;
+  });
+  const bar=document.getElementById('bar');
+  function paint(st){st.el.querySelectorAll('[data-c]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.c===st.pick)));}
+  let db=null; const saved={};
+  function count(){const k=Object.keys(saved).length;bar.innerHTML='고른 것 <b>'+k+' / '+items.length+'</b>'+(db?' · 저장하면 Claude가 읽습니다':' · 저장 기능을 아직 불러오지 못했습니다');}
+  count();
+  async function save(st){
+    const s=st.el.querySelector('.st');
+    if(!st.pick){s.textContent='먼저 승인·미승인·기타 중 하나를 고르세요';return;}
+    if(!db){s.textContent='저장할 수 없습니다. 로그인한 채로 claude.ai에서 열어 주세요';return;}
+    const note=st.el.querySelector('textarea').value.trim();
+    s.textContent='저장하는 중…';
+    try{await db.doc('choices/q'+st.n).set({n:st.n,title:st.title,choice:st.pick,note,savedAt:new Date().toISOString()});s.textContent='저장했습니다';}
+    catch(e){s.textContent='저장하지 못했습니다 ('+(e&&e.code||'오류')+'). 잠시 뒤 다시 눌러 주세요';}
+  }
+  (async()=>{
+    try{db=window.claude&&await window.claude.use('db');}catch(e){db=null;}
+    count(); if(!db) return;
+    db.collection('choices').onSnapshot(snap=>{
+      snap.docs.forEach(doc=>{const v=doc.data();const st=items.find(i=>i.n===v.n);if(!st)return;saved[v.n]=v;
+        if(document.activeElement!==st.el.querySelector('textarea')) st.el.querySelector('textarea').value=v.note||'';
+        st.pick=v.choice;paint(st);st.chip.classList.add('done');st.chip.textContent='안 #'+v.n+' · '+v.choice;
+        st.el.querySelector('.st').textContent='저장됨: '+v.choice+' ('+new Date(v.savedAt).toLocaleString('ko-KR')+')';});
+      count();
+    },()=>{});
+  })();
+})();
+</script>
