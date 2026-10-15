@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 20 화면 흐름 결정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+</style>
+</head>
+<body>
+<main class="doc">
+
+<p class="lead">화면 흐름을 그렸습니다.<br>정할 것 8개를 골라 주세요.</p>
+<p class="sub">새 화면은 없습니다. 공통 머리말(H)에 신호가 붙고, 검색 결과(S1)·책 화면(S3)의 결과 카드에 두 가지(줄이 선 도서관 글, 빨강일 때 「도서관에서 보기 →」 글)가 더해지며, 확장 모드는 같은 화면이 다른 길로 결과를 받습니다. 아래 그림은 자리와 순서만 보이는 배치도이고, 지금 dev 화면(머리말 `AppLayout.tsx`, 결과 카드 `ResultRow.tsx`)을 2026-10-15에 확인해 그렸습니다. 흐름도 두 장(Mermaid)은 대화에 보낸 그림 원본 파일에 있습니다.</p>
+
+<div class="card">
+<h2>머리말 H — PC · 태블릿 · 폰</h2>
+<div class="fig"><svg viewBox="0 0 640 300" role="img" aria-label="머리말 세 폭">
+<text class="sm" x="10" y="16">PC (1080px) · 초록</text>
+<rect class="bx" x="10" y="24" width="620" height="44" rx="8"/>
+<text class="lb" x="24" y="52" font-weight="800">책첵</text><text class="sm" x="80" y="52" font-weight="700">사서추천도서</text>
+<circle cx="500" cy="46" r="7" fill="var(--ok)"/><text class="sm" x="512" y="52">조회 원활</text><text class="sm" x="592" y="52">로그인</text>
+<text class="sm" x="10" y="100">태블릿 (768px) · 노랑 — 같은 구성</text>
+<rect class="bx" x="10" y="108" width="440" height="44" rx="8"/>
+<text class="lb" x="24" y="136" font-weight="800">책첵</text><text class="sm" x="80" y="136" font-weight="700">사서추천도서</text>
+<circle cx="318" cy="130" r="7" fill="var(--warn)"/><text class="sm" x="330" y="136">조회 붐빔</text><text class="sm" x="412" y="136">로그인</text>
+<text class="sm" x="10" y="184">폰 (375px) · 빨강 — 점만, 누르면 설명</text>
+<rect class="bx" x="10" y="192" width="220" height="40" rx="8"/>
+<text class="lb" x="20" y="218" font-weight="800">책첵</text><text class="sm" x="64" y="218" font-weight="700" font-size="12">사서추천도서</text>
+<circle cx="168" cy="212" r="6" fill="var(--no)"/><text class="sm" x="186" y="218" font-size="12">로그인</text>
+<rect class="bxno" x="60" y="240" width="200" height="50" rx="8"/><path class="bxno" d="M160 240 L168 232 L176 240Z"/>
+<text class="sm" x="70" y="260" font-size="12">조회 혼잡</text><text class="sm" x="70" y="278" font-size="11">지금 찾는 사람이 많아 검색이 거절될 수 있어요</text>
+<text class="sm" x="330" y="200">확장 모드(PC만)</text>
+<rect class="bx" x="330" y="208" width="300" height="40" rx="8"/><circle cx="420" cy="228" r="6" fill="var(--accent)"/><text class="sm" x="432" y="233" fill="var(--accent)" font-size="12">내 브라우저에서 조회 중</text><text class="sm" x="580" y="233" font-size="12">로그인</text>
+</svg><p class="cap">점+글은 「로그인」 왼쪽. 폰은 점만 남기고 누르면 말풍선(#1)으로 설명합니다.</p></div>
+</div>
+
+<div class="card">
+<h2>결과 카드 S1·S3 — 더해지는 두 글</h2>
+<div class="fig"><svg viewBox="0 0 640 230" role="img" aria-label="결과 카드 PC와 폰">
+<text class="sm" x="10" y="16">PC · 빨강일 때</text>
+<rect class="bxno" x="10" y="24" width="620" height="26" rx="6"/><text class="sm rt" x="20" y="42">지금 찾는 사람이 많아요. 도서관 사이트에서 직접 확인할 수 있어요</text>
+<rect class="bx" x="10" y="58" width="620" height="70" rx="8"/>
+<text class="lb" x="22" y="82">백만장자 마인드</text><text class="sm" x="22" y="102">모리세 시게토모 · 율리시즈</text>
+<text class="lb" x="260" y="82">경기교육청 통합 전자도서관</text><text class="sm rt" x="260" y="102" font-size="12">지금 이 도서관 조회가 밀려요</text><text class="sm" x="260" y="120" font-size="12">교보 · 소장</text>
+<text class="sm" x="520" y="82">보유 2 · 대출 중 2</text><text class="sm" x="520" y="118" fill="var(--accent)" font-size="12">도서관에서 보기 →</text>
+<text class="sm" x="10" y="156">폰 · 빨강일 때 (배지는 이름 아래 줄, #3)</text>
+<rect class="bx" x="10" y="164" width="300" height="60" rx="8"/>
+<text class="lb" x="20" y="184" font-size="14">경기교육청 통합 전자도서관</text><text class="sm rt" x="20" y="200" font-size="11">지금 이 도서관 조회가 밀려요</text><text class="sm" x="20" y="216" font-size="11">교보 · 소장 · 보유 2 · 대출 중 2</text><text class="sm" x="210" y="216" fill="var(--accent)" font-size="11">도서관에서 보기 →</text>
+</svg><p class="cap">카드 전체가 원래 도서관 페이지 링크입니다. 빨강일 때만 그 사실을 글(「도서관에서 보기 →」)로 보여 줍니다(#7). 줄이 선 도서관 글은 신호 색과 무관하게 뜹니다.</p></div>
+</div>
+
+<div class="card item">
+<h2><span class="num">1</span>폰에서 점을 누르면<br>말풍선으로 설명</h2>
+<p class="concl">[안] 폰(640px 이하)에서 점을 누르면 점 아래에 <b>말풍선(팝오버)</b>으로 글(「조회 혼잡」)과 설명 한 줄이 뜨고, 바깥을 누르면 닫힙니다. 결과 카드의 도서관 이름 팝오버와 같은 부품(radix Popover)을 씁니다.</p>
+<p class="alt">다른 선택: 머리말 바로 아래 한 줄로 펼침. 머리말 높이가 바뀌어 화면이 밀립니다.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">2</span>신호가 바뀔 때<br>움직임 없이 색·글만</h2>
+<p class="concl">[안] 초록↔노랑↔빨강이 바뀔 때 깜빡임이나 움직임 없이 색과 글만 바뀝니다. 10초마다 바뀔 수 있는 값이라 눈에 띄는 움직임은 피합니다.</p>
+<p class="alt">다른 선택: 빨강으로 바뀔 때 한 번 짧게 깜빡임. 눈에 띄지만 검색 중 주의를 끕니다.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">3</span>폰의 「밀려요」 글은<br>도서관 이름 아래 줄</h2>
+<p class="concl">[안] PC·태블릿은 도서관 이름 옆(이름과 「교보 · 소장」 사이), 폰은 폭이 좁아 이름 <b>아래 줄</b>에 둡니다. 「폰에서는 사이트가 다른 화면을 보여요」 안내가 있는 카드에서는 그 위에 옵니다.</p>
+<p class="alt">다른 선택: 폰에서도 이름 옆. 긴 도서관 이름과 겹쳐 두 줄로 꺾입니다.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">4</span>검색 밖 화면(사서추천·소개·내 도서관·가입)에는<br>머리말 신호만</h2>
+<p class="concl">[안] 머리말이 있는 모든 화면(`/terms`·`/privacy` 제외)에서 신호가 보이고 10초마다 묻습니다. 안내 줄·카드 글은 결과 카드가 있는 S1·S3에만 있습니다.</p>
+<p class="alt">다른 선택: 검색 화면(S1·S3)에서만 묻기. 요청은 줄지만 사서추천에서 검색으로 넘어올 때 신호가 비어 있다가 채워집니다.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">5</span>책 화면(S3)도<br>검색 결과와 같은 규칙</h2>
+<p class="concl">[안] 책 화면의 도서관 목록(같은 결과 카드 부품)에도 빨강 안내 줄·「도서관에서 보기 →」·「밀려요」 글이 S1과 똑같이 적용됩니다.</p>
+<p class="alt">다른 선택: S1만. 책 화면에서 혼잡을 알 길이 머리말 점뿐이 됩니다.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">6</span>계획 번호 오류(400)는<br>일반 오류 안내로</h2>
+<p class="concl">[안] 확장 모드에서 해석 요청의 계획 번호가 틀리거나 지나 400 <code>invalid_plan</code>이 오면 화면은 지금의 일반 오류 「검색하지 못했어요. 잠시 뒤 다시 시도해 주세요.」를 보이고 다음 검색은 새 계획으로 시작합니다. 사용자가 고칠 수 있는 일이 아니라 따로 문구를 두지 않습니다.</p>
+<p class="alt">다른 선택: 「확장과 연결이 끊겼어요. 다시 검색해 주세요」 전용 문구. 더 정확하지만 거의 안 나는 경우에 문구 하나가 늘어납니다.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">7</span>다시 제안: 빨강일 때 카드에<br>「도서관에서 보기 →」 글</h2>
+<p class="concl">앞서 승인한 "「도서관에서 보기」 링크를 앞세움"(방법 비교 #4, 명세 #3)은 <b>전제가 틀렸습니다</b>: dev 결과 카드에는 2026-10-05부터 따로 「도서관에서 보기」 버튼이 없고 <b>카드 전체가 도서관 페이지 링크</b>입니다(`ResultRow.tsx` 확인). 앞세울 링크가 없어 다시 제안합니다. [안] 빨강일 때만 카드 상태 칸 아래에 눈에 보이는 글 「도서관에서 보기 →」를 띄워, 카드를 누르면 도서관으로 간다는 것을 알려 줍니다. 초록·노랑에서는 지금처럼 글 없음(카드 전체 링크는 그대로). 안내 줄(명세 #3 문구)은 그대로입니다.</p>
+<p class="alt">다른 선택 ①: 안내 줄만 두고 카드는 그대로. 가장 단순하지만 "직접 확인"하는 방법(카드 누르기)을 알려 주지 않습니다. 다른 선택 ②: 모든 색에서 항상 글 표시. 혼잡 때만 보이는 변화가 없어지고 2026-10-05에 버튼을 뺀 결정과 어긋납니다.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">8</span>이 흐름대로<br>설계(design-delta)로 넘어가기</h2>
+<p class="concl">[안] flow.md의 흐름도 두 장(신호·확장 모드 순서도)과 화면별 내용, AC 15개 ↔ 화면 대응표대로 다음 단계인 설계로 갑니다. 그림 원본은 대화에 보낸 `flow-original.html`에 있습니다.</p>
+</div>
+
+<p class="foot">원문: <code>docs/cycles/20-lookup-status-and-extension/flow.md</code>. 명세 <code>spec.md</code> R12·AC-4는 #7의 바로잡음대로 [안]으로 고쳤습니다.</p>
+</main>
+</body>
+</html>
