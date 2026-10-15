@@ -282,6 +282,39 @@ svg .ah{fill:var(--accent)}
 <p class="concl">[안] 이 문서대로 다음 단계로 갑니다. 지금은 설계 검토만 돌리고, `docs/current/` 반영과 인계서는 사이클 17 회고 뒤에 합니다(`CLAUDE.md` 규칙).</p>
 </div>
 
+<div class="card item">
+<h2><span class="num">9</span>질문에 답: 확장 모드는 서버 캐시를 안 쓰고<br>자기가 받은 것만 보여 주면 되지 않나</h2>
+<p class="concl"><b>됩니다, 그리고 더 단순해집니다.</b> 말씀하신 대로 하면 확장 모드 사용자는 <b>언제나 자기 브라우저가 방금 받아온 결과</b>를 보고, 우리 서버는 그 결과를 해석한 김에 캐시에 넣어 <b>다른 사용자(확장 없는 사람)</b>가 3분 동안 재사용합니다. 이것은 앞서 승인한 설계 #4의 "계획 응답이 3분 캐시에 이미 있는 도서관은 주소 대신 결과를 바로 준다"를 <b>바꾸는</b> 것이라 다시 묻습니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 330" role="img" aria-label="지금 설계와 제안의 차이">
+<defs><marker id="ah9" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="var(--accent)"/></marker></defs>
+<text class="s14" x="10" y="22">지금 설계 (#4 승인안)</text>
+<rect class="bx" x="10" y="34" width="200" height="56" rx="8"/><text class="s13" x="20" y="56">① 계획 요청</text><text class="s13m" x="20" y="76" font-size="12">도서관 5곳</text>
+<rect class="bxa" x="240" y="34" width="250" height="56" rx="8"/><text class="s13" x="250" y="56">서버: 캐시 칸 확인</text><text class="s13m" x="250" y="76" font-size="12">2곳 찬 칸 → 결과 바로 / 3곳 빈 칸 → 주소</text>
+<rect class="bxok" x="520" y="34" width="370" height="56" rx="8"/><text class="s13" x="530" y="56">확장은 3곳만 받아옴</text><text class="s13m" x="530" y="76" font-size="12">사용자가 보는 결과: 2곳은 남이 본 것(최대 3분 전), 3곳은 방금 것</text>
+<path d="M210 62 H240" class="ar" marker-end="url(#ah9)"/><path d="M490 62 H520" class="ar" marker-end="url(#ah9)"/>
+<text class="s14" x="10" y="132">제안 (사용자): 확장 모드는 캐시를 보지 않음</text>
+<rect class="bx" x="10" y="144" width="200" height="56" rx="8"/><text class="s13" x="20" y="166">① 계획 요청</text><text class="s13m" x="20" y="186" font-size="12">도서관 5곳</text>
+<rect class="bxa" x="240" y="144" width="250" height="56" rx="8"/><text class="s13" x="250" y="166">서버: 캐시 안 보고</text><text class="s13m" x="250" y="186" font-size="12">5곳 주소를 모두 줌</text>
+<rect class="bxok" x="520" y="144" width="370" height="56" rx="8"/><text class="s13" x="530" y="166">확장이 5곳 모두 받아옴</text><text class="s13m" x="530" y="186" font-size="12">사용자가 보는 결과: 5곳 모두 방금 자기 브라우저가 받은 것</text>
+<path d="M210 172 H240" class="ar" marker-end="url(#ah9)"/><path d="M490 172 H520" class="ar" marker-end="url(#ah9)"/>
+<rect class="bx" x="10" y="220" width="880" height="100" rx="8"/><text class="s14" x="20" y="242">두 경우 모두 같은 것</text>
+<text class="s13m" x="20" y="262">④ 올라온 페이지는 서버가 해석·검사해 캐시 칸에 넣음 → 확장 없는 사용자(폰 포함)가 3분 동안 재사용 ("확장도 캐싱", AC-10 그대로)</text>
+<text class="s13m" x="20" y="282">검사 ①~⑩ 그대로. 캐시에 넣는 규칙: 빈 칸이면 넣고, 이미 찬 칸이면 서버 출처 값은 덮지 않음(#6 그대로)</text>
+<text class="s13m" x="20" y="302">확장 출처 값끼리는 새 값으로 갱신해도 됨 → 더 최근 결과가 캐시에 남음 (제안)</text>
+</svg><p class="cap">달라지는 것은 ① 계획 단계에서 서버가 캐시를 보느냐뿐. 캐시에 넣는 것(④)은 그대로입니다.</p></div>
+<table>
+<tr><th></th><th>지금 설계 (캐시 먼저)</th><th>제안 (확장은 항상 직접)</th></tr>
+<tr><td>사용자가 보는 결과</td><td>섞임: 일부는 남이 최대 3분 전에 본 값</td><td><b>모두 방금 자기 브라우저가 본 값</b> — "사용자로 접근하니 사용자 것으로"</td></tr>
+<tr><td>도서관에 가는 요청(사용자 IP)</td><td>캐시 hit만큼 줄어듦</td><td>검색마다 모두(호스트 1건·1초는 그대로라 막힐 위험은 같음)</td></tr>
+<tr><td>서버 일</td><td>계획 때 캐시 조회 + 해석</td><td>해석만(계획 때 캐시 안 봄) → <b>더 단순</b></td></tr>
+<tr><td>사용 기록 셈(#5)</td><td>확장 모드에도 `CACHED` 있음</td><td><b>확장 모드에는 `CACHED` 없음</b> → #5는 "확장 모드엔 캐시 답 없음"으로 정리</td></tr>
+<tr><td>캐시 오염 위험</td><td>같음 (넣는 쪽 규칙 그대로)</td><td>같음</td></tr>
+<tr><td>검색 속도</td><td>캐시 hit 도서관은 즉시</td><td>모두 확장이 받아와 1~수 초. 다만 서버 모드처럼 줄 서지 않음</td></tr>
+</table>
+<p class="concl">[안] <b>사용자 제안대로</b>: 확장 모드에서는 서버가 계획 때 캐시를 보지 않고 모든 주소를 확장에 주며, 사용자는 자기 브라우저가 받은 결과만 봅니다. 서버는 올라온 결과를 해석해 캐시에 넣어 다른 사용자가 씁니다(빈 칸이면 넣고, 서버 출처 값은 덮지 않고, 확장 출처 값은 새 값으로 갱신). 이에 따라 설계 #4의 "캐시에 있는 도서관은 결과 바로"를 빼고, #5는 "확장 모드에는 캐시 답이 없음"으로 정리하며, ADR-0119(Proposed)도 고칩니다.</p>
+<p class="alt">다른 선택: 지금 설계 그대로(캐시 먼저). 사용자 IP 요청이 조금 줄지만 결과가 섞이고 서버가 계획 때 캐시를 한 번 더 봐야 합니다.</p>
+</div>
+
 <p class="foot">원문: <code>docs/cycles/20-lookup-status-and-extension/design-delta.md</code>. 앞선 결정: 설계 결정 13개(<code>easy/2026-10-15-design-decisions.html</code>), ADR-0118~0121. 그림 원본 <code>easy/design-delta-original.html</code>.</p>
 </main>
 </body>
