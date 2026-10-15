@@ -359,3 +359,11 @@ plan 15가 `docs/cycles/15-usage-log/to-cycle-17.md` "5차"에 올린 실제 값
 - **새 비밀값 [안]**: YouTube Data API 키·국립중앙도서관 ISBN 서지 API 키(내 PC 수집기 `.env`). 운영 서버에 필요한지는 21 설계에서 정함 → 필요하면 Parameter Store 목록에 추가
 - **배포 전 확인 [확인 필요]**: 서울대 100선 제목 100개 화면 표시 가능 여부, ISBN 서지 API 표지 이용 조건
 - dev 순서: 21을 먼저 개발(17 일정에 19·21이 앞). 운영 공개는 이들 반영 뒤
+
+### 테스트 배포 계획·보류 상태 (2026-10-15)
+- 사용자: 테스트 배포를 지금 원함(공개일과 별개, EC2에서 돌려보며 확인). 다른 개발(19·21 등) 먼저 하고 이어가기로 보류함
+- 방식: **A (밖에서 빌드 → EC2는 실행만)** [확정: 사용자, 2026-10-15]. 2GB 서버라 EC2 빌드(B)는 피함. ADR-0103의 "PC 빌드→docker save→SSH→docker load→실행"과 같음
+- 역할: dev 세션이 앱 arm64 이미지 포장·빌드·EC2 전송, plan(나)이 EC2 실행·확인
+- 테스트 최소: DB(postgres-bigm) + 백엔드. 로그인은 **런타임 env로 켬**(이미지 변경 불필요): `CHAEKCHECK_AUTH_ENABLED=true`·카카오 키(사용자 입력)·`AUTH_PUBLIC_BASE_URL`=cloudflared 임시 터널 `https://…trycloudflare.com`(도메인 전). JWT 서명 키는 서버에서 생성. 비밀값은 Parameter Store 대신 서버 `secrets.env`
+- 다음 재개 지점: **dev 세션(이 PC의 dev 저장소)이 arm64 이미지를 빌드해 EC2 `/srv/chaekcheck`에 올리고 compose를 둠** → plan이 `docker compose up` → 터널 → (사용자 카카오 콘솔 등록·키) → auth 켜고 로그인 테스트
+- dev-17 세션에 요청 보냈으나 그 세션은 다른 PC(오프라인)라 큐에 쌓임(2026-10-15). 이 PC에서 dev 세션을 새로 열어 진행하면 됨
