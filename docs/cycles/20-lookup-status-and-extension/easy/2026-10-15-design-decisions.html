@@ -47,7 +47,7 @@ svg .ah{fill:var(--accent)}
 <main class="doc">
 
 <p class="lead">설계 대안이 나왔습니다.<br>정할 것 12개를 골라 주세요.</p>
-<p class="concl">#1 승인 반영. 질문 "어느 모듈에 들어갈지 그림으로" → 아래 두 번째 카드에 지금 모듈 구성 위에 바뀌는 자리를 그렸습니다.</p>
+<p class="concl">답 반영 (2026-10-15): #1·2·3·4·7·8 승인(#3에 "조작되지 않도록 보안에 신경써줘" 조건을 적었습니다). #5는 그림과 함께 다시 설명했고, #6은 질문("3분 안이면 캐시로 하니까 의미 없지 않나")에 답하고 선택지를 다시 적었습니다. 남은 것: <b>#5, #6, #9~#12</b>.</p>
 <p class="sub">architect가 dev 코드와 사이클 17 설계를 읽고 낸 대안입니다. 명세·화면 흐름은 그대로이고, "어떻게 만들지"만 정합니다. 그림 네 장(모듈 구성, 상태 묻기 순서, 확장 모드 순서, 개념 모델)은 대화에 보낸 원본 파일에 렌더링해 두었습니다. 원문은 `architect-proposal.md`.</p>
 
 <div class="card">
@@ -140,6 +140,7 @@ svg .ah{fill:var(--accent)}
 <div class="card item">
 <h2><span class="num">3</span>받아온 바이트를 서버에 올리는 쪽:<br>확장이 아니라 화면</h2>
 <p class="concl">[안] 확장은 도서관을 GET 해서 결과(상태 코드·바이트·걸린 시간)를 <b>화면에 돌려주기만</b> 하고, 우리 서버에 올리는 것은 화면(웹)이 합니다. 그러면 확장은 우리 API를 전혀 모르는 "사용자 쪽 조회 서버"가 되어, 나중에 서버나 웹 API를 바꿔도 <b>확장을 다시 배포·심사(며칠~몇 주)할 필요가 없습니다</b>. CSRF·CORS 예외도 필요 없습니다.</p>
+<p class="ex">승인 조건(사용자, 2026-10-15): "그런데 조작되지 않도록 보안에 신경써줘" → 설계에 적을 보안 장치: 일회성 계획 번호(10분)·item은 한 번만·서버가 계획에 적은 URL만 씀(올린 URL은 받지 않음)·4MB 상한·올라온 바이트의 해석 검사(#6)·캐시는 빈 칸만(#6). 확장 자체는 책첵 주소에서 온 요청만 받음(externally_connectable).</p>
 <p class="alt">다른 선택: 확장이 서버에 직접 올리기. 바이트가 메시지(base64, 최대 약 322KB)를 거치지 않지만, 확장이 API 주소·판에 묶여 API를 바꿀 때마다 재심사가 필요하고 CSRF 예외·확장 origin CORS 확인이 생깁니다.</p>
 </div>
 
@@ -153,12 +154,38 @@ svg .ah{fill:var(--accent)}
 <div class="card item">
 <h2><span class="num">5</span>서버 안에서 올라온 바이트가 들어가는 길:<br>"받은 응답" 입구 하나</h2>
 <p class="concl">[안] 지금 도서관 페이지를 받아 해석하는 부품(`LibraryPageFetcher`·`DetailPageFetcher`)에 "이미 받은 응답을 넣어 주는 입구(<code>accept</code>)"를 더합니다. 그 뒤의 해석 → 캐시 → 결과 줄 → 판정은 서버 모드와 <b>같은 코드</b>를 지나고, 도서관을 부르는 부분과 간격 재기만 건너뜁니다. 포털의 상세 조회는 "상세 주소 뽑기"와 "받은 상세로 판정" 두 단계로 나눕니다(책 화면 쪽은 이미 나뉘어 있음).</p>
+<h3 style="font-size:20px;margin:18px 0 6px">그림으로 다시 설명: 서버 안에서 도서관 페이지가 지나는 길</h3>
+<p>지금 서버 모드에서 도서관 페이지 하나는 네 칸을 차례로 지납니다. 확장 모드는 앞의 두 칸(간격 재기, 도서관 부르기)을 사용자 브라우저가 대신하고, 받아온 바이트를 <b>세 번째 칸 앞에 넣어 주는 문(accept)</b>만 새로 답니다. 그 뒤는 서버 모드와 한 글자도 다르지 않은 코드가 돕니다.</p>
+<div class="fig" style="overflow-x:auto"><svg viewBox="0 0 900 330" role="img" aria-label="서버 모드와 확장 모드의 처리 길" style="max-width:900px;min-width:640px">
+<defs><marker id="ah3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="var(--accent)"/></marker></defs>
+<style>.k13{font:400 13px "Noto Sans KR",sans-serif;fill:var(--text)} .k13m{font:400 13px "Noto Sans KR",sans-serif;fill:var(--muted)} .k14{font:700 14px "Noto Sans KR",sans-serif;fill:var(--text)}</style>
+<text class="k14" x="10" y="22">서버 모드 (지금)</text>
+<rect class="bx" x="10" y="34" width="150" height="70" rx="8"/><text class="k13" x="20" y="56">① 간격 재기</text><text class="k13m" x="20" y="74">HostThrottle</text><text class="k13m" x="20" y="92">호스트 1건·1초</text>
+<rect class="bx" x="190" y="34" width="150" height="70" rx="8"/><text class="k13" x="200" y="56">② 도서관 부르기</text><text class="k13m" x="200" y="74">SiteFetcher</text><text class="k13m" x="200" y="92">직접 / 조회 서버</text>
+<rect class="bxa" x="370" y="34" width="250" height="70" rx="8"/><text class="k13" x="380" y="56">③ 해석 → 캐시 3분 → 결과 줄</text><text class="k13m" x="380" y="74">LibraryPageFetcher · adapter 9종</text><text class="k13m" x="380" y="92">(책 상세는 DetailPageFetcher)</text>
+<rect class="bxa" x="650" y="34" width="240" height="70" rx="8"/><text class="k13" x="660" y="56">④ 판정 · 상세 조회 결정</text><text class="k13m" x="660" y="74">resolver → row-verdict</text><text class="k13m" x="660" y="92">포털이면 상세 페이지 한 번 더</text>
+<path d="M160 69 H190" class="ar" marker-end="url(#ah3)"/><path d="M340 69 H370" class="ar" marker-end="url(#ah3)"/><path d="M620 69 H650" class="ar" marker-end="url(#ah3)"/>
+<path d="M770 104 V120 H260 V104" class="ar" marker-end="url(#ah3)" stroke-dasharray="5 4"/><text class="k13m" x="420" y="134">④가 "상세 페이지 필요"라고 하면 ①②③을 한 번 더</text>
+<text class="k14" x="10" y="182">확장 모드 (새로)</text>
+<rect class="bxok" x="10" y="194" width="330" height="70" rx="8"/><text class="k13" x="20" y="216">①② 사용자 브라우저(확장)가 대신</text><text class="k13m" x="20" y="234">호스트 1건·1초 · 도서관 GET</text><text class="k13m" x="20" y="252">받은 바이트를 화면이 서버에 올림</text>
+<rect class="bxok" x="340" y="214" width="30" height="30" rx="6"/><text class="k13" x="344" y="234">문</text>
+<rect class="bxa" x="370" y="194" width="250" height="70" rx="8"/><text class="k13" x="380" y="216">③ 같은 코드</text><text class="k13m" x="380" y="234">accept(받은 응답) → 해석 → 캐시 → 결과 줄</text><text class="k13m" x="380" y="252">서버 throttle·SiteFetcher는 건너뜀</text>
+<rect class="bxa" x="650" y="194" width="240" height="70" rx="8"/><text class="k13" x="660" y="216">④ 같은 코드</text><text class="k13m" x="660" y="234">판정 → row-verdict</text><text class="k13m" x="660" y="252">상세가 필요하면 주소를 돌려줌</text>
+<path d="M620 229 H650" class="ar" marker-end="url(#ah3)"/>
+<path d="M770 264 V284 H170 V264" class="ar" marker-end="url(#ah3)" stroke-dasharray="5 4"/><text class="k13m" x="300" y="300">상세 주소를 받아 확장이 한 번 더 받아오고 다시 "문"으로</text>
+</svg><p class="cap">새로 다는 것은 초록 "문"(accept) 하나와 ④의 "상세 주소 돌려주기"뿐. 해석·캐시·판정(③④)은 서버 모드와 같은 코드를 씁니다.</p></div>
+<p>왜 이 방식인지: ③④를 복사하지 않으니 adapter나 판정 규칙을 고칠 때 한 곳만 고치고, 확장 모드 결과가 서버 모드와 같아집니다(AC-10). 서버의 간격 재기(①)를 건너뛰므로 확장 사용자는 서버 줄에 서지 않고, "줄이 선 도서관" 판정에도 끼지 않습니다.</p>
 <p class="alt">다른 선택 ①: 업로드를 기다리는 가짜 SiteFetcher. 서버의 호스트 간격 줄에 확장 사용자가 서게 되어 사용자 IP와 서버 길이 섞이고, 기다리는 스레드와 "지금 받아 와" 밀어주기 통로가 필요합니다. 다른 선택 ②: 고정 응답 SiteFetcher로 fetcher를 하나 더 만들기. 포털 상세 조회가 결국 서버 fetcher를 불러 ①·②를 섞어야 합니다.</p>
 </div>
 
 <div class="card item">
 <h2><span class="num">6</span>가짜 결과가 캐시를 더럽히는 것:<br>빈 칸일 때만 채움</h2>
 <p class="concl">[안] 확장이 올린 결과는 서버 3분 캐시에 <b>그 칸이 비어 있을 때만</b> 넣습니다. 서버가 직접 받아 둔 값은 덮지 않습니다. 계획 번호(명세 #11)는 "모르는 사람이 아무 때나 올리기"는 막지만 "계획을 받은 사람이 가짜 바이트를 올리기"는 못 막는데, 이 규칙이면 가짜가 들어가도 서버가 본 값을 밀어내지 못하고 3분이면 사라집니다.</p>
+<h3 style="font-size:20px;margin:18px 0 6px">질문에 답: 3분 안이면 어차피 캐시로 답하니 의미 없지 않나</h3>
+<p class="concl"><b>거의 맞습니다.</b> #4대로 서버는 캐시에 있는 도서관은 확장에 주소를 보내지 않으므로, 확장이 올리는 결과는 원래 <b>빈 칸</b>에만 들어갑니다. "빈 칸일 때만"이 실제로 작동하는 때는 딱 하나, 계획을 준 뒤 업로드가 오기까지 몇 초 사이에 다른 사용자의 서버 조회가 같은 칸을 먼저 채운 경우뿐입니다(그때 서버가 본 값을 지킴). 그래서 이 규칙은 "가짜가 서버 값을 덮는 것"만 막고, <b>빈 칸에 가짜를 넣어 3분간 보이게 하는 것</b>은 막지 못합니다 — 이것이 architect가 말한 한계입니다.</p>
+<p>가짜가 들어오는 것 자체를 줄이려면 올라온 바이트를 서버가 받으면서 <b>검사</b>하는 수밖에 없습니다: 계획에 적힌 주소의 도서관 adapter로 해석이 되는지(해석 실패면 버림), 상태 코드 200인지, item은 한 번만, 4MB 이하. 이 검사는 ③의 해석 과정에서 공짜로 얻어지므로 비용이 거의 없습니다. 그래도 "그 도서관 페이지 모양을 흉내 낸 HTML"까지는 못 걸러내고, 그런 것은 3분 뒤 사라집니다.</p>
+<p>다시 고르는 선택지 [안] 추천: <b>(나′) 빈 칸일 때만 + 해석 검사</b>(위 네 가지 검사에 걸리면 400 `invalid_plan`으로 버리고 캐시에 넣지 않음). 3분 노출은 받아들입니다.</p>
+<p class="alt">다른 선택 ①: 검사만 하고 "빈 칸일 때만"은 뺌 — 몇 초 사이 경쟁은 드물어 실질 차이는 거의 없음. 다른 선택 ②: 확장 결과는 그 사람에게만(공유 안 함) — 가짜 노출 0이지만 "확장도 캐싱"(AC-10)과 어긋남. 다른 선택 ③: 아무것도 안 함(3분이면 사라짐).</p>
 <p class="alt">다른 선택 ①: 그대로 둠(3분이면 사라짐). 가장 단순하지만 그 3분 동안 다른 사용자가 가짜를 봅니다. 다른 선택 ②: 확장 결과는 그 사람에게만 보이고 공유하지 않음. 가짜 걱정은 없지만 "다른 사용자도 캐시에서 본다"(명세 AC-10, 사용자 요청 "확장도 캐싱")와 어긋납니다.</p>
 </div>
 
