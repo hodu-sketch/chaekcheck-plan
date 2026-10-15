@@ -1,6 +1,6 @@
 # 설계 변경: 사이클 19 같은 책을 갈라 놓는 저자·제목 표기 정리
 
-- 작성: 2026-10-15. 근거: [spec.md](spec.md), [flow.md](flow.md), [architect-proposal.md](architect-proposal.md)(결정 결과 표), dev main `0a75f7a`(읽기만)
+- 작성: 2026-10-15. 근거: [spec.md](spec.md), [flow.md](flow.md), [architect-proposal.md](architect-proposal.md)(결정 결과 표), dev main `0a75f7a`(읽기만; 19 dev 시작 기준. 사이클 21과 나란히 개발하므로 21이 main에 들어간 뒤 이름·줄 번호를 다시 확인)
 - 설계 결정 11개 모두 사용자 결정 (2026-10-15, [설계 결정](easy/2026-10-15-design-decisions.html)). 클래스·설정·파일 이름은 dev가 바꿔도 됨 [안: 이름]
 - `docs/current/`는 아직 고치지 않음 (`/cycle-close`에서 합침)
 
@@ -204,12 +204,17 @@ erDiagram
 | R1-1·R1-2 | `Contributors.stripMarks` | `<`·`>` 모두 뺌(NFKC 뒤 `＜＞`도), `〈〉「」《》` 표시만 뺌, `[ ]` 그대로. 기호만 있어 비면 사람 없음 |
 | R1-3 | `Contributors.parse` | 좁은 규칙 + 셋째 역할 + 보호 장치(붙은 낱말 앞에 역할 낱말이 이미 따로 있으면 자르지 않음) |
 | R1-4 | `catalog/internal/search` (`BookQuery` 저자 값, `PgBigmBookSearch` 정확 일치) | 저자 검색어에 `stripMarks` |
-| R1-5 | `CatalogImporter` 173행 | `NewBook`의 `authorDisplay = Contributors.displayText(대표 원문)`. 세 묶는 방식의 대표 고르기는 그대로 |
+| R1-5 | `CatalogImporter` 173행 (`displayText`는 R1-3과 같은 판정을 써서, 걸린 표기만 역할 낱말 뒤에 띄움, 보호 장치 표기는 그대로) | `NewBook`의 `authorDisplay = Contributors.displayText(대표 원문)`. 세 묶는 방식의 대표 고르기는 그대로 |
 | R2-2 | `SameTextKey.comparisonTitle` | 앞 시리즈 표시를 뗀 뒤 맨 앞 `( … )` 하나를 뗌. 괄호 안(공백 무시)이 `LEADING_NOTE_KEEP_WORDS`에 있거나 "…판"으로 끝나거나 EDITION이 들어 있으면 남김. 다 떼면 빈 제목이면 그대로. 권 표시·부제는 전체 제목에서 |
 | R2-3 | `CollectedCatalog.scan` → `Row.supplierCodeKey` | `BOOKCUBE_FX`는 `alt_code`, `KYOBO_V1`·`KYOBO_SUBSCRIPTION_V1`·`YES24_V1~V3`는 `item_key`, 그 밖은 없음. 공급사 이름은 다듬은 뒤 묶음 파일로 바꿈, 비면 키 없음 |
 | R2-4 | `CollectedCatalog.scan` | 두 번 읽기 모두에서 `authorRaw`↔`publisher` |
 | R3-1 | `crawl_catalog.py` `parse_portal` | `base` 호스트가 상수에 있으면 `info[1]` 저자, `info[0]` 출판사 |
-| R5 | `BatchRunner.answered`, `LibraryEbookController.fetch`, `UsageBuffer`, `UsageLogWriter` | 캐시 답이면 `CACHED`(로그 줄 없음), upsert에 `cached_count` |
+| R5 | `BatchRunner.answered`, `LibraryEbookController.fetch`, `UsageBuffer`, `UsageLogWriter` | 캐시 답이면 `CACHED`(로그 줄 없음, `ms` 무시), upsert에 `cached_count`. 도서관 번호 확인은 다른 결과와 같음(켜진 도서관만, 꺼진 번호는 `rejected_event` `unknown_library`) |
+
+### 규칙 관리 (R7, ADR-0115·0117)
+
+- dev `docs/maintenance/rules-index.md` [안: 이름] 새 문서, 상수 주석, `2-crawl.md`·`3-import.md`·`platforms.md` 시작 점검 한 줄씩
+- 새 스크립트 `scripts/library/check_author_publisher_swap.py` [안: 이름]: 입력 수집 사본, 출력 도서관마다 "바름 / 뒤바뀜 / 판단 못 함"(이름이 다른 도서관에서 저자로 쓰이는 비율과 출판사로 쓰이는 비율, 사이클 19 실험 (d)). 가져오기가 `swap_before` 뒤 사본에서 멈추면 이 스크립트로 확인
 
 ## 외부 연동
 
@@ -227,7 +232,10 @@ erDiagram
 | 2 | 세 묶는 방식 같은 결과 시험(ADR-0079)에 공급사 코드 줄: 북큐브 alt_code = 교보 item_key(같은 묶음), 같은 9자리라도 다른 공급사면 따로, 공급사 빈 줄 따로 |
 | 9 | `CollectedCatalog` 시험(뒤바뀐 칸), `ImportRules` 시험(파일 없음, `swap_before` 뒤 사본 → 멈춤) |
 | 10 | 수집기 단위 시험(세 포털 + 부산 저장 HTML 한 쪽씩) |
-| 11·12·14 | dry run과 반영 보고 |
+| 1·2·4·5·6·9·17 | 가져오기 통합 시험(작은 수집 사본 픽스처로 `CatalogImporter` 끝까지): 꺾쇠·보통 표기 줄이 한 책, 「(만화) 삼국지」는 따로, 뒤바뀐 도서관 줄의 저자·출판사, `book.author_display`에 기호 없음·붙은 역할 띄움 |
+| 11·12·14 | dry run과 반영 보고. AC-14는 사서추천·이동진 추천도서·서울대 100선 세 목록 |
+| 16·18 | 파일 확인 (dev 문서 R6, 규칙 목록·상수 주석·시작 점검 R7) |
+| 19 | 검증 스크립트를 2026-10-12 사본으로 실행 |
 | 13 | 사이클 11 방식 반영 중 검색 탐침 |
 | 15 | `UsageBuffer`·`UsageLogWriter` 시험, `BatchRunner`·`LibraryEbookController` 캐시 경로 시험 |
 | 공통 | Modulith `verify`, `compact` 2GB 안에서 다시 가져오기(키 칸이 늘어남) |
