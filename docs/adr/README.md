@@ -121,3 +121,7 @@
 | [ADR-0114](0114-grouping-supplier-codes-and-leading-notes.md) | 같은 책 묶기에서 같은 공급사의 상품 코드로 잇고, 제목 앞 괄호(관제)를 떼고 견줌 (ADR-0106에 덧붙임) | Accepted | 2026-10-15 | 19 |
 | [ADR-0115](0115-swapped-author-publisher-portals.md) | 저자·출판사가 뒤바뀐 세 포털은 가져올 때 규칙 파일로 바꿔 읽고, 수집기도 고치며, 검증 스크립트로 다시 확인하고 지움 | Accepted | 2026-10-15 | 19 |
 | [ADR-0117](0117-human-rules-index-for-ai.md) | 사람이 정한 수집·가져오기·도서관 규칙은 코드·표 파일에 두고 dev 규칙 목록 문서로 찾고 검증 (ADR-0085를 넓힘) | Accepted | 2026-10-15 | 19 |
+| [ADR-0118](0118-lookup-status-polling-and-host-queue-board.md) | 조회 상태 신호는 화면이 10초마다 묻고(SSE 아님), 서버는 자리·최근 503·길마다 줄 선 호스트를 메모리 `HostQueueBoard`에서 세어 1초 캐시로, 주소는 도서관 호출 구역 밖 | Proposed | 2026-10-16 | 20 |
+| [ADR-0119](0119-extension-as-user-side-fetcher-server-parses-and-checks.md) | 크롬 확장은 사용자 쪽 조회 서버: GET만 하고 화면이 계획 입구 셋으로 원본을 올리며, 서버가 `accept` 입구로 같은 코드로 해석·캐시·판정하고 검사 ①~⑩으로 가짜를 거름, 상한은 설정 하나 | Proposed | 2026-10-16 | 20 |
+| [ADR-0120](0120-extension-folder-no-build-chrome-first-dev-mode.md) | 확장은 dev `extension/` 폴더에 빌드 없이, 모든 사이트 권한, 호스트 1건·1초, 크롬만 먼저, 이번엔 개발자 모드까지 | Proposed | 2026-10-16 | 20 |
+| [ADR-0121](0121-same-header-on-every-screen.md) | 공통 머리말은 약관·처리방침 포함 모든 화면에서 같음(사이클 05·10·14 예외 폐지, `legal` 분기 제거) | Proposed | 2026-10-16 | 20 |

@@ -12,4 +12,4 @@
 | [flow-original.html](flow-original.html) | flow.md 원문 + Mermaid 그림 2장(신호 흐름, 확장 모드 순서도) 렌더링 | `../flow.md` | — |
 | [2026-10-15-design-decisions.html](2026-10-15-design-decisions.html) | 설계 결정 12개: 상태 주소, HostQueueBoard, 화면이 올림, JSON 계획 입구 셋, accept 입구, 캐시 빈 칸만, 더 보기도 확장, 동시 5·머리 10초, usagelog 제약, UNKNOWN 줄 포함, extension/ 빌드 없음, nginx 4m·20r/s | `../architect-proposal.md` | 모두 정함 (2026-10-16; 질문 답 6개·보안 장치·#13 확장 해석 비교 추가) |
 | [architect-proposal-original.html](architect-proposal-original.html) | architect 제안 원문 + Mermaid 그림 4장 렌더링 | `../architect-proposal.md` | — |
-| [2026-10-16-adr-drafts.html](2026-10-16-adr-drafts.html) | ADR 초안 4개: 0118 상태 신호 10초 묻기·메모리 셈, 0119 확장은 사용자 쪽 조회 서버(화면이 올림·서버 해석·검사·보안), 0120 extension/ 빌드 없음·크롬만·개발자 모드, 0121 머리말 모든 화면 같게 | `../architect-proposal.md`, `../spec.md` | 4개 기다림 |
+| [2026-10-16-adr-drafts.html](2026-10-16-adr-drafts.html) | ADR 초안 4개: 0118 상태 신호 10초 묻기·메모리 셈, 0119 확장은 사용자 쪽 조회 서버(화면이 올림·서버 해석·검사·보안), 0120 extension/ 빌드 없음·크롬만·개발자 모드, 0121 머리말 모든 화면 같게 | `../architect-proposal.md`, `../spec.md` | 모두 승인 (2026-10-16) → `docs/adr/0118~0121` Proposed |
