@@ -183,10 +183,10 @@ erDiagram
 |---|---|---|---|---|
 | `usagelog.library_response_daily.source` | `text` (기존) | CHECK를 지우고 `IN ('direct_search','holding_fill','extension')`로 다시 검 | 확장 모드의 도서관 응답(검색·소장·더 보기 모두)은 `extension` | [확정] (설계 #9). 제약 이름은 dev가 확인(지금 이름 없이 걸림) [확인 필요] |
 | (메모리) `SearchPlan`·`PlanItem` | Caffeine | 쓴 뒤 10분 만료, 최대 2,000개 [안], 계획 하나 수 KB | 계획 번호는 추측 불가(랜덤 128비트) | [확정] (명세 #11) / 값 [안] |
-| (메모리) 캐시 값 `FetchedPage` | 기존 | + `via` (`server`\|`extension`), `storedAt` | 확장 출처 칸을 비우는 운영 명령 `availability` 관리 엔드포인트 없이 **JMX/Actuator 없이** 재시작으로 갈음 [안] 또는 Actuator 사용자 정의 엔드포인트 [안] | 보안 ⑧ [확정] / 비우는 방법 [안] |
+| (메모리) 캐시 값 `FetchedPage` | 기존 | + `via` (`server`\|`extension`), `storedAt` | 확장 출처 칸을 비우는 방법은 **서비스 재시작**(캐시가 메모리), 전용 엔드포인트 없음 | 보안 ⑧ [확정] / 비우는 방법 [확정] (사용자 승인, 2026-10-16, design-delta 결정 #4) |
 
-- Liquibase: `usagelog/003-library-response-source-extension.yaml` [안] 새 changeset(기존 changeset 수정 없음). 사이클 19의 `usagelog/002`(cached_count)와 같은 표 → 나중에 main에 합치는 쪽이 include를 master 맨 끝으로
-- 확장 모드의 사용 기록 [확정] (사용자: "확장은 어짜피 사용자로 접근하는거니 사용자걸로 보여주고 그 결과만 우리 서버가 캐시로 가져가면 되는 거 아닐까?", 2026-10-16, design-delta 결정 #9 승인): 확장 모드는 서버 캐시를 보지 않으므로 **캐시 답(`CACHED`)이 없음**. 확장이 받아와 해석된 것은 `SUCCESS`/`FAILURE`, 보내지 못한 것은 `SKIPPED`(close의 `notSent`), 출처는 모두 `extension`
+- Liquibase: `usagelog/003-library-response-source-extension.yaml` [확정] (사용자 승인, 2026-10-16, design-delta 결정 #6) 새 changeset(기존 changeset 수정 없음). 사이클 19의 `usagelog/002`(cached_count)와 같은 표 → 나중에 main에 합치는 쪽이 include를 master 맨 끝으로
+- 확장 모드의 사용 기록 [확정] (#5 확인, 2026-10-16) (사용자: "확장은 어짜피 사용자로 접근하는거니 사용자걸로 보여주고 그 결과만 우리 서버가 캐시로 가져가면 되는 거 아닐까?", 2026-10-16, design-delta 결정 #9 승인): 확장 모드는 서버 캐시를 보지 않으므로 **캐시 답(`CACHED`)이 없음**. 확장이 받아와 해석된 것은 `SUCCESS`/`FAILURE`, 보내지 못한 것은 `SKIPPED`(close의 `notSent`), 출처는 모두 `extension`
 
 ## API
 
@@ -195,7 +195,7 @@ erDiagram
 | GET | `/api/v1/lookup-status` | 상태 신호 값. 도서관을 부르지 않음. nginx 일반 구역. 서버 1초 메모 | 없음 | 200 `{slots, inUse, level, queuedLibraryIds[], serverTime}`, `Cache-Control: no-cache` | — |
 | POST | `/api/v1/ebook-searches/plans` | 확장 모드 검색 묶음 계획(자리 안 잡음). 첫 묶음은 지금 `ebook-searches/stream`과 같은 조건, 다음 묶음은 `batchNo`·`candidates` 추가 | JSON `{title|author|publisher, residenceRegionIds, workRegionIds, filter, scope, visit, libraryIds, batchNo?, candidates?}` | 201 `{planId, batchNo, deadlineMs:8000, rowLimit:20, targets?(첫 묶음), items[{itemId, libraryId, page, url}]}` — **캐시를 보지 않고 모든 도서관 주소를 줌**, 사용자는 자기 브라우저가 받은 결과만 봄 [확정] (사용자: "확장은 어짜피 사용자로 접근하는거니 사용자걸로 보여주고 그 결과만 우리 서버가 캐시로 가져가면 되는 거 아닐까?", 2026-10-16, design-delta 결정 #9 승인) | 400 검증(지금과 같음), 429 (⑦ IP별 계획 한도 1분 20개 [안]) |
 | POST | `/api/v1/book-availabilities/plans` | 책 화면(소장) 계획. items는 상세 주소 | `{bookIds, …, batchNo?, candidates?(holdingId)}` | 같은 모양(이벤트는 `holding-*`) | 같음 |
-| POST | `/api/v1/availability/libraries/{libraryId}/ebooks/plans` [안] | 「더 보기」 계획(설계 #7) | `{title|…, page}` | `{planId, items[1], events[]}` | 같음 |
+| POST | `/api/v1/availability/libraries/{libraryId}/ebooks/plans` [확정] (사용자 승인, 2026-10-16, design-delta 결정 #6) | 「더 보기」 계획(설계 #7) | `{title|…, page}` | `{planId, items[1], events[]}` | 같음 |
 | POST | `/api/v1/lookup-plans/{planId}/items/{itemId}` | 받아온 원본 올리기 | 본문 `application/octet-stream`(원본 그대로); 쿼리 `status`, `ms`, `outcome=RESPONDED\|TIMEOUT\|ERROR`, `contentType`(사이트가 준 값). URL은 받지 않음 | 200 `{events[library-result\|library-failed\|row-verdict\|holding-*], detailItems[{itemId, libraryId, url, kind:DETAIL}], stop}` | 400 `invalid_plan`(계획 없음·만료·쪽 번호 없음·이미 받음·IP 다름·Origin 다름·adapter 해석 실패), 413 `payload_too_large`, 429 |
 | POST | `/api/v1/lookup-plans/{planId}/close` | 묶음 끝 | `{notSent:[itemId]}` | 200 `{events:[batch-done]}` (usagelog SKIPPED·recordSearch는 여기서) | 400 `invalid_plan` |
 
@@ -227,7 +227,7 @@ erDiagram
 | 대상 | 방식 | 제한·키 관리 | 실패 시 동작 | 상태 태그 |
 |---|---|---|---|---|
 | 도서관 사이트 (확장 모드) | 확장 service worker `fetch()` GET, `host_permissions` http·https 전체, `credentials:'omit'`, `redirect:'manual'`, User-Agent는 브라우저 것 | 호스트마다 동시 1건·앞 요청 끝 +1초, 동시 5, 응답 머리 10초·본문 묶음 마감까지, 상한 `max-body-size`(4MB) | `outcome=TIMEOUT\|ERROR`로 올림 → 그 줄 "확인하지 못한 도서관", 서버가 다시 부르지 않음 | [확정] (명세 #7·#10, 설계 #8) |
-| 웹 ↔ 확장 | `externally_connectable.matches`에 책첵 운영·개발 주소; 화면이 `chrome.runtime.sendMessage(VITE_EXTENSION_ID, {type:'hello'})` → `{version}`; 조회는 `chrome.runtime.connect(id)` port로 `{type:'fetch', items}` ↔ `{type:'page', itemId, status, contentType, base64, ms}` | 확장 ID는 manifest `key`로 고정, 웹 설정 `VITE_EXTENSION_ID`. 메시지 64MiB 한도(바이트 base64) | 인사 500ms 답 없음·port 끊김 → 서버 모드 (R6) | [확정] (공식 문서, scope 외부 확인) / 메시지 이름 [안] |
+| 웹 ↔ 확장 | `externally_connectable.matches`에 책첵 운영·개발 주소; 화면이 `chrome.runtime.sendMessage(VITE_EXTENSION_ID, {type:'hello'})` → `{version}`; 조회는 `chrome.runtime.connect(id)` port로 `{type:'fetch', items}` ↔ `{type:'page', itemId, status, contentType, base64, ms}` | 확장 ID는 manifest `key`로 고정, 웹 설정 `VITE_EXTENSION_ID`. 메시지 64MiB 한도(바이트 base64) | 인사 500ms 답 없음·port 끊김 → 서버 모드 (R6) | [확정] (공식 문서, scope 외부 확인) / 메시지·설정 이름 [확정] (사용자 승인, 2026-10-16, design-delta 결정 #6) |
 | nginx | 템플릿 `lookup-plans.conf.template`(`client_max_body_size ${LOOKUP_MAX_BODY_MB}m`, zone `${LOOKUP_UPLOAD_RATE}`r/s burst `${LOOKUP_UPLOAD_BURST}`), `prod.env`의 `LOOKUP_MAX_BODY_MB=4`를 compose가 Spring(`CHAEKCHECK_AVAILABILITY_MAX_BODY_SIZE=${LOOKUP_MAX_BODY_MB}MB`)과 nginx 양쪽에 | 공식 nginx 이미지 envsubst(`/etc/nginx/templates` → `conf.d`, 2026-10-16 확인) | 413·429 Problem Details JSON | [확정] (설계 #12, 사용자 "이걸로 해줘") |
 | 사이클 17 막힌 길 기록·길마다 throttle | `HostQueueBoard`가 읽음 | 17 인계(`from-cycle-20-blocked-ip-resume.md`) | 17 없으면 길 하나·막힌 길 없음 | 전제 [확정] |
 
