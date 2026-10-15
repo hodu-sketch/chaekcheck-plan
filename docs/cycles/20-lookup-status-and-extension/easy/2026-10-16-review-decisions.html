@@ -82,6 +82,69 @@ svg .ah{fill:var(--accent)}
 <tr><td>안정성</td><td>확장 `redirect:'manual'`이면 리다이렉트하는 도서관은 상태 0 → 늘 실패</td><td>상태 0은 실패로, 리다이렉트 도서관은 프로토타입 확인 목록에</td></tr>
 <tr><td>문서</td><td>명세의 낡은 문장 다섯(도서관 직접 확인 이야기, 확장 결과 "캐시", 시간 제한 5초·5초, R6 끊김, AC-1 「사서추천도서」), 범위의 3-1·제외 줄, flow 머리말, changeset 번호(21이 003을 써서 20은 004), API 오류 칸</td><td>모두 지금 결정에 맞춤. AC 다섯(AC-10a·16~20) 더함</td></tr>
 </table>
+<div class="fig wide"><svg viewBox="0 0 900 230" role="img" aria-label="관점별 고친 수">
+<text class="s14" x="10" y="22">바로 고친 21줄을 관점별로 (주된 관점 기준)</text>
+<line x1="150" y1="40" x2="150" y2="210" stroke="var(--line)"/>
+<text class="s13" x="10" y="64">사용자</text><rect x="150" y="48" width="320" height="24" rx="4" fill="var(--accent)"/><text class="s13" x="476" y="65">8</text>
+<text class="s13" x="10" y="100">서버 자원</text><rect x="150" y="84" width="240" height="24" rx="4" fill="var(--warn)"/><text class="s13" x="396" y="101">6</text>
+<text class="s13" x="10" y="136">보안</text><rect x="150" y="120" width="200" height="24" rx="4" fill="var(--no)"/><text class="s13" x="356" y="137">5</text>
+<text class="s13" x="10" y="172">안정성</text><rect x="150" y="156" width="40" height="24" rx="4" fill="var(--ok)"/><text class="s13" x="196" y="173">1</text>
+<text class="s13" x="10" y="208">문서 맞춤</text><rect x="150" y="192" width="40" height="24" rx="4" fill="var(--muted)"/><text class="s13" x="196" y="209">1 (여러 곳)</text>
+<text class="s13m" x="560" y="80">심각도 높음으로 본 것</text>
+<text class="s13m" x="560" y="100">· 서버가 남의 주소를 부르는 구멍 (보안)</text>
+<text class="s13m" x="560" y="120">· 로그인 켜면 새 POST 403 (보안)</text>
+<text class="s13m" x="560" y="140">· 화면 바뀐 도서관 → 전체 오류·IP 잠금</text>
+<text class="s13m" x="560" y="160">· 본문 읽기 전에 거르지 않음 (자원)</text>
+</svg><p class="cap">관점별로 고친 수와, 그중 심각도 높음으로 본 넷.</p></div>
+<div class="fig wide"><svg viewBox="0 0 900 360" role="img" aria-label="고친 곳의 위치">
+<defs><marker id="ahW" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="var(--accent)"/></marker></defs>
+<text class="s14" x="10" y="22">고친 곳이 구조의 어디에 있나 (숫자 = 표의 줄 묶음)</text>
+<rect class="bxa" x="10" y="36" width="300" height="140" rx="10"/><text class="s14" x="20" y="58">사용자 브라우저 · web</text>
+<text class="s13m" x="20" y="80" font-size="12">● 거름·빈 결과 문구 · 첫 검색 500ms 대기</text>
+<text class="s13m" x="20" y="98" font-size="12">● 늦은 응답 버림 · 429 처리 · S14 창</text>
+<text class="s13m" x="20" y="116" font-size="12">● 회색 판정 시각 · 점 접근성</text>
+<text class="s13m" x="20" y="134" font-size="12">● CSRF 머리 · base64 바로 버림</text>
+<text class="s13m" x="20" y="152" font-size="12">● port 끊기면 다시 인사</text>
+<rect class="bxok" x="10" y="190" width="300" height="160" rx="10"/><text class="s14" x="20" y="212">크롬 확장 extension/</text>
+<text class="s13m" x="20" y="234" font-size="12">● 운영 설정에서 localhost 뺌</text>
+<text class="s13m" x="20" y="252" font-size="12">● 보낸 쪽 다시 확인 · 주소 거르기</text>
+<text class="s13m" x="20" y="270" font-size="12">  (사설망·localhost·IP·비표준 포트 거절)</text>
+<text class="s13m" x="20" y="288" font-size="12">● 전역 호스트 줄(탭 두 개도 1건)</text>
+<text class="s13m" x="20" y="306" font-size="12">● 읽으면서 크기 세기(압축 폭탄)</text>
+<text class="s13m" x="20" y="324" font-size="12">● 리다이렉트 상태 0 = 실패</text>
+<rect class="bx" x="340" y="36" width="220" height="140" rx="10"/><text class="s14" x="350" y="58">nginx</text>
+<text class="s13m" x="350" y="80" font-size="12">● 본문 버퍼 512KB</text>
+<text class="s13m" x="350" y="98" font-size="12">● 받은 뒤 넘김(느린 업로드)</text>
+<text class="s13m" x="350" y="116" font-size="12">● 본문 10초</text>
+<text class="s13m" x="350" y="134" font-size="12">● 진짜 IP 넘김(17 그대로)</text>
+<rect class="bxa" x="590" y="36" width="300" height="314" rx="10"/><text class="s14" x="600" y="58">본 서비스 availability · usagelog</text>
+<text class="s13m" x="600" y="80" font-size="12">● 검사 순서: 본문 읽기 전 거름</text>
+<text class="s13m" x="600" y="98" font-size="12">● 400은 계획 문제만, 해석 실패는 그 도서관만</text>
+<text class="s13m" x="600" y="116" font-size="12">● 상세 주소 같은 호스트만 (서버 모드도)</text>
+<text class="s13m" x="600" y="134" font-size="12">● IP = X-Real-IP, IPv6 /64</text>
+<text class="s13m" x="600" y="152" font-size="12">● accept는 서버 호출 없음</text>
+<text class="s13m" x="600" y="170" font-size="12">● 대기 수 시작·끝 짝 (신호가 노랑에 갇힘 방지)</text>
+<text class="s13m" x="600" y="188" font-size="12">● 본문은 요청 중에만, 캐시는 해석 값만</text>
+<text class="s13m" x="600" y="206" font-size="12">● 진행 중인 서버 조회 값은 안 덮음</text>
+<text class="s13m" x="600" y="224" font-size="12">● recordRejected 새로, 1분 1줄</text>
+<text class="s13m" x="600" y="242" font-size="12">● 계획 번호 SecureRandom 16바이트</text>
+<text class="s13m" x="600" y="262" font-size="12">● Content-Encoding 있으면 415</text>
+<path d="M310 100 H340" class="ar" marker-end="url(#ahW)"/><path d="M560 100 H590" class="ar" marker-end="url(#ahW)"/><path d="M160 176 V190" class="ar" marker-end="url(#ahW)"/>
+</svg><p class="cap">고친 21줄을 구조 위에 놓은 그림. 서버 쪽 검사와 확장 쪽 거르기가 가장 많이 바뀌었습니다.</p></div>
+<div class="fig wide"><svg viewBox="0 0 900 300" role="img" aria-label="정할 것 19개의 위치">
+<defs><marker id="ahD" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="var(--accent)"/></marker></defs>
+<text class="s14" x="10" y="22">정할 것 19개가 어디에 붙나</text>
+<rect class="bxok" x="10" y="40" width="210" height="240" rx="10"/><text class="s14" x="20" y="64">결과 화면</text>
+<text class="s13" x="20" y="88">#1 직접 찾기 실패 줄</text><text class="s13" x="20" y="110">#2 묶음 자리</text><text class="s13" x="20" y="132">#3 목록에서 빠진 줄</text><text class="s13" x="20" y="154">#5 「밀려요」 붙일 줄</text><text class="s13" x="20" y="176">#6 폰 말풍선</text>
+<rect class="bxok" x="240" y="40" width="200" height="240" rx="10"/><text class="s14" x="250" y="64">확장</text>
+<text class="s13" x="250" y="88">#4 도중 꺼짐</text><text class="s13" x="250" y="110">#12 서명 목록?</text><text class="s13" x="250" y="132">#16 못 여는 도서관</text>
+<rect class="bx" x="460" y="40" width="200" height="240" rx="10"/><text class="s14" x="470" y="64">nginx</text>
+<text class="s13" x="470" y="88">#13 더 보기 주소 구역</text><text class="s13" x="470" y="110">#15 계획 한도 60/분</text><text class="s13" x="470" y="132">#7 IP당 연결 6</text>
+<rect class="bxa" x="680" y="40" width="210" height="240" rx="10"/><text class="s14" x="690" y="64">서버</text>
+<text class="s13" x="690" y="88">#7 동시 해석 8</text><text class="s13" x="690" y="110">#8 계획 보관함 무게</text><text class="s13" x="690" y="132">#9 확장 캐시 따로</text><text class="s13" x="690" y="154">#10 만료 고정</text><text class="s13" x="690" y="176">#11 잠금에 셀 실패</text><text class="s13" x="690" y="198">#14 떠난 묶음</text><text class="s13" x="690" y="220">#18 앞 계획 지우기</text>
+<text class="s13m" x="10" y="296">#17 설정값 목록 문서, #19 다음 단계는 문서·진행에 관한 것</text>
+<path d="M220 160 H240" class="ar" marker-end="url(#ahD)"/><path d="M440 160 H460" class="ar" marker-end="url(#ahD)"/><path d="M660 160 H680" class="ar" marker-end="url(#ahD)"/>
+</svg><p class="cap">남은 결정 19개가 붙는 자리. 서버 쪽이 7개로 가장 많습니다.</p></div>
 <p class="ex">자세한 근거(파일·행·공식 문서 주소)는 design-delta.md에 ◆ 표시로 남겼습니다. 이 표의 고침은 앞서 정한 방향을 바꾸지 않고 빠진 처리를 채운 것입니다.</p>
 </div>
 
@@ -125,6 +188,15 @@ svg .ah{fill:var(--accent)}
 <div class="card item">
 <h2><span class="num">3</span>"목록에서 빠진 책" 줄은<br>이 묶음에 넣지 않기</h2>
 <p><b>어디서 생기나.</b> 책 화면에는 실패 줄과 별개로 "이 도서관 목록에서 빠졌어요" 줄(`gone`, 책 목록을 다시 받으면서 그 도서관에서 빠진 책)이 있습니다. 지금은 둘 다 실패로 처리돼 같은 자리에 섞입니다(dev `ResultRow.tsx:57`). 확인을 못 한 것이 아니라 "없어진 것"이라 뜻이 다릅니다. 판정이 "모름"(UNKNOWN)인 줄의 지금 글 「대출 가능 여부 확인 필요」도 묶음 안에서 글이 셋으로 갈립니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 250" role="img" aria-label="빠진 줄과 확인 못 한 줄의 자리">
+<text class="s14" x="10" y="22">책 화면(소장) 결과 목록 — 제안</text>
+<rect class="bxok" x="10" y="34" width="880" height="34" rx="6"/><text class="s13" x="20" y="56">지금 빌릴 수 있어요 — 서울교육청 · 부산</text>
+<rect class="bx" x="10" y="74" width="880" height="34" rx="6"/><text class="s13" x="20" y="96">예약하고 기다려요 — 군산 (예약 2)</text>
+<rect class="bx" x="40" y="112" width="850" height="30" rx="6" stroke-dasharray="4 3"/><text class="s13m" x="50" y="132">└ 강남구 · 이 도서관 목록에서 빠졌어요 (gone: 없어진 것, 지금 자리 그대로)</text>
+<rect class="bxno" x="10" y="150" width="880" height="34" rx="6"/><text class="s14" x="20" y="172">확인하지 못한 도서관</text>
+<rect class="bx" x="40" y="188" width="850" height="26" rx="6"/><text class="s13" x="50" y="206">경기교육청 · 대출 정보를 확인하지 못했어요 (실패)</text>
+<rect class="bx" x="40" y="218" width="850" height="26" rx="6"/><text class="s13" x="50" y="236">대구 · 대출 정보를 확인하지 못했어요 (판정 모름 → 같은 글로 통일)</text>
+</svg><p class="cap">"없어진 것"은 예약 묶음 아래 지금 자리, "확인 못 한 것"(실패·모름)은 맨 아래 한 묶음에 같은 글로.</p></div>
 <p class="concl">[안] `gone` 줄은 「확인하지 못한 도서관」에 넣지 않고 <b>지금처럼 예약 묶음 맨 아래에 「이 도서관 목록에서 빠졌어요」</b>로 둡니다. 묶음 안의 실패·모름 줄은 모두 같은 글 「대출 정보를 확인하지 못했어요」로 통일합니다.</p>
 <p class="alt">다른 선택: `gone`도 이 묶음에 넣고 글만 다르게. 한곳에 모이지만 "확인 못 함"과 "없어짐"이 섞여 헷갈립니다.</p>
 </div>
@@ -148,6 +220,20 @@ svg .ah{fill:var(--accent)}
 <div class="card item">
 <h2><span class="num">5</span>「지금 이 도서관 조회가 밀려요」를<br>붙이는 줄과 지속 시간</h2>
 <p><b>어디서 생기나.</b> 지금 설계는 상태 응답의 "줄이 선 도서관" 목록에 있으면 그 도서관의 모든 결과 줄에 글을 붙이고, 60초 뒤 목록에서 빠지면 지웁니다. 그런데 (1) 결과를 정상으로 받은 줄에도 붙어 헷갈리고, (2) 정작 실패한 줄에서는 60초 뒤 사라져 나중에 보면 왜 실패했는지 모르고, (3) 확장 모드는 상태를 묻지 않아 이 글이 영영 나오지 않습니다(문서에 없음).</p>
+<div class="fig wide"><svg viewBox="0 0 900 260" role="img" aria-label="밀려요 글 붙는 시간">
+<text class="s14" x="10" y="22">경기교육청에 줄이 섰다가 그 줄이 실패한 경우</text>
+<line x1="120" y1="60" x2="880" y2="60" stroke="var(--line)" stroke-width="2"/>
+<text class="s13m" x="120" y="48">0초 검색</text><text class="s13m" x="330" y="48">8초 실패</text><text class="s13m" x="600" y="48">68초 (60초 지남)</text><text class="s13m" x="800" y="48">새 검색</text>
+<text class="s14" x="10" y="100">지금 설계</text>
+<rect x="120" y="86" width="560" height="22" rx="4" fill="var(--warn-bg)" stroke="var(--warn)"/><text class="s13" x="130" y="102">「밀려요」 (정상으로 받은 줄에도 붙음)</text>
+<rect x="680" y="86" width="200" height="22" rx="4" fill="var(--card)" stroke="var(--line)"/><text class="s13m" x="690" y="102">사라짐 → 왜 실패?</text>
+<text class="s14" x="10" y="160">제안</text>
+<rect x="120" y="146" width="210" height="22" rx="4" fill="var(--warn-bg)" stroke="var(--warn)"/><text class="s13" x="130" y="162">조회 중 줄에만</text>
+<rect x="330" y="146" width="470" height="22" rx="4" fill="var(--no-bg)" stroke="var(--no)"/><text class="s13" x="340" y="162">실패 순간 붙어 있었으면 그 줄에 계속 (확인하지 못한 도서관 안)</text>
+<rect x="800" y="146" width="80" height="22" rx="4" fill="var(--card)" stroke="var(--line)"/><text class="s13m" x="806" y="162">지움</text>
+<text class="s13m" x="10" y="210">정상으로 받은 줄: 붙이지 않음 · 확장 모드: 상태를 묻지 않으므로 쓰지 않음 · 직접 찾기: #1의 도서관 줄에</text>
+<text class="s13m" x="10" y="232">→ "왜 확인 못 했는지"가 결과를 보는 동안 계속 남음</text>
+</svg><p class="cap">「밀려요」는 아직 조회 중이거나 실패한 줄에만, 실패 순간의 이유를 그 줄에 남깁니다.</p></div>
 <p class="concl">[안] 이 글은 <b>아직 조회 중인 줄과 「확인하지 못한 도서관」 줄에만</b> 붙이고, 실패로 끝난 순간 붙어 있었으면 <b>그 줄에서는 계속 유지</b>(검색을 새로 할 때까지). 정상으로 받은 줄에는 붙이지 않습니다. 확장 모드에서는 쓰지 않는다고 문서에 적습니다. 직접 찾기는 #1의 도서관 줄에 붙입니다.</p>
 <p class="alt">다른 선택: 지금 설계대로(목록에 있는 동안 모든 줄). 단순하지만 위 (1)(2)가 남습니다.</p>
 </div>
@@ -163,6 +249,7 @@ svg .ah{fill:var(--accent)}
 <tr><td>회색</td><td>상태 모름</td><td>조회 상태를 받아오지 못했어요</td></tr>
 <tr><td>파랑</td><td>내 브라우저에서 조회 중</td><td>확장 프로그램이 도서관을 직접 조회해요</td></tr>
 </table>
+<div class="fig wide"><svg viewBox="0 0 900 230" role="img" aria-label="폰 말풍선 다섯 색"><rect class="bx" x="10" y="20" width="168" height="200" rx="16"/><rect class="bx" x="20" y="36" width="148" height="30" rx="6"/><text class="s13" x="26" y="56" font-size="12" font-weight="800">책첵</text><circle cx="126" cy="51" r="6" fill="var(--ok)"/><text class="s13m" x="144" y="56" font-size="11">☰</text><rect x="20" y="74" width="148" height="76" rx="8" fill="var(--card)" stroke="var(--ok)" stroke-width="2"/><text class="s13" x="28" y="94" font-size="12" font-weight="700">조회 원활</text><text class="s13m" x="28" y="114" font-size="11">지금 바로 찾을 수 있어요</text><rect class="bx" x="20" y="160" width="148" height="50" rx="6"/><text class="s13m" x="30" y="190" font-size="11">검색 화면</text><rect class="bx" x="188" y="20" width="168" height="200" rx="16"/><rect class="bx" x="198" y="36" width="148" height="30" rx="6"/><text class="s13" x="204" y="56" font-size="12" font-weight="800">책첵</text><circle cx="304" cy="51" r="6" fill="var(--warn)"/><text class="s13m" x="322" y="56" font-size="11">☰</text><rect x="198" y="74" width="148" height="76" rx="8" fill="var(--card)" stroke="var(--warn)" stroke-width="2"/><text class="s13" x="206" y="94" font-size="12" font-weight="700">조회 붐빔</text><text class="s13m" x="206" y="114" font-size="11">찾는 사람이 늘고 있어요.</text><text class="s13m" x="206" y="130" font-size="11">조금 느릴 수 있어요</text><rect class="bx" x="198" y="160" width="148" height="50" rx="6"/><text class="s13m" x="208" y="190" font-size="11">검색 화면</text><rect class="bx" x="366" y="20" width="168" height="200" rx="16"/><rect class="bx" x="376" y="36" width="148" height="30" rx="6"/><text class="s13" x="382" y="56" font-size="12" font-weight="800">책첵</text><circle cx="482" cy="51" r="6" fill="var(--no)"/><text class="s13m" x="500" y="56" font-size="11">☰</text><rect x="376" y="74" width="148" height="76" rx="8" fill="var(--card)" stroke="var(--no)" stroke-width="2"/><text class="s13" x="384" y="94" font-size="12" font-weight="700">조회 혼잡</text><text class="s13m" x="384" y="114" font-size="11">지금 찾는 사람이 많아</text><text class="s13m" x="384" y="130" font-size="11">검색이 거절될 수 있어요</text><rect class="bx" x="376" y="160" width="148" height="50" rx="6"/><text class="s13m" x="386" y="190" font-size="11">검색 화면</text><rect class="bx" x="544" y="20" width="168" height="200" rx="16"/><rect class="bx" x="554" y="36" width="148" height="30" rx="6"/><text class="s13" x="560" y="56" font-size="12" font-weight="800">책첵</text><circle cx="660" cy="51" r="6" fill="var(--muted)"/><text class="s13m" x="678" y="56" font-size="11">☰</text><rect x="554" y="74" width="148" height="76" rx="8" fill="var(--card)" stroke="var(--muted)" stroke-width="2"/><text class="s13" x="562" y="94" font-size="12" font-weight="700">상태 모름</text><text class="s13m" x="562" y="114" font-size="11">조회 상태를 받아오지</text><text class="s13m" x="562" y="130" font-size="11">못했어요</text><rect class="bx" x="554" y="160" width="148" height="50" rx="6"/><text class="s13m" x="564" y="190" font-size="11">검색 화면</text><rect class="bx" x="722" y="20" width="168" height="200" rx="16"/><rect class="bx" x="732" y="36" width="148" height="30" rx="6"/><text class="s13" x="738" y="56" font-size="12" font-weight="800">책첵</text><circle cx="838" cy="51" r="6" fill="var(--accent)"/><text class="s13m" x="856" y="56" font-size="11">☰</text><rect x="732" y="74" width="148" height="76" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="2"/><text class="s13" x="740" y="94" font-size="12" font-weight="700">내 브라우저에서 조회 중</text><text class="s13m" x="740" y="114" font-size="11">확장 프로그램이 도서관을</text><text class="s13m" x="740" y="130" font-size="11">직접 조회해요</text><rect class="bx" x="732" y="160" width="148" height="50" rx="6"/><text class="s13m" x="742" y="190" font-size="11">검색 화면</text></svg><p class="cap">폰(375px)에서 점을 눌렀을 때 색마다 뜨는 말풍선. 자리와 순서만 보이는 배치도입니다.</p></div>
 <p class="concl">[안] 위 표의 둘째 줄을 색마다 씁니다(빨강은 이미 정한 문장 그대로).</p>
 <p class="alt">다른 선택: 말풍선에는 점 옆 글만(둘째 줄 없음). 짧지만 노랑·빨강이 무슨 뜻인지 설명이 없습니다.</p>
 </div>
@@ -179,6 +266,14 @@ svg .ah{fill:var(--accent)}
 <rect class="bx" x="610" y="20" width="280" height="140" rx="8"/><text class="s14" x="620" y="44">상한이 없으면</text><text class="s13m" x="620" y="66" font-size="12">큰 쪽 20개가 동시에 오면</text><text class="s13m" x="620" y="86" font-size="12">20 × 50MB = 1GB → 힙 초과</text><text class="s13m sred" x="620" y="106" font-size="12">서비스 전체가 멈출 수 있음</text>
 <path d="M210 90 H260" class="ar" marker-end="url(#ah7r)"/>
 </svg><p class="cap">서버 전체에서 동시에 해석하는 수를 묶어 힙을 넘지 않게 합니다. 숫자는 dev 측정으로 맞춥니다.</p></div>
+<div class="fig wide"><svg viewBox="0 0 900 220" role="img" aria-label="힙 사용 그래프">
+<text class="s14" x="10" y="22">서비스 힙 512MB 안에서 올리기 해석이 차지할 수 있는 최대치 (추정)</text>
+<text class="s13m" x="10" y="58">상한 없음 · 큰 쪽 20개</text><rect x="200" y="44" width="680" height="22" rx="4" fill="var(--no-bg)" stroke="var(--no)"/><text class="s13 sred" x="210" y="60">약 1,000MB → 힙 초과</text>
+<text class="s13m" x="10" y="98">제안 · 동시 8개</text><rect x="200" y="84" width="272" height="22" rx="4" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="210" y="100">최악 약 400MB</text>
+<text class="s13m" x="10" y="138">평소 · 쪽 ≤ 300KB</text><rect x="200" y="124" width="20" height="22" rx="4" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="230" y="140">수 MB</text>
+<line x1="548" y1="36" x2="548" y2="160" stroke="var(--no)" stroke-dasharray="5 4"/><text class="s13 sred" x="554" y="176">힙 512MB</text>
+<text class="s13m" x="10" y="200">1MB 당 약 1.36px 비율. 쪽 하나 최악 50MB = 본문 4 + 한글 문자열 6 + HTML 구조(5~10배). dev 측정으로 8을 맞춤</text>
+</svg><p class="cap">동시 해석 수를 묶으면 최악의 경우도 힙 안에 들어옵니다. 평소 쓰임은 아주 작습니다.</p></div>
 <p class="concl">[안] 서버 전체에서 올라온 페이지를 <b>동시에 8개까지</b> 해석(넘치면 2초 기다리고 못 받으면 503 → 화면은 그 도서관만 「확인하지 못한 도서관」), nginx는 올리기 경로에 <b>IP당 동시 연결 6개</b>. 두 값은 변수(`LOOKUP_UPLOAD_CONN`, `max-concurrent-uploads`)로 두고, 인계 때 dev가 4MB 쪽 해석의 힙 최대치를 재서 8을 맞춥니다.</p>
 <p class="alt">다른 선택 ①: 확장 올리기만 본문 상한을 1MB로 낮춤(실제 최대 쪽 322KB) — 최악이 1/4로 줄지만 "상한은 설정 하나"(설계 #12, ADR-0119)와 어긋나 값이 둘이 됩니다. ② 상한 없음 — 평소엔 괜찮지만 몰리면 서비스가 멈출 수 있어 추천하지 않습니다.</p>
 </div>
@@ -190,6 +285,12 @@ svg .ah{fill:var(--accent)}
 <rect class="bxno" x="10" y="20" width="420" height="120" rx="8"/><text class="s14" x="20" y="44">지금(#1 승인): 최대 2,000개</text><text class="s13m" x="20" y="66" font-size="12">계획 크기 무시 → 최악 2,000 × 80KB ≈ 160MB</text><text class="s13m" x="20" y="86" font-size="12">넘치면 가장 오래된 것부터 → 남의 계획도 밀려남</text><text class="s13m" x="20" y="106" font-size="12">IP 4~10개로 채울 수 있음</text>
 <rect class="bxok" x="460" y="20" width="430" height="120" rx="8"/><text class="s14" x="470" y="44">제안: 무게 상한 + IP당 열린 계획 20</text><text class="s13m" x="470" y="66" font-size="12">무게 = 주소 수, 전체 100,000 ≈ 40MB</text><text class="s13m" x="470" y="86" font-size="12">한 IP가 계획 21개째를 만들면 그 IP의 가장 오래된 것만 지움</text><text class="s13m" x="470" y="106" font-size="12">→ 다른 IP의 계획을 밀어내지 않음</text>
 </svg><p class="cap">크기로 묶어 메모리를 정확히 지키고, 한 IP가 남의 계획을 밀어내지 못하게 합니다.</p></div>
+<div class="fig wide"><svg viewBox="0 0 900 150" role="img" aria-label="계획 보관함 메모리 비교">
+<text class="s14" x="10" y="22">계획 보관함이 최악일 때 차지하는 메모리</text>
+<text class="s13m" x="10" y="58">지금(#1) 2,000개</text><rect x="220" y="44" width="480" height="22" rx="4" fill="var(--no-bg)" stroke="var(--no)"/><text class="s13" x="230" y="60">약 160MB (도서관 200곳 계획 × 80KB)</text>
+<text class="s13m" x="10" y="98">제안 무게 100,000</text><rect x="220" y="84" width="120" height="22" rx="4" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="230" y="100">약 40MB</text>
+<text class="s13m" x="10" y="136">무게 = 계획 안 주소 수. 주소 하나 약 400B → 100,000 × 400B ≈ 40MB. 한 IP는 열린 계획 20개까지</text>
+</svg><p class="cap">개수가 아니라 주소 수로 묶어야 메모리가 정확히 지켜집니다.</p></div>
 <p class="concl">[안] 계획 보관함은 <b>주소 수 기준 무게 100,000(약 40MB)</b>, 쓴 뒤 10분. 한 IP(/64)가 <b>열어 둔 계획은 20개까지</b>, 넘으면 그 IP의 가장 오래된 계획을 지움. 앞 #1의 "최대 2,000개"는 이것으로 바꿉니다.</p>
 <p class="alt">다른 선택: 2,000개 그대로(승인값). 단순하지만 위 두 문제가 남습니다.</p>
 </div>
@@ -197,6 +298,15 @@ svg .ah{fill:var(--accent)}
 <div class="card item">
 <h2><span class="num">9</span>확장이 넣는 캐시 칸을<br>서버 캐시와 따로 두기</h2>
 <p><b>어디서 생기나.</b> 검색 결과 캐시는 지금 "최대 1,000칸"이고(dev `application.yml:116-118`) 서버와 확장이 같이 씁니다. 확장 모드는 캐시를 읽지 않고 넣기만 하므로(#9 결정), 확장 사용자가 많이 검색하면 서버가 받아 둔 칸이 밀려나 서버 모드 사용자의 캐시 적중이 떨어지고 도서관 요청이 늘 수 있습니다(한 IP가 1분에 최대 1,200칸).</p>
+<div class="fig wide"><svg viewBox="0 0 900 230" role="img" aria-label="캐시 두 개와 찾는 순서">
+<defs><marker id="ah9c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="var(--accent)"/></marker></defs>
+<rect class="bxa" x="10" y="30" width="250" height="90" rx="8"/><text class="s14" x="20" y="54">서버 모드 검색</text><text class="s13m" x="20" y="76" font-size="12">① 서버 캐시 → ② 확장 캐시</text><text class="s13m" x="20" y="96" font-size="12">→ 둘 다 없으면 도서관 부름</text>
+<rect class="bx" x="320" y="20" width="260" height="70" rx="8"/><text class="s14" x="330" y="44">서버 캐시 1,000칸</text><text class="s13m" x="330" y="66" font-size="12">서버가 받은 값만 (밀려나지 않음)</text>
+<rect class="bxok" x="320" y="110" width="260" height="70" rx="8"/><text class="s14" x="330" y="134">확장 캐시 1,000칸 (새로)</text><text class="s13m" x="330" y="156" font-size="12">확장이 올린 값만, 넘치면 확장 칸끼리 밀림</text>
+<rect class="bxok" x="640" y="110" width="250" height="70" rx="8"/><text class="s14" x="650" y="134">확장 모드 검색</text><text class="s13m" x="650" y="156" font-size="12">읽지 않음, 넣기만(#9 결정)</text>
+<path d="M260 60 H320" class="ar" marker-end="url(#ah9c)"/><path d="M260 90 L320 140" class="ar" marker-end="url(#ah9c)" stroke-dasharray="5 4"/><path d="M640 145 H580" class="ar" marker-end="url(#ah9c)"/>
+<text class="s13m" x="10" y="214">한 칸 = 해석된 결과(수 KB) → 확장 캐시 1,000칸 ≈ 수 MB</text>
+</svg><p class="cap">확장 값은 따로 둔 캐시에만 들어가 서버 값을 밀어내지 않고, 서버 모드는 두 캐시를 차례로 봅니다.</p></div>
 <p class="concl">[안] 확장이 넣는 칸은 <b>따로 둔 캐시(최대 1,000칸)</b>에 넣습니다. 서버 모드는 서버 칸을 먼저 보고 없으면 확장 칸을 봅니다. 그러면 확장이 아무리 많이 넣어도 서버 칸은 밀려나지 않습니다. 메모리는 칸당 해석 값(수 KB)이라 1,000칸 ≈ 수 MB.</p>
 <p class="alt">다른 선택: 지금처럼 함께 쓰고 캐시의 자동 판단(자주 쓰는 칸을 남김)과 IP 한도에 맡김. 코드가 줄지만 서버 칸이 밀릴 수 있습니다.</p>
 </div>
@@ -204,6 +314,17 @@ svg .ah{fill:var(--accent)}
 <div class="card item">
 <h2><span class="num">10</span>확장 값을 다시 넣어도<br>3분 만료를 늘리지 않기</h2>
 <p><b>어디서 생기나.</b> #9 결정에서 "확장 출처 값은 새 값으로 갱신"이라고 적었습니다. 그런데 캐시는 "쓴 뒤 3분" 만료라, 갱신할 때마다 만료가 다시 3분 뒤로 밀립니다. 공격자가 2분마다 같은 가짜를 다시 올리면 가짜가 <b>끝없이</b> 남고, 서버 모드는 캐시가 맞으면 도서관을 부르지 않아 진짜 값이 들어올 틈도 없습니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 200" role="img" aria-label="만료 연장과 고정">
+<text class="s14" x="10" y="22">가짜 값을 2분마다 다시 올리면</text>
+<line x1="150" y1="44" x2="880" y2="44" stroke="var(--line)" stroke-width="2"/>
+<text class="s13m" x="150" y="38">0분</text><text class="s13m" x="300" y="38">2분</text><text class="s13m" x="450" y="38">4분</text><text class="s13m" x="600" y="38">6분</text><text class="s13m" x="750" y="38">8분</text>
+<text class="s13" x="10" y="82">만료 연장(지금 글)</text>
+<rect x="150" y="68" width="730" height="22" rx="4" fill="var(--no-bg)" stroke="var(--no)"/><text class="s13 sred" x="160" y="84">가짜가 계속 남음 (넣을 때마다 3분 다시 시작)</text>
+<text class="s13" x="10" y="132">만료 고정(제안)</text>
+<rect x="150" y="118" width="225" height="22" rx="4" fill="var(--no-bg)" stroke="var(--no)"/><text class="s13" x="160" y="134">가짜 (최대 3분)</text>
+<rect x="375" y="118" width="505" height="22" rx="4" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="385" y="134">3분 뒤 만료 → 서버가 도서관을 다시 불러 진짜 값</text>
+<text class="s13m" x="10" y="180">값마다 "처음 넣은 시각 + 3분"을 들고 있고, 다시 넣어도 이 시각은 바뀌지 않음</text>
+</svg><p class="cap">만료를 처음 시각에 고정하면 어떤 값도 3분을 넘지 못합니다.</p></div>
 <p class="concl">[안] 확장 값은 갱신하되 만료는 <b>처음 넣은 시각 + 3분으로 고정</b>합니다(값마다 만료 시각을 들고 있음). 그러면 어떤 값도 3분 넘게 살지 못하고, 3분 뒤 서버 모드가 도서관을 다시 부릅니다.</p>
 <p class="alt">다른 선택: 확장 값은 갱신하지 않음(빈 칸일 때만 넣음). 더 단순하지만 확장 사용자가 방금 본 새 값이 3분 동안 반영되지 않습니다.</p>
 </div>
@@ -221,6 +342,15 @@ svg .ah{fill:var(--accent)}
 <tr><td>계획 만료·지워짐(#18)·재시작</td><td>있음(오래 둔 탭, 새 검색)</td><td class="red">안 넣음</td></tr>
 <tr><td>IP 다름(와이파이↔LTE 전환)</td><td>있음(폰)</td><td class="red">안 넣음</td></tr>
 </table>
+<div class="fig wide"><svg viewBox="0 0 900 260" role="img" aria-label="올리기 실패 분류">
+<defs><marker id="ah11c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="var(--accent)"/></marker></defs>
+<rect class="bxa" x="10" y="100" width="170" height="60" rx="8"/><text class="s14" x="20" y="124">올린 페이지</text><text class="s13m" x="20" y="144" font-size="12">검사에서 걸림</text>
+<rect class="bxok" x="240" y="20" width="300" height="60" rx="8"/><text class="s13" x="250" y="42">해석 안 됨 · 상태≠200 · 시간 초과</text><text class="s13m" x="250" y="62" font-size="12">→ 200, 그 도서관만 실패 (이미 고침)</text>
+<rect class="bx" x="240" y="100" width="300" height="60" rx="8"/><text class="s13" x="250" y="122">만료 · 지워짐 · 재시작 · IP 바뀜</text><text class="s13m" x="250" y="142" font-size="12">→ 400, 잠금에 안 셈 (정상에서도 남)</text>
+<rect class="bxno" x="240" y="180" width="300" height="60" rx="8"/><text class="s13" x="250" y="202">모르는 번호 · 같은 쪽 두 번 · Origin 다름</text><text class="s13m" x="250" y="222" font-size="12">→ 400, 잠금에 셈 (정상에선 거의 없음)</text>
+<rect class="bxno" x="600" y="180" width="290" height="60" rx="8"/><text class="s13" x="610" y="202">1분 30번 넘으면</text><text class="s13m" x="610" y="222" font-size="12">그 IP 계획 만들기 10분 거절</text>
+<path d="M180 120 L240 50" class="ar" marker-end="url(#ah11c)"/><path d="M180 130 H240" class="ar" marker-end="url(#ah11c)"/><path d="M180 140 L240 210" class="ar" marker-end="url(#ah11c)"/><path d="M540 210 H600" class="ar" marker-end="url(#ah11c)"/>
+</svg><p class="cap">실패를 셋으로 나누고, 공격에서만 나는 셋째만 IP 잠금에 셉니다.</p></div>
 <p class="concl">[안] 잠금에는 <b>모르는 계획 번호·같은 쪽 두 번·Origin 다름</b>만 셉니다. 계획 만료·지워짐·IP 다름은 400만 주고 세지 않습니다(화면은 남은 줄을 확인 못 함으로).</p>
 <p class="alt">다른 선택: 모든 400을 셈. 공격을 더 빨리 막지만 IP를 나눠 쓰는 곳의 정상 사용자가 막힐 수 있습니다.</p>
 </div>
@@ -228,6 +358,21 @@ svg .ah{fill:var(--accent)}
 <div class="card item">
 <h2><span class="num">12</span>확장이 부를 수 있는 호스트를<br>서버가 서명한 목록으로 묶을지</h2>
 <p><b>어디서 생기나.</b> 확장은 모든 사이트 권한을 가지고(범위 #6), 책첵 화면이 준 주소를 부릅니다. 이번 검토로 사설망·localhost·IP 주소·비표준 포트는 확장이 거절하도록 고쳤습니다. 그래도 <b>우리 사이트에 XSS가 생기면</b> 공격자가 사용자 브라우저와 IP로 아무 공개 사이트나 읽을 수 있습니다(로그인 쿠키는 안 보냄). 이를 더 막으려면 확장이 "도서관 호스트 목록"과 맞는 주소만 부르게 할 수 있습니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 270" role="img" aria-label="확장이 부를 수 있는 곳">
+<defs><marker id="ah12c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="var(--accent)"/></marker></defs>
+<rect class="bxno" x="10" y="20" width="200" height="60" rx="8"/><text class="s14" x="20" y="44">우리 사이트에 XSS</text><text class="s13m" x="20" y="64" font-size="12">(전제, 지금은 없음)</text>
+<rect class="bxok" x="270" y="20" width="200" height="60" rx="8"/><text class="s14" x="280" y="44">확장</text><text class="s13m" x="280" y="64" font-size="12">책첵이 준 주소를 부름</text>
+<path d="M210 50 H270" class="ar" marker-end="url(#ah12c)"/>
+<rect class="bx" x="530" y="10" width="360" height="40" rx="8"/><text class="s13" x="540" y="35">공유기·사내망 192.168.* · localhost</text>
+<rect class="bx" x="530" y="60" width="360" height="40" rx="8"/><text class="s13" x="540" y="85">아무 공개 사이트 (예: 다른 서비스)</text>
+<rect class="bx" x="530" y="110" width="360" height="40" rx="8"/><text class="s13" x="540" y="135">도서관 사이트 2,794곳</text>
+<path d="M470 45 H530" class="ar" marker-end="url(#ah12c)"/><path d="M470 55 L530 80" class="ar" marker-end="url(#ah12c)"/><path d="M470 65 L530 130" class="ar" marker-end="url(#ah12c)"/>
+<rect class="bx" x="10" y="170" width="880" height="90" rx="8"/>
+<text class="s14" x="20" y="192">누가 막나</text>
+<text class="s13" x="20" y="214">공유기·사내망·localhost — <tspan class="sok">기본 거르기(이미 고침)가 막음</tspan></text>
+<text class="s13" x="20" y="236">아무 공개 사이트 — <tspan class="sred">기본 거르기로는 못 막음</tspan> → 서명 목록이 있어야 막음 (쿠키는 안 보내 로그인된 정보는 못 읽음)</text>
+<text class="s13" x="20" y="256">도서관 사이트 — 원래 하려는 일</text>
+</svg><p class="cap">기본 거르기로 내부망은 막혔고, 남은 것은 "XSS가 생겼을 때 공개 사이트를 읽는 것"입니다.</p></div>
 <p class="concl">[안] <b>이번에는 기본 거르기까지만</b>(위 표에서 고친 것), 서명 목록은 backlog. 이유: 지금 확장은 개발자 모드 시험용이고 웹스토어에 올리기 전(범위 #6), 도서관 호스트 2,794개를 서명·배포·갱신하는 일이 큽니다. 웹스토어에 올릴 때 다시 봅니다.</p>
 <p class="alt">다른 선택: 이번에 서명 목록까지 — 서버가 도서관 호스트 목록에 서명(Ed25519)해 주고, 확장은 안에 든 공개키로 확인한 목록의 호스트만 부름. XSS가 생겨도 도서관 사이트밖에 못 부르지만, 서명 키 관리·목록 갱신·확장 코드가 늘어납니다.</p>
 </div>
@@ -235,6 +380,15 @@ svg .ah{fill:var(--accent)}
 <div class="card item">
 <h2><span class="num">13</span>「더 보기」 계획 주소를<br>도서관 호출 구역 밖으로</h2>
 <p><b>어디서 생기나.</b> 「더 보기」 계획 주소(`/api/v1/availability/libraries/{id}/ebooks/plans`)는 이름이 `/api/v1/availability/`로 시작해, 지금 nginx 설정상 <b>도서관 호출 구역</b>(IP당 1분 30번, 로봇 거절)에 들어갑니다. 계획은 도서관을 부르지 않는데 그 한도를 씁니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 230" role="img" aria-label="nginx 주소 갈래">
+<defs><marker id="ah13c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="var(--accent)"/></marker></defs>
+<rect class="bx" x="10" y="90" width="150" height="50" rx="8"/><text class="s14" x="20" y="120">들어온 요청</text>
+<rect class="bxok" x="220" y="20" width="330" height="50" rx="8"/><text class="s13" x="230" y="42">~ …/plans$ (정규식, 앞에 둠)</text><text class="s13m" x="230" y="60" font-size="12">세 계획 주소 → 계획 구역 60/분</text>
+<rect class="bx" x="220" y="90" width="330" height="50" rx="8"/><text class="s13" x="230" y="112">^~ /api/v1/availability/</text><text class="s13m" x="230" y="130" font-size="12">도서관 호출 구역 30/분 · 로봇 거절</text>
+<rect class="bx" x="220" y="160" width="330" height="50" rx="8"/><text class="s13" x="230" y="182">/api/v1/lookup-plans/ · /api/</text><text class="s13m" x="230" y="200" font-size="12">올리기 구역 · 일반 구역</text>
+<path d="M160 115 L220 45" class="ar" marker-end="url(#ah13c)"/><path d="M160 115 H220" class="ar" marker-end="url(#ah13c)"/><path d="M160 115 L220 185" class="ar" marker-end="url(#ah13c)"/>
+<rect class="bxa" x="600" y="20" width="290" height="190" rx="8"/><text class="s14" x="610" y="42">「더 보기」 계획 주소</text><text class="s13m" x="610" y="64" font-size="12">/api/v1/availability/libraries/</text><text class="s13m" x="610" y="80" font-size="12">  {id}/ebooks/plans</text><text class="s13m" x="610" y="106" font-size="12">지금 설정: 도서관 호출 구역에 걸림</text><text class="s13m" x="610" y="126" font-size="12">(이름이 availability로 시작)</text><text class="s13 sok" x="610" y="156" font-size="12">제안: 정규식이 먼저 잡아</text><text class="s13 sok" x="610" y="174" font-size="12">계획 구역으로</text>
+</svg><p class="cap">계획 주소 셋을 정규식 하나로 먼저 잡아, 「더 보기」 계획도 계획 한도만 받게 합니다.</p></div>
 <p class="concl">[안] 세 계획 주소(`…/ebook-searches/plans`, `…/book-availabilities/plans`, `…/ebooks/plans`)를 <b>정규식 location 하나로 묶어 계획 구역(#15)</b>에 둡니다. 도서관 호출 구역보다 앞에 둬서 「더 보기」 계획도 계획 한도만 받습니다.</p>
 <p class="alt">다른 선택: 그대로 두고 "「더 보기」 계획은 도서관 호출 한도에 셈"이라고 적기. 설정이 줄지만 확장 모드 「더 보기」가 서버 모드와 같은 한도를 씁니다.</p>
 </div>
@@ -260,6 +414,17 @@ svg .ah{fill:var(--accent)}
 <div class="card item">
 <h2><span class="num">15</span>계획 만들기 한도: 1분 60개, 몰아서 30<br>(앞 #3 다시 낸 값) + nginx에서</h2>
 <p><b>앞 페이지 #3에서 다시 낸 값입니다</b>("일반 사용자가 연타하면 1분 20개는 넘지 않을까"에 답해 60개로 올림). 검토에서 하나를 더했습니다: 이 한도를 서버 메모리의 IP별 카운터가 아니라 <b>nginx 계획 구역</b>에서 세면 앱 메모리가 0이고, #2처럼 변수로 둘 수 있습니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 240" role="img" aria-label="1분 동안 계획 수와 한도">
+<text class="s14" x="10" y="22">1분 동안 만드는 계획 수와 한도선</text>
+<line x1="120" y1="200" x2="880" y2="200" stroke="var(--line)"/><line x1="120" y1="40" x2="120" y2="200" stroke="var(--line)"/>
+<text class="s13m" x="90" y="204">0</text><text class="s13m" x="84" y="150">20</text><text class="s13m" x="84" y="97">40</text><text class="s13m" x="84" y="44">60</text>
+<line x1="120" y1="147" x2="880" y2="147" stroke="var(--warn)" stroke-dasharray="6 4"/><text class="s13" x="760" y="141" fill="var(--warn)">처음 안 20</text>
+<line x1="120" y1="40" x2="880" y2="40" stroke="var(--ok)" stroke-dasharray="6 4"/><text class="s13 sok" x="760" y="56">제안 60</text>
+<rect x="170" y="195" width="80" height="5" fill="var(--accent)"/><text class="s13m" x="150" y="222" font-size="12">보통 검색 2번</text>
+<rect x="330" y="173" width="80" height="27" fill="var(--accent)"/><text class="s13m" x="310" y="222" font-size="12">묶음 넘김 포함 10</text>
+<rect x="490" y="147" width="80" height="53" fill="var(--warn)"/><text class="s13m" x="476" y="222" font-size="12">엔터 연타 20</text>
+<rect x="650" y="94" width="80" height="106" fill="var(--warn)"/><text class="s13m" x="630" y="222" font-size="12">아주 빠른 연타 40</text>
+</svg><p class="cap">처음 안(20)은 엔터 연타에 닿고, 제안(60)은 사람 손으로는 거의 닿지 않습니다. 연타는 화면이 1초 안 같은 검색어를 무시해 더 줄입니다.</p></div>
 <p class="concl">[안] 세 계획 주소는 nginx 계획 구역 <code>chaekcheck_lookup_plans</code>에서 IP당 <b>1분 60개, 몰아서 30</b>(`LOOKUP_PLAN_PER_MIN`·`LOOKUP_PLAN_BURST` 변수). 화면은 같은 검색어 엔터를 1초 안에 다시 받으면 무시. 넘으면 지금 429 안내 줄.</p>
 <p class="alt">다른 선택: 처음 안(1분 20개) — 엔터 연타에 닿습니다. 서버 카운터에서 세기 — 앱 메모리를 조금 쓰고 변수 방식과 다릅니다.</p>
 </div>
@@ -267,6 +432,14 @@ svg .ah{fill:var(--accent)}
 <div class="card item">
 <h2><span class="num">16</span>확장이 못 여는 도서관은<br>그 도서관만 서버가 대신 (앞 #7)</h2>
 <p><b>앞 페이지 #7 그대로입니다</b>(검토에서 바뀐 것 없음, 리다이렉트하는 도서관도 시험 목록에 더함). 인계 전 프로토타입에서 확장이 `http://` 도서관(전주 등), 인증서가 빠진 도서관, 리다이렉트하는 도서관을 열지 못하면, 계획을 만들 때 그 도서관은 확장 주소 목록에서 빼고 서버가 직접 부른 결과를 함께 돌려줍니다(그때만 서버 자리 1개, 목록은 설정). 모두 열리면 이 규칙은 넣지 않습니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 180" role="img" aria-label="못 여는 도서관 갈래">
+<defs><marker id="ah16c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="var(--accent)"/></marker></defs>
+<rect class="bxa" x="10" y="60" width="200" height="60" rx="8"/><text class="s14" x="20" y="84">계획 만들기</text><text class="s13m" x="20" y="104" font-size="12">도서관 5곳</text>
+<rect class="bxok" x="290" y="20" width="300" height="60" rx="8"/><text class="s13" x="300" y="42">4곳 → 확장이 받아옴 (사용자 IP)</text><text class="s13m" x="300" y="62" font-size="12">서울교육청 · 부산 · 군산 · 경기</text>
+<rect class="bx" x="290" y="100" width="300" height="60" rx="8"/><text class="s13" x="300" y="122">전주(http:8095) → 서버가 대신</text><text class="s13m" x="300" y="142" font-size="12">설정 목록에 있는 곳만, 서버 자리 1개</text>
+<rect class="bx" x="650" y="60" width="240" height="60" rx="8"/><text class="s14" x="660" y="84">결과 목록</text><text class="s13m" x="660" y="104" font-size="12">5곳 모두 같은 카드로</text>
+<path d="M210 80 L290 50" class="ar" marker-end="url(#ah16c)"/><path d="M210 100 L290 130" class="ar" marker-end="url(#ah16c)"/><path d="M590 50 L650 80" class="ar" marker-end="url(#ah16c)"/><path d="M590 130 L650 100" class="ar" marker-end="url(#ah16c)"/>
+</svg><p class="cap">프로토타입에서 못 여는 곳이 나올 때만 그 도서관을 서버가 맡습니다.</p></div>
 <p class="concl">[안] 위 규칙을 설계에 "조건부"로 넣습니다.</p>
 <p class="alt">다른 선택: 못 여는 도서관은 확장 모드에서 「확인하지 못한 도서관」으로. 규칙이 하나 줄지만 그 도서관 결과를 확장 사용자는 영영 못 봅니다.</p>
 </div>
@@ -274,6 +447,16 @@ svg .ah{fill:var(--accent)}
 <div class="card item">
 <h2><span class="num">17</span>정해 둔 값들을 찾기 쉽게: dev에<br>"설정값 목록" 문서 하나 (앞 #11)</h2>
 <p><b>앞 페이지 #11 그대로입니다</b>("이런 정해진 값들을 문서화 구조를 잘 해서 AI나 사람이 잘 찾도록"). 이번 검토로 값이 더 늘었습니다(동시 해석 8, IP당 연결 6, 계획 무게 100,000, IP당 열린 계획 20, 확장 캐시 1,000칸, 잠금 카운터 50,000, items 100개·URL 2KB, 포트 예외 목록). dev에 `docs/maintenance/settings-index.md` 하나를 두고 값마다 한 줄(값 / 어디 있나 / 함께 바꿀 곳 / 왜 / 정한 plan 문서·ADR / 바꾸면 무엇을 다시 켜나), 값 옆 주석은 이 문서를 가리키고, 확장 상수는 `extension/config.js` 한 파일. 사이클 19 규칙 목록(ADR-0117)과 같은 방식.</p>
+<div class="fig wide"><svg viewBox="0 0 900 230" role="img" aria-label="설정값 목록 문서 구조">
+<defs><marker id="ah17c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="var(--accent)"/></marker></defs>
+<rect class="bxok" x="300" y="10" width="300" height="60" rx="8"/><text class="s14" x="310" y="34">dev docs/maintenance/settings-index.md</text><text class="s13m" x="310" y="54" font-size="12">값마다 한 줄 · AI·사람이 먼저 여는 곳</text>
+<rect class="bx" x="10" y="120" width="200" height="60" rx="8"/><text class="s13" x="20" y="142">application.yml</text><text class="s13m" x="20" y="162" font-size="12">동시 해석 · 무게 · 캐시</text>
+<rect class="bx" x="230" y="120" width="200" height="60" rx="8"/><text class="s13" x="240" y="142">deploy/prod/prod.env</text><text class="s13m" x="240" y="162" font-size="12">LOOKUP_* 변수</text>
+<rect class="bx" x="450" y="120" width="200" height="60" rx="8"/><text class="s13" x="460" y="142">nginx templates</text><text class="s13m" x="460" y="162" font-size="12">${LOOKUP_*} 자리</text>
+<rect class="bx" x="670" y="120" width="220" height="60" rx="8"/><text class="s13" x="680" y="142">extension/config.js</text><text class="s13m" x="680" y="162" font-size="12">동시 5 · 1초 · 상한 · 포트 예외</text>
+<path d="M450 70 L110 120" class="ar" marker-end="url(#ah17c)"/><path d="M450 70 L330 120" class="ar" marker-end="url(#ah17c)"/><path d="M450 70 L550 120" class="ar" marker-end="url(#ah17c)"/><path d="M450 70 L780 120" class="ar" marker-end="url(#ah17c)"/>
+<text class="s13m" x="10" y="212">한 줄 = 값 · 어디 · 함께 바꿀 곳 · 왜 · 정한 문서·ADR · 바꾸면 다시 켤 것. 값 옆 주석은 이 문서를 가리킴</text>
+</svg><p class="cap">값은 제자리에 두고, 문서 한 장이 모든 값을 가리킵니다.</p></div>
 <p class="concl">[안] 위대로 dev에 설정값 목록 문서를 둡니다.</p>
 <p class="alt">다른 선택: 사이클 19의 규칙 목록에 함께(문서 하나지만 수집 규칙과 운영 숫자가 섞임), 값 옆 주석만(흩어짐).</p>
 </div>
@@ -281,6 +464,15 @@ svg .ah{fill:var(--accent)}
 <div class="card item">
 <h2><span class="num">18</span>새 검색을 하면 앞 계획을 지움<br>(앞 #12)</h2>
 <p><b>앞 페이지 #12 그대로입니다</b>("한 사용자가 요청을 새로 보내면 이전의 계획은 없애도록"). 새 검색(첫 묶음)의 계획 요청에 앞 검색의 계획 번호를 함께 보내면(<code>replaces</code>) 서버가 그것을 지움 — 요청 IP가 만든 IP와 같을 때만, 같은 검색의 다음 묶음은 안 지움. 화면을 떠날 때도 마지막 계획을 닫기로 지움. 검토에서 더한 것: 지워진 계획으로 늦게 올라온 응답은 화면이 지금 계획 번호가 아니므로 버리고, 잠금 셈에도 넣지 않음(#11). #8의 "IP당 열린 계획 20"과 함께 쓰면 연타해도 계획이 쌓이지 않습니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 170" role="img" aria-label="새 검색이 앞 계획을 지움">
+<defs><marker id="ah18c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="var(--accent)"/></marker></defs>
+<rect class="bxno" x="10" y="30" width="250" height="56" rx="8"/><text class="s13" x="20" y="52">「백만장자」 계획 p_1</text><text class="s13m" x="20" y="72" font-size="12">지워짐</text>
+<rect class="bxno" x="320" y="30" width="250" height="56" rx="8"/><text class="s13" x="330" y="52">「백만장자 마인드」 p_2</text><text class="s13m" x="330" y="72" font-size="12">지워짐</text>
+<rect class="bxok" x="630" y="30" width="260" height="56" rx="8"/><text class="s13" x="640" y="52">「백만장자 마인드 율리시즈」 p_3</text><text class="s13m" x="640" y="72" font-size="12">남음 (지금 쓰는 것)</text>
+<path d="M320 58 H260" class="ar" marker-end="url(#ah18c)"/><text class="s13m" x="268" y="106" font-size="12">replaces=p_1</text>
+<path d="M630 58 H570" class="ar" marker-end="url(#ah18c)"/><text class="s13m" x="578" y="106" font-size="12">replaces=p_2</text>
+<text class="s13m" x="10" y="140">같은 IP가 만든 것만 지움 · 같은 검색의 다음 묶음은 안 지움 · 화면 떠날 때 마지막 계획도 닫기로 지움</text>
+</svg><p class="cap">새 검색이 바로 앞 계획 번호를 알려 주면 서버가 그것만 지웁니다.</p></div>
 <p class="concl">[안] 위대로 새 검색이 앞 계획을 지웁니다.</p>
 <p class="alt">다른 선택: 같은 IP의 앞 계획을 모두 지움 — 번호를 안 보내도 되지만 IP를 함께 쓰는 집·회사에서 옆 사람 검색을 끊습니다. 지우지 않음 — #8 상한에 맡김.</p>
 </div>
@@ -288,6 +480,14 @@ svg .ah{fill:var(--accent)}
 <div class="card item">
 <h2><span class="num">19</span>이 문서대로 다음 단계로 (앞 #8)</h2>
 <p><b>무엇을 묻나.</b> 위 1~18이 정해지면 설계 문서(design-delta.md)가 끝납니다. 다음은 설계 검토(design-reviewer) → <code>docs/current/</code> 반영 → dev 인계서이고, 반영과 인계는 규칙대로 사이클 17 회고 뒤에 합니다. 이번 세 관점 검토로 dev가 인계 전에 재야 할 것(4MB 해석의 힙 최대치, SSE 끊김을 알아채는 시점)과 시험할 것(확장 프로토타입)이 확인 필요 표에 들어갔습니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 130" role="img" aria-label="남은 단계">
+<defs><marker id="ah19c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="var(--accent)"/></marker></defs>
+<rect class="bxok" x="10" y="30" width="190" height="64" rx="8"/><text class="s14" x="20" y="54">이 페이지 결정</text><text class="s13m" x="20" y="76" font-size="12">19개</text>
+<rect class="bxok" x="230" y="30" width="190" height="64" rx="8"/><text class="s14" x="240" y="54">설계 검토</text><text class="s13m" x="240" y="76" font-size="12">design-reviewer, 지금</text>
+<rect class="bx" x="450" y="30" width="190" height="64" rx="8"/><text class="s14" x="460" y="54">docs/current 반영</text><text class="s13m" x="460" y="76" font-size="12">17 회고 뒤</text>
+<rect class="bx" x="670" y="30" width="220" height="64" rx="8"/><text class="s14" x="680" y="54">인계서 + 프로토타입</text><text class="s13m" x="680" y="76" font-size="12">17 회고 뒤 → dev (21 → 17 → 20)</text>
+<path d="M200 62 H230" class="ar" marker-end="url(#ah19c)"/><path d="M420 62 H450" class="ar" marker-end="url(#ah19c)"/><path d="M640 62 H670" class="ar" marker-end="url(#ah19c)"/>
+</svg><p class="cap">결정과 검토는 지금, 반영과 인계는 사이클 17 회고 뒤.</p></div>
 <p class="concl">[안] 이 문서대로 다음 단계로 갑니다. 지금은 설계 검토만 돌리고, 반영과 인계서는 사이클 17 회고 뒤.</p>
 </div>
 
