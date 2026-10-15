@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>이동진 추천도서 화면과 보유율</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.gist.ok{background:var(--ok-bg)}.gist.warn{background:var(--warn-bg)}.gist.no{background:var(--no-bg)}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+figure{margin:6px 0 14px}figure svg{width:100%;height:auto;display:block}
+figcaption{color:var(--muted);font-size:17px;margin-top:6px}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.tw{overflow-x:auto}
+ul.ic{list-style:none;margin:0;padding:0}
+ul.ic li{display:flex;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
+ul.ic li:first-child{border-top:none}
+ul.ic svg{flex:0 0 28px;width:28px;height:28px;margin-top:4px;stroke:var(--accent);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.s{display:block;color:var(--muted);font-size:17px}
+h4{font-size:19px;margin:18px 0 4px;color:var(--muted)}
+.tag{font-size:15px;font-weight:700;border-radius:6px;padding:1px 7px;white-space:nowrap}
+.t-ok{background:var(--ok-bg);color:var(--ok)}.t-warn{background:var(--warn-bg);color:var(--warn)}.t-no{background:var(--no-bg);color:var(--no)}
+
+.dev{border:1px solid var(--line);border-radius:14px;background:var(--bg);overflow:hidden;margin:6px auto 4px}
+.dev.pc{max-width:860px}.dev.tab{max-width:560px}.dev.phone{max-width:330px}
+.bar{display:flex;gap:14px;align-items:center;padding:10px 16px;background:var(--card);border-bottom:1px solid var(--line);font-size:15px}
+.bar b{font-size:18px}.bar span{color:var(--muted)}.bar .new{color:var(--accent);font-weight:700}.bar i{margin-left:auto;font-style:normal;color:var(--muted)}
+.body{position:relative;padding:18px 12px 64px}
+.pn{width:fit-content;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 18px 12px}
+.ph{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:8px}
+.ph strong{font-size:22px}.ph span{color:var(--muted);font-size:14px}.ph span b{color:var(--accent)}
+.pg{display:flex;align-items:center;gap:12px}
+.ar{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--code-bg);color:var(--muted);font-style:normal;font-size:13px}
+.ar.sp{background:none}
+.gr{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;list-style:none;margin:0;padding:0;width:var(--gw,330px)}
+.gr li{min-width:0}
+.cv{aspect-ratio:2/3;border-radius:8px;background:var(--accent-bg);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;padding:6px;text-align:center;font-size:13px;line-height:1.35;font-weight:700;color:var(--text)}
+.cv[data-off]{opacity:.32;filter:grayscale(.5)}
+.gr em{display:block;text-align:center;font-style:normal;font-size:12px;color:var(--muted);margin-top:2px}
+.gr .blank{aspect-ratio:2/3}
+.dt{display:flex;justify-content:center;gap:5px;margin-top:10px}.dt b{width:6px;height:6px;border-radius:9px;background:var(--line)}.dt b.on{width:18px;background:var(--accent)}
+.pill{position:absolute;left:50%;bottom:14px;translate:-50% 0;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 16px;font-size:15px;font-weight:800;box-shadow:0 4px 14px rgba(0,0,0,.12);white-space:nowrap}
+.dev.tab .gr{--gw:300px}.dev.phone .gr{--gw:262px;gap:6px}.dev.phone .pg{position:relative;gap:0}.dev.phone .ar{position:absolute;top:45%;z-index:1;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.dev.phone .ar:first-child{left:-12px}.dev.phone .ar:last-child{right:-12px}.dev.phone .ar.sp{display:none}.dev.phone .pn{padding:12px 8px 10px}.dev.phone .cv{font-size:11px;padding:3px}
+.cap{color:var(--muted);font-size:17px;text-align:center;margin:0 0 22px}
+@media (max-width:700px){.dev .gr,.dev.tab .gr{--gw:190px;gap:5px}.dev .cv{font-size:10px;padding:2px}.dev .pg{gap:6px}.dev .ar{width:26px;height:26px}.dev .pn{padding:10px}.dev .ph strong{font-size:18px}.dev.phone .gr{--gw:230px}.dev .bar{gap:8px;font-size:13px;padding:8px 10px}.dev .body{padding:14px 6px 58px}}
+</style>
+</head>
+
+<body>
+<main class="doc">
+<p class="lead">이동진 추천도서 44권 가운데 36권(82%)은<br>지금 모은 도서관에 전자책이 있습니다.</p>
+<p class="sub">아래에는 이 책들을 사서추천도서 화면과 같은 모양으로, 분야별로 최근 추천이 앞에 오게 그렸습니다. 전자책 목록은 2026-09-29~10-11에 모은 도서관 2,642곳 기준입니다.</p>
+<section class="card"><h2><span class="num">1</span>모은 도서관에 몇 권이나 있나</h2>
+<div class="gist ok">44권 중 36권(82%)이 한 곳 이상의 도서관에 전자책으로 있습니다. 없는 8권은 모두 2024년 이후에 추천된 책입니다.</div>
+<p>책첵이 모은 전자책 목록에서 사서추천도서와 같은 방법으로 찾았습니다. 먼저 ISBN이 같은 책을 찾고, 없으면 제목과 저자가 같은 책을 찾았습니다. 같은 책이 목록에 여러 줄로 나뉘어 있으면 그 줄들의 도서관을 합쳐 셌습니다.</p>
+<table><tr><th>가진 도서관 수</th><th>권수</th><th>책</th></tr>
+<tr><td>300곳 이상</td><td>13권</td><td>편안함의 습격 513, 경험의 멸종 503, 나는 메트로폴리탄 미술관의 경비원입니다 423, 세상은 이야기로 만들어졌다 362, 이주하는 인류 354, 악마와 함께 춤을 353, 컬처, 문화로 쓴 세계사 350, 맡겨진 소녀 348, 흐르는 강물처럼 346, 우리가 작별 인사를 할 때마다 326, 아주 희미한 빛으로도 303, 안녕이라 그랬어 302, 한국이란 무엇인가 301</td></tr>
+<tr><td>100~299곳</td><td>18권</td><td>우연은 비켜 가지 않는다 289, 부처스 크로싱 272, 세계를 움직인 열 가지 프레임 268, 두 사람의 인터내셔널 263, 지도로 보아야 보인다 257, 컬트 228, 페이크와 팩트 219, 대온실 수리 보고서 217, 소란한 속삭임 197, 그래서 우리는 음악을 듣는다 170, 왜의 쓸모 147, 페이머스 134, 그녀를 지키다 129, 소비 본능 127, 역사는 어떻게 진보하고 왜 퇴보하는가 124, 예술 도둑 118, 트러스트 114, 부동산은 어떻게 권력이 되었나 110</td></tr>
+<tr><td>100곳 미만</td><td>5권</td><td>인간 제국 쇠망사 54, 히스토리아 비테이 53, 내가 알던 사람 25, 인터메초 11, 외계인 자서전 2</td></tr>
+<tr><td>없음</td><td>8권</td><td>철학은 날씨를 바꾼다, 센세이셔널, 이것이 새입니까?, 그 개와 혁명, 영원에 빚을 져서, 마음 깊은 숨, 괴테는 모든 것을 말했다, 가족이라는 사치</td></tr></table>
+<p class="alt">숫자는 그 책을 전자책으로 가진 도서관 수입니다. 있는 36권의 가운데값은 242곳이고, 가장 많은 「편안함의 습격」도 2,642곳 중 513곳(19%)입니다.</p>
+<p class="alt">없는 8권 가운데 「마음 깊은 숨」은 실린 책을 몰라서 찾을 수 없었습니다. 이 책을 빼고 세면 43권 중 36권(84%)입니다. 「괴테는 모든 것을 말했다」는 「괴테는 모든 것을 말한다」라는 비슷한 제목이 있었지만 다른 저자의 다른 책이라 없음으로 셌습니다.</p></section>
+<section class="card"><h2><span class="num">2</span>사서추천도서처럼 보이면</h2>
+<div class="gist">분야 하나가 한 화면입니다. 표지 9개씩 보이고 ◀ ▶로 넘기며, 아래로 넘기면 다음 분야가 나옵니다. 지금 사서추천도서 화면과 같습니다.</div>
+<p>책은 최근에 추천한 책이 앞에 옵니다. 2026년 3월 「인터메초」가 맨 앞, 2023년 12월 올해의 책이 맨 뒤입니다. 흐린 표지는 검색하는 도서관에 전자책이 없는 책입니다. 사서추천도서와 같은 규칙이고, 그림에서는 모은 도서관 어디에도 없는 책을 흐리게 했습니다.</p>
+<div class="dev pc"><div class="bar"><b>책첵</b><span>사서추천도서</span><span class="new">이동진 추천</span><i>로그인</i></div><div class="body"><div class="pn"><div class="ph"><strong>외국 소설</strong><span><b>1 - 9</b> / 9</span></div><div class="pg"><i class="ar sp"></i><ol class="gr"><li><div class="cv"><span>인터메초</span></div><em>26.03</em></li><li><div class="cv" data-off=""><span>괴테는 모든 것을 말했다</span></div><em>25.11</em></li><li><div class="cv"><span>외계인 자서전</span></div><em>25.08</em></li><li><div class="cv"><span>그녀를 지키다</span></div><em>25.05</em></li><li><div class="cv"><span>우연은 비켜 가지 않는다</span></div><em>24.12</em></li><li><div class="cv"><span>흐르는 강물처럼</span></div><em>24.03</em></li><li><div class="cv"><span>트러스트</span></div><em>23.12</em></li><li><div class="cv"><span>맡겨진 소녀</span></div><em>23.12</em></li><li><div class="cv"><span>부처스 크로싱</span></div><em>23.12</em></li></ol><i class="ar sp"></i></div><div class="dt"><b class=on></b></div></div><div class="pill">외국 소설 &#9662;</div></div></div><p class="cap">PC: 외국 소설 9권. 「괴테는 모든 것을 말했다」는 모은 도서관에 없어 흐립니다.</p>
+<div class="dev tab"><div class="bar"><b>책첵</b><span>사서추천도서</span><span class="new">이동진 추천</span><i>로그인</i></div><div class="body"><div class="pn"><div class="ph"><strong>전체</strong><span><b>1 - 9</b> / 44</span></div><div class="pg"><i class="ar sp"></i><ol class="gr"><li><div class="cv"><span>히스토리아 비테이</span></div><em>26.06</em></li><li><div class="cv" data-off=""><span>가족이라는 사치</span></div><em>26.04</em></li><li><div class="cv"><span>인터메초</span></div><em>26.03</em></li><li><div class="cv"><span>부동산은 어떻게 권력이 되었나</span></div><em>26.02</em></li><li><div class="cv"><span>인간 제국 쇠망사</span></div><em>26.01</em></li><li><div class="cv"><span>안녕이라 그랬어</span></div><em>25.12</em></li><li><div class="cv"><span>한국이란 무엇인가</span></div><em>25.12</em></li><li><div class="cv" data-off=""><span>괴테는 모든 것을 말했다</span></div><em>25.11</em></li><li><div class="cv"><span>역사는 어떻게 진보하고 왜 퇴보하는가</span></div><em>25.10</em></li></ol><i class="ar">&#9654;</i></div><div class="dt"><b class=on></b><b></b><b></b><b></b><b></b></div></div><div class="pill">전체 &#9662;</div></div></div><p class="cap">태블릿: 맨 위 「전체」 첫 9권. 44권이라 다섯 쪽입니다.</p>
+<div class="dev phone"><div class="bar"><b>책첵</b><span>사서추천도서</span><span class="new">이동진 추천</span><i>로그인</i></div><div class="body"><div class="pn"><div class="ph"><strong>한국 소설</strong><span><b>1 - 8</b> / 8</span></div><div class="pg"><i class="ar sp"></i><ol class="gr"><li><div class="cv"><span>안녕이라 그랬어</span></div><em>25.12</em></li><li><div class="cv" data-off=""><span>그 개와 혁명</span></div><em>25.03</em></li><li><div class="cv" data-off=""><span>영원에 빚을 져서</span></div><em>25.03</em></li><li><div class="cv"><span>소란한 속삭임</span></div><em>25.03</em></li><li><div class="cv" data-off=""><span>마음 깊은 숨</span></div><em>25.03</em></li><li><div class="cv"><span>대온실 수리 보고서</span></div><em>24.11</em></li><li><div class="cv"><span>두 사람의 인터내셔널</span></div><em>24.05</em></li><li><div class="cv"><span>아주 희미한 빛으로도</span></div><em>23.12</em></li><li class="blank"></li></ol><i class="ar sp"></i></div><div class="dt"><b class=on></b></div></div><div class="pill">한국 소설 &#9662;</div></div></div><p class="cap">폰: 한국 소설 8권. 예소연의 세 권은 모은 도서관에 없어 흐립니다.</p>
+<p class="alt">그림은 위치와 순서만 보여 줍니다. 실제 화면에는 회색 칸 대신 책 표지가 들어갑니다. 머리말의 「이동진 추천」 링크는 들어가는 곳을 보이려고 넣은 자리일 뿐 이름과 위치는 정하지 않았습니다.</p></section>
+<section class="card"><h2><span class="num">3</span>사서추천도서와 다르게 할 곳</h2>
+<div class="gist warn">두 군데만 사서추천도서와 다르게 하자고 제안합니다.</div>
+<div class="item"><h3>표지 아래에 추천한 달을 작게 표시 [안]</h3><p>그림의 표지 아래 "26.03"처럼 추천한 연·월을 적습니다. 최신순이라는 것이 보이고, 영상 날짜를 찾기 쉬워집니다.</p><p class="alt">다른 선택: 사서추천도서처럼 표지만 둡니다. 화면은 같아지지만 언제 추천했는지는 책을 눌러야 압니다.</p></div>
+<div class="item"><h3>분류 목록은 「전체」 다음에 문학 3개, 비문학 6개 순서 [안]</h3><p>아래 가운데 [분야 ▾]를 누르면 전체, 한국 소설, 외국 소설, 그래픽노블, 에세이, 인문·철학, 역사, 사회·정치, 경제·자기계발, 과학·의학 순으로 나옵니다.</p><p class="alt">다른 선택: 권수가 많은 분야부터 둡니다. 새 책이 들어올 때마다 순서가 바뀔 수 있습니다.</p></div>
+<p>책 하나를 누르면 열리는 창에는 사서추천도서와 달리 "이동진 평론가가 「파이아키아」 영상에서 추천 (2026년 3월)"과 영상 링크가 들어가야 합니다. 화면 맨 아래 출처 줄에는 "책첵은 이동진 평론가·파이아키아와 관계가 없어요"가 들어갑니다. 둘 다 앞서 정하신 것입니다.</p></section>
+<section class="card"><h2><span class="num">4</span>분야별 순서 전체</h2>
+<div class="gist">화면에 들어갈 순서 그대로입니다. 왼쪽이 앞입니다.</div>
+<div class="tw"><table><tr><th>분야</th><th>책 (추천 연·월, 가진 도서관 수)</th></tr>
+<tr><td>한국 소설 8권</td><td>안녕이라 그랬어 (25.12, 302), <span style="opacity:.5">그 개와 혁명 (25.03, 없음)</span>, <span style="opacity:.5">영원에 빚을 져서 (25.03, 없음)</span>, 소란한 속삭임 (25.03, 197), <span style="opacity:.5">마음 깊은 숨 (25.03, 없음)</span>, 대온실 수리 보고서 (24.11, 217), 두 사람의 인터내셔널 (24.05, 263), 아주 희미한 빛으로도 (23.12, 303)</td></tr>
+<tr><td>외국 소설 9권</td><td>인터메초 (26.03, 11), <span style="opacity:.5">괴테는 모든 것을 말했다 (25.11, 없음)</span>, 외계인 자서전 (25.08, 2), 그녀를 지키다 (25.05, 129), 우연은 비켜 가지 않는다 (24.12, 289), 흐르는 강물처럼 (24.03, 346), 트러스트 (23.12, 114), 맡겨진 소녀 (23.12, 348), 부처스 크로싱 (23.12, 272)</td></tr>
+<tr><td>그래픽노블 1권</td><td><span style="opacity:.5">이것이 새입니까? (25.02, 없음)</span></td></tr>
+<tr><td>에세이 4권</td><td>예술 도둑 (24.09, 118), 우리가 작별 인사를 할 때마다 (24.01, 326), 그래서 우리는 음악을 듣는다 (24.01, 170), 나는 메트로폴리탄 미술관의 경비원입니다 (23.12, 423)</td></tr>
+<tr><td>인문·철학 7권</td><td>한국이란 무엇인가 (25.12, 301), 왜의 쓸모 (25.09, 147), 편안함의 습격 (25.07, 513), 경험의 멸종 (25.06, 503), 악마와 함께 춤을 (25.01, 353), <span style="opacity:.5">철학은 날씨를 바꾼다 (24.02, 없음)</span>, 세상은 이야기로 만들어졌다 (23.12, 362)</td></tr>
+<tr><td>역사 4권</td><td>역사는 어떻게 진보하고 왜 퇴보하는가 (25.10, 124), 세계를 움직인 열 가지 프레임 (24.06, 268), 컬처, 문화로 쓴 세계사 (24.02, 350), 이주하는 인류 (23.12, 354)</td></tr>
+<tr><td>사회·정치 4권</td><td><span style="opacity:.5">가족이라는 사치 (26.04, 없음)</span>, 페이크와 팩트 (24.12, 219), 지도로 보아야 보인다 (24.08, 257), 컬트 (24.04, 228)</td></tr>
+<tr><td>경제·자기계발 3권</td><td>부동산은 어떻게 권력이 되었나 (26.02, 110), 페이머스 (25.04, 134), 소비 본능 (24.07, 127)</td></tr>
+<tr><td>과학·의학 4권</td><td>히스토리아 비테이 (26.06, 53), 인간 제국 쇠망사 (26.01, 54), 내가 알던 사람 (24.10, 25), <span style="opacity:.5">센세이셔널 (24.03, 없음)</span></td></tr>
+</table></div></section>
+<p class="foot">원본: docs/research/leedongjin-picks/picks.md 8절 (2026-10-15). 화면 바탕: dev web/src/features/picks (PicksPage, CategorySection), 2026-10-15 확인. 보유 수: dev 로컬 DB catalog.book, 2026-10-15 조회.</p>
+</main></body></html>
