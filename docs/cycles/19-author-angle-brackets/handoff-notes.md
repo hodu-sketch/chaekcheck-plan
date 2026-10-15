@@ -39,3 +39,9 @@
 - 따로 하는 작은 일 (사이클 15 쪽): `usagelog.library_response_daily`에 칸 `cached_count integer NOT NULL DEFAULT 0 CHECK (cached_count >= 0)`를 더하고, 3분 캐시에서 답을 꺼낼 때마다 1(응답 시간·성공/실패 수에는 넣지 않음). 지금은 `BatchRunner.answered`가 캐시 답이면 바로 빠짐(dev `BatchRunner.java` 334~338행), 도서관별 더 보기(`LibraryEbookController.java` 96행)도 같음. 사용 기록 쪽 새 변경 파일(지금 master 마지막 `usagelog/001` 뒤) [확정] (사용자 제안 2026-10-15, 모양·때 사용자 승인 2026-10-15 회고 이어서 #2). 칸 이름은 [안]
 - dev 문서 고칠 것 [확정] (사용자 승인, 2026-10-15, 확인 결과 결정 #9): dev `docs/maintenance/3-import.md` 32·34·177행과 `backend/build.gradle` 74행의 가져오기 메모리 안내 `-PbootRunXmx=6g` → 기본 `compact`는 2GB로 충분(6GB는 `objects` 방식만, ADR-0105). `3-import.md` 41행과 `CatalogImportRunner` 오류 문구의 "약 2,394곳" → 2,370 (가져오기 기록 11번, dev `plan-feedback.md` 4073행)
 
+## dev 18 마무리 알림 (2026-10-15)
+
+- dev가 원래 DB(5432)에 같은 사본(2026-10-12)으로 가져오기를 돌리는 중 → 현대제철 241권이 원래 DB에도 들어감. 19 다시 가져오기는 그 위에서. 끝나면 dev 18이 결과를 다시 알림
+- → 19 비교 기준: 이 원래 DB 가져오기 결과(같은 사본·같은 도서관 목록·18 B 코드)를 그대로 기준으로 씀 (확인 결과 결정 #8 "18 B 가져오기 결과"와 같은 뜻, 복사본 대신 원래 DB)
+- 사이클 18 C 운영 반영은 backlog로 (사용자 지시). 19의 운영 반영(첫 배포 전)과 함께 끝날 수 있음
+
