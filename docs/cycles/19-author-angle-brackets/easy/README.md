@@ -18,3 +18,4 @@
 | [2026-10-15-adr-drafts.html](2026-10-15-adr-drafts.html) | ADR-0113~0116 초안 확인 | 설계 결정들 | 모두 정함 (2026-10-15) |
 | [2026-10-15-design-followup-decisions.html](2026-10-15-design-followup-decisions.html) | 설계 이어서: ADR-0117 방향 지침, 추천 목록 맞춘 수, 21 먼저에 따른 일정 | ADR-0117 초안, `../from-cycle-21-matching.md` | 모두 정함 (2026-10-15, #3 미승인 → 21과 나란히 개발) |
 | [2026-10-15-design-delta-review.html](2026-10-15-design-delta-review.html) | design-delta 한 장 요약, 마무리로 넘어갈지 | `../design-delta.md` | 모두 정함 (2026-10-15) |
+| [2026-10-16-handoff-decisions.html](2026-10-16-handoff-decisions.html) | dev 인계서 검토 3개: 인계서대로 넘김, 21이 10/17까지 없으면 19만 반영, 반영 중 확인은 8081·db-ops | `../handoff.md` | 모두 승인 (2026-10-16) |

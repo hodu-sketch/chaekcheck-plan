@@ -1,620 +1,608 @@
-# 개발 인계서: 사이클 15 사용자 행동 기록 (usagelog)
+# 개발 인계서: 사이클 19 같은 책을 갈라 놓는 저자·제목 표기 정리
 
-- 기준 문서: plan `docs/cycles/15-usage-log/design-delta.md` (특히 "부를 자리", dev main 2026-10-14 확인: 사이클 12·13·14 합친 뒤)
-- ADR: 0096, 0097, 0102 (모두 Accepted)
-- 승인: 이 인계서대로 dev에 넘김 [확정] (사용자 승인, 2026-10-14, `easy/2026-10-14-handoff-review.html` #1)
-- **dev 순서** [확정] (사용자 승인, 2026-10-14, `easy/2026-10-14-handoff-review.html` #4): 사이클 15는 지금 시작하고, 사이클 19(꺾쇠 저자 표기, `docs/cycles/19-author-angle-brackets`)는 명세·인계가 끝나는 대로 이어서 합니다. 둘 다 사이클 17 첫 배포 전에 들어갑니다. 19가 책 목록을 다시 가져올 때 15 개발과 겹치면 DB 묶음을 따로 둡니다
+- 기준 문서: plan `docs/cycles/19-author-angle-brackets/design-delta.md`. 구현은 이 문서를 따릅니다. `architect-proposal.md`는 결정 기록(결정 결과 표 11개)입니다
+- ADR: 0113, 0114, 0115, 0116, 0117 (모두 Accepted, 2026-10-15). 그대로 따르는 ADR: 0069, 0078, 0079·0105, 0085
+- 승인: 사용자 승인 (2026-10-16, [인계서 검토](easy/2026-10-16-handoff-decisions.html) #1~#3)
+- 사용자 당부 (인계서 검토, 2026-10-16): "이거 다른 ai가 수집이거 잘 하도록 문서 구조화 스크립트 잘 파악할 수 있는거에 주의하고 가능하면 실제 서비스되는 서버의 부담은 줄이고 가져오기할 때 잘하고 그랬으면 해". 그래서 11단계 규칙 목록 문서·상수 주석·시작 점검과 9단계 검증 스크립트는 다른 Claude 세션이 문서만 읽고 찾아 돌릴 수 있게 씁니다(문서에서 스크립트 경로·입력·판정 뜻을 바로 찾게). 묶기·정리는 모두 내 PC 가져오기(`export`)에서 하고, 운영 쪽에는 `apply`(복원·색인·바꿔 끼우기)와 사용 기록 칸 하나만 더합니다(ADR-0078)
+- 이 사이클은 화면 구성을 바꾸지 않습니다. 저자 칸 글과 모이는 줄 수만 바뀝니다 [확정] (flow.md). API 모양도 그대로입니다. 표 변경은 `usagelog.library_response_daily.cached_count` 칸 하나뿐입니다 [확정] (design-delta)
 
-## 시작 조건
+## 일정
 
-- **dev main에 사이클 12·13·14가 합쳐진 상태에서 시작합니다** [확정] (design-delta "부를 자리"는 이 상태를 기준으로 확인했습니다). 브랜치 이름 `cycle-15-usage-log` [안]
-- 시작할 때 아래 둘을 다시 봅니다. 줄 번호는 2026-10-14 기준이라 바뀌었을 수 있습니다
-  - master 맨 끝 include. plan 읽기(2026-10-14)로는 `db.changelog-master.yaml:92-95` `# cycle 14` + `picks/001-picks-schema.yaml`
-  - "부를 자리" 표의 각 파일과 줄
-- **사이클 16(공지·처리방침)도 Liquibase changelog를 하나 더할 수 있습니다** (schema `sitecontent` [안]). 두 사이클은 schema가 달라 서로 기대지 않으므로 어느 쪽이 먼저 합쳐져도 됩니다. 규칙 [안] (design-delta "부를 자리" Liquibase 줄):
-  - main에 합치는 순서대로 master 끝에 붙입니다
-  - 나중에 합치는 사이클이 rebase해서 자기 include 줄을 맨 끝으로 옮깁니다
-  - **이미 어떤 DB에서든 돈 changeset은 고치지 않습니다.** dev에 `PRE_DEPLOYMENT` 표시 파일이 있어도 15에서는 다른 changeset을 고치지 않고 새 파일만 더합니다
-- 사이클 16(공지·처리방침)과 동시에 개발하면 사이클 14처럼 따로 작업 폴더·docker 프로젝트·포트를 씁니다(이름·포트는 사이클 14 방식을 따라 dev가 정함 [안]). 16 인계가 아직이면 15 먼저 합니다 [확정] (사용자 승인, 2026-10-14, `easy/2026-10-14-handoff-review.html` #2)
-  - **사이클 16 인계됨 (2026-10-14)**: 인계서는 plan `docs/cycles/16-notices-and-policies/handoff.md`(이 파일은 15 인계서 그대로). 15와 나란히, 따로 작업 폴더에서 개발합니다
-- 기록은 화면에 보이지 않습니다 [확정] (flow.md: 화면 모양·문구 변경 없음). 확인은 SQL과 시험으로 합니다
+- **공개일은 2026-10-18입니다.** 그 전에 19 반영을 끝내도록 서두릅니다. dev가 늦어지면 공개일을 19 반영 다음 날로 미룹니다 [확정] (사용자 승인, 2026-10-15, 명세 결정 #1, spec "일정")
+  - 계획: plan 쪽 화면·설계·인계서는 10-15, dev 개발은 10-16~17, 다시 가져오기와 운영 역할 반영은 10-17 (`to-cycle-17.md` 4)
+  - 공개일이 미뤄지면 사이클 17이 맞춰 둔 날짜(공지, 약관 시행일, 사용 기록 켜는 날)도 함께 옮겨야 합니다 → 아래 "plan 쪽에 알려줄 것"
+- **사이클 21과 나란히 개발합니다** [확정] (사용자: "나란히 개발할래", 2026-10-15, 설계 이어서 #3)
+  - 다시 가져오기와 운영 역할 반영은 19와 21이 모두 들어간 main으로 한 번에 합니다 [안] (spec "일정")
+- **21이 10-17까지 main에 들어오지 않으면 기다리지 않습니다.** 19만 들어간 main으로 먼저 다시 가져오기와 운영 역할 반영을 합니다. 21은 그 뒤 따로 반영합니다 [확정] (사용자 승인, 2026-10-16, 인계서 검토 #2)
 
 ## 요약
 
-새 모듈 `usagelog`를 만듭니다. 이 모듈은 다음 기록을 같은 PostgreSQL의 `usagelog` schema 표 여덟에 남깁니다:
-- 검색, 책 상세, 더 보기
-- 도서관 클릭, 화면 행동
-- 도서관 응답 하루 요약
-- 이상한 알림, 버린 묶음
+저자 정리(`catalog.normalize`의 `Contributors`)를 다음처럼 고칩니다. 같은 규칙을 저자 검색어와 책 표 저자 칸(`book.author_display`)에도 씁니다.
+- 꺾쇠 `< >`·`＜ ＞`는 뗍니다
+- `〈 〉`·`「 」`·`《 》`는 표시만 떼고 안의 글자는 남깁니다
+- 「루이스 캐럴 저이소연 역」처럼 붙은 역할 낱말은 좁은 규칙과 보호 장치로 나눕니다
 
-`catalog`·`availability`는 공개 창구 `UsageLog`를 직접 부릅니다. 화면이 서버 모르게 하는 행동은 웹이 `fetch` keepalive로 `POST /api/v1/usage-events`에 알립니다. 쓰기는 메모리 버퍼(최대 1만 줄)에 모았다가 5초마다 한 트랜잭션(비동기 커밋)으로 넣습니다.
+같은 책 묶기(`collection` 가져오기)도 고칩니다.
+- ② 단계에서 같은 공급사의 상품 코드로 잇습니다
+- ④ 비교 제목에서만 앞 괄호(관제)를 뗍니다
+- 저자·출판사가 뒤바뀐 통합 포털 세 곳은 규칙 파일로 두 칸을 바꿔 읽습니다
 
-`auth`에서 바뀌는 것:
-- `access_token` 쿠키 경로를 `/api/v1`로 넓힙니다
-- 로그인 상태 판별 부품 `LoginStatusReader`를 공개합니다
-
-운영 장치:
-- 기록 켜기 설정(`chaekcheck.usagelog.enabled`, 기본 꺼짐)
-- 04:30 정리 작업
-- nginx 사용 알림 한도와 로봇 거절, `robots.txt`
+수집기에는 "출판사가 먼저 나오는 포털" 상수를 둡니다. 이번에 다시 수집하지는 않습니다. 사용 기록에는 캐시 답 수 칸을 더합니다. 규칙 목록 문서와 검증 스크립트를 만들고 dev 문서를 고칩니다. 마지막으로 내 PC 원래 DB(5432)에서 다시 가져와 기록 11번과 견줍니다. 멈출 조건에 걸리지 않으면 운영 역할 DB에 반영하고 서비스를 새 코드로 다시 켭니다.
 
 ## 이 인계서를 쓰는 규칙
 
 - 이 파일은 chaekcheck-plan이 관리합니다. **dev에서 고치지 마세요.** plan 저장소의 어떤 파일도 고치지 않습니다
-- 구현이 이 인계서나 `design-delta.md`와 달라져야 하면(값, 이름, 구조, 순서) **조용히 바꾸지 않습니다.** 먼저 사용자에게 알리고, 내용과 이유를 dev `docs/plan-feedback.md`의 **새 `# 사이클 15` 절**에 적습니다. 사용자 발언이면 그대로 옮깁니다
-- `[안]`·`[안: 이름]`이 붙은 값은 dev가 코드에 맞춰 바꿀 수 있습니다. 바꾸면 `# 사이클 15` 절에 알리기만 합니다
-  - 해당 예: 공개 API `UsageLog`의 메서드·record 이름, `LoginStatusReader`·`LoginStatus` 이름, 안쪽 패키지·클래스, 설정 키(`chaekcheck.usagelog.cleanup.*`), 환경 변수 이름, changeset id, 제약 이름, 사용 알림 JSON 칸 이름, 웹 함수·파일 위치, nginx zone 이름, 시험 클래스 이름
-- **바꾸지 않는 것** [확정]
-  - 모듈 `usagelog`, schema `usagelog`, `allowedDependencies = { "library", "auth" }`
-  - 표 여덟의 이름: `search_event`, `book_view`, `search_more`, `library_click`, `screen_event`, `library_response_daily`, `rejected_event`, `dropped_batch`
-  - 칸 뜻과 CHECK 값 목록. design-delta "데이터" 표에서 [확정]인 것
-  - changelog 경로 `db/changelog/usagelog/001-usagelog-schema.yaml`, master 맨 끝에 둠
-  - 주소 `POST /api/v1/usage-events`, 늘 204. 로그인 기능 켜짐에서 CSRF 표시가 없으면 403
-  - 설정 키 `chaekcheck.usagelog.enabled`, 기본 꺼짐
-  - 버퍼 최대 1만 줄, 5초 묶음, 한 트랜잭션, 기록 트랜잭션만 비동기 커밋, Spring Modulith 이벤트 안 씀
-  - 보관: IP 30일 뒤 비움, `rejected_event` 30일, 나머지 1년, 매일 04:30 Asia/Seoul
-  - 세 가지 셈 규칙(아래 C5)
-  - `access_token` 쿠키 경로 `/api/v1`. 옛 경로 쿠키를 지우는 코드는 넣지 않음
-- 태그
+- 구현이 이 인계서나 `design-delta.md`와 달라져야 하면(값, 이름, 구조, 순서) 조용히 바꾸지 마세요
+  - 먼저 사용자에게 알립니다
+  - 무엇을 왜 바꿨는지 dev `docs/plan-feedback.md`의 새 **`# 사이클 19`** 절에 적습니다. 사용자 발언이면 그대로 옮깁니다
+- `[안]`·`[안: 이름]`은 dev가 코드에 맞춰 바꿀 수 있습니다 [확정] (design-delta "클래스·설정·파일 이름은 dev가 바꿔도 됨"). 바꾸면 `# 사이클 19` 절에 알리기만 합니다
+  - 해당 예: `Contributors.stripMarks`·`displayText`, `ImportRules`, `rulesDir` 설정 키, `Library.authorPublisherSwapped`, `Row.supplierCodeKey`, `SameTextKey.LEADING_NOTE_KEEP_WORDS`, `ImportReport`의 새 셈 이름(`supplierCodeJoins`·`codeJoinedIsbnConflicts`·`authorPublisherSwappedRows`·`leadingNoteCut`), 규칙 파일의 칸 이름, changeset id, `docs/maintenance/rules-index.md`, `scripts/library/check_author_publisher_swap.py`, 시험 클래스 이름, 작업 폴더·docker 프로젝트 이름·포트
+  - **바꾸지 않는 것** [확정]
+    - spec R1~R5 규칙 내용: 뗄 기호와 남길 기호, 좁은 규칙의 낱말과 글자 수, 보호 장치, 남길 괄호 낱말, "…판"·EDITION 규칙, 같은 공급사끼리만 견주고 제목 조건은 두지 않음, 공급사가 빈 줄은 코드로 잇지 않음
+    - 세 도서관(수집 번호 11·12·15)과 세 호스트(`lib.goe.go.kr`, `library.daegu.go.kr`, `lib.jbe.go.kr`)
+    - 칸 이름 `cached_count`와 그 제약(NOT NULL DEFAULT 0, 0 이상)
+    - 결과 값 `UsageLog.ResponseResult.CACHED`
+    - 모듈 의존 방향
+    - 멈출 조건(아래 C4)
+- 태그 뜻
   - `[확정]`: 사용자가 정했거나 공식 문서로 확인한 값
   - `[안]`: 제안
   - `[확인 필요]`: 모르는 값. 확정된 것처럼 코드에 넣지 말고 `TODO(확인 필요)`로 둔 뒤 확인하고 보고합니다
-- **새 의존성 없음** [안]. `JdbcTemplate`(`batchUpdate`), Spring 예약 기능, `SmartLifecycle`, 지금 있는 Spring Security·Nimbus JWT만 씁니다. 새 라이브러리가 필요하면 먼저 보고합니다
 - 단계마다 통과해야 다음 단계로 갑니다
-  - `backend/`: `./gradlew build` (`ModularityTests`·`DocumentationTests` 포함)
-  - 웹을 고친 단계는 `web/`: `npm test`, `npm run build`, `npm run lint`
-- dev `CLAUDE.md`, 스킬(`spring-modulith`, `postgres-patterns`, `jpa-patterns`, `api-design`), 앞 사이클 인계서의 제약을 그대로 따릅니다. 아래에는 더하거나 바뀌는 것만 적습니다
+  - `backend/`에서 `./gradlew build`(`ModularityTests`·`DocumentationTests` 포함)
+  - 수집기·스크립트를 고친 단계는 해당 `python -m unittest …`도 돌립니다
+  - 웹은 바꾸지 않으므로 `web/` 명령은 회귀 확인용으로만 돌립니다
+- dev `CLAUDE.md`, 스킬(`spring-modulith`, `postgres-patterns`, `jpa-patterns`), `docs/maintenance/3-import.md`, 사이클 05~18 인계서의 제약을 그대로 따릅니다. 아래에는 더하거나 바뀌는 것만 적습니다
 
 ## 참고 문서 (chaekcheck-plan, 읽기 전용)
 
-- `docs/cycles/15-usage-log/design-delta.md`: **기준 문서**
-  - 구조 그림: 모듈, 검색·직접 찾기·사용 알림·쓰기 흐름, 도메인, ER
-  - 모듈 표, 웹, **부를 자리**, 데이터 표, API, 외부 연동, 확인 필요
-  - 그림을 실제로 그린 페이지: `easy/design-delta-original.html`
-- `docs/cycles/15-usage-log/spec.md`: R1~R6, 상태별 동작, AC, 비목표
-- `docs/cycles/15-usage-log/flow.md`: 화면별 기록 자리, 화면 상태 (모양 변경 없음)
-- `docs/cycles/15-usage-log/scope.md`
-- `docs/cycles/15-usage-log/to-cycle-17.md`: 배포 설정과 맞출 것(nginx realip, 한도). `to-cycle-16.md`: 처리방침에 넘긴 수집 항목
-- `architect-proposal.md`는 결정 기록일 뿐입니다. 구현 기준은 design-delta입니다
-- ADR (`docs/adr/`)
-  - 0096: 저장 장소·남길 칸·보관
-  - 0097: 모듈·쓰기 방법·운영 장치
-  - 0102: 쿠키 경로·로그인 판별 부품
-- 회고 결정(2026-10-14): `easy/2026-10-14-retro-decisions.html` #1~#4 (건너뜀, 다시 보내기 한 번, 켜진 도서관만, ADR 확정)
+- `../chaekcheck-plan/docs/cycles/19-author-angle-brackets/design-delta.md`: **기준 문서**. 구조 그림, 모듈 표, 데이터, 규칙 파일, 규칙 세부 표(구현 위치), 시험 표, 확인 필요
+- `.../19-author-angle-brackets/spec.md`: R1~R7, 상태별 동작, AC-1~AC-19, 비목표, 일정
+- `.../19-author-angle-brackets/flow.md`: S1·S3에서 바뀌는 글
+- `.../19-author-angle-brackets/research.md`: 원인 조사, SQL 1~6, 실험 (c)(d)(실험 (d)는 검증 스크립트의 방법), 공급사 코드 모양, 앞 괄호 낱말 분포, 「김근아」 확인
+- `.../19-author-angle-brackets/scope.md`: "먼저 조사할 것" 표 1~9
+- `.../19-author-angle-brackets/architect-proposal.md`: 결정 결과 표
+- `.../19-author-angle-brackets/from-cycle-21-matching.md`: 21과 겹치는 곳, AC-14 기준값
+- ADR (`../chaekcheck-plan/docs/adr/`): 0113, 0114, 0115, 0116, 0117. 관련: 0069, 0078, 0079, 0082, 0085, 0105, 0106
+- AC-14 측정 방법
+  - 이동진 추천도서: `../chaekcheck-plan/docs/research/leedongjin-picks/picks.md` 8절
+  - 서울대 100선: `../chaekcheck-plan/docs/research/snu-100/picks.md` 3절
+  - 사서추천: `docs/cycles/14-librarian-picks/retro.md`
 
 ## 결정 기록
 
 | ADR | 이번 구현에 주는 것 |
 |---|---|
-| 0096 | 같은 PostgreSQL 새 schema. 남기는 것: 검색 조건(지역·고른 도서관 포함), 결과 수, 로그인 여부, IP. 남기지 않는 것: 회원 번호·쿠키 값·User-Agent. IP 30일 뒤 비움, 나머지 1년. 이상한 사용 알림은 IP와 함께 30일. 같은 IP로 30일 안에서 이어 보기는 허용 |
-| 0097 | 모듈 `usagelog`. `catalog`·`availability`가 공개 창구를 직접 부름(이벤트 아님). 메모리 1만 줄 → 5초마다 `batchUpdate` 한 트랜잭션 + 비동기 커밋. 실패 묶음은 버리고 `dropped_batch`에 남김. 표 여덟. 사용 알림은 fetch keepalive + CSRF. IP는 `X-Real-IP`에서 읽음. 운영 장치: `chaekcheck.usagelog.enabled`, 04:30 정리, nginx 로봇 거절, `robots.txt` |
-| 0102 | `access_token` 쿠키 경로 `/api/v1`. `auth`의 판별 부품 하나: 서명이 맞으면 만료돼도 `signed_in`, 없거나 틀리면 `signed_out`, 로그인 꺼짐이면 쿠키를 보지 않고 `login_off`. 기록에만 쓰고 권한에는 쓰지 않음. 옛 경로 쿠키는 지우지 않음. `POST /api/v1/usage-events`는 CSRF 검사만 받고 로그인은 요구하지 않음 |
+| 0113 | `Contributors`에서 기호를 떼고 붙은 역할을 나눕니다(셋째 역할까지, 보호 장치 포함). 공개 함수 `stripMarks`·`displayText`를 둡니다. 저자 검색어와 `book.author_display`에도 같은 규칙을 씁니다. 검색어 정리가 바뀌므로 ADR-0069 "검색어 다듬기 규칙" 순서를 따릅니다 |
+| 0114 | ② 단계에서 (공급사 묶음, 코드)로도 잇습니다. 다른 이름이지만 같은 공급사인 것은 `supplier_families.tsv`에 적습니다. ④ 비교 제목에서만 앞 `( … )`를 뗍니다. 남길 낱말은 코드 상수입니다. ISBN이 둘 이상인 코드 묶음이 생기면 plan에 묻습니다 |
+| 0115 | 수집 번호 11·12·15는 `CollectedCatalog.scan`에서 두 칸을 바꿔 읽습니다(`author_publisher_swapped.tsv`, `rules-dir`, 파일이 없으면 멈춤). `swap_before` 뒤 사본이면 멈춥니다. 수집기 상수 `PUBLISHER_FIRST_PORTAL_HOSTS`를 둡니다. 규칙 줄은 검증 스크립트로 "바름"이 나와야 지웁니다 |
+| 0116 | `cached_count` 칸(새 변경 파일 `usagelog/002`)을 더합니다. `ResponseResult.CACHED`로 알립니다. 응답 시간·성공/실패 수·로그 줄에는 넣지 않습니다 |
+| 0117 | 규칙 목록 문서 `docs/maintenance/rules-index.md` [안: 이름]를 만듭니다. 상수마다 그 줄을 가리키는 주석을 답니다. 수집기의 사람이 정한 값은 파일 맨 위 "규칙" 묶음에 모읍니다. 수집·가져오기 문서의 시작 점검이 규칙 목록 확인을 돌립니다 |
 
-## 지켜야 할 제약
+## 공통 제약
 
-- **C1. 모듈 경계** [확정]
-  - `usagelog/package-info.java`에 `@ApplicationModule(allowedDependencies = { "library", "auth" })`를 씁니다. 예시는 `picks/package-info.java:20`
-  - 새 의존 방향은 `catalog → usagelog`, `availability → usagelog`이고 순환이 없어야 합니다. `catalog`·`availability`의 `package-info.java`에 `allowedDependencies`가 선언돼 있으면 `"usagelog"`를 더합니다
-  - `catalog`·`availability`는 로그인을 모릅니다. `auth`를 부르는 곳은 `usagelog`뿐입니다
-  - 다른 schema로 FK·조인 없음. 번호만 남깁니다 (`library_id`, `book_id`는 FK 없음)
-  - JPA 엔티티를 두지 않고 `JdbcTemplate`/`JdbcClient`를 씁니다 [안]
-- **C2. 기록이 검색을 막지 않음** [확정] (R3-1·R3-3, AC-14)
-  - `record…`는 검사한 뒤 큐에 넣기만 하고 곧바로 돌아갑니다
-  - 기록 쪽 어떤 예외도 부른 쪽으로 새지 않습니다(안에서 잡고 로그)
-  - DB 쓰기 실패는 검색 결과·링크에 영향이 없습니다
-- **C3. 요청 정보는 요청 스레드에서 잡음** [안]
-  - 직접 찾기 첫 묶음 기록은 SSE가 끝날 때 다른 스레드에서 남깁니다. 그래서 `HttpServletRequest`를 나중에 읽으면 안 됩니다
-  - 컨트롤러에서 요청을 받을 때 "요청 정보"를 한 번 잡아 둡니다. 예: `UsageLog.capture(HttpServletRequest) → UsageRequest` [안: 이름]. 잡는 것은 받은 시각, IP, 로봇 여부, 로그인 상태입니다
-  - 기록 시각은 **요청을 받은 때**입니다 [확정] (R1-4)
-- **C4. 기록 설정 꺼짐** [확정 키·기본값] [안: 동작 방식]
-  - `chaekcheck.usagelog.enabled=false`면 모든 `record…`가 곧바로 돌아갑니다. 큐·도서관 응답 요약·사용 알림 모두 남기지 않고, 사용 알림 주소는 그대로 204입니다
-  - 부르는 쪽은 설정을 모릅니다
-  - 꺼짐이면 로그인 판별도 하지 않습니다 [안]
-- **C5. 정한 뜻** [확정] (회고 결정 2026-10-14, 사용자 승인)
-  - **건너뜀(`skipped`)**: 직접 찾기에서 시작 마감(`LAUNCH_CUTOFF` 3초, `BatchRunner.runTasks` `:271-301`)까지 요청을 보내지 못한 후보 도서관 하나마다 1 (#1)
-  - **조회 서버 바꿔 보내기**(`FetchServiceSiteFetcher` `:97-102`)는 도서관에 물어본 한 번으로 셉니다 (#2). 결과는 마지막 결과, 시간은 처음 시작부터 끝까지 [안]
-  - **사용 알림의 도서관 번호**는 `LibraryCatalog.enabledLibraryRefs()`(`library/LibraryCatalog.java:44`, 켜진 도서관만)에 있을 때만 정상입니다. 아니면 `rejected_event` `unknown_library` (#3). `LibraryRegistry.listAll()`은 꺼진 도서관도 돌려주므로 쓰지 않습니다
-- **C6. 남기지 않는 것** [확정] (AC-12)
-  - 회원 번호, User-Agent, 쿠키 값은 칸에 두지 않습니다
-  - 로그에도 쿠키·토큰 값을 찍지 않습니다
-- **C7. 로봇** [확정] (R1-5)
-  - User-Agent에 `bot`·`crawler`·`spider`가 들면(대소문자 무시 [안]) 기록하지 않습니다
-  - 서버 기록과 사용 알림 모두에 적용합니다 [안: 사용 알림에도 적용]
-  - 도서관 응답 요약은 요청자와 무관한 도서관 사실이라 UA와 상관없이 셉니다 [안]
-- **C8. 시험은 진짜 도서관 사이트를 부르지 않음.** 지금 availability 시험의 가짜 fetcher·가짜 서버 방식을 그대로 씁니다
+- **C1. 모듈 경계** [확정] (design-delta "모듈")
+  - 바뀌는 곳은 `catalog`(`normalize`, `internal/search`), `collection`(안쪽만), `availability`(안쪽만), `usagelog`(공개 enum 값 하나 + 표 칸 하나)입니다. 그 밖에 `scripts/crawl/`, `scripts/library/`, `docs/`를 고칩니다
+  - 모듈 의존은 바뀌지 않습니다: `collection → catalog, catalog :: normalize, library`, `availability → usagelog`. 공용(shared/common) 모듈은 만들지 않습니다. 새 이벤트도 없습니다
+  - `catalog :: normalize`에 공개 함수 둘(`stripMarks`, `displayText`)만 더합니다. `CatalogText.norm`·`mainTitleNorm`은 그대로입니다 [확정] (설계 결정 #6, research (b)-2 안 채택 안 함)
+- **C2. 세 묶는 방식은 같은 결과** [확정] (ADR-0079·0105, 설계 결정 #1)
+  - `compact`·`objects`·`sql`이 같은 책, 같은 순서, 같은 책·소장 번호를 내야 합니다
+  - 공급사 코드 키는 `CollectedCatalog`에서 한 번만 계산합니다. 세 방식은 그 키를 ISBN과 같은 "값마다 잇기"로 셉니다
+  - 코드 키는 잇기에만 씁니다. **묶음의 ISBN 고르기(가장 많은 ISBN)에는 넣지 않습니다**. ISBN 값과 섞여 같은 값으로 셈해지지 않게 다른 공간(접두어 또는 별도 집합)에 둡니다 [안]
+  - 대표 저자 고르기(`BookGrouping` 351·385행, `CompactGrouping` 577·619행, `SqlGrouping` 256·440행 부근)는 그대로입니다
+- **C3. Liquibase** [확정] (design-delta "데이터", 설계 결정 #9)
+  - 새 파일 `backend/src/main/resources/db/changelog/usagelog/002-library-response-cached-count.yaml`을 하나만 더합니다
+  - master(`db.changelog-master.yaml`) 맨 끝에 붙입니다. plan 읽기(2026-10-16) 기준으로 맨 끝은 `# cycle 15` + `usagelog/001-usagelog-schema.yaml`(110~113행)이고, 그 뒤에 `# cycle 19` 주석과 include를 둡니다
+  - 기존 changeset(`usagelog/001` 포함)은 고치지 않습니다. `PRE_DEPLOYMENT` 표시 파일이 있어도(plan 읽기 2026-10-16: 있음) 마찬가지입니다. `001`에 접어 넣으면 이미 적용된 내 PC DB의 checksum이 깨집니다(architect 결정 5-2)
+  - 21이 먼저 main에 changeset을 더하면, 나중에 합치는 쪽이 rebase해서 자기 include를 맨 끝으로 옮깁니다
+- **C4. 멈출 조건** [확정] (AC-12, 명세 결정 #8, ADR-0114). 아래 중 하나라도 걸리면 진짜 반영(13단계)을 하지 않고 멈춥니다. `# 사이클 19` 절에 적고 사용자에게 알려 plan이 규칙을 고칩니다
+  1. 원인별 합쳐짐 표본 20권 가운데 **잘못 합쳐진 책이 1권 이상**
+  2. **공급사 코드로 이었는데 ISBN이 둘 이상인 묶음이 1개 이상** (`codeJoinedIsbnConflicts` > 0)
+  3. 가져오기가 규칙 파일 때문에 멈춤(파일 없음, `swap_before` 뒤 사본). 이 경우 아래 C9 절차를 따릅니다
+- **C5. 도서관 사이트 확인** [확정] (사이클 18 회고 결정 #11)
+  - 실제 사이트로 확인할 일이 생기면 도서관 하나만 부르는 주소 `/availability/libraries/{id}/ebooks`를 씁니다
+  - 지역 없는 검색 스트림은 쓰지 않습니다. 다른 도서관(교보 구독형 포함)에도 요청이 가기 때문입니다
+  - 교보 구독형 서버(`*.dkyobobook.co.kr`)에는 요청하지 않습니다
+  - 사람 손 속도로 몇 건만 보냅니다(dev `library-maintenance.md` 2절)
+- **C6. 다시 수집하지 않음** [확정] (spec R3-2)
+  - 수집기는 고치기만 하고, 저장해 둔 HTML로 시험합니다
+  - 세 포털의 칸 순서 확인이 더 필요하면 목록 한 쪽을 한 번씩만 엽니다(C5와 같은 예절)
+- **C7. 가져오기 메모리**
+  - 다시 가져오기는 기본 `compact`로 `-PbootRunXmx=2g` 안에서 끝나야 합니다 [확정: 2GB 기준] (확인 결과 결정 #9, ADR-0105)
+  - 키 칸이 늘어 넘치면 멈추고, 늘린 값과 이유를 보고합니다 [안]
+- **C8. 규칙 파일 꼴** [확정] (dev `scripts/library/rules/README.md`, ADR-0085): UTF-8, 탭 구분, 첫 줄 머리, 따옴표 처리 없음, 빈 칸은 값 없음
+- **C9. 뒤바뀜 규칙 줄 지우기** [확정] (설계 결정 #5, ADR-0115)
+  - 가져오기가 `swap_before` 뒤 사본에서 멈추면 줄을 그냥 지우지 않습니다
+  - 그 사본으로 검증 스크립트를 돌립니다. 세 도서관이 "바름"일 때만 그 줄을 지우고 다시 가져옵니다
+  - "바름"이 아니면 사용자에게 묻습니다
+  - 이 절차를 `3-import.md`에 적습니다(11단계)
+- **C10. 21과 겹치는 파일** [확정] (`to-cycle-21.md` 2)
+  - `collection` 가져오기: 19는 `rules-dir`·`ImportRules`·② 공급사 코드·앞 괄호를 고치고, 21은 추천 목록 표·`BookChoice`를 고칩니다
+  - `catalog.normalize`: 19에서 `parse`가 바뀌면 `name_exact` 맞추기 결과가 바뀝니다
+  - 내 PC `export` 파일(21이 추천 목록 표를 더함)
+  - 나중에 main에 들어가는 쪽이 rebase로 충돌을 풉니다
 
 ## 개발 시작 전 확인
 
 ### dev가 확인할 것
-- [ ] 시작 커밋(main, 12·13·14 합친 뒤)을 `# 사이클 15` 절에 적습니다
-- [ ] base package `com.chaekcheck`, 새 모듈 패키지 `com.chaekcheck.usagelog` [확정] (dev `CLAUDE.md`)
-- [ ] master 맨 끝 include. 16이 먼저 합쳐졌으면 그 뒤에 붙입니다
-- [ ] "부를 자리" 표의 줄 번호와 모양이 그대로인지. 다르면 고친 위치를 보고합니다
-- [ ] dev pgjdbc 실제 버전 [확인 필요: 의존성 트리] (`./gradlew dependencies`)
-- [ ] 예약 작업 실행기 구성. `@Scheduled`가 공용 스레드 하나를 쓰는지 확인합니다(5초 비우기가 회원 정리·사서추천 받기와 서로 막지 않게)
-- [ ] 16과 동시에 개발하는지 확인하고, 그렇다면 따로 작업 폴더·DB 묶음·포트를 정해 `# 사이클 15` 절에 적음 (위 시작 조건, [확정] (사용자 승인, 2026-10-14, `easy/2026-10-14-handoff-review.html` #2))
+
+- [ ] base package `com.chaekcheck` [확정] (dev `CLAUDE.md`)
+- [ ] 시작 커밋은 dev main `0a75f7a`(사이클 18 B `a0e438a` 위, GitHub에도 올림)입니다 [확정] (dev 18 알림, 2026-10-15). 그 뒤 main에 들어온 커밋(16 등)이 있으면 지금 main 끝에서 시작하고 시작 커밋을 `# 사이클 19` 절에 적습니다
+- [ ] 원래 DB(5432)의 마지막 `collection.catalog_import` 기록이 **11번 SUCCEEDED**(2026-10-12 사본, 2624 소장 241권, 켜진 0권 도서관 0곳, `detail_url_not_http` 42)인지 확인합니다 [확정] (dev 18 알림)
+  - 21이 이미 원래 DB에 가져오기를 했으면 기준이 바뀌므로 멈추고 알립니다
+- [ ] 사이클 21이 main에 들어갔는지 확인합니다. 들어갔으면 `BookChoice`, export 파일, master 끝줄을 읽고 시작합니다
+- [ ] 이미 끝난 일이라 하지 않을 것 [확정] (dev 18 알림): 설정 이름 바꾸기 `exclude-candidate-libraries` → `exclude-added-later-libraries`(18 B가 함). 19는 바뀐 이름(`Settings.excludeAddedLaterLibraries`, `HoldingRowFilter`, `SiteHosts`) 위에서 작업합니다
+- [ ] 수집 번호 11·12·15에 짝지어진 서비스 도서관 번호를 `collection.collection_link`에서 찾아 `# 사이클 19` 절에 적습니다 [확인 필요: dev DB]
+- [ ] master 맨 끝 include(plan 읽기: 110~113행 `usagelog/001`)
 
 ### 사용자가 할 것
 
 | 할 일 | 언제 | 결과 |
 |---|---|---|
-| 16과 동시 개발이면 따로 작업 폴더·포트 (정해짐: 위 시작 조건) | 시작 전 | 확인 |
-| 실제 폰 확인 (Samsung Internet, `web-lan-5174`): 링크가 새 탭으로 바로 열리고 기록이 생기는지 | 10단계 | 확인 결과 |
+| 공급사 묶음 목록(`supplier_families.tsv`) 내용 확인 | 12단계 보고 뒤 | plan이 받아 확인 |
+| 12단계 비교 보고 확인(멈출 조건에 걸렸으면 plan이 규칙 고침) | 12단계 끝 | 진행 / 멈춤 |
+| 운영 역할 DB 반영 승인 | 13단계 | 승인 |
 
 ## 구현 단계
 
-### 1단계: `auth` — 쿠키 경로와 로그인 상태 판별 부품 (의존: 없음)
+경로 약어: `C` = `backend/src/main/java/com/chaekcheck/catalog/normalize/`, `I` = `backend/src/main/java/com/chaekcheck/collection/internal/importer/`. 줄 번호는 plan이 2026-10-16에 dev main 작업 트리를 읽고 적은 것입니다. 21이 먼저 들어오면 다시 확인합니다.
 
-1. **쿠키 경로** (`backend/src/main/java/com/chaekcheck/auth/internal/security/AuthCookies.java:9`)
-   - 할 일: `access_token` 경로 `/api/v1/me` → `/api/v1` [확정]. 쿠키를 만드는 곳·지우는 곳(로그아웃·탈퇴)이 모두 새 경로를 쓰는지 봅니다. 리프레시 쿠키(`/api/v1/auth`)와 `Secure`·`HttpOnly`·`SameSite=Lax`는 그대로입니다
-   - 옛 경로 쿠키를 지우는 코드는 넣지 않습니다 [확정] (R1-6, 액세스 쿠키 15분 `application.yml:104`)
-   - `AccessTokenCookieResolver(PROTECTED)`는 지금처럼 `PROTECTED`(`/api/v1/me/**`)에서만 토큰을 읽어야 합니다. 경로가 넓어져도 검색 요청에서 만료 토큰 때문에 401이 나면 안 됩니다 (R1-6 "쿠키 확인 실패는 오류가 아님")
-   - 위험: 중간 (로그인·로그아웃 회귀)
-2. **판별 부품** (`auth/LoginStatusReader.java`, `auth/LoginStatus.java`, 모듈 루트 = 공개 API [안: 이름])
-   - 할 일: `LoginStatus read(HttpServletRequest)`. 값 `SIGNED_IN`/`SIGNED_OUT`/`LOGIN_OFF`, DB 값 `signed_in`/`signed_out`/`login_off` [확정 뜻] [안: 값 이름]
-   - 켜짐 구현 (`auth/internal/...`, `@ConditionalOnAuthEnabled`)
-     - `access_token` 쿠키의 **HS256 서명만** 확인합니다. 만료돼도 서명이 맞으면 `SIGNED_IN`이고, 없거나 틀리거나 못 읽으면 `SIGNED_OUT`입니다 [확정]
-     - 지금 `jwtDecoder`(`SecurityConfiguration.java:105-108`)는 만료를 거절하므로 이 부품에는 시각 검사 없이 서명만 보는 디코더를 따로 둡니다 [안]
-     - 예외를 던지지 않습니다
-   - 꺼짐 구현: `@ConditionalOnAuthEnabled`의 반대 조건으로, 쿠키를 보지 않고 늘 `LOGIN_OFF`를 돌려주는 no-op 빈입니다 [확정]. 반대 조건 어노테이션이 없으면 `auth` 안에 만듭니다 [안]. `auth/ConditionalOnAuthEnabled.java`, `AuthToggleEnvironmentPostProcessor.java:45-56`를 참고합니다
-   - 쿠키·서명 확인 코드는 `auth` 안에만 둡니다 [확정] (ADR-0102)
-   - 위험: 중간
-3. **CSRF 범위** (`SecurityConfiguration.java:47-48,75`)
-   - 할 일: `POST /api/v1/usage-events`가 로그인 기능 켜짐에서 **CSRF 검사는 받고 로그인은 요구하지 않게** 합니다 [확정] (ADR-0102). 방법은 [안: 개발 때]
-   - plan이 다시 읽어 본 점(2026-10-14)
-     - 지금 `.csrf(csrf.spa()…ignoringRequestMatchers(WEBHOOKS))`는 웹훅 말고 모든 POST에 CSRF를 검사하는 모양입니다. 그래서 따로 고칠 것이 없을 수도 있습니다
-     - **`PROTECTED`에 넣으면 로그인을 요구하게 되므로 넣지 않습니다**
-     - 고칠 것이 없으면 시험으로만 증명하고 보고합니다
-   - 위험: 중간
-- 테스트
-  - `AuthEnabledSecurityTests`에 더함:
-    - 로그인 응답의 `Set-Cookie: access_token=…; Path=/api/v1` (AC-26)
-    - 만료된 쿠키를 실은 `GET /api/v1/books`가 200 (회귀)
-    - 로그아웃이 새 경로 쿠키를 지움
-  - `LoginStatusReaderTests` [안] (로그인 켬): 쿠키 없음 → `SIGNED_OUT`, 다른 키로 서명 → `SIGNED_OUT`, 깨진 값 → `SIGNED_OUT`, 만료 + 우리 서명 → `SIGNED_IN`, 정상 → `SIGNED_IN` (AC-25 판별 부분)
-  - `AuthDisabledTests`에 더함: 꺼짐에서 `LoginStatusReader`가 쿠키가 있어도 `LOGIN_OFF` (AC-20 일부)
-  - CSRF 시험은 6단계(주소가 생긴 뒤)
+### 0단계: 시작 점검과 기준값 (코드 변경 없음)
 
-### 2단계: `usagelog` 뼈대, 표 여덟, 설정 (의존: 1단계)
-
-1. **모듈 선언** (`backend/src/main/java/com/chaekcheck/usagelog/package-info.java`)
-   - `@ApplicationModule(allowedDependencies = { "library", "auth" })` [확정]
-   - Javadoc: 책임, ADR-0096·0097·0102, "기록은 검색을 막지 않음"
-   - 안쪽 패키지 [안]: `internal/buffer`, `internal/write`, `internal/cleanup`, `internal/web`
-2. **Liquibase** (`backend/src/main/resources/db/changelog/usagelog/001-usagelog-schema.yaml` [확정 경로])
-   - master 맨 끝에 `# cycle 15: usage log (ADR-0096, ADR-0097)` + include [안: 주석]
-   - `CREATE SCHEMA usagelog`
-   - 표·칸은 design-delta "데이터" 표 그대로입니다. 요점:
-     - `id bigint GENERATED ALWAYS AS IDENTITY` PK: `library_response_daily` 빼고 모든 표 [안] (뺄지는 AC-16 측정으로, [확인 필요: 프로토타입])
-     - `received_at timestamptz NOT NULL` (`dropped_batch`는 `dropped_at`)
-     - `login_status text NOT NULL` CHECK (`signed_in`,`signed_out`,`login_off`). `client_ip inet` NULL 가능. `rejected_event`·`library_response_daily`·`dropped_batch`에는 `login_status`가 없음
-     - `search_event`
-       - `kind` CHECK (`catalog`,`direct`)
-       - `title`/`author`/`publisher` text, 셋 중 하나 이상 NOT NULL CHECK
-       - `exact boolean`·`roles text[]`·`sort text`(수집 목록만), `filter text`(직접 찾기만, `all`/`available`). kind에 맞지 않으면 NULL CHECK [안]
-       - `scope`·`visit` text NOT NULL
-       - `residence_region_ids`·`work_region_ids`·`library_ids` `bigint[] NOT NULL DEFAULT '{}'`
-       - `result_count integer` NULL 가능
-     - `book_view`: `book_id bigint NOT NULL`, 지역·도서관 배열 `NOT NULL DEFAULT '{}'`
-     - `search_more`
-       - `kind` CHECK (`direct_next_batch`,`library_more`,`catalog_next_page`)
-       - `seq integer NOT NULL` [안], `library_id bigint`는 `library_more`일 때만 NOT NULL CHECK [안]
-       - 검색 기록과 같은 조건 칸 전부 [확정]
-     - `library_click`
-       - `library_id bigint NOT NULL`
-       - `place` CHECK (`result_card`,`join_link`,`join_guide`,`home_page`,`logo`,`summary_bar`)
-       - `screen` CHECK (`direct_results`,`catalog_results`,`book_page`,`picks`,`my_libraries`)
-       - `book_id bigint` NULL 가능
-     - `screen_event`
-       - `kind` CHECK (`picks_list_view`,`picks_book_view`,`region_change`,`my_library_add`,`my_library_remove`)
-       - 종류별 칸 `picks_category text`, `book_id bigint`, `residence_region_ids`·`work_region_ids bigint[]`, `library_id bigint`. 종류에 맞지 않는 칸은 NULL CHECK [확정]
-       - 칸 짝 [안]: `picks_list_view` = category / `picks_book_view` = category + book / `region_change` = 두 배열 / `my_library_*` = library
-       - JSON 칸·회원 번호 없음
-     - `library_response_daily`
-       - PK `(day date, library_id bigint, source text)`, `source` CHECK (`direct_search`,`holding_fill`), `day`는 서울 날짜
-       - `ok_count`·`failed_count`·`timeout_count`·`skipped_count integer`, `ok_ms_total bigint`, `ok_ms_max integer`. NOT NULL DEFAULT 0, `>= 0` [안]
-     - `rejected_event`
-       - `client_ip inet`
-       - `reason` CHECK (`unknown_library`,`invalid_place`,`invalid_screen`,`invalid_book_id`,`malformed`,`unknown_type`,`invalid_value`)
-       - `raw_values jsonb`. 2KB가 넘으면 잘라 내는 일은 코드에서 합니다 [확정]
-     - `dropped_batch`: `dropped_at timestamptz NOT NULL`, `row_count integer NOT NULL`, `reason` CHECK (`db_failure`,`buffer_full`)
-     - 색인: 각 표 BRIN `(received_at)` [확정] (`library_response_daily`는 `day` [안], `dropped_batch`는 `dropped_at` [안]). 부분 색인 `WHERE client_ip IS NOT NULL` [안] ([확인 필요: 프로토타입·AC-16])
-     - 파티션 없음 [확정]. 다른 schema로 FK 없음
-   - changeset id `usagelog-001-*` [안: id], 제약 이름은 `postgres-patterns` 관례 [안: 이름]. 기존 changeset은 고치지 않음
-3. **설정** (`application.yml`, `application-test.yml`, `.env.example`, `usagelog/internal/UsageLogProperties.java` [안: 이름])
-   - `chaekcheck.usagelog.enabled: ${CHAEKCHECK_USAGELOG_ENABLED:false}` [확정 키·기본값] [안: 환경 변수 이름]
-   - 값 [확정]: 버퍼 1만 줄, 비우기 간격 5s, 정리 cron `0 30 4 * * *`, zone `Asia/Seoul`
-   - 키 이름 [안]: `chaekcheck.usagelog.buffer-capacity`, `flush-interval`, `cleanup.cron`, `cleanup.zone`, `cleanup.batch-size`
-   - 정리 한 번에 지우는 줄 수 1만 [안]
-   - `.env.example`: `CHAEKCHECK_USAGELOG_ENABLED=false` ("첫 배포 때 꺼 둠, 처리방침 공개일에 켬")
-4. **기존 시험 고침**
-   - `ModularityTests`: `usagelog` 의존(`library`·`auth`), `catalog`·`availability` → `usagelog`
-   - `ApplicationModules.of(...).verify()` 통과
-   - `DocumentationTests`: 새 `module-usagelog.puml`
-- 테스트: `UsageLogSchemaTests` [안] (`db-test`)
-  - CHECK 위반: 틀린 `kind`·`place`·`screen`·`reason`·`login_status`, 검색어 셋 다 NULL, `screen_event` 종류와 맞지 않는 칸
-  - 표 정의에 `user_id`·`account_id`·`user_agent`·`cookie` 같은 칸 없음 (AC-12, `information_schema.columns`로)
+1. **작업 폴더와 브랜치** (사이클 14 방식) [안: 값은 dev가 정해 보고] (설계 이어서 #3)
+   - worktree `../chaekcheck-dev-c19`, 브랜치 `cycle-19-author-angle-brackets`, docker는 늘 `docker compose -p chaekcheck-c19 …`
+   - 포트는 13(5442~5444)·14(5452/5453/8082/5176)·18·21이 쓰는 번호와 겹치지 않게 정합니다. 켜기 전에 `docker compose ls`로 확인합니다
+   - 원래 프로젝트 `chaekcheck`과 다른 사이클의 docker 프로젝트는 켜고 끄지 않습니다
+   - 따로 만든 DB에는 원래 서비스 DB(기록 11번 상태)를 한 번 복사합니다(사이클 14 방법, 원래 DB는 읽기만). 복사하지 않고 원래 `db`를 쓰려면 먼저 사용자에게 묻습니다
+2. **기준 빌드**: 시작 커밋에서 `./gradlew build`를 돌려 통과를 확인합니다. 실패하면 이 사이클 작업 전에 기록하고 사용자에게 알립니다
+3. **기준 번호 파일**: `python scripts/catalog/compare_grouping.py ids db <before> catalog`로 기록 11번의 책 번호를 지금 받아 둡니다(`3-import.md` 12절 154행). **바꿔 끼운 뒤에는 다시 만들 수 없습니다**
+4. **기준값 측정** (`# 사이클 19` 절에 적음; research.md·scope.md "먼저 조사할 것"의 SQL, 원래 DB 또는 복사본, 읽기만)
+   - scope 조사 1·5: 수집 사본 저자 칸의 `<`·`>`·다른 괄호 줄 수와 모양별 표본
+   - scope 조사 2: `catalog.book_contributor`에서 `name_exact`에 꺾쇠가 든 사람 수, 꺾쇠를 뗀 이름이 이미 있는 수
+   - scope 조사 3: 내 PC 서비스에서 `GET /api/v1/books?author=김정은` 단어 검색과 정확히 일치 검색의 결과 수
+   - research SQL 2: 공급사 코드가 여러 도서관에 걸친 수, 그중 제목이 다른 비율
+   - research SQL 3: 앞 괄호 낱말 분포
+   - research SQL 5·6: 붙은 역할 표기 줄 수, 역할 글자로 시작하는 이름
+   - research (a) 확인 SQL: 「백만장자 마인드」(율리시즈) 줄
+   - AC-14 기준: 기록 11번 DB에서 사서추천·이동진 추천도서·서울대 100선 맞춘 수
+     - plan 기준값은 72/108, 36/44, 87/100 [확정: 2026-10-14·15 측정값]
+     - 18 가져오기 뒤 값이 다를 수 있어 다시 잽니다
+     - 사서추천은 `LocalPicksMatchRunner`(backend 시험 쪽, 환경 변수가 있을 때만 돎)
+     - 나머지 둘은 참고 문서의 방법을 씁니다. 21이 main에 있으면 21 코드로 잽니다
+5. **Documenter 다시 만들기** [확정] (15 회고 결정 #6): main에서 `./gradlew build` 뒤 `build/spring-modulith-docs/` 출력을 새로 만들고, `usagelog`·`sitecontent`·`picks` 그림이 있는지 확인해 보고합니다
 - 위험: 낮음
 
-### 3단계: 쓰기 경로 — `UsageLog`, 버퍼, 5초 비우기, 종료 비우기 (의존: 2단계)
+### 1단계: 저자 기호 떼기 `stripMarks` (R1-1, R1-2)
 
-1. **공개 API** (`usagelog/UsageLog.java` + 공개 record, 모듈 루트 [안: 이름])
-   - `UsageRequest capture(HttpServletRequest)` (C3)
-     - IP는 `X-Real-IP`. 없거나 IP 모양이 아니면 NULL [안]
-     - 로봇 여부(C7), `LoginStatusReader.read(...)`, 받은 시각(`Clock`)
-     - 꺼짐이면 빈 표시를 돌려주고 판별하지 않음 [안]
-   - `recordSearch(UsageRequest, SearchRecord)`
-     - `SearchRecord`: kind, title/author/publisher, exact, roles, sort, filter, scope, visit, 지역 둘, libraryIds, `Integer resultCount`
-   - `recordBookView(UsageRequest, long bookId, 지역 둘, libraryIds)`
-   - `recordMore(UsageRequest, MoreRecord)`: kind, seq, `Long libraryId`, 검색 조건 칸 전부
-   - `recordLibraryResponse(long libraryId, Source, Result, long elapsedMs)`
-     - `Source` = `DIRECT_SEARCH`/`HOLDING_FILL`, `Result` = `OK`/`FAILED`/`TIMEOUT`/`SKIPPED`
-     - 요청 정보 없음, 날짜는 끝난 때 서울 날짜 [안]
-2. **버퍼** (`internal/buffer` [안])
-   - 줄 기록용 큐 하나, 최대 **1만 줄** [확정]
-   - 넘치면 새 기록을 버리고 버린 수를 셉니다. 다음 비우기 때 `dropped_batch`(`buffer_full`, 그동안 버린 줄 수) 한 줄 [확정 뜻] [안: 모으는 단위]
-   - 도서관 응답은 큐가 아니라 `(day, libraryId, source)`별 누적 맵입니다. 수, `ok_ms_total`, `ok_ms_max`. 1만 줄 상한에 넣지 않습니다 [안]
-3. **비우기** (`internal/write/UsageLogFlusher.java` [안])
-   - 5초마다(`fixedDelay`) [확정]. 자기 단일 스레드 [안]
-   - 큐와 누적 맵을 통째로 빼 옵니다
-   - 이번 묶음에 든 사용 알림 도서관 번호를 `LibraryCatalog.enabledLibraryRefs()`로 **한 번** 확인합니다. 없는 번호는 `rejected_event`(`unknown_library`)로 옮깁니다 (C5)
-   - **한 트랜잭션**
-     - `SET LOCAL synchronous_commit TO OFF` [확정]
-     - 표마다 `JdbcTemplate.batchUpdate` [확정]
-     - `library_response_daily`는 아래 upsert [확정]
-     - 지난번까지 버린 묶음 → `dropped_batch`
-     - COMMIT
-   - upsert:
-     ```sql
-     INSERT INTO usagelog.library_response_daily AS d (day, library_id, source, ok_count, failed_count, timeout_count, skipped_count, ok_ms_total, ok_ms_max)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-     ON CONFLICT (day, library_id, source) DO UPDATE SET
-       ok_count = d.ok_count + EXCLUDED.ok_count,
-       failed_count = d.failed_count + EXCLUDED.failed_count,
-       timeout_count = d.timeout_count + EXCLUDED.timeout_count,
-       skipped_count = d.skipped_count + EXCLUDED.skipped_count,
-       ok_ms_total = d.ok_ms_total + EXCLUDED.ok_ms_total,
-       ok_ms_max = GREATEST(d.ok_ms_max, EXCLUDED.ok_ms_max)
-     ```
-   - 배열은 `createArrayOf("bigint"/"text", …)`, IP는 `?::inet` [안]
-   - 데이터소스 URL 전체 설정(`reWriteBatchedInserts` 등)은 바꾸지 않습니다. 바꾸고 싶으면 측정과 함께 보고합니다 [안]
-   - **실패**: 그 묶음(도서관 응답 누적 포함 [안])을 버립니다. 버린 사실(시각, 줄 수, `db_failure`)을 메모리에 들고 있다가 다음 성공 때 함께 넣습니다. 서버 로그 WARN 한 줄 [확정]. 메모리에 들고 있을 버린 묶음 기록의 상한은 dev가 정해 보고합니다 [안]
-4. **종료 비우기** (`SmartLifecycle` [안])
-   - 정상 종료 때 남은 것을 넣고 끝냅니다 [확정] (R3-4)
-   - phase는 웹 서버 정지보다 늦고 DataSource가 닫히기 전 [확인 필요: 프로토타입]. 순서를 확인해 보고합니다
-5. **꺼짐·로봇**: C4, C7을 `UsageLog` 구현 맨 앞에 둡니다
-- 테스트
-  - `UsageLogBufferTests` [안] (단위): 1만 1번째는 버려지고 `buffer_full` 수가 셈 / 누적 맵 합·최댓값 / 로봇 UA 세 가지는 큐에 안 들어감(AC-6 단위)
-  - `UsageLogWriteTests` [안] (`@SpringBootTest`, `db-test`, 이 클래스에서만 `enabled=true`)
-    - 비우기 한 번에 표마다 줄이 들어감
-    - 같은 (day, library, source)를 두 번 비우면 더해지고 `ok_ms_max`는 큰 값
-    - DB 실패 흉내(예: 쓰기 부품을 실패로 바꿔 끼움) → 그 묶음 없음, 다음 성공 때 `dropped_batch` `db_failure` 한 줄 + 로그 붙잡기로 WARN 확인 (AC-19)
-  - `UsageLogDisabledTests` [안]: `enabled=false`에서 `record…`·비우기 뒤 여덟 표 모두 0줄, 켜면 생김 (AC-21)
-  - `UsageLogShutdownTests` [안]: 기록 직후 문맥을 닫으면 줄이 남아 있음 (AC-15)
-  - db-test 연결 한도: 새 `@SpringBootTest` 클래스는 기존 문맥을 함께 쓰거나 `@DirtiesContext`(사이클 10 회고)
-- 위험: 높음 (트랜잭션·종료 순서·스레드)
-
-### 4단계: `catalog` 호출 — 검색 첫 쪽, 다음 쪽, 책 상세 (의존: 3단계)
-
-1. **수집 목록 검색** (`catalog/internal/web/BookSearchController.java:37-38`, `GET /api/v1/books`)
-   - 할 일: 검색이 성공해 응답을 만든 뒤
-     - `page`(`BookParams.java:74`, 기본 1)가 1이면 `recordSearch(kind=catalog, …, totalCount)`. `totalCount`는 `PgBigmBookSearch.java:83`
-     - 2 이상이면 `recordMore(catalog_next_page, seq=page, 같은 조건)`
-   - 검색어는 서버가 다듬은 값입니다 (`BookParams.java:26-28,131`)
-   - 400·422(`CatalogErrors.java`)는 기록 없음 [확정]
-   - 0권도 기록합니다 [확정]
+1. **`Contributors.stripMarks(String)`** (파일 `C/Contributors.java`) [확정: 자리 / 안: 이름] (설계 결정 #6)
+   - 할 일
+     - NFKC 뒤 `<`·`>`를 모두 뺍니다(`＜＞`도 NFKC로 같은 글자가 됨, 짝이 안 맞아도 하나씩)
+     - `〈 〉`·`「 」`·`《 》`는 표시 글자만 빼고 안의 글자는 남깁니다
+     - `[ ]`는 그대로 둡니다
+     - 표시를 뺀 자리의 공백은 하나로 줄입니다 [안] (예: 「KBS 〈슈퍼차이나〉 제작팀」 → 「KBS 슈퍼차이나 제작팀」, 「《아사히 신문》경제부」 → 공백 처리 방법은 dev가 정하고, 견줄 때는 `name_exact`가 공백을 무시함)
+   - `parse`가 맨 처음 `stripMarks`를 부릅니다. 결과가 비면(「<>」) 사람 없음으로 둡니다 [확정] (명세 결정 #7)
+   - 이 변화는 `firstNameExact`(사서추천 맞추기)와 국가서지 키에도 그대로 미칩니다(같은 `parse`)
+   - 상수 옆에 규칙 목록 문서 줄을 가리키는 주석을 답니다(ADR-0117)
+   - 이유: 꺾쇠 표기 2,944권이 합쳐지지 않음(사이클 12 R5), 다른 괄호 36쌍(research.md "다른 괄호를 떼면")
+   - 의존: 0단계
    - 위험: 낮음
-2. **책 상세** (`BookSearchController.java:44-45`, `GET /api/v1/books/{bookId}`): 찾으면 `recordBookView`. 404는 기록 없음 [확정]
-- 테스트: `CatalogUsageLogTests` [안] (MockMvc, `db-test`, `enabled=true`, 비우기를 시험에서 직접 부름 [안])
-  - "채식주의자" 검색 → `search_event` 한 줄, 검색어·`result_count`·지역·고른 도서관·`login_status`·`client_ip`(머리글 `X-Real-IP` 넣음) (AC-1)
-  - `page=2` → `search_event` 그대로, `search_more` `catalog_next_page` seq 2 (AC-2)
-  - 검색어 1자(400)·없는 지역(422) → 0줄 (AC-5)
-  - UA `Googlebot` → 0줄, 결과는 같음 (AC-6)
-  - 책 상세 → `book_view` 한 줄, 없는 책 404 → 0줄 (AC-17 일부)
+- 시험 `ContributorsTests` [안 이름] (새 파일 `backend/src/test/java/com/chaekcheck/catalog/normalize/ContributorsTests.java`. 지금 `parse` 시험이 있는 `CatalogTextTests`에 더해도 됨)
+  - 「<김정은>,<김지혜> 저」 → 김정은(AUTHOR), 김지혜(AUTHOR)
+  - 「<모리세 시게토모> 저/<이민연> 역」 → 모리세 시게토모(AUTHOR), 이민연(TRANSLATOR)
+  - 짝 없는 꺾쇠 「＜율곡 이이,신사임당 저/이근오 편」, 전각 「＜이현욱＞역」
+  - 「KBS 〈슈퍼차이나〉 제작팀」과 「KBS 슈퍼차이나 제작팀」의 `name_exact`가 같음
+  - 「존 버거 [지음]」은 `[ ]`를 그대로 둠
+  - 「<>」 → 빈 목록
+  - 기존 `parse`·`firstNameExact` 시험이 그대로 통과(단체 이름, 영문 "성, 이름", 빈 저자는 바뀌지 않음, scope "먼저 조사할 것")
+- 확인: AC-4·AC-5의 단위 부분
+
+### 2단계: 붙은 역할 나누기와 `displayText` (R1-3, R1-5의 글 만들기)
+
+1. **`Contributors.parse` 좁은 규칙** (파일 `C/Contributors.java`, `TRAILING_ROLE` 66~67행 앞에서) [확정] (세 원인 #3, 확인 결과 결정 #5)
+   - 할 일
+     - 한 덩이가 `앞 이름 + (저|저자|지음|지은이|글) + 한글 2~4자 + (역|옮김|옮긴이|번역|역자|그림)`이면 두 사람으로 나눕니다
+     - 그 뒤에 `한글 2~4자 + (감수|편집|엮음|편|기획|해설|그림|사진|역|옮김)`이 또 붙으면 셋째 사람까지 나눕니다
+     - 역할은 지금 `ROLE_WORDS`(39~56행) 그대로입니다. 감수는 OTHER(54행)
+   - **보호 장치**: 붙은 낱말 앞에 역할 낱말이 이미 따로 적혀 있으면 자르지 않습니다(「발터 글라소프 글/…」, 「… 지음, …」)
+   - 첫 낱말에 「편」·「그림」·「역」은 넣지 않습니다(research (c)-1). 넓은 규칙(모든 역할 낱말)은 쓰지 않습니다
+   - 이유: 실험에서 557가지·1,264줄이 바르게 잘리고, 외국 이름 10가지·39줄은 보호 장치로 빠짐(research.md 실험 (c))
+   - 의존: 1
+   - 위험: 중간 (이름을 잘못 자르면 첫 저자 키가 바뀜)
+2. **`Contributors.displayText(String)`** (같은 파일) [확정: 동작 / 안: 이름] (명세 결정 #4, 화면 흐름 #1)
+   - `stripMarks`를 한 뒤, 1의 규칙에 걸린 표기만 역할 낱말 뒤를 띄웁니다. 보호 장치에 걸린 표기와 걸리지 않은 표기는 그대로입니다
+   - 판정은 `parse`와 같은 코드를 써서 어긋나지 않게 합니다
+   - 예: 「밥 프록터 저이재경 역조성희 감수」 → 「밥 프록터 저 이재경 역 조성희 감수」, 「<김정은>,<김지혜> 저」 → 「김정은,김지혜 저」
+   - 의존: 1
+   - 위험: 낮음
+- 시험 (`ContributorsTests`)
+  - 「루이스 캐럴 저이소연 역」 → 루이스 캐럴(AUTHOR), 이소연(TRANSLATOR)
+  - 「마키타 겐지 저전선영 역강재헌 감수」 → AUTHOR·TRANSLATOR·OTHER 세 줄(AC-7)
+  - 「안네마리 노르덴 저원유미 그림배정희 역」 → 세 줄
+  - 「발터 글라소프 글/…」, 「다니엘라 저메인 …」, 「일리야 글라주노프 …」, 「패트릭 글리슨 …」처럼 앞에 역할 낱말이 따로 있는 표기는 잘리지 않음(AC-8)
+  - 「정이현 편혜영 저」는 잘리지 않음
+  - `displayText` 예 셋(위 2)과 보호 장치 표기 그대로(AC-17)
+- 확인: AC-7·AC-8·AC-17의 단위 부분
+
+### 3단계: 저자 검색어 정리 (R1-4)
+
+1. **검색어에 `stripMarks`** (파일 `backend/src/main/java/com/chaekcheck/catalog/internal/search/BookQuery.java` 29~31행 `authorWords`, `PgBigmBookSearch.java` 199행 `CatalogText.nameExact(query.author())`) [확정] (명세 결정 #3)
+   - 단어 검색과 정확히 일치 검색 모두 `stripMarks(author)`를 거친 값으로 다듬습니다. 제목·출판사 검색은 그대로입니다
+   - 이유: 사용자가 "<김정은>"이나 "KBS 〈슈퍼차이나〉"로 찾아도 정리된 이름과 맞게 하려는 것
+   - 의존: 1
+   - 위험: 낮음
+- 시험: `BookSearchTests`(`backend/src/test/java/com/chaekcheck/catalog/BookSearchTests.java`)에 경우를 더합니다
+  - 정리된 이름 「김정은」이 저장된 책을 "김정은"·"<김정은>"으로 단어·정확히 일치 검색하면 모두 찾음(AC-3)
+  - 옮긴이 역할로 "이소연"을 찾으면 나옴(AC-7)
+- 확인: AC-3·AC-7의 검색 부분
+
+### 4단계: ④ 비교 제목의 앞 괄호 (R2-2)
+
+1. **`SameTextKey.comparisonTitle`과 `LEADING_NOTE_KEEP_WORDS`** (파일 `I/SameTextKey.java`, `comparisonTitle` 191행, 상수는 `EDITION_WORDS` 42행·`TAILS` 50행 옆) [확정] (세 원인 #2, 확인 결과 결정 #3, 명세 결정 #5, 설계 결정 #7)
+   - 할 일
+     - 앞 시리즈 표시(`LEADING_SERIES` 54행)를 뗀 뒤 맨 앞 `( … )` 하나를 뗍니다
+     - 괄호 안 글자를 공백 무시하고 남길 낱말과 견줍니다. 같으면 남깁니다
+     - 남길 낱말 목록 밖이라도 "…판"으로 끝나거나 "EDITION"이 들어 있으면 남깁니다(대소문자는 NFKC 뒤 견줌 [안])
+     - 떼고 남은 제목이 비면 떼지 않습니다
+     - 권 표시·부제는 지금처럼 전체 제목에서 읽습니다(174·216행)
+     - 화면 제목, `CatalogText.mainTitleNorm`, 제목 검색은 그대로입니다
+   - 남길 낱말 [확정] (확인 결과 결정 #3)
+     - 판: 개정판, 개정2판, 증보, 증보판, 4판, 리커버, 2nd EDITION, 4th EDITION
+     - 원서·번역: 영어원서, 영어 원서, 영문 번역판, 한영대역, 원문, 완역, 고본완역
+     - 형태: 오디오북, 전자책, 체험판, 무료체험판, 만화, 큰글자책
+     - 뒷권: 속
+   - dev가 합쳐진 책 표본에서 빠진 낱말을 찾으면 더하고 보고합니다 [확정] (scope 포함 6)
+   - 근거: KORMARC 245 "표제 배열" [확정] (https://librarian.nl.go.kr/kormarc/KSX6006-0/sub/20X_24X_245.html, 확인 2026-10-15)
+   - 의존: 0단계(1~3과 따로 가능)
+   - 위험: 중간 (책 종류 괄호가 빠지면 다른 책이 합쳐짐)
+- 시험: `SameTextKeyTests`(`backend/src/test/java/com/chaekcheck/collection/internal/importer/SameTextKeyTests.java`)
+  - (만화)·(개정판)·(속)·(3판)·(제2판)·(2nd EDITION)·(큰글자책)은 남김
+  - 「(부를 끌어 당기는) 백만장자 마인드」와 「백만장자 마인드」는 같은 비교 제목
+  - 「(만화) 삼국지」와 「삼국지」는 다름
+  - 괄호만 있는 제목은 그대로
+  - 기존 시험(`EDITION_WORDS`, 권 표시, 부제)은 그대로 통과
+- 확인: AC-6의 단위 부분
+
+### 5단계: 규칙 폴더 읽기와 저자·출판사 바꿔 읽기 (R2-4)
+
+1. **규칙 파일 둘** (새 파일 `scripts/library/rules/author_publisher_swapped.tsv`, `scripts/library/rules/supplier_families.tsv`) [확정: 파일 둘 / 안: 이름·칸] (설계 결정 #4)
+   - `author_publisher_swapped.tsv`
+     - 칸: `collection_id, name, decided_on, swap_before, note`
+     - 줄: 11 대구전자도서관, 12 경기도교육청 전자도서관, 15 전북특별자치도교육청 전자도서관 [확정]
+     - `swap_before` = 고친 수집기(8단계)를 main에 합친 날 [확인 필요: dev]
+     - `note`에 원인(목록 칸 순서 출판사 → 저자 → 날짜, 사이트 확인 2026-10-14)과 ADR-0115를 적습니다
+   - `supplier_families.tsv`
+     - 칸: `supplier, family, decided_on, note`
+     - 내용은 dev가 수집 DB(2026-10-12 사본)의 `holding.supplier` 이름 전체를 보고 만듭니다 [확인 필요: dev, plan에 보고]
+     - 적어도 다음 묶음을 넣습니다 [확정: 이 묶음] (design-delta, architect 결정 1)
+       - 「Y2Books 전자책」 = 「와이투북스」: **이 줄이 없으면 AC-2가 통과하지 않습니다**
+       - 「YES24」·「예스이십사」·「예스24」·「YES24 전자책」
+       - 「교보문고」·「교보 전자책」·「교보문고 전자책」·「(주)교보문고」
+   - `scripts/library/rules/README.md` 표에 두 줄을 더합니다. 가져오기(`collection-import`, 설정 `rules-dir`)도 이 폴더를 읽는다고 적습니다
+   - 의존: 0단계
+   - 위험: 낮음
+2. **`ImportRules`** (새 파일 `I/ImportRules.java` [안 이름]) [확정: 동작] (설계 결정 #4·#5)
+   - 두 파일을 읽습니다. 파일이나 칸이 없거나 값이 틀리면 **수집 사본을 읽기 전에** 멈춥니다(오류 문구에 파일 이름)
+   - 공급사 이름 다듬기(NFKC, 소문자, `(주)` 같은 법인 표시, 공백 제거)는 한 함수에 둡니다 [안 세부]. 목록에 없는 이름은 다듬은 이름 그대로 한 묶음입니다 [확정] (설계 결정 #2)
+   - `swap_before` 검사: 세 도서관의 수집 시각(`Library.collectedAt`)이 `swap_before` 이후면 "규칙 줄을 지우기 전에 `scripts/library/check_author_publisher_swap.py`로 검증하세요"라는 문구로 멈춥니다 [안: 판정 기준은 dev가 정해 보고]
+   - 지금 넣기 명령의 `RuleSet`(`collection/internal/libraryinsert/RuleSet.java`) 읽기 방식과 같은 꼴로 씁니다. 코드를 나눌지는 dev가 정합니다 [안]
+3. **설정 `rules-dir`** (파일 `I/CatalogImportRunner.java` `Settings` 73~74행, `backend/src/main/resources/application-collection-import.yml`) [확정: 동작 / 안: 이름]
+   - `chaekcheck.collection.import.rules-dir`를 더합니다. 기본값은 `../scripts/library/rules`입니다
+   - 모든 mode에 필요한지는 dev가 정합니다(`export`·`in-place`·dry run은 필요, `apply`·`finish`·`discard`는 사본을 읽지 않음) [안]
+4. **줄을 읽을 때 두 칸 바꾸기** (파일 `I/CollectedCatalog.java`) [확정] (설계 결정 #3)
+   - `Library` 레코드(51~52행)에 `authorPublisherSwapped`를 더합니다. `libraries(…)`(107행)에서 규칙 파일의 수집 번호로 채웁니다
+   - `scan`(164~205행)에서 `Row`를 만들 때(198~201행) 바뀐 도서관이면 `authorRaw`와 `publisher`를 바꿉니다. 두 번 읽기(ADR-0054) 모두 같은 값이어야 합니다
+   - 첫 번째 읽기에서 바꾼 줄 수를 `ImportReport`(`authorPublisherSwappedRows` [안])에 셉니다
+   - Javadoc에 "세 도서관의 `holding.author_raw`·`publisher_raw`는 바꾼 값(수집 원문 그대로의 예외)"을 적습니다 [확정] (design-delta "데이터")
+   - 의존: 2·3
+   - 위험: 낮음
+- 시험
+  - `ImportRulesTests` [안]: 두 파일 정상, 파일 없음 → 멈춤, 칸 없음 → 멈춤, `swap_before` 뒤 수집 시각 → 멈춤, 공급사 이름 다듬기
+  - `CatalogImportSettingsTests`: `rules-dir` 기본값과 지정값
+  - 가져오기 시험(지금 `CatalogImporterTests`의 작은 수집 사본에 수집 번호 11 꼴 도서관을 더함): 그 도서관 줄의 저자·출판사가 바뀌어 들어가고, 다른 도서관은 그대로(AC-9)
+- 확인: AC-9의 시험 부분
+
+### 6단계: ② 공급사 코드로 잇기 (R2-3)
+
+1. **`Row.supplierCodeKey`** (파일 `I/CollectedCatalog.java` `Row` 72~75행, `scan`) [확정] (명세 결정 #6, 설계 결정 #1)
+   - 서비스 화면 종류(`Library.platformType`)에 따라 코드를 고릅니다
+     - `BOOKCUBE_FX` → `alt_code`
+     - `KYOBO_V1`·`KYOBO_SUBSCRIPTION_V1`·`YES24_V1`·`YES24_V2`·`YES24_V3` → `item_key`
+     - 그 밖 → 없음
+   - 키 = (공급사 묶음, 다듬은 코드)입니다. 공급사 묶음은 `ImportRules`로 바꾼 값이고, 공급사가 비면 키도 없습니다
+   - 코드 다듬기(공백, 앞의 0)와 `KYOBO_SUBSCRIPTION_V1` `item_key`의 번호 공간은 [확인 필요: dev 수집 DB] (design-delta 확인 필요)
+2. **세 묶는 방식의 ②** (파일 `I/BookGrouping.java` 141행 부근 `unit.isbns.add(…)`, `I/CompactGrouping.java` 170행 부근, `I/SqlGrouping.java` 151행 부근과 `grp_vote` 새 kind) [확정: 같은 단계·같은 결과] (설계 결정 #1)
+   - 코드 키를 ISBN처럼 "값마다 잇기"에 넣습니다. ISBN 고르기 표에는 넣지 않습니다(C2)
+   - `objects`는 `Unit.codes`, `compact`는 새 필드, `sql`은 `grp_vote` 새 kind입니다 [안]
+   - `BookGrouper` 인터페이스 Javadoc(25~37행 규칙 목록)의 ② 설명을 고칩니다
+3. **셈** (파일 `I/ImportReport.java`)
+   - `supplierCodeJoins` [안]: 코드 키 때문에 이어진 횟수
+   - `codeJoinedIsbnConflicts` [안]: 코드로 이었는데 묶음 안 ISBN이 둘 이상인 묶음 수. C4의 2번 멈출 조건입니다
+   - 세 방식이 같은 값을 내야 합니다
+   - 의존: 5
+   - 위험: **높음** (세 방식이 어긋나거나 9자리 번호에서 다른 책이 이어질 수 있음)
+- 시험
+  - `BookGrouperContractTests`(세 방식 같은 결과)에 경우를 더합니다
+    - 북큐브 `alt_code` 1210492004114(공급사 「Y2Books 전자책」) = 교보 `item_key` 1210492004114(「와이투북스」) → 같은 책(AC-2)
+    - 같은 9자리 번호라도 공급사 묶음이 다르면(북큐브 자체 코드 / YES24) 따로
+    - 공급사가 빈 줄은 따로
+    - 코드로 이은 묶음의 ISBN은 코드가 아니라 가장 많은 ISBN
+    - `codeJoinedIsbnConflicts` 셈
+  - `CompactGroupingTests`·`SqlGroupingTests` 기존 시험이 그대로 통과
+- 확인: AC-2의 시험 부분
+
+### 7단계: 책 표 저자 칸 `displayText`와 가져오기 통합 시험 (R1-5, R2-1)
+
+1. **`NewBook`의 저자 칸** (파일 `I/CatalogImporter.java` 173~174행) [확정] (명세 결정 #4, 설계 결정 #6)
+   - `book.authorDisplay()` 대신 `Contributors.displayText(book.authorDisplay())`를 넣습니다. 세 방식의 대표 고르기는 고치지 않습니다
+   - 첫 저자(③·④ 키)는 1~2단계로 이미 정리된 이름을 씁니다(`SameTextKey.firstAuthor` 338행, `BookGrouper.firstAuthor` 113행은 고치지 않음)
+   - dry run 덤프(`DryRunDump.java` 48행)의 저자 칸도 같은 글이 되는지 봅니다 [안]
+   - 의존: 2·4·5·6
+   - 위험: 낮음
+- 가져오기 통합 시험 (`CatalogImporterTests`에 작은 수집 사본 픽스처, `CatalogImporter` 끝까지, 기본 `compact`. 가능하면 세 방식 모두)
+  - 꺾쇠 줄과 보통 줄 → 한 책(AC-1)
+  - 「백만장자 마인드」 꼴: 보통 / 꺾쇠 / 「김근아 저자」(코드 같음) / 「(부를 끌어 당기는) …」 / 뒤바뀐 도서관 줄 → 한 책, 「부를 끌어 당기는 백만장자 마인드」 → 따로(AC-2)
+  - `book.author_display`에 `<`·`>`·`〈`·`〉`·`「`·`」`·`《`·`》`가 없음, `[ ]`는 그대로(AC-4)
+  - 「KBS 〈슈퍼차이나〉 제작팀」과 「KBS 슈퍼차이나 제작팀」 → 한 책(AC-5)
+  - 「(만화) 삼국지」와 「삼국지」 → 따로(AC-6)
+  - 뒤바뀐 도서관 줄 → 저자·출판사 바름(AC-9)
+  - 붙은 역할만 있는 책 → 저자 칸이 띄어져 있음(AC-17)
+- 확인: AC-1·2·4·5·6·9·17의 시험 부분
+
+### 8단계: 수집기 `PUBLISHER_FIRST_PORTAL_HOSTS` (R3-1)
+
+1. **상수와 `parse_portal`** (파일 `scripts/crawl/crawl_catalog.py`, `parse_portal` 692~720행, 713~714행에서 `info[0]` 저자·`info[1]` 출판사) [확정] (확인 결과 결정 #7, 설계 결정 #10)
+   - 맨 위 "규칙" 묶음에 `PUBLISHER_FIRST_PORTAL_HOSTS = {"lib.goe.go.kr", "library.daegu.go.kr", "lib.jbe.go.kr"}`를 둡니다
+   - `base` 호스트가 이 안에 있으면 `info[1]`을 저자, `info[0]`을 출판사로 읽습니다. 나머지 포털은 그대로입니다
+   - 사람이 정한 값(`PAGE_SIZE_BY_HOST` 63행, `SHARED_HOSTS` 331행, `BLOCKED_HOST_SUFFIX` 60행, `DISABLED_IDS` 50행 등)을 파일 맨 위 "규칙" 묶음으로 모으고, 각 값에 규칙 목록 문서 줄을 가리키는 주석을 답니다 [확정: 방향 / 안: 범위] (ADR-0117). 값과 동작은 바꾸지 않습니다
+   - **다시 수집하지 않습니다** (C6). 이 변경은 다음 수집부터 효과가 납니다
+   - 의존: 0단계(다른 단계와 따로)
+   - 위험: 낮음
+- 시험: 새 `scripts/crawl/test_parse_portal.py` [안 이름] (`python -m unittest scripts/crawl/test_parse_portal.py`, 네트워크 없음)
+  - 경기도교육청·대구·전북교육청 목록 쪽 저장 HTML 한 쪽씩 → 저자·출판사가 바름
+  - 부산 저장 HTML → 지금과 같음(AC-10)
+  - 저장 HTML이 없으면 C5·C6 예절로 한 쪽씩만 받아 `scripts/crawl/` 아래 시험 자료로 둡니다 [안]
+  - `test_crawl_migrate.py`도 그대로 통과
+- 확인: AC-10
+
+### 9단계: 검증 스크립트 (R7, ADR-0115)
+
+1. **`scripts/library/check_author_publisher_swap.py`** [확정: 스크립트 하나 / 안: 이름] (ADR-0115)
+   - 입력: 수집 사본 경로
+   - 출력: 전자도서관 포털 도서관마다 "바름 / 뒤바뀜 / 판단 못 함"과 줄 수
+   - 방법은 research.md 실험 (d)입니다: 줄마다 저자 칸 이름이 다른 도서관에서 저자로 쓰이는 비율과 출판사로 쓰이는 비율을 견줍니다. 비율을 셀 때 전자도서관 포털 사이트는 뺍니다
+   - 판정 문턱값은 dev가 정해 보고합니다 [안]
+   - 수집 사본은 읽기 전용으로 엽니다
+   - 의존: 0단계
+   - 위험: 낮음
+- 시험: 작은 SQLite로 단위 시험(`scripts/library/test_check_author_publisher_swap.py` [안]). 실제로 2026-10-12 사본에 돌려 수집 11·12·15는 "뒤바뀜", 부산(10) 등은 "바름"인지 봅니다(AC-19)
+  - 실험 값 [확정: 2026-10-14 실험]
+    - 전북교육청: 뒤바뀜 63,660 / 바름 1 / 판단 못 함 18,898
+    - 경기도교육청: 27,251 / 5 / 11,397
+    - 대구: 12,768 / 0 / 15,782
+    - 부산: 바름 17,500 / 판단 못 함 3,826
+  - 같은 값이 아니어도 판정이 같으면 됩니다
+- 확인: AC-19
+
+### 10단계: 사용 기록 캐시 답 수 (R5, 다른 단계와 따로)
+
+1. **Liquibase** (새 파일 `backend/src/main/resources/db/changelog/usagelog/002-library-response-cached-count.yaml`, changeset id `usagelog-002-cached-count` [안], master 끝에 `# cycle 19: usage log cached answers (ADR-0116)` + include [안 문구]) [확정: 칸·제약] (C3)
+   ```sql
+   ALTER TABLE usagelog.library_response_daily
+     ADD COLUMN cached_count integer NOT NULL DEFAULT 0
+     CONSTRAINT library_response_daily_cached_count_check CHECK (cached_count >= 0);
+   ```
+   상수 기본값이라 표를 다시 쓰지 않습니다 [확정] (PostgreSQL 18 ALTER TABLE Notes, https://www.postgresql.org/docs/current/sql-altertable.html, 확인 2026-10-15)
+2. **`ResponseResult.CACHED`** (파일 `backend/src/main/java/com/chaekcheck/usagelog/UsageLog.java` 58~62행) [확정] (설계 결정 #8). Javadoc 36행(`elapsedMs`는 OK에서만 씀)에 CACHED는 무시된다고 적습니다
+3. **셈과 쓰기**
+   - 셈: `usagelog/internal/buffer/UsageBuffer.java` 47·114행 `add(ResponseResult, long)`에서 `CACHED`면 캐시 답 수만 1 올립니다. 응답 시간·성공/실패 수는 그대로입니다
+   - 쓰기: `usagelog/internal/write/UsageLogWriter.java` 61~68행 upsert에 `cached_count`(`d.cached_count + EXCLUDED.cached_count`)를 더합니다
+4. **알리는 두 곳**
+   - `availability/internal/search/BatchRunner.java` `answered` 334~338행: 지금은 `fromCache`면 바로 빠집니다. 앞으로는 `recordLibraryResponse(libraryId, source, CACHED, 0)`을 부르고, 로그 줄은 쓰지 않습니다. 330~333행 주석과 71행 클래스 주석도 고칩니다
+   - `availability/internal/web/LibraryEbookController.java` 91~110행(`fetched.cached()` 96행): 같은 방식으로 `DIRECT_SEARCH` 줄에 `CACHED`를 알립니다
+   - 꺼진 도서관 번호 처리는 다른 결과와 같습니다(design-delta 규칙 세부 R5)
+   - 의존: 0단계
+   - 위험: 낮음
+- 시험
+  - `UsageLogSchemaTests`: 칸·기본값·CHECK
+  - `UsageLogBufferTests`·`UsageLogWriteTests`: CACHED는 `cached_count`만 늘고 `ok_count`·`ok_ms_total`·`ok_ms_max`는 그대로
+  - `BatchRunnerTests`·`LibraryEbookControllerTests`: 캐시 경로에서 `CACHED` 한 번, 로그 줄 없음
+  - `ModularityTests`: 의존 그대로(AC-15)
+- 확인: AC-15 (내 PC에서 같은 도서관 검색을 3분 안에 두 번 한 뒤 DB 조회도 함)
+
+### 11단계: 문서 (R6, R7)
+
+1. **가져오기 메모리 안내와 도서관 수** [확정] (확인 결과 결정 #9)
+   - `docs/maintenance/3-import.md` 32·34·177행과 `backend/build.gradle` 74행: `-PbootRunXmx=6g` → 기본 `compact`는 2GB(`-PbootRunXmx=2g`). 6GB는 `objects` 방식만 필요하다고 적습니다
+   - `3-import.md` 41행과 `I/CatalogImportRunner.java` 69행(Javadoc)·101~102행(오류 문구): "약 2,394곳" → 2,370 (가져오기 기록 11번, dev `plan-feedback.md` 4073행)
+   - 58행 같은 지난 측정 표의 숫자는 기록이므로 고치지 않습니다
+2. **`docs/library-maintenance.md` 6-2 "꺼 둔 도서관" 표** (554행 아래): 사이클 07에서 끈 135 전라북도교육청통합도서관, 2194 장안대학교 (YES24), 2198 성균관대학교 (YES24) 세 줄을 더합니다 [확정] (18 회고 결정 #14)
+   - 끈 날·이유 원문은 사이클 07 기록(`library-site-issues.md`, 끄기 changeset 주석)에서 옮깁니다. 못 찾으면 "확인 필요"로 두고 보고합니다
+3. **규칙 목록 문서** (새 파일 `docs/maintenance/rules-index.md` [안: 이름]) [확정: 문서 하나와 칸] (ADR-0117)
+   - 규칙마다 한 줄씩, 칸은 "어디에(파일·상수) / 뜻 / 데이터로 확인하는 법(가능하면 스크립트) / 바꾸는 법과 그 뒤 할 일(다시 수집 또는 다시 가져오기)"입니다
+   - 이번 사이클 규칙
+     - `Contributors`의 기호 떼기, 좁은 규칙의 역할 낱말, 보호 장치
+     - `SameTextKey.LEADING_NOTE_KEEP_WORDS`와 "…판"·EDITION 규칙, `EDITION_WORDS`
+     - `supplier_families.tsv`, `author_publisher_swapped.tsv`(확인하는 법: `check_author_publisher_swap.py`)
+     - `PUBLISHER_FIRST_PORTAL_HOSTS`(확인하는 법: 포털 새 책 목록 한 쪽을 열어 칸 순서 확인)
+   - 이미 있는 규칙도 옮겨 적습니다
+     - `scripts/library/rules/` README 표의 파일들
+     - 수집기 맨 위 상수들
+     - 가져오기 상수(`SameTextKey` `PLACEHOLDER_AUTHORS`·`PLACEHOLDER_PUBLISHERS`·`TAILS`, `BookGrouper.SHARED_CODE_KINDS`, `HoldingRowFilter`의 종류 목록)
+     - `placeholder-date-libraries`
+   - 코드 상수마다 이 문서의 줄을 가리키는 주석을 답니다
+4. **시작 점검 한 줄씩** [확정] (설계 결정 #10, ADR-0117)
+   - `docs/maintenance/2-crawl.md`(0절 읽는 순서 아래 또는 수집 전 점검 목록): "수집 전 `rules-index.md` 확인. 통합 포털 새 책 목록 한 쪽을 열어 `div.info` 칸 순서가 `PUBLISHER_FIRST_PORTAL_HOSTS`와 맞는지 확인"
+   - `docs/maintenance/platforms.md` 5절 101행: "`div.info span`(저자, 출판사, 출간일)"을 "칸 순서가 사이트마다 다름. 출판사가 먼저인 포털 = 경기도교육청·대구·전북교육청(`PUBLISHER_FIRST_PORTAL_HOSTS`)"으로 고칩니다
+   - `docs/maintenance/3-import.md`
+     - 준비(2절)에 "`rules-index.md` 확인, `rules-dir` 두 파일"
+     - 12절 표 아래에 "저자 정리(`Contributors`)를 고치면 세 번째 줄(검색어 다듬기 규칙)"
+     - C9 절차: `swap_before` 뒤 사본에서 멈추면 → 검증 스크립트 → "바름"이면 줄 지우고 다시 가져오기, 아니면 사용자에게 물음
+5. 의존: 4~9 (규칙 이름이 정해진 뒤)
 - 위험: 낮음
+- 확인: AC-16, AC-18
 
-### 5단계: `availability` 호출 — 직접 찾기, 더 보기, 도서관 응답, 요청마다 로그 (의존: 3단계)
+### 12단계: 미리 돌려 보기와 비교 (R4-2, AC-12)
 
-1. **직접 찾기 첫 묶음** (`availability/internal/web/EbookSearchStreamController.java:43-48`, 끝: `search/BatchSession.java:167-193`)
-   - 컨트롤러에서 `capture`(C3) 뒤 세션에 넘깁니다
-   - **세션마다 한 번만** [안: "기록함" 표시 하나, `AtomicBoolean`]
-     - 첫 `batch-done`을 보낸 순간 `recordSearch(kind=direct, resultCount=countedRows)` (R1-4, `StreamEvents.java:30-42,97-127`)
-     - 그 전에 끝나면 `recordSearch(resultCount=null)`: `clientGone`(`BatchSession.send` `:195-200`), `finish()`, emitter 시간 초과(`streamDuration()+5s`), 오류 중 먼저 온 하나
-   - 보낼 것이 없어 끊김을 모르는 경우도 묶음 마감(8초) 뒤 `finish()`가 `done`을 보내다 알게 되므로 늦어도 그때 남습니다
-   - 지금 `SseEmitter`의 `onCompletion`·`onTimeout`·`onError`가 없습니다. 더할지는 dev가 정하고, 더해도 "한 번만"을 지킵니다 [안]
-   - 위험: 높음 (경합, 두 번 기록)
-2. **다음 묶음** (`web/EbookBatchStreamController.java:32`, `batchNo` ≥ 2): `recordMore(direct_next_batch, seq=batchNo, 같은 조건)`. 조건 칸은 이 요청 파라미터나 세션에서 얻습니다. 못 얻는 칸이 있으면 보고합니다 [안]
-3. **도서관별 더 보기** (`web/LibraryEbookController.java:50-52`)
-   - `recordMore(library_more, libraryId, seq=page)`
-   - `:58` `fetcher.fetch(...)` 앞뒤로 시간을 재서 `recordLibraryResponse(source=direct_search)`. 성공은 `OK`, `UpstreamException`은 Kind에 따라 `FAILED`/`TIMEOUT` [안]
-4. **도서관 응답 — 직접 찾기** (`search/BatchRunner.java:161-174`, `fetchAsync(...).whenComplete`)
-   - 요청 시작 시각을 잡아 끝날 때 ms를 계산합니다 [안]
-   - 분류 [확정]
-     - 성공 → `OK`
-     - `UpstreamException.Kind.ERROR` → `FAILED`
-     - `TIMEOUT` 또는 묶음 마감(`deadlinePassed`) → `TIMEOUT`
-     - 시작 마감까지 못 보낸 후보 → 하나마다 `SKIPPED` (C5)
-   - 조회 서버를 바꿔 다시 보내도 한 번입니다 (C5)
-   - 끊긴 뒤에도 이미 보낸 요청은 끝날 때 셉니다 [확정] (R6-4)
-5. **도서관 응답 — 대출 수 채우기** (`BatchRunner.java:225-250` `startHolding`, `requestedAt` `:234`)
-   - `source=holding_fill`, 분류는 4와 같음 [안]
-   - 구독형(요청 없이 끝남, `:226-228`)과 도서관 주소 밖 상세 주소(요청 없이 실패, `:230-232`)는 세지 않습니다 [안]
-   - 대출 수 채우기는 `book_view`·`search_more`로 세지 않습니다 [확정] (R5-1, R6-1)
-6. **요청마다 서버 로그 한 줄**
-   - 위 두 `whenComplete`(와 3의 도서관별 더 보기)에서 INFO `library=… source=… result=… ms=…` [안: 형식]. IP 없음
-   - 지금 실패만 남기는 `BatchSession.java:116`, `HoldingSession.java:104`와 겹치지 않게 정리합니다 [안]
-   - 서비스 로그 보관 14일은 배포 설정입니다 [확정: 17]
-- 테스트 (가짜 fetcher, 진짜 사이트 없음)
-  - `DirectSearchUsageLogTests` [안]
-    - 첫 묶음 끝 → `search_event` direct 한 줄, `result_count` = countedRows (AC-3)
-    - 다음 묶음·도서관별 더 보기 → `search_event` 그대로, `search_more` 한 줄씩 (AC-3)
-    - 첫 묶음 전 끊김 → `result_count` NULL 한 줄. 보낼 것 없이 닫힘 → 마감 뒤 한 줄. 끊김과 `finish`가 겹쳐도 한 줄 (AC-4)
-  - `LibraryResponseSummaryTests` [안]
-    - 가짜 fetcher로 성공·ERROR·TIMEOUT·마감 넘김·시작 마감 못 넘긴 후보·조회 서버 바꿔 보내기를 섞음
-    - (오늘, 도서관, `direct_search`/`holding_fill`) 줄의 수·시간 합·최댓값이 맞음
-    - 대출 수 채우기는 `book_view`를 늘리지 않음 (AC-24, AC-17)
-    - 로그 붙잡기로 요청마다 INFO 한 줄 (AC-24)
-- 위험: 높음
+1. **dry run** (2026-10-12 사본, 기록 11번과 같은 도서관 목록, 기본 `compact`, `-PbootRunXmx=2g`, `dry-run-output` 폴더 지정)
+   - 멈춤 없이 끝나는지 봅니다(`rules-dir` 읽음, `swap_before` 앞 사본이라 멈추지 않아야 함)
+   - 로그·셈을 적습니다: `supplierCodeJoins`, `codeJoinedIsbnConflicts`, `authorPublisherSwappedRows`, `leadingNoteCut`, 국가서지 ISBN 붙음 수(전후)
+   - [안] 같은 사본으로 시작 커밋 코드의 dry run도 한 번 돌려 기록 11번과 같은지 봅니다(규칙 영향만 떼어 보려는 것)
+2. **`compare_grouping.py regroup`** (`3-import.md` 39~40행): A = 0단계 3의 기록 11번 `ids`, B = 1의 dry run 폴더
+   - 책 수, 합쳐짐·나뉨 수를 적습니다
+   - **원인별 합쳐짐 무작위 표본 각 20권**을 뽑습니다: 꺾쇠 / 다른 괄호 / 붙은 역할 / 제목 앞 괄호 / 상품 코드 / 뒤바뀐 칸 [확정] (확인 결과 결정 #8)
+     - 원인은 합쳐진 줄들의 원문 차이로 가릅니다
+     - 나눌 방법(스크립트에 선택지를 더하거나 일회용 스크립트)은 dev가 정합니다 [안]
+   - 나뉨 표본도 20권 봅니다
+   - 표본마다 같은 책인지 사람이 판단합니다. 애매하면 C5 방식으로 사이트 한 건을 엽니다
+   - 「백만장자 마인드」(율리시즈) 줄 수 전후를 적습니다
+   - 남길 낱말 목록에 빠진 낱말이 보이면 4단계로 돌아가 더하고 다시 돌립니다
+3. **공급사 묶음 목록 보고**: `supplier_families.tsv` 최종 내용과 만든 방법을 `# 사이클 19` 절에 적습니다
+4. **멈출 조건 판정** (C4): 걸리면 여기서 멈추고 보고합니다. 걸리지 않으면 13단계로 갑니다
+- 확인: AC-12. 숫자는 AC-1·2·5·6의 실제 데이터 근거가 됩니다
+- 위험: 중간 (판단에 시간이 듦)
 
-### 6단계: 사용 알림 주소 `POST /api/v1/usage-events` (의존: 1·3단계)
+### 13단계: main에 합치기, 다시 가져오기, 운영 역할 반영, 다시 켜기 (R4-1, R4-3, R4-4)
 
-1. **컨트롤러** (`usagelog/internal/web/UsageEventController.java` [안])
-   - JSON 하나, `type`으로 구분 [확정]. 칸 이름 [안]: design-delta "API" 표
-   - 늘 **204**, 본문 없음 [확정]
-   - 로그인 기능 켜짐에서 CSRF 표시가 없거나 틀리면 403입니다(Spring Security가 냄)
-2. **검사** [확정 이유 값]
-   - JSON을 못 읽음 → `malformed`
-   - 모르는 `type` → `unknown_type`
-   - `library_click`
-     - `place` 여섯 밖 → `invalid_place`
-     - `screen` 다섯 밖 → `invalid_screen`
-     - `bookId`가 양의 정수가 아님 → `invalid_book_id` (책이 있는지는 보지 않음, `usagelog`는 `catalog`에 기대지 않음 [안])
-   - 그 밖의 정하지 않은 값 → `invalid_value`. 예: 지역 배열 각 20개 넘음 [안], 카테고리 빈 값·20자 넘음 [안], 빠진 칸
-   - 도서관 번호는 비우기 때 `enabledLibraryRefs()`로 → `unknown_library` (C5, `screen_event`의 `my_library_*`도 같음)
-   - 이상한 값은 `rejected_event`에 시각·IP·이유·받은 값(2KB 넘으면 잘라 냄)을 남깁니다 [확정]
-   - 본문 크기 상한은 [안: 예 8KB, dev가 정해 보고]
-   - 사서추천 분야 값은 사이클 14 뒤 새 코드가 생길 수 있어 목록으로 막지 않습니다 [안]
-3. **꺼짐·로봇**: C4·C7 그대로. 꺼짐이어도 204
-- 테스트
-  - `UsageEventApiTests` [안] (로그인 꺼짐 기본)
-    - `type`별 정상 → `library_click`/`screen_event` 한 줄, 회원 번호 칸 없음 (AC-23 서버 쪽)
-    - 없는 도서관·**꺼진 도서관** 번호, 틀린 `place`·`screen`·`bookId`, 깨진 JSON, 모르는 `type`, 틀린 값 → 204, 클릭 기록 0, `rejected_event`에 IP·이유 (AC-10)
-    - 2KB 넘는 값은 잘림
-  - `AuthEnabledSecurityTests`(또는 `UsageEventCsrfTests` [안], 로그인 켬)
-    - 표시 없이 POST → 403
-    - `XSRF-TOKEN` 쿠키 + `X-XSRF-TOKEN` 머리글 → 204이고 줄 생김
-    - 로그인 쿠키 없이도 204 (AC-9)
-  - `AuthDisabledTests`: 표시 없이 204, 줄 생김 (AC-9)
-- 위험: 중간
-
-### 7단계: 04:30 정리 작업 (의존: 2·3단계)
-
-1. **정리** (`usagelog/internal/cleanup/UsageLogCleanup.java` [안])
-   - 예시: `auth/internal/cleanup/DailyAccountCleanup.java:65` (cron·zone 설정 값)
-   - `@Scheduled(cron = "${chaekcheck.usagelog.cleanup.cron}", zone = "${…zone}")`, 04:30 Asia/Seoul [확정 시각] [안: 키]
-   - 순서 [안]
-     1. 다섯 기록 표에서 `received_at < now() - interval '30 days' AND client_ip IS NOT NULL` → `client_ip = NULL`
-     2. `rejected_event` 30일 지남 → 지움
-     3. 기록 표·`dropped_batch`(`dropped_at`)는 `received_at < now() - interval '1 year'` → 지움, `library_response_daily`는 `day`로 [안]
-   - "1년" = 받은 시각부터 [확정]
-   - 1만 줄씩 나눠서 [안]
-   - 기록 설정이 꺼져 있어도 정리는 돕니다 [안]. 지인 기간 기록도 결국 지워지도록 하기 위함입니다
-   - 지운·비운 줄 수를 INFO 한 줄로 남깁니다
-- 테스트: `UsageLogCleanupTests` [안] (`Clock` 고정, `db-test`)
-  - 1년 1일 전 줄은 지워지고 364일 전 줄은 남음 (AC-13)
-  - 31일 된 줄은 IP가 NULL이고 나머지 칸은 남음. 29일 된 줄은 IP 있음 (AC-18)
-  - `rejected_event` 31일 지움, 29일 남김
-  - 나눠 지우기에서 1만 줄 넘는 경우
-- 위험: 낮음
-
-### 8단계: 웹 — 공용 보내기 함수, 클릭 알림, 화면 행동 알림 (의존: 6단계, 화면 쪽은 가짜 응답으로 먼저 가능)
-
-1. **공용 보내기** (`web/src/api/usageEvents.ts` [안: 위치], 이름 예 `sendUsageEvent`)
-   - `fetch('/api/v1/usage-events', { method: 'POST', keepalive: true, credentials: 'same-origin', JSON })` [확정 keepalive]
-   - 로그인 기능 켜짐일 때만 CSRF 표시를 붙입니다(`/api/v1/me` 404 = 꺼짐, `api/auth.ts:111-113`)
-     - `XSRF-TOKEN` → `X-XSRF-TOKEN`
-     - 없으면 `GET /api/v1/auth/csrf-token`
-     - 403 `csrf_invalid`면 한 번 더
-     - `api/auth.ts:48` `send` 방식을 따릅니다 [안]
-   - 로그인 기능 상태를 아직 모를 때 어떻게 할지는 dev가 정해 보고합니다 [안]
-   - 로그인 여부는 보내지 않습니다 [확정]
-   - **실패해도 아무것도 보이지 않고 다시 보내지 않습니다** [확정] (R2-7). 예외를 밖으로 던지지 않습니다
-2. **클릭 알림**: 링크는 지금처럼 새 탭으로 바로 열립니다. `preventDefault` 없이 같은 클릭에서 보냅니다 [확정]
-   - `features/search/ResultRow.tsx`
-     - 카드 `:185-191` → `result_card`
-     - 가입 링크 `:97-101` → `join_link`
-     - 가입 안내 `:106-113` → `join_guide`
-     - 도서관 첫 화면 `:62-69` → `home_page`
-     - 로고 `:131` → `logo`
-     - 결과 줄은 **어느 화면인지**를 넘겨받습니다 (spec R2-2)
-   - `components/LibraryLogo.tsx:34-39`: 도서관 번호·화면을 넘겨받게 합니다
-   - 요약 막대 이름: `LibrarySummaryBar.tsx`의 `LibraryCell` 첫 화면 링크 `:126-130` (`DirectResults.tsx:122-128` `LibraryCountButton` 안) → `summary_bar`
-   - 화면 값과 책 번호 [확정]
-     - `direct_results`: `DirectResults`, 책 번호 비움
-     - `catalog_results`: `InstantResults.tsx:137`, 책 번호 담음
-     - `book_page`: `features/book/BookPage.tsx:149`, 책 번호 담음
-     - `picks`: `features/picks/PicksBookDialog.tsx:163`, 책 번호 담음
-     - `my_libraries`: `features/mylibrary/MyLibrariesPage.tsx:253,268`, 로고만, 책 번호 비움
-   - 가운데 버튼·길게 누르기로 여는 경우까지 셀지는 dev가 보고합니다 [안]
-3. **화면 행동 알림** [확정 종류]
-   - 사서 추천 목록 보기 `features/picks/PicksPage.tsx:317-325` → `picks_list_view`(`category.code`)
-   - 책 창 열기 `PicksPage.tsx:355-362` → `picks_book_view`(분야, 책)
-   - 지역 저장 `features/region/RegionContext.tsx:113-128` → `region_change`. 로그인 전 `regionStorage.ts:32`, 뒤 `putMyRegions` 모두 같은 자리에서 보냅니다
-   - 내 도서관 넣기·빼기 `MyLibraryContext.tsx:118-157` → `my_library_add`/`my_library_remove`. 로그인 전후 같은 자리에서 보냅니다. 서버 `mylibrary` 코드는 고치지 않습니다 [확정]
-   - 목록 보기를 다시 그릴 때마다 보내지 않게 합니다. 분야를 바꾸거나 처음 열 때 한 번 [안]
-- 테스트 (Vitest, 가짜 `fetch`)
-  - `usageEvents.test.ts` [안]
-    - 켜짐: 머리글 붙음, 표시 없으면 받아 옴, 403 `csrf_invalid` 한 번 더
-    - 꺼짐: 머리글 없음
-    - `keepalive: true`
-    - 실패해도 던지지 않음
-  - `ResultRow`·`LibraryLogo`·`LibrarySummaryBar` 시험
-    - 여섯 곳마다 올바른 `place`·`screen`·`bookId`
-    - 링크 `target="_blank"` 그대로, 기본 동작을 막지 않음 (AC-7, AC-8)
-  - `PicksPage`·`RegionContext`·`MyLibraryContext` 시험: 종류별 한 번, 로그인 전후 (AC-23)
-- 위험: 중간 (여러 화면에 손이 감)
-
-### 9단계: nginx와 robots.txt (의존: 6단계)
-
-1. **사용 알림 한도** (`deploy/nginx/rate-limits.conf:15,20` 근처, `chaekcheck-locations.conf`)
-   - 새 zone, 예 `chaekcheck_usage_events` [안: 이름], `rate=60r/m` per `$binary_remote_addr` [확정]
-   - `location = /api/v1/usage-events`
-     - `limit_req` + 넘치면 기록하지 않고 **204** [확정]. 예: `limit_req_status 429` + `error_page 429 = @usage_events_limited` → `return 204` [안]
-     - burst 값은 [안: 지금 도서관 호출 location과 같은 `burst=20 nodelay`, 보고]
-     - `proxy_set_header X-Real-IP $remote_addr` 등은 `location /api/`(`:13-21`)와 같게
-2. **로봇 거절** [확정 대상] [안: 응답 코드 403]
-   - http 단계 `map $http_user_agent $chaekcheck_named_bot { default 0; ~*(bot|crawler|spider) 1; }` [안]
-   - 직접 찾기·대출 조회 location에서 서버에 넘기기 전에 `return 403`
-     - `:27-29` `^/api/v1/(ebook-searches|book-availabilities)(/batches)?/stream$`
-     - `:45` `^~ /api/v1/availability/`
-3. `chaekcheck.conf`, `local-test.conf`, `tunnel-test.conf` 셋 모두 새 zone·map을 읽는지 확인합니다. `deploy/nginx/README.md` 표에 한 줄 씁니다
-4. **robots.txt** (`web/public/robots.txt` [안: 위치]): `User-agent: *` / `Disallow: /api/` [확정 금지 범위]. nginx에서 `/robots.txt`가 `index.html`이 아니라 이 파일로 나가는지 봅니다(`location /` `:113`)
-5. 사용자 IP 복원(`real_ip_header CF-Connecting-IP`, `set_real_ip_from` compose 네트워크 범위)은 **사이클 17 배포 설정**입니다. 15에서는 하지 않습니다
-- 테스트 (로컬 nginx 확인 `local-test.conf`, API 호출)
-  - UA `…bot…`으로 직접 찾기 → 403, 서비스 로그에 그 요청 없음, `search_event` 0 (AC-6b)
-  - `curl /robots.txt`에 `Disallow: /api/` (AC-6b)
-  - 같은 IP에서 1분에 80번 POST → 모두 204, 기록 줄은 60 + burst 이하 (AC-11). 실제 줄 수 보고
-- 위험: 낮음
-
-### 10단계: 마무리 확인 — 로그인 켬·끔, 성능, 화면 (의존: 1~9단계)
-
-1. **로그인 켬·끔 두 벌** (AC-20, AC-25)
-   - 4·5·6단계 통합 시험의 요점(검색·책 상세·더 보기·사용 알림·도서관 응답)을 로그인 켬과 끔에서 각각 돌립니다(시험 클래스 둘 또는 매개변수 [안])
-   - 끔에서는 `login_status = login_off`이고 쿠키를 읽지 않습니다(쿠키를 실어도 `login_off`)
-   - 켬에서 `GET /api/v1/books`를 네 가지로 보냅니다: 로그인한 쿠키 / 쿠키 없음 / 틀린 서명 / 만료된 우리 서명. 각각 `signed_in` / `signed_out` / `signed_out` / `signed_in`이고, 응답 본문은 넷 다 같아야 합니다
-2. **성능 측정** (AC-16, 결과는 `# 사이클 14`가 아니라 `# 사이클 15` 절에)
-   - 같은 검색 묶음을 `enabled=false`와 `true`로 돌립니다. 수집 목록 검색과 직접 찾기(가짜 또는 로컬 fetcher) [안: 묶음 구성, 보고]
-   - 기준 [확정]: 검색 응답 시간 중앙값 차이 10% 안, 서비스·DB 컨테이너 메모리(`docker stats`) 차이 각각 50MB 안
-   - Prometheus·Grafana·node_exporter(사이클 17)를 켠 상태로 재고 그 메모리도 적습니다 [안]. dev에 없으면 없이 재고 그렇다고 적습니다
-   - 함께 볼 것: 비우기 한 번 시간, `id` PK·부분 색인 유무 비교, 넣기가 정렬용 메모리를 쓰는지(`EXPLAIN ANALYZE`) [확인 필요: 프로토타입]
-3. **Playwright** (데스크톱 1280 먼저, 그다음 768·375)
-   - 여섯 곳 클릭 → 새 탭이 열리고 `POST /api/v1/usage-events` 204
-   - 사서 추천 목록·책 창, 지역 저장, 내 도서관 넣기·빼기 → 알림 하나씩
-   - 화면 모양은 바뀌지 않음 [확정]
-   - 끝나면 브라우저 창 크기를 되돌립니다
-4. **사용자 실제 폰 확인**: 아래 완료 기준의 폰 줄
-5. **dev 운영 메모** (`docs/maintenance/` 아래 [안: 파일 이름]):
-   - 기록 켜고 끄기(`CHAEKCHECK_USAGELOG_ENABLED`)
-   - 표 여덟 읽는 법과 값 뜻: `login_status`, `place`·`screen`, `reason`, 건너뜀·다시 보내기 셈법
-   - 04:30 정리
-   - 요청마다 로그 줄 형식
-   - 지인 기간 시험 뒤 그 기간 기록 지우는 SQL [안]
-- 위험: 중간
+0. **합치기**: 19 브랜치를 main에 합칩니다. 21이 먼저 들어갔으면 rebase해서 충돌을 풉니다(C10, master 끝줄 C3)
+   - 합친 직후 `# 사이클 19` 절에 적고 사용자에게 알립니다. plan 21·dev 21이 알아야 합니다(아래 "plan 쪽에 알려줄 것")
+   - 10-17까지 21이 main에 있으면 둘 다 든 main으로, 없으면 19만 든 main으로 합니다 [확정] (맨 위 일정)
+1. **내 PC 내보내기** (`export`, `3-import.md` 13-2절 1)
+   - 합친 main 판, 원래 DB(5432), 2026-10-12 사본, `-PbootRunXmx=2g`로 돌립니다
+   - ADR-0069 "검색어 다듬기 규칙" 줄이므로 **옛 서비스를 켜 둔 채** 돌립니다(내보내기 안에서 `prepare`가 `catalog_next`를 채움)
+   - 사이클 18의 `library/016` 끄기 파일이 든 판인지 봅니다(13절 162행)
+2. **운영 역할 반영** (`apply`, 13-2절 3)
+   - 운영 역할 DB(`db-ops` 5434, 또는 그때의 운영 역할 DB)에 같은 판으로 돌립니다
+   - `mismatch`면 아무것도 바뀌지 않습니다. `failure_detail`을 보고 맞춥니다(13-3절)
+   - 반영 중에는 운영 역할 서비스에 `probe_during_import.py`를 돌립니다(`CHAEKCHECK_BASE=http://localhost:8081 CHAEKCHECK_DB_SERVICE=db-ops`, 사이클 11 방법) [확정] (사용자 승인, 2026-10-16, 인계서 검토 #3). 반영 중 5xx 0을 확인합니다(AC-13)
+3. **운영 역할 서비스를 바로 새 코드로 다시 켭니다** [확정] (ADR-0069, 설계 결정 #11)
+   - 바꿔 끼운 뒤 다시 켜기 전의 짧은 틈에는 기호를 넣은 저자 검색어만 잠깐 못 찾습니다. 이 틈은 받아들입니다
+   - 다시 켜는 동안의 연결 오류는 AC-13의 5xx와 따로 적습니다 [안]
+4. **내 PC 마저 바꿔 끼우기** (`finish`, 13-2절 4). 그다음 내 PC 서비스도 새 코드로 다시 켭니다
+5. **반영 뒤 확인** (운영 역할 서비스와 내 PC, 아래 AC 표)
+   - AC-1·2·5·6: 검색 결과 한 줄 여부
+   - AC-3·7·9: 저자 검색
+   - AC-4·17: 책 상세 저자 칸
+   - AC-11: `SELECT count(*) FROM catalog.holding WHERE library_id = 2624` = 241
+   - AC-14: 사서추천·이동진 추천도서·서울대 100선 맞춘 수. 줄었으면 원인을 적습니다(21의 `BookChoice` 보유량 규칙이 들어갔으면 그 규칙 기준)
+   - scope 조사 2·3의 전후 값
+   - 측정 시간(내보내기, 반영)
+- 위험: 중간 (판이 다르면 `mismatch`로 멈춤. 다시 켜기 전 짧은 틈)
 
 ## 테스트
 
-- 단위
-  - 버퍼 상한·누적 맵, 로봇 UA, 사용 알림 검사(이유 일곱), 2KB 자르기
-  - 판별 부품 다섯 경우
-  - 웹: 보내기 함수·클릭 자리·화면 행동
-- 통합(`db-test`)
-  - `UsageLogSchemaTests`, `UsageLogWriteTests`, `UsageLogDisabledTests`, `UsageLogShutdownTests`
-  - `CatalogUsageLogTests`, `DirectSearchUsageLogTests`, `LibraryResponseSummaryTests`, `UsageEventApiTests`, `UsageLogCleanupTests`
-  - `AuthEnabledSecurityTests`, `AuthDisabledTests`, `ModularityTests`(`ApplicationModules.of(...).verify()`), `DocumentationTests`, 기존 시험 전부
-- nginx: `local-test.conf`로 API 호출(AC-6b, AC-11)
-- 화면: Vitest, Playwright(데스크톱 먼저), 사용자 실제 폰
-- 측정: AC-16
-- 빌드 시험은 진짜 도서관 사이트를 부르지 않습니다 (C8)
+- **단위**
+  - `ContributorsTests`(`stripMarks`, `parse` 좁은 규칙·보호 장치·셋째 역할, `displayText`)
+  - `SameTextKeyTests`(앞 괄호, 남길 낱말, "…판"·EDITION)
+  - `ImportRulesTests`(파일, `swap_before`, 공급사 이름 다듬기)
+  - `CatalogImportSettingsTests`(`rules-dir`)
+  - `UsageLogBufferTests`
+  - 수집기 `test_parse_portal.py`, 검증 스크립트 단위 시험
+- **통합(`db-test`, 모듈 시험)**
+  - `BookGrouperContractTests`: 세 방식 같은 결과 + 공급사 코드 경우
+  - `CompactGroupingTests`·`SqlGroupingTests` 회귀
+  - `CatalogImporterTests`: 작은 수집 사본 끝까지
+  - `BookSearchTests`: 검색어 정리, 옮긴이
+  - `UsageLogSchemaTests`·`UsageLogWriteTests`
+  - `BatchRunnerTests`·`LibraryEbookControllerTests`: 캐시 경로
+  - `ModularityTests`(`ApplicationModules.of(ChaekcheckApplication.class).verify()`, 모듈 의존 그대로)
+  - `DocumentationTests`(Documenter 출력)
+  - 기존 시험 전부
+- **데이터**: 12단계 dry run과 `regroup` 원인별 표본, 13단계 반영 뒤 검색·SQL, AC-14 측정, 검증 스크립트 실행
+- **화면**: 구성은 바뀌지 않습니다
+  - Playwright 데스크톱 1280에서 S1 결과 카드와 S3 책 페이지 저자 칸(꺾쇠 표기였던 책, 붙은 역할 책)을 한 번 봅니다 [안]
+  - 폰 화면 구성도 바뀌지 않아 사용자 실제 폰 확인 대상이 아닙니다(아래 완료 기준)
 
 | AC | 확인 방법 | 단계 |
 |---|---|---|
-| AC-1 수집 목록 검색 → `search_event` 한 줄(검색어·`totalCount`·지역·도서관) | `CatalogUsageLogTests` + SQL | 4 |
-| AC-2 `page=2` → 검색 기록 그대로, `search_more` 한 줄 | `CatalogUsageLogTests` | 4 |
-| AC-3 직접 찾기 첫 묶음 → 한 줄·결과 수, 더 보기 둘 → `search_more` | `DirectSearchUsageLogTests` | 5 |
-| AC-4 첫 묶음 전 닫힘 → 결과 수 빈 한 줄, 보낼 것 없이 닫힘도 마감 뒤 한 줄 | `DirectSearchUsageLogTests` | 5 |
-| AC-5 400·422 → 기록 없음 | `CatalogUsageLogTests` | 4 |
-| AC-6 UA `Googlebot` → 기록 없음 | `UsageLogBufferTests` + `CatalogUsageLogTests` | 3, 4 |
-| AC-6b nginx 로봇 거절, `robots.txt` | 로컬 nginx API 호출 | 9 |
-| AC-7 여섯 누른 곳 → 새 탭 + `library_click` | Vitest + `UsageEventApiTests` + Playwright | 6, 8, 10 |
-| AC-8 책 페이지 → 책 번호 있음, 직접 찾기 → 비움 | Vitest + Playwright | 8, 10 |
-| AC-9 켬: CSRF 표시로 기록·없으면 403 / 끔: 표시 없이 기록 | `UsageEventCsrfTests`·`AuthDisabledTests` + `usageEvents.test.ts` | 6, 8 |
-| AC-10 없는 도서관·틀린 누른 곳 → 204, `rejected_event` IP·이유 | `UsageEventApiTests` | 6 |
-| AC-11 IP당 1분 60번 넘음 → 기록 안 됨 | 로컬 nginx | 9 |
-| AC-12 회원 번호·UA·쿠키 칸 없음 | `UsageLogSchemaTests` | 2 |
-| AC-13 1년 1일 전 지움, 364일 전 남김 | `UsageLogCleanupTests` | 7 |
-| AC-14 DB 쓰기 실패에도 검색·링크 정상 | `UsageLogWriteTests`(실패 흉내 중 검색 200) | 3 |
-| AC-15 정상 종료 → 직전 기록 남음 | `UsageLogShutdownTests` | 3 |
-| AC-16 끔·켬 응답 시간 중앙값 10% 안, 메모리 각 50MB 안 | 측정 | 10 |
-| AC-17 책 페이지 → `book_view` 한 줄, 대출 수 채우기로 안 늘어남 | `CatalogUsageLogTests` + `LibraryResponseSummaryTests` | 4, 5 |
-| AC-18 31일 IP NULL, 29일 IP 있음 | `UsageLogCleanupTests` | 7 |
-| AC-19 실패 뒤 성공 → `dropped_batch` 한 줄 + 로그 | `UsageLogWriteTests` | 3 |
-| AC-20 로그인 켬·끔 모두 통과, 끔은 `login_off`·쿠키 안 읽음 | 두 벌 통합 시험 | 1, 10 |
-| AC-21 설정 꺼짐 → 기록 없음, 켬 → 생김 | `UsageLogDisabledTests` | 3 |
-| AC-23 사서 추천 목록·책 창, 지역, 내 도서관 → `screen_event` 각 한 줄(로그인 전후) | Vitest + `UsageEventApiTests` + Playwright | 6, 8, 10 |
-| AC-24 도서관별 하루 줄에 수·시간 합·최댓값, 요청마다 로그 | `LibraryResponseSummaryTests` | 5 |
-| AC-25 켬: 로그인함/안 함/틀린 서명/만료 → signed_in/out/out/in, 결과 같음 | `LoginStatusReaderTests` + 10단계 통합 | 1, 10 |
-| AC-26 `access_token` 경로 `/api/v1` | `AuthEnabledSecurityTests` | 1 |
-
-- 참고: spec에는 AC-22가 없습니다(번호가 비어 있음).
+| AC-1 꺾쇠·보통 표기 책 한 줄(「채널 전쟁」·「다재다능 코틀린 프로그래밍」) | 가져오기 통합 시험 + 반영 뒤 제목 검색 | 7, 13 |
+| AC-2 「백만장자 마인드」 모임(꺾쇠·김근아·앞 괄호·대구·경기 줄), 괄호 없는 수식어 줄은 따로 | 계약 시험(공급사 코드) + 통합 시험 + 12단계 줄 수 전후 + 반영 뒤 검색 | 6, 7, 12, 13 |
+| AC-3 "김정은" 단어·정확히 일치 검색 | `ContributorsTests` + `BookSearchTests` + 반영 뒤 검색 | 1, 3, 13 |
+| AC-4 상세 저자 칸에 꺾쇠·다른 괄호 없음, `[ ]` 그대로 | `ContributorsTests` + 통합 시험 + 반영 뒤 상세 | 1, 7, 13 |
+| AC-5 「슈퍼차이나」 한 줄 | `ContributorsTests` + 통합 시험 + 반영 뒤 검색 | 1, 7, 13 |
+| AC-6 (만화)·(개정판)·(속)은 따로 | `SameTextKeyTests` + 통합 시험 + 12단계 표본 | 4, 7, 12 |
+| AC-7 "루이스 캐럴", 옮긴이 "이소연", 「마키타 겐지 …」 세 줄 | `ContributorsTests` + `BookSearchTests` + 반영 뒤 검색 | 2, 3, 13 |
+| AC-8 보호 장치 외국 이름 | `ContributorsTests` + 12단계 붙은 역할 표본 | 2, 12 |
+| AC-9 세 도서관 저자·출판사 바름, "율리시즈" 저자 검색에 안 나옴 | 가져오기 시험 + 통합 시험 + 반영 뒤 검색 | 5, 7, 13 |
+| AC-10 수집기 세 포털 바름, 부산 그대로 | `test_parse_portal.py` | 8 |
+| AC-11 2624 소장 241권 | 반영 뒤 SQL(원래 DB) | 13 |
+| AC-12 원인별 표본 20권, 잘못 합침 수 | 12단계 비교 보고 | 12 |
+| AC-13 반영 중 5xx 0 | `probe_during_import.py` | 13 |
+| AC-14 사서추천·이동진·서울대 100선 맞춘 수 | 0단계 기준 + 반영 뒤 측정 | 0, 13 |
+| AC-15 캐시 답 수 | usagelog·availability 시험 + 내 PC DB 조회 | 10 |
+| AC-16 dev 문서 R6 | 파일 확인 | 11 |
+| AC-17 붙은 역할 책 저자 칸 띄움, 보호 장치 표기 그대로 | `ContributorsTests` + 통합 시험 + 반영 뒤 상세 | 2, 7, 13 |
+| AC-18 규칙 목록 문서·상수 주석·시작 점검 | 파일 확인 | 8, 11 |
+| AC-19 검증 스크립트 판정 | 2026-10-12 사본으로 실행 | 9 |
 
 ## 완료 기준
 
-- [ ] spec의 수용 기준(AC-1~AC-21, AC-6b, AC-23~AC-26)을 위 표의 방법으로 모두 확인하고, AC 확인표를 `# 사이클 15` 절에 적음
-- [ ] `./gradlew build` 통과(`ModularityTests`의 `ApplicationModules.of(...).verify()`, `usagelog` 의존 `library`·`auth`, `DocumentationTests` 포함)
-- [ ] `npm test`, `npm run build`, `npm run lint` 통과, Playwright 데스크톱 → 태블릿 → 폰
-- [ ] 로그인 기능 켬·끔 두 설정에서 기록 시험 통과
-- [ ] `chaekcheck.usagelog.enabled` 기본값이 false이고 `.env.example`에 있음
-- [ ] 화면 모양·문구는 바뀌지 않지만 폰에서 링크를 누르는 동작이 바뀝니다. 그래서 사용자가 자기 폰(Samsung Internet)에서 dev 웹 서버 `web-lan-5174`(`.claude/launch.json`, 같은 Wi-Fi)로 직접 확인한 뒤 사이클을 닫습니다 [확정] (사용자 승인, 2026-10-14, `easy/2026-10-14-handoff-review.html` #3)
-  - 확인할 것: 결과 카드·로고·가입 링크를 누르면 새 탭이 지금처럼 바로 열리고, 사용 알림이 기록되는지(SQL)
-  - Chrome 폰 흉내로 갈음하지 않습니다(사용자 결정, 2026-10-12, `docs/cycles/10-popular-books/easy/2026-10-12-design-addendum-decisions.html` #3)
-- [ ] AC-16 측정 기록
-- [ ] [확인 필요] 결과와 설계와 달라진 점을 `# 사이클 15` 절에 적음
+- [ ] AC-1~AC-19를 위 표의 단계에서 확인하고 AC 확인표를 `# 사이클 19` 절에 적습니다
+- [ ] 단계마다 `backend/`의 `./gradlew build` 통과(`ModularityTests`·`DocumentationTests` 포함). 수집기·스크립트 시험 통과
+- [ ] 세 묶는 방식이 같은 결과(계약 시험 통과)
+- [ ] 12단계 멈출 조건(C4)에 걸리지 않았거나, 걸렸으면 plan에 보고하고 진짜 반영을 하지 않았습니다
+- [ ] 다시 가져오기가 `compact` 2GB 안에서 끝났습니다(넘쳤으면 보고)
+- [ ] 운영 역할 DB 반영 성공, 운영 역할 서비스와 내 PC 서비스를 새 코드로 다시 켰습니다(ADR-0069)
+- [ ] 현대제철(2624) 소장 241권이 다시 가져온 원래 DB에 있습니다 [확정] (18 회고 결정 #13)
+- [ ] `usagelog/001`을 포함해 기존 changeset을 고치지 않았습니다(C3)
+- [ ] 규칙 파일 두 개, README 두 줄, `rules-index.md`, 상수 주석, 시작 점검 줄, 검증 스크립트가 있습니다
+- [ ] `library-maintenance.md` 6-2 세 줄, `3-import.md`·`build.gradle`·`CatalogImportRunner` 문구, Documenter 출력 확인
+- [ ] 이 사이클은 폰 화면을 더하거나 바꾸지 않으므로 사용자 실제 폰(Samsung Internet, `web-lan-5174`) 확인 대상이 아닙니다 [확정] (flow.md "데스크톱·태블릿·폰 배치: 지금 그대로")
+- [ ] [확인 필요] 결과, 설계와 달라진 점, 새로 알게 된 제약을 `# 사이클 19` 절에 적습니다
 
 ## [확인 필요] 항목과 개발 중 확인 방법
 
-| 항목 | 확인 방법 | 막는 단계 |
-|---|---|---|
-| `SmartLifecycle` 정지 phase와 Hikari 닫힘 순서 | 프로토타입 (`UsageLogShutdownTests`) | 3 |
-| dev pgjdbc 실제 버전 | 의존성 트리 | 3 |
-| `id` PK·부분 색인을 둘지 (넣기 비용), 넣기가 정렬용 메모리를 쓰는지 | 프로토타입, AC-16 측정 (`docker stats`, `EXPLAIN ANALYZE`) | 없음 (10단계에서 보고) |
-| nginx 이미지의 realip 모듈, compose 네트워크 범위, Cloudflare "Remove visitor IP headers" 꺼짐 | 배포 때 `nginx -V`, 지인 기간 시험에서 기록된 IP 확인 (사이클 17) | 없음 (배포 때) |
-| 광고 차단으로 빠지는 알림 비율 | 지인 기간 실서버 시험 | 없음 |
-| Google 등 검색 로봇이 화면 실행 중 검색 API를 부르는지 | 운영 뒤 서버 로그 | 없음 |
+| 항목 | 확인 방법 | 결과에 따라 | 막는 단계 |
+|---|---|---|---|
+| 공급사 묶음 목록 내용 | 수집 DB의 `holding.supplier` 이름 전체를 보고 만들어 보고 | 파일 내용. 「Y2Books 전자책」 = 「와이투북스」는 반드시 | 12 (반영 전) |
+| `KYOBO_SUBSCRIPTION_V1`의 `item_key`가 교보 상품 번호와 같은 번호 공간인지, 코드 다듬기(공백·앞의 0) | 수집 DB 조회, research SQL 2 | 코드 키에 넣을지, 다듬기 방법 | 6 |
+| 같은 공급사 안에서 코드가 다른 책을 가리키는 경우 | 12단계 상품 코드 표본, `codeJoinedIsbnConflicts` | 0이 아니면 멈추고 plan에 물음 | 13 |
+| 세 도서관(수집 11·12·15)의 서비스 도서관 번호 | `collection.collection_link` | 보고, 시험·검색 확인에 씀 | 없음 |
+| `swap_before` 날짜, 판정 기준(도서관 수집 시각) | 8단계 수집기를 main에 합친 날 | 파일 값 | 13 |
+| 검증 스크립트 판정 문턱값 | 2026-10-12 사본 실행, 실험 (d) 값과 견줌 | 문턱값 | 9 |
+| 서비스 `book_contributor`의 꺾쇠 든 이름 수, 검색 탐침 전후 | 0단계·13단계 SQL과 검색 | 보고만 | 없음 |
+| 남길 괄호 낱말 목록에 빠진 낱말 | 12단계 앞 괄호 표본 | 상수에 더하고 다시 dry run | 12 |
+| 다시 가져오기·반영 시간 (참고: 사이클 11 `compact` 내보내기 약 21~22분, 반영 4분 35초) | 13단계에서 잼 | 공개일 일정(늦으면 공개일을 19 반영 다음 날로) | 일정 |
+| 21이 10-17까지 main에 들어오는지 | 13단계 직전 main 확인 | 들어왔으면 둘 다, 아니면 19만 반영 [확정] | 13 |
+| 135·2194·2198의 끈 날·이유 원문 | 사이클 07 기록 | 6-2 표 줄 | 11 |
+| 수집기 시험용 저장 HTML이 있는지 | `scripts/crawl/`·데이터 폴더 확인, 없으면 한 쪽씩 받음(C5·C6) | 시험 자료 | 8 |
 
 ## 이번에 하지 않는 것
 
-- 기록을 보는 화면, 통계·그래프 (다음 사이클)
-- 회원 번호·쿠키로 같은 사람 잇기, 검색과 클릭을 잇는 칸 (R2-6)
-- 화면 머문 시간, 스크롤, 그 밖의 버튼
-- 사용자가 기록을 끄는 설정, 빠진 알림 다시 보내기
-- 분석 전용 저장소로 옮기기
-- 옛 경로(`/api/v1/me`) 쿠키 지우기 코드
-- `mylibrary` 서버 저장 코드 고치기
-- nginx 사용자 IP 복원(`real_ip_header`, `set_real_ip_from`), WAF·Cloudflare 요청 한도 규칙, 접속 기록·백업·서비스 로그 보관 설정 (사이클 17)
-- 운영 배포와 기록 켜기 (첫 배포는 꺼짐, 지인 기간 시험·공개일 켜기는 운영 일)
-- 처리방침 문구 (사이클 16)
-- 수집기(책 목록 수집)의 도서관 응답 세기 [확정 제외] (R6-4)
-
-## 15 밖이지만 dev가 알아 둘 것
-
-- **nginx 화면 주소 목록과 `/picks`**: design-delta(2026-10-14 확인)는 `deploy/nginx/chaekcheck-locations.conf:90`의 화면 주소 정규식에 `/picks`가 없다고 적었고, 사이클 17이 배포 설정에서 고치기로 했습니다(회고 결정 #5). plan이 인계서를 쓰며 dev 작업 폴더를 다시 읽어 보니(2026-10-14) 이미 `:91`에 `picks`가 들어 있고 "2026-10-14 터널로 열다 발견" 주석이 있었습니다. 15에서는 고치지 않습니다. main에 커밋된 상태인지만 확인해서 `# 사이클 15` 절에 한 줄 적어 주세요
-- **사이클 11 측정 데이터 정리**: 약 14GB를 지워도 됩니다(사용자 승인, 2026-10-14). 작업 폴더 둘, 운영 흉내 DB 볼륨 약 9GB, 결과 파일 약 4GB, 덤프 1.2GB가 대상입니다. **`data/cycle13/` 백업은 남깁니다**(사이클 11 운영 흉내 반영 기록의 근거). 15 개발과 섞지 말고 따로 하고, 지운 것과 크기를 `# 사이클 15` 절에 적습니다
+- 다시 수집(`scripts/crawl/` 실행). 다음 수집부터 고친 수집기로 받습니다 [확정] (R3-2)
+- `author_publisher_swapped.tsv` 줄 지우기. 고친 수집기로 새로 받은 사본을 가져올 때 C9 절차로 합니다
+- 화면 모양·API 모양 바꾸기 [확정] (scope 제외)
+- 저자 칸의 `[ ]` 처리 [확정] (확인 결과 결정 #2)
+- 괄호 없이 수식어를 본제목 앞에 붙인 제목(「부를 끌어 당기는 백만장자 마인드」) 모으기 (backlog)
+- 판 표시·ISBN 없는 다른 판 나누기 (backlog)
+- 도서관 사이트 직접 찾기의 「김달 저」 문제 (`availability`, 확인 결과 결정 #6)
+- 저자 칸 오류를 사람이 하나씩 고치는 바로잡기 목록 (상품 코드 규칙으로 대신, research (a))
+- `CatalogText.mainTitleNorm`·`norm` 바꾸기, 제목 앞 `<…>` 시리즈 처리(`CatalogText` 20행 `LEADING_SERIES`) [안]
+- 「묘왕동주」 (설계대로, ADR-0053)
+- 설정 이름 `exclude-candidate-libraries` 바꾸기 (사이클 18 B에서 끝남)
+- 사이클 18 C 운영 반영 (backlog. 19 운영 반영과 함께 끝날 수 있음)
+- plan `docs/current/` 고치기 (plan이 `/cycle-close`에서 함)
 
 ## 개발 후 plan 쪽에 알려줄 것
 
-다음 `/cycle-start`의 회고 입력입니다. dev `docs/plan-feedback.md`의 새 **`# 사이클 15`** 절에 **무엇이 달라졌는지와 이유**를 적습니다(사용자 발언은 그대로). 쿠키·토큰 값은 적지 않습니다.
+다음 `/cycle-start`의 회고 입력입니다. dev `docs/plan-feedback.md`의 새 **`# 사이클 19`** 절에 **무엇이 달라졌는지와 이유**를 적습니다(사용자 발언은 그대로).
 
-- 시작 상태: 시작 커밋, master 맨 끝 include, 16과 합친 순서와 rebase로 옮긴 줄
-- 정한 이름: `UsageLog` 메서드·record, `LoginStatusReader`·`LoginStatus`, 안쪽 패키지·클래스, 설정 키·환경 변수, changeset id·제약 이름, JSON 칸 이름, 웹 함수 위치, nginx zone·map 이름, burst 값
-- `auth`
-  - CSRF 범위를 실제로 고쳤는지, 기본 CSRF로 이미 덮였는지
-  - 서명만 보는 디코더를 어떻게 만들었는지
-  - 쿠키 경로를 바꾸고 로그인·로그아웃에서 회귀가 없었는지
-  - 반대 조건 어노테이션을 새로 만들었는지
-- 직접 찾기 "한 번만" 기록 방법(`SseEmitter` 콜백을 더했는지), 다음 묶음에서 조건 칸을 얻은 곳과 못 얻은 칸
-- 도서관 응답 분류에서 설계와 다른 경우(`UpstreamException` Kind, 다시 보내기 시간, 대출 수 채우기에서 세지 않은 경우), 요청마다 로그 줄 형식
-- 버퍼·비우기
-  - 실패 때 도서관 응답 누적도 버렸는지
-  - 버린 묶음 기록 메모리 상한
-  - 비우기 스레드
-  - `SmartLifecycle` phase와 종료 순서 확인 결과
-- 사용 알림 검사에서 정한 상한(본문 크기, 배열 길이, 분야 값), 로그인 기능 상태를 모를 때의 처리, 가운데 버튼 클릭을 셌는지
-- AC-11 실제 줄 수, AC-16 측정값(응답 시간 중앙값, 메모리, 비우기 시간, `id`·부분 색인 비교, 모니터링 도구를 켰는지)
-- 사용자 실제 폰 확인 결과
-- "15 밖" 두 줄의 결과(`/picks` 커밋 여부, 지운 데이터)
+- **시작 상태**: 작업 폴더·브랜치·docker 프로젝트·포트, 시작 커밋, 기준 빌드 결과, 기록 11번 확인, 0단계 기준값(scope 조사 1·2·3, research SQL 2·3·5·6, AC-14 기준 세 목록), Documenter 출력 확인 결과
+- **바꾼 이름**: `stripMarks`·`displayText`·`ImportRules`·`rules-dir`·`supplierCodeKey`·`LEADING_NOTE_KEEP_WORDS`·`ImportReport` 셈·changeset id·규칙 파일 칸·`rules-index.md`·검증 스크립트의 실제 이름
+- **규칙 내용**
+  - `supplier_families.tsv` 최종 내용과 만든 방법
+  - 남길 괄호 낱말에 더한 낱말
+  - 코드 다듬기 방법, `KYOBO_SUBSCRIPTION_V1` 결론
+  - `swap_before` 날짜와 판정 기준, 검증 스크립트 문턱값
+- **세 묶는 방식**: 코드 키를 넣은 방법, 계약 시험 결과
+- **12단계 비교 보고**
+  - 책 수 전후, 합쳐짐·나뉨 수
+  - 원인별 표본 20권과 잘못 합침 수·예
+  - `supplierCodeJoins`·`codeJoinedIsbnConflicts`·`authorPublisherSwappedRows`·`leadingNoteCut`, 국가서지 ISBN 붙음 전후
+  - 「백만장자 마인드」 줄 수 전후, 2GB 안에서 끝났는지
+- **13단계**: 합친 날·판(21 포함 여부), 내보내기·반영 시간, `apply` 결과, 반영 중 5xx 수, 다시 켠 시각, AC-11 수, **AC-14 세 목록 맞춘 수(줄었으면 원인)**
+- **세 도서관의 서비스 도서관 번호**, 수집기 시험 자료를 어떻게 얻었는지
+- **6-2 세 줄**의 원문 출처, R6 문서 고친 곳
+- **알림**
+  - **19가 main에 들어가면 바로**: `# 사이클 19` 절에 적고 사용자에게 알립니다. plan 21·dev 21 세션에 전달합니다(가져오기·`catalog.normalize`·export 파일이 겹치고, 나중에 들어가는 쪽이 rebase함. 다시 가져오기·반영을 한 번에 할지)
+  - **plan 17 일정**: 19 반영이 끝난 날짜를 알립니다. 10-17 안에 끝나지 않을 것 같으면 그 즉시 알립니다. 공개일(2026-10-18)이 19 반영 다음 날로 밀리면 17이 맞춘 날짜(공지, 약관 시행일, 사용 기록 켜는 날)도 옮겨야 합니다
 - [확인 필요] 표 각 행의 결과, 설계와 달라진 점, 새로 알게 된 제약, AC 확인표
-
----
-
-사이클 18(소장이 비었거나 덜 모인 도서관)도 미리 인계함 (2026-10-14): 인계서 `../chaekcheck-plan/docs/cycles/18-empty-library-holdings/handoff.md`. dev 순서: A1(22곳 끄기)·A2(밑줄 호스트 요청 길, 본 서비스와 조회 서버 앱 둘 다)는 언제든, B(가져오기 고침·넣기 "전자책 0권")는 사이클 19가 main에 들어간 뒤, C(운영 반영)는 사이클 17 첫 배포 뒤.
-- 바뀜 (2026-10-14, 사용자 결정): 18 B를 19보다 먼저 함. 19는 18 B가 main에 들어간 뒤 그 위에서 시작
