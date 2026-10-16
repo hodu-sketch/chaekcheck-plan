@@ -1137,6 +1137,7 @@ body{background:var(--bg);color:var(--text)}
 <tr><td>서버 메모리</td><td colspan="2">거의 같음 — 한 번에 들고 있는 결과가 줄어 조금 덜 씀</td></tr>
 </table>
 <p>바로 검색은 첫 묶음(5곳)에서 10줄이 차면 그때 멈추므로, 결과가 많은 인기 책일수록 효과가 큽니다. 숫자는 모두 어림이고 배포 뒤 사용 기록으로 확인합니다 [확인 필요].</p>
+<p class="concl" style="border:2px solid var(--ok)"><b>정함 (2026-10-16)</b>: 승인. 범위(포함 C-7), 명세 R15·AC-21, 설계 문서, 설정값 목록에 반영했습니다.</p>
 <p class="concl"><span class="chip" data-n="23">안 #23</span> 사이클 20 인계에 함께 넣음: 바로 검색 <code>batch.row-limit</code> 20 → <b>10</b>, 책 기준 검색 <code>pageSize</code> 기본 20 → <b>10</b>(최대는 20 그대로, 화면이 10을 보냄). 확장 모드도 같은 10(명세 R8 "줄 상한은 서버 모드와 같음"). 설정값 목록(<code>docs/settings-index.md</code>)에 근거와 함께 적음.</p>
 <p class="alt">다른 선택: 별도 작은 사이클로(backlog) — 사이클 20과 섞이지 않지만 그만큼 늦게 반영됩니다.</p>
 </div>

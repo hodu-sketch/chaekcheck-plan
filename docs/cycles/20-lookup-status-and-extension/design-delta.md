@@ -182,6 +182,8 @@ classDiagram
 - 사이클 17 의존: `HostQueueBoard`는 17의 길(lane) 개념과 막힌 길 기록을 읽음. 17이 먼저 들어가지 않으면 길은 하나(직접)로 두고 막힌 길은 빈 목록 [확정] (전제)
 - IP: 모든 IP 판정(⑤ 계획 묶기·⑦ 계획 한도·⑨ 잠금)은 `UsageLog.capture(request).clientIp()`(= nginx `X-Real-IP` = Cloudflare `CF-Connecting-IP`, 사이클 17 R3-1)로 읽음. `getRemoteAddr()`는 nginx 컨테이너 주소라 쓰지 않음. IPv6는 앞 /64로 비교·셈 ◆
 
+- **검색 결과 수 10** [확정] (세 관점 검토 #23 승인 2026-10-16, 명세 R15): `availability` 설정 `batch.row-limit` 20 → 10(서버·확장 모드), `catalog` `GET /api/v1/books` `pageSize` 기본 20 → 10(검증 범위 1~20 그대로), 웹 책 검색이 `pageSize=10`을 보냄. 코드 구조 변화 없음(설정·기본값·웹 상수)
+
 ## 데이터
 
 - 스키마: `usagelog` (새 표 없음, `availability`는 메모리만)
