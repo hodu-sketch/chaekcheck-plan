@@ -624,6 +624,24 @@ body{background:var(--bg);color:var(--text)}
 <rect x="375" y="118" width="505" height="22" rx="4" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="385" y="134">3분 뒤 만료 → 서버가 도서관을 다시 불러 진짜 값</text>
 <text class="s13m" x="10" y="180">값마다 "처음 넣은 시각 + 3분"을 들고 있고, 다시 넣어도 이 시각은 바뀌지 않음</text>
 </svg><p class="cap">만료를 처음 시각에 고정하면 어떤 값도 3분을 넘지 못합니다.</p></div>
+<h3 style="font-size:20px;margin:18px 0 6px">질문에 답: "확장은 수명을 따로 관리하자는 거야?"</h3>
+<p class="concl"><b>수명 길이는 똑같이 3분입니다. 다른 건 하나, "다시 넣을 때 시계를 처음부터 다시 돌리느냐"뿐입니다.</b> 서버 값은 지금처럼 두고, 확장이 올린 값만 다시 넣어도 시계를 되돌리지 않습니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 250" role="img" aria-label="서버 값과 확장 값의 3분 시계">
+<text class="s14" x="10" y="22">같은 칸(강동 · 「백만장자 마인드」 · 1쪽)의 3분 시계</text>
+<line x1="200" y1="44" x2="860" y2="44" stroke="var(--line)"/>
+<text class="s13m" x="200" y="38" font-size="11">0분</text><text class="s13m" x="370" y="38" font-size="11">2분</text><text class="s13m" x="455" y="38" font-size="11">3분</text><text class="s13m" x="540" y="38" font-size="11">4분</text><text class="s13m" x="710" y="38" font-size="11">6분</text>
+<text class="s13" x="10" y="76" font-size="12">서버 값 (지금 그대로)</text>
+<rect x="200" y="60" width="255" height="26" rx="4" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="208" y="78" font-size="11">서버가 받은 값, 3분</text>
+<text class="s13m" x="465" y="78" font-size="11">→ 지나면 서버가 도서관을 다시 부름 (서버 값은 3분 안에 다시 넣는 일이 없음)</text>
+<text class="s13" x="10" y="124" font-size="12">확장 값: 시계를 다시 돌리면</text>
+<rect x="200" y="108" width="660" height="26" rx="4" fill="var(--no-bg)" stroke="var(--no)"/><text class="s13" x="208" y="126" font-size="11">0분 넣음 → 2분 또 넣음(3분 다시) → 4분 또 넣음 … 끝없이 남을 수 있음</text>
+<text class="s13" x="10" y="172" font-size="12">확장 값: 시계 고정 (제안)</text>
+<rect x="200" y="156" width="255" height="26" rx="4" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="208" y="174" font-size="11">처음 넣은 0분 + 3분에서 끝</text>
+<text class="s13m" x="465" y="174" font-size="11">2분에 다시 넣으면 값만 바뀌고 끝나는 시각은 3분 그대로</text>
+<text class="s13m" x="10" y="216" font-size="12">왜 확장 값만: 서버 값은 우리 서버가 도서관에서 직접 받은 것이고, 3분 안에 같은 칸을 다시 받지 않음(캐시가 맞으면 안 부름).</text>
+<text class="s13m" x="10" y="236" font-size="12">확장 값은 확장 사용자들이 3분 안에 같은 칸을 여러 번 올릴 수 있어서, 시계를 되돌리면 같은 값(꾸민 값 포함)이 계속 남을 수 있음.</text>
+</svg><p class="cap">길이는 둘 다 3분. 확장 값만 "다시 넣어도 끝나는 시각은 처음 그대로"로 둡니다.</p></div>
+<p>이 규칙은 #9에서 "한 통으로"를 골라도 그대로 쓸 수 있습니다(값마다 끝나는 시각을 들고 있으면 됨). 더 단순한 다른 선택은 "확장 값은 빈 칸일 때만 넣고 다시 넣지 않음"입니다. 그러면 시계 걱정은 없지만, 3분 안에 확장 사용자가 본 새 상태(예: 방금 대출됨)가 서버 모드 사용자에게 늦게 보입니다.</p>
 <p class="concl"><span class="chip" data-n="10">안 #10</span> 확장 값은 갱신하되 만료는 <b>처음 넣은 시각 + 3분으로 고정</b>합니다(값마다 만료 시각을 들고 있음). 그러면 어떤 값도 3분 넘게 살지 못하고, 3분 뒤 서버 모드가 도서관을 다시 부릅니다.</p>
 <p class="alt">다른 선택: 확장 값은 갱신하지 않음(빈 칸일 때만 넣음). 더 단순하지만 확장 사용자가 방금 본 새 값이 3분 동안 반영되지 않습니다.</p>
 </div>
