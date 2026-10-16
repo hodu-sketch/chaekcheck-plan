@@ -49,7 +49,7 @@ flowchart LR
   - 서비스: 요청 수, 응답 시간, 오류 수(429·5xx 포함), Java 메모리 (Spring Actuator)
   - 도서관 호출: 차례를 못 받아 포기한 횟수 (`throttle timeout`)
   - DB 컨테이너 메모리
-- 휴대폰에서도 열림. 네 묶음을 대시보드 하나에 두고 배치는 Grafana 기본을 씀, 알림은 두지 않음 [확정] (같음)
+- 휴대폰에서도 열림. 네 묶음을 대시보드 하나에 두고 배치는 기본을 씀(실제 배포는 Grafana 서버 대신 CloudWatch, research 17절). **대출 조회 나가는 길 관련 알림은 CloudWatch 경보 → AWS SNS 메일(`<알림 메일>`)로 보냄**(이전 "알림 두지 않음"을 바꿈 — ADR-0130, 사이클 22, 사용자 승인 2026-10-16, [`from-research-lookup-egress.md`](from-research-lookup-egress.md) #7). 보낼 일: 길이 쉬기 시작·7일 상한·풀림, 모든 길 막힘, 업체 데이터 80%·90%, 업체 계정 문제, 매일 아침 요약
 
 ## 상태별 동작 대응
 

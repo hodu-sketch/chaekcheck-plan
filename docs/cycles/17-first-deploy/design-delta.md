@@ -2,7 +2,7 @@
 
 - 근거: [`architect-proposal.md`](architect-proposal.md)(결정 1~8, 사용자 결정 2026-10-13~14), [`spec.md`](spec.md), [`flow.md`](flow.md), [`research.md`](research.md)
 - 이번 슬라이스는 서비스의 모듈 경계·공개 API·표를 바꾸지 않음. 바뀌는 것은 `availability` 안쪽 지표, 운영 프로필, 배포 파일
-- 대출 조회 나가는 길(spec R13)도 이 사이클에 포함(사용자, 2026-10-14). 그 설계는 [ADR-0095](../../adr/0095-lookup-egress-proxies-per-ip-browser-ua.md)이며, 네 선행 조건(업체 고르기·정부 사이트 제한·약관·Java 프록시)을 확인한 뒤 이어 감. 이 문서는 그 부분을 제외한 배포 공통 설계를 담음
+- 대출 조회 나가는 길(spec R13)도 이 사이클에 포함(사용자, 2026-10-14). 그 설계는 **[ADR-0130](../../adr/0130-lookup-egress-webshare-kr-static-and-alerts.md)**(ADR-0095를 대신함, 사이클 22 배포 조사, 사용자 승인 2026-10-16)이며, 넘길 값은 [`from-research-lookup-egress.md`](from-research-lookup-egress.md)에 정리됨: 첫 배포 길 = EC2 자기 IP 1개 + Webshare 한국 정적 주거용 20개(IP Authorization), **본 서비스 직접 조회와 따로 둔 조회 서버 조회 둘 다 개발**, 업체 데이터 80% 경고·90% 멈춤·업체 오류면 업체 길 전체 멈춤, 알림은 CloudWatch→SNS 메일. 이 문서는 그 부분을 제외한 배포 공통 설계를 담음
 
 ## 구조 그림
 
@@ -149,14 +149,14 @@ sequenceDiagram
 
 | 대상 | 방식 | 제한·키 관리 | 실패 시 동작 | 상태 태그 |
 |---|---|---|---|---|
-| AWS Parameter Store (서울) | `up.sh`가 띄울 때 한 번 읽음 | **EC2 IAM 역할**로 읽음(접근 키 없음, ADR-0104). 역할에 그 경로 읽기만 허용, Standard 무료. 넣는 값: DB 비밀번호, JWT 키, 카카오 키 3개, 터널 토큰, Grafana 관리자 비밀번호, 국립중앙도서관 사서추천 Open API 키(dev 14, **새 키 안 받고 지금 키를 비밀값으로 뺌, 표지 조건 확인 안 함** [확정: 사용자 #23, 2026-10-14])(조회 서버 토큰은 꺼 둬서 이번엔 안 넣음). 이름 끝 = 환경 변수 이름(`/chaekcheck/prod/DB_PASSWORD` → `DB_PASSWORD`) | 멈추고 기존 컨테이너 유지 | [확정] (사용자 승인, 2026-10-14, #1) |
+| AWS Parameter Store (서울) | `up.sh`가 띄울 때 한 번 읽음 | **EC2 IAM 역할**로 읽음(접근 키 없음, ADR-0104). 역할에 그 경로 읽기만 허용, Standard 무료. 넣는 값: DB 비밀번호, JWT 키, 카카오 키 3개, 터널 토큰, Grafana 관리자 비밀번호, 국립중앙도서관 사서추천 Open API 키(dev 14, **새 키 안 받고 지금 키를 비밀값으로 뺌, 표지 조건 확인 안 함** [확정: 사용자 #23, 2026-10-14]), **Webshare API 키**(ADR-0130, 업체 데이터 사용량 세기·`from-research-lookup-egress.md` #5)(조회 서버 토큰은 꺼 둬서 이번엔 안 넣음). 이름 끝 = 환경 변수 이름(`/chaekcheck/prod/DB_PASSWORD` → `DB_PASSWORD`) | 멈추고 기존 컨테이너 유지 | [확정] (사용자 승인, 2026-10-14, #1) |
 | Cloudflare Tunnel | `cloudflared` 컨테이너, `chaekcheck.com`·`grafana.chaekcheck.com`·SSH 길 | 터널 토큰은 Parameter Store | Error 1033 / 502·504 (flow F4) | [확정] / SSH 길 설정·무료 범위 [확인 필요] |
 | 카카오 로그인 | 지금 그대로, 운영 Redirect URI 등록 | 키는 Parameter Store | 카카오 화면 오류 | [확정] (spec R6) |
 
 ## 결정 기록
 
 - ADR-0103 운영 서버 구성 [확정: 저장됨, Proposed] (사용자 승인, 2026-10-14)
-- 앞선 것: ADR-0094·ADR-0095(제안됨, 이번 설계 밖), ADR-0078(가져오기는 PC), ADR-0010·0011(호출 간격)
+- 앞선 것: ADR-0094, **ADR-0130**(대출 조회 나가는 길·알림, ADR-0095를 대신함 — ADR-0095는 Superseded by 0130), ADR-0078(가져오기는 PC), ADR-0010·0011(호출 간격). R13 나가는 길·알림 값은 [`from-research-lookup-egress.md`](from-research-lookup-egress.md) 기준
 
 ## 확인 필요
 
