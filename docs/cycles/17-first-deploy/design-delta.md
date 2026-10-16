@@ -45,7 +45,7 @@ flowchart TB
 sequenceDiagram
   participant Op as 운영자 (Tunnel SSH)
   participant S as up.sh
-  participant SSM as Parameter Store (서울)
+  participant SSM as Parameter Store (시드니)
   participant DC as docker compose
   Op->>S: 실행
   alt env 파일을 손으로 둔 경우 (노트북 등)
@@ -149,7 +149,7 @@ sequenceDiagram
 
 | 대상 | 방식 | 제한·키 관리 | 실패 시 동작 | 상태 태그 |
 |---|---|---|---|---|
-| AWS Parameter Store (서울) | `up.sh`가 띄울 때 한 번 읽음 | **EC2 IAM 역할**로 읽음(접근 키 없음, ADR-0104). 역할에 그 경로 읽기만 허용, Standard 무료. 넣는 값: DB 비밀번호, JWT 키, 카카오 키 3개, 터널 토큰, Grafana 관리자 비밀번호, 국립중앙도서관 사서추천 Open API 키(dev 14, **새 키 안 받고 지금 키를 비밀값으로 뺌, 표지 조건 확인 안 함** [확정: 사용자 #23, 2026-10-14]), **Webshare API 키**(ADR-0130, 업체 데이터 사용량 세기·`from-research-lookup-egress.md` #5)(조회 서버 토큰은 꺼 둬서 이번엔 안 넣음). 이름 끝 = 환경 변수 이름(`/chaekcheck/prod/DB_PASSWORD` → `DB_PASSWORD`) | 멈추고 기존 컨테이너 유지 | [확정] (사용자 승인, 2026-10-14, #1) |
+| AWS Parameter Store (시드니 ap-southeast-2, 실제 배포 §17) | `up.sh`가 띄울 때 한 번 읽음 | **EC2 IAM 역할**로 읽음(접근 키 없음, ADR-0104). 역할에 그 경로 읽기만 허용, Standard 무료. 넣는 값: DB 비밀번호, JWT 키, 카카오 키 3개, 터널 토큰, Grafana 관리자 비밀번호, 국립중앙도서관 사서추천 Open API 키(dev 14, **새 키 안 받고 지금 키를 비밀값으로 뺌, 표지 조건 확인 안 함** [확정: 사용자 #23, 2026-10-14]), **Webshare API 키**(ADR-0130, 업체 데이터 사용량 세기·`from-research-lookup-egress.md` #5)(조회 서버 토큰은 꺼 둬서 이번엔 안 넣음). 이름 끝 = 환경 변수 이름(`/chaekcheck/prod/DB_PASSWORD` → `DB_PASSWORD`) | 멈추고 기존 컨테이너 유지 | [확정] (사용자 승인, 2026-10-14, #1) |
 | Cloudflare Tunnel | `cloudflared` 컨테이너, `chaekcheck.com`·`grafana.chaekcheck.com`·SSH 길 | 터널 토큰은 Parameter Store | Error 1033 / 502·504 (flow F4) | [확정] / SSH 길 설정·무료 범위 [확인 필요] |
 | 카카오 로그인 | 지금 그대로, 운영 Redirect URI 등록 | 키는 Parameter Store | 카카오 화면 오류 | [확정] (spec R6) |
 
