@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>남은 할 일</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.card h3.t{font-size:21px;margin:26px 0 8px}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font-size:15px;line-height:1.55;margin:8px 0 6px;word-break:normal}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+pre .cm{color:var(--muted)} pre .hl{background:var(--warn-bg);color:var(--warn);font-weight:700}
+.src{color:var(--muted);font-size:15px;margin:14px 0 0}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+.fig{overflow-x:auto;margin:8px 0 4px}
+.fig svg{width:100%;min-width:640px;height:auto;display:block}
+.mine{border:1px dashed var(--warn);background:var(--warn-bg);border-radius:8px;padding:10px 14px;font-size:18px;margin:10px 0}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0}
+.pc>div{border-radius:10px;padding:12px 16px;font-size:18px}
+.pc .p{background:var(--ok-bg)} .pc .c{background:var(--no-bg)}
+.pc h4{margin:0 0 6px;font-size:18px}
+.pc ul{margin:0;padding-left:20px}
+.pc li{margin:0 0 8px}
+@media (max-width:640px){.pc{grid-template-columns:1fr} body{font-size:18px} .lead{font-size:24px}}
+.tbl{overflow-x:auto}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">지금 직접 하실 일은 하나,<br>배포 때 둘입니다</p>
+<p class="sub">사용자 질문(2026-10-16): "내가 해야 할 거 남은거 뭐야?" 대출 조회 프록시(Webshare) 일에서 남은 것만 모았습니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>지금 정하실 것</h2>
+<p class="gist">ADR-0130은 기록만 되어 있고 아직 "제안됨(Proposed)"입니다. 이 결정대로 간다고 정하시면 "확정(Accepted)"으로 바꿉니다.</p>
+<ul>
+<li><b>ADR-0130 내용:</b> 첫 배포부터 EC2 서버 자기 IP + Webshare 한국 정적 주거용 20개로 대출 조회를 보냄. 업체 프록시와 서버 공인 IP 여러 개를 둘 다, 본 서비스 직접 조회와 따로 둔 조회 서버 둘 다 개발. 바뀌는 주거용은 나중에. 업체 데이터 80% 경고·90% 멈춤, 업체 오류면 Webshare 길 전체 멈춤, CloudWatch → 메일 알림.</li>
+<li><b>확정되면:</b> ADR 파일은 그 뒤로 고칠 수 없고, 바꾸려면 새 ADR을 씁니다. 사이클 17은 이미 이 ADR 기준으로 맞춰 두었습니다.</li>
+</ul>
+<div class="item">
+<h3><span class="no">#1</span>ADR-0130을 확정(Accepted)으로</h3>
+<p>[안] <code>docs/adr/0130-lookup-egress-webshare-kr-static-and-alerts.md</code>의 상태를 <code>Accepted</code>로 바꾸고 ADR 목록도 고칩니다.</p>
+<p class="alt"><b>다른 선택:</b> 첫 배포 뒤 실제로 써 보고 확정 → 그동안 "제안됨"으로 남음.</p>
+<p class="rec">추천: 지금 확정. 오늘 항목마다 이미 승인하셨고 시험 결과도 좋았습니다.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>배포할 때 직접 하실 것</h2>
+<p class="gist">둘 다 계정 안에서 하는 일이라 제가 대신할 수 없습니다.</p>
+<div class="tbl"><table>
+<tr><th>할 일</th><th>어디서</th><th>왜</th></tr>
+<tr><td>Webshare API 키 만들기 → 서버 비밀 값에 넣기</td><td>Webshare 대시보드</td><td>서버가 1시간마다 Webshare 데이터 사용량을 읽어 80%·90%를 판단</td></tr>
+<tr><td>알림 메일 구독 확인 누르기</td><td><code><알림 메일></code> 받은편지함 (AWS가 보냄)</td><td>누르지 않으면 CloudWatch 알림 메일이 오지 않음</td></tr>
+</table></div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>알아 두실 것</h2>
+<ul>
+<li><b>Webshare 요금:</b> 매달 $6 자동 결제, 다음 결제 11/15. 환불 기한은 10/18 저녁까지지만 시험 결과가 좋아 필요 없어 보입니다.</li>
+<li><b>집 PC에서는 프록시를 못 씀:</b> Webshare IP 등록이 EC2 서버 IP(<code><서버 IP></code>)로 되어 있습니다(1개만 됨). 집에서 다시 시험하려면 바꿔야 합니다.</li>
+<li><b>다른 사이클이 이어서 함:</b> 사이클 17은 인계 반영 끝. 부산 전자도서관 실제 조회 주소 재시험은 17의 확인 목록에 있습니다.</li>
+</ul>
+</section>
+
+<p class="foot">근거: <code>docs/research/deploy/multi-source-ip.md</code> 9절, ADR-0130, <code>docs/cycles/17-first-deploy/from-research-lookup-egress.md</code>.</p>
+</main>
+</body>
+</html>

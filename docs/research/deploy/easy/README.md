@@ -19,3 +19,4 @@
 | [2026-10-16-proxy-limits-alerts-artifact.html](2026-10-16-proxy-limits-alerts-artifact.html) | 위 페이지의 원격용 Artifact 사본(승인·미승인·기타 저장). https://claude.ai/artifact/2D8Py6Sxj2i22LgsS4aiZR | 같음 | 같음 |
 | [2026-10-16-webshare-setup.html](2026-10-16-webshare-setup.html) | Webshare 한국 정적 주거용 20개: 가입·구매(미리 채운 링크)·IP Authorization·목록 받기·접속 시험(`../tools/proxy_check.py`)·결과 판정. Artifact https://claude.ai/artifact/CMoP6FXwVv6ecdoeirJrqB | `../multi-source-ip.md` 9절 | 없음(절차) |
 | [2026-10-16-adr-0130-draft.html](2026-10-16-adr-0130-draft.html) | ADR-0130 초안 → 승인됨(ADR-0095 대신: 서버 IP + Webshare 한국 정적 20개, 두 방식 지원, 바뀌는 주거용 나중, 한도 전 멈춤·메일)과 사이클 17 인계 파일 | `../../../adr/0130-lookup-egress-webshare-kr-static-and-alerts.md`, `../../../cycles/17-first-deploy/from-research-lookup-egress.md` | 2개 |
+| [2026-10-16-remaining-todo.html](2026-10-16-remaining-todo.html) | 프록시 일에서 사용자가 할 일: ADR-0130 확정, 배포 때 Webshare API 키·알림 메일 확인, 요금·IP 등록 메모 | `../multi-source-ip.md` 9절, ADR-0130 | 1개 |
