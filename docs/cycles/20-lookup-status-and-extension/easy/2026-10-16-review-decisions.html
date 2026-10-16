@@ -376,6 +376,24 @@ svg .ah{fill:var(--accent)}
 <line x1="548" y1="36" x2="548" y2="160" stroke="var(--no)" stroke-dasharray="5 4"/><text class="s13 sred" x="554" y="176">힙 512MB</text>
 <text class="s13m" x="10" y="200">1MB 당 약 1.36px 비율. 쪽 하나 최악 50MB = 본문 4 + 한글 문자열 6 + HTML 구조(5~10배). dev 측정으로 8을 맞춤</text>
 </svg><p class="cap">동시 해석 수를 묶으면 최악의 경우도 힙 안에 들어옵니다. 평소 쓰임은 아주 작습니다.</p></div>
+<h3 style="font-size:20px;margin:18px 0 6px">질문에 답: "서비스 힙 512MB"는 무슨 기준인가</h3>
+<p class="concl"><b>사이클 08에서 내 PC로 재고 사용자가 고른 값</b>입니다. "힙"은 자바 서비스(본 서비스)가 쓸 수 있는 메모리의 최대 크기입니다. dev가 사이클 08에 재 보니 서비스는 256MB로도 잘 돌았고, 동시 검색이 많을 때를 위해 두 배인 512MB를 두었습니다 — 사용자 선택 "512MB (권장)"(2026-10-11, `docs/current/data-model.md` 309행). 코드에는 dev `backend/build.gradle` 76행 `-Xmx512m`으로 들어 있습니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 260" role="img" aria-label="서버 4GB 안의 메모리 나눔">
+<text class="s14" x="10" y="22">운영 서버 4GB(사이클 17) 안에서 메모리를 나누는 모습 — 숫자는 아직 운영에서 재지 않음</text>
+<rect x="10" y="40" width="880" height="44" rx="6" fill="var(--card)" stroke="var(--line)"/>
+<rect x="10" y="40" width="112" height="44" rx="6" fill="var(--accent-bg)" stroke="var(--accent)"/><text class="s13" x="18" y="60" font-size="12">서비스 힙</text><text class="s13" x="18" y="76" font-size="12">512MB</text>
+<rect x="122" y="40" width="66" height="44" fill="var(--code-bg)" stroke="var(--line)"/><text class="s13m" x="126" y="66" font-size="11">JVM 그 밖</text>
+<rect x="188" y="40" width="220" height="44" fill="var(--warn-bg)" stroke="var(--warn)"/><text class="s13" x="196" y="60" font-size="12">PostgreSQL</text><text class="s13m" x="196" y="76" font-size="11">상한 권장 1GB</text>
+<rect x="408" y="40" width="60" height="44" fill="var(--code-bg)" stroke="var(--line)"/><text class="s13m" x="412" y="66" font-size="11">nginx 등</text>
+<rect x="468" y="40" width="160" height="44" fill="var(--code-bg)" stroke="var(--line)"/><text class="s13m" x="474" y="60" font-size="11">Prometheus·Grafana</text><text class="s13m" x="474" y="76" font-size="11">(사이클 17)</text>
+<rect x="628" y="40" width="262" height="44" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="636" y="60" font-size="12">운영체제·디스크 캐시·여유</text>
+<text class="s13m" x="10" y="112">어디서 정했나</text>
+<text class="s13" x="10" y="134">· 사이클 08(2026-10-11) dev가 내 PC(WSL2, 32GB)에서 잼: 256MB로도 정상 → 여유를 둬 512MB, 사용자 "512MB (권장)"</text>
+<text class="s13" x="10" y="156">· dev는 그때 "동시 검색이 많을 때(응답 본문 최대 4MB × 100) 여유가 작다"고 적음 (data-model.md 311행, 확인 필요로 남음)</text>
+<text class="s13" x="10" y="178">· 운영 서버가 정해지면 다시 재기로 함 → 사이클 17 범위 6 "운영 메모리 값 다시 재기(서비스 힙 …)", 17 확인 필요 "mem_limit 합이 4GB 안인지"</text>
+<text class="s13m" x="10" y="210">그래서 #7의 계산(최악 8 × 50MB ≈ 400MB)은 "힙이 지금처럼 512MB라면"을 전제로 한 것입니다.</text>
+<text class="s13m" x="10" y="230">사이클 17이 운영 힙을 바꾸면 동시 해석 수 8도 같은 비율로 맞춥니다(설정값이라 코드 변경 없음).</text>
+</svg><p class="cap">512MB는 사이클 08에 내 PC에서 재서 정한 서비스 힙. 운영 서버(4GB)에서는 사이클 17이 다시 잽니다.</p></div>
 <p class="concl">[안] 서버 전체에서 올라온 페이지를 <b>동시에 8개까지</b> 해석(넘치면 2초 기다리고 못 받으면 503 → 화면은 그 도서관만 「확인하지 못한 도서관」), nginx는 올리기 경로에 <b>IP당 동시 연결 6개</b>. 두 값은 변수(`LOOKUP_UPLOAD_CONN`, `max-concurrent-uploads`)로 두고, 인계 때 dev가 4MB 쪽 해석의 힙 최대치를 재서 8을 맞춥니다.</p>
 <p class="alt">다른 선택 ①: 확장 올리기만 본문 상한을 1MB로 낮춤(실제 최대 쪽 322KB) — 최악이 1/4로 줄지만 "상한은 설정 하나"(설계 #12, ADR-0119)와 어긋나 값이 둘이 됩니다. ② 상한 없음 — 평소엔 괜찮지만 몰리면 서비스가 멈출 수 있어 추천하지 않습니다.</p>
 </div>
