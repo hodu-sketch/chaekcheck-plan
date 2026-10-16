@@ -76,7 +76,7 @@
 | 올리기 속도 | IP당 초당 20, 몰림 60 | nginx `LOOKUP_UPLOAD_RATE`·`_BURST` (인계 예정) | 인계 예정 | design-delta nginx 줄 | [이유 미확인] | [안] | — |
 | nginx 본문 받기 | `proxy_request_buffering on`, `client_body_buffer_size 512k`, `client_body_timeout 10s` | nginx 템플릿 (인계 예정) | 인계 예정 | design-delta nginx 줄 | 느린 회선이 서버 일꾼·해석 자리를 잡지 않게 (https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_request_buffering , 2026-10-16) | [안] | — |
 | 계획 보관 | 무게(주소 수) 25,000(약 10MB, 주소 하나 약 400B), 쓴 뒤 10분, IP당 열린 계획 20, 꽉 차면 다른 사람 것을 밀지 않고 새 계획 503 → 그 검색만 서버 모드 | 인계 예정 | 인계 예정 | 검토 #8 | 2GB 기준. 사용자: "오래된 계획이 밀려나는 게 서비스적으로 맞나?" → 밀어내지 않기로, 승인 (2026-10-16) | [확정] | — |
-| 계획 요청 | 분당 60, 몰림 30 + 화면 1초 묶기 | nginx `LOOKUP_PLAN_PER_MIN`·`_BURST` (인계 예정) | 인계 예정 | 검토 #15 | [이유 미확인] | [안] | — |
+| 계획 요청 (계획 만들기) | 공인 IP당 분당 300, 몰림 100 + 화면 1초 묶기 | nginx `LOOKUP_PLAN_PER_MIN`·`_BURST` (인계 예정) | 인계 예정 | 사이클 20 검토 #15 | 공인 IP는 여럿이 함께 씀(사용자 질문 "이 아이피가 공공아이피야?") → nginx는 한 곳 대량만 막는 울타리, 사람별은 서버. 승인 (2026-10-16). 처음 안 60·30 | [확정] | 계획 보관함(#8), 브라우저 열쇠(#22) |
 | 서버가 대신 부르는 도서관 목록 | 비어 있음 (프로토타입에서 확장이 못 여는 도서관이 나오면 넣음: http·인증서·리다이렉트) | `be.yml` `extension.server-fetched-libraries` (이름 [안], 인계 예정) | 인계 예정 | 사이클 20 검토 #16 | 사용자 승인, "이것들도 다 기록해야해" (2026-10-16) → 사용 기록 출처 `server_for_extension`·켤 때 로그 | [확정] | dev 설정값 목록, 이 줄 |
 | 확장 한 번에 받는 주소 | 최대 100개, 주소 2KB | 확장 `config.js` (인계 예정) | 인계 예정 | design-delta | [이유 미확인] | [안] | — |
 
