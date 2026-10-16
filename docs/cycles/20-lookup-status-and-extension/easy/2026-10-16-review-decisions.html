@@ -910,6 +910,7 @@ svg .ah{fill:var(--accent)}
 <rect class="bx" x="670" y="30" width="220" height="64" rx="8"/><text class="s14" x="680" y="54">인계서 + 프로토타입</text><text class="s13m" x="680" y="76" font-size="12">17 회고 뒤 → dev (21 → 17 → 20)</text>
 <path d="M200 62 H230" class="ar" marker-end="url(#ah19c)"/><path d="M420 62 H450" class="ar" marker-end="url(#ah19c)"/><path d="M640 62 H670" class="ar" marker-end="url(#ah19c)"/>
 </svg><p class="cap">결정과 검토는 지금, 반영과 인계는 사이클 17 회고 뒤.</p></div>
+<p class="concl" style="border:2px solid var(--ok)"><b>정함 (2026-10-16)</b>: "이거 다음에 17 가야 할 것 같은데, 17이 배포니까" — 네, 그 순서입니다. 지금은 설계 검토(design-reviewer)만 돌리고, docs/current 반영·인계서는 사이클 17(배포) 회고 뒤에 씁니다. dev도 17 배포가 먼저입니다.</p>
 <p class="concl">[안] 이 문서대로 다음 단계로 갑니다. 지금은 설계 검토만 돌리고, 반영과 인계서는 사이클 17 회고 뒤.</p>
 </div>
 
@@ -1388,6 +1389,7 @@ svg .ah{fill:var(--accent)}
 <tr><td>확장 (동시 5·1초 등)</td><td><code>extension/config.js</code> 한 파일</td><td>확장 새 버전 깔기</td></tr>
 </table>
 <p>환경 변수 이름 목록은 <code>docs/settings-index.md</code> 8절에 이미 적었고, <code>docs/reference-index.md</code> 맨 위와 <code>CLAUDE.md</code>에서 이 문서로 링크했습니다.</p>
+<p class="concl" style="border:2px solid var(--ok)"><b>정함 (2026-10-16)</b>: 승인. 설계 문서, 사이클 17 인계 파일 <code>from-cycle-20-prod-env-numbers.md</code>, 설정값 목록 8절에 반영했습니다.</p>
 <p class="concl">[안] 위 방식으로: 운영 숫자는 모두 <code>prod.env</code> 한 곳에 "대출 조회 숫자" 묶음으로 적고(각 줄에 settings-index 줄을 가리키는 설명), 서비스 값은 Spring 환경 변수 규칙으로 덮어씀, nginx와 함께 쓰는 값만 <code>LOOKUP_*</code>, 화면은 <code>VITE_*</code>, 확장은 <code>config.js</code>. 사이클 20 인계에 "prod.env 묶음과 dev 설정값 목록에 환경 변수 칸"을 넣고, 사이클 17의 <code>prod.env</code> 견본에도 같은 묶음을 넣도록 17 인계 파일로 알림.</p>
 <p class="alt">다른 선택: 모든 값을 <code>LOOKUP_*</code> 같은 짧은 이름으로 새로 만들고 <code>application.yml</code>에 <code>${LOOKUP_…:기본값}</code>으로 하나하나 걸기 — 이름은 짧아지지만 yml을 많이 고치고, Spring 기본 규칙과 이름이 두 벌이 됩니다.</p>
 </div>

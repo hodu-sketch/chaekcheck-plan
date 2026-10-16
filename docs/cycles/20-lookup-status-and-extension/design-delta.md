@@ -185,6 +185,8 @@ classDiagram
 
 - **검색 결과 수 10** [확정] (세 관점 검토 #23 승인 2026-10-16, 명세 R15): `availability` 설정 `batch.row-limit` 20 → 10(서버·확장 모드), `catalog` `GET /api/v1/books` `pageSize` 기본 20 → 10(검증 범위 1~20 그대로), 웹 책 검색이 `pageSize=10`을 보냄. 코드 구조 변화 없음(설정·기본값·웹 상수)
 
+- **운영 숫자는 변수로 한 곳에서** [확정] (세 관점 검토 #25 승인 2026-10-16; 사용자: "이런 개수 말이야 변수로 통합적으로 관리 가능하도록"): 이 사이클이 더하거나 바꾸는 숫자(동시 해석·계획 보관함·확장 캐시·잠금·결과 10 등)는 모두 설정 속성으로 두고 운영은 `prod.env`의 "대출 조회 숫자" 묶음에서 Spring 환경 변수로 덮어씀(이름 규칙·목록 `../../settings-index.md` 8절). nginx와 함께 쓰는 값만 `LOOKUP_*`, 화면 `VITE_*`, 확장 `extension/config.js`. dev 설정값 목록(#17)에 환경 변수 칸. 사이클 17 `prod.env` 견본은 `../17-first-deploy/from-cycle-20-prod-env-numbers.md`
+
 ## 데이터
 
 - 스키마: `usagelog` (새 표 없음, `availability`는 메모리만)
