@@ -1,5 +1,7 @@
 # 설계 대안: 사이클 20 조회 상태 신호와 브라우저 확장 조회
 
+> 역사 기록: 지금 값은 [`design-delta.md`](design-delta.md)와 [`docs/settings-index.md`](../../settings-index.md). 이 문서의 값(4MB, 1분 20개, IP별 잠금 등)은 2026-10-15~16 설계 때의 것으로, 뒤의 세 관점 검토(2026-10-16)로 바뀐 것이 있다.
+
 - 2026-10-15, `architect` 서브에이전트 제안을 그대로 옮김(이름·한도·경로 중 새로 지은 값은 모두 [안]). 결정 페이지: [`easy/2026-10-15-design-decisions.html`](easy/2026-10-15-design-decisions.html). 그림 원본: [`easy/architect-proposal-original.html`](easy/architect-proposal-original.html)
 - 읽은 것: 이 사이클 scope·spec·flow·research, 사이클 17 design-delta·`from-cycle-20-blocked-ip-resume.md`, dev `availability.internal.{search,fetch,resolve,web}`, `application.yml`, nginx conf, `web/src/api/searchStream.ts`, `AppLayout.tsx` (2026-10-15)
 

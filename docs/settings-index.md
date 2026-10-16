@@ -22,12 +22,12 @@
 | 값 | 지금 값 | 들어 있는 곳 | 상태 | 정한 문서 | 근거 | 태그 | 함께 바꿀 곳 |
 |---|---|---|---|---|---|---|---|
 | 연결 시간 제한 | 5초 | `be.yml` `chaekcheck.availability.connect-timeout`, `fs.yml` `fetch.connect-timeout` | 구현됨 | 사이클 01·dev | 경기교육청 등 연결에 1~3초 걸리는 곳(2026-09-29), 사이클 01 값 3초에서 사용자 결정 (2026-09-29) | [확정] | 두 파일 같이 |
-| 응답 머리까지 제한 | 5초 | `be.yml` `read-timeout`, `fs.yml` `fetch.read-timeout` | 구현됨 | 사이클 01·dev | [이유 미확인]. 시드니 → 한국 IP → 강동구립 홈페이지(586KB)는 3.5~5.0초로 닿을 수 있음 ([multi-source-ip](research/deploy/multi-source-ip.md) 9-4절) — 운영에서 확인 [확인 필요] | [확정] | 두 파일 같이 |
+| 응답 머리까지 제한 | 5초 | `be.yml` `read-timeout`, `fs.yml` `fetch.read-timeout` | 구현됨 | [사이클 01 spec](cycles/01-ebook-availability-search/spec.md) 5.2 ("응답 5초", 절 [확정] 2026-09-27) | 이유 [이유 미확인]. 시드니 → 한국 IP → 강동구립 홈페이지(586KB)는 3.5~5.0초로 닿을 수 있음 ([multi-source-ip](research/deploy/multi-source-ip.md) 9-4절) — 운영 서버에서 이 값이 맞는지 아직 모름 | [확인 필요: 운영 기록 확인] | 두 파일 같이 |
 | 한 요청 전체 제한 | 15초 | `be.yml` `total-timeout`, `fs.yml` `fetch.total-timeout` | 구현됨 | dev | 연결 5 + 머리 5 + 본문 5, 지금 되는 응답을 자르지 않음 (dev 주석) | [안] | 두 파일 같이 |
-| 묶음 마감 (적용: 바로 검색, 책 기준 검색 뒤 대출 상태 조회) | 8초 (묶음 시작부터) | `be.yml` `batch.deadline` | 구현됨 | 사이클 01·[api](current/api.md) | [이유 미확인]. 시드니 + 한국 IP에서 한 곳 1.7~3.7초라 안에 들어옴 (사이클 20 검토, 2026-10-16) | [확정] | 확장 모드도 같음 (사이클 20 R8) |
+| 묶음 마감 (적용: 바로 검색, 책 기준 검색 뒤 대출 상태 조회) | 8초 (묶음 시작부터) | `be.yml` `batch.deadline` | 구현됨 | [사이클 02 spec](cycles/02-library-expansion/spec.md) 88행 (사용자 결정 2026-09-28, "사이클 01과 같은 값"), ADR-0014, [api](current/api.md) | 사용자 결정 (2026-09-28), 이유 [이유 미확인]. 시드니 + 한국 IP에서 한 곳 1.7~3.7초라 안에 들어옴 (사이클 20 검토, 2026-10-16) | [확정] | 확장 모드도 같음 (사이클 20 R8) |
 | 새 요청 멈춤 | 마감 3초 전부터 | `be.yml` `batch.launch-cutoff` | 구현됨 | dev | [이유 미확인] | [안] | — |
-| 「더 보기」 한 쪽 제한 | 8초 (대기 포함) | `be.yml` `request-deadline` | 구현됨 | dev | [이유 미확인] | [확정] | — |
-| 상세 페이지 마감 | 묶음 시작부터 30초 | `be.yml` `detail.deadline` | 구현됨 | dev | [이유 미확인] | [확정] | — |
+| 「더 보기」 한 쪽 제한 | 8초 (대기 포함) | `be.yml` `request-deadline` | 구현됨 | [사이클 01 spec](cycles/01-ebook-availability-search/spec.md) 5.2 ("검색 전체 8초", 절 [확정] 2026-09-27), 사이클 01 design-delta 251행 ("요청당 8초(대기 포함)" [확정]) | 사용자 확인 (2026-09-27), 이유 [이유 미확인] | [확정] | — |
+| 상세 페이지 마감 | 묶음 시작부터 30초 | `be.yml` `detail.deadline` | 구현됨 | [사이클 02 spec](cycles/02-library-expansion/spec.md) 110행 ("최대 30초 기다림" [확정] 사용자 2026-09-28), ADR-0014 | 사용자 결정 (2026-09-28), 이유 [이유 미확인] | [확정] | — |
 | 도서관 응답 본문 상한 | 지금 4MB → **1MB로 바꿈** (서버 모드·확장 모드 같은 값) | `be.yml` `max-body-size`, `fs.yml` `fetch.max-body-size` → 인계 뒤 `LOOKUP_MAX_BODY_MB` 하나 (Spring + nginx) | 4MB 구현됨, 1MB 인계 예정 | [사이클 20 design-delta](cycles/20-lookup-status-and-extension/design-delta.md), 세 관점 검토 #7 | 실측 도서관 응답 최대 약 322KB(BOOKCUBE XML, 2026-10-05), 오늘 잰 검색 화면 42~220KB → 1MB면 약 3배 여유. 2GB 서버라 1MB 쪽 하나 해석 최악 약 12MB × 4 ≈ 50MB로 묶음. 사용자 승인 #7 (2026-10-16) | [확정] | nginx `client_max_body_size`, 사이클 20 동시 해석 |
 
 ## 3. 대출 조회: 동시 수와 간격
@@ -37,11 +37,11 @@
 | 동시 검색 자리 (바로 검색 묶음 1개·대출 상태 조회 묶음 1개·「더 보기」 1번이 각각 1자리) | 20 (넘으면 바로 503 `server_busy`) | `be.yml` `max-concurrent-searches` | 구현됨 | dev | 개인 서비스에 몇 초 안 20검색은 드묾, 실제 이용으로 조정 (dev 주석) | [안] | 상태 불 단계(10 노랑·20 빨강, 사이클 20 R1) |
 | 묶음당 동시 도서관 (적용: 바로 검색, 책 기준 검색 뒤 대출 상태 조회 / 적용 안 됨: 책 찾기 `/books`, 도서관 한 곳 「더 보기」) | 5 | `be.yml` `batch.parallelism` | 구현됨 | 사이클 02 [design-delta](cycles/02-library-expansion/design-delta.md) 261행 (제안값, "프로토타입으로 확인") | [이유 미확인] — 사용자 결정·측정 기록 없음. 배포 뒤 "검색 한 번이 묶음을 몇 번 도는지"로 맞춤 | [안] | 확장 전체 동시 5 |
 | 묶음 줄 상한 (적용: 바로 검색, 책 기준 검색 뒤 대출 상태 조회 — 같은 값, dev `BatchRunner` 201~203행 / 적용 안 됨: 책 찾기 `/books`) | 지금 20줄 → **10줄** | `be.yml` `batch.row-limit` | 20 구현됨, 10 인계 예정 | 사이클 20 명세 R15, 검토 #23 | 사용자: "검색 결과 수를 줄여야겠다 10개로" (2026-10-16). 효과(어림): 검색당 도서관 요청 약 반 → 받는 검색 약 2배 | [확정] | 확장 모드 같은 값 |
-| 책 기준 검색 한 쪽 책 수 | 지금 기본 20 → **기본 10** (최대 20) | `GET /api/v1/books` `pageSize` 기본값, 웹 책 검색 상수 | 인계 예정 | 사이클 20 명세 R15, 검토 #23 | 같음. 이어지는 대출 조회(`book-availabilities/stream`)도 대략 반 | [확정] | — |
+| 책 기준 검색 한 쪽 책 수 | 지금 기본 20 → **기본 10** (최대 20) | 지금 dev `catalog/internal/web/BookParams.java` 상수 `MAX_PAGE_SIZE = 20` 하나가 기본값·최대를 함께 맡음(2026-10-16 읽음) → 기본값을 설정 속성으로 분리. 값을 정하는 곳(서버 설정 속성 / 웹 `VITE_BOOKS_PAGE_SIZE`) [안] 검토 #30 (제안: 서버 설정 속성 하나, 웹은 `pageSize`를 보내지 않음) | 인계 예정 | 사이클 20 명세 R15, 검토 #23 | 같음. 이어지는 대출 조회(`book-availabilities/stream`)도 대략 반 | 10 [확정] / 정하는 곳 [안] | — |
 | 다음 묶음 후보 | 50 | `be.yml` `batch.max-candidates` | 구현됨 | dev | [이유 미확인] | [안] | — |
 | 한 길·한 사이트 동시 / 간격 | 동시 1건, 1초 | `be.yml` `host-max-concurrency`, `host-min-interval` | 구현됨 (길 하나) | ADR-0094·0095, [multi-source-ip](research/deploy/multi-source-ip.md) 7절 #2 | 사용자 승인: 고정 IP마다 동시 1건·1초 (2026-10-16) | [확정] | 길이 늘면 길마다 |
 | 교보 구독형 서버 | 길마다 동시 3건, 느려지면 1건, 막힘 신호면 멈춤 | 인계 예정 (사이클 17) | 인계 예정 | ADR-0094, [사이클 17 scope](cycles/17-first-deploy/scope.md) 10번 | 사용자: "이거 지금 해" (2026-10-13) | [확정] | — |
-| 차례 기다림 → 시간 초과 | 8초 | dev throttle | 구현됨 | 사이클 20 [spec](cycles/20-lookup-status-and-extension/spec.md) R4 | [이유 미확인] | [확정] | 줄 선 도서관 60초 |
+| 차례 기다림 → 시간 초과 | 8초 | dev throttle | 구현됨 | [사이클 01 design-delta](cycles/01-ebook-availability-search/design-delta.md) 251행 ("요청당 8초(대기 포함)" [확정]), 사이클 20 [spec](cycles/20-lookup-status-and-extension/spec.md) R4 | 사이클 01 확정값 (2026-09-27), 이유 [이유 미확인] | [확정] | 줄 선 도서관 60초 |
 
 ## 4. 나가는 길 (첫 배포)
 
@@ -60,7 +60,7 @@
 
 | 값 | 지금 값 | 들어 있는 곳 | 상태 | 정한 문서 | 근거 | 태그 | 함께 바꿀 곳 |
 |---|---|---|---|---|---|---|---|
-| 조회 캐시 유지 | 3분 | `be.yml` `cache-ttl` | 구현됨 | [api](current/api.md) | [이유 미확인] | [확정] | 확장 캐시 유지(첫 저장부터 고정, 사이클 20 #10) |
+| 조회 캐시 유지 | 3분 | `be.yml` `cache-ttl` | 구현됨 | [사이클 01 spec](cycles/01-ebook-availability-search/spec.md) 5.6 ([확정] 사용자 2026-09-27), ADR-0006, [api](current/api.md) | 사용자 결정 (2026-09-27), 이유 [이유 미확인] | [확정] | 확장 캐시 유지(첫 저장부터 고정, 사이클 20 #10) |
 | 검색 쪽·상세 판정 캐시 칸 | 각 1,000 | `be.yml` `caches.*-max-size` | 구현됨 | ADR-0066 (사이클 08) | 측정 전까지 이전 값 (dev 주석) | [안] | — |
 | 확장이 채우는 캐시 | 500칸 | 인계 예정 | 인계 예정 | 사이클 20 세 관점 검토 #9 | 2GB 기준, 칸당 수 KB → 2~3MB. 믿을 수 없는 값을 서버 값과 섞지 않기(검토 #9 근거). 만료는 처음 넣은 시각 + 3분 고정(#10). 사용자 승인 (2026-10-16) | [확정] | — |
 
@@ -71,11 +71,11 @@
 | 상태 묻는 간격 | 10초 | 인계 예정 (웹) | 인계 예정 | [spec](cycles/20-lookup-status-and-extension/spec.md), [research](cycles/20-lookup-status-and-extension/research.md) | 사용자: "메모리 점유가 더 문제" → SSE 대신 묻기 (2026-10-15) | [확정] | — |
 | 단계 | 자리 10개 이상 노랑, 20개 또는 10초 안 503 빨강, 마지막 성공 30초 지나면 회색 | 인계 예정 | 인계 예정 | spec R1·R5 | 사용자 승인 (범위 #2) | [확정] | 동시 검색 자리 20 |
 | 줄 선 도서관 남기기 | 시간 초과 뒤 60초 | 인계 예정 | 인계 예정 | spec R4 | 사용자 승인 (명세 결정 #5) | [확정] | 차례 기다림 8초 |
-| 확장 인사 기다림 | 첫 검색 최대 500ms, 끊기면 3번(바로·1초·2초) | 인계 예정 | 인계 예정 | spec R6, 검토 #4 | 사용자: "이렇게 해" (2026-10-16) | [확정] | — |
+| 확장 인사 기다림 | 첫 검색 최대 500ms, 끊기면 3번(바로·1초·2초) | 인계 예정 | 인계 예정 | spec R6, 검토 #4 | 3번: 사용자 "이렇게 해" (2026-10-16, 검토 #4). 500ms: 세 관점 검토가 고친 값(◆), 사용자가 따로 고르지 않음 [이유 미확인] | 3번 [확정] / 500ms [안] | — |
 | 서버 전체 동시 해석 | 4, 자리 기다림 최대 2초(페이지가 서버에 다 도착한 뒤부터) → 503 → 그 도서관만 실패 | `max-concurrent-uploads` (인계 예정) | 인계 예정 | 검토 #7 | 실측(2026-10-16, jsoup 1.23.2): 1MB 쪽 해석 중 7.4MB·6ms, 보통 쪽 0.6~0.9MB·1~4ms → 4자리면 최악 약 30MB, 2초에 수백 장 처리. 사용자 승인 (2026-10-16) | [확정] | 페이지 상한 |
 | 올리기 IP당 동시 연결 | 4 | nginx `LOOKUP_UPLOAD_CONN` (인계 예정) | 인계 예정 | 검토 #7 | 한 사람이 해석 자리를 혼자 차지하지 않게. 사용자 승인 (2026-10-16) | [확정] | — |
-| 올리기 속도 | IP당 초당 20, 몰림 60 | nginx `LOOKUP_UPLOAD_RATE`·`_BURST` (인계 예정) | 인계 예정 | design-delta nginx 줄 | [이유 미확인] | [안] | — |
-| nginx 본문 받기 | `proxy_request_buffering on`, `client_body_buffer_size 512k`, `client_body_timeout 10s` | nginx 템플릿 (인계 예정) | 인계 예정 | design-delta nginx 줄 | 느린 회선이 서버 일꾼·해석 자리를 잡지 않게 (https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_request_buffering , 2026-10-16) | [안] | — |
+| 올리기 속도 | IP당 초당 20, 몰림 60 | nginx `LOOKUP_UPLOAD_RATE`·`_BURST` (인계 예정) | 인계 예정 | design-delta nginx 줄, [architect-proposal](cycles/20-lookup-status-and-extension/architect-proposal.md) 결정 절 설계 #12 | 사용자: "이걸로 해줘" (2026-10-16, 설계 #12), 이유 [이유 미확인] | [확정] | — |
+| nginx 본문 받기 | `proxy_request_buffering on`, `client_body_buffer_size 512k`, `client_body_timeout 10s` | nginx 템플릿 (인계 예정) | 인계 예정 | design-delta nginx 줄 (세 관점 검토가 고친 값 ◆, 사용자가 따로 고르지 않음) | 느린 회선이 서버 일꾼·해석 자리를 잡지 않게 (https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_request_buffering , 2026-10-16) | [안] | — |
 | 계획 보관 | 무게(주소 수) 25,000(약 10MB, 주소 하나 약 400B), 쓴 뒤 10분, 브라우저 열쇠당 열린 계획 20 + 공인 IP당 200 울타리(#22), 꽉 차면 다른 사람 것을 밀지 않고 새 계획 503 → 그 검색만 서버 모드 | 인계 예정 | 인계 예정 | 검토 #8 | 2GB 기준. 사용자: "오래된 계획이 밀려나는 게 서비스적으로 맞나?" → 밀어내지 않기로, 승인 (2026-10-16) | [확정] | — |
 | 올리기 잠금 | 1분 실패 30번(모르는 계획 번호·같은 쪽 두 번·Origin 다름만) → 그 브라우저 열쇠 10분 잠금, 같은 공인 IP에서 잠긴 열쇠 5개 이상이면 IP 10분 잠금 | 인계 예정 (서버) | 인계 예정 | 사이클 20 검토 #11·#22 | 같은 공인 IP를 쓰는 사람끼리 묶이지 않게 (사용자 질문, 2026-10-16), 승인 | [확정] | — |
 | 계획 요청 (계획 만들기) | 공인 IP당 분당 300, 몰림 100 + 화면 1초 묶기 | nginx `LOOKUP_PLAN_PER_MIN`·`_BURST` (인계 예정) | 인계 예정 | 사이클 20 검토 #15 | 공인 IP는 여럿이 함께 씀(사용자 질문 "이 아이피가 공공아이피야?") → nginx는 한 곳 대량만 막는 울타리, 사람별은 서버. 승인 (2026-10-16). 처음 안 60·30 | [확정] | 계획 보관함(#8), 브라우저 열쇠(#22) |
@@ -94,7 +94,7 @@
 
 ## 8. 값을 바꾸는 곳: 환경 변수 이름 (2026-10-16)
 
-사용자: "이런 개수 말이야 변수로 통합적으로 관리 가능하도록 했으면 해 설정이라던가 그리고 이런 것들 문서 링크 잘 해서 ai가 잘 보도록 정리하고" (2026-10-16, 사이클 20 세 관점 검토). 방식은 사이클 20 검토 #25 [안].
+사용자: "이런 개수 말이야 변수로 통합적으로 관리 가능하도록 했으면 해 설정이라던가 그리고 이런 것들 문서 링크 잘 해서 ai가 잘 보도록 정리하고" (2026-10-16, 사이클 20 세 관점 검토). 방식은 사이클 20 검토 #25 [확정] (사용자 승인 2026-10-16).
 
 - 서비스(Spring) 값은 `application.yml`을 고치지 않고 **환경 변수로 덮어쓸 수 있음**: 이름은 속성 이름에서 점을 `_`로, `-`를 빼고, 대문자로 [확정] (Spring Boot 공식 문서 "Binding From Environment Variables", https://docs.spring.io/spring-boot/reference/features/external-config.html , 2026-10-16 확인). 운영에서는 `deploy/prod/prod.env`(사이클 17)에 적고 서비스를 다시 켬
 - nginx와 서비스가 함께 쓰는 값은 짧은 `LOOKUP_*` 이름 하나로(사이클 20 설계 #12)
@@ -114,10 +114,10 @@
 | 「더 보기」 한 쪽 제한 | `CHAEKCHECK_AVAILABILITY_REQUESTDEADLINE` | 8s |
 | 조회 캐시 유지 | `CHAEKCHECK_AVAILABILITY_CACHETTL` | 3m |
 | 캐시 칸 | `CHAEKCHECK_AVAILABILITY_CACHES_SEARCHPAGEMAXSIZE` / `_DETAILVERDICTMAXSIZE` | 1000 / 1000 |
-| 도서관 응답 본문 상한 (서버·확장·nginx 함께) | `LOOKUP_MAX_BODY_MB` | 4MB → 1 (사이클 20) |
+| 도서관 응답 본문 상한 (서버·확장·nginx 함께) | `LOOKUP_MAX_BODY_MB` (compose가 Spring `CHAEKCHECK_AVAILABILITY_MAXBODYSIZE=${LOOKUP_MAX_BODY_MB}MB`와 nginx 템플릿에 넘김) | 4MB → 1 (사이클 20) |
 | 확장 올리기 동시 해석 | (사이클 20 새 속성, 이름은 dev가 정함 → 위 규칙대로 환경 변수) | 4 |
 | nginx 올리기 / 계획 한도 | `LOOKUP_UPLOAD_CONN`, `LOOKUP_UPLOAD_RATE`·`_BURST`, `LOOKUP_PLAN_PER_MIN`·`_BURST` | 4, 20·60, 300·100 |
-| 책 기준 검색 한 쪽 책 수 | 웹 `VITE_BOOKS_PAGE_SIZE` [안] (API 기본값은 서비스 설정) | 20 → 10 (사이클 20) |
+| 책 기준 검색 한 쪽 책 수 | 서비스 설정 속성(새로 분리, 이름은 dev가 정함 → 위 규칙대로 환경 변수) 또는 웹 `VITE_BOOKS_PAGE_SIZE` — 어느 쪽인지 [안] 검토 #30 (제안: 서비스 설정 속성 하나, 웹은 `pageSize`를 보내지 않음). 최대 20은 그대로 | 20 → 10 (사이클 20) |
 | 상태 묻는 간격 | 웹 `VITE_LOOKUP_STATUS_POLL_SECONDS` [안] | 10 |
 | 나가는 길 설정 | ADR-0130 설정 자리 (사이클 17 인계) | `모두` |
 

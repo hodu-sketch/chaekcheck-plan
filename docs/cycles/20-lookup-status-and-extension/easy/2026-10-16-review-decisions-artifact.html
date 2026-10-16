@@ -1507,6 +1507,77 @@ body{background:var(--bg);color:var(--text)}
 <p class="alt">다른 선택: 책 화면만 동시 10칸으로 한 묶음(약 8초)에 끝내기 — 더 빠르지만 검색 하나가 동시 요청 10건을 붙잡습니다. 또는 처음 제안(둘 다 10줄에서 멈춤).</p>
 </div>
 
+<div class="card">
+<h2>설계 검토 결과 (2026-10-16): 고친 것과 새로 정할 것 #27~#31</h2>
+<p class="concl">결정 25개를 문서에 넣은 뒤 설계 검토(design-reviewer)를 돌렸습니다. <b>문서끼리 어긋난 곳·낡은 값은 바로 고쳤고</b>, 결정이 필요한 다섯 가지만 아래 #27~#31로 묻습니다.</p>
+<table>
+<tr><th>바로 고친 것 (결정 필요 없음)</th><th>어디</th></tr>
+<tr><td>본문 상한 환경 변수 이름이 Spring 규칙과 달라 1MB가 안 먹을 뻔함 → <code>CHAEKCHECK_AVAILABILITY_MAXBODYSIZE</code></td><td>설계 nginx 줄, 설정값 목록 8절</td></tr>
+<tr><td>사용 기록 거절 표의 <code>reason</code> CHECK에 <code>invalid_plan</code>·<code>invalid_client_key</code>를 더하는 내용이 빠짐 → changeset 004에 넣음 (dev 이름 <code>rejected_event_reason_check</code>)</td><td>설계 데이터 절</td></tr>
+<tr><td>#22 브라우저 열쇠가 일부에만 들어감 → 흐름 그림·API 머리글 <code>X-Lookup-Client</code>·검사 순서·웹·명세 R9·ADR-0119까지</td><td>설계·명세·ADR</td></tr>
+<tr><td>낡은 값: 응답 <code>rowLimit 20</code>→10, 명세 4MB→1MB, ADR-0118 "4GB"→시드니 2GB, PC 마우스 올림→누르면 말풍선</td><td>설계·명세·흐름·ADR</td></tr>
+<tr><td>#16 서버 대행: 사용 기록 출처 <code>server_for_extension</code>을 그림·표·명세에 맞춤, AC-9·AC-12에 "목록이 비었을 때" 조건</td><td>설계·명세</td></tr>
+<tr><td>범위 문서에 검토에서 더한 9가지(D절), 새 수용 기준 AC-22~27, #14는 ADR-0131(새, Proposed), #21·#24는 ADR-0118에</td><td>scope·spec·ADR</td></tr>
+<tr><td>흐름 문서: 실패 줄 표시 "새 검색 전까지 남음"(#5), 계획 번호 오류는 오류 화면 없이 「확인하지 못한 도서관」, 확장 꺼짐은 인사 3번(#4)</td><td>flow.md</td></tr>
+<tr><td>사용 기록 표 칸 이름을 dev 실제 이름(<code>ok_count</code>·<code>failed_count</code>·<code>timeout_count</code>·<code>ok_ms_total</code>…)으로</td><td>설계 ER 그림</td></tr>
+<tr><td>설정값 목록: 근거 없는 [확정]을 정리(근거 찾은 것은 사이클 01·02 명세 줄로, 없으면 제안값으로 내림)</td><td>settings-index</td></tr>
+</table>
+</div>
+
+<div class="card item">
+<h2><span class="num">27</span>페이지를 올릴 때 "계획을 만든 IP와 같은가"<br>검사를 계속할까</h2>
+<p><b>어디서 생기나.</b> #22에서 계획을 "브라우저 열쇠"로 묶기로 했습니다. 그런데 처음 설계에는 "올리기 요청의 IP가 계획을 만든 IP(/64)와 같아야 함"이라는 검사도 있습니다. 폰은 와이파이↔LTE를 오가면 검색 도중에 IP가 바뀌어, 이 검사 때문에 남은 도서관이 모두 실패할 수 있습니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 120" role="img" aria-label="검색 도중 IP가 바뀌는 폰">
+<rect class="bx" x="10" y="20" width="250" height="44" rx="6"/><text class="s13" x="20" y="47" font-size="12">계획 만듦 · 와이파이 IP 1.2.3.4</text>
+<rect class="bx" x="300" y="20" width="250" height="44" rx="6"/><text class="s13" x="310" y="47" font-size="12">밖으로 나감 → LTE IP 5.6.7.8</text>
+<rect class="bxno" x="590" y="20" width="300" height="44" rx="6"/><text class="s13" x="600" y="47" font-size="12">IP 검사가 있으면 남은 쪽 올리기 400</text>
+<text class="s13m" x="10" y="94" font-size="12">열쇠는 탭 메모리에 그대로라 바뀌지 않음 — 열쇠 검사만으로 "같은 사람"을 확인할 수 있음</text>
+</svg><p class="cap">IP가 바뀌어도 같은 탭이면 열쇠는 같습니다.</p></div>
+<table><tr><th></th><th>열쇠로만 (제안)</th><th>열쇠 + IP 둘 다</th></tr><tr><td>폰 IP가 바뀔 때</td><td>계속 됨</td><td>남은 도서관 실패</td></tr><tr><td>남이 계획 번호를 훔쳐 쓰기</td><td>번호(무작위 16바이트)와 열쇠(무작위 16바이트)를 둘 다 알아야 함</td><td>거기에 같은 IP까지</td></tr></table>
+<p class="concl"><span class="chip" data-n="27">안 #27</span> 올리기·닫기는 <b>계획 번호 + 브라우저 열쇠</b>가 맞으면 받고, "같은 IP" 검사는 뺍니다. IP는 #22의 울타리(공인 IP당 한도·잠금)에만 씁니다.</p>
+<p class="alt">다른 선택: IP 검사도 유지 — 더 엄격하지만 폰에서 검색 도중 회선이 바뀌면 그 검색의 남은 도서관이 실패합니다.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">28</span>머리말 둘째 줄 문구를 고르려면<br>상태 응답에 "이유"가 필요</h2>
+<p><b>어디서 생기나.</b> #21(Webshare 길이 모두 멈춤 → 최소 노랑 "지금은 조회가 평소보다 느려요")과 #24(프록시만 + 길 0개 → 빨강 "지금은 도서관 조회를 할 수 없어요")를 정했는데, 지금 상태 응답(<code>GET /api/v1/lookup-status</code>)에는 색만 있어 화면이 어떤 문구를 띄울지 모릅니다. 같은 노랑이라도 "사람이 많아서"(#6 문구 "찾는 사람이 늘고 있어요…")와 "업체 길이 멈춰서"가 다릅니다.</p>
+
+<table><tr><th>색</th><th>이유 <code>reason</code></th><th>둘째 줄</th></tr><tr><td>초록</td><td>NONE</td><td>#6 표 그대로</td></tr><tr><td>노랑</td><td>NONE (자리 10개 이상)</td><td>"찾는 사람이 늘고 있어요. 조금 느릴 수 있어요" (#6)</td></tr><tr><td>노랑</td><td>VENDOR_PAUSED (Webshare 길 멈춤)</td><td>"지금은 조회가 평소보다 느려요" (#21)</td></tr><tr><td>빨강</td><td>NONE (자리 20 또는 10초 안 503)</td><td>#6 표 그대로</td></tr><tr><td>빨강</td><td>NO_LANE (프록시만 + 길 0개)</td><td>"지금은 도서관 조회를 할 수 없어요" (#24)</td></tr></table><p>둘이 겹치면(업체 길 멈춤 + 자리도 참): 색은 더 나쁜 쪽(빨강), 문구는 이유가 있는 쪽(업체·길)을 보여 줍니다.</p>
+<p class="concl"><span class="chip" data-n="28">안 #28</span> 상태 응답에 <code>reason</code>(NONE | VENDOR_PAUSED | NO_LANE)을 더하고, 화면은 위 표대로 문구를 고릅니다. 겹치면 색은 나쁜 쪽, 문구는 이유 있는 쪽. 서버는 17·22의 나가는 길 코드가 주는 "업체 길 멈춤"·"길 설정" 값을 읽기 전용으로 읽고, 그 코드가 아직 없으면 NONE.</p>
+<p class="alt">다른 선택: 이유 없이 색만 — 응답은 단순하지만 #21·#24 문구를 띄울 수 없습니다.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">29</span>확장 모드에서 "서버가 대신 부르는 도서관"(#16)인데<br>서버 자리가 다 찼으면</h2>
+<p><b>어디서 생기나.</b> #16에서, 확장이 못 여는 도서관(http 주소·인증서 문제 등)은 그 도서관만 서버가 대신 부르기로 했습니다. 그때 서버 자리 1개를 씁니다. 그런데 서버 모드 사용자가 많아 자리 20개가 다 찼으면(빨간 불) 어떻게 할지가 정해지지 않았습니다.</p>
+
+<table><tr><th></th><th>그 도서관만 확인 못 함 (제안)</th><th>계획 전체를 서버 모드로</th></tr><tr><td>확장 사용자 화면</td><td>나머지 도서관은 확장으로 그대로, 대행 도서관만 「확인하지 못한 도서관」</td><td>그 검색 전체가 503 → 빨간 불</td></tr><tr><td>서버 부담</td><td>더 안 늚</td><td>더 안 늚</td></tr></table>
+<p class="concl"><span class="chip" data-n="29">안 #29</span> 서버 자리가 없으면 대행 도서관만 「확인하지 못한 도서관」으로 두고, 나머지는 확장으로 계속합니다(사용 기록 출처 <code>server_for_extension</code>, 결과 SKIPPED).</p>
+<p class="alt">다른 선택: 계획 요청 전체를 503으로 — 단순하지만 확장 사용자도 빨간 불을 봅니다.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">30</span>책 한 쪽 10권(#23)은<br>어디서 정할까</h2>
+<p><b>어디서 생기나.</b> #23에서 책 기준 검색 한 쪽을 기본 10권으로 정했습니다. 지금 dev 코드는 상수 하나(<code>BookParams.MAX_PAGE_SIZE = 20</code>)가 기본값과 최대값을 함께 맡고 있어, 기본만 10으로 바꾸려면 코드가 조금 바뀝니다. 그리고 서버 기본값과 화면이 보내는 값(<code>pageSize</code>) 두 곳에 정해 두면 둘이 달라질 수 있습니다.</p>
+
+<table><tr><th></th><th>서버 설정 하나 (제안)</th><th>화면이 정함</th></tr><tr><td>정하는 곳</td><td>서버 설정 속성 기본 10 (환경 변수로 바꿈, #25)</td><td>화면 빌드 변수 <code>VITE_BOOKS_PAGE_SIZE</code></td></tr><tr><td>화면</td><td><code>pageSize</code>를 보내지 않음</td><td>10을 보냄</td></tr><tr><td>바꿀 때</td><td>서버 다시 켜기</td><td>화면 다시 빌드</td></tr></table>
+<p class="concl"><span class="chip" data-n="30">안 #30</span> 서버 <code>catalog</code>에 설정 속성 하나(기본 10, 최대 20은 그대로)를 두고, 화면은 <code>pageSize</code>를 보내지 않아 서버 값을 따릅니다. 설정값 목록 8절의 <code>VITE_BOOKS_PAGE_SIZE</code>는 지웁니다.</p>
+<p class="alt">다른 선택: 화면이 정함 — 서버는 그대로지만 바꿀 때 화면을 다시 빌드해야 합니다.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">31</span>한 곳(공인 IP)이 계획 보관함을<br>혼자 채우지 못하게</h2>
+<p><b>어디서 생기나.</b> #8에서 계획 보관함은 무게(주소 수) 25,000, 다 차면 남의 계획을 밀지 않고 새 계획을 503으로 거절하기로 했고, #22에서 IP 울타리를 "공인 IP당 열린 계획 200개"로 정했습니다. 검토에서 짚은 점: 계획 하나가 도서관 200곳이면 주소 200개라, 한 IP가 열쇠를 바꿔 가며 계획 125개만 만들어도 보관함이 다 찹니다(200개 울타리 전에). 그러면 모든 사람의 확장 모드가 서버 모드로 밀려 서버 자리가 빨강이 됩니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 110" role="img" aria-label="보관함 무게와 IP 몫">
+<rect x="10" y="20" width="880" height="30" fill="var(--card)" stroke="var(--line)"/><text class="s13m" x="16" y="40" font-size="11">보관함 무게 25,000 (약 10MB)</text>
+<rect x="10" y="20" width="176" height="30" fill="var(--warn-bg)" stroke="var(--warn)"/><text class="s13" x="16" y="72" font-size="12">제안: 공인 IP 하나는 최대 5,000 (20%)까지</text>
+<text class="s13m" x="16" y="96" font-size="11">한 곳이 마구 만들어도 나머지 80%는 다른 사람 몫으로 남음</text>
+</svg><p class="cap">개수 200개 대신 "보관함의 20%"로 묶으면 한 곳이 다 채울 수 없습니다.</p></div>
+<table><tr><th></th><th>무게 20% (제안)</th><th>개수 200 (지금 #22)</th></tr><tr><td>한 곳이 채울 수 있는 양</td><td>최대 20%</td><td>보관함 전부 가능(계획이 크면)</td></tr><tr><td>회사·학교 같은 큰 공인 IP</td><td>주소 5,000 = 보통 검색(주소 수십 개) 수십~백 명분</td><td>계획 200개</td></tr></table>
+<p class="concl"><span class="chip" data-n="31">안 #31</span> #22의 IP 울타리를 "공인 IP당 열린 계획 200개"에서 <b>"공인 IP당 보관함 무게의 20%(주소 5,000)"</b>로 바꿉니다. 넘으면 그 IP의 새 계획만 503 → 그 검색은 서버 모드(남의 것 안 지움). 값은 설정(#25).</p>
+<p class="alt">다른 선택: 개수 200 그대로 — 단순하지만 큰 계획으로 보관함을 혼자 채울 수 있습니다.</p>
+</div>
+
 <p class="foot">원문: <code>docs/cycles/20-lookup-status-and-extension/design-delta.md</code>(◆ = 이번 검토로 고친 곳), <code>spec.md</code>(AC-10a·16~20 추가), <code>flow.md</code>, ADR-0119(Proposed, 검사 순서 고침). 검토는 사용자·서버 자원·보안/안정성 세 관점, dev 코드와 공식 문서(크롬 확장 service worker 수명, Spring CSRF, nginx) 확인 2026-10-16.</p>
 
 </main>
