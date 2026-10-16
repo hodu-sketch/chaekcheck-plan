@@ -681,6 +681,66 @@ svg .ah{fill:var(--accent)}
 <p class="alt">다른 선택: PC는 짧은 글만(지금 설계). 머리말이 조용하지만 노랑·빨강의 뜻이 PC에서는 설명되지 않습니다.</p>
 </div>
 
+<div class="card">
+<h2>질문에 답: 운영을 "시드니 EC2 + 한국 IP 20개"로 놓고 다시 계산</h2>
+<p><b>어디서 온 숫자인가.</b> 사이클 22 세션이 오늘 밤 실제로 잰 값입니다(공유 파일 <code>docs/research/deploy/multi-source-ip.md</code> 9-4절, 2026-10-16). 운영 서버는 시드니 EC2(<서버 IP>)이고, 첫 배포부터 도서관에 가는 "나가는 길"은 <b>EC2 자기 IP 1개 + Webshare 한국 고정 IP 20개 = 21개</b>입니다(같은 파일 7·8절, 사용자 승인). 도서관 사이트마다 IP 하나당 동시 1건·1초입니다.</p>
+<table>
+<tr><th>도서관 화면 하나 받는 시간</th><th>서버 모드: 시드니 → 한국 IP(KT) → 도서관</th><th>집(한국) → 도서관 쪽 (확장 모드와 같은 위치)</th></tr>
+<tr><td>강동 전자도서관 (60KB)</td><td>1.7~1.9초 (가운데 1.7초)</td><td>대부분 0.7초 (프록시 거쳐 잰 값, 직접이면 더 짧을 것)</td></tr>
+<tr><td>교보 구독형 강동 (70KB)</td><td>2.7~3.7초 (가운데 2.7초)</td><td>0.5~1.7초</td></tr>
+<tr><td>강동구립 홈페이지 (586KB)</td><td>3.5~5.0초</td><td>0.9~2.4초</td></tr>
+</table>
+<div class="fig wide"><svg viewBox="0 0 900 250" role="img" aria-label="서버 모드와 확장 모드 시간 비교">
+<text class="s14" x="10" y="22">도서관 한 곳 결과가 화면에 뜨기까지 (강동 전자도서관 기준)</text>
+<text class="s13" x="10" y="62">서버 모드</text>
+<rect x="120" y="44" width="34" height="28" fill="var(--code-bg)" stroke="var(--line)"/><text class="s13m" x="122" y="96" font-size="11">요청</text>
+<rect x="154" y="44" width="510" height="28" fill="var(--warn-bg)" stroke="var(--warn)"/><text class="s13" x="164" y="63" font-size="12">시드니 → 한국 IP → 도서관 → 다시 시드니  약 1.7초 (실측)</text>
+<rect x="664" y="44" width="40" height="28" fill="var(--code-bg)" stroke="var(--line)"/><text class="s13m" x="664" y="96" font-size="11">해석·전달</text>
+<text class="s13" x="10" y="142">확장 모드</text>
+<rect x="120" y="124" width="210" height="28" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="128" y="143" font-size="12">내 브라우저 → 도서관 약 0.7초</text>
+<rect x="330" y="124" width="120" height="28" fill="var(--accent-bg)" stroke="var(--accent)"/><text class="s13" x="336" y="143" font-size="12">시드니로 올리기</text>
+<text class="s13m" x="330" y="176" font-size="11">한국→시드니 한 번 왕복 + 60KB, 약 0.2~0.4초 (어림, 배포 뒤 잼)</text>
+<line x1="120" y1="200" x2="720" y2="200" stroke="var(--line)"/>
+<text class="s13m" x="120" y="218" font-size="11">0초</text><text class="s13m" x="290" y="218" font-size="11">0.5초</text><text class="s13m" x="460" y="218" font-size="11">1초</text><text class="s13m" x="630" y="218" font-size="11">1.5초</text>
+<text class="s13" x="10" y="242" font-size="12">→ 확장 모드가 도서관 한 곳마다 약 0.6~1초 빠르고, 우리 서버의 길·Webshare 데이터를 쓰지 않음</text>
+</svg><p class="cap">서버가 시드니에 있어 서버 모드는 한국까지 한 번 더 다녀옵니다. 확장 모드는 한국 브라우저가 바로 받아 결과만 시드니로 올립니다.</p></div>
+<table>
+<tr><th>이 사이클의 값</th><th>시드니 + 한국 IP 21개로 다시 보면</th><th>바꿀지</th></tr>
+<tr><td>묶음 마감 8초 (5곳씩)</td><td>한 곳 1.7~3.7초라 한 번에 끝남. 같은 도서관에 몰려도 길이 21개라 줄이 거의 안 섬. 큰 홈페이지(5초)도 안에 들어옴</td><td>그대로</td></tr>
+<tr><td>호스트 대기 8초 후 시간 초과</td><td>길 하나가 1.7초 일하고 1초 쉬므로, 한 길에서 기다리는 2번째는 약 2.7초 뒤 출발 → 8초 안</td><td>그대로</td></tr>
+<tr><td>검색 자리 20개 · 불 단계(10개 노랑, 20개 빨강)</td><td>한 검색이 자리를 잡는 시간이 서버 모드에서 조금 길어짐(도서관 응답 1.7초) → 같은 사람 수에서 노랑이 조금 더 자주 보일 수 있음</td><td>그대로 (설정값, 배포 뒤 기록 보고 조정)</td></tr>
+<tr><td>확장 모드 이점</td><td>서버 길·자리·Webshare 데이터를 하나도 안 씀 + 사용자에게도 더 빠름</td><td>그대로 (이점이 더 커짐)</td></tr>
+<tr><td>Webshare 데이터 세기 (사이클 22)</td><td>확장 모드로 올라온 바이트는 Webshare를 거치지 않았으니 세지 않아야 함</td><td>설계에 적음 (아래 #21과 별개, 결정 아님)</td></tr>
+<tr><td>Webshare 길 20개 한꺼번에 멈춤 (사이클 22)</td><td>길이 1개로 줄어 1초에 1건씩 — 그런데 불은 자리 수만 봐서 초록일 수 있음</td><td><b>새 [안] #21</b></td></tr>
+</table>
+<p class="cap">"0.2~0.4초"는 직접 재지 못한 어림입니다(시드니 서버는 지금 밖에서 접속을 받지 않음). 배포 뒤 확장 모드 올리기의 <code>ms</code>와 서버 기록으로 잽니다.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">21</span>Webshare 길이 한꺼번에 멈춘 동안<br>머리말 불은 어떻게 보일까 (사이클 22에서 새로 생김)</h2>
+<p><b>어디서 생기나.</b> 사이클 22가 정한 것(공유 파일 8절 #3·#4, 사용자 승인): <b>Webshare 쪽 문제(인증 실패 407, 동시 연결 초과 429, 계정 확인·정지)나 데이터 250GB의 90%</b>가 오면 Webshare 20개 길을 <b>한꺼번에</b> 멈추고 운영자에게 메일을 보냅니다. 그러면 길은 시드니 EC2 1개만 남아, 도서관마다 1초에 1건씩만 갑니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 230" role="img" aria-label="길 21개에서 1개로">
+<text class="s14" x="10" y="22">평소: 길 21개</text>
+<rect class="bxok" x="10" y="34" width="120" height="34" rx="6"/><text class="s13" x="20" y="56" font-size="12">EC2 IP 1</text>
+<rect class="bxok" x="140" y="34" width="420" height="34" rx="6"/><text class="s13" x="150" y="56" font-size="12">Webshare 한국 IP 20 (IP마다 동시 1건·1초)</text>
+<text class="s13m" x="580" y="56" font-size="12">→ 같은 도서관에 21건까지 함께</text>
+<text class="s14" x="10" y="104">Webshare 문제·데이터 90% → 20개 한꺼번에 멈춤</text>
+<rect class="bxok" x="10" y="116" width="120" height="34" rx="6"/><text class="s13" x="20" y="138" font-size="12">EC2 IP 1</text>
+<rect class="bxno" x="140" y="116" width="420" height="34" rx="6"/><text class="s13" x="150" y="138" font-size="12">멈춤 (운영자에게 메일, 다시 켜기는 설정)</text>
+<text class="s13m" x="580" y="138" font-size="12">→ 1초에 1건씩, 줄이 금방 김</text>
+<text class="s13" x="10" y="186">지금 불 규칙(명세 R1)은 "검색 자리 20개 중 몇 개 쓰는지"만 봐서, 사람이 적으면 길이 줄어도 초록일 수 있음</text>
+<text class="s13m" x="10" y="208">줄이 생기면 그 도서관 줄에는 「지금 이 도서관 조회가 밀려요」가 붙음(#5) — 머리말 불은 그대로</text>
+</svg><p class="cap">Webshare 길 20개가 함께 멈추면 길이 21개에서 1개로 줄어듭니다.</p></div>
+<table>
+<tr><th>사용자가 겪는 일</th><th>지금 규칙 그대로</th><th>제안</th></tr>
+<tr><td>머리말 불</td><td>초록일 수 있음 (사람이 적으면)</td><td>최소 노랑, 둘째 줄 "지금은 조회가 평소보다 느려요"</td></tr>
+<tr><td>확장 모드(파란 불)</td><td colspan="2">영향 없음 — 확장은 사용자 브라우저에서 바로 가므로 서버의 길을 쓰지 않음</td></tr>
+<tr><td>서버 자원</td><td colspan="2">값 하나(Webshare 길 멈춤 여부)를 상태 계산 때 읽을 뿐, 메모리 늘지 않음</td></tr>
+</table>
+<p class="concl">[안] Webshare 길이 한꺼번에 멈춘 동안(업체 문제 또는 데이터 90%) 상태 단계를 <b>최소 노랑</b>으로 올리고, 둘째 줄은 "지금은 조회가 평소보다 느려요". 줄이 차서 빨강이 되는 규칙은 그대로. 다시 켜지면 원래 규칙으로. 사이클 22의 "업체 길 멈춤" 값을 읽기만 합니다.</p>
+<p class="alt">다른 선택: 지금 규칙 그대로(검색 자리만 봄). 단순하지만, 길이 1개로 줄어 느린데도 불은 초록일 수 있습니다.</p>
+</div>
+
 <p class="foot">원문: <code>docs/cycles/20-lookup-status-and-extension/design-delta.md</code>(◆ = 이번 검토로 고친 곳), <code>spec.md</code>(AC-10a·16~20 추가), <code>flow.md</code>, ADR-0119(Proposed, 검사 순서 고침). 검토는 사용자·서버 자원·보안/안정성 세 관점, dev 코드와 공식 문서(크롬 확장 service worker 수명, Spring CSRF, nginx) 확인 2026-10-16.</p>
 </main>
 </body>
