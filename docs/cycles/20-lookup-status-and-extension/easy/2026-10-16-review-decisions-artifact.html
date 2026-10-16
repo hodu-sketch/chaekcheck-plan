@@ -1087,6 +1087,42 @@ body{background:var(--bg);color:var(--text)}
 </div>
 
 <div class="card">
+<h2>용어 풀이: "검색 자리 20"과 "묶음 5곳"은 무엇이고 어디 값인가</h2>
+<p class="concl">둘 다 <b>지금 dev 코드에 들어 있는 설정값</b>입니다(dev <code>backend/src/main/resources/application.yml</code>, 2026-10-16 읽음). 사용자가 정한 값이 아니라 dev가 "<b>실제 이용을 보고 맞출 값</b>"이라고 적어 둔 시작값입니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 290" role="img" aria-label="검색 자리 20과 묶음 5곳">
+<defs><marker id="ahsl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="var(--accent)"/></marker></defs>
+<rect class="bxa" x="10" y="20" width="430" height="250" rx="10"/><text class="s14" x="22" y="44">우리 서버: 검색 자리 20개</text>
+<text class="s13m" x="22" y="64" font-size="11">설정 max-concurrent-searches: 20 (138행)</text>
+<rect class="bxok" x="30" y="80" width="120" height="40" rx="6"/><text class="s13" x="40" y="105" font-size="12">자리 1: A 검색</text>
+<rect class="bxok" x="160" y="80" width="120" height="40" rx="6"/><text class="s13" x="170" y="105" font-size="12">자리 2: B 검색</text>
+<rect class="bx" x="290" y="80" width="130" height="40" rx="6"/><text class="s13m" x="300" y="105" font-size="12">… 자리 20</text>
+<text class="s13" x="22" y="150" font-size="12">한 자리 = 지금 돌고 있는 검색 묶음 하나</text>
+<text class="s13" x="22" y="172" font-size="12">(또는 「더 보기」 한 번)</text>
+<text class="s13 sred" x="22" y="204" font-size="12">21번째 검색이 오면 기다리지 않고 바로 503</text>
+<text class="s13 sred" x="22" y="224" font-size="12">「잠시 후 다시」 = 머리말 빨간 불</text>
+<text class="s13m" x="22" y="252" font-size="11">묶음이 끝나면 자리가 비어 다음 검색이 씀</text>
+<rect class="bx" x="490" y="20" width="400" height="250" rx="10"/><text class="s14" x="502" y="44">자리 하나 안: 묶음 5곳</text>
+<text class="s13m" x="502" y="64" font-size="11">설정 batch.parallelism: 5 (143행)</text>
+<rect class="bxok" x="510" y="80" width="100" height="36" rx="6"/><text class="s13" x="518" y="103" font-size="12">A 검색</text>
+<rect class="bx" x="690" y="74" width="180" height="22" rx="4"/><text class="s13" x="698" y="90" font-size="11">강동 도서관</text>
+<rect class="bx" x="690" y="100" width="180" height="22" rx="4"/><text class="s13" x="698" y="116" font-size="11">송파 도서관</text>
+<rect class="bx" x="690" y="126" width="180" height="22" rx="4"/><text class="s13" x="698" y="142" font-size="11">서울교육청</text>
+<rect class="bx" x="690" y="152" width="180" height="22" rx="4"/><text class="s13" x="698" y="168" font-size="11">경기교육청</text>
+<rect class="bx" x="690" y="178" width="180" height="22" rx="4"/><text class="s13" x="698" y="194" font-size="11">군산 도서관</text>
+<path d="M610 98 L690 85" class="ar" marker-end="url(#ahsl)"/><path d="M610 98 L690 111" class="ar" marker-end="url(#ahsl)"/><path d="M610 98 L690 137" class="ar" marker-end="url(#ahsl)"/><path d="M610 98 L690 163" class="ar" marker-end="url(#ahsl)"/><path d="M610 98 L690 189" class="ar" marker-end="url(#ahsl)"/>
+<text class="s13" x="502" y="226" font-size="12">검색 하나가 도서관 5곳을 동시에 부름</text>
+<text class="s13" x="502" y="248" font-size="12">결과가 10줄(#23) 안 차면 다음 5곳 묶음</text>
+</svg><p class="cap">서버 전체에 검색 자리 20개, 자리 하나가 도서관 5곳을 동시에 부릅니다. 그래서 한꺼번에 도서관 요청은 최대 20 × 5 = 100건.</p></div>
+<table>
+<tr><th>값</th><th>뜻</th><th>어디 값</th><th>왜 이 숫자 (적혀 있는 이유)</th><th>태그</th></tr>
+<tr><td><b>검색 자리 20</b></td><td>서버 전체에서 동시에 돌 수 있는 검색 묶음(또는 「더 보기」) 수. 넘으면 기다리지 않고 503</td><td><code>chaekcheck.availability.max-concurrent-searches: 20</code> (138행)</td><td>dev 주석: "개인 서비스에서 같은 몇 초 안에 20검색은 드묾, 실제 이용으로 조정"</td><td>dev 시작값 (사용자 결정 아님)</td></tr>
+<tr><td><b>묶음 5곳</b></td><td>검색 한 번이 한꺼번에 부르는 도서관 수. 결과가 모자라면 다음 5곳 묶음</td><td><code>chaekcheck.availability.batch.parallelism: 5</code> (143행)</td><td>dev 주석: "실제 묶음 시간으로 맞출 값"</td><td>dev 시작값</td></tr>
+<tr><td>둘을 곱한 100</td><td>서버가 한꺼번에 기다리는 도서관 응답 최대 수</td><td>dev 주석 "20 × parallelism 5 = at most 100 library requests in flight"</td><td>메모리 어림의 기준(보통 약 10MB, 최악 약 100MB)</td><td>계산</td></tr>
+</table>
+<p>앞 카드들의 "초당 약 33건"은 이 100건이 각각 약 2~3초씩 걸린다고 보고 나눈 값입니다. 두 값 모두 <code>docs/settings-index.md</code> 3절에 있습니다.</p>
+</div>
+
+<div class="card">
 <h2>질문에 답: 나가는 IP마다 도서관 접속을 따로 보고, 안 되는 곳을 표시하나?</h2>
 <p class="concl"><b>네, 그렇게 정해져 있습니다</b> — 다만 이 사이클(20)이 아니라 <b>사이클 17</b>(배포)과 <b>22</b>(프록시)가 dev에 넘기는 부분이고, 20은 그 기록을 읽기만 합니다. 근거: ADR-0095 "나가는 IP마다 따로 세기, 막힌 IP만 그 사이트에서 멈춤"(사이클 17 scope 10번, 사용자 확정 2026-10-13), 풀림 확인 규칙 <code>../17-first-deploy/from-cycle-20-blocked-ip-resume.md</code>(사용자 확정 2026-10-15, 상한 1주일), 사이클 22 결정(<code>docs/research/deploy/multi-source-ip.md</code> 8절).</p>
 <div class="fig wide"><svg viewBox="0 0 900 300" role="img" aria-label="길과 사이트별 막힘 표">
