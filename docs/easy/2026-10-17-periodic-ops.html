@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>정기 작업 한눈에</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f1;--card:#fff;--ink:#1d2330;--muted:#5b6475;--line:#d9dde5;--accent:#3d5a99;--accent-bg:#e8edf8;--ok:#2f7d4f;--ok-bg:#e6f4ea;--warn:#a86b00;--warn-bg:#fdf3dc;--no:#b3261e;--no-bg:#fbe7e5;--code-bg:#eef0f4}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:980px;margin:0 auto;padding:28px 16px 60px}
+h1{font-size:30px;line-height:1.4;margin:0 0 6px;text-wrap:balance}
+.lead{font-size:24px;font-weight:700;background:var(--accent-bg);border-left:6px solid var(--accent);padding:16px 20px;border-radius:10px;margin:14px 0 26px;text-wrap:pretty}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 22px 18px;margin:0 0 22px}
+.card h2{font-size:24px;margin:0 0 12px;text-wrap:balance}
+.card h2 .n{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:#fff;font-size:18px;margin-right:10px;vertical-align:2px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:12px 16px;margin:0 0 14px;font-weight:500;text-wrap:pretty}
+p{margin:8px 0;text-wrap:pretty}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:10px 0}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--code-bg);font-weight:700}
+code{background:var(--code-bg);padding:1px 6px;border-radius:5px;font-size:.9em;word-break:break-all}
+.ok{color:var(--ok);font-weight:700}.warn{color:var(--warn);font-weight:700}.no{color:var(--no);font-weight:700}
+.tag{display:inline-block;font-size:15px;font-weight:700;padding:1px 8px;border-radius:999px;margin-left:4px}
+.t-ok{background:var(--ok-bg);color:var(--ok)}.t-warn{background:var(--warn-bg);color:var(--warn)}.t-no{background:var(--no-bg);color:var(--no)}
+.items{list-style:none;padding:0;margin:6px 0}
+.items li{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-top:1px dashed var(--line)}
+.items li:first-child{border-top:0}
+.items svg{flex:0 0 28px;width:28px;height:28px;margin-top:4px;stroke:var(--accent);fill:none;stroke-width:2}
+.items b{font-weight:700}
+.fig{margin:12px 0}
+.fig svg{width:100%;height:auto;display:block}
+.cap{font-size:17px;color:var(--muted);margin-top:6px}
+.foot{font-size:16px;color:var(--muted);margin-top:30px}
+@media (max-width:640px){body{font-size:19px}h1{font-size:25px}.lead{font-size:20px}table{font-size:16px}th,td{padding:6px}}
+</style>
+</head>
+<body>
+<main>
+<h1>책첵 정기 작업:<br>무엇을, 누가, 어디에 적어 두었나</h1>
+<p class="lead">저절로 도는 것은 서버의 예약 작업 3개와 서버 경보 2개뿐입니다. 도서관·책 수집은 모두 사람이 집 PC에서 직접 돌립니다. 안정성 작업은 대부분 설계만 있고, 숫자는 <code>docs/settings-index.md</code> 한 곳으로 모으는 중입니다.</p>
+
+<section class="card">
+<h2><span class="n">1</span>한눈에: 저절로 / 사람이 / 아직 설계만</h2>
+<p class="concl">세 묶음은 "지금 실제로 누가 돌리는가"로 나눴습니다. 오른쪽으로 갈수록 운영 전에 채워야 할 일입니다.</p>
+<div class="fig"><svg viewBox="0 0 900 300" role="img" aria-label="정기 작업 세 묶음">
+<rect x="10" y="10" width="280" height="280" rx="12" fill="#e6f4ea" stroke="#2f7d4f"/>
+<text x="26" y="44" font-size="22" font-weight="700" fill="#2f7d4f">저절로 돎</text>
+<text x="26" y="84" font-size="17" fill="#1d2330">04:00 회원 정리</text>
+<text x="26" y="114" font-size="17" fill="#1d2330">04:30 사용 기록 정리</text>
+<text x="26" y="144" font-size="17" fill="#1d2330">05:00 사서추천 받기 판단</text>
+<text x="26" y="174" font-size="17" fill="#1d2330">CloudWatch 메모리·디스크</text>
+<text x="26" y="204" font-size="17" fill="#1d2330">경보 2개 → 메일</text>
+<rect x="310" y="10" width="280" height="280" rx="12" fill="#fdf3dc" stroke="#a86b00"/>
+<text x="326" y="44" font-size="22" font-weight="700" fill="#a86b00">사람이 집 PC에서</text>
+<text x="326" y="84" font-size="17" fill="#1d2330">도서관 목록 확인</text>
+<text x="326" y="114" font-size="17" fill="#1d2330">책 목록 수집</text>
+<text x="326" y="144" font-size="17" fill="#1d2330">정리·서비스 DB 넣기</text>
+<text x="326" y="174" font-size="17" fill="#1d2330">추천 목록(이동진·서울대)</text>
+<rect x="610" y="10" width="280" height="280" rx="12" fill="#fbe7e5" stroke="#b3261e"/>
+<text x="626" y="44" font-size="22" font-weight="700" fill="#b3261e">설계만 있음</text>
+<text x="626" y="84" font-size="17" fill="#1d2330">03:00 DB 백업</text>
+<text x="626" y="114" font-size="17" fill="#1d2330">막힌 길 다시 시험</text>
+<text x="626" y="144" font-size="17" fill="#1d2330">Webshare 한도·오류</text>
+<text x="626" y="174" font-size="17" fill="#1d2330">알림 메일·매일 요약</text>
+<text x="626" y="204" font-size="17" fill="#1d2330">로그 14일·되돌리기</text>
+</svg><p class="cap">초록은 지금 도는 것, 노랑은 사람이 직접 돌리는 것, 빨강은 문서로만 정해진 것입니다. 각 칸의 내용은 아래 2~4번 카드에 전부 적었습니다.</p></div>
+</section>
+
+<section class="card">
+<h2><span class="n">2</span>수집: 모두 사람이 집 PC에서 돌림</h2>
+<p class="concl">수집 절차의 원본은 dev 저장소의 <code>docs/maintenance/</code> 폴더입니다. 주기는 그 폴더의 <code>README.md</code> 0절에 모여 있고, 대부분 자동 실행이 없습니다.</p>
+<table>
+<tr><th>작업</th><th>얼마나 자주</th><th>무엇으로</th><th>절차 문서 (dev)</th><th>상태</th></tr>
+<tr><td>도서관 목록 확인<br>(새 곳·바뀐 주소·꺼진 곳·가입 자격)</td><td>월 1회 + 운영 기록에 이상 신호가 보일 때 <span class="tag t-warn">제안값</span></td><td><code>CheckKyoboSites.java</code>, <code>CheckYes24Sites.java</code>, <code>scripts/library/discover/probe_*.py</code></td><td><code>docs/maintenance/1-libraries.md</code></td><td><span class="ok">도구 있음</span>, 주기 미정</td></tr>
+<tr><td>책 목록 수집 (업체별)</td><td>주 1회 전체 + 매일 신간 <span class="tag t-ok">확정</span></td><td><code>scripts\crawl\resume.cmd</code> → <code>crawl_catalog.py</code></td><td><code>docs/maintenance/2-crawl.md</code></td><td>전체 수집만 있음, <span class="no">신간 수집 명령·자동 실행 없음</span></td></tr>
+<tr><td>정리·묶기·서비스 DB 넣기</td><td>전체 수집이 끝날 때마다 <span class="tag t-warn">제안값</span></td><td><code>collection-import</code> 프로필: 미리 보기 → 내보내기 → 운영 반영</td><td><code>docs/maintenance/3-import.md</code></td><td><span class="ok">있음</span>, 운영 서버 반영은 아직 한 번도 안 함</td></tr>
+<tr><td>사서추천도서 받기</td><td>서버가 매일 05:00에 판단, 월요일이거나 실패 뒤면 받음</td><td>서버 예약 작업</td><td><code>docs/maintenance/4-picks.md</code></td><td><span class="ok">돌아감</span></td></tr>
+<tr><td>추천 목록 (이동진·서울대 100선)</td><td>월 1회 (YouTube 30일 규칙)</td><td><code>scripts/crawl/recommended_lists.py</code></td><td>사이클 21 인계에서 만들 예정</td><td><span class="warn">dev 21에서 만드는 중</span></td></tr>
+</table>
+<p><b>멈춰 있거나 절차가 없는 것</b></p>
+<ul class="items">
+<li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></svg><div><b>교보 구독형 마감 확인</b>: 2026-10-12부터 스크립트가 바로 끝나도록 막혀 있습니다(교보 구독형 서버가 집 IP를 막음). dev 문서는 아직 "매일 확인"이라고 적혀 있어 고쳐야 합니다.</div></li>
+<li><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6"/></svg><div><b>국가서지 파일 새로 받기</b>: "공개될 때마다"로만 적혀 있고, 받는 절차 문서가 없습니다.</div></li>
+<li><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg><div><b>날짜가 정해진 다시 확인</b>(도서관 id 131은 2027-01 등): 날짜만 적혀 있고 알려 주는 장치가 없습니다.</div></li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="n">3</span>안정성: 지금 실제로 도는 것</h2>
+<p class="concl">운영 서버(시드니 EC2 2GB)에서 지금 도는 감시는 메모리·디스크 지표와 경보 2개입니다. 경보가 울리면 SNS가 메일을 보냅니다.</p>
+<table>
+<tr><th>작업</th><th>언제</th><th>무엇을 하나</th><th>적힌 곳</th></tr>
+<tr><td>CloudWatch 지표</td><td>60초마다</td><td>메모리 사용률, 디스크 사용률(<code>/</code>)을 보냄</td><td>plan <code>docs/cycles/17-first-deploy/research.md</code> (설치 기록)</td></tr>
+<tr><td>경보 → 메일</td><td>5분마다 평가</td><td><code>chaekcheck-server-down</code>(서버 상태 확인 실패), <code>chaekcheck-disk-high</code>(디스크 90% 넘음) → SNS 주제 <code>chaekcheck-alerts</code> → 운영자 메일</td><td>같은 문서. 운영 절차 문서는 없음</td></tr>
+<tr><td>회원 정리</td><td>매일 04:00</td><td>지난 로그인 유지 기록 지우기, 1년 접속 없는 계정 지우기 (로그인 기능을 켰을 때만)</td><td>dev <code>application.yml</code>. 운영 절차 문서 없음</td></tr>
+<tr><td>사용 기록 정리</td><td>매일 04:30</td><td>IP는 30일, 거절 기록은 30일, 나머지는 1년 뒤 지움</td><td>dev <code>docs/maintenance/5-usage-log.md</code></td></tr>
+</table>
+</section>
+
+<section class="card">
+<h2><span class="n">4</span>안정성: 아직 설계만 있는 것</h2>
+<p class="concl">아래는 결정은 되어 있지만 dev 코드나 운영 문서가 아직 없습니다. 사이클 17(배포)과 20 인계로 만들어야 합니다.</p>
+<table>
+<tr><th>묶음</th><th>작업</th><th>정해진 값</th><th>결정 문서 (plan)</th></tr>
+<tr><td rowspan="2">데이터 지키기</td><td>DB 백업</td><td>매일 03:00, 서버 2개·내 PC 7개 보관</td><td><code>docs/cycles/17-first-deploy/spec.md</code> R10</td></tr>
+<tr><td>로그 지우기</td><td>nginx 접속 기록·서비스 로그 14일</td><td>같은 문서 R11</td></tr>
+<tr><td rowspan="3">대출 조회 길</td><td>막힌 길 다시 시험</td><td>10분 뒤 1건, 또 막히면 두 배, 최대 7일</td><td><code>from-cycle-20-blocked-ip-resume.md</code></td></tr>
+<tr><td>Webshare 데이터</td><td>250GB의 80% 경고, 90%에서 한국 IP 길 멈춤 (1시간마다 확인)</td><td><code>docs/research/deploy/multi-source-ip.md</code> 8절, ADR-0130</td></tr>
+<tr><td>Webshare 업체 오류</td><td>인증 실패·동시 연결 초과·계정 문제면 Webshare 길 전체를 바로 멈춤</td><td>같은 곳</td></tr>
+<tr><td rowspan="2">알리기·되살리기</td><td>알림 메일 5종 + 매일 아침 요약</td><td>같은 일은 1시간에 한 번까지. 요약 시각은 미정</td><td>같은 곳 8절</td></tr>
+<tr><td>배포·되돌리기</td><td>배포는 이미지 옮기기 방식. <span class="no">되돌리기 절차는 어디에도 없음</span></td><td><code>docs/cycles/17-first-deploy/design-delta.md</code></td></tr>
+</table>
+<p>사이클 17 문서 일부는 아직 옛 설계를 적고 있습니다. 서버를 "Lightsail 서울 4GB"로, 감시를 "Prometheus·Grafana"로 적었는데, 실제는 시드니 EC2 2GB와 CloudWatch입니다. 고칠 목록을 사이클 17 폴더에 따로 남겼습니다.</p>
+</section>
+
+<section class="card">
+<h2><span class="n">5</span>임계값·숫자: 한 문서에서 찾고, 근거까지 따라감</h2>
+<p class="concl">시간 제한·크기 상한·동시 수 같은 숫자는 plan <code>docs/settings-index.md</code>에 모읍니다. 줄마다 지금 값, dev 안 위치, 정한 문서, 근거, 바꾸는 환경 변수 이름이 있습니다.</p>
+<ul class="items">
+<li><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg><div><b>무엇이 들어 있나</b>: 서버 크기·메모리, 도서관에 가는 시간, 동시 수·간격, 나가는 길·Webshare, 캐시, 상태 불·확장 모드, 그 밖 운영 값, 환경 변수 이름표.</div></li>
+<li><svg viewBox="0 0 24 24"><path d="M10 14l4-4M8 16a3 3 0 0 1 0-4l2-2M16 8a3 3 0 0 1 0 4l-2 2"/></svg><div><b>어디서 링크되나</b>: <code>CLAUDE.md</code>, <code>docs/reference-index.md</code> 맨 위, 사이클 20 설계 문서 맨 위, 사이클 17로 넘긴 <code>from-cycle-20-prod-env-numbers.md</code>. 다른 AI도 <code>CLAUDE.md</code>에서 시작해 이 문서로 옵니다.</div></li>
+<li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><div><b>아직 빠진 것</b>: 예약 시각(03:00·04:00·04:30·05:00), 보관 기간(30일·1년·14일, 백업 2·7개), CloudWatch 경보 값(디스크 90%, 60초). 이번 점검에서 넣습니다.</div></li>
+<li><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 12h8M12 8v8"/></svg><div><b>운영에서 바꾸는 곳</b>: 운영 서버의 <code>prod.env</code> 한 파일. 서비스 값은 Spring 규칙대로 같은 이름의 환경 변수로 덮어씁니다. 이 묶음과 dev 쪽 설정값 목록은 사이클 20 인계로 만듭니다(아직 없음).</div></li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="n">6</span>문서가 어디 있나: 절차는 dev, 결정과 근거는 plan</h2>
+<p class="concl">어떻게 돌리는지(절차)는 dev 저장소, 왜 그렇게 정했는지(결정·조사)는 plan 저장소에 둡니다. plan의 두 색인이 둘을 이어 줍니다.</p>
+<table>
+<tr><th>찾는 것</th><th>먼저 볼 곳</th></tr>
+<tr><td>정기 작업 주기와 체크리스트</td><td>dev <code>docs/maintenance/README.md</code></td></tr>
+<tr><td>수집·가져오기 절차</td><td>dev <code>docs/maintenance/1-libraries.md</code> ~ <code>3-import.md</code></td></tr>
+<tr><td>수집·분류 결정과 조사 근거</td><td>plan <code>docs/reference-index.md</code> 1~7절</td></tr>
+<tr><td>운영·안정성 문서 모음</td><td>plan <code>docs/reference-index.md</code> 8절 (이번에 새로 만듦)</td></tr>
+<tr><td>숫자·시간·한도</td><td>plan <code>docs/settings-index.md</code></td></tr>
+</table>
+</section>
+
+<section class="card">
+<h2><span class="n">7</span>이번에 고친 것과 남은 것</h2>
+<p class="concl">링크가 깨진 곳과 옛 내용을 가리키던 곳을 고쳤습니다. 절차 문서가 아예 없는 정기 작업은 인계로 만들 목록에 올렸습니다.</p>
+<table>
+<tr><th>상태</th><th>내용</th></tr>
+<tr><td><span class="ok">고침</span></td><td><code>docs/current/handoff.md</code>의 깨진 결정 페이지 링크, <code>CLAUDE.md</code>의 사이클 20 상태 문구("인계서 아직 없음"으로)</td></tr>
+<tr><td><span class="ok">고치는 중</span></td><td><code>reference-index.md</code>의 오래된 기준 날짜와 "dev에 아직 없음" 표기, 8절 "운영·안정성" 새로 만들기, 옛 원본을 가리키던 <code>docs/research/maintenance/periodic-tasks.md</code>를 dev 문서 안내로 바꾸기, 사이클 17에 고칠 목록 남기기</td></tr>
+<tr><td><span class="warn">인계로</span></td><td>dev 문서의 어긋남: 사서추천 "최근 6번"(실제 12번), 교보 구독형 마감 확인을 "매일"로 적은 곳</td></tr>
+<tr><td><span class="no">절차 문서 없음</span></td><td>04:00 회원 정리, 03:00 백업·되살리기, 로그 14일 지우기, CloudWatch 경보 운영, 매일 아침 요약(시각 미정), Webshare 월 초기화 날짜(1일인지 16일인지 미정), 국가서지 받기, 되돌리기, 날짜가 정해진 다시 확인 모음(id 131 2027-01, 도서관 인증서 2027-05-21·2027-11-02, AWS 무료 플랜 약 2027-04-14)</td></tr>
+</table>
+</section>
+
+<p class="foot">이 글은 요약이며 근거는 원본 문서(plan <code>docs/reference-index.md</code>, <code>docs/settings-index.md</code>, <code>docs/cycles/17-first-deploy/</code>, dev <code>docs/maintenance/</code>)에 있습니다. 2026-10-17 조사 기준.</p>
+</main>
+</body>
+</html>
