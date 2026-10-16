@@ -36,7 +36,8 @@ flowchart TB
   YT["YouTube Data API"]
   NI["국립중앙도서관 ISBN 서지 API<br/>(서지 · 표지)"]
   COL -->|재생목록 읽기| YT
-  COL -->|ISBN · KDC · 표지| NI
+  COL -->|ISBN · 주제 한 자리 · 표지| NI
+  COL -->|전자책 표지 주소 cover_url| CDB[("수집 DB<br/>(내 PC SQLite)")]
   COL -->|판 고르기 SELECT| PCDB
   COL -->|새 줄 · 고정 판 · 표지 파일| TSV
   subgraph BE["backend (Spring Modulith)"]
@@ -73,15 +74,16 @@ sequenceDiagram
   alt 키 거절 · 할당량 · 응답 없음
     C-->>U: 수집 기록에 실패 한 줄, 목록 파일 그대로
   else 성공
-    C->>NI: 괄호 안 책 이름으로 ISBN · 저자 · 출판사 · KDC · 표지 주소
-    alt 책 이름 없음 · 여럿 · KDC 없음
+    C->>NI: 괄호 안 책 이름으로 ISBN · 저자 · 출판사 · 주제 한 자리
+    alt 책 이름 없음 · 여럿
       C->>F: 확인 필요 파일에 영상 ID · 연월 · 까닭만
     else 하나 맞음
-      C->>F: 새 줄 + 분야 (KDC 대응표), 같은 분야 겹치면 최신만
+      C->>F: 확인 필요 파일에 새 책 + 분야 제안
+      U->>F: 분야를 정해 목록 파일에 적음
     end
     C->>PDB: 같은 책 판들의 보유량 (SELECT만)
     C->>F: 고정 판 (사람이 적은 판은 그대로)
-    C->>NI: 없는 표지만 받아 200px JPEG로 줄여 파일로
+    C->>C: 없는 표지만: 수집 DB 표지 주소 등에서 받아 200px JPEG로 줄여 파일로
   end
   U->>X: export (prepare 뒤)
   X->>PK: CuratedListTransfer.read(lists-dir, preparedLookup)
@@ -231,9 +233,8 @@ stateDiagram-v2
   state "고정 판: 확인 필요" as PinUnknown
   state "고정 판: 사람" as PinnedManual
   [*] --> NewVideo: 재생목록에 있고 목록 파일에 없음
-  NewVideo --> Pending: 책 이름 없음 · 여럿 · KDC 없음
-  NewVideo --> Listed: 하나 맞음, 분야 정함
-  Pending --> Listed: 사람이 줄을 적음
+  NewVideo --> Pending: 책 이름 없음 · 여럿 · 하나 맞아도 분야는 제안만
+  Pending --> Listed: 사람이 분야를 정해 줄을 적음
   Listed --> PinnedAuto: 규칙으로 판을 고름
   Listed --> PinUnknown: 규칙으로 못 가림
   PinUnknown --> PinnedManual: 사람이 고정 판을 적음
@@ -349,7 +350,7 @@ erDiagram
 ### 첫 목록 파일 만들기 (dev 작업 하나) [확정] (사용자 승인, 2026-10-16, [설계 검토 3](easy/2026-10-16-review-decisions-3.html) #1)
 
 1. 조사 문서를 목록 파일로 옮김: 이동진 44권 `docs/research/leedongjin-picks/picks.md`(영상 ID·연월·책), 서울대 100권 `docs/research/snu-100/picks.md`(목차 번호·분야·저자 열쇠) → `leedongjin.tsv`·`snu100.tsv`·`fields.tsv`. `pinned_by`는 비움(수집기가 처음 돌 때 `collector`로 채움). 서울대 "규칙으로 못 가리는 책" 2권(미국의 민주주의, 페더랄리스트)은 사람이 `manual`로 적음
-2. 이동진 44권 분야를 ISBN 서지 API KDC와 `kdc_fields.tsv`로 다시 매기고, **지금 분야와 달라지는 책 목록을 plan에 보내 사용자가 확정**한 뒤 파일에 씀 (spec R3-9)
+2. ~~이동진 44권 분야를 KDC로 다시 매기기~~ → 하지 않음: 조사 때 정한 분야 그대로 [확정] (사용자 승인, 2026-10-16, [API 시험 뒤 결정](easy/2026-10-16-step0-decisions.html) #2). 서울대 「미국의 민주주의」는 책 번호 607617(위즈덤커넥트 「미국의 민주주의 : 자유 너머의 인간」), 「페더랄리스트」는 463760(위즈덤커넥트 「페더럴리스트 : 미국 건국의 서문」)을 `manual`로 [확정] (사용자 승인, 2026-10-16, [API 시험 뒤 결정](easy/2026-10-16-step0-decisions.html) #4·#5). 신원문화사 「다시보는 미국의 민주주의」(보유량 105)는 청소년 요약판이라 뺌(교보문고 소개 https://ebook-product.kyobobook.co.kr/dig/epd/ebook/E000003088013 , 2026-10-16 확인)
 3. 수집기를 한 번 돌려 고정 판·표지 파일을 채우고, 맞춘 수(조사 때 이동진 36/44, 서울대 87/100)와 견줌
 
 ### 반영 파일 `notes.listPart` (파일 형식 번호 3)
@@ -373,8 +374,8 @@ erDiagram
 | `leedongjin.tsv` | `month, position, year_book, video_id, field, title, author, publisher, isbn13, cover_url, pinned_title, pinned_author, pinned_publisher, pinned_isbn13, pinned_by, checked_on, note` | 예 (`pinned_by`·`checked_on`·`note` 빼고) |
 | `snu100.tsv` | `toc_no, field, title, author, cover_url, pinned_*, pinned_by, note` | 예 (같음) |
 | `covers/<sha1(cover_url)>.jpg` | 수집기가 줄인 표지: 폭 200px, JPEG 품질 0.8, 원본 5MB 넘으면 받지 않음 [확정] (ADR-0091과 같게). `http://` 주소는 `https://`로 바꿔 적음 [안, 확인 필요: API 호출 시험] | 예 (`listPart.covers`) |
-| `kdc_fields.tsv` | `kdc_prefix, field, note` | 아니오 (수집기만) |
-| `leedongjin_pending.tsv` | `video_id, month, reason` | 아니오 |
+| `subject_fields.tsv` | `subject, field_suggestion, note` (ISBN 서지 `SUBJECT` 한 자리 → 분야 제안) [안: 이름] | 아니오 (수집기만) |
+| `leedongjin_pending.tsv` | `video_id, month, reason, title, author, isbn13, field_suggestion` (새 책은 여기에 제안과 함께 들어가고, 사람이 분야를 정해 `leedongjin.tsv`로 옮김) | 아니오 |
 
 - 영상 제목·설명은 어느 파일에도 두지 않음 (spec R4-5) [확정]
 - 30일 규칙: 수집기가 돌 때마다 「이달의 책」·업로드 재생목록을 **처음부터 끝까지 다시 읽어**, 목록 파일에 있는 영상이 아직 공개인지 확인하고 `checked_on`(확인한 날)을 고침. 사라지거나 비공개가 된 영상의 줄은 지우고 수집 기록에 남김. 30일 넘게 확인 못 한 줄(수집을 오래 안 돌림)은 export가 경고 [확정] (사용자 승인, 2026-10-16, [설계 검토](easy/2026-10-16-review-decisions.html) #5) (YouTube 개발자 정책 III.E.4, https://developers.google.com/youtube/terms/developer-policies , 2026-10-15 확인)
@@ -432,7 +433,8 @@ erDiagram
 | 대상 | 방식 | 제한·키 관리 | 실패 시 동작 | 상태 태그 |
 |---|---|---|---|---|
 | YouTube Data API v3 (수집기) | `playlistItems.list`: 「이달의 책」(`PLUpgTv3bu9rGxQBAMVaMvam27P0YbiY29`), 채널 업로드 재생목록(12월 "올해의 책"·"베스트북"). `search.list`는 쓰지 않음(100단위) | 하루 10,000단위, 재생목록 읽기 1단위 (https://developers.google.com/youtube/v3/determine_quota_cost , 2026-10-15 확인). 키는 dev `.env`. 페이지 자동 접근 금지 (https://www.youtube.com/t/terms). 30일 저장 규칙은 수집 때마다 이미 넣은 영상도 다시 확인해 지킴 (개발자 정책 III.E.4, https://developers.google.com/youtube/terms/developer-policies , 2026-10-15 확인) | 키 거절·할당량·응답 없음 → 목록 파일 그대로, 수집 기록 한 줄 | [확정] (ADR-0128). 업로드 재생목록 ID 얻는 법 [확인 필요: 공식 문서 확인] |
-| 국립중앙도서관 ISBN 서지 API (수집기) | `https://www.nl.go.kr/seoji/SearchApi.do`: 책 이름 → ISBN·저자·출판사·KDC·`TITLE_URL`(표지 이미지 URL) | 키는 dev `.env`. 하루 한도·이용 허락 범위 확인 못 함 | 못 찾음·여럿·KDC 없음 → 확인 필요 파일. 표지 안 열림 → 표지 없이(제목 글자 표지) | 항목 [확정] (https://www.nl.go.kr/NL/contents/N31101030500.do , 2026-10-15 확인), 한도·조건 [확인 필요: API 호출 시험·공식 문서 확인] |
+| 국립중앙도서관 ISBN 서지 API (수집기) | `https://www.nl.go.kr/seoji/SearchApi.do`: 책 이름·ISBN → ISBN·저자·출판사·`SUBJECT`(주제 한 자리, 분야 제안에만)·`TITLE_URL`. KDC는 이동진 43/43이 비어 쓰지 않음 | 사서추천 키로 됨(dev 0단계 143번 모두 200), 하루 한도는 안내에 없음. 1초 간격 | 못 찾음·여럿 → 확인 필요 파일 | [확정] (dev 0단계 2026-10-16, https://www.nl.go.kr/NL/contents/N31101030500.do) |
+| 수집 DB 전자책 표지 (수집기) | 고정 판 책의 수집 사본 `holding.cover_url`(도서관 사이트·YES24·교보 그림 서버) → 받아 200px. 차례: ① 고정 판 ISBN으로 국립중앙도서관 표지가 있으면 그것 ② 없으면 수집 DB 표지 가운데 YES24(`image.yes24.com`)·교보(`dcontent.dkyobobook.co.kr`) 주소 ③ 그것도 없으면 그 책의 첫 주소, 받지 못하면 다음 차례, 다 안 되면 제목 글자 표지 [확정] (사용자 승인, 2026-10-16, [표지 순서](easy/2026-10-16-cover-order.html) #1) | 새 책만, 사람 손 속도 | 받지 못하면 다음 차례 | 쓰기 [확정] (사용자 승인, 2026-10-16, [API 시험 뒤 결정](easy/2026-10-16-step0-decisions.html) #3) |
 | 국립중앙도서관 `saseoApi.do`·표지 (운영 서버) | 사이클 14 그대로 (주 1회, 실패 뒤 매일) | 그대로 | 그대로 | [확정] |
 | 내 PC 서비스 DB (수집기) | `catalog.book`·`book_contributor`·`library.library.lending_model` SELECT만 | 접속은 dev `.env` 주소 [안] | 접속 실패 → 고정 판 칸 그대로, 기록 한 줄 [안] | [확정] (ADR-0124) |
 
@@ -468,7 +470,7 @@ erDiagram
 | 항목 | 왜 | 확인 방법 | 막는 단계 |
 |---|---|---|---|
 | `TITLE_URL` 주소의 호스트·경로, 인증키가 붙는지 | `cover_source` CHECK, 표지 받기 | API 호출 시험 | 개발 |
-| 사서추천 인증키로 ISBN 서지 API를 부를 수 있는지, 하루 한도, KDC·표지 빈 값 비율 | 수집기, spec R4-4 | API 호출 시험 (44 + 100권) | 개발 (빈 값이 많으면 R4-4 다시 묻기) |
+| ~~사서추천 인증키로 ISBN 서지 API를 부를 수 있는지, 하루 한도, KDC·표지 빈 값 비율~~ → 끝남 (dev 0단계 2026-10-16: 됨, 한도 안내 없음, 이동진 KDC 43/43·표지 40/43 빔 → API 시험 뒤 결정) | 수집기, spec R4-4 | API 호출 시험 (44 + 100권) | 개발 (빈 값이 많으면 R4-4 다시 묻기) |
 | 유튜브 영상 ID 꼴 | `video_id` CHECK | 공식 문서 확인 | 개발 |
 | 채널 업로드 재생목록 ID를 API로 얻는 법 | 설계 결정 #8 | 공식 문서 확인 (`channels.list` `contentDetails`) | 개발 |
 | 색인 없는 `catalog_next`에서 고정 판 맞추는 시간 | export 시간 | 프로토타입 (dev 측정) | 개발 |

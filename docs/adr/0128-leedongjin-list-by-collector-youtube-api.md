@@ -28,5 +28,6 @@ Supersedes: 없음
 - 채택하지 않은 이유: 유튜브 약관(자동화된 수단 금지)
 
 ## 결과
+- 바뀜 (사용자 승인, 2026-10-16, API 시험 뒤 결정 #1·#2): ISBN 서지 API가 이동진 책에 KDC를 주지 않아(43/43 빔, dev 0단계) "KDC로 분야를 자동으로 넣고 확정"은 "수집기가 주제 한 자리로 제안, 사람이 정함"으로 바뀜. 지금 44권은 조사 때 분야 그대로. 표지는 수집 DB 전자책 표지로(결정 #3)
 - 근거: https://developers.google.com/youtube/v3/determine_quota_cost , https://developers.google.com/youtube/terms/developer-policies , https://www.nl.go.kr/NL/contents/N31101030500.do (2026-10-15 확인)
 - 근거 문서: `docs/cycles/21-recommended-books/architect-proposal.md`, `design-delta.md`
