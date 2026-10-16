@@ -14,3 +14,4 @@
 | [2026-10-14-cloudflare-tunnel-decision.html](2026-10-14-cloudflare-tunnel-decision.html) | AWS에서 계속 쓸 때 Cloudflare Tunnel 유지 여부(①유지/②CF프록시/③DNS만/④AWS Route53+CloudFront/⑤ALB) | ADR-0103, research 3·12절 | 1개 |
 | [2026-10-15-remote-deploy-status.html](2026-10-15-remote-deploy-status.html) | 원격(노트북)용 배포 현황+결정 페이지: 터널 선택 버튼 저장(db), 할 일·확인 항목 보기. claude.ai 비공개 Artifact FeYpG6XqGhgQbabEgwWYB8 | scope.md, research 12~15절, ADR-0103·0104 | 1개(터널) |
 | [2026-10-16-aws-credits-and-monitoring.html](2026-10-16-aws-credits-and-monitoring.html) | 오늘 AWS 작업 요약: 무료 크레딧 $200 전부 적립(활동 5개), 만든 자원 전부 삭제, 누르면 안 되는 버튼 3개, CloudWatch 모니터링 | `../research.md` 17절, AWS 무료티어 공식 문서 | 1개(확인) |
+| [2026-10-15-aws-console-steps.html](2026-10-15-aws-console-steps.html) | 노트북에서 AWS 콘솔을 따라 하는 안내: 1 예산 → 2 EC2(리전·Ubuntu Arm·키 페어·고정 IP) → 3 IAM 역할(정책 JSON) | scope.md, `../research.md` 12절, ADR-0104 | 0개 |

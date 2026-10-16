@@ -1,0 +1,94 @@
+<title>AWS 콘솔 따라 하기</title>
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1a1c1e;--card:#242729;--text:#e8e8e6;--muted:#a3a9b2;--line:#3a3e42;--accent:#7bb0e0;--accent-bg:#1f2d3a;--ok:#5fcf8e;--ok-bg:#16301f;--warn:#e3b760;--warn-bg:#332814;--no:#e88a82;--no-bg:#331a18;--code-bg:#2c2f31;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1a1c1e;--card:#242729;--text:#e8e8e6;--muted:#a3a9b2;--line:#3a3e42;--accent:#7bb0e0;--accent-bg:#1f2d3a;--ok:#5fcf8e;--ok-bg:#16301f;--warn:#e3b760;--warn-bg:#332814;--no:#e88a82;--no-bg:#331a18;--code-bg:#2c2f31;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,-apple-system,sans-serif;font-size:17px;line-height:1.72;word-break:keep-all;overflow-wrap:break-word}
+.wrap{max-width:780px;margin:0 auto;padding-block:26px 72px;padding-left:16px;padding-right:16px}
+h1{font-size:24px;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 20px;margin:0 0 20px}
+.card h2{font-size:20px;margin:0 0 4px;display:flex;gap:9px;align-items:baseline}
+.cn{flex:none;display:inline-grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--accent);color:#fff;font-size:15px}
+.time{color:var(--muted);font-size:14px;margin:0 0 12px}
+ol{margin:8px 0;padding-left:22px}li{margin:8px 0}
+.val{background:var(--ok-bg);border-radius:7px;padding:1px 7px;font-weight:600;color:var(--ok)}
+.warn{background:var(--warn-bg);border-left:3px solid var(--warn);border-radius:0 8px 8px 0;padding:9px 13px;margin:10px 0;font-size:15.5px}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:13px 15px;overflow-x:auto;font-size:14px;line-height:1.5;margin:8px 0}
+.mine{border:1px dashed var(--accent);background:var(--accent-bg);border-radius:8px;padding:8px 13px;font-size:15.5px;margin:10px 0}
+.ask{background:var(--accent);color:#fff;border-radius:9px;padding:12px 15px;margin:16px 0;font-size:16px}
+.foot{color:var(--muted);font-size:14px;margin-top:24px}
+b.k{color:var(--text)}
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap">
+<div class="wrap">
+<h1>AWS 콘솔 따라 하기</h1>
+<p class="sub">노트북에서 이걸 보면서 AWS 콘솔을 조작하시면 됩니다. 한 단계 끝날 때마다 막히면 그 화면을 캡처해 대화창에 올려 주세요 — 어디를 누를지 짚어 드립니다. (화면 문구는 조금 다를 수 있습니다.)</p>
+
+<div class="warn">먼저: 화면 <b>오른쪽 위 리전</b>이 <span class="val">아시아 태평양 (서울) ap-northeast-2</span>인지 확인하세요. 아니면 눌러서 서울로 바꿉니다. 이게 틀리면 다른 지역에 서버가 생깁니다.</div>
+
+<section class="card">
+<h2><span class="cn">1</span>예산 만들기 (Budgets)</h2>
+<p class="time">약 2분 · 과금 알림 + 추가 크레딧 $20 적립</p>
+<ol>
+<li>위쪽 <b class="k">검색창</b>에 <code>Budgets</code> 입력 → <b class="k">AWS Budgets</b> 클릭.</li>
+<li><b class="k">예산 생성 (Create budget)</b> 클릭.</li>
+<li>유형은 <span class="val">비용 예산 (Cost budget)</span> 선택 → 다음.</li>
+<li>이름 아무거나(예 <code>chaekcheck</code>), 기간 <b class="k">월간</b>, 예산 금액 <span class="val">10</span>(USD) 정도.</li>
+<li>알림(Alert) 하나 추가: 실제 비용이 예산의 <span class="val">80%</span>를 넘으면, 당신 <b class="k">이메일</b>로 알림.</li>
+<li><b class="k">예산 생성</b>으로 끝.</li>
+</ol>
+</section>
+
+<section class="card">
+<h2><span class="cn">2</span>EC2 서버 만들기</h2>
+<p class="time">약 5분 · 우리 서비스가 돌 서버. 생성이 추가 크레딧 $20 적립</p>
+<ol>
+<li>검색창에 <code>EC2</code> → <b class="k">EC2</b> 클릭 → <b class="k">인스턴스 시작 (Launch instance)</b>.</li>
+<li><b class="k">이름</b>: <code>chaekcheck</code>.</li>
+<li><b class="k">애플리케이션 및 OS 이미지(AMI)</b>: <span class="val">Ubuntu</span> 선택 → 버전은 <span class="val">Ubuntu Server 24.04 LTS</span>. 그 아래 아키텍처를 <span class="val">64비트(Arm)</span>로 바꿉니다. <span style="color:var(--no)">(Arm이어야 다음의 t4g를 고를 수 있습니다.)</span></li>
+<li><b class="k">인스턴스 유형</b>: <span class="val">t4g.medium</span> (2 vCPU, 4 GiB).</li>
+<li><b class="k">키 페어(로그인)</b>: <b class="k">새 키 페어 생성</b> → 이름 <code>chaekcheck-key</code>, 유형 <b class="k">RSA</b>, 형식 <b class="k">.pem</b> → 생성하면 파일이 받아집니다. <b style="color:var(--no)">이 파일을 잘 보관하세요(서버 접속 열쇠, 다시 못 받음).</b></li>
+<li><b class="k">네트워크 설정</b> → <b class="k">편집</b> → 보안 그룹 규칙:
+  <ul>
+  <li><b class="k">SSH(22)</b> 허용, 소스는 <span class="val">내 IP (My IP)</span>. <span class="muted">(서버 세팅용으로만 잠깐. 나중에 닫습니다.)</span></li>
+  <li>HTTP(80)·HTTPS(443)는 <b style="color:var(--no)">열지 않습니다</b> — 우리는 Cloudflare Tunnel로 들어올 거라서요.</li>
+  </ul></li>
+<li><b class="k">스토리지 구성</b>: <span class="val">40</span> GiB, <span class="val">gp3</span>.</li>
+<li>오른쪽 <b class="k">인스턴스 시작</b>. 1~2분 뒤 <b class="k">인스턴스</b> 목록에 <b>실행 중</b>으로 뜹니다.</li>
+</ol>
+<div class="warn">주소가 바뀌지 않게 <b>고정 IP</b>를 붙입니다: 왼쪽 메뉴 <b class="k">탄력적 IP(Elastic IP)</b> → <b class="k">탄력적 IP 주소 할당</b> → 만든 뒤 <b class="k">작업 → 주소 연결</b>에서 방금 만든 <code>chaekcheck</code> 인스턴스에 연결.</div>
+</section>
+
+<section class="card">
+<h2><span class="cn">3</span>IAM 역할 붙이기</h2>
+<p class="time">약 4분 · 서버가 비밀값을 접근 키 없이 읽게</p>
+<ol>
+<li>검색창에 <code>IAM</code> → <b class="k">IAM</b> → 왼쪽 <b class="k">역할(Roles)</b> → <b class="k">역할 생성</b>.</li>
+<li>신뢰할 수 있는 엔터티: <b class="k">AWS 서비스</b> → 사용 사례 <span class="val">EC2</span> → 다음.</li>
+<li>권한은 지금 <b class="k">건너뛰고</b>(아무것도 선택 안 해도 됨) 다음 → 역할 이름 <code>chaekcheck-ec2-role</code> → <b class="k">역할 생성</b>.</li>
+<li>만든 역할을 열고 → <b class="k">권한 추가 → 인라인 정책 생성</b> → <b class="k">JSON</b> 탭에 아래를 붙여넣기. <span style="color:var(--no)"><code>&lt;계정ID&gt;</code>만 당신 12자리 계정 번호로 바꾸세요</span>(오른쪽 위 계정 메뉴에 보입니다):
+<pre>{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Effect": "Allow",
+    "Action": [
+      "ssm:GetParametersByPath",
+      "ssm:GetParameters",
+      "ssm:GetParameter"
+    ],
+    "Resource": "arn:aws:ssm:ap-northeast-2:&lt;계정ID&gt;:parameter/chaekcheck/prod/*"
+  }]
+}</pre>
+정책 이름 <code>chaekcheck-param-read</code> → 저장.</li>
+<li>이 역할을 서버에 연결: <b class="k">EC2 → 인스턴스 → chaekcheck 선택 → 작업 → 보안 → IAM 역할 수정</b> → <code>chaekcheck-ec2-role</code> 선택 → 저장.</li>
+</ol>
+<div class="mine">이 JSON은 "<code>/chaekcheck/prod/</code> 아래 비밀값만 읽기"를 허용합니다. 비밀값(카카오 키·DB 비밀번호 등)은 나중에 제가 넣는 법을 알려 드립니다.</div>
+</section>
+
+<div class="ask">여기까지 하면 알려 주세요. 그러면 <b>서버에 접속해서 Docker·cloudflared 설치 → 비밀값 넣기 → 서비스 띄우기</b>를 이어서 안내합니다. 중간에 막히면 그 화면을 캡처해 올려 주세요.</div>
+
+<p class="foot">도메인(chaekcheck.com)·카카오 등록은 AWS와 별개라 아무 때나 하면 됩니다. 근거: scope.md, research 12절, ADR-0104. 2026-10-15.</p>
+</div>
