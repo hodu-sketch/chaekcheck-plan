@@ -483,6 +483,7 @@ body{background:var(--bg);color:var(--text)}
 <rect x="20" y="226" width="860" height="20" rx="4" fill="none" stroke="var(--line)" stroke-dasharray="4 3"/><text class="s13m" x="28" y="241" font-size="11">묶음 마감 8초는 전체(받기+올리기+기다림+해석)를 봄 — 이것은 따로 있음</text>
 </svg><p class="cap">2초 = 서버에 도착한 페이지가 해석 자리를 기다리는 최대 시간. 받아 오고 올리는 시간은 들어가지 않습니다.</p></div>
 <p>그래서 보통은 기다림 0초, 아주 붐벼도 이 구간이 2초를 넘지 않게 끊어 두는 것입니다. 2초를 다 써도 도서관 한 곳 결과는 약 3초에 나와 묶음 마감 8초 안입니다.</p>
+<p class="concl" style="border:2px solid var(--ok)"><b>정함 (2026-10-16)</b>: 승인. 요청대로 사이클 밖 문서 <code>docs/settings-index.md</code>를 새로 만들어 시간·용량·동시 수 값을 모두 모았습니다(값 / dev 어디 / 정한 문서 링크 / 근거 / 함께 바꿀 곳, 7개 묶음 약 45줄). <code>CLAUDE.md</code>에 "값을 바꾸는 사이클은 이 문서도 함께 고침" 규칙을 넣고, 설계 문서에서도 링크했습니다.</p>
 <p class="concl"><span class="chip" data-n="7">안 #7</span> (2GB 기준으로 바뀐 제안) 페이지 상한을 <b>1MB</b>로(`LOOKUP_MAX_BODY_MB=1`, 서버 모드와 함께), 서버 전체에서 올라온 페이지를 <b>동시에 4개까지</b> 해석(넘치면 2초 기다리고 못 받으면 503 → 그 도서관만 「확인하지 못한 도서관」), nginx는 올리기 경로에 <b>IP당 동시 연결 4개</b>. 값은 모두 변수(`LOOKUP_MAX_BODY_MB`, `max-concurrent-uploads`, `LOOKUP_UPLOAD_CONN`)로 두고, 인계 때 dev가 실제 쪽 크기 분포와 해석 힙을 재서 맞춥니다.</p>
 <p class="alt">다른 선택 ①: 확장 올리기만 본문 상한을 1MB로 낮춤(실제 최대 쪽 322KB) — 최악이 1/4로 줄지만 "상한은 설정 하나"(설계 #12, ADR-0119)와 어긋나 값이 둘이 됩니다. ② 상한 없음 — 평소엔 괜찮지만 몰리면 서비스가 멈출 수 있어 추천하지 않습니다.</p>
 </div>

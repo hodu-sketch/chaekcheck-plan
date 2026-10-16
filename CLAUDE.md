@@ -26,6 +26,7 @@ Current cycle: docs/cycles/21-recommended-books (추천도서 menu: 이동진 �
 
 - `docs/backlog.md` — ideas not in any cycle yet
 - `docs/reference-index.md` — index of the documents to consult when redoing or maintaining library collection, library classification, book collection and book normalization/grouping; read it before a cycle that touches those, and update it when a source document moves
+- `docs/settings-index.md` — every server time limit, size cap and concurrency value (where it lives in dev, which doc decided it, why); when a cycle adds or changes such a value, update this file in the same change
 - `docs/current/` — the design as it stands now: `module-map.md`, `data-model.md`, `api.md`, `flows.md`, `handoff.md`
 - `docs/adr/README.md` — ADR index; `docs/adr/NNNN-<slug>.md` — decision records
 - `docs/cycles/NN-<slug>/` — `scope.md`, `spec.md`, `flow.md`, `design-delta.md`, `handoff.md`, `retro.md`
