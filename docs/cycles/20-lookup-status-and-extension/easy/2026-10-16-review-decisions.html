@@ -394,7 +394,24 @@ svg .ah{fill:var(--accent)}
 <text class="s13m" x="10" y="210">그래서 #7의 계산(최악 8 × 50MB ≈ 400MB)은 "힙이 지금처럼 512MB라면"을 전제로 한 것입니다.</text>
 <text class="s13m" x="10" y="230">사이클 17이 운영 힙을 바꾸면 동시 해석 수 8도 같은 비율로 맞춥니다(설정값이라 코드 변경 없음).</text>
 </svg><p class="cap">512MB는 사이클 08에 내 PC에서 재서 정한 서비스 힙. 운영 서버(4GB)에서는 사이클 17이 다시 잽니다.</p></div>
-<p class="concl">[안] 서버 전체에서 올라온 페이지를 <b>동시에 8개까지</b> 해석(넘치면 2초 기다리고 못 받으면 503 → 화면은 그 도서관만 「확인하지 못한 도서관」), nginx는 올리기 경로에 <b>IP당 동시 연결 6개</b>. 두 값은 변수(`LOOKUP_UPLOAD_CONN`, `max-concurrent-uploads`)로 두고, 인계 때 dev가 4MB 쪽 해석의 힙 최대치를 재서 8을 맞춥니다.</p>
+<h3 style="font-size:20px;margin:18px 0 6px">다시 답: 실제 서버는 2GB — 값을 더 조입니다</h3>
+<p class="concl"><b>맞습니다, 제가 놓쳤습니다.</b> 사이클 17은 설계(서울 4GB) 대신 무료 플랜 제약으로 <b>시드니 t4g.small 2GB</b>에 실제로 서버를 만들었고(2026-10-15), 앱을 올리기 전에 이미 메모리 1.8GiB 중 약 0.97GiB를 운영체제·Docker가 씁니다(사이클 17 research 17절). 남는 약 0.8~1.3GiB에 <b>서비스(힙 512MB + 그 밖 약 200MB)·PostgreSQL·nginx·cloudflared·CloudWatch 에이전트</b>가 다 들어가야 합니다. 그래서 #7·#8·#9의 값을 2GB 기준으로 다시 잡았습니다(아래 바뀐 제안).</p>
+<div class="fig wide"><svg viewBox="0 0 900 300" role="img" aria-label="2GB 서버 메모리 나눔">
+<text class="s14" x="10" y="22">실제 운영 서버 t4g.small 2GB(1.8GiB) 나눔 — 사이클 17 측정과 어림</text>
+<rect x="10" y="40" width="880" height="48" rx="6" fill="var(--card)" stroke="var(--line)"/>
+<rect x="10" y="40" width="474" height="48" rx="6" fill="var(--code-bg)" stroke="var(--line)"/><text class="s13" x="18" y="62" font-size="12">운영체제·Docker·스냅 (앱 전에 이미 사용, 측정 약 0.97GiB)</text><text class="s13m" x="18" y="80" font-size="11">사이클 17 research 17절, 2026-10-16</text>
+<rect x="484" y="40" width="250" height="48" fill="var(--accent-bg)" stroke="var(--accent)"/><text class="s13" x="490" y="62" font-size="12">서비스 JVM 약 0.7GiB</text><text class="s13m" x="490" y="80" font-size="11">힙 512MB + 그 밖</text>
+<rect x="734" y="40" width="110" height="48" fill="var(--warn-bg)" stroke="var(--warn)"/><text class="s13" x="740" y="62" font-size="12">PostgreSQL</text><text class="s13m" x="740" y="80" font-size="11">0.2GiB~</text>
+<rect x="844" y="40" width="46" height="48" fill="var(--no-bg)" stroke="var(--no)"/><text class="s13m" x="848" y="68" font-size="10">남음</text>
+<text class="s13" x="10" y="120">→ 거의 꽉 참. 힙 512MB 안에서 쓸 수 있는 몫도 작음 (캐시·검색 묶음·사용 기록 버퍼가 이미 씀)</text>
+<text class="s14" x="10" y="160">이번 사이클이 힙에 더하는 최악치 (어림)</text>
+<text class="s13m" x="10" y="186">앞 제안(4GB 가정)</text><rect x="200" y="172" width="560" height="22" rx="4" fill="var(--no-bg)" stroke="var(--no)"/><text class="s13" x="210" y="188">올리기 해석 400MB + 계획 40MB + 확장 캐시 수 MB ≈ 450MB → 2GB에선 불가</text>
+<text class="s13m" x="10" y="226">바뀐 제안(2GB)</text><rect x="200" y="212" width="80" height="22" rx="4" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="290" y="228">올리기 해석 약 50MB + 계획 10MB + 확장 캐시 약 3MB + 카운터 1MB ≈ 65MB</text>
+<text class="s13m" x="10" y="266">핵심: 페이지 상한을 4MB → 1MB로(실제 도서관 쪽은 대부분 300KB 안), 동시 해석 8 → 4. 1MB 쪽 하나 최악 약 12MB × 4 ≈ 50MB</text>
+<text class="s13m" x="10" y="286">숫자는 어림이며, 인계 때 dev가 실제 쪽 크기 분포와 해석 힙을 재서 맞춥니다(설정값이라 코드 변경 없음)</text>
+</svg><p class="cap">2GB 서버는 앱 전에 이미 반쯤 차 있어, 이번 사이클이 더하는 메모리를 약 65MB 안으로 묶습니다.</p></div>
+<p><b>바뀐 제안의 근거.</b> ① 페이지 상한 1MB: 서버 모드도 같은 설정(`max-body-size`, #12에서 하나의 변수로 정함)을 쓰므로 함께 1MB가 됩니다. 오늘 잰 도서관 쪽은 42~220KB였고(research 1·10절), 검토에서 본 가장 큰 쪽은 약 322KB라 1MB면 3배 여유입니다. 1MB가 넘는 도서관이 나오면 그 도서관만 실패로 보이고 로그에 남으니, 그때 변수를 올립니다. ② 동시 해석 4: 1MB 쪽 하나가 최악 약 12MB(본문 1 + 한글 문자열 1.5 + HTML 구조 5~10배)라 4개면 약 50MB. ③ 계획 보관함·확장 캐시·카운터도 2GB에 맞춰 줄임(#8·#9, 보안 ⑨).</p>
+<p class="concl">[안] (2GB 기준으로 바뀐 제안) 페이지 상한을 <b>1MB</b>로(`LOOKUP_MAX_BODY_MB=1`, 서버 모드와 함께), 서버 전체에서 올라온 페이지를 <b>동시에 4개까지</b> 해석(넘치면 2초 기다리고 못 받으면 503 → 그 도서관만 「확인하지 못한 도서관」), nginx는 올리기 경로에 <b>IP당 동시 연결 4개</b>. 값은 모두 변수(`LOOKUP_MAX_BODY_MB`, `max-concurrent-uploads`, `LOOKUP_UPLOAD_CONN`)로 두고, 인계 때 dev가 실제 쪽 크기 분포와 해석 힙을 재서 맞춥니다.</p>
 <p class="alt">다른 선택 ①: 확장 올리기만 본문 상한을 1MB로 낮춤(실제 최대 쪽 322KB) — 최악이 1/4로 줄지만 "상한은 설정 하나"(설계 #12, ADR-0119)와 어긋나 값이 둘이 됩니다. ② 상한 없음 — 평소엔 괜찮지만 몰리면 서비스가 멈출 수 있어 추천하지 않습니다.</p>
 </div>
 
@@ -411,7 +428,7 @@ svg .ah{fill:var(--accent)}
 <text class="s13m" x="10" y="98">제안 무게 100,000</text><rect x="220" y="84" width="120" height="22" rx="4" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="230" y="100">약 40MB</text>
 <text class="s13m" x="10" y="136">무게 = 계획 안 주소 수. 주소 하나 약 400B → 100,000 × 400B ≈ 40MB. 한 IP는 열린 계획 20개까지</text>
 </svg><p class="cap">개수가 아니라 주소 수로 묶어야 메모리가 정확히 지켜집니다.</p></div>
-<p class="concl">[안] 계획 보관함은 <b>주소 수 기준 무게 100,000(약 40MB)</b>, 쓴 뒤 10분. 한 IP(/64)가 <b>열어 둔 계획은 20개까지</b>, 넘으면 그 IP의 가장 오래된 계획을 지움. 앞 #1의 "최대 2,000개"는 이것으로 바꿉니다.</p>
+<p class="concl">[안] (2GB 기준으로 바뀐 제안) 계획 보관함은 <b>주소 수 기준 무게 25,000(약 10MB)</b>, 쓴 뒤 10분. 한 IP(/64)가 <b>열어 둔 계획은 20개까지</b>, 넘으면 그 IP의 가장 오래된 계획을 지움. 앞 #1의 "최대 2,000개"는 이것으로 바꿉니다. (처음 제안 100,000 ≈ 40MB는 4GB 가정이었음)</p>
 <p class="alt">다른 선택: 2,000개 그대로(승인값). 단순하지만 위 두 문제가 남습니다.</p>
 </div>
 
@@ -427,7 +444,7 @@ svg .ah{fill:var(--accent)}
 <path d="M260 60 H320" class="ar" marker-end="url(#ah9c)"/><path d="M260 90 L320 140" class="ar" marker-end="url(#ah9c)" stroke-dasharray="5 4"/><path d="M640 145 H580" class="ar" marker-end="url(#ah9c)"/>
 <text class="s13m" x="10" y="214">한 칸 = 해석된 결과(수 KB) → 확장 캐시 1,000칸 ≈ 수 MB</text>
 </svg><p class="cap">확장 값은 따로 둔 캐시에만 들어가 서버 값을 밀어내지 않고, 서버 모드는 두 캐시를 차례로 봅니다.</p></div>
-<p class="concl">[안] 확장이 넣는 칸은 <b>따로 둔 캐시(최대 1,000칸)</b>에 넣습니다. 서버 모드는 서버 칸을 먼저 보고 없으면 확장 칸을 봅니다. 그러면 확장이 아무리 많이 넣어도 서버 칸은 밀려나지 않습니다. 메모리는 칸당 해석 값(수 KB)이라 1,000칸 ≈ 수 MB.</p>
+<p class="concl">[안] 확장이 넣는 칸은 <b>따로 둔 캐시(최대 500칸, 2GB 기준; 처음 제안 1,000칸)</b>에 넣습니다. 서버 모드는 서버 칸을 먼저 보고 없으면 확장 칸을 봅니다. 그러면 확장이 아무리 많이 넣어도 서버 칸은 밀려나지 않습니다. 메모리는 칸당 해석 값(수 KB)이라 500칸 ≈ 2~3MB.</p>
 <p class="alt">다른 선택: 지금처럼 함께 쓰고 캐시의 자동 판단(자주 쓰는 칸을 남김)과 IP 한도에 맡김. 코드가 줄지만 서버 칸이 밀릴 수 있습니다.</p>
 </div>
 
