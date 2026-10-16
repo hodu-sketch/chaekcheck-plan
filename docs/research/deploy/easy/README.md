@@ -20,3 +20,4 @@
 | [2026-10-16-webshare-setup.html](2026-10-16-webshare-setup.html) | Webshare 한국 정적 주거용 20개: 가입·구매(미리 채운 링크)·IP Authorization·목록 받기·접속 시험(`../tools/proxy_check.py`)·결과 판정. Artifact https://claude.ai/artifact/CMoP6FXwVv6ecdoeirJrqB | `../multi-source-ip.md` 9절 | 없음(절차) |
 | [2026-10-16-adr-0130-draft.html](2026-10-16-adr-0130-draft.html) | ADR-0130 초안 → 승인됨(ADR-0095 대신: 서버 IP + Webshare 한국 정적 20개, 두 방식 지원, 바뀌는 주거용 나중, 한도 전 멈춤·메일)과 사이클 17 인계 파일 | `../../../adr/0130-lookup-egress-webshare-kr-static-and-alerts.md`, `../../../cycles/17-first-deploy/from-research-lookup-egress.md` | 2개 |
 | [2026-10-16-remaining-todo.html](2026-10-16-remaining-todo.html) | 프록시 일에서 사용자가 할 일: ADR-0130 확정, 배포 때 Webshare API 키·알림 메일 확인, 요금·IP 등록 메모 | `../multi-source-ip.md` 9절, ADR-0130 | 1개 |
+| [2026-10-17-load-memory-sim.html](2026-10-17-load-memory-sim.html) | 초당 검색 수별 열린 검색·확인 불가·거절·힙 메모리 어림 (직접만 / 모두 / 프록시만, 2분 흉내) | `../tools/loadsim.py`, dev application.yml | 없음 (설명) |
