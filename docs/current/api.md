@@ -101,7 +101,7 @@
 - 책 칸: 사서 `id` = `source_no`(사이클 14 `recomNo`), `recommendedMonth`만 값. 이동진 `id` = `list_book.id`(목록을 바꿀 때마다 새로 매김), `recommendedMonth`·`yearBook`·`videoId`. 서울대 `tocNo`. `fetchedAt`은 사서만(마지막 성공 받기), 이동진·서울대는 null [안: 칸 이름]
 - `title` = 화면 이름(맞춘 우리 책 제목에서 판 표시를 덜어 낸 이름, 못 맞추면 목록 이름), `listTitle` = 목록 이름이 `title`과 다를 때만 값 [안: 칸 이름] (ADR-0129)
 - 칸 바뀜: `recomNo` → `id`(글자). 배포 전·웹만 부름 [안]
-- `bookId`: 이동진·서울대는 export 때 맞춰 저장한 책 번호(못 맞추면 null), 사서는 사이클 14처럼 캐시 때 ISBN → 본제목+첫 저자로 맞춤. 후보가 여럿이면 `BookChoice`(켜진 도서관만, 구독형 아닌 수 + 켜진 구독형이 하나라도 있으면 1, 같으면 1권 먼저 → 책 번호 작은 것) [확정] (ADR-0124·0125)
+- `bookId`: 이동진·서울대는 export 때 맞춰 저장한 책 번호(못 맞추면 null), 사서는 사이클 14처럼 캐시 때 ISBN → 본제목+첫 저자로 맞춤. 후보가 여럿이면 `BookChoice`(켜진 도서관만, 구독형 아닌 수 + 켜진 구독형이 하나라도 있으면 1, 같은 세트는 한 판으로 보고 고른 세트의 1권, 같으면 책 번호 작은 것) [확정] (ADR-0124·0125)
 - 분야 순서: 목록별 `list_field.position`(이동진 「전체」 + 9분야, 서울대 「전체」 + 5분야, 사서 사이클 14 그대로), 책 0권인 분야는 뺌 [확정] (spec R5)
 - 사용 알림 예: `{"type":"picks_list_view","list":"snu100","category":"korean_lit"}`
 - 위 값(번호·영상 ID)은 예시 값
