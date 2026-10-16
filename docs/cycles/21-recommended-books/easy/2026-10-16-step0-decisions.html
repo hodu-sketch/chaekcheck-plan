@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 21 API 시험 뒤 결정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+
+.v-flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.v-box{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:7px 11px;font-size:15px;text-align:center;min-width:90px}
+.v-box small{display:block;color:var(--muted);font-size:12px}
+.v-hi{border-color:var(--accent);background:var(--accent-bg)}
+.v-warn{border-color:var(--warn);background:var(--warn-bg)}
+.v-ok{border-color:var(--ok);background:var(--ok-bg)}
+.v-arr{color:var(--muted);font-size:18px}
+.v-file{border:2px solid var(--line);border-radius:12px;background:var(--card);padding:10px;margin:10px 0;max-width:560px}
+.v-file .v-part{border:1px dashed var(--line);border-radius:8px;padding:8px 10px;margin:6px 0;font-size:14px}
+.v-file .v-part.v-new{border-color:var(--accent);background:var(--accent-bg)}
+.v-tl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0;font-size:13px;text-align:center}
+.v-tl div{border-top:4px solid var(--line);padding-top:6px}
+.v-tl div.v-hi{border-top-color:var(--accent);background:none}
+.v-cv{display:inline-flex;width:70px;aspect-ratio:2/3;border-radius:7px;border:1px solid var(--line);background:var(--accent-bg);align-items:center;justify-content:center;font-size:11px;text-align:center;padding:3px;vertical-align:top;margin:4px}
+.v-cv.v-img{background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 6px,var(--card) 6px,var(--card) 12px)}
+.v-mini{border:1px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;margin:8px 0;max-width:420px}
+.v-mini .v-bar{display:flex;gap:10px;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line);font-size:13px}
+.v-mini .v-body{padding:10px 12px;font-size:13px}
+.v-pill{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-weight:800;font-size:12px}
+@media (max-width:700px){main table{display:block;overflow-x:auto;max-width:100%}.v-tl{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.v-code{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:var(--code-bg);border-radius:8px;padding:8px 10px;overflow-x:auto;white-space:pre}
+</style>
+</head>
+
+<body>
+<main class="doc">
+<p class="lead">dev가 국립중앙도서관 API를 시험해 보니<br>분야 · 표지를 거기서 얻을 수 없었습니다. 5개를 골라 주세요.</p>
+<p class="sub">dev 사이클 21이 0단계(API 시험)를 마쳤습니다(2026-10-16, dev <code>docs/plan-feedback.md</code> "# 사이클 21"). 수집기가 이동진 추천도서의 <b>분야</b>와 <b>표지</b>를 국립중앙도서관 ISBN 서지 API에서 받기로 했는데, 그 API가 이동진 책에는 둘 다 거의 주지 않습니다. 이 페이지에서 "판"은 책의 판(출판사 판)만 뜻합니다.</p>
+<div class="card"><h2>시험에서 나온 것</h2><p class="concl">이동진 43권은 분류 번호(KDC)가 모두 비었고, 표지는 40권이 비었습니다. 서울대도 분류는 92%, 표지는 88%가 빈 줄입니다.</p><table><tr><th>받으려던 것</th><th>이동진 43권</th><th>서울대 100권</th><th>뜻</th></tr><tr><td>분류 번호 KDC</td><td><b>43권 모두 빔</b></td><td>줄의 92% 빔</td><td>이동진 책은 모두 2023년 뒤 책. 국립중앙도서관이 분류를 늦게 붙이거나 안 붙임</td></tr><tr><td>주제 한 자리(SUBJECT)</td><td>41권 있음</td><td>—</td><td>8 = 문학처럼 한 자리뿐이라 한국 소설·외국 소설·에세이를 못 가름</td></tr><tr><td>표지 주소</td><td><b>40권 빔</b> (3권만 있음)</td><td>줄의 88% 빔</td><td>이동진 목록 표지의 주된 출처가 될 수 없음</td></tr><tr><td>사서추천 인증키로 부르기</td><td colspan="2">됨 (143번 모두 정상)</td><td>새 키 신청은 필요 없음</td></tr></table><p class="cap">근거: dev 0단계 기록(2026-10-16), ISBN 서지 안내 https://www.nl.go.kr/NL/contents/N31101030500.do ("제공서비스에 따라 출력결과 필드는 제한될 수 있습니다"). 알라딘 · 정보나루는 이전에 쓰지 않기로 하셨습니다(2026-10-11, ADR-0072). 알라딘 OpenAPI는 2026-10-30에 끝납니다.</p></div>
+<div class="card"><h2>낱말 풀이</h2><table><tr><th>낱말</th><th>뜻</th></tr><tr><td>KDC</td><td>한국십진분류. 813 = 한국 소설처럼 세 자리로 책 분야를 나타내는 번호. 원래 설계는 이 번호로 분야를 자동으로 정하려 했음</td></tr><tr><td>SUBJECT</td><td>같은 API가 주는 "주제" 한 자리(0~9). 8 = 문학, 9 = 역사 같은 큰 갈래만</td></tr><tr><td>수집 DB 표지</td><td>우리 수집기가 도서관 전자책 사이트를 돌며 모은 목록에 이미 들어 있는 표지 주소(<code>cover_url</code>). 지금은 서비스에 쓰지 않음</td></tr></table></div>
+<div class="card item"><h2><span class="num">1</span>새로 들어오는 이동진 책의 분야는 사람이 정함 (수집기가 제안)</h2><p class="concl">[안] 수집기는 새 이달의 책을 "확인 필요" 파일에 넣으며 주제 한 자리로 고른 분야를 <b>제안</b>만 하고, 사람이 목록 파일의 분야 칸을 정해 적으면 목록에 들어갑니다. 한 달에 1~4권입니다.</p><p><b>어디서 생기는 일:</b> 처음 정하신 것은 "수집기가 분야까지 자동으로 넣고 바로 확정"(명세 R4-3 · R4-4)이었는데, 자동으로 정할 근거(KDC)가 없어졌습니다.</p><p><b>주제 한 자리로 자동으로 하면 얼마나 맞나</b> (지금 44권 분야와 견줌, dev 기록):</p><table><tr><th>지금 분야</th><th>주제 한 자리</th><th>자동으로 가를 수 있나</th></tr><tr><td>외국 소설 9 · 한국 소설 7 · 그래픽노블 1</td><td>모두 8</td><td>못 가름</td></tr><tr><td>에세이 4</td><td>8 · 8 · 6 · 빈 값</td><td>소설과 섞임</td></tr><tr><td>역사 4</td><td>모두 9</td><td>됨</td></tr><tr><td>경제·자기계발 3 · 사회·정치 4 · 인문·철학 7</td><td>3과 1이 섞임</td><td>못 가름</td></tr><tr><td>과학·의학 4</td><td>4 · 5</td><td>됨</td></tr></table><div class="v-flow"><div class="v-box ">새 영상</div><span class="v-arr">→</span><div class="v-box ">수집기<br><small>책 찾기 · 판 고르기 · 분야 제안</small></div><span class="v-arr">→</span><div class="v-box v-warn">확인 필요 파일</div><span class="v-arr">→</span><div class="v-box v-hi">사람이 분야 적음</div><span class="v-arr">→</span><div class="v-box v-ok">다음 가져오기에 실림</div></div><p class="alt">다른 선택: 주제 한 자리로 자동 확정하고(8은 옮긴이가 있으면 외국 소설, 없으면 한국 소설) 틀린 것만 사람이 고침. 손이 덜 가지만 위 표처럼 에세이 · 인문 · 사회 쪽이 자주 틀립니다.</p></div>
+<div class="card item"><h2><span class="num">2</span>지금 44권 분야는 조사 때 정한 그대로</h2><p class="concl">[안] 이동진 44권의 분야는 조사 때 정해 보여 드린 것(분야별 목록) 그대로 씁니다. "국립중앙도서관 분류로 다시 매겨 기준을 하나로"(명세 R3-9)는 하지 않습니다.</p><p><b>어디서 생기는 일:</b> 명세 결정 #7에서 지금 44권도 새 책과 같은 근거(KDC)로 다시 매기기로 하셨는데, KDC가 하나도 없어 다시 매길 수 없습니다. 1번에서 새 책도 사람이 정하면 기준이 "사람"으로 같아집니다.</p><p>예: 「대온실 수리 보고서」는 지금처럼 한국 소설, 「히스토리아 비테이」는 과학·의학 (docs/research/leedongjin-picks/picks.md 5절).</p></div>
+<div class="card item"><h2><span class="num">3</span>표지는 우리 수집 DB의 전자책 표지를 줄여서</h2><p class="concl">[안] 수집기가 이동진 · 서울대 책의 표지를 국립중앙도서관 대신 <b>우리가 이미 모은 전자책 목록의 표지 주소</b>에서 받아 폭 200px로 줄여 싣습니다. 그 책을 가진 도서관 사이트의 표지 가운데 하나를 씁니다. 없으면 국립중앙도서관 표지, 그것도 없으면 지금처럼 제목 글자 표지입니다.</p><p><b>어디서 생기는 일:</b> 국립중앙도서관 표지가 이동진 43권 중 3권뿐이라, 이대로면 목록 대부분이 제목 글자로 보입니다.</p><div class="v-flow"><div class="v-box ">고정 판 = 우리 책</div><span class="v-arr">→</span><div class="v-box v-hi">수집 DB에서 그 책의<br>표지 주소 (도서관 사이트)</div><span class="v-arr">→</span><div class="v-box ">받아서 200px로 줄임</div><span class="v-arr">→</span><div class="v-box v-ok">가져오기 파일에 실림</div></div><p><b>될 것으로 보는 까닭:</b> 이동진 44권 중 36권, 서울대 100권 중 87권이 우리 전자책 목록에 있습니다(조사 2026-10-15). 수집 DB에는 줄마다 표지 주소 칸이 있습니다(dev <code>scripts/crawl/README.md</code>). 실제로 표지가 있는 권수는 dev가 셉니다 [확인 필요].</p><p><b>감수할 것:</b> 저작권 위험은 지금 설계와 같은 "작게 줄여 저장 + 출처 표시 + 삭제 요청 받으면 내림" 수준(조사 docs/research/popular-books/cover-copyright.md 6절, "중간")입니다. 도서관 사이트에서 표지를 한 장씩 더 받습니다(새 책만, 사람 손 속도).</p><p class="alt">다른 선택: 국립중앙도서관 표지만 쓰고 나머지는 제목 글자 표지. 받는 곳이 하나로 단순하지만 이동진 목록은 거의 글자 표지가 됩니다.</p></div>
+<div class="card item"><h2><span class="num">4</span>서울대 「미국의 민주주의」는 위즈덤커넥트 「미국의 민주주의 : 자유 너머의 인간」</h2><p class="concl">[안] 고정 판을 책 번호 607617(알렉시 드 토크빌, 위즈덤커넥트, 2025, 보유량 21)로 적습니다. 조사 때 고른 판과 같습니다.</p><table><tr><th>후보</th><th>보유량</th><th>판단</th></tr><tr><td>다시보는 미국의 민주주의 (신원문화사, 2009)</td><td>105</td><td><b>뺌</b>: 교보문고 소개에 "청소년의 눈높이에 맞춰 읽기 쉽도록 요약한 책" (https://ebook-product.kyobobook.co.kr/dig/epd/ebook/E000003088013 , 2026-10-16 확인). 요약판은 빼는 규칙(명세 R3-3 · R3-4)</td></tr><tr><td>미국의 민주주의 : 자유 너머의 인간 (위즈덤커넥트, 2025)</td><td>21</td><td>추천</td></tr><tr><td>미국의 민주주의 : 자유의 설계도 (위즈덤커넥트, 2025)</td><td>21</td><td>같은 보유량. 하루 차이로 나온 같은 출판사 책이라 한 저작을 둘로 나눈 것일 수 있음 [확인 필요: dev가 소개 확인]</td></tr><tr><td>계명대학교출판부 · 한길사 · 스토리요</td><td>2~7</td><td>보유량 적음</td></tr></table><p class="alt">다른 선택: 「자유의 설계도」(책 번호 1647427). 두 책이 1 · 2권 관계로 밝혀지면 1권 쪽으로 dev가 바꿔 알림.</p></div>
+<div class="card item"><h2><span class="num">5</span>서울대 「페더랄리스트」는 위즈덤커넥트 「페더럴리스트 : 미국 건국의 서문」</h2><p class="concl">[안] 고정 판을 책 번호 463760(해밀턴 · 제이 · 매디슨, 위즈덤커넥트, 2024, 보유량 22)으로 적습니다. 조사 때 고른 판과 같습니다.</p><table><tr><th>후보</th><th>보유량</th><th>판단</th></tr><tr><td>페더럴리스트 : 미국 건국의 서문 (위즈덤커넥트, 2024)</td><td>22</td><td>추천</td></tr><tr><td>미국을 만든 생각들 : 페더럴리스트 40문장 (위즈덤커넥트, 2026)</td><td>23</td><td>보유량은 1 더 많지만 제목대로 40문장을 골라 엮은 책이라 전체가 아님 → 요약 쪽</td></tr><tr><td>연방주의자 논집, 국가 설계도 (스마트북, 2026)</td><td>11</td><td>보유량 적음</td></tr></table><p class="alt">다른 선택: 보유량 규칙대로 「40문장」. 규칙은 그대로 따르지만 원전 전체가 아닌 책이 서울대 100선 자리에 들어갑니다.</p></div>
+<div class="card"><h2>알려 드릴 것 (고를 것 아님)</h2><ul><li><b>YouTube Data API 키</b>가 dev <code>.env</code>에 없어 유튜브 쪽 시험을 못 했습니다. 키를 만들어 넣어 주셔야 다음으로 갑니다(Google Cloud 콘솔 → API 사용 설정 → 사용자 인증 정보 → API 키).</li><li>영상 ID 꼴은 유튜브 공식 문서에 정해져 있지 않아, DB 검사는 지금처럼 "1~64자 영문 · 숫자 · _ · -"로 두고 근거는 "관찰"로 적습니다.</li><li>국립중앙도서관 표지 주소는 호스트가 셋(www 있음 · 없음, http · https)이라 DB 검사를 그에 맞게 넓힙니다. 3번을 고르시면 도서관 사이트 주소도 받도록 "https://로 시작"만 봅니다.</li></ul></div>
+<p class="foot">원본: dev 브랜치 cycle-21-recommended-books 커밋 7227a63 docs/plan-feedback.md "# 사이클 21" (2026-10-16). 고치게 될 문서: spec.md R3-9 · R4-3 · R4-4 · R5-4, design-delta.md 수집기 · 목록 파일 · 외부 연동, handoff.md 7 · 8단계.</p>
+</main></body></html>
