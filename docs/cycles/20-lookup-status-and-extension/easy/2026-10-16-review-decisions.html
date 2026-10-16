@@ -456,6 +456,21 @@ svg .ah{fill:var(--accent)}
 <tr><td>묶음 마감까지(최대 8초)</td><td>몰려도 늦게라도 결과가 나올 가능성이 큼</td><td>몰릴 때 일꾼이 길게 잡혀 상태 묻기·다른 검색까지 느려질 수 있음</td></tr>
 </table>
 <p>"약 50ms"는 어림입니다. 인계 때 dev가 실제 해석 시간을 재고, 생각보다 길면 자리 수(②)나 기다리는 시간을 설정에서 바꿉니다. 묶음 마감까지로 바꾸고 싶으면 이 항목에서 "기타"로 알려 주세요.</p>
+<h3 style="font-size:20px;margin:18px 0 6px">다시 답: "왔다 갔다만 해도 2초가 넘는데 2초가 맞아?"</h3>
+<p class="concl"><b>2초는 왔다 갔다 하는 시간과 따로 셉니다.</b> 시계는 페이지가 <b>이미 우리 서버에 다 도착한 뒤</b>, 해석 자리가 빌 때까지 기다리는 구간에서만 돕니다. 도서관에서 받아 오는 시간(0.7초)과 시드니로 올리는 시간(0.2~0.4초)은 이 2초에 들어가지 않습니다. 그것들은 묶음 마감 8초가 따로 봅니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 250" role="img" aria-label="한 도서관 결과가 나오기까지 시간 줄">
+<text class="s14" x="10" y="22">확장 모드, 도서관 한 곳 (강동 전자도서관 기준)</text>
+<line x1="20" y1="150" x2="880" y2="150" stroke="var(--line)"/>
+<text class="s13m" x="20" y="170" font-size="11">0초</text><text class="s13m" x="300" y="170" font-size="11">1초</text><text class="s13m" x="580" y="170" font-size="11">2초</text><text class="s13m" x="860" y="170" font-size="11">3초</text>
+<rect x="20" y="50" width="196" height="40" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="28" y="75" font-size="12">브라우저 → 도서관 0.7초</text>
+<rect x="216" y="50" width="84" height="40" fill="var(--accent-bg)" stroke="var(--accent)"/><text class="s13" x="220" y="75" font-size="11">올리기 0.3초</text>
+<rect x="300" y="50" width="6" height="40" fill="var(--warn)"/>
+<rect x="306" y="50" width="14" height="40" fill="var(--code-bg)" stroke="var(--line)"/>
+<text class="s13" x="300" y="112" font-size="11">↑ 여기서 자리 기다림(보통 0초) + 해석 약 0.05초 → 1초쯤 결과</text>
+<rect x="300" y="190" width="560" height="26" rx="4" fill="var(--warn-bg)" stroke="var(--warn)"/><text class="s13" x="310" y="208" font-size="12">2초 시계는 여기서부터만: 자리가 정말 안 나면 이 구간이 최대 2초 → 그래도 약 3초에 끝</text>
+<rect x="20" y="226" width="860" height="20" rx="4" fill="none" stroke="var(--line)" stroke-dasharray="4 3"/><text class="s13m" x="28" y="241" font-size="11">묶음 마감 8초는 전체(받기+올리기+기다림+해석)를 봄 — 이것은 따로 있음</text>
+</svg><p class="cap">2초 = 서버에 도착한 페이지가 해석 자리를 기다리는 최대 시간. 받아 오고 올리는 시간은 들어가지 않습니다.</p></div>
+<p>그래서 보통은 기다림 0초, 아주 붐벼도 이 구간이 2초를 넘지 않게 끊어 두는 것입니다. 2초를 다 써도 도서관 한 곳 결과는 약 3초에 나와 묶음 마감 8초 안입니다.</p>
 <p class="concl">[안] (2GB 기준으로 바뀐 제안) 페이지 상한을 <b>1MB</b>로(`LOOKUP_MAX_BODY_MB=1`, 서버 모드와 함께), 서버 전체에서 올라온 페이지를 <b>동시에 4개까지</b> 해석(넘치면 2초 기다리고 못 받으면 503 → 그 도서관만 「확인하지 못한 도서관」), nginx는 올리기 경로에 <b>IP당 동시 연결 4개</b>. 값은 모두 변수(`LOOKUP_MAX_BODY_MB`, `max-concurrent-uploads`, `LOOKUP_UPLOAD_CONN`)로 두고, 인계 때 dev가 실제 쪽 크기 분포와 해석 힙을 재서 맞춥니다.</p>
 <p class="alt">다른 선택 ①: 확장 올리기만 본문 상한을 1MB로 낮춤(실제 최대 쪽 322KB) — 최악이 1/4로 줄지만 "상한은 설정 하나"(설계 #12, ADR-0119)와 어긋나 값이 둘이 됩니다. ② 상한 없음 — 평소엔 괜찮지만 몰리면 서비스가 멈출 수 있어 추천하지 않습니다.</p>
 </div>
