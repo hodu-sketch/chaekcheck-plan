@@ -860,6 +860,15 @@ body{background:var(--bg);color:var(--text)}
 <rect x="380" y="72" width="300" height="56" rx="8" fill="var(--card)" stroke="var(--warn)" stroke-width="2"/><text class="s13" x="392" y="94" font-size="12">조회 붐빔</text><text class="s13m" x="392" y="114" font-size="12">찾는 사람이 늘고 있어요. 조금 느릴 수 있어요</text>
 <text class="s13m" x="700" y="48" font-size="12">← 마우스를 올리면</text><text class="s13m" x="700" y="66" font-size="12">  (키보드 초점도 같음)</text>
 </svg><p class="cap">PC에서 점이나 글에 마우스를 올리면(또는 Tab으로 초점이 가면) 폰 말풍선과 같은 둘째 줄이 뜹니다.</p></div>
+<h3 style="font-size:20px;margin:18px 0 6px">질문에 답: 쓸데없이 복잡해지지 않나? 다른 서비스들은?</h3>
+<p class="concl"><b>복잡해지지 않게 하는 방법이 있습니다: PC도 폰과 똑같이 "누르면 말풍선".</b> 이미 폰용으로 만드는 말풍선 하나를 PC에서도 그대로 쓰면 새로 만들 것이 없습니다. 마우스 올림(hover)까지 더하는 건 웹에서 흔한 방식이지만 꼭 필요하지는 않습니다.</p>
+<table>
+<tr><th>방식</th><th>누가 이렇게 하나 / 근거</th><th>더 만드는 것</th><th>우리에게</th></tr>
+<tr><td><b>PC도 누르면 말풍선</b> (폰과 같음)</td><td>폰 말풍선을 그대로 씀</td><td><b>없음</b> (폰용 하나로 끝)</td><td>가장 단순. PC 사용자는 점을 눌러야 둘째 줄을 봄</td></tr>
+<tr><td>마우스 올림 + 키보드 초점 말풍선 (지금 제안)</td><td>웹 접근성 표준 W3C ARIA "Tooltip" 패턴: 요소에 키보드 초점이 가거나 마우스를 올리면 뜨고, Esc로 닫음 (https://www.w3.org/WAI/ARIA/apg/patterns/tooltip/ , 2026-10-16 확인). 웹에서 흔한 방식</td><td>올림·초점·Esc 처리 몇 줄 + 폰 누르기와 겹치지 않게 맞춤</td><td>조금 더 편하지만 폰과 동작이 둘로 갈림</td></tr>
+<tr><td>브라우저 기본 툴팁 (<code>title</code> 속성)</td><td>코드 한 줄이지만 MDN이 "터치 기기·키보드·화면 읽기 사용자에게 매우 문제"라고 적음 (https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/title , 2026-10-16 확인)</td><td>한 줄</td><td>폰에서 안 보이고 접근성이 나빠 권하지 않음</td></tr>
+</table>
+<p>걱정하신 대로 단순하게 가려면 <b>"PC도 누르면 말풍선"</b>이 맞습니다. 이 항목에서 "기타 — PC도 누르면"으로 고르시면 그렇게 바꿉니다(그러면 이 항목은 "따로 만들 것 없음"으로 끝납니다).</p>
 <p class="concl"><span class="chip" data-n="20">안 #20</span> PC에서는 점+글에 <b>마우스를 올리거나 키보드 초점이 가면</b> 폰과 같은 말풍선(짧은 글 + 둘째 줄)을 띄웁니다. 문구는 #6 표 그대로.</p>
 <p class="alt">다른 선택: PC는 짧은 글만(지금 설계). 머리말이 조용하지만 노랑·빨강의 뜻이 PC에서는 설명되지 않습니다.</p>
 </div>
@@ -952,6 +961,7 @@ body{background:var(--bg);color:var(--text)}
 <tr><td>확장 모드(파란 불)</td><td colspan="2">영향 없음 — 확장은 사용자 브라우저에서 바로 가므로 서버의 길을 쓰지 않음</td></tr>
 <tr><td>서버 자원</td><td colspan="2">값 하나(Webshare 길 멈춤 여부)를 상태 계산 때 읽을 뿐, 메모리 늘지 않음</td></tr>
 </table>
+<p class="concl" style="border:2px solid var(--ok)"><b>정함 (2026-10-16)</b>: 승인. 명세 R1, 설계 문서(사이클 22와 맞춤 절), <code>docs/settings-index.md</code>에 반영하고 사이클 22 세션에 알렸습니다.</p>
 <p class="concl"><span class="chip" data-n="21">안 #21</span> Webshare 길이 한꺼번에 멈춘 동안(업체 문제 또는 데이터 90%) 상태 단계를 <b>최소 노랑</b>으로 올리고, 둘째 줄은 "지금은 조회가 평소보다 느려요". 줄이 차서 빨강이 되는 규칙은 그대로. 다시 켜지면 원래 규칙으로. 사이클 22의 "업체 길 멈춤" 값을 읽기만 합니다.</p>
 <p class="alt">다른 선택: 지금 규칙 그대로(검색 자리만 봄). 단순하지만, 길이 1개로 줄어 느린데도 불은 초록일 수 있습니다.</p>
 </div>
