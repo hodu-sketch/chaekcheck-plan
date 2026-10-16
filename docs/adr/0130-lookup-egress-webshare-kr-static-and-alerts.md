@@ -1,6 +1,6 @@
 # ADR-0130: 서비스 대출 조회는 첫 배포부터 서버 자기 IP와 Webshare 한국 정적 주거용 20개로 나가고, 업체 프록시와 서버 공인 IP 여러 개를 모두 지원하며, 한도에 닿기 전에 멈추고 메일로 알린다
 
-Status: Proposed
+Status: Accepted
 Date: 2026-10-16
 Cycle: 사이클 밖 (배포 조사, `docs/research/deploy/multi-source-ip.md`)
 Supersedes: 0095

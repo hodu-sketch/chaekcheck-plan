@@ -133,4 +133,4 @@
 | [ADR-0127](0127-header-mega-menu.md) | 머리말은 도서관 정보나루식 큰 메뉴: 「추천도서」(이동진 추천도서·사서 추천도서·서울대 100선)·「마이페이지」(내 도서관 관리), PC는 올림 0.5초로 펼침(덮지 않음), 폰은 ☰ | Accepted | 2026-10-16 | 21 |
 | [ADR-0128](0128-leedongjin-list-by-collector-youtube-api.md) | 이동진 추천도서는 수집기가 YouTube Data API(공식)와 국립중앙도서관 ISBN 서지 API로 모아 목록 파일(dev `scripts/crawl/lists/` TSV)에 적음 | Accepted | 2026-10-16 | 21 |
 | [ADR-0129](0129-picks-shown-title-from-matched-book.md) | 추천 목록 화면의 책 이름은 맞춘 우리 책 제목에서 판 표시를 덜어 낸 이름 (못 맞추면 목록 이름) | Accepted | 2026-10-16 | 21 |
-| [ADR-0130](0130-lookup-egress-webshare-kr-static-and-alerts.md) | 서비스 대출 조회는 첫 배포부터 서버 자기 IP + Webshare 한국 정적 주거용 20개로 나가고, 업체 프록시와 서버 공인 IP 여러 개를 모두 지원(자체 서버 조회·조회 서버 둘 다), 바뀌는 주거용은 허용하되 나중에, 업체 데이터 80% 경고·90% 멈춤·업체 오류면 업체 길 전체 멈춤, CloudWatch→메일 알림 (ADR-0095를 대신함) | Proposed | 2026-10-16 | 사이클 밖 (배포 조사) |
+| [ADR-0130](0130-lookup-egress-webshare-kr-static-and-alerts.md) | 서비스 대출 조회는 첫 배포부터 서버 자기 IP + Webshare 한국 정적 주거용 20개로 나가고, 업체 프록시와 서버 공인 IP 여러 개를 모두 지원(자체 서버 조회·조회 서버 둘 다), 바뀌는 주거용은 허용하되 나중에, 업체 데이터 80% 경고·90% 멈춤·업체 오류면 업체 길 전체 멈춤, CloudWatch→메일 알림 (ADR-0095를 대신함) | Accepted | 2026-10-16 | 사이클 밖 (배포 조사) |

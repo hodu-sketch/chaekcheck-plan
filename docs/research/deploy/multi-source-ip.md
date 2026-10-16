@@ -183,3 +183,4 @@ ADR-0095의 세 길은 "서버 자기 IP 1개" 또는 "업체 프록시"였다. 
 
 - #1 ADR-0130 초안대로 기록 [확정] (사용자 승인) → `docs/adr/0130-lookup-egress-webshare-kr-static-and-alerts.md` (Proposed), ADR-0095는 Superseded by 0130
 - #2 `docs/cycles/17-first-deploy/from-research-lookup-egress.md`대로 사이클 17에 넘김 [확정] (사용자 승인). 덧붙임: "이거 자체 서버에서 조회하는거랑 따로 조회서버 두는거랑 둘 다 개발되어야 해" → ADR-0130 결정과 인계 #1에 반영
+- ADR-0130 확정: Status Accepted [확정] (사용자 승인, 2026-10-16, `easy/2026-10-16-remaining-todo.html` #1)
