@@ -1551,6 +1551,7 @@ svg .ah{fill:var(--accent)}
 <p><b>어디서 생기나.</b> #21(Webshare 길이 모두 멈춤 → 최소 노랑 "지금은 조회가 평소보다 느려요")과 #24(프록시만 + 길 0개 → 빨강 "지금은 도서관 조회를 할 수 없어요")를 정했는데, 지금 상태 응답(<code>GET /api/v1/lookup-status</code>)에는 색만 있어 화면이 어떤 문구를 띄울지 모릅니다. 같은 노랑이라도 "사람이 많아서"(#6 문구 "찾는 사람이 늘고 있어요…")와 "업체 길이 멈춰서"가 다릅니다.</p>
 
 <table><tr><th>색</th><th>이유 <code>reason</code></th><th>둘째 줄</th></tr><tr><td>초록</td><td>NONE</td><td>#6 표 그대로</td></tr><tr><td>노랑</td><td>NONE (자리 10개 이상)</td><td>"찾는 사람이 늘고 있어요. 조금 느릴 수 있어요" (#6)</td></tr><tr><td>노랑</td><td>VENDOR_PAUSED (Webshare 길 멈춤)</td><td>"지금은 조회가 평소보다 느려요" (#21)</td></tr><tr><td>빨강</td><td>NONE (자리 20 또는 10초 안 503)</td><td>#6 표 그대로</td></tr><tr><td>빨강</td><td>NO_LANE (프록시만 + 길 0개)</td><td>"지금은 도서관 조회를 할 수 없어요" (#24)</td></tr></table><p>둘이 겹치면(업체 길 멈춤 + 자리도 참): 색은 더 나쁜 쪽(빨강), 문구는 이유가 있는 쪽(업체·길)을 보여 줍니다.</p>
+<p class="concl" style="border:2px solid var(--ok)"><b>정함 (2026-10-16)</b>: 승인. 설계·명세·흐름·설정값 목록·ADR-0118에 [확정]으로 반영했습니다.</p>
 <p class="concl">[안] 상태 응답에 <code>reason</code>(NONE | VENDOR_PAUSED | NO_LANE)을 더하고, 화면은 위 표대로 문구를 고릅니다. 겹치면 색은 나쁜 쪽, 문구는 이유 있는 쪽. 서버는 17·22의 나가는 길 코드가 주는 "업체 길 멈춤"·"길 설정" 값을 읽기 전용으로 읽고, 그 코드가 아직 없으면 NONE.</p>
 <p class="alt">다른 선택: 이유 없이 색만 — 응답은 단순하지만 #21·#24 문구를 띄울 수 없습니다.</p>
 </div>
@@ -1560,6 +1561,7 @@ svg .ah{fill:var(--accent)}
 <p><b>어디서 생기나.</b> #16에서, 확장이 못 여는 도서관(http 주소·인증서 문제 등)은 그 도서관만 서버가 대신 부르기로 했습니다. 그때 서버 자리 1개를 씁니다. 그런데 서버 모드 사용자가 많아 자리 20개가 다 찼으면(빨간 불) 어떻게 할지가 정해지지 않았습니다.</p>
 
 <table><tr><th></th><th>그 도서관만 확인 못 함 (제안)</th><th>계획 전체를 서버 모드로</th></tr><tr><td>확장 사용자 화면</td><td>나머지 도서관은 확장으로 그대로, 대행 도서관만 「확인하지 못한 도서관」</td><td>그 검색 전체가 503 → 빨간 불</td></tr><tr><td>서버 부담</td><td>더 안 늚</td><td>더 안 늚</td></tr></table>
+<p class="concl" style="border:2px solid var(--ok)"><b>정함 (2026-10-16)</b>: 승인. 설계·명세·흐름·설정값 목록·ADR-0118에 [확정]으로 반영했습니다.</p>
 <p class="concl">[안] 서버 자리가 없으면 대행 도서관만 「확인하지 못한 도서관」으로 두고, 나머지는 확장으로 계속합니다(사용 기록 출처 <code>server_for_extension</code>, 결과 SKIPPED).</p>
 <p class="alt">다른 선택: 계획 요청 전체를 503으로 — 단순하지만 확장 사용자도 빨간 불을 봅니다.</p>
 </div>
@@ -1569,6 +1571,7 @@ svg .ah{fill:var(--accent)}
 <p><b>어디서 생기나.</b> #23에서 책 기준 검색 한 쪽을 기본 10권으로 정했습니다. 지금 dev 코드는 상수 하나(<code>BookParams.MAX_PAGE_SIZE = 20</code>)가 기본값과 최대값을 함께 맡고 있어, 기본만 10으로 바꾸려면 코드가 조금 바뀝니다. 그리고 서버 기본값과 화면이 보내는 값(<code>pageSize</code>) 두 곳에 정해 두면 둘이 달라질 수 있습니다.</p>
 
 <table><tr><th></th><th>서버 설정 하나 (제안)</th><th>화면이 정함</th></tr><tr><td>정하는 곳</td><td>서버 설정 속성 기본 10 (환경 변수로 바꿈, #25)</td><td>화면 빌드 변수 <code>VITE_BOOKS_PAGE_SIZE</code></td></tr><tr><td>화면</td><td><code>pageSize</code>를 보내지 않음</td><td>10을 보냄</td></tr><tr><td>바꿀 때</td><td>서버 다시 켜기</td><td>화면 다시 빌드</td></tr></table>
+<p class="concl" style="border:2px solid var(--ok)"><b>정함 (2026-10-16)</b>: 승인. 설계·명세·흐름·설정값 목록·ADR-0118에 [확정]으로 반영했습니다.</p>
 <p class="concl">[안] 서버 <code>catalog</code>에 설정 속성 하나(기본 10, 최대 20은 그대로)를 두고, 화면은 <code>pageSize</code>를 보내지 않아 서버 값을 따릅니다. 설정값 목록 8절의 <code>VITE_BOOKS_PAGE_SIZE</code>는 지웁니다.</p>
 <p class="alt">다른 선택: 화면이 정함 — 서버는 그대로지만 바꿀 때 화면을 다시 빌드해야 합니다.</p>
 </div>
