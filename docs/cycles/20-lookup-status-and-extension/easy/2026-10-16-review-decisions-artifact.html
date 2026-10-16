@@ -440,7 +440,23 @@ body{background:var(--bg);color:var(--text)}
 <text class="s13m" x="10" y="98">제안 무게 100,000</text><rect x="220" y="84" width="120" height="22" rx="4" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="230" y="100">약 40MB</text>
 <text class="s13m" x="10" y="136">무게 = 계획 안 주소 수. 주소 하나 약 400B → 100,000 × 400B ≈ 40MB. 한 IP는 열린 계획 20개까지</text>
 </svg><p class="cap">개수가 아니라 주소 수로 묶어야 메모리가 정확히 지켜집니다.</p></div>
-<p class="concl"><span class="chip" data-n="8">안 #8</span> (2GB 기준으로 바뀐 제안) 계획 보관함은 <b>주소 수 기준 무게 25,000(약 10MB)</b>, 쓴 뒤 10분. 한 IP(/64)가 <b>열어 둔 계획은 20개까지</b>, 넘으면 그 IP의 가장 오래된 계획을 지움. 앞 #1의 "최대 2,000개"는 이것으로 바꿉니다. (처음 제안 100,000 ≈ 40MB는 4GB 가정이었음)</p>
+<h3 style="font-size:20px;margin:18px 0 6px">질문에 답: 오래된 계획이 밀려나는 게 서비스적으로 맞나</h3>
+<p class="concl"><b>두 경우가 다릅니다.</b> (1) <b>같은 사람(같은 IP)의 오래된 계획</b>이 밀려나는 것은 괜찮습니다 — 한 사람이 진행 중인 검색은 많아야 1~4묶음이고 새 검색은 앞 계획을 지우므로(#18), 21번째로 밀려나는 것은 사실상 오래전에 버려진 탭의 계획입니다. (2) 그런데 보관함 전체가 차서 <b>다른 사람의 진행 중인 계획</b>이 밀려나면, 그 사람은 검색 도중 남은 도서관이 「확인하지 못한 도서관」이 됩니다. 서비스적으로 이건 맞지 않습니다. 그래서 (2)를 <b>밀어내지 않고, 새 계획을 받지 않는 쪽</b>으로 바꿔 제안합니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 300" role="img" aria-label="계획 보관함이 찰 때">
+<defs><marker id="ah8q" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="var(--accent)"/></marker></defs>
+<text class="s14" x="10" y="22">(1) 한 사람(IP)이 계획 21개째 — 그 사람의 가장 오래된 것만 지움 (그대로)</text>
+<rect class="bx" x="10" y="34" width="300" height="40" rx="6"/><text class="s13" x="20" y="58">IP A: 계획 20개 (대부분 버려진 옛 탭)</text>
+<rect class="bxno" x="340" y="34" width="250" height="40" rx="6"/><text class="s13" x="350" y="58">A의 가장 오래된 것 지움</text>
+<rect class="bxok" x="620" y="34" width="270" height="40" rx="6"/><text class="s13" x="630" y="58">다른 사람 계획은 그대로</text>
+<path d="M310 54 H340" class="ar" marker-end="url(#ah8q)"/>
+<text class="s14" x="10" y="112">(2) 보관함 전체(무게 25,000)가 꽉 참</text>
+<rect class="bxno" x="10" y="124" width="420" height="70" rx="8"/><text class="s14" x="20" y="146">앞 제안: 가장 오래된 것부터 밀어냄</text><text class="s13m" x="20" y="166" font-size="12">다른 사람의 진행 중 검색이 밀려날 수 있음</text><text class="s13 sred" x="20" y="184" font-size="12">→ 그 사람 화면: 남은 도서관 "확인 못 함"</text>
+<rect class="bxok" x="470" y="124" width="420" height="70" rx="8"/><text class="s14" x="480" y="146">바뀐 제안: 밀어내지 않고 새 계획을 거절(503)</text><text class="s13m" x="480" y="166" font-size="12">진행 중인 검색은 끝까지 됨</text><text class="s13 sok" x="480" y="184" font-size="12">→ 새로 검색한 사람은 그 검색만 서버 모드로</text>
+<text class="s13m" x="10" y="226">얼마나 자주? 계획 하나 = 주소 최대 50개(후보 상한) → 25,000이면 동시에 열린 계획 약 500개. 새 검색이 앞 계획을 지우고(#18) 끝나면 닫으므로</text>
+<text class="s13m" x="10" y="246">열린 계획 ≈ 지금 확장 모드로 검색 중인 수. 2GB 개인 서버에서 500개 동시는 거의 없음 → 거절은 드문 안전장치</text>
+<text class="s13m" x="10" y="270">거절된 사람: 화면이 503을 받으면 그 한 번은 서버 모드로 검색(서버도 꽉 찼으면 지금의 "찾는 사람이 많아요" 안내)</text>
+</svg><p class="cap">자기 옛 계획만 지우고, 남의 진행 중 계획은 절대 밀어내지 않습니다. 꽉 차면 새로 온 쪽이 서버 모드로 갑니다.</p></div>
+<p class="concl"><span class="chip" data-n="8">안 #8</span> (바뀐 제안) 계획 보관함은 무게 25,000(약 10MB), 쓴 뒤 10분. 한 IP는 열어 둔 계획 20개까지(넘으면 <b>그 IP의</b> 가장 오래된 것만 지움). <b>보관함 전체가 차면 다른 사람의 계획을 밀어내지 않고 새 계획 요청을 503으로 거절</b>하고, 화면은 그 한 번의 검색을 서버 모드로 합니다. 닫힌 계획(close·새 검색이 지운 것)은 바로 지워 자리를 비웁니다.</p>
 <p class="alt">다른 선택: 2,000개 그대로(승인값). 단순하지만 위 두 문제가 남습니다.</p>
 </div>
 
