@@ -1554,6 +1554,7 @@ body{background:var(--bg);color:var(--text)}
 <tr><td>만들 것</td><td>가장 단순</td><td>서명 비밀 키 1개(서버 비밀 값) + 첫 응답에 번호 싣기</td></tr>
 </table>
 <p>사람별로 세는 효과(같은 공인 IP 뒤의 옆 사람과 안 묶임)는 같고, 서버가 준 번호라 더 믿을 수 있습니다. 그래서 아래 #27 제안을 "서버가 주는 브라우저 번호 + IP 검사 뺌"으로 다시 냈습니다.</p>
+<p class="concl" style="border:2px solid var(--ok)"><b>정함 (2026-10-16)</b>: 바뀐 제안 승인("이걸로 해줘") — 서버가 서명한 브라우저 번호. 덧붙인 두 요청("번호랑 IP 합쳐서 검증", "XSS로 오염되지 않도록")은 바로 아래 #32·#33으로 묻습니다. 문서 반영은 #32·#33까지 정한 뒤 한 번에.</p>
 <p class="concl"><span class="chip" data-n="27">안 #27</span> (바뀐 제안) 브라우저 번호는 <b>서버가 만들어 줍니다</b>: 첫 계획 요청 때 서버가 무작위 번호에 서명(서버 비밀 키, HMAC)해 응답에 싣고, 화면은 탭 메모리에 들고 다음 계획·올리기·닫기마다 머리글로 보냅니다. 서명이 안 맞으면 400 <code>invalid_client_key</code>. 올리기·닫기는 <b>계획 번호 + 그 번호</b>가 맞으면 받고 "같은 IP" 검사는 뺍니다. IP는 울타리(#22·#31)에만. (#22의 "화면이 만든 열쇠"를 이것으로 바꿈)</p>
 <p class="alt">다른 선택: #22대로 화면이 열쇠를 만듦(가장 단순, 다만 아무 값이나 지어 낼 수 있음). 또는 IP 검사도 유지 — 더 엄격하지만 폰에서 검색 도중 회선이 바뀌면 남은 도서관이 실패합니다.</p>
 </div>
@@ -1599,6 +1600,31 @@ body{background:var(--bg);color:var(--text)}
 <table><tr><th></th><th>무게 20% (제안)</th><th>개수 200 (지금 #22)</th></tr><tr><td>한 곳이 채울 수 있는 양</td><td>최대 20%</td><td>보관함 전부 가능(계획이 크면)</td></tr><tr><td>회사·학교 같은 큰 공인 IP</td><td>주소 5,000 = 보통 검색(주소 수십 개) 수십~백 명분</td><td>계획 200개</td></tr></table>
 <p class="concl"><span class="chip" data-n="31">안 #31</span> #22의 IP 울타리를 "공인 IP당 열린 계획 200개"에서 <b>"공인 IP당 보관함 무게의 20%(주소 5,000)"</b>로 바꿉니다. 넘으면 그 IP의 새 계획만 503 → 그 검색은 서버 모드(남의 것 안 지움). 값은 설정(#25).</p>
 <p class="alt">다른 선택: 개수 200 그대로 — 단순하지만 큰 계획으로 보관함을 혼자 채울 수 있습니다.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">32</span>브라우저 번호와 IP를 "합쳐서" 검증하는 방법</h2>
+<p><b>어디서 생기나.</b> #27에 덧붙인 요청: "그 브라우저 번호랑 아이피랑 합쳐서 검증하고". #27 바뀐 제안은 "같은 IP 검사는 뺀다"였는데(폰은 와이파이↔LTE로 IP가 바뀜), 합쳐서 보려면 IP가 바뀌었을 때 어떻게 할지를 정해야 합니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 200" role="img" aria-label="번호와 IP를 함께 보는 세 방법">
+<rect class="bx" x="10" y="20" width="280" height="160" rx="8"/><text class="s14" x="20" y="44">가. 둘 다 맞아야 (엄격)</text><text class="s13" x="20" y="70" font-size="12">번호 서명에 발급 IP를 넣음</text><text class="s13" x="20" y="92" font-size="12">IP가 바뀌면 그 번호 무효</text><text class="s13 sred" x="20" y="120" font-size="12">폰 회선 바뀜 → 그 검색의</text><text class="s13 sred" x="20" y="140" font-size="12">남은 도서관 실패</text>
+<rect class="bxok" x="310" y="20" width="280" height="160" rx="8"/><text class="s14" x="320" y="44">나. IP가 바뀌면 새로 받기 (제안)</text><text class="s13" x="320" y="70" font-size="12">번호 서명에 발급 IP를 넣음</text><text class="s13" x="320" y="92" font-size="12">IP가 다르면 400 → 화면이 바로</text><text class="s13" x="320" y="112" font-size="12">새 번호를 받아 남은 쪽을 다시 계획</text><text class="s13 sok" x="320" y="140" font-size="12">폰도 끊기지 않음(1번 더 왕복)</text><text class="s13m" x="320" y="160" font-size="11">IP 바뀜은 기록에 남김</text>
+<rect class="bx" x="610" y="20" width="280" height="160" rx="8"/><text class="s14" x="620" y="44">다. 번호만 (#27 처음 안)</text><text class="s13" x="620" y="70" font-size="12">IP는 울타리(한도·잠금)에만</text><text class="s13" x="620" y="92" font-size="12">번호 서명만 확인</text><text class="s13m" x="620" y="140" font-size="12">가장 단순, 합쳐 보지는 않음</text>
+</svg><p class="cap">"합쳐서 검증"을 지키면서 폰이 끊기지 않게 하려면, IP가 바뀌었을 때 번호를 새로 받게 하면 됩니다.</p></div>
+<table><tr><th></th><th>가. 엄격</th><th>나. 새로 받기 (제안)</th><th>다. 번호만</th></tr><tr><td>남이 번호를 훔쳐 다른 곳에서 씀</td><td>막힘</td><td>막힘 (그 IP로는 무효, 새로 받으면 새 번호라 훔친 번호가 쓸모없음)</td><td>번호만 있으면 됨</td></tr><tr><td>폰 회선이 바뀜</td><td>남은 도서관 실패</td><td>새 번호 받고 계속 (계획도 다시)</td><td>그대로 계속</td></tr><tr><td>서버 부담</td><td colspan="3">같음 (서명 계산만, 저장 없음)</td></tr></table>
+<p class="concl"><span class="chip" data-n="32">안 #32</span> "나"로: 서버는 번호를 줄 때 <b>번호 + 발급 IP(/64)</b>를 함께 서명합니다. 올리기·닫기·다음 계획 때 번호 서명과 지금 IP가 맞아야 받습니다. IP가 다르면 400 <code>client_key_ip_changed</code>(이름 [확인 필요]) → 화면은 새 번호를 받고 남은 도서관만 새 계획으로 다시 보냅니다(사용자 조작 없음). IP 바뀜은 거절 기록에 남기고 잠금에는 세지 않습니다(#11처럼 정상에서도 남).</p>
+<p class="alt">다른 선택: "가"(엄격, 폰에서 끊김) 또는 "다"(번호만, #27 처음 안).</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">33</span>브라우저 번호가 XSS로 새거나 바뀌지 않게:<br>자바스크립트가 못 읽는 쿠키에 두기</h2>
+<p><b>어디서 생기나.</b> #27에 덧붙인 요청: "브라우저 번호 이거 XSS로 뭐 오염되지 않도록 조심해야 해". 지금 제안은 번호를 탭 메모리(자바스크립트 변수)에 두는데, 우리 사이트에 XSS가 생기면 그 스크립트가 번호를 읽어 가거나 바꿔 보낼 수 있습니다. 서명이 있어 <b>지어 낸 번호</b>는 막히지만, <b>진짜 번호를 훔쳐 가는 것</b>은 메모리에 있으면 못 막습니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 190" role="img" aria-label="번호를 어디에 두나">
+<rect class="bxno" x="10" y="20" width="420" height="150" rx="8"/><text class="s14" x="20" y="44">탭 메모리 (지금 제안)</text><text class="s13" x="20" y="70" font-size="12">화면 자바스크립트가 들고 머리글로 보냄</text><text class="s13 sred" x="20" y="96" font-size="12">XSS 스크립트도 읽을 수 있음 → 훔쳐 갈 수 있음</text><text class="s13m" x="20" y="122" font-size="11">탭마다 따로, 창 닫으면 사라짐</text>
+<rect class="bxok" x="470" y="20" width="420" height="150" rx="8"/><text class="s14" x="480" y="44">HttpOnly 쿠키 (제안)</text><text class="s13" x="480" y="70" font-size="12">서버가 Set-Cookie로 주고, 브라우저가 알아서 보냄</text><text class="s13 sok" x="480" y="96" font-size="12">자바스크립트(XSS 포함)가 읽지도 바꾸지도 못함</text><text class="s13m" x="480" y="122" font-size="11">브라우저마다 하나(탭끼리 같음) · 올리기 경로에만 보냄</text><text class="s13m" x="480" y="140" font-size="11">Secure · SameSite=Strict · 짧은 수명(예: 1일)</text>
+</svg><p class="cap">HttpOnly 쿠키는 자바스크립트가 읽을 수 없어, XSS가 생겨도 번호를 훔쳐 가지 못합니다.</p></div>
+<table><tr><th>근거</th><th>내용</th></tr><tr><td>MDN Set-Cookie (2026-10-16 확인)</td><td>HttpOnly는 "자바스크립트가 쿠키에 접근하지 못하게 함 … XSS 공격을 줄임", SameSite=Strict는 "쿠키를 정한 같은 사이트에서 시작한 요청에만 보냄" (https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Set-Cookie)</td></tr><tr><td>우리 쪽 이미 있는 것</td><td>로그인 쿠키도 HttpOnly·Secure·SameSite (dev <code>application.yml</code> 세션 쿠키 설정), POST는 CSRF 머리(<code>X-XSRF-TOKEN</code>) — 쿠키를 자동으로 보내도 다른 사이트가 우리 올리기를 대신 보낼 수 없음</td></tr><tr><td>남는 한계</td><td>XSS 스크립트가 <b>우리 화면 안에서</b> 올리기 요청을 보내면 쿠키가 같이 감 → 이건 서명·계획 번호·IP(#32)·한도·잠금·CSP로 줄임. XSS 자체를 막는 것(화면이 외부 글을 HTML로 넣지 않기, CSP)은 그대로 중요</td></tr><tr><td>개인정보</td><td>무작위 번호라 사람을 알아보는 정보는 아니지만 쿠키이므로 개인정보 처리방침의 쿠키 설명에 한 줄 [확인 필요: 사이클 16 처리방침 문구와 맞춤]</td></tr></table>
+<p class="concl"><span class="chip" data-n="33">안 #33</span> 브라우저 번호는 탭 메모리 대신 <b>HttpOnly·Secure·SameSite=Strict 쿠키</b>(경로 <code>/api/v1/lookup-plans</code>·계획 주소만, 수명 1일, 값은 설정)로 줍니다. 자바스크립트는 번호를 보지도 못하고, 서버는 쿠키의 번호 서명(+ #32의 IP)으로 확인합니다. #22·#27의 "머리글 <code>X-Lookup-Client</code>"는 쿠키로 바뀝니다. 처리방침의 쿠키 설명에 한 줄 더함.</p>
+<p class="alt">다른 선택: 탭 메모리 그대로 — 탭마다 따로 셀 수 있지만 XSS가 생기면 번호를 훔쳐 갈 수 있습니다.</p>
 </div>
 
 <p class="foot">원문: <code>docs/cycles/20-lookup-status-and-extension/design-delta.md</code>(◆ = 이번 검토로 고친 곳), <code>spec.md</code>(AC-10a·16~20 추가), <code>flow.md</code>, ADR-0119(Proposed, 검사 순서 고침). 검토는 사용자·서버 자원·보안/안정성 세 관점, dev 코드와 공식 문서(크롬 확장 service worker 수명, Spring CSRF, nginx) 확인 2026-10-16.</p>
