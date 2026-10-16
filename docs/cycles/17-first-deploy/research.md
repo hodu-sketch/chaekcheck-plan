@@ -359,6 +359,14 @@ plan 15가 `docs/cycles/15-usage-log/to-cycle-17.md` "5차"에 올린 실제 값
 - **[확인 필요]** 루트 디스크가 `df`에서 **29~30G**로 보임(EBS는 40GiB로 설정했을 수 있음) → 파티션이 볼륨보다 작은지 배포 때 `lsblk`로 확인하고 필요 시 `growpart`
 - 비용: EC2 기본 지표·CloudWatch 에이전트 커스텀 지표는 소량이라 프리티어·크레딧 범위. 메모리·디스크 사용률은 에이전트가 있어야만 나옴(EC2 기본 지표엔 없음)
 
+### 무료 플랜 추가 크레딧 전부 적립 ($200 달성, 2026-10-16)
+신규 AWS 무료 플랜은 가입 시 $100, 활동 5개를 하면 각 $20씩 최대 $100을 더 줌(계정 2026-10-13 생성, Moonshot Mode, 계정 135274608857). 다섯 활동 모두 완료해 **남은 크레딧 US$200.00** 달성(크레딧 만료 2027-10-13, 무료 플랜 기간 종료 약 2027-04-14).
+- 완료: ① 비용 예산(Budgets) ② EC2 인스턴스 실행 ③ Bedrock 플레이그라운드에서 모델 사용 ④ Lambda 웹 앱(함수 URL) ⑤ RDS/Aurora DB 생성. 각 $20. 콘솔 홈 "AWS 살펴보기 > Earn AWS credits" 위젯에서 진행 확인
+- 뒷정리(크레딧만 쓰고 자원은 안 남김): EC2 테스트 인스턴스 `i-027ff80a088a2dd80` 종료, Lambda `credit-webapp-fn` 삭제, RDS `database-1`(PostgreSQL db.t4g.micro) 삭제(백업 미보존). 운영 `chaekcheck` 서버·CloudWatch는 건드리지 않음
+- 활동마다 자원 생성 요금이 발생하나 **크레딧에서 차감**(카드 청구 아님). 무료 플랜은 크레딧 소진·기간 종료 전까지 실제 과금 없음
+- **[주의] 활동·크레딧이 즉시 무효가 되는 행위**(공식 문서, 2026-10-16): AWS Organizations 가입, Control Tower 랜딩 존 설정, 플랜 업그레이드(고급 기능 활성화). 콘솔의 "플랜 업그레이드" 버튼을 누르면 안 됨
+- 출처(확인 2026-10-16): https://docs.aws.amazon.com/accounts/latest/reference/bcm-lite-free-tier-credits.html , https://aws.amazon.com/free/free-tier-faqs/
+
 ## 18. 사이클 21 → 17 전달 (2026-10-15, `from-cycle-21.md`)
 
 사이클 21(추천도서)을 먼저 개발하기로 함(사용자, 순서 무관). 17 배포에 닿는 것:
