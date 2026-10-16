@@ -4,7 +4,7 @@
 - 이 인계서의 자리: plan `docs/cycles/21-recommended-books/handoff.md`. `docs/current/handoff.md`는 사이클 19 인계서이고, 거기에는 21을 알리는 한 줄만 들어갑니다(사이클 14 선례). dev에서는 `../chaekcheck-plan/docs/cycles/21-recommended-books/handoff.md`로 읽습니다
 - ADR: 0122, 0123, 0124, 0125, 0126, 0127, 0128, 0129 (모두 Accepted, 2026-10-16). 그대로 따르는 ADR: 0062, 0078, 0086, 0089, 0090(맞추는 길. 고르기 규칙은 0125, 화면 이름은 0129로 바뀜), 0091
 - ADR-0121(모든 화면 같은 머리말)은 사이클 20이 확정할 초안(Proposed)입니다. 21은 spec R1-6(`from-cycle-20-header-light.md`)대로 머리말을 만듭니다. 사이클 20이 방향을 바꾸면 design-delta "웹" 표의 머리말 행을 다시 봅니다
-- 승인: [확인 필요: 사용자 인계서 검토]
+- 승인: 사용자 승인 (2026-10-16, [인계서 검토](easy/2026-10-16-handoff-review.html) #1·#2, 외부용 페이지 https://claude.ai/artifact/KdmUJ1a1txMmsbMfHWfdE9)
 
 ## 일정과 다른 사이클과의 순서
 
@@ -137,7 +137,7 @@
   - 포트는 13·14·18·19가 쓰는 번호와 겹치지 않게 정합니다. 켜기 전에 `docker compose ls`로 봅니다
   - 원래 프로젝트 `chaekcheck`과 다른 사이클의 docker 프로젝트는 켜고 끄지 않습니다
   - 따로 만든 DB에는 원래 서비스 DB를 한 번 복사합니다(원래 DB는 읽기만)
-- [ ] **원래 DB(5432)에서 export를 하지 않습니다**: export는 `catalog_next`를 남겨 두므로, 19의 `export`가 "기다리는 내보내기"로 멈춥니다(`ImportTransfer.requireNoWaitingExport`). 19 인계서 0단계도 "21이 원래 DB에 가져오기를 했으면 멈춤"입니다. 실데이터 연습은 21의 복사본 DB에서만 합니다(10단계)
+- [ ] **원래 DB(5432)에서 export를 하지 않습니다**: export는 `catalog_next`를 남겨 두므로, 19의 `export`가 "기다리는 내보내기"로 멈춥니다(`ImportTransfer.requireNoWaitingExport`). 19 인계서 0단계도 "21이 원래 DB에 가져오기를 했으면 멈춤"입니다. 실데이터 연습은 21의 복사본 DB에서만 합니다(10단계) [확정] (사용자 승인, 2026-10-16, 인계서 검토 #1)
 - [ ] 키 확인: ISBN 서지 API 키(사서추천 키 `CHAEKCHECK_PICKS_NLK_API_KEY`로 되는지 0단계에서 확인), YouTube Data API 키(없으면 사용자에게 요청). `.env` 변수 이름은 [안: dev]
 - [ ] 줄 번호는 plan이 2026-10-16에 dev main 작업 트리를 읽고 적은 것입니다. 19가 먼저 들어오면 다시 확인합니다
 
