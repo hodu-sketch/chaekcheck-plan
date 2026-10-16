@@ -1616,7 +1616,61 @@ body{background:var(--bg);color:var(--text)}
 <tr><td>잠긴 번호 5개 → IP 잠금</td><td>잠금은 공격에서만 나는 실패로만 셈(#11) → 정상 사용자 번호가 잠길 일은 거의 없음. 5개는 "우연 한둘은 봐주고, 여러 번호로 공격하면 IP째" 선</td><td>—</td></tr>
 </table>
 <p>정리: 근거는 "우리 설계 숫자(묶음 후보 50, 번호당 계획 20, 보관함 25,000)에서 계산한 값"이고, 바깥 표준은 없으며 OWASP도 서비스에 맞게 정하라고 합니다. 그래서 값은 설정으로 두고(#25), 배포 뒤 거절 기록(<code>rejected_event</code>)과 IP별 계획 무게를 보고 맞춥니다 — 설정값 목록에 이 계산을 근거로 적겠습니다.</p>
-<p class="concl"><span class="chip" data-n="31">안 #31</span> (바뀐 제안) #32 장부로 공인 IP 울타리를 셉니다: ① 그 IP에 준 번호들의 계획 무게 합이 보관함의 20%(주소 5,000)를 넘으면 그 IP의 새 계획만 503 → 서버 모드 ② 한 IP에 새 번호는 1분에 30개까지(넘으면 429) ③ 잠긴 번호 5개 이상이면 IP 10분 잠금. #22의 "열린 계획 200개"는 ①로 바뀝니다. 값은 모두 설정.</p>
+<h3 style="font-size:20px;margin:18px 0 6px">그림으로: 세 규칙이 각각 언제, 누구에게, 무엇을 하나</h3>
+<p class="concl"><b>먼저 "왜 서버 모드로 가나"부터.</b> 확장 모드도 혼자 움직이지 않습니다. 검색마다 서버가 먼저 "이 주소들을 받아 와"라는 <b>계획</b>을 만들어 줘야 확장이 움직입니다. 계획을 만들지 못하면 확장은 무엇을 받아 올지 모릅니다. 그래서 계획을 거절당한 <b>그 검색 한 번만</b> 원래 방식(서버가 직접 도서관에 감 = 서버 모드)으로 처리하자는 것이 지금 제안입니다. 사용자의 모드가 바뀌는 게 아니라, 다음 검색은 다시 확장 모드로 시도합니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 170" role="img" aria-label="계획이 있어야 확장이 움직임">
+<defs><marker id="ah31" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="var(--accent)"/></marker></defs>
+<rect class="bx" x="10" y="20" width="200" height="56" rx="8"/><text class="s13" x="20" y="44" font-size="12">화면: 검색 (확장 있음)</text><text class="s13m" x="20" y="64" font-size="11">파란 불</text>
+<rect class="bxa" x="260" y="20" width="230" height="56" rx="8"/><text class="s13" x="270" y="44" font-size="12">서버: 계획 만들기</text><text class="s13m" x="270" y="64" font-size="11">보관함에 자리 있나?</text>
+<rect class="bxok" x="540" y="10" width="350" height="36" rx="6"/><text class="s13" x="550" y="33" font-size="12">있음 → 계획 줌 → 확장이 받아 옴 (확장 모드)</text>
+<rect class="bxno" x="540" y="54" width="350" height="36" rx="6"/><text class="s13" x="550" y="77" font-size="12">없음(한도 넘음) → 계획 못 줌 (503)</text>
+<path d="M210 48 H260" class="ar" marker-end="url(#ah31)"/><path d="M490 40 L540 28" class="ar" marker-end="url(#ah31)"/><path d="M490 56 L540 72" class="ar" marker-end="url(#ah31)"/>
+<text class="s13" x="540" y="118" font-size="12">→ 그 검색 한 번은: 지금 제안 = 서버가 직접(서버 모드)</text>
+<text class="s13" x="540" y="140" font-size="12">   또는 다른 선택 = 「잠시 후 다시」 (서버도 안 함)</text>
+<text class="s13m" x="10" y="140" font-size="11">다음 검색은 다시 확장 모드로 시도</text>
+</svg><p class="cap">확장 모드는 서버의 계획이 있어야 움직입니다. 계획을 못 받으면 그 검색 한 번을 어떻게 할지가 "서버 모드로"의 뜻입니다.</p></div>
+
+<p><b>① 계획 무게 20%: 회사 하나에 여러 명</b></p>
+<div class="fig wide"><svg viewBox="0 0 900 190" role="img" aria-label="한 IP 몫 5,000">
+<text class="s13" x="10" y="20" font-size="12">회사 공인 IP 1.2.3.4 뒤 직원들이 확장 모드로 검색 · 보관함 전체 25,000 중 이 IP 몫 최대 5,000</text>
+<rect x="10" y="34" width="880" height="30" fill="var(--card)" stroke="var(--line)"/>
+<rect x="10" y="34" width="40" height="30" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="14" y="54" font-size="10">A</text>
+<rect x="50" y="34" width="30" height="30" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="54" y="54" font-size="10">B</text>
+<rect x="80" y="34" width="60" height="30" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="84" y="54" font-size="10">C…</text>
+<line x1="186" y1="28" x2="186" y2="72" stroke="var(--no)" stroke-width="2"/><text class="s13 sred" x="192" y="54" font-size="11">이 IP 몫 5,000</text>
+<text class="s13" x="10" y="94" font-size="12">보통 사람 계획 1~3개(무게 수십~150) → 직원 30명 넘게 동시에 써도 5,000 안</text>
+<text class="s13" x="10" y="116" font-size="12">누가 자동 프로그램으로 계획을 마구 만들어 5,000을 넘기면 → 그 IP의 새 계획만 거절</text>
+<text class="s13m" x="10" y="140" font-size="12">그 IP의 다음 검색은 위의 "그 검색 한 번" 처리 · 다른 IP 사람들의 몫(나머지 20,000)은 그대로</text>
+<text class="s13m" x="10" y="162" font-size="11">막으려는 것: 한 곳이 보관함을 다 채워 모든 사람의 확장 모드가 막히는 것</text>
+</svg></div>
+
+<p><b>② 새 번호 1분 30개: 번호를 바꿔 가며 한도 피하기</b></p>
+<div class="fig wide"><svg viewBox="0 0 900 150" role="img" aria-label="새 번호 발급 한도">
+<text class="s13" x="10" y="20" font-size="12">번호는 보통 탭을 새로 열 때·IP가 바뀔 때만 받음 → 사람 한 명은 1분에 1~2개</text>
+<rect x="10" y="34" width="300" height="26" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="16" y="52" font-size="11">같은 IP에서 1분에 새 번호 1~30개 → 그대로 줌</text>
+<rect x="320" y="34" width="300" height="26" fill="var(--no-bg)" stroke="var(--no)"/><text class="s13" x="326" y="52" font-size="11">31번째부터 → 새 번호만 429 (1분 뒤 다시)</text>
+<text class="s13" x="10" y="90" font-size="12">누가: 번호마다 한도(계획 20·잠금)가 있으니, 공격 프로그램이 번호를 계속 새로 받아 한도를 피하려 할 때</text>
+<text class="s13m" x="10" y="112" font-size="12">이미 번호가 있는 사람은 영향 없음 · 막힌 쪽은 새 번호를 못 받아 그 검색은 위의 "그 검색 한 번" 처리</text>
+</svg></div>
+
+<p><b>③ 잠긴 번호 5개 → IP 10분 잠금: 같은 곳에서 여러 번호로 공격</b></p>
+<div class="fig wide"><svg viewBox="0 0 900 150" role="img" aria-label="IP 잠금">
+<text class="s13" x="10" y="20" font-size="12">번호 잠금은 공격에서만 나는 실패(모르는 계획 번호·같은 쪽 두 번·Origin 다름)가 1분 30번일 때만 (#11)</text>
+<rect x="10" y="34" width="60" height="26" fill="var(--no-bg)" stroke="var(--no)"/><text class="s13" x="14" y="52" font-size="10">잠김1</text>
+<rect x="74" y="34" width="60" height="26" fill="var(--no-bg)" stroke="var(--no)"/><text class="s13" x="78" y="52" font-size="10">잠김2</text>
+<rect x="138" y="34" width="60" height="26" fill="var(--no-bg)" stroke="var(--no)"/><text class="s13" x="142" y="52" font-size="10">…잠김5</text>
+<text class="s13" x="210" y="52" font-size="12">→ 그 IP 전체의 확장 모드 계획을 10분 거절</text>
+<text class="s13" x="10" y="90" font-size="12">누가: 같은 IP에서 번호를 여러 개 받아 공격을 반복하는 쪽 · 정상 사용자 번호가 잠길 일은 거의 없음</text>
+<text class="s13m" x="10" y="112" font-size="12">그 IP의 정상 사용자도 10분 동안 그 검색은 위의 "그 검색 한 번" 처리 (그래서 기준을 5개로 높게)</text>
+</svg></div>
+
+<table>
+<tr><th>"그 검색 한 번"을 어떻게</th><th>사용자</th><th>우리 서버</th></tr>
+<tr><td><b>서버 모드로 (지금 제안, #8과 같음)</b></td><td>결과는 받음 (조금 느릴 수 있음)</td><td>그만큼 서버가 도서관에 감 — 다만 서버 자리 20이 다 차면 거기서 다시 「잠시 후 다시」</td></tr>
+<tr><td>「잠시 후 다시」</td><td>그 검색은 실패, 다시 눌러야 함</td><td>부담 없음 — 공격 쪽이 서버 모드로 우회해 서버를 쓰는 길도 막힘</td></tr>
+</table>
+<p>공격 때문에 걸린 경우(②·③)에 서버 모드로 보내면, 공격 쪽이 결국 우리 서버를 쓰게 됩니다. 그래서 <b>①(정상 사용자가 몰린 경우)만 서버 모드, ②·③(공격 쪽 한도)은 「잠시 후 다시」</b>로 나누는 것도 방법입니다 — 아래 제안에 반영했습니다.</p>
+<p class="concl"><span class="chip" data-n="31">안 #31</span> (다시 바뀐 제안) #32 장부로 공인 IP 울타리를 셉니다: ① 그 IP에 준 번호들의 계획 무게 합이 보관함의 20%(주소 5,000)를 넘으면 그 IP의 새 계획만 거절 → <b>그 검색 한 번은 서버 모드</b>(정상 사용자가 몰린 경우라 결과는 줌) ② 한 IP에 새 번호는 1분에 30개까지, 넘으면 <b>「잠시 후 다시」</b>(서버 모드로 보내지 않음 — 공격이 서버를 쓰는 길이 됨) ③ 잠긴 번호 5개 이상이면 그 IP 확장 모드 10분 거절, 그동안 <b>「잠시 후 다시」</b>. #22의 "열린 계획 200개"는 ①로 바뀝니다. 다음 검색은 다시 확장 모드로 시도. 값은 모두 설정.</p>
 <p class="alt">다른 선택: 개수 200 그대로 — 단순하지만 큰 계획으로 보관함을 혼자 채울 수 있습니다.</p>
 </div>
 
