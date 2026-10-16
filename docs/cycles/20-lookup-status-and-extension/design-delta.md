@@ -1,6 +1,6 @@
 # 설계 변경: 사이클 20 조회 상태 신호와 브라우저 확장 조회
 
-- 바탕: [`scope.md`](scope.md)(범위 8개 확정), [`spec.md`](spec.md)(R1~R15·R15-1, AC-1~31·AC-10a), [`flow.md`](flow.md), [`architect-proposal.md`](architect-proposal.md)(설계 결정 13개 확정, 2026-10-16), ADR-0118~0121(Proposed)
+- 바탕: [`scope.md`](scope.md)(범위 8개 확정), [`spec.md`](spec.md)(R1~R15·R15-1, AC-1~31·AC-10a), [`flow.md`](flow.md), [`architect-proposal.md`](architect-proposal.md)(설계 결정 13개 확정, 2026-10-16), ADR-0118~0121·0131(Proposed)
 - 전제: **사이클 17**(나가는 길·막힌 길 기록·운영 nginx·Actuator)과 **사이클 21**(머리말 메뉴)이 먼저 dev에 들어감. 20은 그 위에 얹음. 사이클 19·21과 겹치는 usagelog changeset은 번호로 나눔(19 = `002`, 21 = `003`, 20 = `004`, 사이클 21 설계 검토 #4 [확정] 2026-10-16), 나중에 합치는 쪽이 include를 master 맨 끝으로
 - 상태: **초안** — `docs/current/` 반영과 인계는 사이클 17 회고 뒤(`CLAUDE.md`). `[안]`은 결정 페이지 [`easy/2026-10-16-design-delta-decisions.html`](easy/2026-10-16-design-delta-decisions.html)·[`easy/2026-10-16-review-decisions.html`](easy/2026-10-16-review-decisions.html)에서 정함
 - **세 관점 검토 반영 (2026-10-16)**: 사용자 요청("사용자적 관점과 서버 리소스 적인 관점 그리고 전체적인 보안과 안정성적인 관점에서 검토를 한 번 구체적이고 꼼꼼하게 하고 수정할 거 있으면 수정하고")으로 세 관점 검토를 돌려 고칠 것은 이 문서에 바로 고쳤고(아래 "검토로 고친 것" 표시 ◆), 사용자가 고를 것만 [`easy/2026-10-16-review-decisions.html`](easy/2026-10-16-review-decisions.html)에 [안]으로 남김. #1~#33 모두 2026-10-16 승인(#27·#31·#32·#33 = 서버가 주는 브라우저 번호·장부·HttpOnly 쿠키·공인 IP 울타리, 2026-10-16 함께 반영)
@@ -266,6 +266,10 @@ erDiagram
 
 - **확장 모드는 서버 캐시를 읽지 않고 넣기만 함** [확정] (설계 결정 #9): 넣는 규칙 = 빈 칸이면 넣음, 서버 출처 값·진행 중인 서버 로드는 덮지 않음 ◆, 확장 값은 따로 둔 캐시(500칸)에 넣고, 다시 넣으면 값만 바꾸고 만료는 처음 넣은 시각 + 3분 그대로 [확정] (검토 #9·#10 승인 2026-10-16; 이유: 서버 칸 밀림 방지보다 "믿을 수 없는 값을 서버가 받은 값과 섞지 않기" — 근거 PortSwigger web cache poisoning, Chrome HTTP cache partitioning, 2026-10-16 확인)
 - **CSRF** ◆: 세 POST는 로그인 기능이 켜지면 `csrf.spa()`가 `X-XSRF-TOKEN`을 요구함(dev `SecurityConfiguration.java:75`, Spring 문서 https://docs.spring.io/spring-security/reference/servlet/exploits/csrf.html 확인 2026-10-16). 웹은 `usageEvents.ts`와 같은 방식(쿠키 없으면 `/api/v1/auth/csrf-token`, `csrf_invalid`면 한 번 다시)
+- **XSS 1차 방어 = 웹 CSP** (이미 있음): dev `deploy/nginx/security-headers.conf` 13행 `script-src 'self'; connect-src 'self'; object-src 'none'; frame-ancestors 'none'` (2026-10-17 읽음), 공지·문서의 Markdown은 원본 HTML을 쓰지 않음(dev `web/src/components/Markdown.tsx`: react-markdown 기본값, `rehype-raw`·`dangerouslySetInnerHTML` 없음) [확정] (dev 파일 확인). 번호 쿠키 HttpOnly(#33)는 그 위의 둘째 겹
+- **로그인을 끈 운영에서는 CSRF 방어가 `SameSite=Strict` 번호 쿠키 + `Origin` 대조 두 겹** (위 CSRF 머리는 로그인 기능이 켜졌을 때만 요구됨)
+- nginx 한도는 IPv6 주소 전체로 셈(`$binary_remote_addr`, dev `deploy/nginx/rate-limits.conf`), 서버 울타리·장부는 앞 /64로 셈 → IPv6 한 사람이 /64 안에서 주소를 바꾸면 nginx 한도는 피할 수 있으나 서버 울타리에 걸림 — 감수 [안]
+- DNS 리바인딩(도서관 호스트 이름이 나중에 사설 주소를 가리키게 바꾸는 공격)은 확장의 주소 거르기(이름 단계)로 막지 못함 — 확장은 GET만·쿠키 없음·응답은 우리 서버 해석만 거쳐 위험 작음, 감수 [안]
 - **올리기 검사 순서** ◆ (본문을 읽기 전에 거절): ⑥ `Origin`(없으면 `Referer`)을 설정의 허용 origin과 대조(요청 Host가 아니라; 둘 다 없으면 거절) → 브라우저 번호 쿠키가 장부에 있음(없음·모름 → 400 `invalid_client_key`) → 장부의 받은 IP(/64) = 지금 IP(다름 → 400 `client_ip_changed`, 잠금에 안 셈) [확정] (검토 #32; #27의 "계획을 만든 IP와 같음" 검사는 이것으로 바뀜) → ⑨ 번호 잠금·IP 잠금(→ 429) → ①⑤ 계획 있음·쪽 번호·처음 받음·계획을 만든 번호와 같음 → ② `Content-Length` ≤ 상한·`Content-Encoding` 없음 → 동시 해석 자리(4, 최대 2초 기다림 → 503) [확정] (검토 #7) → 여기서 본문을 상한까지만 읽는 스트림으로 읽음(`@RequestBody byte[]` 아님; dev에서 nginx 없이 돌 때도 지킴) → ② `status` 200 → ③ adapter 해석(⑩ adapter는 계획 URL 호스트로만) → ⑪ `detailUrl`·`detailItems` 같은 호스트 검사 → ④ 캐시 넣기 규칙
 - ⑦ 계획 만들기 한도는 nginx 계획 구역 공인 IP당 1분 300·몰아서 100 [확정] (검토 #15), ⑨ 잠금에 세는 것 = 모르는 계획 번호·같은 쪽 두 번·Origin 다름만(계획 만료·지워짐·번호 다름·IP 바뀜은 400만, 세지 않음) [확정] (검토 #11 승인 2026-10-16; 세는 단위 = 브라우저 번호, 검토 #22·#32). 서버 안의 공인 IP 울타리 셋(무게 20%·새 번호 1분 30·잠긴 번호 5 → 10분)은 계획 요청에서 장부로 셈 [확정] (검토 #31)
 - 이벤트 이름·데이터는 지금 SSE(`docs/current/api.md` 스트림 절)와 같음. `done`은 상세 단계가 끝나거나 30초가 지나면 화면이 만듦 [확정] (architect 2-3)

@@ -1,5 +1,7 @@
 # 사이클 20 조사: 도서관 조회 부담을 사용자 쪽으로 옮기는 방법
 
+> 역사 기록 — 조사 당시 값(4GB, Grafana, 상한 24시간 등)이 남아 있음. 지금 값은 [`docs/settings-index.md`](../../settings-index.md)와 [`design-delta.md`](design-delta.md)
+
 - 조사일: 2026-10-15. 사용자 요청: "목표는 조회 서버의 부담을 사용자로 옮기는 거야 크롬 확장 말고도 다른 방식이 있으면 좋아"
 - 쉬운 설명·결정 페이지: [`easy/2026-10-15-offload-options.html`](easy/2026-10-15-offload-options.html)
 - 출발점(dev 코드, 2026-10-15 확인, `scope.md` "지금 상태"): 도서관 조회는 모두 GET·쿠키 없음, 해석(adapter 9종)은 본 서비스, 조회 서버(fetch-service)는 URL을 받아 상태 코드와 원본 바이트만 돌려줌(ADR-0015). 일부 도서관은 `http://`(예 `ebook.jeonju.go.kr:8095`), EUC-KR, 중간 인증서 빠짐
