@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ADR-0130 초안</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.card h3.t{font-size:21px;margin:26px 0 8px}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.no{flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+.rec{color:var(--ok);font-weight:500}
+.chg{background:var(--warn-bg);border-radius:8px;padding:8px 12px;margin:8px 0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font-size:15px;line-height:1.55;margin:8px 0 6px;word-break:normal}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+pre .cm{color:var(--muted)} pre .hl{background:var(--warn-bg);color:var(--warn);font-weight:700}
+.src{color:var(--muted);font-size:15px;margin:14px 0 0}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.cap{color:var(--muted);font-size:16px;margin:4px 0 16px}
+.fig{overflow-x:auto;margin:8px 0 4px}
+.fig svg{width:100%;min-width:640px;height:auto;display:block}
+.mine{border:1px dashed var(--warn);background:var(--warn-bg);border-radius:8px;padding:10px 14px;font-size:18px;margin:10px 0}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0}
+.pc>div{border-radius:10px;padding:12px 16px;font-size:18px}
+.pc .p{background:var(--ok-bg)} .pc .c{background:var(--no-bg)}
+.pc h4{margin:0 0 6px;font-size:18px}
+.pc ul{margin:0;padding-left:20px}
+.pc li{margin:0 0 8px}
+@media (max-width:640px){.pc{grid-template-columns:1fr} body{font-size:18px} .lead{font-size:24px}}
+.tbl{overflow-x:auto}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">ADR-0130 초안과 사이클 17 인계:<br>오늘 정한 것을 기록하고 넘기기</p>
+<p class="sub">사용자 말씀(2026-10-16): "ADR-0095 바꾸는 ADR 초안이랑 사이클 17 인계 파일 만들어서 캔버스로 보여줘". 오늘 정한 대출 조회 나가는 길·한도·알림을 ADR-0130 하나로 묶어 ADR-0095를 대신하게 하고, dev에 넘길 것은 사이클 17 폴더에 파일로 둡니다. 정할 것은 두 가지입니다.</p>
+
+<section class="card">
+<h2><span class="num">1</span>오늘 정한 것이 서비스에서 어떻게 돌아가나</h2>
+<p class="gist">사용자가 책을 검색하면 우리 서버(시드니 EC2)가 도서관 사이트마다 고정 IP 21개 중 비어 있는 IP를 골라 대출 현황을 묻습니다. 한도에 가까워지거나 막히면 그 길만 멈추고 메일이 옵니다.</p>
+<div class="fig">
+<svg viewBox="0 0 900 360" role="img" aria-label="대출 조회가 고정 IP 21개로 나가고 한도·막힘이면 메일이 오는 그림">
+<rect x="10" y="130" width="170" height="90" rx="12" fill="var(--accent-bg)" stroke="var(--accent)"/>
+<text x="95" y="166" text-anchor="middle" font-size="17" fill="var(--text)">우리 서버</text>
+<text x="95" y="190" text-anchor="middle" font-size="13" fill="var(--muted)">시드니 EC2</text>
+<rect x="250" y="40" width="250" height="60" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/>
+<text x="375" y="66" text-anchor="middle" font-size="15" fill="var(--text)">EC2 자기 IP 1개</text>
+<text x="375" y="88" text-anchor="middle" font-size="12" fill="var(--muted)">호주 IP, 추가 비용 없음</text>
+<rect x="250" y="130" width="250" height="70" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/>
+<text x="375" y="158" text-anchor="middle" font-size="15" fill="var(--text)">Webshare 한국 정적 20개</text>
+<text x="375" y="182" text-anchor="middle" font-size="12" fill="var(--muted)">KT IP, 월 $6, 250GB</text>
+<rect x="250" y="235" width="250" height="56" rx="8" fill="var(--card)" stroke="var(--line)" stroke-dasharray="6 4"/>
+<text x="375" y="260" text-anchor="middle" font-size="15" fill="var(--muted)">바뀌는 주거용 (나중에)</text>
+<text x="375" y="280" text-anchor="middle" font-size="12" fill="var(--muted)">backlog</text>
+<rect x="740" y="110" width="150" height="110" rx="12" fill="var(--card)" stroke="var(--line)"/>
+<text x="815" y="158" text-anchor="middle" font-size="16" fill="var(--text)">도서관</text>
+<text x="815" y="182" text-anchor="middle" font-size="16" fill="var(--text)">사이트</text>
+<line x1="180" y1="160" x2="250" y2="70" stroke="var(--text)" stroke-width="2"/>
+<line x1="180" y1="170" x2="250" y2="165" stroke="var(--text)" stroke-width="2"/>
+<line x1="180" y1="190" x2="250" y2="263" stroke="var(--muted)" stroke-width="2" stroke-dasharray="6 4"/>
+<line x1="500" y1="70" x2="740" y2="140" stroke="var(--ok)" stroke-width="2"/>
+<line x1="500" y1="165" x2="740" y2="165" stroke="var(--ok)" stroke-width="2"/>
+<rect x="540" y="290" width="200" height="56" rx="8" fill="var(--warn-bg)" stroke="var(--warn)"/>
+<text x="640" y="314" text-anchor="middle" font-size="14" fill="var(--text)">CloudWatch → 메일</text>
+<text x="640" y="334" text-anchor="middle" font-size="12" fill="var(--muted)">막힘·80%·90%·업체 오류·아침 요약</text>
+<line x1="95" y1="220" x2="95" y2="318" stroke="var(--warn)" stroke-width="2"/>
+<line x1="95" y1="318" x2="540" y2="318" stroke="var(--warn)" stroke-width="2"/>
+</svg>
+</div>
+<p class="cap">초록은 첫 배포에 쓰는 길(한 사이트에 1초 최대 21건), 점선은 나중에 더할 길, 노랑은 알림입니다.</p>
+<div class="tbl"><table>
+<tr><th>정한 것</th><th>어디서 정함</th></tr>
+<tr><td>업체 프록시와 서버 공인 IP 여러 개를 둘 다 지원</td><td>첫 페이지 #2 승인</td></tr>
+<tr><td>첫 배포: EC2 IP 1개 + Webshare 한국 정적 20개, 고정 IP 먼저</td><td>첫 배포 프록시 #1·#2 승인 → "정적 20개 먼저, 동적은 나중"</td></tr>
+<tr><td>바뀌는 주거용 허용(동시 5건·연달아 5번 쉼·90% 멈춤), 단 나중에</td><td>첫 배포 프록시 #3~#5 승인, backlog</td></tr>
+<tr><td>CloudWatch 메일, 알릴 일 다섯, 정적 90% 멈춤, 업체 오류면 업체 길 전체 멈춤</td><td>한도와 알림 #1~#4 승인</td></tr>
+<tr><td>Webshare 20개 모두 멈추면 상태 불 최소 노랑</td><td>사이클 20 #21 승인</td></tr>
+</table></div>
+</section>
+
+<section class="card">
+<h2><span class="num">2</span>ADR-0130 초안</h2>
+<p class="gist">ADR-0095의 내용(세 길, IP마다 따로 셈, 막힌 IP만 멈춤, 일반 브라우저 User-Agent)을 이어받고, 오늘 정한 것을 더해 ADR-0095를 대신합니다. 승인하면 ADR-0095는 "Superseded by 0130"이 됩니다.</p>
+<ul>
+<li><b>이전 결정이 바뀌는 점:</b> ADR-0095 G안 "주거용·IP 바꾸는 프록시는 넣지 않음"을 뒤집습니다. 사이클 17의 "알림은 두지 않음"도 바꿉니다.</li>
+<li><b>이유:</b> 모두 오늘 하신 말씀을 그대로 옮겼습니다(예: "지금 프록시가 없으면 1초 제한에 걸려서 사용자가 거의의미가없어 …"). 제가 고른 숫자(동시 5건, 연달아 5번, 80·90%)는 "제안 → 승인"으로 적었습니다.</li>
+<li><b>검토한 대안 여섯:</b> 채택(A), 첫 배포는 프록시 없이(B, 미승인), 정적만(C, 미승인), 서버 IP만(D), 알림 없음(E), <code>.go.kr</code>은 바뀌는 주거용 빼기(F, 미룸).</li>
+<li><b>감수하는 점:</b> 막힌 뒤 다른 IP로 계속 들어가는 모양(대법원 2021도1533)이 주거용 IP로 더 뚜렷해짐, Webshare 공유 IP라 남 때문에 막힐 수 있음, Webshare 계정이 멈추면 EC2 IP 하나로 돌아감.</li>
+</ul>
+<div class="item">
+<h3><span class="no">#1</span>ADR-0130 초안대로 기록</h3>
+<p>[안] 초안(<code>docs/research/deploy/drafts/0130-lookup-egress-webshare-kr-static-and-alerts.md</code>)을 <code>docs/adr/0130-…</code>로 쓰고 <code>Status: Proposed</code>로 둡니다. ADR-0095는 "Superseded by 0130"으로 바꾸고 ADR 목록에 한 줄 더합니다.</p>
+<p class="alt"><b>다른 선택:</b> ADR-0095를 두고 바뀐 부분만 담은 ADR을 따로 → 두 ADR을 함께 읽어야 함. / 사이클 17이 설계할 때 ADR로 → 오늘 정한 것이 그때까지 조사 문서에만 있음.</p>
+<p class="rec">추천: 초안대로.</p>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="num">3</span>사이클 17 인계 파일</h2>
+<p class="gist">사이클 17이 dev에 넘기는 대출 조회 부분(spec R13)을 이 파일 기준으로 맞추도록, 넘길 것 아홉 줄을 <code>docs/cycles/17-first-deploy/from-research-lookup-egress.md</code>에 적었습니다. 사이클 20이 17에 넘긴 파일과 같은 방식입니다.</p>
+<div class="tbl"><table>
+<tr><th>#</th><th>dev에 넘길 것</th></tr>
+<tr><td>1</td><td>나가는 길에 "서버 공인 IP 여러 개" 더하기, 업체 프록시와 둘 다 지원</td></tr>
+<tr><td>2</td><td>첫 배포 길: EC2 IP 1개 + Webshare 한국 20개(주소:포트, IP 등록이라 비밀번호 없음)</td></tr>
+<tr><td>3</td><td>고정 IP 먼저, IP마다 1건·1초(교보 구독형 3건)</td></tr>
+<tr><td>4</td><td>막힌 길: ADR-0095 + 사이클 20 규칙(10분부터 두 배, 7일 상한)</td></tr>
+<tr><td>5</td><td>업체 데이터 세기: 우리가 센 양과 Webshare 사용량 API 중 큰 값, 80% 경고·90% 멈춤, 확장 모드 응답은 빼기</td></tr>
+<tr><td>6</td><td>Webshare 407·429·계정 확인이면 Webshare 길 전체 즉시 멈춤</td></tr>
+<tr><td>7</td><td>CloudWatch → SNS 메일, 알릴 일 다섯, 1시간에 한 번</td></tr>
+<tr><td>8</td><td>상태 불: 20개 모두 멈추면 최소 노랑(사이클 20이 읽음)</td></tr>
+<tr><td>9</td><td>나간 길·업체를 조회 기록에(그대로)</td></tr>
+</table></div>
+<ul>
+<li><b>배포 때 직접 하실 일:</b> Webshare API 키 만들기, AWS가 보내는 SNS 구독 확인 메일 누르기.</li>
+<li><b>17 세션에 알림:</b> 승인하시면 사이클 17 세션에 파일 위치만 메시지로 보냅니다(요약 왕복 없이).</li>
+</ul>
+<div class="item">
+<h3><span class="no">#2</span>이 파일대로 사이클 17에 넘김</h3>
+<p>[안] 파일을 <code>[확정]</code>으로 바꾸고 커밋·푸시한 뒤, chaekcheck-plan-cycle-17 세션에 "17 인계 R13을 이 파일 기준으로 맞춰 달라"고 알립니다.</p>
+<p class="alt"><b>다른 선택:</b> 17 세션이 직접 조사 문서를 읽고 정리 → 17이 같은 내용을 다시 찾아야 함.</p>
+<p class="rec">추천: 이 파일대로.</p>
+</div>
+</section>
+
+<p class="foot">이 글은 요약이며 근거는 <code>docs/research/deploy/multi-source-ip.md</code> 6~9절, ADR-0130 초안, <code>docs/cycles/17-first-deploy/from-research-lookup-egress.md</code>에 있습니다.</p>
+</main>
+</body>
+</html>

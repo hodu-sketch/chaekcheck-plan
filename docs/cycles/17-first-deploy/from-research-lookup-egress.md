@@ -1,0 +1,39 @@
+# 배포 조사(사이클 22 세션) → 사이클 17: 대출 조회 나가는 길·한도·알림 (인계에 넣을 것)
+
+- 쓴 날: 2026-10-16, chaekcheck-plan-cycle-22 세션(사이클 밖 배포 조사). 사용자: "ADR-0095 바꾸는 ADR 초안이랑 사이클 17 인계 파일 만들어서 캔버스로 보여줘"
+- 상태: [안] 사용자가 결정 페이지 `docs/research/deploy/easy/2026-10-16-adr-0130-draft.html`에서 승인하면 [확정]
+- 근거: `docs/research/deploy/multi-source-ip.md` 6~9절, ADR-0130 초안(`docs/research/deploy/drafts/0130-lookup-egress-webshare-kr-static-and-alerts.md`, 승인되면 `docs/adr/0130-…`), ADR-0094
+- 왜 17에: 17이 ADR-0095(대출 조회 나가는 길, spec R13)를 dev에 넘기는 사이클. ADR-0130이 ADR-0095를 대신하므로 17 인계의 R13 부분을 이 파일 기준으로 맞춤
+- 이미 맞춘 곳: 사이클 20 `design-delta.md` 「사이클 22 나가는 길·알림과 맞춤」(충돌 없음), 20 spec R1(#21 상태 불)
+
+## 1. 바뀌는 사실
+
+- 운영 EC2는 **시드니(ap-southeast-2), 고정 IP <서버 IP>**. 한국 IP는 Webshare 20개뿐 (17 `research.md` 330·334·339행과 같음)
+- Webshare 계정: Static Residential(공유) 20개, 한국, 250GB/월, IP 자동 교체 없음, 월 $6(첫 결제 $5.40, 2026-10-16), 기간 매달 16일 시작. 동시 연결 기본 500. **IP Authorization = EC2 IP <서버 IP>**(아이디·비밀번호 없이 IP로 허용, 1개만 됨)
+
+## 2. dev에 넘길 것
+
+| # | 무엇 | 값 |
+|---|---|---|
+| 1 | 나가는 길 종류 | ADR-0095의 셋(직접 / 직접 + 업체 프록시 / 조회 서버)에 **서버 자기 공인 IP 여러 개**를 더함. 업체 프록시와 서버 공인 IP 여러 개 모두 지원, 설정이 따로 필요하면 따로. 본 서비스·조회 서버 모두 [안: 구현 방법은 dev — IP마다 tinyproxy `Bind`로 "우리 프록시 목록"을 만들면 업체 프록시와 같은 코드] |
+| 2 | 첫 배포 길 설정 | EC2 자기 IP 1개 + Webshare 한국 정적 주거용 20개(주소:포트 목록, IP Authorization이라 인증 값 없음). 바뀌는 주거용은 넣지 않음(나중, `docs/backlog.md`) |
+| 3 | 고르는 순서 | 도서관 사이트마다 고정 IP 21개 중 지금 보낼 수 있는 IP 먼저. IP마다 동시 1건·1초, 교보 구독형 서버(`*.dkyobobook.co.kr`)는 IP마다 동시 3건(ADR-0094, 설정) |
+| 4 | 막힌 길 | ADR-0095 그대로(막힌 IP만 그 사이트에서 멈춤), 다시 보기는 `from-cycle-20-blocked-ip-resume.md`(10분부터 두 배, 7일 상한) |
+| 5 | 업체 데이터 세기 | 우리 서버가 Webshare 프록시로 받은 데이터를 셈(확장 모드 응답은 빼기). 1시간마다 Webshare 사용량 API `GET https://proxy.webshare.io/api/v2/stats/aggregate/`(`bandwidth_total`)와 비교해 큰 값. 플랜 250GB의 **80% 경고, 90% Webshare 길 멈춤**, 다음 달 시작에 다시 켬. Webshare API 키는 서버 비밀 값(Parameter Store `/chaekcheck/prod/*`) |
+| 6 | 업체 쪽 오류 | Webshare 응답이 407(인증), 429 `client_connect_high_concurrency`, 계정 확인·정지면 사이트별 규칙을 기다리지 않고 **Webshare 길 전체 즉시 멈춤**, EC2 IP로 계속. 다시 켜기는 설정 |
+| 7 | 알림 | CloudWatch 경보 → AWS SNS 메일 `<알림 메일>`, 같은 일 1시간에 한 번까지. 보낼 일: ① 길이 사이트에서 쉬기 시작·7일 상한·풀림 ② 모든 길 막혀 "확인 불가" ③ 업체 데이터 80%·90% ④ 업체 계정 문제로 업체 길 전체 멈춤 ⑤ 매일 아침 요약(길마다 어제 요청·실패·데이터, 쉬는 길 목록). 17의 "알림은 두지 않음"을 바꿈. 서버는 기록(지표·로그)만 남기고 메일은 AWS가 보냄 |
+| 8 | 상태 불(사이클 20) | Webshare 길 20개가 한꺼번에 멈춘 동안 최소 노랑 — 20이 #6·#5의 "업체 길 멈춤" 값을 읽음 (20 spec R1) |
+| 9 | 기록 | 나간 길·업체를 조회 기록에 남김(ADR-0095 그대로) |
+
+## 3. 사용자가 배포 때 할 일
+
+- Webshare 대시보드에서 API 키 만들기 → 서버 비밀 값으로
+- SNS 메일 구독 확인 메일(AWS가 보냄)에서 확인 누르기
+
+## 4. 확인 필요
+
+| 무엇 | 어떻게 |
+|---|---|
+| dev HTTP 클라이언트가 프록시·나가는 주소를 고를 수 있는지 | dev 코드 확인 |
+| CloudWatch 경보 개수(무료 10개)와 SNS 메일 값 | 설계 때 경보 목록을 세고 공식 가격 확인 |
+| 부산 전자도서관 실제 조회 주소(`ebook.busan.go.kr:8081/FxLibrary`)가 열리는지 | 배포 뒤 Webshare 길로 시험 |
