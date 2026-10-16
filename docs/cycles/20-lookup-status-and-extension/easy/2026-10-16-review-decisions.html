@@ -1657,6 +1657,28 @@ svg .ah{fill:var(--accent)}
 <tr><td>우리 사이트에 XSS — 스크립트가 그 자리에서 올리기를 보냄</td><td>못 막음</td><td>CSP, 계획 번호·장부·IP(#32), 한도·잠금으로 줄임</td></tr>
 </table>
 <p>그래서 CORS는 "열지 않는다(기본 거절)"로 두는 게 맞고, 그건 이미 그렇게 되어 있습니다. XSS로 번호가 새지 않게 하는 건 #33(HttpOnly 쿠키)이 맡습니다. 그리고 #32가 서명을 쓰지 않기로 해서, #33 문장의 "쿠키의 번호 서명"은 "쿠키의 번호를 장부와 대조"로 바꿉니다.</p>
+<h3 style="font-size:20px;margin:18px 0 6px">질문에 답: "자바스크립트로 쿠키 값을 읽어 (바꿔서) 함께 보내는 것" — 그 이름은 "더블 서브밋 쿠키(Double Submit Cookie)"</h3>
+<p class="concl">기억하신 것은 <b>더블 서브밋 쿠키</b>입니다. 서버가 읽을 수 있는 쿠키에 무작위 값(토큰)을 주고, 화면 자바스크립트가 그 값을 읽어 <b>머리글에도 한 번 더</b> 실어 보내면, 서버가 "쿠키 값 = 머리글 값"인지 봅니다. 다른 사이트는 우리 쿠키를 읽을 수 없어 머리글을 못 채우므로 <b>다른 사이트가 시킨 요청(CSRF)</b>을 막습니다. Spring은 여기에 값을 매번 섞어(가려) 보내는 방식까지 넣어 두었습니다. <b>우리는 이미 이걸 씁니다</b> — POST마다 <code>X-XSRF-TOKEN</code> 머리글(설계 CSRF 줄, dev <code>SecurityConfiguration.java</code> <code>csrf.spa()</code>).</p>
+<div class="fig wide"><svg viewBox="0 0 900 230" role="img" aria-label="두 쿠키가 막는 것">
+<rect class="bx" x="10" y="20" width="430" height="190" rx="8"/><text class="s14" x="20" y="44">① XSRF 토큰 쿠키 (이미 있음)</text>
+<text class="s13" x="20" y="70" font-size="12">자바스크립트가 읽을 수 있는 쿠키</text>
+<text class="s13" x="20" y="92" font-size="12">화면이 읽어 X-XSRF-TOKEN 머리글로 함께 보냄</text>
+<text class="s13 sok" x="20" y="120" font-size="12">막음: 다른 사이트가 시킨 요청 (CSRF)</text>
+<text class="s13 sred" x="20" y="144" font-size="12">못 막음: XSS — 스크립트도 이 쿠키를 읽어</text>
+<text class="s13 sred" x="20" y="164" font-size="12">머리글을 똑같이 채울 수 있음</text>
+<text class="s13m" x="20" y="194" font-size="11">이름: 더블 서브밋 쿠키 (Spring은 값을 섞어 보냄)</text>
+<rect class="bxok" x="460" y="20" width="430" height="190" rx="8"/><text class="s14" x="470" y="44">② 브라우저 번호 쿠키 (#33 제안)</text>
+<text class="s13" x="470" y="70" font-size="12">HttpOnly — 자바스크립트가 읽지 못함</text>
+<text class="s13" x="470" y="92" font-size="12">브라우저가 알아서 올리기 주소에만 보냄</text>
+<text class="s13 sok" x="470" y="120" font-size="12">막음: XSS가 번호를 훔쳐 가기</text>
+<text class="s13 sok" x="470" y="144" font-size="12">막음: 다른 사이트 요청 (SameSite=Strict)</text>
+<text class="s13m" x="470" y="194" font-size="11">둘이 함께 → CSRF와 번호 훔치기 둘 다</text>
+</svg><p class="cap">①은 이미 있는 CSRF 방어(자바스크립트가 읽어 함께 보내는 방식), ②는 자바스크립트가 아예 못 읽게 하는 방식입니다. 둘은 막는 것이 달라 함께 씁니다.</p></div>
+<table>
+<tr><th>근거</th><th>내용</th></tr>
+<tr><td>OWASP CSRF 방지 지침 (2026-10-16 확인)</td><td>더블 서브밋 쿠키 중 "서명된" 방식이 가장 강함. 그리고 "XSS는 모든 CSRF 방어를 무너뜨릴 수 있다"("Remember that Cross-Site Scripting (XSS) can defeat all CSRF mitigation techniques!") — https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html</td></tr>
+<tr><td>그래서 우리가 하는 것</td><td>CSRF는 ①(이미 있음), 번호 훔치기는 ②(HttpOnly), XSS 자체는 CSP·외부 글을 HTML로 넣지 않기로 줄이고, 그래도 생긴 XSS가 그 자리에서 보내는 요청은 장부·IP(#32)·한도·잠금(#31)으로 피해를 묶음</td></tr>
+</table>
 <p class="concl">[안] 브라우저 번호는 탭 메모리 대신 <b>HttpOnly·Secure·SameSite=Strict 쿠키</b>(경로 <code>/api/v1/lookup-plans</code>·계획 주소만, 수명 1일, 값은 설정)로 줍니다. 자바스크립트는 번호를 보지도 못하고, 서버는 쿠키의 번호를 #32 장부와 대조(+ 받은 IP)해 확인합니다. CORS는 열지 않음(기본 거절). #22·#27의 "머리글 <code>X-Lookup-Client</code>"는 쿠키로 바뀝니다. 처리방침의 쿠키 설명에 한 줄 더함.</p>
 <p class="alt">다른 선택: 탭 메모리 그대로 — 탭마다 따로 셀 수 있지만 XSS가 생기면 번호를 훔쳐 갈 수 있습니다.</p>
 </div>
