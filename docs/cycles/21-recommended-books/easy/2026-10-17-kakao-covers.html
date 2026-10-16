@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 21 카카오 표지</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+
+.v-flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.v-box{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:7px 11px;font-size:15px;text-align:center;min-width:90px}
+.v-box small{display:block;color:var(--muted);font-size:12px}
+.v-hi{border-color:var(--accent);background:var(--accent-bg)}
+.v-warn{border-color:var(--warn);background:var(--warn-bg)}
+.v-ok{border-color:var(--ok);background:var(--ok-bg)}
+.v-arr{color:var(--muted);font-size:18px}
+.v-file{border:2px solid var(--line);border-radius:12px;background:var(--card);padding:10px;margin:10px 0;max-width:560px}
+.v-file .v-part{border:1px dashed var(--line);border-radius:8px;padding:8px 10px;margin:6px 0;font-size:14px}
+.v-file .v-part.v-new{border-color:var(--accent);background:var(--accent-bg)}
+.v-tl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0;font-size:13px;text-align:center}
+.v-tl div{border-top:4px solid var(--line);padding-top:6px}
+.v-tl div.v-hi{border-top-color:var(--accent);background:none}
+.v-cv{display:inline-flex;width:70px;aspect-ratio:2/3;border-radius:7px;border:1px solid var(--line);background:var(--accent-bg);align-items:center;justify-content:center;font-size:11px;text-align:center;padding:3px;vertical-align:top;margin:4px}
+.v-cv.v-img{background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 6px,var(--card) 6px,var(--card) 12px)}
+.v-mini{border:1px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;margin:8px 0;max-width:420px}
+.v-mini .v-bar{display:flex;gap:10px;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line);font-size:13px}
+.v-mini .v-body{padding:10px 12px;font-size:13px}
+.v-pill{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-weight:800;font-size:12px}
+@media (max-width:700px){main table{display:block;overflow-x:auto;max-width:100%}.v-tl{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.v-code{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:var(--code-bg);border-radius:8px;padding:8px 10px;overflow-x:auto;white-space:pre}
+</style>
+</head>
+
+<body>
+<main class="doc">
+<p class="lead">카카오에서 받은 표지 18장을<br>어떻게 할지 1개를 골라 주세요.</p>
+<p class="sub">dev에서 표지 차례 끝에 카카오 책 검색을 더해 표지가 거의 다 찼습니다. 그런데 카카오는 받은 정보를 <b>그대로 오래 저장하는 것</b>을 허용하지 않습니다. 이 페이지에서 "판"은 책의 판만 뜻합니다.</p>
+<div class="card"><h2>표지가 어디서 왔나 (dev 2026-10-17 셈)</h2><table><tr><th>목록</th><th>수집 DB YES24 · 교보</th><th>수집 DB 그 밖</th><th>국립중앙도서관</th><th>카카오</th><th>없음</th></tr><tr><td>이동진 43권</td><td>34</td><td>0</td><td>3</td><td><b>6</b></td><td>0</td></tr><tr><td>서울대 100권</td><td>73</td><td>11</td><td>3</td><td><b>12</b></td><td>1 (「제자백가 선독」)</td></tr><tr><td>사서 108권</td><td colspan="5">지금처럼 서버가 국립중앙도서관에서 받음 (카카오 0)</td></tr></table><p class="cap">카카오 18장은 앞 차례(국립중앙도서관 · 수집 DB)에서 못 받은 책만 카카오로 간 것입니다.</p></div>
+<div class="card"><h2>카카오 조건</h2><p class="concl">DB에 저장해 늘 보여 줄 수는 있지만, <b>다시 받아 최신으로 맞추지 않고 계속 두면 안 됩니다.</b> 얼마마다 다시 받을지는 정해져 있지 않습니다.</p><ul><li>"운영정책상 제공되는 데이터를 DB에 영구 저장하거나 장기적인 하드캐싱은 허용하고 있지 않습니다."</li><li>"관련 정보의 상시 표기를 위해 DB에 저장하실 수 있지만, 이는 해당 정보 제공을 위한 버퍼링으로만 사용되어야 하며 최신화 행위 없이 영구적으로 저장해서는 안됩니다."</li><li>갱신 주기: "별도 권장 주기는 제공하고 있지 않습니다." 무료 한도는 하루 3만 건.</li></ul><p class="cap">출처: 카카오 DevTalk 운영자 답변 https://devtalk.kakao.com/t/api-daum-search/150751 (2026-07-20 답변, 2026-10-17 확인). 표지 그림 자체의 저작권은 다른 표지와 같이 "작게 줄여 저장 + 출처 표시 + 삭제 요청 받으면 내림"(docs/research/popular-books/cover-copyright.md 6절).</p></div>
+<div class="card item"><h2><span class="num">1</span>카카오 표지는 수집할 때마다 다시 받아 맞춤</h2><p class="concl">[안] 카카오 표지 18장은 쓰되, 수집기가 돌 때마다(한 달에 한 번 이상) 카카오에서 다시 받아 바꿔 넣습니다. 카카오가 그 책을 더는 주지 않으면 표지를 빼고 제목 글자 표지로 돌립니다. 목록 파일에 받은 날을 적어, 30일 넘게 다시 받지 못한 카카오 표지는 가져오기 파일을 만들 때 빼고 경고합니다.</p><div class="v-flow"><div class="v-box ">수집 실행<br><small>한 달에 한 번 이상</small></div><span class="v-arr">→</span><div class="v-box v-hi">카카오 표지 18장 다시 받기</div><span class="v-arr">→</span><div class="v-box ">받은 날 고침</div><span class="v-arr">→</span><div class="v-box v-ok">가져오기 파일<br><small>30일 넘은 것은 뺌</small></div></div><p><b>좋은 점:</b> 이동진 43권 · 서울대 99권 표지가 그대로 보입니다. "최신화 없이 영구 저장"이 아니게 됩니다(유튜브 30일 규칙과 같은 꼴).</p><p><b>감수할 것:</b> 수집기에 카카오 키와 다시 받기 코드가 남습니다. 수집을 30일 넘게 안 돌리면 그 18권은 제목 글자 표지가 됩니다.</p><p class="alt">다른 선택: 카카오 표지를 쓰지 않음 — 18권(이동진 6 · 서울대 12)은 제목 글자 표지. 가장 단순하고 조건을 걱정할 일이 없지만, 표지가 빈 책이 생깁니다.</p></div>
+<p class="foot">원본: dev 21 메시지 (2026-10-17, c21 커밋 9a0a839), 카카오 DevTalk 답변. 고치게 될 문서: spec R5-4, design-delta 외부 연동 · 목록 파일, handoff 7단계 표지 차례.</p>
+</main></body></html>
