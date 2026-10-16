@@ -17,6 +17,7 @@
 |---|---|---|
 | 1 | 나가는 길 종류 | ADR-0095의 셋(직접 / 직접 + 업체 프록시 / 조회 서버)에 **서버 자기 공인 IP 여러 개**를 더함. 업체 프록시와 서버 공인 IP 여러 개 모두 지원, 설정이 따로 필요하면 따로. **본 서비스가 직접 조회하는 길과 따로 둔 조회 서버로 조회하는 길 둘 다 개발**(사용자, 2026-10-16), 두 길 모두 같은 나가는 길 설정 [안: 구현 방법은 dev — IP마다 tinyproxy `Bind`로 "우리 프록시 목록"을 만들면 업체 프록시와 같은 코드] |
 | 2 | 첫 배포 길 설정 | EC2 자기 IP 1개 + Webshare 한국 정적 주거용 20개(주소:포트 목록, IP Authorization이라 인증 값 없음). 바뀌는 주거용은 넣지 않음(나중, `docs/backlog.md`) |
+| 2-1 | 길 설정 값 (사이클 20 #24, 2026-10-16 추가) | `모두`(기본, EC2 1 + Webshare 20) / `프록시만`(Webshare 20만, EC2 IP로는 도서관에 안 감·막힌 길 다시 시험 포함, Webshare 20개가 모두 멈춰도 EC2로 자동 전환 안 함) / `직접만`(EC2 1). 대출 조회 길에만. 자세한 것 `from-cycle-20-proxy-only.md`. ADR-0130 "길을 설정으로 고름" 안의 값이라 ADR은 그대로 |
 | 3 | 고르는 순서 | 도서관 사이트마다 고정 IP 21개 중 지금 보낼 수 있는 IP 먼저. IP마다 동시 1건·1초, 교보 구독형 서버(`*.dkyobobook.co.kr`)는 IP마다 동시 3건(ADR-0094, 설정) |
 | 4 | 막힌 길 | ADR-0095 그대로(막힌 IP만 그 사이트에서 멈춤), 다시 보기는 `from-cycle-20-blocked-ip-resume.md`(10분부터 두 배, 7일 상한) |
 | 5 | 업체 데이터 세기 | 우리 서버가 Webshare 프록시로 받은 데이터를 셈(확장 모드 응답은 빼기). 1시간마다 Webshare 사용량 API `GET https://proxy.webshare.io/api/v2/stats/aggregate/`(`bandwidth_total`)와 비교해 큰 값. 플랜 250GB의 **80% 경고, 90% Webshare 길 멈춤**, 다음 달 시작에 다시 켬. Webshare API 키는 서버 비밀 값(Parameter Store `/chaekcheck/prod/*`) |
