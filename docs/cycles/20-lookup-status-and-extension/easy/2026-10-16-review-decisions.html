@@ -823,6 +823,20 @@ svg .ah{fill:var(--accent)}
 <path d="M630 58 H570" class="ar" marker-end="url(#ah18c)"/><text class="s13m" x="578" y="106" font-size="12">replaces=p_2</text>
 <text class="s13m" x="10" y="140">같은 IP가 만든 것만 지움 · 같은 검색의 다음 묶음은 안 지움 · 화면 떠날 때 마지막 계획도 닫기로 지움</text>
 </svg><p class="cap">새 검색이 바로 앞 계획 번호를 알려 주면 서버가 그것만 지웁니다.</p></div>
+<h3 style="font-size:20px;margin:18px 0 6px">질문에 답: IP를 함께 쓰는 옆 사람이 피해를 보지 않나?</h3>
+<p class="concl"><b>#18(새 검색이 앞 계획 지우기) 자체는 옆 사람에게 피해가 없습니다.</b> 지우려면 그 계획 번호를 알아야 하는데, 계획 번호는 서버가 만든 16바이트 무작위 값이라 옆 사람은 알 수 없습니다. IP 같음 검사는 덤입니다. <b>하지만 짚어 주신 문제는 다른 곳에 있습니다</b> — IP 하나로 세는 한도 두 개(#8 "IP당 열린 계획 20", #11 "IP 10분 잠금")는 같은 IP를 쓰는 사람들이 함께 묶입니다. 그래서 새 제안 #22로 "사람(브라우저)마다 따로"를 냈습니다(맨 아래).</p>
+<div class="fig wide"><svg viewBox="0 0 900 230" role="img" aria-label="공인 IP 하나를 여럿이 쓰는 경우">
+<text class="s14" x="10" y="22">공인 IP 하나를 여럿이 함께 쓰는 곳</text>
+<rect class="bx" x="10" y="40" width="160" height="40" rx="6"/><text class="s13" x="20" y="65" font-size="12">휴대폰 A</text>
+<rect class="bx" x="10" y="90" width="160" height="40" rx="6"/><text class="s13" x="20" y="115" font-size="12">휴대폰 B</text>
+<rect class="bx" x="10" y="140" width="160" height="40" rx="6"/><text class="s13" x="20" y="165" font-size="12">회사 PC C</text>
+<rect class="bxa" x="260" y="80" width="230" height="60" rx="8"/><text class="s13" x="270" y="106" font-size="12">통신사·회사 공유기</text><text class="s13m" x="270" y="126" font-size="11">밖에서는 IP 1.2.3.4 하나</text>
+<path d="M170 60 L260 100" class="ar"/><path d="M170 110 H260" class="ar"/><path d="M170 160 L260 120" class="ar"/>
+<rect class="bx" x="560" y="40" width="330" height="160" rx="8"/><text class="s14" x="570" y="64">우리 서버가 보는 것</text>
+<text class="s13" x="570" y="90" font-size="12">#18 앞 계획 지우기: 계획 번호를 알아야 함</text><text class="s13 sok" x="570" y="110" font-size="12">→ 옆 사람 것 못 지움 (피해 없음)</text>
+<text class="s13" x="570" y="140" font-size="12">#8 IP당 열린 계획 20 · #11 IP 잠금</text><text class="s13 sred" x="570" y="160" font-size="12">→ A·B·C가 한 묶음으로 셈 (피해 가능)</text>
+<text class="s13m" x="570" y="186" font-size="11">→ 새 제안 #22에서 사람마다 따로 셈</text>
+</svg><p class="cap">휴대폰 통신사의 공유 주소(CGN)는 여러 가입자가 같은 공인 IP를 쓰는 방식으로, 그 주소 대역이 RFC 6598로 정해져 있습니다 (https://www.rfc-editor.org/rfc/rfc6598 , 2026-10-16 확인).</p></div>
 <p class="concl">[안] 위대로 새 검색이 앞 계획을 지웁니다.</p>
 <p class="alt">다른 선택: 같은 IP의 앞 계획을 모두 지움 — 번호를 안 보내도 되지만 IP를 함께 쓰는 집·회사에서 옆 사람 검색을 끊습니다. 지우지 않음 — #8 상한에 맡김.</p>
 </div>
@@ -954,6 +968,36 @@ svg .ah{fill:var(--accent)}
 <p class="concl" style="border:2px solid var(--ok)"><b>정함 (2026-10-16)</b>: 승인. 명세 R1, 설계 문서(사이클 22와 맞춤 절), <code>docs/settings-index.md</code>에 반영하고 사이클 22 세션에 알렸습니다.</p>
 <p class="concl">[안] Webshare 길이 한꺼번에 멈춘 동안(업체 문제 또는 데이터 90%) 상태 단계를 <b>최소 노랑</b>으로 올리고, 둘째 줄은 "지금은 조회가 평소보다 느려요". 줄이 차서 빨강이 되는 규칙은 그대로. 다시 켜지면 원래 규칙으로. 사이클 22의 "업체 길 멈춤" 값을 읽기만 합니다.</p>
 <p class="alt">다른 선택: 지금 규칙 그대로(검색 자리만 봄). 단순하지만, 길이 1개로 줄어 느린데도 불은 초록일 수 있습니다.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">22</span>IP를 함께 쓰는 사람끼리 묶이지 않게:<br>사람(브라우저)마다 따로 세기 (#18 질문에서)</h2>
+<p><b>어디서 생기나.</b> #18 질문("아이피로만 하면 같은 공인아이피의 다른 상대가 피해가 갈 것 같은데 각각 클라이언트를 보호할 방법은?")에서 나왔습니다. 지금 설계는 확장 모드의 한도를 IP로 셉니다: #8 "IP당 열린 계획 20, 넘으면 그 IP의 가장 오래된 것 지움"(승인됨), #11 "검사 실패가 1분 30번이면 그 IP 10분 잠금". 휴대폰 통신사·회사·학교처럼 여럿이 IP 하나를 쓰면, <b>옆 사람이 계획 20개를 넘기면 내 계획이 지워지고, 옆 사람이 잠기면 나도 잠깁니다.</b></p>
+<div class="fig wide"><svg viewBox="0 0 900 250" role="img" aria-label="브라우저 열쇠로 사람마다 세기">
+<text class="s14" x="10" y="22">제안: 화면이 탭마다 무작위 "브라우저 열쇠"를 하나 만들어 계획 요청에 붙임</text>
+<rect class="bx" x="10" y="40" width="200" height="34" rx="6"/><text class="s13" x="20" y="62" font-size="12">A 탭: 열쇠 k-7f3a…</text>
+<rect class="bx" x="10" y="82" width="200" height="34" rx="6"/><text class="s13" x="20" y="104" font-size="12">B 탭: 열쇠 k-91c0…</text>
+<rect class="bx" x="10" y="124" width="200" height="34" rx="6"/><text class="s13" x="20" y="146" font-size="12">C 탭: 열쇠 k-0d55…</text>
+<rect class="bxok" x="260" y="40" width="300" height="118" rx="8"/><text class="s14" x="270" y="62">사람마다 (열쇠별)</text>
+<text class="s13" x="270" y="86" font-size="12">열린 계획 20, 넘으면 그 열쇠의 가장 오래된 것만</text>
+<text class="s13" x="270" y="108" font-size="12">검사 실패 1분 30번 → 그 열쇠만 10분 잠금</text>
+<text class="s13m" x="270" y="132" font-size="11">계획은 만든 열쇠로만 올리기·지우기 가능</text>
+<rect class="bxa" x="590" y="40" width="300" height="118" rx="8"/><text class="s14" x="600" y="62">IP 전체 (큰 울타리만)</text>
+<text class="s13" x="600" y="86" font-size="12">열린 계획 200까지, 넘으면 새 계획 503</text><text class="s13m" x="600" y="104" font-size="11">→ 그 검색만 서버 모드 (남의 것 안 지움)</text>
+<text class="s13" x="600" y="128" font-size="12">IP 잠금은 다른 열쇠 5개 이상이 잠길 때만</text>
+<text class="s13m" x="10" y="190" font-size="12">열쇠는 공격자가 새로 만들 수 있으므로 IP 울타리(200·열쇠 5개)는 남겨 둠 — 열쇠는 "정상 사용자끼리 묶이지 않게", IP 울타리는 "한 곳에서 대량 공격"을 막음</text>
+<text class="s13m" x="10" y="212" font-size="12">열쇠는 로그인·쿠키가 아니고 탭 메모리에만(창 닫으면 사라짐), 개인정보 아님. 서버 메모리: 열쇠별 카운터 몇 바이트</text>
+<text class="s13m" x="10" y="234" font-size="12">nginx IP당 한도(올리기 연결 4·초당 20, 계획 분당 60)는 그대로 — 넘으면 거절이 아니라 잠깐 차례 대기라 피해가 작음 · 배포 뒤 기록으로 조정</text>
+</svg><p class="cap">사람마다 세는 한도는 열쇠로, IP는 대량 공격을 막는 큰 울타리로만 씁니다.</p></div>
+<table>
+<tr><th>상황</th><th>지금 (IP로만)</th><th>제안 (열쇠 + IP 울타리)</th></tr>
+<tr><td>같은 IP의 옆 사람이 검색을 많이 함</td><td>21번째부터 내 계획이 지워질 수 있음</td><td>옆 사람 열쇠 안에서만 지워짐. IP 전체 200을 넘으면 새 계획만 서버 모드</td></tr>
+<tr><td>같은 IP의 누군가가 공격</td><td>IP 전체 10분 잠김 (나도)</td><td>그 열쇠만 잠김. 열쇠를 바꿔 가며 5개 넘게 잠기면 그때 IP 잠금</td></tr>
+<tr><td>#18 앞 계획 지우기</td><td colspan="2">계획 번호 + 같은 열쇠여야 지움 (원래도 피해 없음)</td></tr>
+<tr><td>서버 자원</td><td colspan="2">계획에 열쇠 1칸(16바이트) 더함, 열쇠별 실패 카운터(#11과 같은 상한 안)</td></tr>
+</table>
+<p class="concl">[안] 화면이 탭마다 무작위 "브라우저 열쇠"(16바이트, 탭 메모리에만)를 만들어 계획 요청·올리기·닫기에 머리글로 붙이고, 서버는 <b>열린 계획 20과 10분 잠금을 열쇠별로</b> 셉니다. IP는 큰 울타리로만: 열린 계획 200(넘으면 새 계획 503 → 서버 모드, 남의 것 안 지움), 잠긴 열쇠 5개 이상일 때만 IP 잠금. 계획은 만든 열쇠로만 올리기·지우기. #8의 "IP당 20"은 "열쇠당 20 + IP 울타리 200"으로 바뀝니다.</p>
+<p class="alt">다른 선택: 지금처럼 IP로만(가장 단순, 개인 서버 규모라 함께 묶일 일이 드물다고 보고 감수). 또는 로그인 사용자만 확장 모드(사람이 확실하지만 로그인 없는 사용자는 확장 모드를 못 씀).</p>
 </div>
 
 <p class="foot">원문: <code>docs/cycles/20-lookup-status-and-extension/design-delta.md</code>(◆ = 이번 검토로 고친 곳), <code>spec.md</code>(AC-10a·16~20 추가), <code>flow.md</code>, ADR-0119(Proposed, 검사 순서 고침). 검토는 사용자·서버 자원·보안/안정성 세 관점, dev 코드와 공식 문서(크롬 확장 service worker 수명, Spring CSRF, nginx) 확인 2026-10-16.</p>
