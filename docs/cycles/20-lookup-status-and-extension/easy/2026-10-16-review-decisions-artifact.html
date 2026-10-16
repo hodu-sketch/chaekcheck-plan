@@ -1215,6 +1215,29 @@ body{background:var(--bg);color:var(--text)}
 <p class="alt">다른 선택: 별도 작은 사이클로(backlog) — 사이클 20과 섞이지 않지만 그만큼 늦게 반영됩니다.</p>
 </div>
 
+<div class="card item">
+<h2><span class="num">24</span>나가는 길 설정에 "프록시만" 옵션:<br>서버 자기 IP로는 도서관에 가지 않기</h2>
+<p><b>어디서 생기나.</b> 사용자 요청(2026-10-16): "옵션 설정하는 거 있잖아, 프록시만 하면 프록시만 하고 자체 서버 IP에서 수집하는 것을 안 하도록 했으면 해". 지금 정해진 첫 배포 길은 <b>21개 = 시드니 EC2 자기 IP 1 + Webshare 한국 IP 20</b>이고(ADR-0130, 사이클 22), 이 둘을 고르는 설정이 있습니다. 여기에 "프록시만"을 고를 수 있게 하자는 것입니다. 나가는 길 설정 자체는 사이클 22·17(ADR-0130) 몫이라, 정해지면 그쪽 인계 파일로 넘기고, 사이클 20은 상태 불이 이 설정을 따르게만 합니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 250" role="img" aria-label="나가는 길 설정 세 가지">
+<text class="s14" x="10" y="22">나가는 길 설정 (하나를 고름)</text>
+<rect class="bx" x="10" y="36" width="280" height="100" rx="8"/><text class="s14" x="20" y="58">모두 (지금)</text><text class="s13" x="20" y="82" font-size="12">EC2 IP 1 + 한국 IP 20 = 21개</text><text class="s13m" x="20" y="104" font-size="11">EC2를 막는 go.kr 일부는 20개</text>
+<rect class="bxok" x="310" y="36" width="280" height="100" rx="8"/><text class="s14" x="320" y="58">프록시만 (새로)</text><text class="s13" x="320" y="82" font-size="12">한국 IP 20개만</text><text class="s13m" x="320" y="104" font-size="11">시드니 EC2 IP로는 도서관에 안 감</text>
+<rect class="bx" x="610" y="36" width="280" height="100" rx="8"/><text class="s14" x="620" y="58">직접만</text><text class="s13" x="620" y="82" font-size="12">EC2 IP 1개만</text><text class="s13m" x="620" y="104" font-size="11">Webshare를 쓰지 않을 때</text>
+<text class="s14" x="10" y="170">"프록시만"에서 Webshare 20개가 한꺼번에 멈추면? (#21의 경우)</text>
+<text class="s13" x="20" y="194" font-size="12">길이 0개 → 서버 모드로는 어느 도서관도 못 감 → 모든 도서관 「확인하지 못한 도서관」</text>
+<text class="s13" x="20" y="216" font-size="12">머리말: 빨강 "지금은 도서관 조회를 할 수 없어요" · 확장 모드(파란 불)는 사용자 브라우저로 가므로 계속 됨</text>
+<text class="s13m" x="20" y="238" font-size="11">운영자에게는 사이클 22의 "업체 길 멈춤" 메일이 감 → 설정을 "모두"로 바꾸면 EC2로 다시 감</text>
+</svg><p class="cap">"프록시만"이면 시드니 IP는 도서관에 쓰지 않습니다. 대신 Webshare가 멈추면 서버 모드 조회가 멈춥니다.</p></div>
+<table>
+<tr><th>물음</th><th>제안</th><th>이유</th></tr>
+<tr><td>설정 값</td><td><code>모두</code>(기본) / <code>프록시만</code> / <code>직접만</code> 셋 중 하나, 바꾸면 다시 켜기만</td><td>ADR-0130의 "자체 서버 조회·조회 서버 둘 다 개발"과 같은 설정 자리에 값 하나 더</td></tr>
+<tr><td>"프록시만"에서 Webshare가 모두 멈추면</td><td><b>EC2로 자동으로 넘어가지 않음</b> — 서버 모드 조회 멈춤, 머리말 빨강 "지금은 도서관 조회를 할 수 없어요", 확장 모드는 계속, 운영자 메일</td><td>"자체 서버 IP로는 안 가게"라는 뜻을 지킴. 자동으로 넘어가면 옵션을 고른 의미가 없어짐</td></tr>
+<tr><td>어디에 적용</td><td><b>대출 조회(서비스)</b>의 나가는 길에만</td><td>책 목록 수집기는 따로 도는 프로그램이고 길 설정도 따로임 — 수집기에도 같은 옵션이 필요하면 기타로 알려 주세요</td></tr>
+</table>
+<p class="concl"><span class="chip" data-n="24">안 #24</span> 나가는 길 설정에 <code>프록시만</code>을 더해 <code>모두</code>(기본)·<code>프록시만</code>·<code>직접만</code> 중 고름. <code>프록시만</code>이면 시드니 EC2 IP로는 도서관에 가지 않고, Webshare 20개가 모두 멈추면 EC2로 자동으로 넘어가지 않음(서버 모드 조회 멈춤, 머리말 빨강 "지금은 도서관 조회를 할 수 없어요", 확장 모드는 계속, 운영자 메일). 대출 조회 길에만 적용. 결정은 사이클 17 인계 파일과 사이클 22 세션에 넘김.</p>
+<p class="alt">다른 선택: <code>프록시만</code>이어도 Webshare가 모두 멈추면 그때만 EC2로 자동으로 넘어감 — 서비스는 계속되지만 "자체 서버 IP로 안 감"이 그 순간 깨집니다.</p>
+</div>
+
 <p class="foot">원문: <code>docs/cycles/20-lookup-status-and-extension/design-delta.md</code>(◆ = 이번 검토로 고친 곳), <code>spec.md</code>(AC-10a·16~20 추가), <code>flow.md</code>, ADR-0119(Proposed, 검사 순서 고침). 검토는 사용자·서버 자원·보안/안정성 세 관점, dev 코드와 공식 문서(크롬 확장 service worker 수명, Spring CSRF, nginx) 확인 2026-10-16.</p>
 
 </main>
