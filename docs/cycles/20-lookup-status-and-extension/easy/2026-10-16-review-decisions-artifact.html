@@ -1078,6 +1078,25 @@ body{background:var(--bg);color:var(--text)}
 <p class="alt">다른 선택: 지금처럼 IP로만(가장 단순, 개인 서버 규모라 함께 묶일 일이 드물다고 보고 감수). 또는 로그인 사용자만 확장 모드(사람이 확실하지만 로그인 없는 사용자는 확장 모드를 못 씀).</p>
 </div>
 
+<div class="card item">
+<h2><span class="num">23</span>검색 결과를 한 번에 10개로 줄이기<br>(바로 검색·책 기준 검색 둘 다)</h2>
+<p><b>어디서 생기나.</b> 사용자 요청(2026-10-16): "별개로 지금 도서 검색 정보 바로 검색이든 도서책 기준 검색이든 검색 결과 수를 줄여야겠다 10개로". 사이클 20의 범위 밖이지만, 조회 부담을 줄이는 일이라 이 사이클 인계에 같이 넣을지를 묻습니다. 지금 값(dev, 2026-10-16 확인):</p>
+<table>
+<tr><th>검색</th><th>지금</th><th>어디 값</th><th>도서관 요청에 미치는 것</th></tr>
+<tr><td><b>바로 검색</b> (도서관에서 직접 찾기, <code>/api/v1/ebook-searches/stream</code>)</td><td>결과 줄이 20줄 넘게 모이면 새 도서관 요청을 멈춤</td><td><code>application.yml</code> <code>batch.row-limit: 20</code></td><td>10이면 줄이 더 빨리 차서 묶음을 덜 돎 → 도서관 요청 감소</td></tr>
+<tr><td><b>책 기준 검색</b> (수집 목록에서 책 찾기, <code>/api/v1/books</code>)</td><td>한 쪽에 책 20권(기본), 그 책들의 도서관 대출 상태를 이어서 조회</td><td><code>pageSize</code> 1~20, 기본 20 (<code>docs/current/api.md</code> 53행)</td><td>책 수가 반으로 → 이어지는 대출 조회(<code>book-availabilities/stream</code>)도 대략 반으로</td></tr>
+</table>
+<div class="fig wide"><svg viewBox="0 0 900 160" role="img" aria-label="결과 20개에서 10개로">
+<text class="s14" x="10" y="22">책 기준 검색 한 쪽이 만드는 대출 조회 (예: 책마다 범위 안 도서관 3곳)</text>
+<text class="s13" x="10" y="58" font-size="12">지금 20권</text><rect x="120" y="42" width="600" height="24" fill="var(--warn-bg)" stroke="var(--warn)"/><text class="s13" x="128" y="59" font-size="11">20권 × 3곳 = 상세 조회 약 60건</text>
+<text class="s13" x="10" y="98" font-size="12">10권</text><rect x="120" y="82" width="300" height="24" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="128" y="99" font-size="11">10권 × 3곳 = 약 30건</text>
+<text class="s13m" x="10" y="136" font-size="12">사용자는 「다음 쪽」·「더 보기」로 나머지를 봄. 도서관 수 3곳은 설명용 예시</text>
+</svg><p class="cap">한 번에 보여 주는 결과를 반으로 줄이면 그 뒤 대출 조회도 대략 반으로 줄어듭니다.</p></div>
+<p><b>질문에 답 — 바로 검색도 캐시하나?</b> <b>네, 합니다.</b> 바로 검색이 도서관에서 받은 검색 결과 쪽은 "도서관·검색어·쪽"이 같으면 3분 동안 캐시에서 답하고(dev <code>CaffeineSearchPageCache</code>, <code>cache-ttl: 3m</code>), 같은 것이 이미 요청 중이면 새로 부르지 않고 그 결과를 같이 기다립니다(앞 #5 답). 「더 보기」 응답에도 <code>cached</code>·<code>cacheAgeSeconds</code>가 있습니다(<code>docs/current/api.md</code> 327행). 확장 모드만 캐시를 읽지 않습니다(설계 결정).</p>
+<p class="concl"><span class="chip" data-n="23">안 #23</span> 사이클 20 인계에 함께 넣음: 바로 검색 <code>batch.row-limit</code> 20 → <b>10</b>, 책 기준 검색 <code>pageSize</code> 기본 20 → <b>10</b>(최대는 20 그대로, 화면이 10을 보냄). 확장 모드도 같은 10(명세 R8 "줄 상한은 서버 모드와 같음"). 설정값 목록(<code>docs/settings-index.md</code>)에 근거와 함께 적음.</p>
+<p class="alt">다른 선택: 별도 작은 사이클로(backlog) — 사이클 20과 섞이지 않지만 그만큼 늦게 반영됩니다.</p>
+</div>
+
 <p class="foot">원문: <code>docs/cycles/20-lookup-status-and-extension/design-delta.md</code>(◆ = 이번 검토로 고친 곳), <code>spec.md</code>(AC-10a·16~20 추가), <code>flow.md</code>, ADR-0119(Proposed, 검사 순서 고침). 검토는 사용자·서버 자원·보안/안정성 세 관점, dev 코드와 공식 문서(크롬 확장 service worker 수명, Spring CSRF, nginx) 확인 2026-10-16.</p>
 
 </main>
