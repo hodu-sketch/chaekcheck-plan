@@ -51,6 +51,7 @@ th{background:var(--code-bg)}
 <li>결제 전에 화면에서 <b>Static Residential</b>, 나라 <b>South Korea 20</b>, 값 <b>$6.00/월</b>인지 봅니다. 나라가 비어 있으면 South Korea를 골라 20으로 맞춥니다.</li>
 <li>Private(다른 고객 0~2명과 같이)은 $18.52, Dedicated(혼자)는 한국 재고가 없습니다(2026-10-16 Webshare API).</li>
 </ul>
+<p class="note"><b>질문 "근데 이거 없나"에 대한 답 (2026-10-16 저녁 다시 확인):</b> Webshare API로 다시 보니 한국은 지금도 공유 759개, Private 253개가 있고, Dedicated(혼자 쓰는 것)만 한국이 0개입니다. 화면에서 South Korea가 안 보이면 두 가지를 봐 주세요. (1) 맨 위 종류가 <b>Static Residential</b>(Proxy Server나 Residential이 아님)인지, (2) 그 아래 <b>Shared / Private / Dedicated</b> 중 Dedicated가 골라져 있으면 Shared나 Private으로 바꾸면 나라 목록에 South Korea가 나옵니다. 그래도 없으면 어느 화면인지 알려 주세요.</p>
 </div>
 
 <div class="step">
@@ -86,7 +87,40 @@ th{background:var(--code-bg)}
 <li><b>잘 된 것:</b> 나라 <code>KR</code>, 통신사가 한국 회사(KT·SK브로드밴드·LG U+ 등), 네 곳이 열림 → 운영 서버 IP를 등록하고 사이클 17 인계에 넣음</li>
 <li><b>안 된 것:</b> 나라가 KR이 아니거나 도서관이 안 열림 → 결제 뒤 48시간 안, 1GB 미만이면 환불 요청</li>
 </ul>
+<p class="note"><b>질문 "이거 무료 반품 되나"에 대한 답:</b> 됩니다. 조건이 모두 맞으면 수수료 없이 돌려받습니다(도움말에 수수료 언급 없음).</p>
+<div class="tbl"><table>
+<tr><th>환불 조건 (Webshare 도움말)</th><th>이번 시험에서</th></tr>
+<tr><td>결제 뒤 <b>48시간 안</b>에 요청</td><td>시험은 결제한 날 바로 함</td></tr>
+<tr><td>정적 주거용은 쓴 데이터 <b>1GB 미만</b></td><td>20개 × 5번 접속 ≈ 수 MB</td></tr>
+<tr><td>프록시 1,000개 미만</td><td>20개</td></tr>
+<tr><td>계정 크레딧(Account Credits)으로 낸 돈은 환불 안 됨</td><td>카드로 결제</td></tr>
+</table></div>
+<ul>
+<li><b>요청 방법:</b> 구독 취소만으로는 환불되지 않습니다. 고객지원에 이메일로 요청하고, 담당자가 조건을 보고 승인합니다.</li>
+<li><b>돌아오는 때:</b> 보통 5~10일 뒤 결제한 쪽 은행 계좌(카드)로 들어오고, 등록된 결제 수단은 지워집니다.</li>
+</ul>
+<p class="src">근거: https://help.webshare.io/en/articles/8370527-requesting-a-refund (2026-10-16 확인)</p>
 <p class="note">EC2 서버는 서울이 아니라 시드니(호주)에 있습니다. 그래서 한국 IP로 나가는 길은 이 20개뿐입니다.</p>
+</div>
+
+<div class="step">
+<h2><span class="num">0</span>먼저 무료 10개로 해 본 결과 <span class="who cl">Claude, 2026-10-16 저녁</span></h2>
+<p><b>교보 구독형 서버를 포함해 강동 사이트 세 곳은 외국 IP로도 열렸고, 부산 전자도서관만 모든 외국 IP에서 막혔습니다.</b> 무료 10개는 영국·미국·독일 등의 호스팅 회사(데이터센터) IP라 한국 IP는 없습니다.</p>
+<ul>
+<li>한 일: Chrome의 Webshare에서 IP Authorization에 집 IP <code>211.178.70.242</code>를 등록하고, 목록은 주소·포트만 가져왔습니다(비밀번호 안 씀).</li>
+</ul>
+<div class="tbl"><table>
+<tr><th>접속한 곳</th><th>열린 수</th><th>걸린 시간</th></tr>
+<tr><td>강동구립 홈페이지</td><td style="background:var(--ok-bg)">9/9</td><td>4.6~22.9초</td></tr>
+<tr><td>강동 전자도서관</td><td style="background:var(--ok-bg)">9/9</td><td>2.3~5.7초</td></tr>
+<tr><td>부산 전자도서관</td><td style="background:var(--no-bg)">0/9 (15초 시간 초과)</td><td>—</td></tr>
+<tr><td>교보 구독형 강동 (집 IP를 막은 서버)</td><td style="background:var(--ok-bg)">9/9</td><td>3.6~6.9초</td></tr>
+</table></div>
+<ul>
+<li>10개 중 1개(스페인)는 IP 확인 사이트가 403을 돌려 건너뛰었습니다. 원인은 확인 못 함.</li>
+<li>외국을 거치니 느립니다. 한국 IP 20개를 사면 같은 시험으로 부산이 열리는지, 더 빠른지 봅니다.</li>
+<li>쓴 데이터: 약 6.5MB (무료 1GB 중).</li>
+</ul>
 </div>
 
 <p class="src">근거: IP Authorization https://intercom.help/webshare/en/articles/8375312-ip-authorization · 목록 내려받기 https://help.webshare.io/en/articles/8596696-how-can-i-download-my-proxy-list · 환불 https://help.webshare.io/en/articles/8370527-requesting-a-refund · 한국 재고·값 Webshare API (모두 2026-10-16 확인). 원문 <code>docs/research/deploy/multi-source-ip.md</code> 9절.</p>

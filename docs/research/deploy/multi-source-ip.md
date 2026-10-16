@@ -118,3 +118,20 @@ ADR-0095의 세 길은 "서버 자기 IP 1개" 또는 "업체 프록시"였다. 
 - 목록 파일: 대시보드 Proxy List → Download, `.txt`, 한 줄에 `ip:port:username:password` [확정] (https://help.webshare.io/en/articles/8596696-how-can-i-download-my-proxy-list , 2026-10-16). 저장소 밖(예: 내려받기 폴더)에 둠
 - 시험 스크립트: `docs/research/deploy/tools/proxy_check.py` (파이썬 표준 라이브러리만). 프록시마다 ipinfo.io로 나라·통신사, 그다음 강동구립 홈페이지, 강동 전자도서관, 부산 전자도서관(외국 IP 막음), 교보 구독형 강동 `gdlib.dkyobobook.co.kr`(집 IP 막음)에 GET 1번씩, 요청 사이 1초. 기본 앞 3개, `--all`이면 20개. 비밀번호는 출력 안 함
 - 판정: 나라 KR, 통신사가 한국 통신사, 네 곳이 열림. 아니면 결제 뒤 48시간 안·1GB 미만일 때 환불(시험 20개 × 5요청은 수 MB) [안]
+
+### 9-1. 무료 10개로 먼저 시험 (2026-10-16 저녁, 사용자: "미국 무료걸로 먼저 시도해볼래?", "집 IP 211.178.70.242를 Webshare IP Authorization에 등록하고 무료 10개로 시험 돌려줘")
+
+- Claude가 사용자 Chrome(로그인된 Webshare)에서 IP Authorization에 집 IP 등록(무료 플랜은 1개까지), 목록은 IP Authentication 보기로 주소·포트만 가져옴(비밀번호 안 씀)
+- 무료 10개 = 데이터센터 IP(영국·스페인·미국·폴란드/포르투갈·독일, 통신사는 HostPapa·Leaseweb 등 호스팅 회사), 한국 없음
+- 결과 (`tools/proxy_check.py --all`, 프록시마다 사이트별 GET 1번, 요청 사이 1초) [확정] (직접 시험):
+
+| | 열림 | 걸린 시간 |
+|---|---|---|
+| 강동구립 홈페이지 `www.gdlibrary.or.kr` | 9/9 (200, 586KB) | 4.6~22.9초 |
+| 강동 전자도서관 `ebook.gdlibrary.or.kr` | 9/9 (200, 약 60KB) | 2.3~5.7초 |
+| 부산 전자도서관 `ebook.busan.go.kr` | **0/9** (15초 시간 초과) | — |
+| 교보 구독형 강동 `gdlib.dkyobobook.co.kr` | **9/9** (200, 70KB) | 3.6~6.9초 |
+
+- 1개(64.137.96.74, 스페인)는 ipinfo.io가 403 → 그 프록시는 시험 건너뜀(원인 확인 못 함)
+- 뜻 [안: 해석]: (1) 집 IP를 막은 교보 구독형 서버도 다른 IP로는 열림. (2) 부산은 외국 IP를 모두 막음(시드니 AWS 때와 같음) → 한국 IP(정적 주거용)가 있어야 열릴 것. (3) 외국 프록시를 거치면 느림(홈페이지 최대 23초) → 한국 IP는 더 빠를 것으로 기대, 정적 20개 사서 같은 시험으로 비교
+- 쓴 데이터: 약 6.5MB(무료 1GB 중)
