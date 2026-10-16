@@ -153,15 +153,19 @@ svg .ah{fill:var(--accent)}
 <div class="card item">
 <h2><span class="num">1</span>"도서관에서 직접 찾기"에서<br>실패한 도서관도 한 줄로 보이기</h2>
 <p><b>어디서 생기나.</b> 검색에는 두 방식이 있습니다. 책 목록에서 찾기(결과가 책마다 한 줄)와 도서관 사이트에서 직접 찾기(설정의 "직접 찾기")입니다. 직접 찾기에서는 도서관 한 곳이 실패하면 결과 줄이 하나도 생기지 않고, 그 도서관은 위쪽 「N곳」 요약에만 들어갑니다(dev `useSearch.ts:177-185`). 그래서 「확인하지 못한 도서관」 묶음에 넣을 줄이 없습니다. 실패가 섞여 있어도 "조회한 도서관 N곳에 이 제목의 전자책이 없습니다"가 나옵니다. 말씀하신 "없으면 없다고, 못 찾으면 어디에"와 반대입니다.</p>
-<div class="fig wide"><svg viewBox="0 0 900 200" role="img" aria-label="직접 찾기 실패 도서관 표시">
-<text class="s14" x="10" y="22">지금</text>
-<rect class="bx" x="10" y="32" width="430" height="56" rx="8"/><text class="s13" x="20" y="54">조회한 도서관 5곳에 이 제목의 전자책이 없습니다</text><text class="s13m" x="20" y="74" font-size="12">(2곳은 실패였는데 "없다"로 보임)</text>
-<text class="s14" x="460" y="22">제안</text>
-<rect class="bx" x="460" y="32" width="430" height="40" rx="8"/><text class="s13" x="470" y="57">조회한 3곳에 이 제목의 전자책이 없어요 · 2곳은 확인하지 못했어요</text>
-<rect class="bxno" x="460" y="80" width="430" height="44" rx="6"/><text class="s14" x="470" y="100">확인하지 못한 도서관</text><text class="s13m" x="640" y="100" font-size="12">(묶음)</text>
-<rect class="bx" x="460" y="128" width="430" height="30" rx="6"/><text class="s13" x="470" y="148">경기교육청 통합 전자도서관 · 대출 정보를 확인하지 못했어요</text>
-<rect class="bx" x="460" y="162" width="430" height="30" rx="6"/><text class="s13" x="470" y="182">전주 전자도서관 · 대출 정보를 확인하지 못했어요</text>
-</svg><p class="cap">직접 찾기에서도 실패한 도서관을 도서관 단위 한 줄로 맨 아래 묶음에 넣고, "없다" 문구는 확인한 곳만 셉니다.</p></div>
+<div class="fig wide"><svg viewBox="0 0 900 300" role="img" aria-label="직접 찾기 실패 도서관 표시">
+<text class="s14" x="10" y="22">예: 「백만장자 마인드」를 도서관 5곳에서 직접 찾았는데 3곳은 답했고(책 없음) 2곳은 실패</text>
+<text class="s14" x="10" y="54">지금 화면</text>
+<rect class="bx" x="10" y="64" width="420" height="70" rx="8"/><text class="s13" x="20" y="88">조회한 도서관 5곳에 이 제목의 전자책이 없습니다</text><text class="s13 sred" x="20" y="112" font-size="12">실패한 2곳도 "없다"에 섞여 있음 (줄이 안 생김)</text>
+<text class="s14" x="460" y="54">제안 화면</text>
+<rect class="bx" x="460" y="64" width="430" height="40" rx="8"/><text class="s13" x="470" y="89">조회한 3곳에 이 제목의 전자책이 없어요 · 2곳은 확인하지 못했어요</text>
+<rect x="460" y="116" width="430" height="168" rx="10" fill="var(--no-bg)" stroke="var(--no)" stroke-width="2"/>
+<text class="s14" x="474" y="140">확인하지 못한 도서관</text><text class="s13m" x="640" y="140" font-size="12">← 묶음 제목 (이 빨간 상자 전체가 한 묶음)</text>
+<rect class="bx" x="474" y="152" width="402" height="52" rx="6"/><text class="s13" x="486" y="174">경기교육청 통합 전자도서관</text><text class="s13m" x="486" y="194" font-size="12">대출 정보를 확인하지 못했어요 · 누르면 그 도서관 검색 페이지</text>
+<rect class="bx" x="474" y="214" width="402" height="52" rx="6"/><text class="s13" x="486" y="236">전주 전자도서관</text><text class="s13m" x="486" y="256" font-size="12">대출 정보를 확인하지 못했어요 · 누르면 그 도서관 검색 페이지</text>
+<text class="s13m" x="10" y="170" font-size="12">직접 찾기에는 "책" 줄이 없으므로</text><text class="s13m" x="10" y="190" font-size="12">실패한 곳은 도서관 이름 한 줄로 보입니다.</text><text class="s13m" x="10" y="210" font-size="12">답한 3곳은 지금처럼 "없어요" 문구로 셉니다.</text>
+</svg><p class="cap">빨간 상자 하나가 「확인하지 못한 도서관」 묶음이고, 그 안에 실패한 두 곳(경기교육청 통합 전자도서관, 전주 전자도서관)이 한 줄씩 들어갑니다.</p></div>
+<p><b>질문에 답 (2026-10-16): 네, 맞습니다.</b> 「확인하지 못한 도서관」 묶음 안에 경기교육청 통합 전자도서관과 전주 전자도서관이 들어 있는 그림입니다. 앞 그림은 묶음 제목과 두 줄이 따로 떨어진 상자처럼 보여 헷갈렸습니다 — 묶음을 하나의 빨간 상자로, 두 도서관을 그 안에 넣어 다시 그렸습니다.</p>
 <p class="concl">[안] 직접 찾기에서 실패한 도서관은 <b>도서관 하나를 한 줄</b>(책 제목 없이 「○○도서관 · 대출 정보를 확인하지 못했어요」, 누르면 그 도서관 검색 페이지)로 「확인하지 못한 도서관」 묶음에 넣고, "없습니다" 문구는 실패를 뺀 곳만 센 뒤 "N곳은 확인하지 못했어요"를 붙입니다.</p>
 <p class="alt">다른 선택: 직접 찾기는 지금처럼 「N곳」 요약에만. 만들 것이 없지만 실패를 "없음"으로 오해합니다.</p>
 </div>
