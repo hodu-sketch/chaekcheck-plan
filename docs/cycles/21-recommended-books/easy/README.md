@@ -14,4 +14,4 @@
 | [2026-10-16-design-decisions-2.html](2026-10-16-design-decisions-2.html) | 사서추천도서도 수집기 → 가져오기 길로 옮길지(사용자 제안), 받는 때, 서버 받기 장치 지우기 | 사용자 제안 2026-10-16, `../architect-proposal.md` | 없음. 사용자가 거둠: "아니다 사서 추천은 따로 가자" (2026-10-16) → 사서추천도서는 지금처럼 서버가 받음 |
 | [2026-10-16-design-decisions-3.html](2026-10-16-design-decisions-3.html) | 사서추천도서는 서버가 받되 PICK 표를 없애고 책 줄 표 하나로 합칠지 (사용자 질문) | 사용자 질문 2026-10-16, `../architect-proposal.md` | 없음. 승인 (2026-10-16): PICK 표 없애고 list_book 하나로 |
 | [2026-10-16-handoff-review-artifact.html](2026-10-16-handoff-review-artifact.html) | 인계서 검토 외부용 사본 (claude.ai 페이지 https://claude.ai/artifact/KdmUJ1a1txMmsbMfHWfdE9 , 저장 버튼 db `choices`) |
-| [2026-10-16-step0-decisions.html](2026-10-16-step0-decisions.html) · [외부용](2026-10-16-step0-decisions-artifact.html) | dev 0단계(API 시험) 뒤 분야 · 표지 · 서울대 두 권 결정 5개 (claude.ai 페이지 https://claude.ai/artifact/12z8sU664i2wLcoKsbeHaz , db `choices`) |
+| [2026-10-16-step0-decisions.html](2026-10-16-step0-decisions.html) · [외부용](2026-10-16-step0-decisions-artifact.html) | dev 0단계(API 시험) 뒤 분야 · 표지 · 서울대 두 권 결정 6개 (claude.ai 페이지 https://claude.ai/artifact/12z8sU664i2wLcoKsbeHaz , db `choices`) |
