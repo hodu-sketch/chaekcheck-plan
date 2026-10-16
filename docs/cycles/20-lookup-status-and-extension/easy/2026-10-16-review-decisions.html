@@ -1474,8 +1474,25 @@ svg .ah{fill:var(--accent)}
 <tr><td>도서관 요청</td><td>더 적음 (부담 줄이기에 맞음)</td><td>책 화면은 지금과 같음</td></tr>
 <tr><td>만들 것</td><td>없음 (값 하나)</td><td>설정 하나 더 (<code>holding-row-limit</code> 같은 이름, dev가 정함)</td></tr>
 </table>
-<p class="concl">[안] 둘 다 10으로 둡니다(#23의 목적 "조회 부담 줄이기"에 맞고, 값 하나로 단순). 책 화면에서 상태가 늦게 채워져 불편하면 그때 설정을 나눕니다. #23 기록·명세 R15·설정값 목록에 "적용: 바로 검색, 책 화면 대출 상태 조회 / 적용 안 됨: 책 찾기 자체, 도서관 한 곳 「더 보기」"를 적습니다.</p>
-<p class="alt">다른 선택: 책 화면 대출 상태 조회는 20 유지 — 설정을 둘로 나눠(바로 검색 10, 책 화면 20) 책 화면은 지금처럼 보이게.</p>
+<h3 style="font-size:20px;margin:18px 0 6px">다시 낸 제안: 책 기준 검색은 "보이는 10권"을 다 채우기 (사용자: "5개 그대로 안 가져가고 한 번에 보여지는 10개대로 하는 게 맞지 않아?")</h3>
+<p class="concl"><b>맞습니다.</b> 바로 검색은 "어디까지 찾을지 모르니 10줄 차면 멈춤"이 맞지만, 책 기준 검색은 <b>이미 화면에 보일 책 10권이 정해져 있으니</b> 그 10권의 상태를 다 채우는 게 자연스럽습니다. 줄 상한으로 중간에 멈출 이유가 없습니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 230" role="img" aria-label="보이는 10권을 다 채우기">
+<text class="s14" x="10" y="22">책 기준 검색: 화면의 책 10권 × 범위 안 소장 도서관 (예: 책마다 3곳 = 상세 30장)</text>
+<text class="s13" x="10" y="60" font-size="12">지금 규칙</text><rect x="130" y="46" width="200" height="22" fill="var(--warn-bg)" stroke="var(--warn)"/><text class="s13" x="136" y="62" font-size="11">10줄에서 멈춤 → 책 1~3만</text><text class="s13m" x="340" y="62" font-size="11">나머지 책 4~10은 "조회 중"으로 남음</text>
+<text class="s13" x="10" y="100" font-size="12">바뀐 제안</text><rect x="130" y="86" width="600" height="22" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="136" y="102" font-size="11">줄 상한 없이 10권의 상세 30장을 모두 — 동시 5칸 그대로, 8초 묶음이 끝나면 화면이 바로 다음 묶음</text>
+<text class="s13m" x="130" y="130" font-size="11">30장 ÷ 5칸 × 약 2.5초 ≈ 약 15초에 10권 모두 (묶음 2번, 첫 상태는 약 2초부터 하나씩 뜸)</text>
+<text class="s13" x="10" y="168" font-size="12">다른 선택</text><rect x="130" y="154" width="300" height="22" fill="var(--accent-bg)" stroke="var(--accent)"/><text class="s13" x="136" y="170" font-size="11">책 화면만 동시 10칸 → 약 8초, 묶음 1번</text>
+<text class="s13m" x="440" y="170" font-size="11">대신 검색 하나가 동시 요청 10건을 붙잡음</text>
+<text class="s13m" x="10" y="208" font-size="11">요청 수는 셋 다 "보이는 책의 소장 도서관 수"로 같음 — 다음 쪽 책들은 사용자가 넘길 때만. 책마다 3곳은 예시</text>
+</svg><p class="cap">책 화면은 "보이는 10권 다 채우기", 바로 검색은 "10줄 차면 멈춤" — 두 흐름의 멈추는 기준을 나눕니다.</p></div>
+<table>
+<tr><th></th><th>동시 5칸 (제안)</th><th>동시 10칸 (다른 선택)</th></tr>
+<tr><td>10권이 다 채워지는 시간 (예시 30장)</td><td>약 15초 (묶음 2번, 화면이 자동으로 이어 부름)</td><td>약 8초 (묶음 1번)</td></tr>
+<tr><td>서버 자원</td><td>지금과 같음 (자리 20 × 5 = 동시 100건, 메모리 보통 약 10MB)</td><td>책 검색이 몰리면 동시 최대 200건 (메모리 보통 약 20MB — 잰 값 기준 여유 있음), 대신 바로 검색과 자리 경쟁이 커짐</td></tr>
+<tr><td>도서관 요청 수</td><td colspan="2">같음 — 보이는 10권의 소장 도서관만</td></tr>
+</table>
+<p class="concl">[안] (바뀐 제안) 책 기준 검색 뒤 대출 상태 조회는 <b>줄 상한을 쓰지 않고, 화면에 보이는 책 10권의 범위 안 소장 도서관을 모두</b> 조회합니다. 동시 5칸·8초 묶음은 그대로, 묶음이 끝나도 남은 게 있으면 화면이 바로 다음 묶음을 이어 부릅니다(10권이 다 채워질 때까지). 바로 검색은 #23대로 "10줄 차면 멈춤". 설정은 두 흐름을 나눠 바로 검색만 <code>row-limit</code>을 씀.</p>
+<p class="alt">다른 선택: 책 화면만 동시 10칸으로 한 묶음(약 8초)에 끝내기 — 더 빠르지만 검색 하나가 동시 요청 10건을 붙잡습니다. 또는 처음 제안(둘 다 10줄에서 멈춤).</p>
 </div>
 
 <p class="foot">원문: <code>docs/cycles/20-lookup-status-and-extension/design-delta.md</code>(◆ = 이번 검토로 고친 곳), <code>spec.md</code>(AC-10a·16~20 추가), <code>flow.md</code>, ADR-0119(Proposed, 검사 순서 고침). 검토는 사용자·서버 자원·보안/안정성 세 관점, dev 코드와 공식 문서(크롬 확장 service worker 수명, Spring CSRF, nginx) 확인 2026-10-16.</p>
