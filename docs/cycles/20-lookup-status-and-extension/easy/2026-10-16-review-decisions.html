@@ -1593,6 +1593,17 @@ svg .ah{fill:var(--accent)}
 <tr><td>번호를 계속 새로 받아 한도 피하기</td><td>한 IP에 새 번호는 1분에 30개까지(같은 회사·학교 여러 명도 충분) — 넘으면 새 번호만 429</td></tr>
 <tr><td>한 IP의 잠금</td><td>그 IP 번호 중 잠긴 번호가 5개 이상이면 IP 10분 잠금 (#22 그대로)</td></tr>
 </table>
+<h3 style="font-size:20px;margin:18px 0 6px">질문에 답: 20%·1분 30개에 근거가 있나?</h3>
+<p class="concl"><b>솔직히 바깥 표준 숫자는 없습니다.</b> OWASP API 보안 지침도 "속도 제한은 서비스 필요에 맞춰 조정해야 한다"고만 합니다("Rate limiting should be fine tuned based on the business needs", https://api-security.owasp.org/editions/2023/en/0xa4-unrestricted-resource-consumption , 2026-10-16 확인). 그래서 <b>우리 숫자에서 거꾸로 계산</b>하는 것이 근거가 됩니다. 아래처럼 "한 사람이 많이 써도 쓰는 양"에서 출발해 값을 정하고, 배포 뒤 기록으로 맞춥니다.</p>
+<table>
+<tr><th>값</th><th>계산 (우리 설계 숫자에서)</th><th>뜻</th></tr>
+<tr><td>계획 하나의 무게</td><td>한 묶음 후보 최대 50곳(<code>batch.max-candidates</code>, dev 설정) + 상세 몇 장 → 보통 수십, 최대 약 50~60</td><td>—</td></tr>
+<tr><td>한 사람이 동시에 가진 최대 무게</td><td>번호당 열린 계획 20(#8·#22) × 약 50 = <b>약 1,000</b></td><td>탭을 많이 연 아주 바쁜 사람 한 명</td></tr>
+<tr><td><b>IP 울타리 5,000 (20%)</b></td><td>5,000 ÷ 1,000 = 바쁜 사람 <b>5명이 동시에</b> 최대로 써도 들어감. 보통 사람(계획 1~3개, 무게 수십~150)이면 30명 이상</td><td>그리고 보관함 25,000의 20%라, 대량으로 보내는 곳이 <b>최소 5곳</b>은 되어야 보관함이 참</td></tr>
+<tr><td><b>새 번호 1분 30개</b></td><td>번호는 탭을 새로 열거나 IP가 바뀔 때만 받음 → 한 사람은 1분에 1~2개. 30개 = 같은 IP 뒤에서 <b>1분에 15~30명</b>이 새로 들어와도 됨</td><td>번호를 계속 바꿔 한도를 피하려면 1분에 30개를 넘게 받아야 함 → 막힘</td></tr>
+<tr><td>잠긴 번호 5개 → IP 잠금</td><td>잠금은 공격에서만 나는 실패로만 셈(#11) → 정상 사용자 번호가 잠길 일은 거의 없음. 5개는 "우연 한둘은 봐주고, 여러 번호로 공격하면 IP째" 선</td><td>—</td></tr>
+</table>
+<p>정리: 근거는 "우리 설계 숫자(묶음 후보 50, 번호당 계획 20, 보관함 25,000)에서 계산한 값"이고, 바깥 표준은 없으며 OWASP도 서비스에 맞게 정하라고 합니다. 그래서 값은 설정으로 두고(#25), 배포 뒤 거절 기록(<code>rejected_event</code>)과 IP별 계획 무게를 보고 맞춥니다 — 설정값 목록에 이 계산을 근거로 적겠습니다.</p>
 <p class="concl">[안] (바뀐 제안) #32 장부로 공인 IP 울타리를 셉니다: ① 그 IP에 준 번호들의 계획 무게 합이 보관함의 20%(주소 5,000)를 넘으면 그 IP의 새 계획만 503 → 서버 모드 ② 한 IP에 새 번호는 1분에 30개까지(넘으면 429) ③ 잠긴 번호 5개 이상이면 IP 10분 잠금. #22의 "열린 계획 200개"는 ①로 바뀝니다. 값은 모두 설정.</p>
 <p class="alt">다른 선택: 개수 200 그대로 — 단순하지만 큰 계획으로 보관함을 혼자 채울 수 있습니다.</p>
 </div>
@@ -1624,6 +1635,7 @@ svg .ah{fill:var(--accent)}
 <tr><td>특정 번호만 끊기</td><td>장부에서 지우면 끝</td><td>못 함(만료까지)</td></tr>
 <tr><td>서버 메모리</td><td>5만 줄 약 5MB (상한, 1일)</td><td>거의 0</td></tr>
 <tr><td>서버를 다시 켜면</td><td>장부가 비워짐 → 화면이 새 번호 받음(자동)</td><td>번호 그대로</td></tr></table>
+<p class="concl" style="border:2px solid var(--ok)"><b>정함 (2026-10-16)</b>: 바뀐 제안 승인 — 서버 메모리의 브라우저 번호 장부(번호 → 받은 IP·시각·열린 계획·무게·실패), 서명 없음, IP가 바뀌면 새 번호. 문서 반영은 #31·#33까지 정한 뒤 한 번에.</p>
 <p class="concl">[안] (바뀐 제안) 서버 메모리에 <b>브라우저 번호 장부</b>(번호 → 받은 IP(/64)·받은 시각·열린 계획 수·계획 무게·최근 실패)를 둡니다. 번호는 서버가 무작위로 만들어 장부에 적고 #33의 쿠키로 줍니다(서명은 쓰지 않음 — #27의 HMAC을 이것으로 바꿈). 요청마다 "장부에 있나 + 받은 IP와 지금 IP가 같나"를 봅니다. IP가 다르면 400 → 화면이 새 번호를 받고 남은 도서관만 다시 계획(사용자 조작 없음, 잠금에 안 셈). 장부 상한 5만 줄(약 5MB)·1일 지나면 지움, 값은 설정.</p>
 <p class="alt">다른 선택: "가"(엄격, 폰에서 끊김) 또는 "다"(번호만, #27 처음 안).</p>
 </div>
@@ -1636,7 +1648,16 @@ svg .ah{fill:var(--accent)}
 <rect class="bxok" x="470" y="20" width="420" height="150" rx="8"/><text class="s14" x="480" y="44">HttpOnly 쿠키 (제안)</text><text class="s13" x="480" y="70" font-size="12">서버가 Set-Cookie로 주고, 브라우저가 알아서 보냄</text><text class="s13 sok" x="480" y="96" font-size="12">자바스크립트(XSS 포함)가 읽지도 바꾸지도 못함</text><text class="s13m" x="480" y="122" font-size="11">브라우저마다 하나(탭끼리 같음) · 올리기 경로에만 보냄</text><text class="s13m" x="480" y="140" font-size="11">Secure · SameSite=Strict · 짧은 수명(예: 1일)</text>
 </svg><p class="cap">HttpOnly 쿠키는 자바스크립트가 읽을 수 없어, XSS가 생겨도 번호를 훔쳐 가지 못합니다.</p></div>
 <table><tr><th>근거</th><th>내용</th></tr><tr><td>MDN Set-Cookie (2026-10-16 확인)</td><td>HttpOnly는 "자바스크립트가 쿠키에 접근하지 못하게 함 … XSS 공격을 줄임", SameSite=Strict는 "쿠키를 정한 같은 사이트에서 시작한 요청에만 보냄" (https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Set-Cookie)</td></tr><tr><td>우리 쪽 이미 있는 것</td><td>로그인 쿠키도 HttpOnly·Secure·SameSite (dev <code>application.yml</code> 세션 쿠키 설정), POST는 CSRF 머리(<code>X-XSRF-TOKEN</code>) — 쿠키를 자동으로 보내도 다른 사이트가 우리 올리기를 대신 보낼 수 없음</td></tr><tr><td>남는 한계</td><td>XSS 스크립트가 <b>우리 화면 안에서</b> 올리기 요청을 보내면 쿠키가 같이 감 → 이건 서명·계획 번호·IP(#32)·한도·잠금·CSP로 줄임. XSS 자체를 막는 것(화면이 외부 글을 HTML로 넣지 않기, CSP)은 그대로 중요</td></tr><tr><td>개인정보</td><td>무작위 번호라 사람을 알아보는 정보는 아니지만 쿠키이므로 개인정보 처리방침의 쿠키 설명에 한 줄 [확인 필요: 사이클 16 처리방침 문구와 맞춤]</td></tr></table>
-<p class="concl">[안] 브라우저 번호는 탭 메모리 대신 <b>HttpOnly·Secure·SameSite=Strict 쿠키</b>(경로 <code>/api/v1/lookup-plans</code>·계획 주소만, 수명 1일, 값은 설정)로 줍니다. 자바스크립트는 번호를 보지도 못하고, 서버는 쿠키의 번호 서명(+ #32의 IP)으로 확인합니다. #22·#27의 "머리글 <code>X-Lookup-Client</code>"는 쿠키로 바뀝니다. 처리방침의 쿠키 설명에 한 줄 더함.</p>
+<h3 style="font-size:20px;margin:18px 0 6px">질문에 답: CORS로는 안 되나?</h3>
+<p class="concl"><b>CORS는 XSS를 막지 못합니다.</b> CORS는 "<b>다른 사이트</b>가 우리 서버 응답을 읽어도 되는지"를 정하는 규칙입니다. XSS는 공격 스크립트가 <b>우리 사이트 안에서</b> 우리 사이트로 실행되는 것이라, 브라우저 입장에서는 같은 출처의 정상 요청과 똑같아 CORS가 끼어들 자리가 없습니다(MDN CORS: https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS , 2026-10-16 확인 — CORS는 다른 출처 요청을 허락하는 장치).</p>
+<table>
+<tr><th>위협</th><th>CORS가 막나</th><th>막는 것</th></tr>
+<tr><td>다른 사이트(evil.com)가 우리 올리기 주소로 요청을 보냄</td><td>읽기는 막음 (우리는 CORS를 열지 않음 = 기본 거절)</td><td>+ SameSite=Strict 쿠키(다른 사이트 요청엔 번호 쿠키가 안 감) + CSRF 머리 + Origin 검사 — 이미 설계에 있음</td></tr>
+<tr><td><b>우리 사이트에 XSS</b> — 스크립트가 번호를 훔침</td><td><b>못 막음</b> (같은 출처)</td><td><b>HttpOnly 쿠키(#33)</b> — 스크립트가 번호를 읽지 못함</td></tr>
+<tr><td>우리 사이트에 XSS — 스크립트가 그 자리에서 올리기를 보냄</td><td>못 막음</td><td>CSP, 계획 번호·장부·IP(#32), 한도·잠금으로 줄임</td></tr>
+</table>
+<p>그래서 CORS는 "열지 않는다(기본 거절)"로 두는 게 맞고, 그건 이미 그렇게 되어 있습니다. XSS로 번호가 새지 않게 하는 건 #33(HttpOnly 쿠키)이 맡습니다. 그리고 #32가 서명을 쓰지 않기로 해서, #33 문장의 "쿠키의 번호 서명"은 "쿠키의 번호를 장부와 대조"로 바꿉니다.</p>
+<p class="concl">[안] 브라우저 번호는 탭 메모리 대신 <b>HttpOnly·Secure·SameSite=Strict 쿠키</b>(경로 <code>/api/v1/lookup-plans</code>·계획 주소만, 수명 1일, 값은 설정)로 줍니다. 자바스크립트는 번호를 보지도 못하고, 서버는 쿠키의 번호를 #32 장부와 대조(+ 받은 IP)해 확인합니다. CORS는 열지 않음(기본 거절). #22·#27의 "머리글 <code>X-Lookup-Client</code>"는 쿠키로 바뀝니다. 처리방침의 쿠키 설명에 한 줄 더함.</p>
 <p class="alt">다른 선택: 탭 메모리 그대로 — 탭마다 따로 셀 수 있지만 XSS가 생기면 번호를 훔쳐 갈 수 있습니다.</p>
 </div>
 
