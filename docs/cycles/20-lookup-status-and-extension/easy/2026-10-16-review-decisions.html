@@ -304,6 +304,32 @@ svg .ah{fill:var(--accent)}
 <path d="M200 191 L260 205" class="ar" marker-end="url(#ah5r)"/><path d="M200 223 L260 212" class="ar" marker-end="url(#ah5r)"/>
 <text class="s13m" x="560" y="200" font-size="12">확장 모드는 캐시를 읽지 않으므로(#9 결정)</text><text class="s13m" x="560" y="218" font-size="12">각자 브라우저가 받아옴 — 서버 줄과 무관</text>
 </svg><p class="cap">같은 검색은 이미 한 요청을 함께 씁니다. 줄은 같은 도서관에 다른 검색이 몰릴 때만 섭니다.</p></div>
+<h3 style="font-size:20px;margin:18px 0 6px">그림으로 자세히: 지금 정한 60초 규칙과 제안하는 바꿈</h3>
+<p><b>먼저 지금 정한 규칙(명세 R4, 명세 결정 #5).</b> 서버는 10초마다 오는 상태 응답에 "줄이 선 도서관 목록"을 넣어 줍니다. 어떤 도서관이 이 목록에 들어가는 조건은 둘 중 하나입니다: (가) 지금 그 도서관 앞에 차례를 기다리는 요청이 1건 이상 있음, (나) <b>최근 60초 안에</b> 그 도서관 앞에서 8초를 기다리다 포기한 요청(시간 초과)이 있었음. 화면은 이 목록에 있는 도서관의 <b>결과 줄 전부</b>에 「지금 이 도서관 조회가 밀려요」를 붙이고, 목록에서 빠지면 바로 지웁니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 230" role="img" aria-label="줄이 선 도서관 목록에 들고 나는 시간">
+<defs><marker id="ah5z" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="var(--accent)"/></marker></defs>
+<text class="s14" x="10" y="22">경기교육청이 "줄이 선 도서관 목록"에 들어 있는 시간 (서버 쪽)</text>
+<line x1="150" y1="60" x2="880" y2="60" stroke="var(--line)" stroke-width="2"/>
+<text class="s13m" x="150" y="50">0초</text><text class="s13m" x="240" y="50">2초</text><text class="s13m" x="380" y="50">9초</text><text class="s13m" x="590" y="50">30초</text><text class="s13m" x="790" y="50">69초</text>
+<text class="s13" x="10" y="92">기다리는 요청</text><rect x="150" y="78" width="230" height="22" rx="4" fill="var(--warn-bg)" stroke="var(--warn)"/><text class="s13" x="160" y="94">B·C 요청이 차례 기다림 (가)</text>
+<text class="s13" x="10" y="130">시간 초과 기록</text><rect x="380" y="116" width="410" height="22" rx="4" fill="var(--no-bg)" stroke="var(--no)"/><text class="s13" x="390" y="132">C가 9초에 포기 → 그때부터 60초 동안 (나)</text>
+<text class="s13" x="10" y="168">목록에 있음</text><rect x="150" y="154" width="640" height="22" rx="4" fill="var(--no)" opacity=".85"/><text class="s13" x="160" y="170" fill="#fff">0초 ~ 69초 동안 "줄이 선 도서관" (가)든 (나)든 하나라도 맞으면</text>
+<text class="s13m" x="10" y="212">69초가 지나면 (가)(나) 모두 아니므로 목록에서 빠짐 → 화면은 다음 상태 응답(최대 10초 뒤)에서 글을 지움</text>
+</svg><p class="cap">"60초"는 시간 초과가 난 뒤 그 도서관을 목록에 남겨 두는 시간입니다.</p></div>
+
+<p><b>장면: 세 사람 A·B·C가 서로 다른 책으로 같은 경기교육청을 검색.</b> A가 먼저 보내져 2초에 답을 받았고, B는 차례를 기다리다 4초에 받았고, C는 8초를 기다리다 9초에 포기(시간 초과)했습니다. A와 C의 화면을 시간 순서로 봅니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 470" role="img" aria-label="지금 규칙과 제안 규칙의 화면 비교">
+<text class="s14" x="10" y="22">지금 정한 규칙 — 목록에 있는 동안 그 도서관의 모든 줄에 붙음</text>
+<rect class="bx" x="10" y="34" width="270" height="76" rx="8"/><text class="s13" x="20" y="54" font-weight="700">A의 화면 · 5초</text><rect class="bx" x="20" y="64" width="250" height="36" rx="6"/><text class="s13" x="28" y="79" font-size="12">경기교육청 · 빌릴 수 있음 (2초에 받음)</text><text class="s13 sred" x="28" y="94" font-size="11">지금 이 도서관 조회가 밀려요 ← 이미 받았는데?</text><rect class="bx" x="310" y="34" width="270" height="76" rx="8"/><text class="s13" x="320" y="54" font-weight="700">C의 화면 · 9초</text><rect class="bx" x="320" y="64" width="250" height="36" rx="6"/><text class="s13" x="328" y="79" font-size="12">경기교육청 · 대출 정보를 확인하지 못했어요</text><text class="s13 sok" x="328" y="94" font-size="11">지금 이 도서관 조회가 밀려요 ← 이유</text><rect class="bx" x="610" y="34" width="270" height="76" rx="8"/><text class="s13" x="620" y="54" font-weight="700">C의 화면 · 75초</text><rect class="bx" x="620" y="64" width="250" height="36" rx="6"/><text class="s13" x="628" y="79" font-size="12">경기교육청 · 대출 정보를 확인하지 못했어요</text><text class="s13 sred" x="628" y="94" font-size="11">(글이 사라짐) ← 왜 실패했는지 모름</text>
+<text class="s13 sred" x="10" y="132">문제 ① A는 결과를 이미 받았는데 "밀려요"가 붙어 헷갈림</text>
+<text class="s13 sred" x="10" y="152">문제 ② C가 나중에(75초) 다시 보면 실패 이유가 사라져 있음</text>
+<text class="s14" x="10" y="200">제안 — 아직 조회 중인 줄과 실패한 줄에만, 실패 순간의 이유는 그 줄에 남김</text>
+<rect class="bx" x="10" y="212" width="270" height="76" rx="8"/><text class="s13" x="20" y="232" font-weight="700">A의 화면 · 5초</text><rect class="bx" x="20" y="242" width="250" height="36" rx="6"/><text class="s13" x="28" y="257" font-size="12">경기교육청 · 빌릴 수 있음 (2초에 받음)</text><text class="s13 sok" x="28" y="272" font-size="11">(글 없음 — 이미 받았으니)</text><rect class="bx" x="310" y="212" width="270" height="76" rx="8"/><text class="s13" x="320" y="232" font-weight="700">C의 화면 · 5초 (기다리는 중)</text><rect class="bx" x="320" y="242" width="250" height="36" rx="6"/><text class="s13" x="328" y="257" font-size="12">경기교육청 · 대출 정보 조회 중</text><text class="s13 sok" x="328" y="272" font-size="11">지금 이 도서관 조회가 밀려요</text><rect class="bx" x="610" y="212" width="270" height="76" rx="8"/><text class="s13" x="620" y="232" font-weight="700">C의 화면 · 75초</text><rect class="bx" x="620" y="242" width="250" height="36" rx="6"/><text class="s13" x="628" y="257" font-size="12">경기교육청 · 대출 정보를 확인하지 못했어요</text><text class="s13 sok" x="628" y="272" font-size="11">지금 이 도서관 조회가 밀려요 (남음)</text>
+<text class="s13 sok" x="10" y="310">① 결과를 받은 줄에는 붙지 않음</text>
+<text class="s13 sok" x="10" y="330">② 실패한 줄은 실패 순간 붙어 있던 이유가 새 검색 전까지 남음</text>
+<text class="s13m" x="10" y="370">서버 쪽 규칙(목록에 들고 나는 조건, 60초)은 그대로이고, 화면이 그 목록을 "어느 줄에 붙일지"만 바뀝니다.</text>
+<text class="s13m" x="10" y="392">확장 모드는 상태를 묻지 않으므로 이 글을 쓰지 않습니다. 직접 찾기는 #1의 도서관 줄(확인 못 함)에 붙습니다.</text>
+</svg><p class="cap">위(지금 규칙)는 받은 줄에도 붙고 실패 이유가 사라짐. 아래(제안)는 조회 중·실패 줄에만 붙고 이유가 남음.</p></div>
 <p>그래서 이 항목(#5)이 묻는 것은: 「밀려요」 글을 <b>조회 중이거나 확인 못 한 줄에만</b> 붙이고, 실패로 끝난 줄에서는 이유로 <b>계속 남길지</b>입니다(위 시간 그림). 이해가 되시면 골라 주세요.</p>
 <p class="concl">[안] 이 글은 <b>아직 조회 중인 줄과 「확인하지 못한 도서관」 줄에만</b> 붙이고, 실패로 끝난 순간 붙어 있었으면 <b>그 줄에서는 계속 유지</b>(검색을 새로 할 때까지). 정상으로 받은 줄에는 붙이지 않습니다. 확장 모드에서는 쓰지 않는다고 문서에 적습니다. 직접 찾기는 #1의 도서관 줄에 붙입니다.</p>
 <p class="alt">다른 선택: 지금 설계대로(목록에 있는 동안 모든 줄). 단순하지만 위 (1)(2)가 남습니다.</p>
