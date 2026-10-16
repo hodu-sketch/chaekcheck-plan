@@ -1098,13 +1098,13 @@ svg .ah{fill:var(--accent)}
 <rect class="bx" x="690" y="152" width="180" height="22" rx="4"/><text class="s13" x="698" y="168" font-size="11">경기교육청</text>
 <rect class="bx" x="690" y="178" width="180" height="22" rx="4"/><text class="s13" x="698" y="194" font-size="11">군산 도서관</text>
 <path d="M610 98 L690 85" class="ar" marker-end="url(#ahsl)"/><path d="M610 98 L690 111" class="ar" marker-end="url(#ahsl)"/><path d="M610 98 L690 137" class="ar" marker-end="url(#ahsl)"/><path d="M610 98 L690 163" class="ar" marker-end="url(#ahsl)"/><path d="M610 98 L690 189" class="ar" marker-end="url(#ahsl)"/>
-<text class="s13" x="502" y="226" font-size="12">검색 하나가 도서관 5곳을 동시에 부름</text>
-<text class="s13" x="502" y="248" font-size="12">결과가 10줄(#23) 안 차면 다음 5곳 묶음</text>
+<text class="s13" x="502" y="226" font-size="12">검색 하나가 동시에 최대 5곳</text>
+<text class="s13" x="502" y="248" font-size="12">끝나는 대로 다음 도서관, 10줄(#23) 차면 멈춤</text>
 </svg><p class="cap">서버 전체에 검색 자리 20개, 자리 하나가 도서관 5곳을 동시에 부릅니다. 그래서 한꺼번에 도서관 요청은 최대 20 × 5 = 100건.</p></div>
 <table>
 <tr><th>값</th><th>뜻</th><th>어디 값</th><th>왜 이 숫자 (적혀 있는 이유)</th><th>태그</th></tr>
 <tr><td><b>검색 자리 20</b></td><td>서버 전체에서 동시에 돌 수 있는 검색 묶음(또는 「더 보기」) 수. 넘으면 기다리지 않고 503</td><td><code>chaekcheck.availability.max-concurrent-searches: 20</code> (138행)</td><td>dev 주석: "개인 서비스에서 같은 몇 초 안에 20검색은 드묾, 실제 이용으로 조정"</td><td>dev 시작값 (사용자 결정 아님)</td></tr>
-<tr><td><b>묶음 5곳</b></td><td>검색 한 번이 한꺼번에 부르는 도서관 수. 결과가 모자라면 다음 5곳 묶음</td><td><code>chaekcheck.availability.batch.parallelism: 5</code> (143행)</td><td>dev 주석: "실제 묶음 시간으로 맞출 값"</td><td>dev 시작값</td></tr>
+<tr><td><b>묶음 5곳</b></td><td>검색 하나가 동시에 부를 수 있는 도서관 수(5칸 창구). 한 곳이 끝나면 바로 다음 도서관 출발, 결과 10줄이 차면 멈춤</td><td><code>chaekcheck.availability.batch.parallelism: 5</code> (143행)</td><td>dev 주석: "실제 묶음 시간으로 맞출 값"</td><td>dev 시작값</td></tr>
 <tr><td>둘을 곱한 100</td><td>서버가 한꺼번에 기다리는 도서관 응답 최대 수</td><td>dev 주석 "20 × parallelism 5 = at most 100 library requests in flight"</td><td>메모리 어림의 기준(보통 약 10MB, 최악 약 100MB)</td><td>계산</td></tr>
 </table>
 <p>앞 카드들의 "초당 약 33건"은 이 100건이 각각 약 2~3초씩 걸린다고 보고 나눈 값입니다. 두 값 모두 <code>docs/settings-index.md</code> 3절에 있습니다.</p>
@@ -1180,6 +1180,32 @@ svg .ah{fill:var(--accent)}
 <tr><td>크게 (10곳)</td><td>첫 묶음에서 더 많은 도서관이 한 번에 뜸 → 결과가 적은 책도 빨리 끝남</td><td>검색 하나가 동시 요청 10건을 붙잡아, 자리 20개 × 10 = 200건 기다림. 10줄이 금방 차는 인기 책은 나머지 요청이 낭비</td></tr>
 </table>
 <p>결과를 10개로 줄였으니(#23) 지금 5곳은 "첫 묶음 하나로 10줄이 차는 경우가 많고, 모자라면 다음 5곳"이라 무난한 값으로 보입니다. 다만 근거 없는 값이라 <code>docs/settings-index.md</code>에 [이유 미확인]으로 적고, 배포 뒤 사용 기록(검색 한 번이 묶음을 몇 번 도는지)을 보고 맞추는 값으로 두었습니다. 바꾸고 싶으시면 기타로 알려 주세요.</p>
+</div>
+
+<div class="card">
+<h2>질문에 답: 어차피 도서관마다 따로 보내는데, 왜 "묶음"으로 하나</h2>
+<p class="concl"><b>맞습니다, 요청은 도서관마다 따로 갑니다.</b> 그리고 먼저 바로잡습니다 — 앞 카드에서 "5곳을 한 번에 부르고, 모자라면 다음 5곳"이라고 쓴 건 정확하지 않았습니다. 실제로는 <b>"한 번에 최대 5곳까지 동시에, 한 곳이 끝나면 바로 다음 도서관을 출발"</b>시킵니다(5칸짜리 창구가 계속 돌아감). "묶음"은 도서관 5개 묶음이 아니라 <b>"이번 검색에서 어디까지 찾고 멈출지"를 정하는 한 차례(최대 8초)</b>입니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 250" role="img" aria-label="한 묶음 안에서 5칸 창구가 도는 모습">
+<text class="s14" x="10" y="22">한 묶음(최대 8초) 안: 동시 5칸, 끝나는 대로 다음 도서관 출발</text>
+<line x1="120" y1="40" x2="880" y2="40" stroke="var(--line)"/>
+<text class="s13m" x="120" y="34" font-size="11">0초</text><text class="s13m" x="340" y="34" font-size="11">2초</text><text class="s13m" x="560" y="34" font-size="11">4초</text><text class="s13m" x="780" y="34" font-size="11">6초</text>
+<text class="s13" x="10" y="62" font-size="12">칸 1</text><rect x="120" y="50" width="190" height="18" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="124" y="63" font-size="10">강동 1.7초</text><rect x="312" y="50" width="200" height="18" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="316" y="63" font-size="10">군산</text>
+<text class="s13" x="10" y="88" font-size="12">칸 2</text><rect x="120" y="76" width="300" height="18" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="124" y="89" font-size="10">교보 구독형 2.7초</text><rect x="422" y="76" width="180" height="18" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="426" y="89" font-size="10">전주</text>
+<text class="s13" x="10" y="114" font-size="12">칸 3</text><rect x="120" y="102" width="200" height="18" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="124" y="115" font-size="10">송파</text><rect x="322" y="102" width="190" height="18" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="326" y="115" font-size="10">익산</text>
+<text class="s13" x="10" y="140" font-size="12">칸 4</text><rect x="120" y="128" width="410" height="18" fill="var(--warn-bg)" stroke="var(--warn)"/><text class="s13" x="124" y="141" font-size="10">큰 홈페이지 3.7초</text>
+<text class="s13" x="10" y="166" font-size="12">칸 5</text><rect x="120" y="154" width="190" height="18" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="124" y="167" font-size="10">서울교육청</text><rect x="312" y="154" width="190" height="18" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="316" y="167" font-size="10">경기교육청</text>
+<line x1="512" y1="44" x2="512" y2="180" stroke="var(--no)" stroke-dasharray="4 3"/><text class="s13 sred" x="518" y="194" font-size="11">결과 10줄이 참 → 새 도서관 출발 멈춤</text>
+<text class="s13m" x="10" y="218" font-size="12">멈춘 뒤 나머지 도서관(수백 곳)은 "아직 안 물어봄"으로 남고, 목록 맨 아래 「더 보기」를 누르면 다음 묶음이 그 자리부터 이어서 찾음</text>
+<text class="s13m" x="10" y="240" font-size="12">마감 3초 전부터는 새 도서관을 출발시키지 않음(8초 안에 끝내려고) — 이미 출발한 것은 끝까지 받음</text>
+</svg><p class="cap">"묶음" = 한 차례 찾기. 그 안에서는 5칸이 끝나는 대로 다음 도서관으로 넘어가고, 10줄이 차거나 시간이 다 되면 멈춥니다.</p></div>
+<table>
+<tr><th>묶음(한 차례)을 두는 이유</th><th>근거</th></tr>
+<tr><td><b>범위 안 도서관이 수백 곳</b>이라, 결과가 10줄 찰 때까지만 찾고 멈춰야 도서관·서버·Webshare 데이터를 아낌. 다 찾으면 검색 한 번에 수백 건</td><td>사이클 02 명세 5.3 "순위대로 약 20줄이 찰 때까지만 조회, 맨 아래 「더 보기」로 이어서" (ADR-0014, 지금 10줄은 #23)</td></tr>
+<tr><td>검색 하나가 서버 자리를 <b>최대 8초만</b> 붙잡게 — 끝없이 열린 검색이 자리를 막지 않음</td><td>묶음 마감 8초 [확정] (ADR-0014·<code>batch.deadline</code>)</td></tr>
+<tr><td>「더 보기」를 누를 때 <b>이어서</b> 찾을 자리를 화면이 기억 → 서버는 검색 상태를 저장하지 않음(재시작해도 「더 보기」가 끊기지 않음)</td><td>ADR-0014 A안 (브라우저가 계획을 가짐)</td></tr>
+<tr><td>이미 본 줄의 위치가 바뀌지 않음 — 새 결과는 아래에 붙음</td><td>사이클 02 명세 5.3</td></tr>
+</table>
+<p>그래서 "묶음"은 도서관을 5개씩 모아 보내는 장치가 아니라, <b>"이번에는 여기까지 찾고, 더 보려면 「더 보기」"</b>를 나누는 단위입니다. 앞의 처리량 계산(검색 하나가 동시에 최대 5건, 자리 20 × 5 = 100건)은 그대로 맞습니다.</p>
 </div>
 
 <div class="card">
