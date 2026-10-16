@@ -217,6 +217,17 @@ svg .ah{fill:var(--accent)}
 <path d="M210 48 H240" class="ar" marker-end="url(#ah4r)"/><path d="M440 40 H470" class="ar" marker-end="url(#ah4r)"/><path d="M440 60 L470 85" class="ar" marker-end="url(#ah4r)"/>
 <text class="s13m" x="10" y="150">명세 #10 "확장이 받아오지 못한 도서관은 서버가 다시 부르지 않음"과 같은 원칙</text>
 </svg><p class="cap">끊기면 다시 확인하고, 그래도 없으면 남은 도서관은 확인 못 함으로 둡니다.</p></div>
+<h3 style="font-size:20px;margin:18px 0 6px">질문에 답: "남은 도서관을 서버가 이어서 부름"은 서비스 쪽에서 어떤가</h3>
+<p class="concl"><b>사용자에게는 결과가 더 채워져 좋지만, 서버 쪽 대가가 있고 실제로 쓰일 일이 드뭅니다.</b> 확장이 검색 도중(몇 초 사이)에 꺼지는 경우만 해당하기 때문입니다. 서버가 이어서 부르면 그 순간 서버 자리 1개와 서버 IP로 도서관 요청이 나가고, 서버가 빨강이면 결국 503이라 같은 "확인 못 함"이 됩니다.</p>
+<table>
+<tr><th></th><th>(제안) 남은 곳은 확인 못 함</th><th>(다른 선택) 서버가 이어서 부름</th><th>(절충) 서버 자리가 있을 때만 이어서</th></tr>
+<tr><td>사용자가 보는 결과</td><td>2곳 받음 + 3곳 확인 못 함</td><td>5곳 모두(서버가 한가하면)</td><td>초록·노랑이면 5곳, 빨강이면 확인 못 함</td></tr>
+<tr><td>서버 자리</td><td>안 씀</td><td>1개 씀(8초), 빨강이면 503</td><td>자리 있을 때만 1개</td></tr>
+<tr><td>도서관에 가는 IP</td><td>—</td><td>서버 IP(막힘 위험을 서버가 짊어짐)</td><td>서버 IP</td></tr>
+<tr><td>만들 것</td><td>없음(닫기로 건너뜀 알림)</td><td>올리기 경로 → 서버 스트림으로 갈아타는 코드, 남은 후보 넘기기</td><td>다른 선택 + 상태 확인</td></tr>
+<tr><td>일어나는 빈도</td><td colspan="3">확장을 검색 도중 끄거나, 업데이트·잠듦이 그 몇 초에 겹칠 때만(드묾). 다시 인사로 잠듦은 대부분 이어짐(이미 고침)</td></tr>
+</table>
+<p>정리: 드문 경우를 위해 갈아타기 코드를 넣는 것보다, 다음 검색부터 서버 모드로 바뀌니 사용자가 다시 검색하면 5곳 모두 나옵니다. 그래서 제안(확인 못 함)을 그대로 추천합니다. 서비스 측면에서 결과를 최대한 채우고 싶으시면 절충안(자리가 있을 때만 이어서)을 기타로 적어 주세요.</p>
 <p class="concl">[안] 다시 인사해도 답이 없으면 그 검색의 남은 도서관은 <b>「확인하지 못한 도서관」</b>으로 두고(닫기로 서버에 건너뜀으로 알림), 이미 받은 결과는 그대로, 파란 불은 지우고 <b>다음 검색부터 서버 모드</b>(상태 묻기 바로 1회 → 10초 주기).</p>
 <p class="alt">다른 선택: 남은 도서관을 그 자리에서 서버가 이어서 부름. 결과가 더 채워지지만 그 순간 서버 자리가 필요하고(빨강이면 503), 명세 #10 "서버가 다시 부르지 않음"과 어긋납니다.</p>
 </div>
@@ -238,6 +249,29 @@ svg .ah{fill:var(--accent)}
 <text class="s13m" x="10" y="210">정상으로 받은 줄: 붙이지 않음 · 확장 모드: 상태를 묻지 않으므로 쓰지 않음 · 직접 찾기: #1의 도서관 줄에</text>
 <text class="s13m" x="10" y="232">→ "왜 확인 못 했는지"가 결과를 보는 동안 계속 남음</text>
 </svg><p class="cap">「밀려요」는 아직 조회 중이거나 실패한 줄에만, 실패 순간의 이유를 그 줄에 남깁니다.</p></div>
+<h3 style="font-size:20px;margin:18px 0 6px">질문에 답: "줄이 선 도서관"은 어디에 무엇이 줄을 선 건가</h3>
+<p class="concl"><b>우리 서버 안에서, 그 도서관 사이트로 보낼 요청들이 차례를 기다리고 있는 것</b>입니다. 도서관 사이트에 줄을 서는 게 아닙니다. 우리 서버는 도서관 한 곳(정확히는 그 사이트 주소 하나)에 <b>한 번에 1건만, 앞 요청이 끝나고 1초 뒤에</b> 다음 요청을 보냅니다(사이클 02부터 있는 규칙, dev `InMemoryHostThrottle`). 여러 사람이 같은 도서관을 동시에 찾으면 첫 요청만 바로 나가고 나머지는 서버 안에서 순서를 기다립니다. 이 "기다리는 요청이 있는 도서관"을 "줄이 선 도서관"이라고 불렀습니다. 말이 어려웠습니다 — 화면에 보이는 글은 「지금 이 도서관 조회가 밀려요」입니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 330" role="img" aria-label="줄이 선 도서관">
+<defs><marker id="ah5q" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="var(--accent)"/></marker></defs>
+<text class="s14" x="10" y="22">세 사람이 같은 순간 「백만장자 마인드」를 검색, 셋 다 경기교육청 통합 전자도서관을 봐야 함</text>
+<rect class="bx" x="10" y="44" width="150" height="40" rx="8"/><text class="s13" x="20" y="69">사용자 A</text>
+<rect class="bx" x="10" y="94" width="150" height="40" rx="8"/><text class="s13" x="20" y="119">사용자 B</text>
+<rect class="bx" x="10" y="144" width="150" height="40" rx="8"/><text class="s13" x="20" y="169">사용자 C</text>
+<rect class="bxa" x="220" y="34" width="400" height="160" rx="10"/><text class="s14" x="230" y="56">우리 서버 — 경기교육청 앞 대기 줄</text>
+<rect class="bxok" x="240" y="70" width="110" height="34" rx="6"/><text class="s13" x="250" y="92">A 요청 → 보냄</text>
+<rect class="bxno" x="360" y="70" width="110" height="34" rx="6"/><text class="s13" x="370" y="92">B 대기 (1초 뒤)</text>
+<rect class="bxno" x="480" y="70" width="120" height="34" rx="6"/><text class="s13" x="490" y="92">C 대기 (2초 뒤)</text>
+<text class="s13m" x="240" y="130" font-size="12">한 번에 1건 · 앞 요청 끝나고 1초 → B·C가 "줄을 섬"</text>
+<text class="s13m" x="240" y="150" font-size="12">8초 안에 차례가 안 오면 그 요청은 실패</text>
+<text class="s13 sred" x="240" y="176">→ 이 도서관 = "줄이 선 도서관"</text>
+<rect class="bx" x="690" y="70" width="200" height="40" rx="8"/><text class="s13" x="700" y="95">경기교육청 사이트</text>
+<path d="M160 64 L240 87" class="ar" marker-end="url(#ah5q)"/><path d="M160 114 L360 87" class="ar" marker-end="url(#ah5q)"/><path d="M160 164 L480 100" class="ar" marker-end="url(#ah5q)"/><path d="M350 80 H690" class="ar" marker-end="url(#ah5q)"/>
+<rect class="bx" x="10" y="214" width="880" height="106" rx="8"/><text class="s14" x="20" y="236">사용자 C의 화면</text>
+<rect class="bx" x="20" y="246" width="420" height="30" rx="6"/><text class="s13" x="30" y="266">서울교육청 · 빌릴 수 있음 (바로 받음)</text>
+<rect class="bx" x="20" y="282" width="420" height="30" rx="6"/><text class="s13" x="30" y="302">경기교육청 · 대출 정보 조회 중 · <tspan class="sred">지금 이 도서관 조회가 밀려요</tspan></text>
+<text class="s13m" x="460" y="266" font-size="12">다른 도서관은 줄이 없어 바로 나오는데</text><text class="s13m" x="460" y="284" font-size="12">경기교육청만 늦는 이유를 그 줄에서 알려 줌</text><text class="s13m" x="460" y="302" font-size="12">(서버 전체 신호는 초록일 수도 있음)</text>
+</svg><p class="cap">"줄"은 우리 서버 안에서 같은 도서관으로 보낼 요청들이 차례를 기다리는 것. 그 도서관 줄에만 「밀려요」가 붙습니다.</p></div>
+<p>그래서 이 항목(#5)이 묻는 것은: 「밀려요」 글을 <b>조회 중이거나 확인 못 한 줄에만</b> 붙이고, 실패로 끝난 줄에서는 이유로 <b>계속 남길지</b>입니다(위 시간 그림). 이해가 되시면 골라 주세요.</p>
 <p class="concl">[안] 이 글은 <b>아직 조회 중인 줄과 「확인하지 못한 도서관」 줄에만</b> 붙이고, 실패로 끝난 순간 붙어 있었으면 <b>그 줄에서는 계속 유지</b>(검색을 새로 할 때까지). 정상으로 받은 줄에는 붙이지 않습니다. 확장 모드에서는 쓰지 않는다고 문서에 적습니다. 직접 찾기는 #1의 도서관 줄에 붙입니다.</p>
 <p class="alt">다른 선택: 지금 설계대로(목록에 있는 동안 모든 줄). 단순하지만 위 (1)(2)가 남습니다.</p>
 </div>
@@ -256,6 +290,10 @@ svg .ah{fill:var(--accent)}
 <div class="fig wide"><svg viewBox="0 0 900 230" role="img" aria-label="폰 말풍선 다섯 색"><rect class="bx" x="10" y="20" width="168" height="200" rx="16"/><rect class="bx" x="20" y="36" width="148" height="30" rx="6"/><text class="s13" x="26" y="56" font-size="12" font-weight="800">책첵</text><circle cx="126" cy="51" r="6" fill="var(--ok)"/><text class="s13m" x="144" y="56" font-size="11">☰</text><rect x="20" y="74" width="148" height="76" rx="8" fill="var(--card)" stroke="var(--ok)" stroke-width="2"/><text class="s13" x="28" y="94" font-size="12" font-weight="700">조회 원활</text><text class="s13m" x="28" y="114" font-size="11">지금 바로 찾을 수 있어요</text><rect class="bx" x="20" y="160" width="148" height="50" rx="6"/><text class="s13m" x="30" y="190" font-size="11">검색 화면</text><rect class="bx" x="188" y="20" width="168" height="200" rx="16"/><rect class="bx" x="198" y="36" width="148" height="30" rx="6"/><text class="s13" x="204" y="56" font-size="12" font-weight="800">책첵</text><circle cx="304" cy="51" r="6" fill="var(--warn)"/><text class="s13m" x="322" y="56" font-size="11">☰</text><rect x="198" y="74" width="148" height="76" rx="8" fill="var(--card)" stroke="var(--warn)" stroke-width="2"/><text class="s13" x="206" y="94" font-size="12" font-weight="700">조회 붐빔</text><text class="s13m" x="206" y="114" font-size="11">찾는 사람이 늘고 있어요.</text><text class="s13m" x="206" y="130" font-size="11">조금 느릴 수 있어요</text><rect class="bx" x="198" y="160" width="148" height="50" rx="6"/><text class="s13m" x="208" y="190" font-size="11">검색 화면</text><rect class="bx" x="366" y="20" width="168" height="200" rx="16"/><rect class="bx" x="376" y="36" width="148" height="30" rx="6"/><text class="s13" x="382" y="56" font-size="12" font-weight="800">책첵</text><circle cx="482" cy="51" r="6" fill="var(--no)"/><text class="s13m" x="500" y="56" font-size="11">☰</text><rect x="376" y="74" width="148" height="76" rx="8" fill="var(--card)" stroke="var(--no)" stroke-width="2"/><text class="s13" x="384" y="94" font-size="12" font-weight="700">조회 혼잡</text><text class="s13m" x="384" y="114" font-size="11">지금 찾는 사람이 많아</text><text class="s13m" x="384" y="130" font-size="11">검색이 거절될 수 있어요</text><rect class="bx" x="376" y="160" width="148" height="50" rx="6"/><text class="s13m" x="386" y="190" font-size="11">검색 화면</text><rect class="bx" x="544" y="20" width="168" height="200" rx="16"/><rect class="bx" x="554" y="36" width="148" height="30" rx="6"/><text class="s13" x="560" y="56" font-size="12" font-weight="800">책첵</text><circle cx="660" cy="51" r="6" fill="var(--muted)"/><text class="s13m" x="678" y="56" font-size="11">☰</text><rect x="554" y="74" width="148" height="76" rx="8" fill="var(--card)" stroke="var(--muted)" stroke-width="2"/><text class="s13" x="562" y="94" font-size="12" font-weight="700">상태 모름</text><text class="s13m" x="562" y="114" font-size="11">조회 상태를 받아오지</text><text class="s13m" x="562" y="130" font-size="11">못했어요</text><rect class="bx" x="554" y="160" width="148" height="50" rx="6"/><text class="s13m" x="564" y="190" font-size="11">검색 화면</text><rect class="bx" x="722" y="20" width="168" height="200" rx="16"/><rect class="bx" x="732" y="36" width="148" height="30" rx="6"/><text class="s13" x="738" y="56" font-size="12" font-weight="800">책첵</text><circle cx="838" cy="51" r="6" fill="var(--accent)"/><text class="s13m" x="856" y="56" font-size="11">☰</text><rect x="732" y="74" width="148" height="76" rx="8" fill="var(--card)" stroke="var(--accent)" stroke-width="2"/><text class="s13" x="740" y="94" font-size="12" font-weight="700">내 브라우저에서 조회 중</text><text class="s13m" x="740" y="114" font-size="11">확장 프로그램이 도서관을</text><text class="s13m" x="740" y="130" font-size="11">직접 조회해요</text><rect class="bx" x="732" y="160" width="148" height="50" rx="6"/><text class="s13m" x="742" y="190" font-size="11">검색 화면</text></svg><p class="cap">폰(375px)에서 점을 눌렀을 때 색마다 뜨는 말풍선. 자리와 순서만 보이는 배치도입니다.</p></div>
 <p class="concl">[안] 위 표의 둘째 줄을 색마다 씁니다(빨강은 이미 정한 문장 그대로).</p>
 <p class="alt">다른 선택: 말풍선에는 점 옆 글만(둘째 줄 없음). 짧지만 노랑·빨강이 무슨 뜻인지 설명이 없습니다.</p>
+</div>
+
+<div class="card"><h3 style="font-size:20px;margin:18px 0 6px">질문에 답: PC도 같은 메시지인가</h3>
+<p class="concl">PC(640px 넘음)는 점 옆에 <b>짧은 글</b>(「조회 원활」·「조회 붐빔」·「조회 혼잡」·「상태 모름」·「내 브라우저에서 조회 중」)이 늘 보이고, 둘째 줄 설명은 지금 설계에는 없습니다. 폰만 점을 누르면 말풍선으로 짧은 글 + 둘째 줄이 뜹니다. PC에서도 둘째 줄을 보이게 할지는 새 20번에서 고르실 수 있게 했습니다.</p>
 </div>
 
 <h2 class="grp">B. 서버 메모리를 지키는 값</h2>
@@ -493,6 +531,19 @@ svg .ah{fill:var(--accent)}
 <path d="M200 62 H230" class="ar" marker-end="url(#ah19c)"/><path d="M420 62 H450" class="ar" marker-end="url(#ah19c)"/><path d="M640 62 H670" class="ar" marker-end="url(#ah19c)"/>
 </svg><p class="cap">결정과 검토는 지금, 반영과 인계는 사이클 17 회고 뒤.</p></div>
 <p class="concl">[안] 이 문서대로 다음 단계로 갑니다. 지금은 설계 검토만 돌리고, 반영과 인계서는 사이클 17 회고 뒤.</p>
+</div>
+
+<div class="card item">
+<h2><span class="num">20</span>PC에서 점에 마우스를 올리면<br>둘째 줄 설명도 보이기 (#6에서 이어짐)</h2>
+<p><b>어디서 생기나.</b> #6 질문("PC도 마찬가지 메시지지?")에서 나왔습니다. PC는 점 옆 짧은 글만 보이고, 폰은 누르면 둘째 줄까지 보입니다. PC 사용자도 "조회 붐빔"이 무슨 뜻인지 둘째 줄로 알 수 있게 할지입니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 140" role="img" aria-label="PC 마우스 올림 말풍선">
+<rect class="bx" x="10" y="20" width="620" height="44" rx="8"/><text class="s13" x="24" y="48" font-weight="800">책첵</text><text class="s13" x="80" y="48">추천도서</text><text class="s13" x="160" y="48">마이페이지</text>
+<circle cx="440" cy="42" r="7" fill="var(--warn)"/><text class="s13" x="452" y="48">조회 붐빔</text><text class="s13" x="580" y="48">로그인</text>
+<rect x="380" y="72" width="300" height="56" rx="8" fill="var(--card)" stroke="var(--warn)" stroke-width="2"/><text class="s13" x="392" y="94" font-size="12">조회 붐빔</text><text class="s13m" x="392" y="114" font-size="12">찾는 사람이 늘고 있어요. 조금 느릴 수 있어요</text>
+<text class="s13m" x="700" y="48" font-size="12">← 마우스를 올리면</text><text class="s13m" x="700" y="66" font-size="12">  (키보드 초점도 같음)</text>
+</svg><p class="cap">PC에서 점이나 글에 마우스를 올리면(또는 Tab으로 초점이 가면) 폰 말풍선과 같은 둘째 줄이 뜹니다.</p></div>
+<p class="concl">[안] PC에서는 점+글에 <b>마우스를 올리거나 키보드 초점이 가면</b> 폰과 같은 말풍선(짧은 글 + 둘째 줄)을 띄웁니다. 문구는 #6 표 그대로.</p>
+<p class="alt">다른 선택: PC는 짧은 글만(지금 설계). 머리말이 조용하지만 노랑·빨강의 뜻이 PC에서는 설명되지 않습니다.</p>
 </div>
 
 <p class="foot">원문: <code>docs/cycles/20-lookup-status-and-extension/design-delta.md</code>(◆ = 이번 검토로 고친 곳), <code>spec.md</code>(AC-10a·16~20 추가), <code>flow.md</code>, ADR-0119(Proposed, 검사 순서 고침). 검토는 사용자·서버 자원·보안/안정성 세 관점, dev 코드와 공식 문서(크롬 확장 service worker 수명, Spring CSRF, nginx) 확인 2026-10-16.</p>
