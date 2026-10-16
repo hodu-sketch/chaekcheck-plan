@@ -316,6 +316,7 @@ body{background:var(--bg);color:var(--text)}
 <path d="M200 191 L260 205" class="ar" marker-end="url(#ah5r)"/><path d="M200 223 L260 212" class="ar" marker-end="url(#ah5r)"/>
 <text class="s13m" x="560" y="200" font-size="12">확장 모드는 캐시를 읽지 않으므로(#9 결정)</text><text class="s13m" x="560" y="218" font-size="12">각자 브라우저가 받아옴 — 서버 줄과 무관</text>
 </svg><p class="cap">같은 검색은 이미 한 요청을 함께 씁니다. 줄은 같은 도서관에 다른 검색이 몰릴 때만 섭니다.</p></div>
+<p class="concl" style="border:2px solid var(--ok)"><b>정함 (2026-10-16)</b>: 제안대로 — 조회 중·확인 못 한 줄에만, 실패 이유는 남김.</p>
 <h3 style="font-size:20px;margin:18px 0 6px">그림으로 자세히: 지금 정한 60초 규칙과 제안하는 바꿈</h3>
 <p><b>먼저 지금 정한 규칙(명세 R4, 명세 결정 #5).</b> 서버는 10초마다 오는 상태 응답에 "줄이 선 도서관 목록"을 넣어 줍니다. 어떤 도서관이 이 목록에 들어가는 조건은 둘 중 하나입니다: (가) 지금 그 도서관 앞에 차례를 기다리는 요청이 1건 이상 있음, (나) <b>최근 60초 안에</b> 그 도서관 앞에서 8초를 기다리다 포기한 요청(시간 초과)이 있었음. 화면은 이 목록에 있는 도서관의 <b>결과 줄 전부</b>에 「지금 이 도서관 조회가 밀려요」를 붙이고, 목록에서 빠지면 바로 지웁니다.</p>
 <div class="fig wide"><svg viewBox="0 0 900 230" role="img" aria-label="줄이 선 도서관 목록에 들고 나는 시간">
