@@ -92,6 +92,37 @@
 | 사서 추천 받기 | 연결 5초, 읽기 10초, 본문 10MB, 표지 5MB, 간격 1초 | `be.yml` `picks.fetch.*` | 구현됨 | 사이클 14, ADR-0089·0092 | 표지 5MB 사용자 결정 (2026-10-12) | [확정] |
 | 로그인 토큰 | 접근 15분, 로그인 30일, 재인증 5분, 가입 대기 10분 | `be.yml` `auth.tokens.*` | 구현됨 | ADR-0038·0040·0043 | ADR | [확정] |
 
+## 8. 값을 바꾸는 곳: 환경 변수 이름 (2026-10-16)
+
+사용자: "이런 개수 말이야 변수로 통합적으로 관리 가능하도록 했으면 해 설정이라던가 그리고 이런 것들 문서 링크 잘 해서 ai가 잘 보도록 정리하고" (2026-10-16, 사이클 20 세 관점 검토). 방식은 사이클 20 검토 #25 [안].
+
+- 서비스(Spring) 값은 `application.yml`을 고치지 않고 **환경 변수로 덮어쓸 수 있음**: 이름은 속성 이름에서 점을 `_`로, `-`를 빼고, 대문자로 [확정] (Spring Boot 공식 문서 "Binding From Environment Variables", https://docs.spring.io/spring-boot/reference/features/external-config.html , 2026-10-16 확인). 운영에서는 `deploy/prod/prod.env`(사이클 17)에 적고 서비스를 다시 켬
+- nginx와 서비스가 함께 쓰는 값은 짧은 `LOOKUP_*` 이름 하나로(사이클 20 설계 #12)
+- 웹(화면) 값은 빌드 때 `VITE_*`, 확장 값은 `extension/config.js` 한 파일 — 이 둘은 다시 빌드·다시 깔아야 바뀜
+
+| 값 | 환경 변수 | 지금 기본값 |
+|---|---|---|
+| 동시 검색 자리 | `CHAEKCHECK_AVAILABILITY_MAXCONCURRENTSEARCHES` | 20 |
+| 묶음당 동시 도서관 | `CHAEKCHECK_AVAILABILITY_BATCH_PARALLELISM` | 5 |
+| 바로 검색 결과 줄 상한 | `CHAEKCHECK_AVAILABILITY_BATCH_ROWLIMIT` | 20 → 10 (사이클 20) |
+| 묶음 마감 | `CHAEKCHECK_AVAILABILITY_BATCH_DEADLINE` | 8s |
+| 새 요청 멈춤 | `CHAEKCHECK_AVAILABILITY_BATCH_LAUNCHCUTOFF` | 3s |
+| 다음 묶음 후보 | `CHAEKCHECK_AVAILABILITY_BATCH_MAXCANDIDATES` | 50 |
+| 상세 마감 | `CHAEKCHECK_AVAILABILITY_DETAIL_DEADLINE` | 30s |
+| 한 길·한 사이트 동시 / 간격 | `CHAEKCHECK_AVAILABILITY_HOSTMAXCONCURRENCY` / `CHAEKCHECK_AVAILABILITY_HOSTMININTERVAL` | 1 / 1s |
+| 연결 / 머리 / 전체 시간 제한 | `CHAEKCHECK_AVAILABILITY_CONNECTTIMEOUT` / `_READTIMEOUT` / `_TOTALTIMEOUT` | 5s / 5s / 15s |
+| 「더 보기」 한 쪽 제한 | `CHAEKCHECK_AVAILABILITY_REQUESTDEADLINE` | 8s |
+| 조회 캐시 유지 | `CHAEKCHECK_AVAILABILITY_CACHETTL` | 3m |
+| 캐시 칸 | `CHAEKCHECK_AVAILABILITY_CACHES_SEARCHPAGEMAXSIZE` / `_DETAILVERDICTMAXSIZE` | 1000 / 1000 |
+| 도서관 응답 본문 상한 (서버·확장·nginx 함께) | `LOOKUP_MAX_BODY_MB` | 4MB → 1 (사이클 20) |
+| 확장 올리기 동시 해석 | (사이클 20 새 속성, 이름은 dev가 정함 → 위 규칙대로 환경 변수) | 4 |
+| nginx 올리기 / 계획 한도 | `LOOKUP_UPLOAD_CONN`, `LOOKUP_UPLOAD_RATE`·`_BURST`, `LOOKUP_PLAN_PER_MIN`·`_BURST` | 4, 20·60, 300·100 |
+| 책 기준 검색 한 쪽 책 수 | 웹 `VITE_BOOKS_PAGE_SIZE` [안] (API 기본값은 서비스 설정) | 20 → 10 (사이클 20) |
+| 상태 묻는 간격 | 웹 `VITE_LOOKUP_STATUS_POLL_SECONDS` [안] | 10 |
+| 나가는 길 설정 | ADR-0130 설정 자리 (사이클 17 인계) | `모두` |
+
+- 위 표의 속성 이름은 dev `backend/src/main/resources/application.yml`(2026-10-16 읽음) 기준. 속성 이름이 바뀌면 환경 변수 이름도 바뀌므로 이 표를 함께 고침
+
 ## 확인 필요
 
 | 항목 | 확인 방법 |
