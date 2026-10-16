@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>오늘 AWS에서 한 일</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;color-scheme:light}
+:root[data-theme="dark"]{--bg:#1a1c1e;--card:#242729;--text:#e8e8e6;--muted:#a3a9b2;--line:#3a3e42;--accent:#7bb0e0;--accent-bg:#1f2d3a;--ok:#5fcf8e;--ok-bg:#16301f;--warn:#e3b760;--warn-bg:#332814;--no:#e88a82;--no-bg:#331a18;--code-bg:#2c2f31;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:19px;line-height:1.72;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:800px;margin:0 auto;padding:34px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.34}
+p,li,td{text-wrap:pretty}
+.lead{font-size:26px;font-weight:700;margin:0 0 6px}
+.sub{color:var(--muted);margin:0 0 26px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 20px;margin:0 0 20px}
+.card h2{font-size:20px;margin:0 0 6px;display:flex;gap:10px;align-items:baseline}
+.cn{flex:none;display:inline-grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--accent);color:#fff;font-size:15px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:12px 15px;margin:4px 0 14px;font-weight:500}
+.ok-gist{background:var(--ok-bg);color:var(--ok)}
+.no-gist{background:var(--no-bg);color:var(--no)}
+table{border-collapse:collapse;width:100%;font-size:16.5px;margin:8px 0}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--code-bg);font-weight:700}
+td.r{text-align:right;white-space:nowrap}
+.done{color:var(--ok);font-weight:600}
+ul.items{list-style:none;padding:0;margin:8px 0}
+ul.items li{display:flex;gap:11px;align-items:flex-start;margin:9px 0}
+ul.items .ic{flex:none;width:30px;height:30px}
+.warnrow{display:flex;gap:11px;align-items:flex-start;margin:10px 0;background:var(--no-bg);border-radius:9px;padding:10px 13px}
+.warnrow b{color:var(--no)}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.chip{background:var(--warn-bg);border:1px solid var(--warn);border-radius:9px;padding:12px 15px;margin:14px 0 4px;font-size:17px}
+.foot{color:var(--muted);font-size:15px;margin-top:26px}
+.src{color:var(--muted);font-size:14px;margin-top:8px}
+@media (max-width:640px){body{font-size:18px}.lead{font-size:22px}}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">오늘 AWS에서 두 가지를 끝냈습니다</p>
+<p class="sub">① 무료 크레딧 <b>$200</b>를 전부 확보했고, ② 서버 상태를 늘 볼 수 있는 <b>모니터링</b>을 켰습니다. 운영 서버는 건드리지 않았고, 지금 더 하실 일은 없습니다. (2026-10-16)</p>
+
+<section class="card">
+<h2><span class="cn">1</span>무료 크레딧 $200 — 전부 챙김</h2>
+<div class="gist ok-gist">가입 때 받은 $100에 더해, 간단한 체험 활동 5개를 하면 각 $20씩 최대 $100을 더 줍니다. 그 다섯 개를 모두 끝내 <b>남은 크레딧이 $200</b>이 됐습니다.</div>
+<table>
+<tr><th>한 일</th><th>받은 크레딧</th><th>상태</th></tr>
+<tr><td>가입 기본 크레딧</td><td class="r">$100</td><td class="done">완료</td></tr>
+<tr><td>비용 예산(Budgets) 만들기</td><td class="r">$20</td><td class="done">완료</td></tr>
+<tr><td>EC2 서버(실습용) 한 대 켰다 끄기</td><td class="r">$20</td><td class="done">완료</td></tr>
+<tr><td>Bedrock에서 AI 모델 한 번 써보기</td><td class="r">$20</td><td class="done">완료</td></tr>
+<tr><td>Lambda로 작은 웹페이지 만들기</td><td class="r">$20</td><td class="done">완료</td></tr>
+<tr><td>데이터베이스(RDS) 한 개 만들기</td><td class="r">$20</td><td class="done">완료</td></tr>
+<tr><th>합계 (남은 크레딧)</th><th class="r">$200</th><th class="done">최대</th></tr>
+</table>
+<p>크레딧은 <b>2027년 10월 13일</b>까지 쓸 수 있고, 무료 플랜 기간은 <b>2027년 4월 14일쯤</b>까지입니다. 둘 중 먼저 끝나는 때까지 쓸 수 있습니다.</p>
+</section>
+
+<section class="card">
+<h2><span class="cn">2</span>그래서 돈이 나갔나요? — 아니요</h2>
+<div class="gist">활동을 하면 그 서비스 사용료가 생기지만, <b>카드가 아니라 크레딧($200)에서 빠집니다.</b> 작은 실습 자원을 금방 지웠으니 빠진 크레딧은 아주 적고, 활동마다 $20을 받아 전체로는 오히려 크레딧이 늘었습니다.</div>
+<p>AWS 결제 화면 안내 그대로입니다: 무료 플랜에서는 크레딧이 비용을 대신 내고, <b>크레딧이 다 떨어지거나 기간이 끝나기 전까지 실제 과금은 없습니다.</b></p>
+</section>
+
+<section class="card">
+<h2><span class="cn">3</span>만든 것은 모두 지웠습니다</h2>
+<div class="gist">크레딧만 받고 자원은 남기지 않도록, 활동용으로 만든 것들을 전부 삭제했습니다. <b>실제 서비스가 돌 `chaekcheck` 서버와 모니터링은 그대로 둡니다.</b></div>
+<ul class="items">
+<li><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="2"><path d="M4 7h16M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2M6 7l1 13a1 1 0 001 1h8a1 1 0 001-1l1-13"/></svg><span><b>EC2 실습용 서버</b>(<code>test-credit-instance</code>) — 켰다가 종료(삭제)함</span></li>
+<li><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="2"><path d="M4 7h16M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2M6 7l1 13a1 1 0 001 1h8a1 1 0 001-1l1-13"/></svg><span><b>Lambda 웹페이지</b>(<code>credit-webapp-fn</code>) — 삭제함(공개 주소도 사라짐)</span></li>
+<li><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="2"><path d="M4 7h16M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2M6 7l1 13a1 1 0 001 1h8a1 1 0 001-1l1-13"/></svg><span><b>데이터베이스</b>(<code>database-1</code>, PostgreSQL) — <b>삭제 진행 중</b>. AWS가 알아서 몇 분 안에 없앱니다(제 창을 꺼도 계속됩니다). 다음에 로그인하면 사라진 것을 확인할 수 있습니다</span></li>
+<li><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 12l2 2 4-4"/></svg><span><b>운영 `chaekcheck` 서버</b>(<서버 IP>) — 그대로 실행 중, 손대지 않음</span></li>
+</ul>
+</section>
+
+<section class="card">
+<h2><span class="cn">4</span>누르면 안 되는 버튼 3개</h2>
+<div class="gist no-gist">아래를 하면 <b>남은 활동·크레딧이 즉시 무효</b>가 됩니다. 콘솔에서 이 세 가지만 피하면 $200를 기간 안에 그대로 씁니다. (AWS 공식 문서)</div>
+<div class="warnrow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="var(--no)" stroke-width="2" style="flex:none;width:26px;height:26px"><path d="M12 9v4M12 17h.01M10.3 3.9L2 18a2 2 0 001.7 3h16.6a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg><span><b>"플랜 업그레이드" 버튼</b> — 콘솔 여러 곳에 있습니다. 누르면 유료 플랜으로 바뀌며 크레딧 혜택이 끝납니다</span></div>
+<div class="warnrow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="var(--no)" stroke-width="2" style="flex:none;width:26px;height:26px"><path d="M12 9v4M12 17h.01M10.3 3.9L2 18a2 2 0 001.7 3h16.6a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg><span><b>AWS Organizations 가입</b> (여러 계정 묶기)</span></div>
+<div class="warnrow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="var(--no)" stroke-width="2" style="flex:none;width:26px;height:26px"><path d="M12 9v4M12 17h.01M10.3 3.9L2 18a2 2 0 001.7 3h16.6a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg><span><b>Control Tower 설정</b> (대규모 계정 관리 기능)</span></div>
+</section>
+
+<section class="card">
+<h2><span class="cn">5</span>서버 모니터링을 켰습니다</h2>
+<div class="gist">CloudWatch 대시보드 <code>chaekcheck</code>에서 서버 상태를 늘 볼 수 있습니다. <b>서버 안에 작은 수집기(CloudWatch 에이전트)를 설치</b>해, 서버가 재부팅돼도 자동으로 다시 켜집니다.</div>
+<ul class="items">
+<li><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg><span><b>CPU·네트워크</b> — AWS가 기본으로 보여줌(실시간)</span></li>
+<li><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><rect x="3" y="4" width="18" height="6" rx="1"/><rect x="3" y="14" width="18" height="6" rx="1"/><path d="M7 7h.01M7 17h.01"/></svg><span><b>메모리·디스크 사용률</b> — 방금 설치한 수집기가 1분마다 보냄</span></li>
+<li><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>지금은 앱을 아직 안 올려 그래프가 거의 평평합니다. <b>실제 배포 뒤</b>에 숫자가 의미 있어집니다</span></li>
+</ul>
+</section>
+
+<div class="chip">[안] 이 내용대로 확인했습니다 — 지금 더 할 일 없음 (RDS 삭제 완료 확인은 다음 로그인 때)</div>
+
+<p class="foot">근거: research.md 17절(실제 배포·모니터링·크레딧). 크레딧 규정은 AWS 공식 문서 확인(2026-10-16).</p>
+<p class="src">출처: https://docs.aws.amazon.com/accounts/latest/reference/bcm-lite-free-tier-credits.html · https://aws.amazon.com/free/free-tier-faqs/</p>
+</main>
+</body>
+</html>
