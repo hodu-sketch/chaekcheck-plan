@@ -1,8 +1,8 @@
 # 배포 조사(사이클 22 세션) → 사이클 17: 대출 조회 나가는 길·한도·알림 (인계에 넣을 것)
 
 - 쓴 날: 2026-10-16, chaekcheck-plan-cycle-22 세션(사이클 밖 배포 조사). 사용자: "ADR-0095 바꾸는 ADR 초안이랑 사이클 17 인계 파일 만들어서 캔버스로 보여줘"
-- 상태: [안] 사용자가 결정 페이지 `docs/research/deploy/easy/2026-10-16-adr-0130-draft.html`에서 승인하면 [확정]
-- 근거: `docs/research/deploy/multi-source-ip.md` 6~9절, ADR-0130 초안(`docs/research/deploy/drafts/0130-lookup-egress-webshare-kr-static-and-alerts.md`, 승인되면 `docs/adr/0130-…`), ADR-0094
+- 상태: [확정] (사용자 승인, 2026-10-16, 결정 페이지 `docs/research/deploy/easy/2026-10-16-adr-0130-draft.html` #2). 덧붙임: "이거 자체 서버에서 조회하는거랑 따로 조회서버 두는거랑 둘 다 개발되어야 해"
+- 근거: `docs/research/deploy/multi-source-ip.md` 6~9절, [ADR-0130](../../adr/0130-lookup-egress-webshare-kr-static-and-alerts.md) (Proposed, ADR-0095를 대신함), ADR-0094
 - 왜 17에: 17이 ADR-0095(대출 조회 나가는 길, spec R13)를 dev에 넘기는 사이클. ADR-0130이 ADR-0095를 대신하므로 17 인계의 R13 부분을 이 파일 기준으로 맞춤
 - 이미 맞춘 곳: 사이클 20 `design-delta.md` 「사이클 22 나가는 길·알림과 맞춤」(충돌 없음), 20 spec R1(#21 상태 불)
 
@@ -15,7 +15,7 @@
 
 | # | 무엇 | 값 |
 |---|---|---|
-| 1 | 나가는 길 종류 | ADR-0095의 셋(직접 / 직접 + 업체 프록시 / 조회 서버)에 **서버 자기 공인 IP 여러 개**를 더함. 업체 프록시와 서버 공인 IP 여러 개 모두 지원, 설정이 따로 필요하면 따로. 본 서비스·조회 서버 모두 [안: 구현 방법은 dev — IP마다 tinyproxy `Bind`로 "우리 프록시 목록"을 만들면 업체 프록시와 같은 코드] |
+| 1 | 나가는 길 종류 | ADR-0095의 셋(직접 / 직접 + 업체 프록시 / 조회 서버)에 **서버 자기 공인 IP 여러 개**를 더함. 업체 프록시와 서버 공인 IP 여러 개 모두 지원, 설정이 따로 필요하면 따로. **본 서비스가 직접 조회하는 길과 따로 둔 조회 서버로 조회하는 길 둘 다 개발**(사용자, 2026-10-16), 두 길 모두 같은 나가는 길 설정 [안: 구현 방법은 dev — IP마다 tinyproxy `Bind`로 "우리 프록시 목록"을 만들면 업체 프록시와 같은 코드] |
 | 2 | 첫 배포 길 설정 | EC2 자기 IP 1개 + Webshare 한국 정적 주거용 20개(주소:포트 목록, IP Authorization이라 인증 값 없음). 바뀌는 주거용은 넣지 않음(나중, `docs/backlog.md`) |
 | 3 | 고르는 순서 | 도서관 사이트마다 고정 IP 21개 중 지금 보낼 수 있는 IP 먼저. IP마다 동시 1건·1초, 교보 구독형 서버(`*.dkyobobook.co.kr`)는 IP마다 동시 3건(ADR-0094, 설정) |
 | 4 | 막힌 길 | ADR-0095 그대로(막힌 IP만 그 사이트에서 멈춤), 다시 보기는 `from-cycle-20-blocked-ip-resume.md`(10분부터 두 배, 7일 상한) |

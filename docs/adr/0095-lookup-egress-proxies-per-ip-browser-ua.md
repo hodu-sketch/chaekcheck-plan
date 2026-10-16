@@ -1,6 +1,6 @@
 # ADR-0095: 서비스 대출 조회는 세 가지 나가는 길(직접·업체 고정 IP 프록시·조회 서버)을 설정으로 고르고, 나가는 IP마다 따로 세며, 막힌 IP만 멈추고, 일반 브라우저 User-Agent로 보낸다
 
-Status: Proposed
+Status: Superseded by 0130
 Date: 2026-10-13
 Cycle: 사이클 밖 (배포 조사, `docs/research/deploy/`)
 Supersedes: 없음 (ADR-0011 일부 바꿈: 호출 간격 제어 위치, 다른 서버로 넘기는 기준. ADR-0094의 서비스 조회 부분을 바꿈. 사이클 01 User-Agent 식별 원칙을 서비스 대출 조회에 한해 바꿈)
