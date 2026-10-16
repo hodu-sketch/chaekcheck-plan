@@ -74,7 +74,7 @@
 | 올리기 IP당 동시 연결 | 4 | nginx `LOOKUP_UPLOAD_CONN` (인계 예정) | 인계 예정 | 검토 #7 | 한 사람이 해석 자리를 혼자 차지하지 않게. 사용자 승인 (2026-10-16) | [확정] | — |
 | 올리기 속도 | IP당 초당 20, 몰림 60 | nginx `LOOKUP_UPLOAD_RATE`·`_BURST` (인계 예정) | 인계 예정 | design-delta nginx 줄 | [이유 미확인] | [안] | — |
 | nginx 본문 받기 | `proxy_request_buffering on`, `client_body_buffer_size 512k`, `client_body_timeout 10s` | nginx 템플릿 (인계 예정) | 인계 예정 | design-delta nginx 줄 | 느린 회선이 서버 일꾼·해석 자리를 잡지 않게 (https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_request_buffering , 2026-10-16) | [안] | — |
-| 계획 보관 | 무게 25,000(약 10MB), 쓴 뒤 10분, IP당 열린 계획 20, 꽉 차면 새 계획 503 → 서버 모드 | 인계 예정 | 인계 예정 | 검토 #8 | 2GB 기준 | [안] | — |
+| 계획 보관 | 무게(주소 수) 25,000(약 10MB, 주소 하나 약 400B), 쓴 뒤 10분, IP당 열린 계획 20, 꽉 차면 다른 사람 것을 밀지 않고 새 계획 503 → 그 검색만 서버 모드 | 인계 예정 | 인계 예정 | 검토 #8 | 2GB 기준. 사용자: "오래된 계획이 밀려나는 게 서비스적으로 맞나?" → 밀어내지 않기로, 승인 (2026-10-16) | [확정] | — |
 | 계획 요청 | 분당 60, 몰림 30 + 화면 1초 묶기 | nginx `LOOKUP_PLAN_PER_MIN`·`_BURST` (인계 예정) | 인계 예정 | 검토 #15 | [이유 미확인] | [안] | — |
 | 확장 한 번에 받는 주소 | 최대 100개, 주소 2KB | 확장 `config.js` (인계 예정) | 인계 예정 | design-delta | [이유 미확인] | [안] | — |
 
