@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 21 dev 결과 검토</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+</style>
+</head>
+<body>
+<main class="doc">
+<h1>사이클 21 dev 결과 검토 (2026-10-17)</h1>
+<p class="concl">dev 21이 c21 브랜치(커밋 <code>9a0a839</code>·<code>4efcd45</code>)에 추천도서·머리말 메뉴·표지를 끝냈다고 알려 와, 사용자 지시("20이 이것을 검토해야 한다")로 사이클 20 세션이 읽기만 해서 검토했습니다. <b>설계와 달라진 것은 대부분 사용자가 dev 화면을 보며 직접 정한 것</b>(dev <code>docs/plan-feedback.md</code> "# 사이클 21" 4810~4833행)인데, plan 문서에는 아직 하나도 반영되지 않았습니다. 정할 것 9개를 아래에 [안]으로 묻고, 이미 정하신 것은 마무리 때 plan 문서에 옮겨 적습니다.</p>
+
+<div class="card">
+<h2>이미 사용자가 정한 것 — plan 문서에 옮길 것 (묻지 않음)</h2>
+<table>
+<tr><th>바뀐 것</th><th>원래 설계</th><th>사용자 말 (dev plan-feedback)</th></tr>
+<tr><td>머리말 큰 메뉴에 「도서검색 › 전자책 검색(/search)」 추가 (셋: 도서검색·추천도서·마이페이지)</td><td>큰 메뉴 둘, 책 검색은 로고 (명세 R1-1, ADR-0127)</td><td>"최종, 사용자와 그림을 보며 여러 번 고침" (4824행)</td></tr>
+<tr><td>PC: 탭을 누르면 이동 없이 세 칸이 모두 열림, 같은 탭을 다시 누르면 닫힘. 세 칸 같은 폭, 탭 글자 한 단계 크게</td><td>누르면 첫 항목으로 감 (R1-3)</td><td>"pc 탭 말이야 누르면 아래 항목 보이도록", "나는 다 보였으면" (4825~4827행)</td></tr>
+<tr><td>폰: ☰ 없앰, 머리말 줄 빈 곳을 누르면 메뉴</td><td>640px 이하 ☰ (R1-5, AC-2)</td><td>"상단 탭 자체를 누르면 메뉴 보이는 걸로" (4829행)</td></tr>
+<tr><td>로고는 메인(/)으로만</td><td>같음</td><td>"좌상단 로고는 … 그냥 메인으로 옮겨주는 걸로만 해" (4830행)</td></tr>
+<tr><td>추천도서 표지 아래 날짜·번호 없앰</td><td>R5-1·R5-2, AC-4·AC-5</td><td>"추천도서 각각에 날짜나 숫자 붙이지 마" (4820행)</td></tr>
+<tr><td>목록 이름을 머리말 아래 붙박이(PC·폰), 폰 떠 있는 버튼은 분야만</td><td>흐름 #4 (PC A, 폰 C)</td><td>"좌상단에 고정으로 … pc도 마찬가지" (4821행)</td></tr>
+<tr><td>/search 검색 전 화면 「전자책 검색」 (안 A), 폰 첫 화면 글·검색창 조금 내림</td><td>사이클 21 범위 밖이었음</td><td>안 A 고름 (4833행), 4822행</td></tr>
+<tr><td>표지 찾는 차례에 ④ 카카오 책 검색, ⑤ 국립중앙도서관 제목 검색 추가</td><td>①~③ 다음은 제목 글자 표지 (R5-4)</td><td>"책 표지 무조건 다 보였으면 해 인터넷 수집해서" (4810행)</td></tr>
+</table>
+<p class="cap">판 고르기 (나) 세트 규칙(「토지」 1권)과 표지 ①~③ 차례는 설계와 같습니다.</p>
+</div>
+<div class="card item">
+<h2><span class="num">1</span>카카오 책 검색 표지를<br>공개 배포 때도 쓸까</h2>
+<p><b>어디서 생기나.</b> 표지를 모두 채우려고 dev가 ④ 카카오 책 검색을 더했습니다. 확인한 공식 문서(2026-10-16): 카카오 개발 가이드(https://developers.kakao.com/docs/ko/daum-search/dev-guide)는 <code>thumbnail</code>을 "도서 표지 미리보기 URL"이라고만 하고 표시 조건이 없습니다. 카카오디벨로퍼스 운영정책(https://developers.kakao.com/terms/ko/site-policies, 2026-04-20 시행) 제5조는 받은 데이터의 오래 두는 캐시와 사전 승낙 없는 복제를 금지합니다. 카카오 담당자 커뮤니티 답변(https://devtalk.kakao.com/t/api-daum-search/150751)도 "영구 저장이나 장기 하드캐싱은 허용되지 않으며"라고 했습니다(공식 문서 아님). 우리 수집기는 그림을 한 번 받아 줄여 영구로 넣고, 미리보기 주소 대신 원본 주소를 받습니다. 원본 그림의 권리는 출판사·서점에 있습니다.</p>
+<table><tr><th></th><th>가. 공개 배포 전에 카카오 표지 빼기</th><th>나. 저장 없이 카카오 미리보기 주소를 바로 띄움</th><th>다. 카카오에 정식 문의</th></tr><tr><td>규정 위험</td><td>없음</td><td>저장 금지는 피함, 원본 권리 문제는 남음</td><td>답이 올 때까지 미정</td></tr><tr><td>표지 수</td><td>카카오로 채운 만큼 제목 글자 표지로 (⑤로 일부 메워짐, 정확한 수는 dev 확인)</td><td>그대로</td><td>—</td></tr><tr><td>할 일</td><td>수집기 ④ 끄기</td><td>사용자 브라우저가 Daum 서버에 요청 → 개인정보처리방침·CSP 바꿈</td><td>문의</td></tr></table>
+<p class="concl">[안] "가": 공개 배포 전에 카카오 표지를 빼고 그 자리는 ⑤ 국립중앙도서관 제목 검색 또는 제목 글자 표지로. 카카오 쪽은 backlog에 "정식 문의 후 다시 볼 것"으로 남김.</p>
+<p class="alt">다른 선택: "나"(미리보기 주소 바로 띄우기) 또는 "다"(문의 뒤 결정, 그동안 배포 보류).</p>
+</div>
+<div class="card item">
+<h2><span class="num">2</span>우리 책과 맞추지 못한 추천 도서의 표지</h2>
+<p><b>어디서 생기나.</b> 설계는 "못 맞춘 책은 흐린 제목 글자 표지"(명세 R2-4, AC-15)였는데, dev 수집기는 못 맞춘 책도 인터넷에서 표지 그림을 찾아 흐리게 보여 줍니다. 이것은 plan-feedback에 따로 적힌 사용자 말이 없습니다(4810행 "무조건 다 보였으면"에서 나온 것으로 보임).</p>
+<table><tr><th></th><th>가. dev대로 그림을 흐리게</th><th>나. 설계대로 흐린 제목 글자</th></tr><tr><td>보기</td><td>모든 칸에 그림</td><td>못 맞춘 책은 글자</td></tr><tr><td>"우리 도서관에 없는 책" 구분</td><td>흐림으로만</td><td>그림 유무로 더 분명</td></tr></table>
+<p class="concl">[안] "가"(dev대로 흐린 그림). 단, #1에서 카카오를 빼면 그 그림 중 일부는 제목 글자로 바뀜. AC-15 문구를 이에 맞춰 고침.</p>
+<p class="alt">다른 선택: "나" 설계대로 흐린 제목 글자.</p>
+</div>
+<div class="card item">
+<h2><span class="num">3</span>「제자백가 선독」의 판</h2>
+<p><b>어디서 생기나.</b> 서울대 100선의 「제자백가 선독」은 그 이름의 책이 어디에도 없어 표지를 못 찾았습니다(99/100).</p>
+
+<p class="concl">[안] "가": 제목 글자 표지 그대로 두고, 해제집 원문 근거를 목록 파일 메모에 남김.</p>
+<p class="alt">다른 선택: "나": 해제집 원문에 나온 출판사 판을 찾아 수동(manual)으로 고정.</p>
+</div>
+<div class="card item">
+<h2><span class="num">4</span>1권이 우리 목록에 없는 세트<br>(예: 「카라마조프가의 형제들」)</h2>
+<p><b>어디서 생기나.</b> 판 고르기 (나)는 세트면 1권을 보여 줍니다. 그런데 1권이 우리 카탈로그에 없으면 dev는 가장 작은 권(2권)을 보이고 화면 이름도 「… 2」가 됩니다. 설계에서 다루지 않은 경우입니다.</p>
+
+<p class="concl">[안] "가": 가장 작은 권을 보이되, 화면 이름에서 권 번호는 빼고 세트 이름으로(「카라마조프가의 형제들」).</p>
+<p class="alt">다른 선택: "나": 1권이 없는 세트는 세트에서 빼고 다음 판으로. 또는 그대로 「… 2」.</p>
+</div>
+<div class="card item">
+<h2><span class="num">5</span>「체호프 희곡선」이 「체호프 단편선」에 맞춰짐</h2>
+<p><b>어디서 생기나.</b> 서울대 48번 「체호프 희곡선」이 우리 목록의 「체호프 단편선」에 잘못 맞춰졌습니다(dev plan-feedback 4802행). 다른 책을 보여 주는 오류입니다.</p>
+
+<p class="concl">[안] "가": 수동(manual)으로 바른 판에 맞추고, 없으면 "못 맞춤"으로 둠.</p>
+<p class="alt">다른 선택: "나": 그대로 둠.</p>
+</div>
+<div class="card item">
+<h2><span class="num">6</span>저자를 "일반 지식"으로 채운 서울대 12권</h2>
+<p><b>어디서 생기나.</b> 서울대 목록에서 저자가 비어 있던 12권을 dev가 일반 지식으로 채웠고 [안]으로 표시했습니다. 출처가 없는 값입니다.</p>
+
+<p class="concl">[안] dev가 해제집 원문과 대조해 맞는 것만 [확정]으로 바꾸고, 원문에 없는 것은 저자를 비워 둠(화면은 저자 칸 없이).</p>
+<p class="alt">다른 선택: "일반 지식" 값 그대로 [안]으로 둠.</p>
+</div>
+<div class="card item">
+<h2><span class="num">7</span>폰 머리말에 "누르면 메뉴"라는 표시가 없음</h2>
+<p><b>어디서 생기나.</b> 폰에서 ☰를 없애고 머리말 줄 빈 곳을 누르면 메뉴가 열리게 하셨습니다(그림 승인). 다만 화면에 눈에 보이는 열기 표시가 없어, 처음 쓰는 사람은 메뉴가 있는 줄 모를 수 있습니다(화면 읽기 프로그램용 이름만 있음).</p>
+<table><tr><th></th><th>가. 그대로</th><th>나. 줄 오른쪽에 작은 ▾</th></tr><tr><td>깔끔함</td><td>가장 깔끔</td><td>표시 하나 더</td></tr><tr><td>알아채기</td><td>모를 수 있음</td><td>누르면 열린다는 게 보임</td></tr></table>
+<p class="concl">[안] "나": 로고 옆이나 줄 오른쪽에 작은 ▾ 하나(누르면 메뉴, 크기는 폰 320px에서 한 줄 유지되게).</p>
+<p class="alt">다른 선택: "가" 그림대로 표시 없이.</p>
+</div>
+<div class="card item">
+<h2><span class="num">8</span>수집기 거르기 낱말이 늘어남</h2>
+<p><b>어디서 생기나.</b> 명세 R3-4는 어린이 출판사·번역AI·[100분 고전]만 거르기로 했는데, dev가 영어원서·청소년·만화·그림책·논술 등을 더했습니다. 기록된 결정이 없습니다.</p>
+
+<p class="concl">[안] dev가 늘린 낱말을 R3-4에 합쳐 [확정]으로 적음(목록은 dev <code>collector_words.tsv</code> 그대로).</p>
+<p class="alt">다른 선택: 원래 셋만 두고 나머지는 빼기.</p>
+</div>
+<div class="card item">
+<h2><span class="num">9</span>(사이클 20과 겹침) 머리말 상태 불 점과<br>폰 "줄 누르면 메뉴"가 부딪히지 않게</h2>
+<p><b>어디서 생기나.</b> 사이클 20의 조회 상태 점은 머리말 「로그인」 왼쪽에 있고, 폰에서는 점을 누르면 말풍선이 뜹니다. 사이클 21에서 폰 머리말 줄 전체가 "누르면 메뉴"가 되어, 점을 누를 때 메뉴까지 열리거나 말풍선이 메뉴 밑에 깔릴 수 있습니다(dev 구조: 줄 전체를 덮는 투명 버튼 위에 로고·오른쪽 끝 묶음이 올라가 있음).</p>
+<table><tr><th>규칙</th><th>내용</th></tr><tr><td>점 자리</td><td>점(누르는 영역 44px 포함)은 머리말 오른쪽 끝 묶음 안에 둠 → 점을 눌러도 메뉴가 열리지 않음. 시험: 점을 누르면 말풍선이 열리고 메뉴는 닫힌 채</td></tr><tr><td>동시에 안 열림</td><td>메뉴가 열리면 말풍선이 닫히고, 말풍선이 열리면 메뉴가 닫힘 (PC·폰 모두)</td></tr><tr><td>Esc</td><td>한 번에 열린 것 하나만 닫고, 포커스는 연 자리로</td></tr><tr><td>폰 폭</td><td>320px에서 「책첵」·점·「로그인」이 한 줄에 들어가고, 메뉴를 열 빈 곳이 남는지 dev가 확인</td></tr><tr><td>글 고치기</td><td>사이클 20·21 문서와 ADR-0121·0127의 "폰은 ☰ 왼쪽"을 "폰도 「로그인」 바로 왼쪽, ☰ 없음"으로</td></tr></table>
+<p class="concl">[안] 위 다섯 규칙을 사이클 20 설계(머리말 줄)에 넣고, 사이클 21 쪽에는 공유 파일로 알림.</p>
+<p class="alt">다른 선택: 점을 폰에서 숨김(PC만 표시) — 부딪힐 일은 없지만 폰 사용자는 상태를 못 봄.</p>
+</div>
+<p class="foot">근거: dev <code>chaekcheck-dev-c21</code> 코드·<code>docs/plan-feedback.md</code> "# 사이클 21"(4517~4836행), plan <code>docs/cycles/21-recommended-books/</code> 명세·흐름·인계, ADR-0121·0127. 읽기만 한 검토, 2026-10-17.</p>
+</main>
+</body>
+</html>
