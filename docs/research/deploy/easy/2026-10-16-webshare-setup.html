@@ -1,0 +1,93 @@
+<title>Webshare 한국 IP 준비</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* 한 줄 흐름: 결론 → 6단계 카드(누가 하는지 표시) → 결과 보는 법 */
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#16181b;--card:#1f2226;--text:#e8e6e1;--muted:#a3a9b1;--line:#353a40;--accent:#8db6e0;--accent-bg:#20303f;--ok:#7fcf9c;--ok-bg:#1d3326;--warn:#e3b45c;--warn-bg:#3a2e17;--no:#ee8f88;--no-bg:#3d201e;--code-bg:#2a2e33;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#16181b;--card:#1f2226;--text:#e8e6e1;--muted:#a3a9b1;--line:#353a40;--accent:#8db6e0;--accent-bg:#20303f;--ok:#7fcf9c;--ok-bg:#1d3326;--warn:#e3b45c;--warn-bg:#3a2e17;--no:#ee8f88;--no-bg:#3d201e;--code-bg:#2a2e33;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:19px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word;padding-inline:16px}
+main{max-width:860px;margin:0 auto;padding-block:32px 72px;display:flex;flex-direction:column;gap:22px}
+h1,h2{text-wrap:balance;line-height:1.35;margin:0}
+p,li,td{text-wrap:pretty}
+.lead{font-size:26px;font-weight:700}
+.sub{color:var(--muted);margin:0}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 22px 16px;display:flex;flex-direction:column;gap:8px}
+.step h2{font-size:22px;display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+.num{flex:none;display:inline-grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--accent);color:var(--card);font-size:17px}
+.who{font-size:15px;font-weight:700;border-radius:999px;padding:1px 10px;border:1px solid}
+.who.me{color:var(--warn);background:var(--warn-bg);border-color:var(--warn)}
+.who.cl{color:var(--ok);background:var(--ok-bg);border-color:var(--ok)}
+.step ul{margin:0;padding-left:22px}
+.step p{margin:0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.86em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px;overflow-x:auto;font-size:15px;line-height:1.55;margin:4px 0}
+pre code{background:none;padding:0;word-break:normal}
+a{color:var(--accent)}
+.note{background:var(--warn-bg);border-radius:8px;padding:8px 12px}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:16px}
+th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+th{background:var(--code-bg)}
+.src{color:var(--muted);font-size:15px}
+@media (max-width:600px){body{font-size:17px}.lead{font-size:22px}}
+</style>
+
+<main>
+<p class="lead">Webshare 한국 IP 20개를 사서<br>도서관 사이트가 열리는지 시험하기</p>
+<p class="sub">가입·결제·대시보드 설정은 직접 하셔야 합니다(계정 만들기와 결제·비밀번호 입력은 Claude가 할 수 없음). 목록 파일을 받아 위치를 알려 주시면 시험은 제가 돌립니다. 한 달 $6, 시험에 쓰는 데이터는 수 MB입니다.</p>
+
+<div class="step">
+<h2><span class="num">1</span>Webshare 가입 <span class="who me">직접</span></h2>
+<p><a href="https://www.webshare.io/register">https://www.webshare.io/register</a> 에서 이메일이나 Google로 가입합니다. 무료 플랜(10개)이 같이 생기는데 미국 IP라 이번 시험에는 쓰지 않습니다.</p>
+</div>
+
+<div class="step">
+<h2><span class="num">2</span>한국 정적 주거용 20개 구매 <span class="who me">직접</span></h2>
+<p>아래 링크는 "정적 주거용(공유) 20개, 한국 20개, 250GB, 월 결제"를 미리 채운 구매 화면입니다.</p>
+<p><a href="https://www.webshare.io/express-checkout?proxyType=%22shared%22&proxySubtype=%22isp%22&proxyCount=20&countries=%7B%22KR%22%3A20%7D&bandwidth=250&isYearly=false">구매 화면 열기</a></p>
+<ul>
+<li>결제 전에 화면에서 <b>Static Residential</b>, 나라 <b>South Korea 20</b>, 값 <b>$6.00/월</b>인지 봅니다. 나라가 비어 있으면 South Korea를 골라 20으로 맞춥니다.</li>
+<li>Private(다른 고객 0~2명과 같이)은 $18.52, Dedicated(혼자)는 한국 재고가 없습니다(2026-10-16 Webshare API).</li>
+</ul>
+</div>
+
+<div class="step">
+<h2><span class="num">3</span>IP Authorization에 집 IP 등록 <span class="who me">직접</span></h2>
+<p>대시보드 <b>Proxy Settings → IP Authorization</b>에 시험할 PC의 공인 IP를 넣으면, 아이디·비밀번호 없이 그 PC에서만 프록시를 쓸 수 있습니다.</p>
+<ul>
+<li>시험용: 집 PC <code>211.178.70.242</code> (SK브로드밴드, 2026-10-16 확인)</li>
+<li>운영용(나중에): EC2 서버 <code><서버 IP></code>로 바꿈. 계정마다 기본 1개 IP만 등록됩니다.</li>
+</ul>
+</div>
+
+<div class="step">
+<h2><span class="num">4</span>프록시 목록 내려받기 <span class="who me">직접</span></h2>
+<p>대시보드 <b>Proxy List → Download</b>로 <code>.txt</code>를 받습니다. 한 줄에 <code>ip:port:username:password</code> 모양입니다. 저장소 밖(예: <code>C:\Users\yujun\Downloads\</code>)에 두고, 파일 경로만 알려 주세요. 파일 내용은 붙여 넣지 마세요.</p>
+</div>
+
+<div class="step">
+<h2><span class="num">5</span>접속 시험 <span class="who cl">Claude</span></h2>
+<p>집 PC에서 스크립트를 돌립니다. 프록시마다 나가는 IP의 나라·통신사를 보고, 네 곳에 한 번씩 접속합니다(요청 사이 1초). 비밀번호는 화면에 찍지 않습니다.</p>
+<pre><code>python docs/research/deploy/tools/proxy_check.py C:\Users\yujun\Downloads\목록.txt --all</code></pre>
+<div class="tbl"><table>
+<tr><th>접속하는 곳</th><th>왜 고름</th></tr>
+<tr><td>강동구립 홈페이지 <code>www.gdlibrary.or.kr</code></td><td>기본 확인</td></tr>
+<tr><td>강동 전자도서관 <code>ebook.gdlibrary.or.kr</code></td><td>대출 조회를 실제로 하는 곳</td></tr>
+<tr><td>부산 전자도서관 <code>ebook.busan.go.kr</code></td><td>시드니 AWS IP에서 안 열렸던 곳(2026-10-14) → 한국 IP면 열려야 함</td></tr>
+<tr><td>교보 구독형 강동 <code>gdlib.dkyobobook.co.kr</code></td><td>집 IP를 막은 교보 서버 → 다른 IP로 열리는지</td></tr>
+</table></div>
+</div>
+
+<div class="step">
+<h2><span class="num">6</span>결과 보고 정하기 <span class="who cl">함께</span></h2>
+<ul>
+<li><b>잘 된 것:</b> 나라 <code>KR</code>, 통신사가 한국 회사(KT·SK브로드밴드·LG U+ 등), 네 곳이 열림 → 운영 서버 IP를 등록하고 사이클 17 인계에 넣음</li>
+<li><b>안 된 것:</b> 나라가 KR이 아니거나 도서관이 안 열림 → 결제 뒤 48시간 안, 1GB 미만이면 환불 요청</li>
+</ul>
+<p class="note">EC2 서버는 서울이 아니라 시드니(호주)에 있습니다. 그래서 한국 IP로 나가는 길은 이 20개뿐입니다.</p>
+</div>
+
+<p class="src">근거: IP Authorization https://intercom.help/webshare/en/articles/8375312-ip-authorization · 목록 내려받기 https://help.webshare.io/en/articles/8596696-how-can-i-download-my-proxy-list · 환불 https://help.webshare.io/en/articles/8370527-requesting-a-refund · 한국 재고·값 Webshare API (모두 2026-10-16 확인). 원문 <code>docs/research/deploy/multi-source-ip.md</code> 9절.</p>
+</main>

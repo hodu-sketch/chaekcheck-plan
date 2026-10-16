@@ -17,7 +17,7 @@ ADR-0095의 세 길은 "서버 자기 IP 1개" 또는 "업체 프록시"였다. 
 
 | 방식 | IP 5개 월 대략 | IP 20개 | 한국 IP | 고정 | 트래픽 | 설정 난이도 | 근거 |
 |---|---|---|---|---|---|---|---|
-| **AWS EC2 서울 + 공인 IPv4 추가** (서비스 서버 t4g.medium에 붙임) | 추가 4개 × $3.65 = **약 $14.6** (기존 1개 제외) | t4g.medium은 최대 18개(아래) → 17개 추가 약 $62 | 예(서울) | 예(Elastic IP) | 나가는 데이터 서울 $0.126/GB(무료 한도 뒤) | 중: ENI·보조 사설 IP·EIP 연결 + OS 라우팅 | [확정] 공인 IPv4 $0.005/h (https://aws.amazon.com/vpc/pricing/ , `aws-crawl.md`), t4g.medium 네트워크 인터페이스 3개 × 인터페이스당 IPv4 6개 [확정] (https://docs.aws.amazon.com/ec2/latest/instancetypes/gp.html , 2026-10-16). 리전당 Elastic IP 기본 한도 5개 [확인 필요: Service Quotas 화면] |
+| **AWS EC2 + 공인 IPv4 추가** (서비스 서버 t4g.medium에 붙임. 실제 서버는 시드니라 붙이는 IP도 호주 IP, 36행) | 추가 4개 × $3.65 = **약 $14.6** (기존 1개 제외) | t4g.medium은 최대 18개(아래) → 17개 추가 약 $62 | 예(서울) | 예(Elastic IP) | 나가는 데이터 서울 $0.126/GB(무료 한도 뒤) | 중: ENI·보조 사설 IP·EIP 연결 + OS 라우팅 | [확정] 공인 IPv4 $0.005/h (https://aws.amazon.com/vpc/pricing/ , `aws-crawl.md`), t4g.medium 네트워크 인터페이스 3개 × 인터페이스당 IPv4 6개 [확정] (https://docs.aws.amazon.com/ec2/latest/instancetypes/gp.html , 2026-10-16). 리전당 Elastic IP 기본 한도 5개 [확인 필요: Service Quotas 화면] |
 | **AWS Lightsail** | 서버 한 대에 고정 IP **1개만** | 불가(서버를 여러 대 띄워야 함, 최소 $5/대) | 예 | 예 | 1TB 포함(소형) | — | [확정] "인스턴스에 고정 IP는 한 번에 하나" (https://docs.aws.amazon.com/lightsail/latest/userguide/amazon-lightsail-faq-networking.html , 2026-10-16). 사이클 17 운영 서버는 EC2라 해당 없음(Lightsail로 바꾸면 안 됨) |
 | **iwinv(국내) 추가 IP** | 추가 IP 월 3,300원 × 3 = 9,900원 + 기존 1개 = 4개가 상한 | 불가(서버당 최대 3개 추가, 넘으면 기술지원 문의) | 예 | 예 | `aws-crawl.md` 5절 | 중: rp_filter 등 OS 설정 직접 | [확정] "일 130원/월 3,300원", "최대 3개까지 추가" (https://docs.iwinv.kr/service/network/add-ip/add-ip-overview , 2026-10-16). IP는 무작위 배정 |
 | **Vultr 서울 추가 IPv4** | $3/개 [확인 필요] × 4 ≈ $12 + 서버 | 상한 [확인 필요] | 서울 리전 있음 [확인 필요: 주문 화면] | 예 | [확인 필요] | 중: 추가 시 서버 재시작 + OS 설정 | 예약 IP $0.004/h·$3/월 (https://docs.vultr.com/support/products/network/are-reserved-ips-free , 2026-10-16). 추가 IPv4가 같은 값인지·서울 값인지 [확인 필요] |
@@ -34,6 +34,7 @@ ADR-0095의 세 길은 "서버 자기 IP 1개" 또는 "업체 프록시"였다. 
 - **효과의 한계**: 같은 클라우드 대역 IP 여러 개는 사이트가 대역째 막으면 함께 막힘. 반대로 지금까지 막힌 사례는 교보 구독형 서버 1곳(집 IP, 동시 4건·이틀 8만 건)뿐 (ADR-0094)
 - **법적 부담은 그대로**: 막힌 뒤 다른 IP로 계속 가는 모양은 ADR-0094·0095 "감수하는 점" 그대로(대법원 2021도1533, 한국 직접 판례 못 찾음)
 - **사이클 17 배포 서버와의 관계**: 첫 배포 운영 서버는 AWS EC2 t4g.medium 서울 한 대 [확정] (ADR-0104, 사이클 17 `scope.md`) → 이 서버에 공인 IPv4를 더 붙일 수 있음(최대 18개, 2절). 2주 뒤 집 노트북으로 옮기면(사이클 17 `scope.md`, 사용자 2026-10-12) 집 회선은 보통 공인 IP 1개라 이 방식이 안 되고 업체 프록시나 바깥 서버 프록시가 필요함 [안: 추론]
+- **바로잡음 (2026-10-16)**: 실제 운영 EC2는 무료 플랜 제약으로 **시드니(ap-southeast-2)**, 고정 IP <서버 IP> (사이클 17 `research.md` 330·334·339행). 위의 "서울"은 설계(ADR-0104) 기준이었음. → EC2 자기 IP와 거기에 더 붙이는 IP는 모두 **호주 IP**. 한국 IP는 Webshare 정적 주거용 20개뿐. 부산 전자도서관처럼 외국 IP를 막는 곳은 Webshare로만 열릴 것으로 봄 [안: 추론, 접속 시험으로 확인]
 
 ## 4. 제안 [안]
 
@@ -90,7 +91,13 @@ ADR-0095의 세 길은 "서버 자기 IP 1개" 또는 "업체 프록시"였다. 
 - Webshare 사용량 API: `GET https://proxy.webshare.io/api/v2/stats/aggregate/` → `bandwidth_total`, 성공·실패 요청 수, `error_reasons` 등, API 키 필요 (https://apidocs.webshare.io/proxystats/aggregate , 2026-10-16)
 - CloudWatch 경보 무료 10개/달, 그 뒤 $0.10/경보 지표 [확정] (https://aws.amazon.com/cloudwatch/pricing/ , 2026-10-16). SNS 메일 값 확인 못 함
 - 지금 설계: 사이클 17 모니터링 "알림은 두지 않음"(flow.md 52행), CloudWatch는 메모리·디스크만, 막힌 길은 로그·지표만 → 메일 없음
-- 제안 5개 [안] (결정 페이지 `easy/2026-10-16-proxy-limits-alerts.html`, 원격용 Artifact): #1 CloudWatch 경보 → SNS 메일(1시간에 한 번), #2 메일 보낼 일 다섯 가지(길 쉼·풀림·7일 상한, 모든 길 막힘, 데이터 80%·90%, 업체 계정 문제, 매일 아침 요약), #3 정적 20개도 250GB의 90%에서 멈춤 + Webshare 사용량 API 1시간마다 비교해 큰 값, #4 업체 쪽 오류(407·429 동시 연결·계정 확인)면 Webshare 길 전체 즉시 멈춤, #5 `.go.kr` 도서관은 바뀌는 주거용으로 보내지 않음
+- 결정 (2026-10-16, 원격 Artifact https://claude.ai/artifact/2D8Py6Sxj2i22LgsS4aiZR, 페이지 `easy/2026-10-16-proxy-limits-alerts.html`):
+  - #1 CloudWatch 경보 → AWS SNS 메일(`<알림 메일>`), 같은 일은 1시간에 한 번 [확정] (사용자 승인). 사이클 17 "알림은 두지 않음"을 바꿈
+  - #2 메일 보낼 일: 길 쉼 시작·7일 상한·풀림, 모든 길 막혀 "확인 불가", 업체 데이터 80% 경고·90% 멈춤, 업체 계정 문제로 업체 길 전체 멈춤, 매일 아침 요약 [확정] (사용자 승인)
+  - #3 정적 20개도 250GB의 90%에서 정적 길만 멈춤, 80% 경고, 우리가 센 양과 Webshare 사용량 API(`/api/v2/stats/aggregate/`, 1시간마다)를 비교해 큰 값 [확정] (사용자 승인)
+  - #4 Webshare 업체 쪽 오류(407 인증 실패, 429 `client_connect_high_concurrency`, 계정 확인·정지)면 Webshare 길 전체를 바로 멈추고 메일, EC2 IP로 계속, 다시 켜기는 설정 [확정] (사용자 승인)
+  - #5 `.go.kr`은 바뀌는 주거용으로 보내지 않음 → 미룸. 사용자: "이건 잘 모르겠어. 근데 이건 나중으로 미뤄도 될 것 같아 일단 고정ip먼저 할거거든....."
+- **범위 바뀜 (2026-10-16)**: 사용자 "Webshare 정적 20개 이거먼저 할거고 동적은 좀 더 나중에 고민해도 될 것 같아". → 첫 배포 길은 EC2 자기 IP 1개 + Webshare 한국 정적 주거용 공유 20개($6). 7절 #1의 "바뀌는 주거용 1GB"와 #3·#4·#5(바뀌는 주거용 세기·막힘·GB 멈춤), 8절 #5는 나중에 다시 봄 (`docs/backlog.md`)
 
 ## 확인 필요
 
@@ -98,7 +105,16 @@ ADR-0095의 세 길은 "서버 자기 IP 1개" 또는 "업체 프록시"였다. 
 |---|---|
 | Webshare 정적 주거용·데이터센터에 한국 IP가 있는지, 값 | 공식 화면 확인(가입 후 플랜 국가 목록) |
 | 정적 주거용(가정 대역 고정 IP)을 ADR-0095 "고정 IP 상품"에 넣을지 | 사용자에게 질문 |
-| AWS 서울 Elastic IP 리전 한도(기본 5개로 알려짐) | 공식 문서 확인(Service Quotas 화면) |
+| AWS 시드니 Elastic IP 리전 한도(기본 5개로 알려짐) | 공식 문서 확인(Service Quotas 화면) |
 | Vultr 서울 추가 IPv4 값·상한 | 공식 문서 확인(주문 화면) |
 | Alibaba Cloud 서울 EIP 단가·트래픽 과금 | 공식 문서 확인(가격 계산기) |
 | dev HTTP 클라이언트에서 나가는 주소 지정 가능 여부 | dev 코드 확인, 프로토타입 |
+
+## 9. Webshare 정적 20개 먼저: 가입·구매·접속 시험 (2026-10-16, 사용자: "정적인 거 하려고 하는데 계정 생성이나 뭐 이런거 그리고 간단한 접속 테스트나 이런거 도와줄래")
+
+- 계정 만들기·결제·비밀번호 입력은 사용자가 함. Claude는 절차 안내·구매 링크·시험 스크립트·결과 정리
+- 구매 화면 링크(한국 20개 미리 채움): `https://www.webshare.io/express-checkout?proxyType=%22shared%22&proxySubtype=%22isp%22&proxyCount=20&countries=%7B%22KR%22%3A20%7D&bandwidth=250&isYearly=false` [안: 링크 매개변수는 Webshare 페이지의 구매 링크를 본뜸, 화면에서 South Korea 20·$6 확인 필요]
+- 인증: IP Authorization(아이디·비밀번호 없이 IP로 허용), 계정마다 기본 1개 IP [확정] (https://intercom.help/webshare/en/articles/8375312-ip-authorization , 2026-10-16). 시험 때는 집 PC 공인 IP(SK브로드밴드), 운영 때는 EC2 IP <서버 IP>로 바꿈 [안]
+- 목록 파일: 대시보드 Proxy List → Download, `.txt`, 한 줄에 `ip:port:username:password` [확정] (https://help.webshare.io/en/articles/8596696-how-can-i-download-my-proxy-list , 2026-10-16). 저장소 밖(예: 내려받기 폴더)에 둠
+- 시험 스크립트: `docs/research/deploy/tools/proxy_check.py` (파이썬 표준 라이브러리만). 프록시마다 ipinfo.io로 나라·통신사, 그다음 강동구립 홈페이지, 강동 전자도서관, 부산 전자도서관(외국 IP 막음), 교보 구독형 강동 `gdlib.dkyobobook.co.kr`(집 IP 막음)에 GET 1번씩, 요청 사이 1초. 기본 앞 3개, `--all`이면 20개. 비밀번호는 출력 안 함
+- 판정: 나라 KR, 통신사가 한국 통신사, 네 곳이 열림. 아니면 결제 뒤 48시간 안·1GB 미만일 때 환불(시험 20개 × 5요청은 수 MB) [안]

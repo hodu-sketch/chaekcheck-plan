@@ -17,3 +17,4 @@
 | [2026-10-16-multi-source-ip-followup.html](2026-10-16-multi-source-ip-followup.html) | 첫 배포부터 프록시: EC2 1 + Webshare 한국 정적 주거용 20개 + 바뀌는 주거용 1GB, 고정 IP 먼저, 바뀌는 주거용 동시 5건·연달아 5번 막히면 쉼·GB 90%에서 멈춤 | `../multi-source-ip.md` 6절, ADR-0095 | 5개 |
 | [2026-10-16-proxy-limits-alerts.html](2026-10-16-proxy-limits-alerts.html) | 프록시 한도와 알림: 길마다 한도(EC2·Webshare 데이터·동시 연결·정부 사이트), CloudWatch 경보 → 메일, 알릴 일 다섯 가지, 정적 20개 90% 멈춤, 업체 오류면 업체 길 전체 멈춤, `.go.kr`은 고정 IP로만 | `../multi-source-ip.md` 8절 | 5개 |
 | [2026-10-16-proxy-limits-alerts-artifact.html](2026-10-16-proxy-limits-alerts-artifact.html) | 위 페이지의 원격용 Artifact 사본(승인·미승인·기타 저장). https://claude.ai/artifact/2D8Py6Sxj2i22LgsS4aiZR | 같음 | 같음 |
+| [2026-10-16-webshare-setup.html](2026-10-16-webshare-setup.html) | Webshare 한국 정적 주거용 20개: 가입·구매(미리 채운 링크)·IP Authorization·목록 받기·접속 시험(`../tools/proxy_check.py`)·결과 판정. Artifact https://claude.ai/artifact/CMoP6FXwVv6ecdoeirJrqB | `../multi-source-ip.md` 9절 | 없음(절차) |
