@@ -1237,6 +1237,54 @@ body{background:var(--bg);color:var(--text)}
 </div>
 
 <div class="card">
+<h2>그림으로 자세히: 묶음 규칙이 쓰이는 두 흐름</h2>
+<p class="concl">서버 안에는 <b>"묶음 돌리개"(dev <code>BatchRunner</code>) 하나</b>가 있고, 두 화면이 이것을 함께 씁니다. 돌리개는 언제나 같은 규칙으로 돕니다: <b>검색 자리 1개를 잡고 → 동시 5칸 → 결과 10줄이 차거나 8초가 되면 멈춤</b>. 다른 건 "도서관의 어느 쪽을 받아 오느냐"뿐입니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 470" role="img" aria-label="두 흐름이 같은 묶음 돌리개를 쓰는 그림">
+<defs><marker id="ahbr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="var(--accent)"/></marker></defs>
+<text class="s14" x="10" y="22">① 바로 검색 (도서관에서 직접 찾기)</text>
+<rect class="bx" x="10" y="36" width="170" height="64" rx="8"/><text class="s13" x="20" y="60" font-size="12">화면: 검색어 「백만장자」</text><text class="s13m" x="20" y="82" font-size="11">바로 검색 켬</text>
+<path d="M180 68 H250" class="ar" marker-end="url(#ahbr)"/><text class="s13m" x="186" y="60" font-size="10">ebook-searches</text><text class="s13m" x="186" y="90" font-size="10">/stream</text>
+<rect class="bxa" x="250" y="36" width="330" height="64" rx="8"/><text class="s13" x="262" y="60" font-size="12" font-weight="700">묶음 돌리개 (자리 1 · 5칸 · 10줄 · 8초)</text><text class="s13m" x="262" y="82" font-size="11">범위 안 도서관 순서대로 5칸씩 돌림</text>
+<path d="M580 68 H640" class="ar" marker-end="url(#ahbr)"/>
+<rect class="bx" x="640" y="36" width="250" height="64" rx="8"/><text class="s13" x="650" y="58" font-size="12">도서관마다 <b>검색 결과 쪽</b> 1장</text><text class="s13m" x="650" y="78" font-size="11">"백만장자"로 검색한 목록 화면</text><text class="s13m" x="650" y="94" font-size="11">→ 책 줄 여러 개가 나옴</text>
+<text class="s14" x="10" y="146">② 책 기준 검색 (수집 목록에서 책 찾기 → 그 책들의 대출 상태)</text>
+<rect class="bx" x="10" y="160" width="170" height="64" rx="8"/><text class="s13" x="20" y="184" font-size="12">화면: 책 찾기</text><text class="s13m" x="20" y="206" font-size="11">「백만장자」</text>
+<path d="M180 192 H250" class="ar" marker-end="url(#ahbr)"/><text class="s13m" x="190" y="184" font-size="10">/books</text>
+<rect class="bxok" x="250" y="160" width="330" height="64" rx="8"/><text class="s13" x="262" y="184" font-size="12" font-weight="700">우리 DB에서 책 10권 (#23)</text><text class="s13m" x="262" y="206" font-size="11">도서관에 요청 없음 · 묶음 규칙 안 씀</text>
+<path d="M415 224 V262" class="ar" marker-end="url(#ahbr)"/><text class="s13m" x="424" y="248" font-size="10">book-availabilities/stream (화면이 이어서 부름)</text>
+<rect class="bxa" x="250" y="262" width="330" height="64" rx="8"/><text class="s13" x="262" y="286" font-size="12" font-weight="700">같은 묶음 돌리개 (자리 1 · 5칸 · 10줄 · 8초)</text><text class="s13m" x="262" y="308" font-size="11">10권을 가진 도서관들을 순서대로 5칸씩</text>
+<path d="M580 294 H640" class="ar" marker-end="url(#ahbr)"/>
+<rect class="bx" x="640" y="262" width="250" height="64" rx="8"/><text class="s13" x="650" y="284" font-size="12">도서관마다 <b>책 상세 쪽</b> 1장</text><text class="s13m" x="650" y="304" font-size="11">그 책 한 권의 대출 상태 화면</text><text class="s13m" x="650" y="320" font-size="11">(교보 구독형은 요청 없이 판정)</text>
+<text class="s14" x="10" y="370">③ 도서관 한 곳 「더 보기」</text>
+<rect class="bx" x="10" y="384" width="170" height="54" rx="8"/><text class="s13" x="20" y="408" font-size="12">결과 줄의 「더 보기」</text>
+<path d="M180 411 H250" class="ar" marker-end="url(#ahbr)"/>
+<rect class="bx" x="250" y="384" width="330" height="54" rx="8"/><text class="s13" x="262" y="406" font-size="12">돌리개 안 씀 — 자리 1개만 잡고</text><text class="s13m" x="262" y="426" font-size="11">그 도서관 다음 쪽 1장, 8초 제한</text>
+<path d="M580 411 H640" class="ar" marker-end="url(#ahbr)"/>
+<rect class="bx" x="640" y="384" width="250" height="54" rx="8"/><text class="s13" x="650" y="408" font-size="12">그 도서관 검색 결과 다음 쪽</text>
+<text class="s13m" x="10" y="462" font-size="11">확장 모드(파란 불)에서는 ①②의 도서관 요청을 사용자 브라우저가 하고, 규칙(5칸·10줄·8초)은 같음(명세 R8)</text>
+</svg><p class="cap">①과 ②의 보라 상자는 같은 돌리개입니다. 그래서 묶음 값(5칸·10줄·8초)을 바꾸면 두 흐름이 함께 바뀝니다.</p></div>
+<div class="fig wide"><svg viewBox="0 0 900 250" role="img" aria-label="책 기준 검색 대출 상태 조회의 한 묶음">
+<text class="s14" x="10" y="22">② 안을 확대: 책 10권의 대출 상태 조회 한 묶음 (책마다 소장 도서관 3곳 예시 = 30곳)</text>
+<line x1="150" y1="42" x2="880" y2="42" stroke="var(--line)"/>
+<text class="s13m" x="150" y="36" font-size="11">0초</text><text class="s13m" x="390" y="36" font-size="11">3초</text><text class="s13m" x="630" y="36" font-size="11">6초</text><text class="s13m" x="850" y="36" font-size="11">8초</text>
+<text class="s13" x="10" y="64" font-size="12">칸 1~5</text>
+<rect x="150" y="52" width="140" height="18" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="154" y="65" font-size="10">책1·강동</text>
+<rect x="292" y="52" width="140" height="18" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="296" y="65" font-size="10">책2·송파</text>
+<rect x="150" y="74" width="160" height="18" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="154" y="87" font-size="10">책1·송파</text>
+<rect x="312" y="74" width="140" height="18" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="316" y="87" font-size="10">책2·전주</text>
+<rect x="150" y="96" width="150" height="18" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="154" y="109" font-size="10">책1·군산</text>
+<rect x="302" y="96" width="150" height="18" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="306" y="109" font-size="10">책3·경기</text>
+<rect x="150" y="118" width="180" height="18" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="154" y="131" font-size="10">책2·강동</text>
+<rect x="150" y="140" width="170" height="18" fill="var(--ok-bg)" stroke="var(--ok)"/><text class="s13" x="154" y="153" font-size="10">책3·서울</text>
+<line x1="456" y1="46" x2="456" y2="166" stroke="var(--no)" stroke-dasharray="4 3"/>
+<text class="s13 sred" x="462" y="100" font-size="11">상태 10줄 참 → 새 상세 조회 멈춤</text>
+<text class="s13" x="10" y="196" font-size="12">화면: 책 1~3의 상태가 먼저 채워짐. 책 4~10은 "대출 정보 조회 중" → 다음 묶음(화면이 이어서 요청)에서 채움</text>
+<text class="s13m" x="10" y="220" font-size="12">줄 상한이 20이면(지금) 책 1~6쯤까지 첫 묶음에 채워짐 — 이 차이를 #26에서 묻습니다</text>
+<text class="s13m" x="10" y="242" font-size="11">책마다 도서관 수·순서는 예시. 실제 순서는 가입 가능한 곳 우선 규칙(planSearch)</text>
+</svg><p class="cap">책 화면에서도 같은 5칸·10줄 규칙이라, 첫 묶음에서는 앞쪽 책들의 상태가 먼저 채워집니다.</p></div>
+</div>
+
+<div class="card">
 <h2>질문에 답: 나가는 IP마다 도서관 접속을 따로 보고, 안 되는 곳을 표시하나?</h2>
 <p class="concl"><b>네, 그렇게 정해져 있습니다</b> — 다만 이 사이클(20)이 아니라 <b>사이클 17</b>(배포)과 <b>22</b>(프록시)가 dev에 넘기는 부분이고, 20은 그 기록을 읽기만 합니다. 근거: ADR-0095 "나가는 IP마다 따로 세기, 막힌 IP만 그 사이트에서 멈춤"(사이클 17 scope 10번, 사용자 확정 2026-10-13), 풀림 확인 규칙 <code>../17-first-deploy/from-cycle-20-blocked-ip-resume.md</code>(사용자 확정 2026-10-15, 상한 1주일), 사이클 22 결정(<code>docs/research/deploy/multi-source-ip.md</code> 8절).</p>
 <div class="fig wide"><svg viewBox="0 0 900 300" role="img" aria-label="길과 사이트별 막힘 표">
