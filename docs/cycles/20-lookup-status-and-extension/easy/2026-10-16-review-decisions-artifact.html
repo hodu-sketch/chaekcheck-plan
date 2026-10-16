@@ -800,6 +800,7 @@ body{background:var(--bg);color:var(--text)}
 <rect class="bx" x="650" y="60" width="240" height="60" rx="8"/><text class="s14" x="660" y="84">결과 목록</text><text class="s13m" x="660" y="104" font-size="12">5곳 모두 같은 카드로</text>
 <path d="M210 80 L290 50" class="ar" marker-end="url(#ah16c)"/><path d="M210 100 L290 130" class="ar" marker-end="url(#ah16c)"/><path d="M590 50 L650 80" class="ar" marker-end="url(#ah16c)"/><path d="M590 130 L650 100" class="ar" marker-end="url(#ah16c)"/>
 </svg><p class="cap">프로토타입에서 못 여는 곳이 나올 때만 그 도서관을 서버가 맡습니다.</p></div>
+<p class="concl" style="border:2px solid var(--ok)"><b>정함 (2026-10-16)</b>: 승인 + "이것들도 다 기록해야해" → 서버가 대신 부른 것은 세 군데에 남깁니다: ① 사용 기록 출처를 <code>extension</code>이 아니라 <code>server_for_extension</code>으로(도서관별 횟수·결과), ② 서버를 켤 때 로그 한 줄에 목록 전체(도서관·이유: http/인증서/리다이렉트), ③ 목록·넣은 이유·날짜를 설정값 목록(plan <code>docs/settings-index.md</code>, dev <code>docs/maintenance/settings-index.md</code>)에 한 줄씩. 설계 문서에 반영했습니다.</p>
 <p class="concl"><span class="chip" data-n="16">안 #16</span> 위 규칙을 설계에 "조건부"로 넣습니다.</p>
 <p class="alt">다른 선택: 못 여는 도서관은 확장 모드에서 「확인하지 못한 도서관」으로. 규칙이 하나 줄지만 그 도서관 결과를 확장 사용자는 영영 못 봅니다.</p>
 </div>
@@ -817,6 +818,7 @@ body{background:var(--bg);color:var(--text)}
 <path d="M450 70 L110 120" class="ar" marker-end="url(#ah17c)"/><path d="M450 70 L330 120" class="ar" marker-end="url(#ah17c)"/><path d="M450 70 L550 120" class="ar" marker-end="url(#ah17c)"/><path d="M450 70 L780 120" class="ar" marker-end="url(#ah17c)"/>
 <text class="s13m" x="10" y="212">한 줄 = 값 · 어디 · 함께 바꿀 곳 · 왜 · 정한 문서·ADR · 바꾸면 다시 켤 것. 값 옆 주석은 이 문서를 가리킴</text>
 </svg><p class="cap">값은 제자리에 두고, 문서 한 장이 모든 값을 가리킵니다.</p></div>
+<p class="concl" style="border:2px solid var(--ok)"><b>정함 (2026-10-16)</b>: 승인. dev에는 코드 위치 색인 <code>docs/maintenance/settings-index.md</code>, plan에는 정한 근거 색인 <code>docs/settings-index.md</code>(#7 때 만듦) — 값이 바뀌면 둘 다 고칩니다.</p>
 <p class="concl"><span class="chip" data-n="17">안 #17</span> 위대로 dev에 설정값 목록 문서를 둡니다.</p>
 <p class="alt">다른 선택: 사이클 19의 규칙 목록에 함께(문서 하나지만 수집 규칙과 운영 숫자가 섞임), 값 옆 주석만(흩어짐).</p>
 </div>
