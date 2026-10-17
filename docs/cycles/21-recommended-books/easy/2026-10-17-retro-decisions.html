@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 21 회고 확인</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+</style>
+</head>
+<body>
+<main class="doc">
+<h1>사이클 21 회고에서 정할 것 4개 (2026-10-17)</h1>
+<p class="concl">dev 기록(<code>plan-feedback.md</code> "# 사이클 21")과 dev main <code>836bd7b</code> 코드를 설계와 비교해 회고(<code>retro.md</code>)를 쓰고 <code>docs/current</code>를 실제 코드에 맞췄습니다. 모듈 구조·표·API는 설계 그대로였습니다. 바뀐 것은 대부분 화면에서 직접 정하신 것이라 이유가 기록돼 있고, 아래 4개만 정하면 회고를 닫습니다.</p>
+<div class="card item">
+<h2><span class="num">1</span>머리말 ADR-0127을 지금 화면에 맞추기</h2>
+<p><b>무엇인가.</b> dev에서 직접 바꾸신 머리말(큰 메뉴 셋 「도서검색」·「추천도서」·「마이페이지」, PC는 누르면 펼침, 폰은 ☰ 없이 줄 누르기 + ▾, 로고는 메인으로만)이 ADR-0127 본문에는 옛 모양("폰은 ☰")으로 남아 있습니다. 결정은 이미 하셨고 기록만 낡았습니다.</p>
+
+<p class="concl">[안] ADR-0127 "결과"에 "바뀜 (2026-10-16~17)" 줄을 더하고 제목의 "폰은 ☰"를 고칩니다. 명세 R1-5·R1-6 문구도 같이 고칩니다(ADR-0128·0129와 같은 방식).</p>
+<p class="alt">다른 선택: ADR을 새로 하나 써서 0127을 대체.</p>
+</div>
+<div class="card item">
+<h2><span class="num">2</span>수집기가 "저자를 보지 않고 다시 고르기"를 하는 문제</h2>
+<p><b>무엇인가.</b> 이동진·서울대 목록의 책 판은 수집기(dev <code>scripts/crawl/recommended_lists.py</code> 490~500행)가 고릅니다. 거르기 뒤 남은 판이 없으면 dev가 저자를 보지 않고 같은 본제목 판 전체에서 다시 고르는 규칙을 더했습니다(코드 주석: "어린이판·요약판만 남은 경우"). 명세 R3-3은 "같은 책 = 본제목 + 저자"라 이 규칙과 어긋나고, 이유를 말씀하신 기록이 없습니다.</p>
+<svg viewBox="0 0 640 260" style="width:100%;max-width:640px" role="img" aria-label="수집기 판 고르기">
+<rect x="10" y="10" width="300" height="70" rx="8" fill="#fff" stroke="#888"/>
+<text x="22" y="34" font-size="14" font-weight="700">① 같은 책 판 모으기</text>
+<text x="22" y="56" font-size="12">본제목 같음 + 저자 하나 이상 같음 (R3-3)</text>
+<line x1="160" y1="80" x2="160" y2="100" stroke="#3d5a99" stroke-width="2"/>
+<rect x="10" y="100" width="300" height="60" rx="8" fill="#fff" stroke="#888"/>
+<text x="22" y="124" font-size="14" font-weight="700">② 거르기</text>
+<text x="22" y="146" font-size="12">어린이·만화·원서·요약·번역AI 판 뺌</text>
+<line x1="310" y1="130" x2="330" y2="130" stroke="#3d5a99" stroke-width="2"/>
+<rect x="330" y="100" width="300" height="60" rx="8" fill="#e6f4ea" stroke="#2f7d4f"/>
+<text x="342" y="124" font-size="14" font-weight="700">남은 판 있음 → 그중 보유량 최대</text>
+<text x="342" y="146" font-size="12">설계대로</text>
+<line x1="160" y1="160" x2="160" y2="180" stroke="#b3261e" stroke-width="2"/>
+<rect x="10" y="180" width="620" height="70" rx="8" fill="#fbe7e5" stroke="#b3261e"/>
+<text x="22" y="204" font-size="14" font-weight="700">③ 남은 판이 하나도 없으면 (dev가 더한 규칙)</text>
+<text x="22" y="226" font-size="12">저자를 보지 않고 같은 본제목 판 전체에서 다시 고름 → 다른 사람이 쓴 같은 제목 책이</text>
+<text x="22" y="244" font-size="12">골라질 수 있음 (명세 R3-3 "본제목 + 저자"와 어긋남)</text>
+</svg>
+<p class="concl">[안] 이 규칙을 없애고 그런 줄은 "못 맞춤"(흐린 표지)으로 둡니다. dev가 다시 돌려 바뀌는 줄을 보고하면, 바른 판이 있는 책만 사람이 <code>manual</code>로 고정합니다(지침 <code>matching-guide.md</code> 4절).</p>
+<p class="alt">다른 선택: 규칙은 두되 이 길로 고른 줄을 수집 기록에 따로 남겨 사람이 매번 확인.</p>
+</div>
+<div class="card item">
+<h2><span class="num">3</span>표지 출처가 바뀐 것을 ADR-0123에 적기</h2>
+<p><b>무엇인가.</b> ADR-0123 본문은 "ISBN 서지 표지"인데, dev 결과 검토에서 정하신 대로 실제로는 표지 출처가 다섯 곳 + 출판사 공식 페이지 한 장이고 카카오는 뺐습니다(저장 금지 조건). 결정은 이미 하셨고 기록 방식만 묻습니다.</p>
+
+<p class="concl">[안] ADR-0123 "결과"에 "바뀜" 줄로 표지 차례와 카카오를 뺀 까닭을 적습니다.</p>
+<p class="alt">다른 선택: 새 ADR로.</p>
+</div>
+<div class="card item">
+<h2><span class="num">4</span>이유가 기록되지 않은 dev 세부 셋</h2>
+<p><b>무엇인가.</b> dev가 화면을 다듬으며 정한 것인데 이유가 남아 있지 않습니다. ① 화면 책 이름에서 끝 낱말 "세트"를 덜어 냄 ② 2권부터는 「토지 2」처럼 권 숫자를 남김 ③ 이동진 영상은 2023-12보다 오래된 것은 보지 않음. 실제 폰 확인 때 "폰 확인했어 괜찮아"라고 하셨습니다.</p>
+
+<p class="concl">[안] 셋 다 지금대로 [확정]하고 회고에 적습니다.</p>
+<p class="alt">다른 선택: 바꿀 것을 기타로.</p>
+</div>
+<p class="foot">원문: docs/cycles/21-recommended-books/retro.md, dev docs/plan-feedback.md "# 사이클 21", 명세 R3-3.</p></main></body></html>

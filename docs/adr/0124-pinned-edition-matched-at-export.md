@@ -27,6 +27,7 @@ Supersedes: 없음
 - 채택하지 않은 이유: [이유 미확인] (추천하지 않은 안, "수집기가"를 그대로 따름)
 
 ## 결과
+- 바뀜 (2026-10-17, 사이클 21 회고): dev 21이 수집기에 더한 "거르기 뒤 남은 판이 없으면 같은 본제목 판 전체에서 저자를 보지 않고 다시 고르기"(dev `scripts/crawl/recommended_lists.py` `choose_editions`)를 없앰. 같은 책은 명세 R3-3대로 본제목 + 저자이고, 같은 저자의 판이 모두 걸러지면 고정 판을 비워 "못 맞춤"(흐린 표지, 희망도서 안내)으로 둠. dev가 두 목록을 다시 돌려 바뀐 줄을 보고하고, 바른 판이 카탈로그에 있는 책만 사람이 `manual`로 고정함(지침 `docs/research/recommended-lists/matching-guide.md` 4절) [확정] (사용자 승인, 2026-10-17, 회고 결정 #2). 이유: 사용자가 고른 안 — 다른 사람이 쓴 같은 제목 책에 맞출 수 있음(결정 페이지 `docs/cycles/21-recommended-books/easy/2026-10-17-retro-decisions.html` #2). dev 할 일 `docs/cycles/21-recommended-books/to-dev-retro-fixes.md`
 - ADR-0090의 "짝은 저장하지 않음(캐시를 만들 때 맞춤)"이 이동진·서울대 줄에 한해 바뀜(`list_book.book_id` 저장). 사서 줄은 그대로. 저장된 번호가 낡는 길(목록 없이 책 번호만 바꾸는 가져오기)은 없음: 가져오기마다 목록도 다시 실려 맞춤 (설계 검토 #9, 2026-10-16)
 - `reference-index.md` 6절에 "`catalog.book`·`book_contributor`·`library.lending_model` 칸이 바뀌면 수집기 판 고르기도 고침"을 더함
 - 근거 문서: `docs/cycles/21-recommended-books/architect-proposal.md`, `design-delta.md`

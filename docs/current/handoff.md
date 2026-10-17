@@ -864,3 +864,8 @@
   - 운영 2GB에서 JVM 전체 메모리 · 자리 60으로 올릴지(17 배포 뒤 요약 로그로)
   - 올리기 시간(배포 뒤 `ms`)
   - 처리방침 쿠키 · 확장 모드 문구(사용자 확인, 공개 전)
+
+## 함께 할 작은 일: 사이클 21 회고 (2026-10-17)
+
+- 수집기 판 고르기의 "저자를 보지 않고 다시 고르기"(dev `scripts/crawl/recommended_lists.py` `choose_editions`)를 없애고, 이동진·서울대 목록을 다시 돌려 바뀐 줄을 dev `docs/plan-feedback.md` "# 사이클 21"에 보고 [확정] (사용자 승인, 2026-10-17, 회고 결정 #2)
+- 할 일·시험·보고 칸·다 됐다고 보는 기준: plan `docs/cycles/21-recommended-books/to-dev-retro-fixes.md`
