@@ -1,6 +1,6 @@
 # ADR-0096: 사용자 행동 기록은 같은 PostgreSQL에 남기고, IP는 30일만, 나머지는 1년
 
-Status: Accepted
+Status: Accepted — 변경 제안 중: 회원 번호·기록끼리 잇는 칸은 [ADR-0134](0134-usage-log-member-id-and-visit-key.md)(Proposed, 2026-10-18)
 Date: 2026-10-13
 Cycle: 15-usage-log
 Supersedes: 없음

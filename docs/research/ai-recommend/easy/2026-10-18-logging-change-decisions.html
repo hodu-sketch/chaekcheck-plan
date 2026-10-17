@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 추천용 기록 변경 결정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+
+.v-flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.v-box{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:7px 11px;font-size:15px;text-align:center;min-width:90px}
+.v-box small{display:block;color:var(--muted);font-size:12px}
+.v-hi{border-color:var(--accent);background:var(--accent-bg)}
+.v-warn{border-color:var(--warn);background:var(--warn-bg)}
+.v-ok{border-color:var(--ok);background:var(--ok-bg)}
+.v-arr{color:var(--muted);font-size:18px}
+.v-file{border:2px solid var(--line);border-radius:12px;background:var(--card);padding:10px;margin:10px 0;max-width:560px}
+.v-file .v-part{border:1px dashed var(--line);border-radius:8px;padding:8px 10px;margin:6px 0;font-size:14px}
+.v-file .v-part.v-new{border-color:var(--accent);background:var(--accent-bg)}
+.v-tl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0;font-size:13px;text-align:center}
+.v-tl div{border-top:4px solid var(--line);padding-top:6px}
+.v-tl div.v-hi{border-top-color:var(--accent);background:none}
+.v-cv{display:inline-flex;width:70px;aspect-ratio:2/3;border-radius:7px;border:1px solid var(--line);background:var(--accent-bg);align-items:center;justify-content:center;font-size:11px;text-align:center;padding:3px;vertical-align:top;margin:4px}
+.v-cv.v-img{background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 6px,var(--card) 6px,var(--card) 12px)}
+.v-mini{border:1px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;margin:8px 0;max-width:420px}
+.v-mini .v-bar{display:flex;gap:10px;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line);font-size:13px}
+.v-mini .v-body{padding:10px 12px;font-size:13px}
+.v-pill{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-weight:800;font-size:12px}
+@media (max-width:700px){main table{display:block;overflow-x:auto;max-width:100%}.v-tl{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.v-code{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:var(--code-bg);border-radius:8px;padding:8px 10px;overflow-x:auto;white-space:pre}
+</style>
+</head>
+
+<body>
+<main class="doc">
+<p class="lead">AI 추천용 기록 변경: 어느 표에 어느 칸이 생기고,<br>기록이 어떻게 흐르고, dev의 어디를 고치는지 7가지를 골라 주세요.</p>
+<p class="sub">"기록 표에 회원 번호 넣기"는 승인하셨지만, 표·칸·흐름·고칠 곳은 아직 보여 드리지 않았습니다. 이 페이지에서 승인된 것만 사이클 20 인계서 끝에 덧붙여 dev에 전하고, ADR-0134를 확정으로 바꿉니다. 지금 기록 구조는 사이클 15(ADR-0096), dev 파일은 2026-10-18에 읽었습니다.</p>
+
+<div class="card"><h2>지금 흐름과 바뀐 흐름</h2>
+<p class="concl">지금은 책 상세 열기·도서관 클릭·화면 행동이 "누가"도 "같은 방문인지"도 없이 남습니다. 바뀌면 두 칸이 더 붙습니다: 방문 번호(모두), 회원 번호(로그인한 경우).</p>
+<p style="font-weight:800;margin:14px 0 4px">지금</p>
+<div class="v-flow">
+<div class="v-box">브라우저<small>책 창 열기 / 도서관 클릭</small></div><span class="v-arr">→</span>
+<div class="v-box">서버<small>IP · 로그인 여부(예/아니오)만 봄</small></div><span class="v-arr">→</span>
+<div class="v-box">기록 표<small>book_view · library_click · screen_event</small></div>
+</div>
+<p style="font-weight:800;margin:14px 0 4px">바뀐 뒤</p>
+<div class="v-flow">
+<div class="v-box v-hi">브라우저<small>탭 열 때 방문 번호 하나 만듦<br>요청마다 같이 보냄</small></div><span class="v-arr">→</span>
+<div class="v-box v-hi">서버<small>방문 번호 받음<br>로그인 쿠키에서 회원 번호 읽음</small></div><span class="v-arr">→</span>
+<div class="v-box v-hi">기록 표<small>+ visit_key<br>+ account_id (로그인만)</small></div>
+</div>
+<div class="v-flow">
+<div class="v-box v-warn">탈퇴<small>AccountDeleted 이벤트</small></div><span class="v-arr">→</span>
+<div class="v-box">기록 표<small>그 회원의 account_id만 비움(줄은 남김)</small></div>
+</div>
+<div class="v-flow">
+<div class="v-box">기록 표</div><span class="v-arr">→</span>
+<div class="v-box v-ok">PC에서 한 달에 한 번<small>같은 visit_key 안에서 같이 연 책 세기 (IP는 안 읽음)</small></div>
+<div class="v-box v-ok">3단계 사이클<small>account_id로 회원 맞춤 추천</small></div>
+</div>
+<p class="cap">검색 기록(search_event)은 두 칸 모두 받지 않습니다. 통계 SQL은 account_id를 읽지 않습니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">1</span>세 표에 칸 둘: 방문 번호와 회원 번호,<br>검색 기록은 빼기</h2>
+<p class="concl">[안] <code>usagelog.book_view</code>(책 상세 열기), <code>library_click</code>(도서관 클릭), <code>screen_event</code>(추천 목록·지역·내 도서관 행동) 세 표에 아래 두 칸을 더합니다. <code>search_event</code>·<code>search_more</code>(검색과 더 보기)에는 넣지 않습니다.</p>
+<table><tr><th>칸</th><th>타입</th><th>값</th><th>비면</th></tr>
+<tr><td><code>visit_key</code></td><td>text, NULL 허용, CHECK 길이 16~64·영숫자</td><td>브라우저 탭이 만든 무작위 번호</td><td>안 보냈거나 형식이 틀림 → NULL (거절하지 않음)</td></tr>
+<tr><td><code>account_id</code></td><td>bigint, NULL 허용, CHECK &gt; 0, FK 없음</td><td>로그인 쿠키의 회원 번호</td><td>비로그인·로그인 꺼짐·탈퇴 뒤 → NULL</td></tr>
+</table>
+<p class="ex">검색 기록을 뺀 이유: 검색어는 민감할 수 있고 추천 계산에 필요 없어 식별자와 함께 두지 않는 쪽이 안전합니다(추론). 색인은 더하지 않습니다 — 같이 본 책 계산은 PC에서 표를 통째로 읽고, 탈퇴 때 비우기는 BRIN(received_at) 범위 없이 전체를 훑어도 1년치 몇백만 줄이라 드뭅니다(탈퇴는 하루 몇 건).</p>
+<p class="alt">다른 선택: search_event에도 visit_key만 넣기 — "이걸 검색한 방문이 연 책"을 셀 수 있지만 검색어와 방문 번호가 같이 남습니다. 원하시면 기타로.</p>
+</div>
+
+<div class="card item"><h2><span class="num">2</span>방문 번호: 탭을 열 때 한 번 만들고<br>책 상세 요청과 사용 알림에 함께 보내기</h2>
+<p class="concl">[안] 웹이 탭을 열 때 무작위 32자(<code>crypto.randomUUID</code>에서 하이픈 뺀 것)를 만들어 <code>sessionStorage</code>에 둡니다(탭을 닫으면 사라짐, 쿠키 아님, 다른 탭과 다름). 책 상세 GET(<code>/api/v1/books/{id}</code>)에는 헤더 <code>X-Visit-Key</code>로, 사용 알림 POST(<code>/api/v1/usage-events</code>)에는 본문 칸 <code>visitKey</code>로 보냅니다.</p>
+<p class="ex">예: 한 탭에서 책 A 창 → 책 B 창 → B의 도서관 클릭이면 세 줄 모두 같은 visit_key. 다른 탭에서 연 책은 다른 번호라 묶이지 않습니다.</p>
+<p class="alt">다른 선택: 쿠키 — 며칠에 걸친 방문을 이을 수 있지만 처리방침에 "자동 수집 장치" 절이 필수가 되고(개인정보 보호법 제30조①7호 [확정]) 광고 차단기가 막습니다. 1차 결정 #8에서 "쿠키 아님"으로 승인하셨습니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">3</span>회원 번호: 로그인 부품이 상태와 함께<br>회원 번호도 돌려주게</h2>
+<p class="concl">[안] 지금 <code>auth</code>의 공개 부품 <code>LoginStatusReader</code>는 "로그인함/안 함/기능 꺼짐"만 돌려줍니다(dev <code>auth/LoginStatusReader.java</code>, 2026-10-18 읽음). 이것을 넓혀 로그인함일 때 회원 번호도 돌려주게 합니다(결과 <code>LoginStatus</code>에 <code>accountId</code> 또는 새 record, 이름은 dev가). 서명이 맞으면 만료돼도 지금처럼 "로그인함"으로 보고 그 토큰의 회원 번호를 씁니다. <code>usagelog</code>의 <code>UsageRequest</code>에 <code>accountId</code>·<code>visitKey</code>가 들어갑니다.</p>
+<p class="ex">왜 이 길인지: 회원 번호를 읽는 기존 부품(<code>AccountIdArgumentResolver</code>)은 <code>/api/v1/me/**</code> 밖에서는 늘 401이라 책 상세·사용 알림에 못 씁니다. 로그인 상태 부품은 이미 두 요청에서 쓰이고 있어 거기에 번호만 더하는 것이 가장 작은 변경입니다.</p>
+<p class="alt">다른 선택: 브라우저가 회원 번호를 보내기 — 위조할 수 있어 안 됩니다. 사용 알림 설명에도 "로그인 상태는 보내지 않고 서버가 읽는다"고 되어 있습니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">4</span>탈퇴하면 회원 번호만 비우고,<br>끄기 설정이 생기기 전엔 로그인 회원 모두 저장</h2>
+<p class="concl">[안] <code>usagelog</code>가 <code>AccountDeleted</code> 이벤트를 받아 세 표의 그 회원 <code>account_id</code>를 NULL로 바꿉니다(<code>mylibrary</code>의 <code>AccountDeletedCleanup</code>과 같은 방식, 줄은 남김). "맞춤 추천 끄기" 설정은 AI 추천 3단계 사이클에서 만들고, 그때까지는 로그인한 회원 모두 저장합니다. 매일 04:30 정리·IP 30일·1년 보관은 그대로입니다.</p>
+<p class="ex">모듈 규칙: <code>usagelog</code>는 이미 <code>auth</code>에 의존할 수 있어(<code>allowedDependencies = { "library", "auth" }</code>) 이벤트 구독에 경계 변경이 없습니다.</p>
+<p class="alt">다른 선택: 탈퇴 때 줄을 지우기 — 익명 통계가 빠집니다. 끄기 설정을 지금 같이 만들기 — 설정 화면·API가 이번 변경에 딸려 와 커집니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">5</span>처리방침 1절 문구 (사이클 16 문서, 공개 2026-10-18)</h2>
+<p class="concl">[안] "자동으로 수집되는 정보" 줄의 "서비스 이용 기록"을 이렇게 바꿉니다: <b>"서비스 이용 기록(같은 방문에서 연 책을 묶으며, 로그인한 경우 회원 번호를 함께 남깁니다)"</b>, 목적을 <b>"이용 통계, 운영과 보안, 책 추천"</b>으로. 보유 기간 줄에 <b>"회원 번호는 탈퇴하면 바로 지움"</b>을 더합니다.</p>
+<p class="ex">근거: 개인을 식별해 행태정보를 처리하면 처리방침에 근거·항목·방법·목적·기간·거부 방법을 적어야 함(개인정보위 작성지침 2026.4. p.55 [확정], law.md 1절). 거부 방법(끄기 설정)은 3단계에서 생기므로 그때 "맞춤 추천" 항목을 따로 더합니다(2차 결정 #3). 공개일 전에 넣으면 새 판 없이 첫 판에 들어갑니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">6</span>dev의 어디를 고치는지</h2>
+<p class="concl">[안] 아래 표대로 사이클 20 인계서 끝에 "함께 할 작은 일: AI 추천용 기록 변경" 절로 넣고, dev <code>docs/plan-feedback.md</code>에 "# 기록 변경(ADR-0134)" 절로 보고받습니다. 파일 이름은 2026-10-18에 dev를 읽은 것이고, 새 이름은 dev가 정합니다.</p>
+<table><tr><th>어디</th><th>무엇</th></tr>
+<tr><td>Liquibase <code>db/changelog/usagelog/005-visit-key-account-id.yaml</code> (새 파일, master 맨 끝 <code>usagelog/004</code> 다음)</td><td>세 표에 <code>visit_key</code>·<code>account_id</code> 칸과 CHECK 추가. 기존 changeset은 안 고침</td></tr>
+<tr><td><code>auth/LoginStatusReader.java</code>, <code>auth/LoginStatus</code>, <code>auth/internal/security/SignatureLoginStatusReader.java</code>, <code>auth/internal/LoginOffStatusReader.java</code></td><td>로그인함일 때 회원 번호도 돌려주기</td></tr>
+<tr><td><code>usagelog/UsageRequest.java</code>, <code>usagelog/internal/DefaultUsageLog.java</code>(<code>capture</code>)</td><td><code>accountId</code>·<code>visitKey</code> 담기, 헤더 <code>X-Visit-Key</code> 읽기·형식 검사</td></tr>
+<tr><td><code>usagelog/internal/web/UsageEventReader.java</code>, <code>UsageEventController.java</code></td><td>본문 <code>visitKey</code> 읽기(틀리면 NULL, 거절 아님)</td></tr>
+<tr><td><code>usagelog/internal/buffer/UsageRow.java</code>, <code>internal/write/UsageLogWriter.java</code></td><td>세 표 INSERT에 두 칸</td></tr>
+<tr><td><code>usagelog/internal/</code> 새 listener (예 <code>AccountDeletedCleanup</code>)</td><td><code>AccountDeleted</code> → 세 표 <code>account_id</code> NULL</td></tr>
+<tr><td>web <code>src/api/usageEvents.ts</code>, 책 상세를 부르는 api 파일, 새 <code>visitKey.ts</code></td><td>탭 난수 만들기·보관, 헤더·본문에 넣기</td></tr>
+<tr><td>plan <code>docs/cycles/16-notices-and-policies/drafts/privacy-policy.md</code>, dev 처리방침 데이터</td><td>5번 문구</td></tr>
+<tr><td>plan <code>docs/cycles/16-notices-and-policies/drafts/ops-sql.md</code></td><td>통계 SQL이 <code>account_id</code>를 읽지 않는다는 규칙 한 줄</td></tr>
+<tr><td>시험</td><td><code>UsageEventApiTests</code>·<code>UsageLogBufferTests</code>에 두 칸, <code>LoginStatusReaderTests</code>에 회원 번호, 탈퇴 비우기 테스트 하나</td></tr>
+</table>
+</div>
+
+<div class="card item"><h2><span class="num">7</span>언제 하나: 사이클 20 1단계와 같이,<br>사이클 17 배포 전에</h2>
+<p class="concl">[안] 사이클 20 1단계(사이클 17 배포 앞)에 끼워 넣어, 공개 첫날부터 두 칸이 쌓이게 합니다. <code>usagelog/005</code>는 20의 <code>004</code> 다음에 두고 같은 배포에 적용합니다.</p>
+<p class="alt">다른 선택: AI 추천 1단계 사이클에서 — 그동안의 기록에는 두 칸이 비어 같이 본 책 계산이 그만큼 늦어집니다. 배포 전이라 지금이 가장 싸다고 하셨습니다.</p>
+</div>
+
+<p class="foot">원본: docs/adr/0134-usage-log-member-id-and-visit-key.md (Proposed), docs/research/ai-recommend/overview.md 3-1·3-2′. dev 파일은 2026-10-18 읽음. 승인되면 사이클 20 인계서(docs/current/handoff.md) 끝에 절 추가, data-model.md usagelog에 설계됨(미구현) 표시, ADR-0134 Accepted.</p>
+</main></body></html>

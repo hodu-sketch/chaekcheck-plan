@@ -137,3 +137,4 @@
 | [ADR-0131](0131-stop-launching-when-user-leaves.md) | 화면을 떠나면 서버 모드 묶음(검색·책 화면)은 새 도서관·포털 상세를 띄우지 않고, 이미 넘긴 요청은 줄 대기 포함 끝까지 받아 캐시에 넣으며 자리는 그 뒤 반납 | Accepted | 2026-10-16 | 20 |
 | [ADR-0132](0132-lookup-load-reduction.md) | 조회 부하 줄이기: 결과 10, 책 화면 이어 부르기 최대 3묶음, 도서관 요청 gzip + 풀었을 때도 1MB(4MB → 1MB) + 1MB 넘음 기록(`body_too_large_count`), 1분 운영 요약 로그 | Accepted | 2026-10-17 | 20 |
 | [ADR-0133](0133-lookup-memory-state-behind-store-interfaces.md) | 브라우저 번호 장부는 가장 오래 안 쓴 줄을 밀어내는 LRU 표(Caffeine 크기 상한 아님), 대출 조회의 메모리 상태는 저장소 인터페이스 뒤 + 설정 하나(`state-store=memory`), Redis는 나중 | Accepted | 2026-10-17 | 20 |
+| [ADR-0134](0134-usage-log-member-id-and-visit-key.md) | 이용 기록 `book_view`·`library_click`·`screen_event`에 회원 번호(로그인한 경우)·방문 번호(탭 난수, 쿠키 아님) 칸을 더함 — AI 추천용; ADR-0096의 "회원 번호 안 남김·기록끼리 잇는 칸 없음"을 바꿈, 검색 기록 제외, 탈퇴·끄기 때 비움 | Proposed (방향만 승인, 세부는 결정 페이지 뒤) | 2026-10-18 | 없음 (dev 전달: 사이클 20 인계서) |
