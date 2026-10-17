@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 도서 추천 결정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+
+.v-flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.v-box{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:7px 11px;font-size:15px;text-align:center;min-width:90px}
+.v-box small{display:block;color:var(--muted);font-size:12px}
+.v-hi{border-color:var(--accent);background:var(--accent-bg)}
+.v-warn{border-color:var(--warn);background:var(--warn-bg)}
+.v-ok{border-color:var(--ok);background:var(--ok-bg)}
+.v-arr{color:var(--muted);font-size:18px}
+.v-file{border:2px solid var(--line);border-radius:12px;background:var(--card);padding:10px;margin:10px 0;max-width:560px}
+.v-file .v-part{border:1px dashed var(--line);border-radius:8px;padding:8px 10px;margin:6px 0;font-size:14px}
+.v-file .v-part.v-new{border-color:var(--accent);background:var(--accent-bg)}
+.v-tl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0;font-size:13px;text-align:center}
+.v-tl div{border-top:4px solid var(--line);padding-top:6px}
+.v-tl div.v-hi{border-top-color:var(--accent);background:none}
+.v-cv{display:inline-flex;width:70px;aspect-ratio:2/3;border-radius:7px;border:1px solid var(--line);background:var(--accent-bg);align-items:center;justify-content:center;font-size:11px;text-align:center;padding:3px;vertical-align:top;margin:4px}
+.v-cv.v-img{background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 6px,var(--card) 6px,var(--card) 12px)}
+.v-mini{border:1px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;margin:8px 0;max-width:420px}
+.v-mini .v-bar{display:flex;gap:10px;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line);font-size:13px}
+.v-mini .v-body{padding:10px 12px;font-size:13px}
+.v-pill{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-weight:800;font-size:12px}
+@media (max-width:700px){main table{display:block;overflow-x:auto;max-width:100%}.v-tl{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.v-code{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:var(--code-bg);border-radius:8px;padding:8px 10px;overflow-x:auto;white-space:pre}
+</style>
+</head>
+
+<body>
+<main class="doc">
+<p class="lead">AI 도서 추천을 어떤 모델로, 어떤 순서로 만들지<br>11가지를 골라 주세요.</p>
+<p class="sub">"로깅으로 추천도서 + 글 설명으로 추천도서에 적합한 AI 모델들을 알려주고 어떻게 구성하면 좋은지"라고 물으셨습니다. 결론은 <b>모델은 운영 서버 밖(PC나 잠깐 빌린 GPU)에서 미리 돌리고, 서버는 결과 표만 읽는 구성</b>입니다. 글(서지)로 비슷한 책을 찾는 모델, 기록으로 같이 본 책을 세는 계산, 소개 문구를 쓰는 모델이 각각 다릅니다. 법 확인 결과(동의·표시)도 같이 넣었습니다. 바탕: <code>docs/research/ai-recommend/overview.md</code>와 industry·infra-cost·law 세 조사 문서(2026-10-17). 여기 수치는 모두 공식 페이지에서 2026-10-17에 확인한 값이고, 확인 못 한 것은 그렇게 적었습니다.</p>
+
+<div class="card"><h2>이 페이지에 나오는 말</h2>
+<table>
+<tr><th>말</th><th>뜻</th></tr>
+<tr><td>임베딩</td><td>글(제목·저자·출판사)을 숫자 묶음으로 바꾸는 일. 숫자가 가까우면 내용이 비슷한 책입니다. 글을 만들지 않습니다.</td></tr>
+<tr><td>LLM</td><td>글을 만드는 AI(Claude 같은 것). 여기서는 소개 문구를 쓰는 데만 씁니다.</td></tr>
+<tr><td>같이 본 책</td><td>한 사람이 한 번 방문해서 연 책들을 묶어 "A를 본 방문에서 B도 많이 봤다"를 세는 것. Amazon "함께 산 상품"과 같은 방식입니다.</td></tr>
+<tr><td>방문 번호</td><td>브라우저 탭을 열 때 만드는 무작위 번호. 탭을 닫으면 사라지고, 쿠키가 아니며, 회원 번호와 잇지 않습니다.</td></tr>
+<tr><td>배치(Batch)</td><td>요청 수만 건을 한 번에 보내 몇 시간 안에 받는 방식. Claude는 이때 요금이 절반입니다.</td></tr>
+<tr><td>Jev(제브)</td><td>TypeSafe AI의 모델. 글을 만들지 않고 "정해진 선택지 중 하나·점수·예/아니오 확률"만 돌려줍니다.</td></tr>
+</table></div>
+
+<div class="card"><h2>전체 모습: 미리 계산하고, 서버는 표만 읽기</h2>
+<p class="concl">PC에서 한 달에 한 번쯤 계산해 파일로 운영 DB에 넣습니다(사이클 11 방식). 운영 서버에는 AI 모델이 없습니다.</p>
+<div class="v-flow">
+<div class="v-box v-hi">① 서지 임베딩<small>KURE-v1 · PC</small></div><span class="v-arr">→</span>
+<div class="v-box">책당 비슷한 책 20권<small>표 약 130MB</small></div><span class="v-arr">→</span>
+<div class="v-box v-ok">운영 DB<small>파일로 반영</small></div>
+</div>
+<div class="v-flow">
+<div class="v-box v-hi">② 같이 본 책 세기<small>SQL · 2단계</small></div><span class="v-arr">→</span>
+<div class="v-box">책당 같이 본 책 20권</div><span class="v-arr">→</span>
+<div class="v-box v-ok">운영 DB</div>
+</div>
+<div class="v-flow">
+<div class="v-box v-hi">③ 소개 문구<small>Claude Haiku 5.5 배치</small></div><span class="v-arr">→</span>
+<div class="v-box">책당 1~2문장<small>"AI가 쓴 소개" 표시</small></div><span class="v-arr">→</span>
+<div class="v-box v-ok">운영 DB</div>
+</div>
+<div class="v-flow">
+<div class="v-box v-ok">운영 DB</div><span class="v-arr">→</span>
+<div class="v-box">서버: 이웃 합치기·점수·정렬<small>모델 없음, 조회 몇 번</small></div><span class="v-arr">→</span>
+<div class="v-box v-warn">비로그인<small>최근 본 책(방문 번호) 기준</small></div>
+<div class="v-box v-warn">로그인<small>본 책·관심도서(회원 번호) 기준</small></div>
+</div>
+<p class="cap">Netflix·Amazon도 "비슷한 항목" 목록은 미리 전 항목에 대해 계산하고, 개인화는 "어느 항목을 기준으로 보여 줄지"에서 생깁니다(각 회사 논문·블로그, industry.md 1절).</p>
+</div>
+
+<div class="card"><h2>화면에 보이는 모습 (자리만, 디자인 아님)</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px">
+<div><p style="font-weight:800;margin:0 0 4px">PC · 책 창</p>
+<div class="v-mini"><div class="v-bar"><span class="v-pill">책첵</span><span>검색</span><span>추천도서</span></div>
+<div class="v-body"><b>책 제목</b> · 저자 · 출판사<br><span style="color:var(--muted)">AI가 쓴 소개: 이 책은 … 한 문장. <span class="v-pill">AI</span></span><br><div style="margin-top:6px;font-weight:700">비슷한 책</div>
+<div class="v-cv">표지</div><div class="v-cv">표지</div><div class="v-cv">표지</div><div class="v-cv">표지</div>
+<div style="margin-top:4px;color:var(--muted)">내 도서관에 있는 책을 앞에</div></div></div></div>
+<div><p style="font-weight:800;margin:0 0 4px">폰 · 책 창</p>
+<div class="v-mini" style="max-width:240px"><div class="v-bar"><span class="v-pill">책첵</span></div>
+<div class="v-body"><b>책 제목</b><br>저자 · 출판사<br><span style="color:var(--muted)">AI가 쓴 소개: … <span class="v-pill">AI</span></span><br><div style="margin-top:6px;font-weight:700">비슷한 책</div>
+<div class="v-cv">표지</div><div class="v-cv">표지</div><div class="v-cv">표지</div></div></div></div>
+</div>
+<p class="cap">1단계에서는 이 두 칸(소개 문구, 비슷한 책)만 생깁니다. "같이 본 책"·"나에게 맞는 책" 칸은 2·3단계.</p>
+</div>
+
+<h2 style="margin:36px 0 12px">가. 구성과 범위</h2>
+
+<div class="card item"><h2><span class="num">1</span>세 단계로 나누고,<br>모델은 운영 서버 밖에서</h2>
+<p class="concl">[안] 추천을 ① 후보 뽑기(비슷한 책·같이 본 책) ② 순위(규칙 계산) ③ 소개 문구(LLM) 세 단계로 나누고, ①③은 PC에서 미리 계산해 표만 운영 DB에 넣습니다. 서버는 조회와 가벼운 계산만 합니다.</p>
+<p><b>어디서 생기는 값인지:</b> 서버 메모리 4GB에 Spring Boot와 PostgreSQL이 같이 삽니다(사이클 17). 68만 권 임베딩은 원본만 약 2.79GB이고 검색 색인은 그만큼 더 필요해 서버에 둘 수 없습니다(pgvector 공식 README의 크기 산식으로 계산, infra-cost.md 4절). 책당 이웃 20권만 표로 두면 약 130MB입니다.</p>
+<p class="ex">예: 사용자가 책 창을 열면 서버는 <code>book_similar</code>에서 그 책의 이웃 20권을 한 번 읽고, 내 도서관에 있는 책을 앞으로 보냅니다. AI를 부르지 않습니다.</p>
+<p class="alt">다른 선택: 서버가 요청마다 AI(API나 vast.ai)를 부르기 — 응답이 느려지고 요청 수만큼 돈이 들며, 빌린 GPU가 내려가면 추천도 멈춥니다. 권하지 않습니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">2</span>1단계는 "비슷한 책 + AI 소개 문구"만,<br>기록은 바꾸지 않음</h2>
+<p class="concl">[안] 첫 사이클은 서지 임베딩으로 만든 "비슷한 책"과 AI 소개 문구를 책 창·추천도서 화면에 넣습니다. 비로그인도 똑같이 보입니다. 이용 기록·약관은 손대지 않습니다. 같이 본 책(2단계)과 로그인 맞춤(3단계)은 뒤에 합니다.</p>
+<p><b>왜 이 순서인지:</b> 기록이 적을 때 기록 기반 추천은 결과가 나쁩니다. Amazon은 "아는 게 없으면 가장 인기 있는 것", Netflix는 신규 회원에게 인기작과 설문, Goodreads는 20권 평가를 요구합니다(industry.md 4절, 각 회사 공식 자료). 책첵은 추천목록 세 개(사서·이동진·서울대)와 서지가 이미 있어 1단계를 바로 할 수 있습니다.</p>
+<p class="alt">다른 선택: 처음부터 3단계까지 한 사이클에 — 표 3개, 설정 화면, 약관·처리방침 새 판이 한꺼번에 들어가 사이클이 커집니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">3</span>vast.ai는 "빌려서 돌리고 바로 반납",<br>서버가 실시간으로 부르지 않음</h2>
+<p class="concl">[안] GPU가 필요하면 vast.ai를 on-demand(중단 없음)로 몇 시간 빌려 임베딩·문구를 만들고 파일로 받은 뒤 바로 destroy합니다. 책 서지만 올리고 API 키·DB 덤프·이용 기록은 올리지 않습니다. 책첵 서버가 vast.ai REST를 부르는 구성은 하지 않습니다.</p>
+<p><b>근거 (vast.ai 공식 문서, 2026-10-17 확인):</b> 가격은 장비 주인이 정하는 시세(RTX 3090 최저 $0.16/시간, 4090 $0.40, 조회 당시), 입찰형은 더 높은 입찰에 밀리면 "프로세스가 죽은 채 멈춤", 삭제하면 "컨테이너 디스크 데이터는 영구 삭제", 보안 FAQ는 "제공자마다 보안 수준이 크게 다름"·"올리기 전에 암호화 권장"이라고 적고 <b>장비 주인이 데이터를 볼 수 없다는 문장은 없습니다</b>. <a href="https://docs.vast.ai/guides/reference/faq/security">docs.vast.ai 보안 FAQ</a>, <a href="https://docs.vast.ai/instances/storage">저장소</a>.</p>
+<p class="ex">비용 예: 임베딩 68만 권 + 문구 10만 권을 4090으로 3~15시간 → 약 1,300~11,000원(환율 1,334.89원 가정, infra-cost.md 5절).</p>
+<p class="alt">다른 선택: 서버리스(vast.ai·RunPod)로 실시간 호출 — 요청마다 켜지는 시간이 있고 켜 둔 만큼 과금, 주소가 바뀝니다. 개인 서비스 규모에 맞지 않습니다.</p>
+</div>
+
+<h2 style="margin:36px 0 12px">나. 모델 고르기</h2>
+
+<div class="card item"><h2><span class="num">4</span>비슷한 책 찾기는<br>한국어 임베딩 모델 KURE-v1, PC에서</h2>
+<p class="concl">[안] "글(서지)로 추천"은 nlpai-lab/KURE-v1(bge-m3를 한국어로 조정한 임베딩 모델, 1024차원, MIT 무료)을 PC에서 돌려 책마다 가까운 20권을 뽑습니다. 입력은 제목·저자·출판사(·출판일)만.</p>
+<p><b>근거:</b> 모델 카드에 한국어 검색 성능 top-1 recall 0.5264로 bge-m3 계열 중 가장 높게 보고됨, 라이선스 MIT (<a href="https://huggingface.co/nlpai-lab/KURE-v1">huggingface.co/nlpai-lab/KURE-v1</a>, 2026-10-17 확인). PC CPU 처리량은 공식 수치가 없어 1,000권으로 시험해야 합니다(확인 못 함).</p>
+<table><tr><th>후보</th><th>특징</th><th>판단</th></tr>
+<tr><td>KURE-v1</td><td>한국어 특화, 1024차원, MIT</td><td class="okc">추천</td></tr>
+<tr><td>BAAI/bge-m3</td><td>100개 언어, 한국어 명시 없음, MIT</td><td>대안</td></tr>
+<tr><td>Qwen3-Embedding-0.6B</td><td>차원을 32~1024로 줄일 수 있음, Apache-2.0</td><td>표를 더 작게 할 때 대안</td></tr>
+<tr><td>API(Voyage·OpenAI·Gemini)</td><td>voyage-4는 2억 토큰 무료, OpenAI small $1.4~2.7</td><td>PC가 너무 느릴 때</td></tr>
+</table>
+<p class="alt">주의: 지금 <code>catalog</code>에는 분야(KDC)·책 소개 칸이 없어 제목·저자·출판사만으로 비슷함을 잽니다. 그럴듯한지는 프로토타입으로 봐야 합니다(확인 필요).</p>
+</div>
+
+<div class="card item"><h2><span class="num">5</span>같이 본 책은 모델 없이 SQL,<br>기록이 쌓이면 implicit</h2>
+<p class="concl">[안] "기록으로 추천"은 AI 모델이 아니라 SQL로 셉니다: 같은 방문에서 함께 연 책 쌍을 세고, 인기 책이 어디에나 나오지 않게 평균 대비 비율로 보정합니다(Amazon 2003 논문 방식). 기록이 몇 달 쌓이면 Python 라이브러리 implicit(ALS)으로 바꿀 수 있습니다.</p>
+<p><b>근거:</b> Amazon item-to-item 협업 필터링 논문 (<a href="https://www.cs.umd.edu/~samir/498/Amazon-Recommendations.pdf">PDF</a>), GRU4Rec 논문은 "긴 이력이 없는 사이트는 실무가 item-to-item으로 회귀"한다고 적음 (<a href="https://arxiv.org/abs/1511.06939">arxiv 1511.06939</a>). 둘 다 2026-10-17 확인.</p>
+<p class="alt">다른 선택: 세션 추천 신경망(GRU4Rec·SR-GNN) — 학습 데이터가 수백만 세션일 때 뜻이 있습니다. 지금 규모에는 과합니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">6</span>소개 문구는 Claude Haiku 5.5 배치로,<br>입력은 서지만</h2>
+<p class="concl">[안] 문구는 Claude Haiku 5.5를 Message Batches로 불러 책마다 1~2문장을 미리 만들어 DB에 저장합니다. 입력은 제목·저자·출판사·분야(있으면)만 주고, "주어진 정보에 없는 줄거리·수상 경력을 쓰지 말 것"을 규칙으로 둡니다. 책 소개 원문(출판사 글)은 넣지 않습니다.</p>
+<p><b>비용 (platform.claude.com 요금 페이지, 2026-10-17 확인):</b> Haiku 5.5 입력 $0.10·출력 $0.50/100만 토큰, 배치는 둘 다 절반. 10만 권 × (입력 300 + 출력 80 토큰) = 약 $3.5, 한국어 토큰이 2배면 $7. 결과는 "대부분 1시간 안"에 옵니다.</p>
+<table><tr><th>후보</th><th>라이선스·상업 이용</th><th>판단</th></tr>
+<tr><td>Claude Haiku 5.5 배치</td><td>API</td><td class="okc">추천: 10만 권 몇 천 원, 설치 없음</td></tr>
+<tr><td>Qwen3 8B/14B (자체 호스팅)</td><td>Apache-2.0, 허용</td><td>GPU 빌려 돌릴 때 대안</td></tr>
+<tr><td>Kakao Kanana 1.5 8B</td><td>Apache-2.0, 허용, 한·영</td><td>대안</td></tr>
+<tr><td>Naver HyperCLOVA X SEED 14B</td><td>허용, "Powered by HyperCLOVA X" 표시 의무</td><td>대안</td></tr>
+<tr><td>LG EXAONE 4.0</td><td class="red">상업 이용 금지</td><td class="red">못 씀</td></tr>
+</table>
+<p class="alt">저작권: 출판사 책 소개를 그대로 바꿔 쓰면 2차적 저작물 문제가 있습니다. 서지만으로 새로 쓰는 쪽이 부담이 가장 작습니다(law.md 5절, 추론). 국립중앙도서관 책 소개는 2021-02 이전 자료만 있어 처음엔 쓰지 않습니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">7</span>Jev(제브)는 순위 점수용으로<br>나중에 검토</h2>
+<p class="concl">[안] Jev는 글을 만들지 않으므로 소개 문구에는 쓸 수 없고, "이 후보가 이 독자의 최근 본 책과 맞는가"를 점수로 돌려받는 ② 순위 단계에 맞습니다. 다만 지금은 early access이고 개인정보 처리 문구를 홈페이지에서 찾지 못해, 1단계에서는 규칙 계산으로 가고 가입·약관을 확인한 뒤 검토합니다.</p>
+<p><b>확인한 것 (TypeSafe AI 공식 문서, 2026-10-17):</b> "returns typed decisions and probabilities rather than generated text", 입력은 글만, 질문 종류는 Choice(선택)·Score(점수)·Noul(예/아니오 확률), "답장 쓰기·코드·설명 생성에는 쓰지 말 것" (<a href="https://docs.typesafe.ai/concepts/system-one">docs.typesafe.ai</a>). 요금 "입력 10억 토큰당 $42", 출력 비용 표기 없음, 가입 절차 설명 없음, 개인정보 처리 설명 없음 (<a href="https://typesafe.ai/">typesafe.ai</a>). 1.14판(2026-10-14)은 다국어가 좋아졌다고 하나 "실험 단계라 실서비스 적용 비권장"(AI타임스 보도, 공식 원문 확인 못 함).</p>
+<p class="ex">쓴다면 이렇게: 서버가 아니라 PC에서, (기준 책, 후보 책) 쌍마다 "같은 독자가 좋아할 확률"을 Noul로 받아 표에 점수로 저장. 쌍이 68만 × 20 = 1,360만 개라 토큰이 많으니 추천목록·많이 찾는 책부터.</p>
+<p class="alt">다른 선택: 처음부터 Jev로 순위 — 가입이 되는지, 올린 책·기록 데이터를 어떻게 다루는지 모른 채 설계하게 됩니다.</p>
+</div>
+
+<h2 style="margin:36px 0 12px">다. 기록(로깅)과 약관</h2>
+
+<div class="card item"><h2><span class="num">8</span>같이 본 책을 세려면<br>방문 번호 칸 하나 (2단계)</h2>
+<p class="concl">[안] 브라우저 탭을 열 때 무작위 번호를 만들어(탭을 닫으면 사라짐, 쿠키 아님) 책 상세 열기·도서관 클릭 알림에 함께 보내고, 기록 표에 <code>visit_key</code> 칸을 더합니다. 회원 번호와 잇지 않고, 같이 본 책 계산은 IP를 읽지 않습니다.</p>
+<p><b>지금과 달라지는 것:</b> 사이클 15에서 "기록끼리 잇는 칸 없음"으로 정했습니다(ADR-0096). 이것을 바꾸는 일이라 새 ADR이 필요합니다.</p>
+<p><b>법 (law.go.kr·개인정보위 작성지침, 2026-10-17 확인):</b> 개인정보는 "다른 정보와 쉽게 결합하여 알아볼 수 있는 정보"까지입니다(제2조1호 나목). 쿠키도 회원 번호도 없는 탭 번호는 결합 키가 없어 개인정보가 아니라고 볼 여지가 큽니다(추론). 같은 줄에 IP(30일)가 있어 결합 가능성이 남으니 계산 때 IP를 읽지 않습니다. 개인을 식별하지 않는 행태정보 처리는 처리방침에 "안내 권장"(작성지침 p.58) → 1절에 한 구절 더합니다(11번).</p>
+<p class="alt">다른 선택: 쿠키(기기 단위, 며칠 이어 봄) — 처리방침에 "자동 수집 장치 설치·운영·거부" 절이 필수(제30조①7호)가 되고 광고 차단기가 막습니다. 이번엔 쓰지 않습니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">9</span>로그인 맞춤 추천은 별도 표에,<br>기본 켬 + 설정에서 끄기 (3단계)</h2>
+<p class="concl">[안] 익명 통계 기록(<code>usagelog</code>)은 그대로 두고, 추천용 표를 따로 만듭니다: 회원 번호·책 번호·종류(연 책·누른 도서관·관심도서)·시각. 탈퇴하면 함께 지우고, 보관은 탈퇴 또는 마지막 로그인 뒤 1년. 회원 설정에 "맞춤 추천 끄기"를 두고, 끄면 저장을 멈추고 있던 줄도 지웁니다.</p>
+<p><b>동의가 꼭 필요한가 (law.md 1절, 2026-10-17 확인):</b> 개인정보위 통합 안내서 FAQ(p.129): "맞춤형 콘텐츠 추천이 계약의 본질적인 내용이며 해당 내용을 이용계약·약관 등에 명확히 규정하고 있고 정보주체가 충분히 알 수 있도록 조치하였다면, 계약 이행을 위해 <b>별도의 동의 없이도</b> 수집·이용할 수 있음"(제15조①4호). 다만 작성지침은 "식별하여 행태정보를 처리하는 경우" 처리방침에 근거·항목·방법·목적·기간·<b>거부 방법</b>을 적으라고 합니다(p.55) → 끄기 설정이 거부 방법이 됩니다. "자동화된 결정" 절은 필요 없습니다(안내서가 상품·콘텐츠 추천을 명시적으로 제외, p.10).</p>
+<table><tr><th>선택</th><th>하는 일</th><th>비용</th></tr>
+<tr><td class="okc">약관에 명시 + 끄기 설정 (추천)</td><td>약관 한 줄, 처리방침 항목 하나, 설정 스위치</td><td>기존 회원에게 다시 묻지 않아도 됨</td></tr>
+<tr><td>추천 전용 선택 동의</td><td>가입 동의문에 항목 추가, 기존 회원에게 다시 받음</td><td>동의 화면·버전 관리 추가</td></tr>
+<tr><td class="red">기록 표에 회원 번호 넣기(B안)</td><td>ADR-0096을 뒤집고 익명 통계 표에 식별자</td><td class="red">처리방침 전체 다시, 권하지 않음</td></tr>
+</table>
+</div>
+
+<div class="card item"><h2><span class="num">10</span>AI가 쓴 문구에는 "AI가 쓴 소개" 표시,<br>서비스 안내에 사전 고지</h2>
+<p class="concl">[안] 문구 옆에 "AI가 쓴 소개"(또는 AI 표시)를 붙이고, 서비스 안내·약관에 "책 소개 문구 일부는 생성형 AI(Claude)가 씁니다"를 적습니다. 비슷한 책 목록 자체는 글을 만들지 않으므로 표시하지 않습니다.</p>
+<p><b>법 (law.go.kr, 2026-10-17 확인):</b> 인공지능 기본법 제31조① "생성형 인공지능을 이용한 제품 또는 서비스를 제공하려는 경우 … 사실을 이용자에게 사전에 고지", ② "결과물이 생성형 인공지능에 의하여 생성되었다는 사실을 표시". 시행령 제23조: 고지는 "이용약관 등에 기재" 또는 화면 표시, 표시는 "사람이 인식할 수 있는 방법". 규모 면제 없음(매출·이용자 기준은 국내대리인 조항에만). 과기정통부: "1년 이상 계도기간", 서비스 안에서만 보일 때는 "UI나 로고 표출 등으로 유연하게" (<a href="https://www.korea.kr/briefing/pressReleaseView.do?newsId=156740669">보도자료 2026-01-21</a>). 국내 서점(교보·YES24·밀리)은 "AI와 대화" 같은 진입점 이름으로만 드러내고 문구별 표시는 확인되지 않았습니다(industry.md 2절).</p>
+<p class="alt">다른 선택: 표시 없이 — 계도기간이라 당장 과태료는 없지만 표시를 넣는 비용이 거의 없습니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">11</span>약관·처리방침에 더할 문구 (초안)</h2>
+<p class="concl">[안] 아래 문구를 해당 단계의 사이클에서 새 판으로 넣습니다. 지금 처리방침 1절은 그대로 둡니다.</p>
+<table>
+<tr><th>어디</th><th>언제</th><th>문구</th></tr>
+<tr><td>이용약관 서비스 내용</td><td>3단계</td><td>"책첵은 회원이 본 책과 관심도서를 바탕으로 책을 추천합니다. 설정에서 끌 수 있습니다."</td></tr>
+<tr><td>처리방침 새 항목 "맞춤 추천"</td><td>3단계</td><td>근거: 이용계약 이행(제15조①4호) / 항목: 회원이 연 책, 누른 도서관, 관심도서 / 방법: 책을 열거나 관심도서로 넣을 때 서버가 기록 / 목적: 맞춤 책 추천 / 보유: 탈퇴 또는 마지막 로그인 뒤 1년, 끄면 바로 삭제 / 거부: 설정 › 맞춤 추천 끄기, 로그인하지 않으면 모이지 않음</td></tr>
+<tr><td>처리방침 1절 한 구절</td><td>2단계</td><td>"서비스 이용 기록(같은 방문에서 연 책을 묶어 통계와 추천에 씁니다)"</td></tr>
+<tr><td>서비스 안내·약관</td><td>1단계</td><td>"책 소개 문구 일부는 생성형 AI(Claude)가 씁니다. 사실과 다를 수 있으니 책 정보는 도서관 페이지에서 확인해 주세요."</td></tr>
+</table>
+<p class="alt">주의: 정보나루 "함께 대출된 도서" API와 국립중앙도서관 책 소개는 처음엔 쓰지 않는 것으로 두었습니다(정보나루는 사이클 10에서 인기 도서 출처로 쓰지 않기로 하셨고, 책 소개는 권리 귀속 미확인). 쓰고 싶으시면 기타로 적어 주세요.</p>
+</div>
+
+<p class="foot">원본: docs/research/ai-recommend/overview.md (결정할 것 1~11), industry.md, infra-cost.md, law.md (2026-10-17). 사용자 질문 2026-10-17. 승인된 항목은 overview.md에 [확정]으로 옮기고, 사이클로 가져갈 때 scope.md에서 다시 범위를 자릅니다.</p>
+</main></body></html>
