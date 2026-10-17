@@ -362,7 +362,7 @@ plan 15가 `docs/cycles/15-usage-log/to-cycle-17.md` "5차"에 올린 실제 값
 - **터널 `chaekcheck`** 생성: Tunnel ID `6ab7232f-8d79-42aa-8a14-74ac3408ba87`, 타입 cloudflared(원격 관리·토큰 방식)
 - **라우트(Published application)**: `chaekcheck.com`(루트) → `http://nginx:80`. **DNS CNAME 자동 생성**: `chaekcheck.com` → `6ab7232f-8d79-42aa-8a14-74ac3408ba87.cfargotunnel.com`
 - **[확인 필요] 내부 서비스 주소** `http://nginx:80`은 cloudflared·nginx가 같은 compose 네트워크이고 nginx 서비스명이 `nginx`라고 가정 — dev compose와 다르면 배포 때 라우트 Service URL 수정(Cloudflare 터널 Routes 탭에서)
-- **터널 토큰**: 터널 Overview의 설치 명령(`--token eyJ…`) 또는 오른쪽 "Rotate token"으로 받음. 배포 때 Parameter Store에 넣음(토큰은 비밀값 → 사용자가 붙여넣기). **[확인 필요] compose 환경변수 이름**(cloudflared 표준은 `TUNNEL_TOKEN`) → dev 확인 후 파라미터 이름 맞춤
+- **터널 토큰 자리 미리 만듦**(2026-10-18): Parameter Store `/chaekcheck/prod/TUNNEL_TOKEN`(SecureString, 임시값 `REPLACE_WITH_CLOUDFLARE_TUNNEL_TOKEN`). 실제 토큰은 터널 Overview의 설치 명령(`--token eyJ…` 뒷부분) 또는 "Rotate token"으로 받아 이 값만 교체(비밀값 → 사용자가 붙여넣기). **[확인 필요] compose 환경변수 이름**(cloudflared 표준은 `TUNNEL_TOKEN`) → dev 확인 후 파라미터 이름 맞춤
 - grafana.chaekcheck.com은 **안 넣음**(모니터링이 CloudWatch로 바뀜). 백업용 SSH 길(architect #8)은 배포 때 별도 구성
 - 남은 것: cloudflared 컨테이너를 compose에 넣고 토큰 주입(dev) → 뜨면 터널 Active, chaekcheck.com이 nginx로 들어옴
 
@@ -381,7 +381,7 @@ Webshare API 키를 Parameter Store(`/chaekcheck/prod/*`, 시드니)에 넣는 �
 **미리 만들어 둔 것 (2026-10-16, 콘솔):**
 - **SNS 주제** `chaekcheck-alerts`(표준, 시드니, ARN `arn:aws:sns:ap-southeast-2:135274608857:chaekcheck-alerts`)
 - **이메일 구독** → `<알림 메일>`, 상태 **확인됨(Confirmed)** (사용자가 메일에서 Confirm 누름, 2026-10-16). 이제 경보가 울리면 이 주소로 메일이 감
-- **기본 경보 2개**(둘 다 chaekcheck-alerts로): `chaekcheck-server-down`(StatusCheckFailed_Instance ≥ 1, 최대, 5분), `chaekcheck-disk-high`(disk_used_percent > 90, 평균, 5분). 운영 서버 보호용. CloudWatch 경보 무료 10개 범위 안(2개 사용)
+- **기본 경보 3개**(모두 chaekcheck-alerts로): `chaekcheck-server-down`(StatusCheckFailed_Instance ≥ 1, 최대, 5분), `chaekcheck-disk-high`(disk_used_percent > 90, 평균, 5분), `chaekcheck-memory-high`(mem_used_percent > 90, 평균, 5분, 2026-10-18 추가). 운영 서버 보호용. CloudWatch 경보 무료 10개 범위 안(3개 사용)
 - **배포 때 추가할 경보**: ADR-0130 #7의 대출-조회 전용(길 쉼·7일 상한·풀림, 모든 길 막힘, 업체 데이터 80·90%, 업체 계정 문제, 매일 아침 요약) — 앱 커스텀 지표가 생긴 뒤. [확인 필요]로 둔 경보 개수는 이들 더하면 10개에 가까워지므로 설계 때 셈
 - **Webshare 키 저장 완료**(2026-10-16): Parameter Store `/chaekcheck/prod/WEBSHARE_API_KEY`(SecureString, 시드니, KMS `alias/aws/ssm`). 사용자가 Webshare 대시보드(Integrations→API Keys)에서 토큰 발급 → 편집 화면에서 직접 붙여넣어 저장(버전 2). 비밀값 입력은 사용자가 함(Claude는 값 안 봄). ※ 발급 토큰이 한때 채팅에 노출됨 → 필요하면 Webshare에서 폐기·재발급 후 이 파라미터 값만 교체 권장. **환경변수 이름 `WEBSHARE_API_KEY` 확정**(dev 2026-10-18): 앱은 아직 이 키를 안 읽음 — 업체 데이터 세기(사용량 API `stats/aggregate`, 80/90%)는 17이 만들 몫이라 코드에 변수가 아직 없음. 17에서 만들 때 속성 `chaekcheck.availability.egress.vendor-api-key` ← `${WEBSHARE_API_KEY:}`로 받음. 파라미터 이름 그대로 둠. **kms:Decrypt**: up.sh가 `aws ssm get-parameter --with-decryption`으로 읽고, 기본 키 `aws/ssm`이면 `ssm:GetParameter` + 그 키 `kms:Decrypt`가 보통 필요 → 배포 리허설 때 dev가 up.sh로 확인, 필요하면 역할에 추가(IAM 변경은 사용자)
 
