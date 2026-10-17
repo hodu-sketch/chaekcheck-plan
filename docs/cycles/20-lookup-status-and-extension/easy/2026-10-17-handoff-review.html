@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 20 인계서 확인</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+</style>
+</head>
+<body>
+<main class="doc">
+<h1>사이클 20 인계서 확인 (2026-10-17)</h1>
+<p class="concl">planner가 쓴 인계서를 확인해 주세요. 정한 결정만 옮겼고, 새로 정할 것은 없습니다. 승인하면 <code>docs/current/handoff.md</code>를 이 인계서로 바꿔 dev 세션이 바로 읽게 하고, CLAUDE.md를 고쳐 커밋합니다.</p>
+<div class="card item"><h2><span class="num">1</span>dev가 만드는 순서</h2><svg viewBox="0 0 660 470" style="width:100%;max-width:660px" role="img" aria-label="인계서 순서"><rect x="10" y="10" width="640" height="130" rx="8" fill="#e6f4ea" stroke="#2f7d4f"/><text x="22" y="34" font-size="14" font-weight="700">1단계 — 사이클 17 배포 앞 (번호 1-0 ~ 1-14)</text><text x="22" y="54" font-size="12" font-weight="400">설정값(자리 40·결과 10·1MB·책 10권) → 사용 기록 004·1MB 넘음 칸 → gzip+1MB</text><text x="22" y="74" font-size="12" font-weight="400">→ 해석 자리 8 → detailUrl 검사 → 503·DB 오류 시각(ApiExceptionHandler) → 줄 선 호스트</text><text x="22" y="94" font-size="12" font-weight="400">→ 상태 API → 떠나면 멈춤 → 1분 요약 로그 → 웹 머리말 점 → 확인 못한 묶음·「밀려요」</text><text x="22" y="114" font-size="12" font-weight="400">→ 책 화면 3묶음·「더 보기」 / 끝: 실제 폰(Samsung Internet)으로 확인 뒤 닫음</text><line x1="330" y1="140" x2="330" y2="160" stroke="#3d5a99" stroke-width="2"/><rect x="10" y="160" width="640" height="50" rx="8" fill="#fff" stroke="#888"/><text x="22" y="184" font-size="14" font-weight="700">사이클 17 배포 (다른 세션)</text><line x1="330" y1="210" x2="330" y2="230" stroke="#3d5a99" stroke-width="2"/><rect x="10" y="230" width="640" height="110" rx="8" fill="#e8edf8" stroke="#3d5a99"/><text x="22" y="254" font-size="14" font-weight="700">2단계 — 확장 최소판 (2-0 ~ 2-9)</text><text x="22" y="274" font-size="12" font-weight="400">프로토타입(도서관 3곳) → 사용 기록 확장 출처 → 확장 캐시 500 → accept 입구</text><text x="22" y="294" font-size="12" font-weight="400">→ 계획 보관함 → 계획·올리기·닫기 API(UploadGate) → nginx 한 블록</text><text x="22" y="314" font-size="12" font-weight="400">→ extension/ 폴더 → 웹 확장 모드 / 끝: 개발자 모드 크롬으로 확인</text><line x1="330" y1="340" x2="330" y2="360" stroke="#3d5a99" stroke-width="2" stroke-dasharray="5 4"/><rect x="10" y="360" width="640" height="100" rx="8" fill="#fff" stroke="#888" stroke-dasharray="6 4"/><text x="22" y="384" font-size="14" font-weight="700">3단계 — 조건이 오면 (웹스토어에 올릴 때 / 남용 기록이 보일 때)</text><text x="22" y="406" font-size="12" font-weight="400">LRU 장부 → HttpOnly 번호 쿠키·번호 잠금 → IP 울타리 둘 → 서버 대행 목록</text><text x="22" y="428" font-size="12" font-weight="400">조건이 오기 전에는 만들지 않음</text></svg><p>실선 = 지금 만듦, 점선 = 조건이 오면. 번호마다 빌드·시험이 통과해야 다음 번호로 갑니다. 1단계 끝은 사용자 폰 확인입니다.</p></div>
+<div class="card item"><h2><span class="num">2</span>인계서가 설계 위에 더한 세부 (dev가 정하고 알림)</h2><p>planner가 dev 코드를 읽고 구현 방법을 구체화한 것입니다. 결정을 바꾸는 것은 없고, dev가 <code>plan-feedback.md</code>의 "# 사이클 20"에 알립니다.</p>
+<table><tr><th>세부</th><th>왜 필요한가</th></tr>
+<tr><td>조회 서버(fetch-service)에 "1MB 넘음" 결과 값 하나 더함</td><td>지금은 크기 넘음이 일반 오류라 본 서비스가 1MB 넘음을 셀 수 없음</td></tr>
+<tr><td>나가는 길 읽기 포트를 20이 먼저 정의, 기본은 "멈춘 길 없음"</td><td>사이클 17/22 코드가 아직 dev에 없음 → 상태는 <code>reason=NONE</code></td></tr>
+<tr><td>줄 선 호스트 기록은 부르는 두 곳에서 감쌈</td><td>기존 <code>HostThrottle</code>에는 도서관 번호가 없음</td></tr>
+<tr><td>DB 꺼짐에 <code>CannotCreateTransactionException</code>도 셈</td><td>DB가 꺼지면 트랜잭션 시작에서 이 예외가 나기도 함(dev가 문서로 확인)</td></tr>
+</table></div>
+<div class="card item"><h2><span class="num">3</span>이번에 고친 것</h2><ul><li>설계 문서 "개발 단계" 표의 1단계 시기가 "사이클 17 공개 직후"로 남아 있어, 정하신 순서("사이클 20을 먼저 개발하고, 그다음 17 배포로 해")대로 "사이클 17 배포 앞"으로 고쳤습니다(design-delta, docs/current/module-map).</li>
+<li>확장 판이 낮을 때 안내는 마무리 확인 #8대로 머리말 말풍선 둘째 줄에만 둡니다(인계서 초안의 "검색 결과 위 안내 줄"은 뺌).</li>
+<li>사이클 19·21은 dev main에 들어가 있어 <code>docs/current/handoff.md</code>는 이 인계서로 바꿉니다.</li></ul></div>
+<div class="card item"><h2><span class="num">5</span>3단계 자세히: 계획 요청 하나가 거치는 검사</h2><p class="concl">물으신 「LRU 장부 → HttpOnly 번호 쿠키·번호 잠금 → IP 울타리 둘 → 서버 대행 목록」은 확장 모드 계획 요청이 서버에서 이 순서로 검사받는 것입니다. 목적은 같은 공인 IP 뒤 여러 사람을 브라우저마다 따로 세서, 한 사람의 남용이 다른 사람을 막지 않게 하는 것입니다.</p><svg viewBox="0 0 660 720" style="width:100%;max-width:660px" role="img" aria-label="3단계 계획 요청 검사"><defs><marker id="h3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#3d5a99"/></marker></defs><rect x="10" y="10" width="640" height="52" rx="8" fill="#fff" stroke="#888" /><text x="22" y="32" font-size="14" font-weight="700">① 확장 모드 화면이 계획 요청 (도서관 주소 목록을 달라)</text><text x="22" y="51" font-size="12" font-weight="400">쿠키 lookup_client가 있으면 브라우저가 자동으로 같이 보냄</text><line x1="330" y1="62" x2="330" y2="82" stroke="#3d5a99" stroke-width="2" marker-end="url(#h3)"/><rect x="10" y="84" width="420" height="90" rx="8" fill="#fdf3dc" stroke="#a86b00" /><text x="22" y="106" font-size="14" font-weight="700">② IP 울타리 둘 (같은 공인 IP 전체를 셈)</text><text x="22" y="125" font-size="12" font-weight="400">(1) 이 IP 번호들이 연 계획 주소 합이 5,000(보관함의 20%) 넘음</text><text x="22" y="144" font-size="12" font-weight="400">(2) 이 IP에서 새 번호가 1분에 30개 넘게 나감</text><text x="22" y="163" font-size="12" font-weight="400">막는 것: 한 IP가 보관함·장부를 혼자 채우는 것</text><rect x="450" y="84" width="200" height="90" rx="8" fill="#fbe7e5" stroke="#b3261e" /><text x="462" y="106" font-size="14" font-weight="700">하나라도 넘으면</text><text x="462" y="125" font-size="12" font-weight="400">429 → 화면 호박색 줄</text><text x="462" y="144" font-size="12" font-weight="400">「잠시 후 다시」</text><text x="462" y="163" font-size="12" font-weight="400">(서버 모드로 넘기지 않음)</text><line x1="430" y1="129" x2="450" y2="129" stroke="#3d5a99" stroke-width="2" marker-end="url(#h3)"/><line x1="220" y1="174" x2="220" y2="194" stroke="#3d5a99" stroke-width="2" marker-end="url(#h3)"/><rect x="10" y="196" width="420" height="128" rx="8" fill="#e8edf8" stroke="#3d5a99" /><text x="22" y="218" font-size="14" font-weight="700">③ 번호 쿠키 + 장부</text><text x="22" y="237" font-size="12" font-weight="400">쿠키 번호가 장부에 있고, 받은 IP = 지금 IP 이면 → 그 번호 그대로</text><text x="22" y="256" font-size="12" font-weight="400">아니면 → 새 번호(무작위 16바이트)를 장부에 적고 쿠키로 줌</text><text x="22" y="275" font-size="12" font-weight="400">쿠키: HttpOnly = 페이지 스크립트가 못 읽음 → XSS로 못 훔침</text><text x="22" y="294" font-size="12" font-weight="400">SameSite=Strict, 경로 /api/v1/lookup-plans 에만 붙음</text><text x="22" y="313" font-size="12" font-weight="400"></text><rect x="450" y="196" width="200" height="128" rx="8" fill="#fff" stroke="#888" /><text x="462" y="218" font-size="14" font-weight="700">장부 (서버 메모리)</text><text x="462" y="237" font-size="12" font-weight="400">5만 줄 · 받은 지 1일</text><text x="462" y="256" font-size="12" font-weight="400">차면 가장 오래 안 쓴</text><text x="462" y="275" font-size="12" font-weight="400">줄을 지움 (LRU)</text><text x="462" y="294" font-size="12" font-weight="400">방금 준 번호는 안 지워짐</text><line x1="430" y1="260" x2="450" y2="260" stroke="#3d5a99" stroke-width="2" marker-end="url(#h3)"/><line x1="220" y1="324" x2="220" y2="344" stroke="#3d5a99" stroke-width="2" marker-end="url(#h3)"/><rect x="10" y="346" width="420" height="90" rx="8" fill="#e8edf8" stroke="#3d5a99" /><text x="22" y="368" font-size="14" font-weight="700">④ 번호마다 세기와 잠금</text><text x="22" y="387" font-size="12" font-weight="400">이 번호의 열린 계획은 20개까지 (넘으면 가장 오래된 것 지움)</text><text x="22" y="406" font-size="12" font-weight="400">1분에 실패 30번(모르는 계획·같은 쪽 두 번·Origin 다름)</text><text x="22" y="425" font-size="12" font-weight="400">→ 그 번호만 10분 잠금. 같은 IP의 다른 사람은 영향 없음</text><line x1="220" y1="436" x2="220" y2="456" stroke="#3d5a99" stroke-width="2" marker-end="url(#h3)"/><rect x="10" y="458" width="420" height="90" rx="8" fill="#e6f4ea" stroke="#2f7d4f" /><text x="22" y="480" font-size="14" font-weight="700">⑤ 계획을 만들어 확장에 도서관 주소를 줌</text><text x="22" y="499" font-size="12" font-weight="400">계획에 이 번호를 적어 둠 (10분 보관)</text><text x="22" y="518" font-size="12" font-weight="400">확장이 사용자 IP로 도서관 페이지를 받아 서버에 올림</text><text x="22" y="537" font-size="12" font-weight="400">올릴 때도: 쿠키 번호가 장부에 있나·IP 같나·잠금·계획 번호와 같나</text><rect x="450" y="458" width="200" height="90" rx="8" fill="#fdf3dc" stroke="#a86b00" /><text x="462" y="480" font-size="14" font-weight="700">서버 대행 목록</text><text x="462" y="499" font-size="12" font-weight="400">확장이 못 여는 도서관만</text><text x="462" y="518" font-size="12" font-weight="400">(http·인증서 문제 등)</text><text x="462" y="537" font-size="12" font-weight="400">서버가 대신 부름</text><line x1="430" y1="503" x2="450" y2="503" stroke="#3d5a99" stroke-width="2" marker-end="url(#h3)"/><rect x="10" y="580" width="640" height="130" rx="8" fill="#fff" stroke="#888" stroke-dasharray="6 4"/><text x="22" y="602" font-size="14" font-weight="700">왜 3단계로 미뤘나</text><text x="22" y="621" font-size="12" font-weight="400">2단계는 "계획을 만든 IP = 올리는 IP"만 봅니다. 그래서 같은 공인 IP(회사·학교·공유기)</text><text x="22" y="640" font-size="12" font-weight="400">뒤 여러 사람을 구별하지 못합니다. 3단계는 브라우저마다 번호를 줘서 따로 세고 잠급니다.</text><text x="22" y="659" font-size="12" font-weight="400">그래서 한 사람이 잘못 보내도 같은 IP의 다른 사람은 계속 씁니다.</text><text x="22" y="678" font-size="12" font-weight="400">조건: 웹스토어에 올려 모르는 사람이 쓰게 될 때, 또는 거절 기록에 남용이 보일 때.</text></svg><p>숫자는 모두 이미 정한 값입니다(세 관점 검토 #22·#31~#33, 전반 점검 #10·#12, 설계 검토 #1). 서버 대행 목록은 처음에 비어 있고, 2단계 프로토타입에서 확장이 못 여는 도서관이 나오면 넣습니다.</p></div>
+<div class="card item"><h2><span class="num">4</span>이대로 넘기기</h2><p class="concl">[안] 이 인계서대로 확정하고 <code>docs/current/handoff.md</code>를 바꾼 뒤 커밋·푸시합니다. dev 세션에서 1단계를 시작하면 됩니다.</p><p class="alt">다른 선택: 고칠 곳을 기타로 알려 주시면 고친 뒤 다시 보여 드림.</p></div>
+<p class="foot">원문: docs/cycles/20-lookup-status-and-extension/handoff.md (planner 작성, 2026-10-17).</p></main></body></html>
