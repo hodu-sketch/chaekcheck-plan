@@ -1009,3 +1009,40 @@
 
 - 수집기 판 고르기의 "저자를 보지 않고 다시 고르기"(dev `scripts/crawl/recommended_lists.py` `choose_editions`)를 없애고, 이동진·서울대 목록을 다시 돌려 바뀐 줄을 dev `docs/plan-feedback.md` "# 사이클 21"에 보고 [확정] (사용자 승인, 2026-10-17, 회고 결정 #2)
 - 할 일·시험·보고 칸·다 됐다고 보는 기준: plan `docs/cycles/21-recommended-books/to-dev-retro-fixes.md`
+
+## 함께 할 작은 일: AI 추천용 기록 변경 — 회원 번호·방문 번호 칸 (2026-10-18, ADR-0134)
+
+사용자(2026-10-18): "배포 전이니까 20 dev에게 ai활용을 위한 로깅 정책을 바뀐다고 전해줬으면 해 저장하는 것이랑 다 바꾸고 수정하자고". 결정은 plan `docs/research/ai-recommend/easy/2026-10-18-logging-change-decisions.html` #1~#7 [확정] (사용자 승인, 2026-10-18), 근거 [ADR-0134](../adr/0134-usage-log-member-id-and-visit-key.md)(ADR-0096의 "회원 번호 안 남김·기록끼리 잇는 칸 없음"을 바꿈). 추천 기능 자체는 이번에 만들지 않습니다 — 기록만 바꿉니다. 파일 이름은 2026-10-18에 dev를 읽은 것이고 새 이름은 dev가 정합니다.
+
+**언제**: 1단계(사이클 17 배포 앞)에 같이 [확정] (#7). 공개 첫날부터 두 칸이 쌓이게.
+
+**무엇** [확정] (#1): `usagelog.book_view`·`library_click`·`screen_event` 세 표에
+- `visit_key text NULL`, CHECK 길이 16~64·영숫자(`[A-Za-z0-9]`) — 브라우저 탭이 만든 난수
+- `account_id bigint NULL`, CHECK `> 0`, FK 없음 — 로그인한 회원의 번호
+- `search_event`·`search_more`에는 넣지 않음. 색인 없음. 1년 보관·IP 30일·04:30 정리는 그대로
+
+**방문 번호 흐름** [확정] (#2): 웹이 탭을 열 때 `crypto.randomUUID()`에서 하이픈을 뺀 32자를 만들어 `sessionStorage`에 둠(탭 닫으면 사라짐, 쿠키 아님, 탭마다 다름). 책 상세 GET `/api/v1/books/{id}`에는 헤더 `X-Visit-Key`, 사용 알림 `POST /api/v1/usage-events`에는 본문 칸 `visitKey`. 서버는 형식이 틀리면 NULL로 저장하고 거절하지 않음(`rejected_event` 아님).
+
+**회원 번호 흐름** [확정] (#3): `auth`의 공개 `LoginStatusReader`가 로그인함일 때 회원 번호도 돌려줌(결과 `LoginStatus`에 `accountId` 또는 새 record, 이름 [안: dev]). 지금처럼 쿠키 서명만 확인하고 만료돼도 로그인함으로 봄(ADR-0102 그대로). 브라우저가 회원 번호를 보내지 않음. `usagelog`의 `UsageRequest`에 `accountId`·`visitKey`가 들어감.
+
+**탈퇴·끄기** [확정] (#4): `usagelog`가 `AccountDeleted`를 받아 세 표의 그 회원 `account_id`를 NULL로(줄은 남김; `mylibrary`의 `AccountDeletedCleanup` 방식, 멱등). "맞춤 추천 끄기" 설정은 AI 추천 3단계 사이클에서 — 그 전엔 로그인 회원 모두 저장. 운영 통계 SQL은 `account_id`를 읽지 않음.
+
+**처리방침** [확정] (#5, 사용자 "짧은 판"): 1절 자동 수집 줄을 "IP 주소, 브라우저 종류, 접속 기록, 서비스 이용 기록(로그인한 경우 회원 번호 포함), 부정 이용 기록", 목적 "이용 통계, 운영과 보안, 책 추천", 보유 기간 줄 끝에 "회원 번호는 탈퇴하면 바로 지움". plan `docs/cycles/16-notices-and-policies/drafts/privacy-policy.md` 7차에 반영했음 → dev의 처리방침 데이터(`sitecontent`)를 같은 문구로. 공개일(2026-10-18) 전이면 첫 판에, 지났으면 새 판 + 공지.
+
+**어디를 고치나** [확정] (#6)
+
+| 어디 | 무엇 |
+|---|---|
+| Liquibase `db/changelog/usagelog/005-visit-key-account-id.yaml` (새 파일, master 맨 끝 `usagelog/004` 다음, 주석 `# ADR-0134: visit key and account id`) | 세 표에 두 칸과 CHECK(`<표>_visit_key_check`, `<표>_account_id_check`). 기존 changeset은 안 고침 |
+| `auth/LoginStatusReader.java`, `auth/LoginStatus`, `auth/internal/security/SignatureLoginStatusReader.java`, `auth/internal/LoginOffStatusReader.java` | 로그인함일 때 회원 번호도 |
+| `usagelog/UsageRequest.java`, `usagelog/internal/DefaultUsageLog.java`(`capture`) | `accountId`·`visitKey`, 헤더 `X-Visit-Key` 읽기·형식 검사 |
+| `usagelog/internal/web/UsageEventReader.java`, `UsageEventController.java` | 본문 `visitKey`(틀리면 NULL) |
+| `usagelog/internal/buffer/UsageRow.java`, `internal/write/UsageLogWriter.java` | 세 표 INSERT에 두 칸 |
+| `usagelog/internal/` 새 listener(예 `AccountDeletedCleanup`) | `AccountDeleted` → 세 표 `account_id` NULL |
+| web `src/api/usageEvents.ts`, 책 상세를 부르는 api 파일, 새 `src/api/visitKey.ts` | 난수 만들기·보관, 헤더·본문에 넣기 |
+| 처리방침 데이터 | 위 문구 |
+| 시험 | `UsageEventApiTests`·`UsageLogBufferTests`에 두 칸(있음·없음·형식 틀림), `LoginStatusReaderTests`에 회원 번호(정상·만료·꺼짐), 탈퇴 비우기 테스트 하나 |
+
+**다 됐다고 보는 기준**: 로그인한 채 책 창을 열면 `book_view`에 `account_id`와 `visit_key`가 차고, 비로그인이면 `account_id`만 NULL; 같은 탭의 책 창·도서관 클릭이 같은 `visit_key`; 탈퇴 뒤 그 회원 줄의 `account_id`가 NULL이고 줄 수는 그대로; 검색 기록 표에는 두 칸이 없음.
+
+**보고**: dev `docs/plan-feedback.md`에 `# 기록 변경 (ADR-0134, 사이클 20 1단계와 함께)` 절 — 바꾼 파일, `LoginStatus` 새 모양, changeset id, 시험 결과, 처리방침 판 번호.
