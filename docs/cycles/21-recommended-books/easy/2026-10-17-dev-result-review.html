@@ -142,6 +142,7 @@ svg .ah{fill:var(--accent)}
 <tr><td><b>판 고르기에서 빼는 이름 낱말</b> <code>excluded_name</code><br>② 판 고를 때</td><td>번역AI</td><td>후보 판의 <b>저자·역자 이름</b>에 들면 뺌 (대소문자 무시)</td><td>명세 R3-4 [확정] (기계 번역 판)</td></tr>
 </table>
 <p class="cap">②는 이동진 목록과 서울대 목록 모두의 판 고르기에 똑같이 걸립니다(dev <code>recommended_lists.py</code> 467·477행, <code>excluded()</code> 367행). 사서 추천은 서버가 맞추므로 이 파일을 쓰지 않습니다. 낱말이 제목 어디에든 들면 빼므로(부분 일치), 정상 판의 제목에 그 낱말이 우연히 들어가면 그 판도 빠질 수 있습니다 — 그런 책은 지침 문서 4절대로 <code>manual</code>로 고정합니다.</p>
+<p class="concl" style="border:2px solid var(--ok)"><b>정함 (2026-10-17)</b>: 승인 — dev가 더한 원서·초등·청소년·그림책을 R3-3·R3-4 거르기에 합쳐 [확정]으로(목록은 dev <code>collector_words.tsv</code>). 사이클 21 마무리 때 명세에 옮김.</p>
 <p class="concl">[안] dev가 늘린 낱말을 R3-4에 합쳐 [확정]으로 적음(목록은 dev <code>collector_words.tsv</code> 그대로).</p>
 <p class="alt">다른 선택: 원래 셋만 두고 나머지는 빼기.</p>
 </div>
