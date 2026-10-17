@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 20 설계 검토 결정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+</style>
+</head>
+<body>
+<main class="doc">
+<h1>사이클 20 설계 검토에서 정할 것 4개 (2026-10-17)</h1>
+<p class="concl"><code>/cycle-close</code> 2단계로 design-reviewer가 사이클 20 문서를 검토했습니다. 꼭 고칠 것 7개 중 낡은 문구·태그 불일치·빠진 수용 기준(인사 재시도, 상태 응답 끊김, 확장 시간 초과, 올리기 429, 확장 캐시 3분)·단계 표시는 제가 고치고 있습니다. 아래 4개는 판단이 필요해 묻습니다. 다 정해지면 docs/current 반영 → 인계서로 갑니다.</p>
+<div class="card item">
+<h2><span class="num">1</span>장부가 꽉 찼을 때 방금 받은 번호가 지워지지 않게</h2>
+<p><b>무엇인가.</b> 3단계의 브라우저 번호 장부(서버 메모리, 5만 줄)가 차면 줄 하나를 지우고 새 번호를 넣기로 정했습니다(전반 점검 #10). 문서는 이걸 Caffeine 크기 상한으로 만든다고 적었는데, Caffeine 공식 위키는 "들어온 줄과 기존 줄 중 <b>쓴 횟수가 많은 쪽을 남긴다</b>"고 하고, 공격으로 횟수를 부풀리면 "새로 들어오는 것이 모두 거절된다"고도 적습니다(https://github.com/ben-manes/caffeine/wiki/Design , 2026-10-17 확인). 그러면 공격 중에 정상 사용자가 받은 새 번호가 바로 지워지고, 올리기마다 400 → 다시 계획 → 또 400이 되어 확장 모드를 못 씁니다.</p>
+<svg viewBox="0 0 640 230" style="width:100%;max-width:640px" role="img" aria-label="장부 밀어내기">
+<rect x="10" y="20" width="190" height="80" rx="8" fill="#fdf3dc" stroke="#a86b00"/>
+<text x="24" y="46" font-size="15" font-weight="700">공격자</text>
+<text x="24" y="70" font-size="13">여러 IP로 새 번호를</text><text x="24" y="88" font-size="13">계속 받아 장부를 채움</text>
+<rect x="225" y="20" width="190" height="80" rx="8" fill="#fff" stroke="#888"/>
+<text x="239" y="46" font-size="15" font-weight="700">장부 5만 줄 (꽉 참)</text>
+<text x="239" y="70" font-size="13">새 줄 하나 넣으려면</text><text x="239" y="88" font-size="13">한 줄을 지워야 함</text>
+<rect x="440" y="20" width="190" height="80" rx="8" fill="#e6f4ea" stroke="#2f7d4f"/>
+<text x="454" y="46" font-size="15" font-weight="700">정상 사용자</text>
+<text x="454" y="70" font-size="13">방금 새 번호를 받음</text><text x="454" y="88" font-size="13">(쓴 횟수 1)</text>
+<line x1="200" y1="60" x2="225" y2="60" stroke="#3d5a99" stroke-width="2"/><line x1="440" y1="60" x2="415" y2="60" stroke="#3d5a99" stroke-width="2"/>
+<rect x="10" y="130" width="300" height="90" rx="8" fill="#fbe7e5" stroke="#b3261e"/>
+<text x="24" y="156" font-size="14" font-weight="700">Caffeine 그대로 (지금 문서)</text>
+<text x="24" y="180" font-size="13">쓴 횟수를 비교해 적은 쪽을 지움</text>
+<text x="24" y="200" font-size="13">→ 방금 받은 정상 번호가 지워질 수 있음</text>
+<rect x="330" y="130" width="300" height="90" rx="8" fill="#e6f4ea" stroke="#2f7d4f"/>
+<text x="344" y="156" font-size="14" font-weight="700">제안: 가장 오래 안 쓴 것부터</text>
+<text x="344" y="180" font-size="13">방금 받은 번호는 가장 최근이라</text>
+<text x="344" y="200" font-size="13">→ 지워지지 않음 (오래 안 쓴 줄이 지워짐)</text>
+</svg>
+<p class="concl">[안] 장부는 Caffeine 대신 <b>"가장 오래 안 쓴 줄부터 지우는" 단순한 표</b>(Java <code>LinkedHashMap</code> 접근 순서 + 잠금)로 만들고, 요구사항에 "방금 받은 번호는 밀려나지 않는다"를 적습니다. 5만 줄이라 메모리(약 5MB)·속도 차이는 없습니다.</p>
+<p class="alt">다른 선택: Caffeine 그대로 두고 공격 중 확장 모드가 꺼지는 것을 감수.</p>
+</div>
+<div class="card item">
+<h2><span class="num">2</span>결과 10개·gzip 같은 "부하 줄이기" 결정을 ADR 하나로</h2>
+<p><b>무엇인가.</b> 다음 결정은 dev 코드의 기본값과 API를 바꾸는데 ADR이 없고 설계 문서에만 있습니다: 검색 결과 20→10(<code>batch.row-limit</code>, <code>/books</code> 기본 <code>pageSize</code>), 책 화면 대출 상태 자동 이어 부르기 최대 3묶음, 도서관 요청 gzip + 풀었을 때 1MB 상한(지금 4MB) + 1MB 넘음 기록, 1분 운영 요약 로그. 모두 사용자가 승인한 결정입니다(spec R15·R15-1·R16).</p>
+
+<p class="concl">[안] 새 ADR-0132 「조회 부하 줄이기: 결과 10, 이어 부르기 3묶음, gzip·1MB, 1분 요약 로그」를 Accepted로 씁니다. 내용은 승인된 결정과 사용자 말 인용 그대로, 새 결정은 넣지 않습니다.</p>
+<p class="alt">다른 선택: 기존 ADR-0131(떠나면 멈춤)에 덧붙임.</p>
+</div>
+<div class="card item">
+<h2><span class="num">3</span>DB 오류 시각을 누가 적나</h2>
+<p><b>무엇인가.</b> 전반 점검 #9로 "최근 30초 안에 DB 오류가 있었으면 머리말 회색"을 정했습니다. 그런데 DB 오류는 책 찾기·검색 등 여러 모듈에서 나고, 상태를 판정하는 곳은 <code>availability</code>입니다. 문서는 "공통 오류 처리가 적음 (안: dev)"으로만 두어, dev가 모듈 경계를 넘는 공유 코드를 만들 위험이 있다는 지적입니다. dev 코드 확인: 모든 API 오류를 받는 <code>ApiExceptionHandler</code>가 맨 위 패키지 <code>com.chaekcheck</code>에 있습니다.</p>
+<svg viewBox="0 0 640 200" style="width:100%;max-width:640px" role="img" aria-label="DB 오류 시각 기록">
+<rect x="10" y="20" width="180" height="70" rx="8" fill="#fff" stroke="#888"/>
+<text x="22" y="46" font-size="14" font-weight="700">책 찾기·검색</text><text x="22" y="70" font-size="13">(catalog 등 모듈)</text>
+<rect x="230" y="20" width="180" height="70" rx="8" fill="#e8edf8" stroke="#3d5a99"/>
+<text x="242" y="46" font-size="14" font-weight="700">ApiExceptionHandler</text><text x="242" y="70" font-size="13">모든 API 오류를 받는 곳</text>
+<rect x="450" y="20" width="180" height="70" rx="8" fill="#e6f4ea" stroke="#2f7d4f"/>
+<text x="462" y="46" font-size="14" font-weight="700">availability</text><text x="462" y="70" font-size="13">"마지막 DB 오류 시각"</text>
+<line x1="190" y1="55" x2="230" y2="55" stroke="#3d5a99" stroke-width="2"/><text x="194" y="48" font-size="11">DB 오류</text>
+<line x1="410" y1="55" x2="450" y2="55" stroke="#3d5a99" stroke-width="2"/><text x="414" y="48" font-size="11">시각 적기</text>
+<rect x="450" y="120" width="180" height="60" rx="8" fill="#fff" stroke="#888"/>
+<text x="462" y="146" font-size="13">상태 응답: 30초 안이면</text><text x="462" y="166" font-size="13">회색 「상태 모름」</text>
+<line x1="540" y1="90" x2="540" y2="120" stroke="#3d5a99" stroke-width="2"/>
+<text x="10" y="140" font-size="12">ApiExceptionHandler는 어느 모듈에도 속하지 않는 맨 위</text>
+<text x="10" y="160" font-size="12">패키지(com.chaekcheck)에 있어 availability가 공개한</text>
+<text x="10" y="180" font-size="12">작은 인터페이스 하나를 부를 수 있습니다.</text>
+</svg>
+<p class="concl">[안] <code>availability</code>가 "DB 오류가 났다고 알리기" 메서드 하나만 공개하고, <code>ApiExceptionHandler</code>가 DB 오류(<code>DataAccessException</code> 등)를 받을 때 그것을 부릅니다. 새 모듈·이벤트·공유 모듈 없음, 모듈 경계 시험(<code>ModularityTests</code>) 그대로 통과.</p>
+<p class="alt">다른 선택: 상태 응답이 10초마다 DB에 아주 가벼운 질의를 직접 해 보고 실패하면 회색(다른 모듈과 연결이 전혀 없지만 "최근 30초 오류"가 아니라 "지금 DB가 응답하나"로 뜻이 조금 바뀜).</p>
+</div>
+<div class="card item">
+<h2><span class="num">4</span>DB 오류와 빨강이 겹치면 무엇을 보이나</h2>
+<p><b>무엇인가.</b> 예: 검색 자리 40개가 다 찼거나(빨강) 프록시 길이 모두 멈춘(빨강 「지금은 도서관 조회를 할 수 없어요」) 상태에서 DB도 오류가 나면, 머리말 점을 빨강으로 둘지 회색으로 둘지입니다. 문서에는 "회색이 앞섬"이 제안으로만 있고 수용 기준 AC-37이 그것을 전제합니다.</p>
+<div class="card" style="font-size:16px"><p>회색 = 「상태 모름 · 상태를 확인할 수 없어요」 / 빨강 = 「붐벼요 · 잠시 뒤 다시」 또는 「도서관 조회를 할 수 없어요」</p></div>
+<p class="concl">[안] <b>회색이 앞섬.</b> DB가 오류면 책 찾기부터 실패할 수 있어 빨강의 안내(잠시 뒤 다시)가 맞는지 서버도 알 수 없기 때문입니다. 30초 동안 DB 오류가 없으면 원래 색으로 돌아옵니다.</p>
+<p class="alt">다른 선택: 빨강이 앞섬(붐빔 안내를 먼저).</p>
+</div>
+<p class="foot">근거: design-reviewer 검토(2026-10-17), docs/cycles/20-lookup-status-and-extension/design-delta.md "개발 단계"·"전반 점검으로 바뀐 것", spec.md R1·R15·R16, dev <code>backend/src/main/java/com/chaekcheck/ApiExceptionHandler.java</code>.</p>
+</main></body></html>
