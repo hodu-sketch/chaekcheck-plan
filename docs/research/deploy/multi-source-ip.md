@@ -198,3 +198,4 @@ ADR-0095의 세 길은 "서버 자기 IP 1개" 또는 "업체 프록시"였다. 
 - 사용자: "Webshare 20개 길, 막힌 길 처리, 이건 20dev에서 할 수 있자나" → 사이클 17 인계 파일 `from-research-lookup-egress.md`의 #1~#4·#9(길 목록 EC2 1 + Webshare 20, 길 설정 값 모두/프록시만/직접만, 길·호스트마다 호출 간격, 막힌 길 처리, 나간 길 기록)는 **사이클 20 dev**가 만듦 [확정] (사용자)
 - 사이클 17에 남음: #5 업체 데이터 세기(80%·90%, Webshare API 키), #6 업체 오류면 Webshare 길 전체 멈춤, #7 CloudWatch→SNS 메일
 - 알림: plan 20(handoff.md 795행·1단계 범위 고치기), dev 20(할 일 요약, 로컬에서는 Webshare가 IP 등록 때문에 안 붙음), plan 17(R13 구분)
+- 사이클 17 반영 (2026-10-17, 17 세션 알림): design-delta R13에 분담 명시. 배포 준비 이미 됨 — SNS 주제 `chaekcheck-alerts` + 메일 구독 확인됨, 기본 경보 2개(server-down·disk-high), Webshare API 키 Parameter Store `/chaekcheck/prod/WEBSHARE_API_KEY` 저장(사용자가 발급·붙여 넣음) [확정] (사이클 17 기록)
