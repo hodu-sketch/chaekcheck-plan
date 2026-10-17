@@ -371,6 +371,9 @@
 
 ### 1-15. 나가는 길: 길 목록과 막힌 길 (사이클 22 범위 일부, 사용자 결정 2026-10-17)
 
+- **대출 조회 요청 User-Agent** = 일반 브라우저와 같은 값, 우리 이름을 넣지 않음 [확정] (사이클 17 spec R13-5, 사용자 2026-10-14; ADR-0095 → ADR-0130이 이어받음). 수집기는 대상 아님. 17 design-delta의 "연락처를 넣은 값"은 이것과 어긋난 것이라 17이 맞춤
+
+
 - 왜 여기: 사용자 "Webshare 20개 길, 막힌 길 처리, 이건 20dev에서 할 수 있자나" (2026-10-17, webshare 세션 전달) [확정]. 사이클 17 인계 파일 `from-research-lookup-egress.md`의 #1~#4·#9를 이 번호로 옮깁니다. 같은 결정이 plan `docs/research/deploy/multi-source-ip.md` 11절, `docs/cycles/17-first-deploy/design-delta.md` 머리에 있습니다
 - 기준 문서(plan, 읽기 전용): ADR-0130(Accepted, ADR-0095를 대신함), ADR-0094(교보 구독형 서버), `docs/cycles/17-first-deploy/spec.md` R13 · AC-8 · AC-9, `docs/cycles/17-first-deploy/from-research-lookup-egress.md` #1~#4 · #9, `from-cycle-20-proxy-only.md`, `from-cycle-20-blocked-ip-resume.md`, `docs/research/deploy/multi-source-ip.md` 7 · 8 · 9 · 11절, `docs/settings-index.md` 3 · 4 · 8절
 - 이 번호에서 만들지 않는 것(사이클 17에 남음): 아래 "사이클 17에 남는 것"
