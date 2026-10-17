@@ -371,6 +371,9 @@
 
 ### 1-15. 나가는 길: 길 목록과 막힌 길 (webshare 작업 범위 일부, 사용자 결정 2026-10-17)
 
+- **운영 길 설정 = `proxy-only`(프록시만)** [확정] (사용자: "나는 ec2 주소에서 직접 도서관 조회하는 건 설정으로 분리하자고 했는데;; 프록시만 사용하도록 하고", 2026-10-18). 코드 기본값은 `all` 그대로 두고 운영 `prod.env`에서 `CHAEKCHECK_AVAILABILITY_EGRESS_MODE=proxy-only`(fetch-service도 같게)로 덮음(사이클 17 `from-cycle-20-prod-env-numbers.md`). `proxy-only`에서 EC2 자기 IP로는 도서관 요청·막힌 길 다시 시험 모두 하지 않음
+
+
 - **대출 조회 요청 User-Agent** = 일반 브라우저와 같은 값, 우리 이름을 넣지 않음 [확정] (사이클 17 spec R13-5, 사용자 2026-10-14; ADR-0095 → ADR-0130이 이어받음). 수집기는 대상 아님. 17 design-delta의 "연락처를 넣은 값"은 이것과 어긋난 것이라 17이 맞춤
 
 

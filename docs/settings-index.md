@@ -57,7 +57,7 @@
 | 값 | 지금 값 | 들어 있는 곳 | 상태 | 정한 문서 | 근거 | 태그 | 함께 바꿀 곳 |
 |---|---|---|---|---|---|---|---|
 | 나가는 길 | 21개 = EC2 자기 IP 1 + Webshare 한국 정적 주거용(공유) 20 | 인계 예정 (사이클 20 1단계 1-15: 설정 목록 `chaekcheck.availability.egress.proxies` 이름 [안], 업체 주소는 서버 비밀 값 — 운영 값 넣기는 사이클 17) | 인계 예정 (사이클 20 1단계 1-15, 사용자 결정 2026-10-17로 17에서 옮김) | [multi-source-ip](research/deploy/multi-source-ip.md) 7·8절 | 사용자: 프록시 없으면 "1초 제한에 걸려서 사용자가 거의 의미가 없어", 정적 20개 먼저 (2026-10-16) | [확정] | — |
-| 나가는 길 설정 | `모두`(기본, 21개) / `프록시만`(한국 20) / `직접만`(EC2 1). `프록시만`이면 Webshare가 모두 멈춰도 EC2로 넘어가지 않음 | 인계 예정 (사이클 20 1단계 1-15: `chaekcheck.availability.egress.mode` 이름 [안], ADR-0130 설정 자리) | 인계 예정 (사이클 20 1단계 1-15, 사용자 결정 2026-10-17로 17에서 옮김) | 사이클 20 검토 #24, `cycles/17-first-deploy/from-cycle-20-proxy-only.md` | 사용자: "프록시만 하면 프록시만 하고 자체 서버 IP에서 … 안 하도록" (2026-10-16), 승인 | [확정] | 상태 불(사이클 20 R1) |
+| 나가는 길 설정 | `모두`(기본, 21개) / `프록시만`(한국 20) / `직접만`(EC2 1). `프록시만`이면 Webshare가 모두 멈춰도 EC2로 넘어가지 않음. **운영 값 `프록시만`** (사용자, 2026-10-18) | 인계 예정 (사이클 20 1단계 1-15: `chaekcheck.availability.egress.mode` 이름 [안], ADR-0130 설정 자리) | 인계 예정 (사이클 20 1단계 1-15, 사용자 결정 2026-10-17로 17에서 옮김) | 사이클 20 검토 #24, `cycles/17-first-deploy/from-cycle-20-proxy-only.md` | 사용자: "프록시만 하면 프록시만 하고 자체 서버 IP에서 … 안 하도록" (2026-10-16), 승인 | [확정] | 상태 불(사이클 20 R1) |
 | 시간 (실측) | 시드니 → 한국 IP → 강동 전자도서관 1.7초, 교보 구독형 2.7초, 큰 홈페이지 3.5~5.0초 | — | 실측 | 같은 문서 9-4절 | 1회 측정 (2026-10-16) | [확정] | 2절 시간 제한 |
 | 막힌 길 다시 시험 | 10분 뒤 1건, 막혀 있으면 두 배, 최대 7일 | 인계 예정 (사이클 20 1단계 1-15, 속성 이름 [안: dev]) | 인계 예정 (사이클 20 1단계 1-15, 사용자 결정 2026-10-17로 17에서 옮김) | [from-cycle-20-blocked-ip-resume](cycles/17-first-deploy/from-cycle-20-blocked-ip-resume.md) | 사용자 승인 (2026-10-15), 상한 "일주일로 가자" | [확정] | — |
 | Webshare 데이터 | 정적 20개 250GB/달, 80% 경고, 90%에서 정적 길만 멈춤 | 인계 예정 | 인계 예정 | [multi-source-ip](research/deploy/multi-source-ip.md) 8절 #3 (97행) | 사용자 승인 (2026-10-16). 확장 모드로 올라온 페이지는 세지 않음 (9-5절) | [확정] | — |
@@ -178,7 +178,7 @@
 | 상태 묻는 간격 | 웹 `VITE_LOOKUP_STATUS_POLL_SECONDS` [안] | 10 |
 | 책 화면 자동 이어 부르기 묶음 수 | 웹 `VITE_*` (이름 [안: dev], 전반 점검 #7) | 3 |
 | 확장 약속 판 번호 최소 판 | 웹 `VITE_EXTENSION_MIN_PROTOCOL` [안] + 확장 `extension/config.js`의 `protocol` (전반 점검 #8) | 1 [안] |
-| 나가는 길 설정 / 프록시 길 목록 | `CHAEKCHECK_AVAILABILITY_EGRESS_MODE` / `CHAEKCHECK_AVAILABILITY_EGRESS_PROXIES`, 조회 서버 `FETCH_EGRESS_MODE` / `FETCH_EGRESS_PROXIES` (이름 [안], 사이클 20 1단계 1-15; 두 서비스에 같은 값 — 공통 `LOOKUP_EGRESS_*` [안], compose·`prod.env`는 사이클 17) | `all`(모두) / 빈 목록 |
+| 나가는 길 설정 / 프록시 길 목록 | `CHAEKCHECK_AVAILABILITY_EGRESS_MODE` / `CHAEKCHECK_AVAILABILITY_EGRESS_PROXIES`, 조회 서버 `FETCH_EGRESS_MODE` / `FETCH_EGRESS_PROXIES` (이름 [안], 사이클 20 1단계 1-15; 두 서비스에 같은 값 — 공통 `LOOKUP_EGRESS_*` [안], compose·`prod.env`는 사이클 17) | 코드 기본 `all`(모두) / 빈 목록. **운영 `proxy-only`** [확정] (사용자: "프록시만 사용하도록 하고", 2026-10-18) |
 | 교보 구독형 길마다 동시 | `CHAEKCHECK_AVAILABILITY_KYOBO_SUBSCRIPTIONMAXCONCURRENCY` (이름 [안], 사이클 20 1단계 1-15) | 3 |
 
 - 위 표의 속성 이름은 dev `backend/src/main/resources/application.yml`(2026-10-16 읽음) 기준. 속성 이름이 바뀌면 환경 변수 이름도 바뀌므로 이 표를 함께 고침
