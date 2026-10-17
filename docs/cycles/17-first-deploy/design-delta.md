@@ -2,7 +2,10 @@
 
 - 근거: [`architect-proposal.md`](architect-proposal.md)(결정 1~8, 사용자 결정 2026-10-13~14), [`spec.md`](spec.md), [`flow.md`](flow.md), [`research.md`](research.md)
 - 이번 슬라이스는 서비스의 모듈 경계·공개 API·표를 바꾸지 않음. 바뀌는 것은 `availability` 안쪽 지표, 운영 프로필, 배포 파일
-- 대출 조회 나가는 길(spec R13)도 이 사이클에 포함(사용자, 2026-10-14). 그 설계는 **[ADR-0130](../../adr/0130-lookup-egress-webshare-kr-static-and-alerts.md)**(ADR-0095를 대신함, 사이클 22 배포 조사, 사용자 승인 2026-10-16)이며, 넘길 값은 [`from-research-lookup-egress.md`](from-research-lookup-egress.md)에 정리됨: 첫 배포 길 = EC2 자기 IP 1개 + Webshare 한국 정적 주거용 20개(IP Authorization), **본 서비스 직접 조회와 따로 둔 조회 서버 조회 둘 다 개발**, 업체 데이터 80% 경고·90% 멈춤·업체 오류면 업체 길 전체 멈춤, 알림은 CloudWatch→SNS 메일. 이 문서는 그 부분을 제외한 배포 공통 설계를 담음
+- 대출 조회 나가는 길(spec R13)의 설계는 **[ADR-0130](../../adr/0130-lookup-egress-webshare-kr-static-and-alerts.md)**(ADR-0095를 대신함, 사이클 22 배포 조사, 사용자 승인 2026-10-16), 넘길 값은 [`from-research-lookup-egress.md`](from-research-lookup-egress.md). **사이클 분담**(사용자 결정 2026-10-17, webshare 세션 전달):
+  - **사이클 20 dev가 만듦**: #1~#4(나가는 길 종류·첫 배포 길 EC2 1 + Webshare 20·길마다 호출 간격·막힌 길 처리)·#9(나간 길 기록). 즉 길 목록·선택·막힘 처리는 20 몫
+  - **사이클 17에 남는 것**: #5(업체 데이터 세기 — Webshare 사용량 API·80% 경고·90% 멈춤·Webshare API 키), #6(업체 오류면 Webshare 길 전체 즉시 멈춤), #7(CloudWatch 경보→SNS 메일 알림)
+- 이 문서는 R13의 공통 배포 설계(위 17 몫 포함)를 담고, 길 목록·선택 로직은 사이클 20 설계를 따름
 
 ## 구조 그림
 
