@@ -14,7 +14,7 @@
 사이클 13 회고 반영 (2026-10-14): 흐름 32·33과 S12 한 줄 — 구현됨 (사이클 13, 회고 2026-10-14). 흐름 32에 `nextId` 다시 확인·종료 5, 흐름 33에 "같은 번호가 다른 도서관이면 멈춤"을 더함(ADR-0107). 첫 실행(여주대 빈 곳 채우기)은 뺌(AC-1). 근거 `docs/cycles/13-crawler-to-dev/retro.md`.
 사이클 15 cycle-close (2026-10-14, 12·13·14 회고 뒤): 사용자 행동 기록 — 흐름 34(수집 목록 검색 기록), 35(직접 찾기 첫 묶음과 "더 보기" 기록), 36(사용 알림), 37(기록 쓰기와 지우기)을 더함 — 구현됨 (사이클 15, 회고 2026-10-15). 근거 `docs/cycles/15-usage-log/design-delta.md` "주요 흐름", ADR-0096·0097·0102.
 사이클 16 cycle-close (2026-10-14, 12·13·14·15 회고·인계 뒤): 공지사항과 안내·약관 페이지를 DB로 — 흐름 38(공지 목록·공지 글), 39(서비스 안내·이용약관·처리방침 글), 40(가입 화면의 약관·동의문, 글을 못 불러올 때), 41(운영자가 새 판을 넣을 때)을 더하고 흐름 9에 문서 버전의 원본을 적음 — 구현됨 (사이클 16, 회고 2026-10-15). 근거 `docs/cycles/16-notices-and-policies/design-delta.md` "주요 흐름", ADR-0098~0101.
-사이클 15·16·18 회고 (2026-10-15): 구현됨으로 바꾸고 실제 이름·값을 맞춤. 15 `usagelog`·16 `sitecontent` 구현됨, 18은 A1·A2·B 구현됨(dev main `a0e438a`), C(운영 반영)는 사이클 17 첫 배포 뒤. 근거 `docs/cycles/15-usage-log/retro.md`, `docs/cycles/16-notices-and-policies/retro.md`, `docs/cycles/18-empty-library-holdings/retro.md`, dev `plan-feedback.md` "# 사이클 15"·"# 사이클 16"·"# 사이클 18".
+사이클 15·16·18 회고 (2026-10-15): 구현됨으로 바꾸고 실제 이름·값을 맞춤. 15 `usagelog`·16 `sitecontent` 구현됨, 18은 A1·A2·B 구현됨(dev main `a0e438a`), C(운영 반영)는 `docs/backlog.md` "사이클 18 C"로 옮김 (사용자: "운영 반영은 백로그랑 CYCLE19 PLAN에게 알려주고 이거 마무리하자", 2026-10-15). 근거 `docs/cycles/15-usage-log/retro.md`, `docs/cycles/16-notices-and-policies/retro.md`, `docs/cycles/18-empty-library-holdings/retro.md`, dev `plan-feedback.md` "# 사이클 15"·"# 사이클 16"·"# 사이클 18".
 사이클 19 cycle-close (2026-10-15): 저자·제목 표기 정리 — 설계됨(미구현, 사이클 19). ADR-0113~0117. 흐름 44(다시 가져오기 → 비교 → 반영 → 다시 켜기), 45(캐시 답 세기)를 더하고, 흐름 20·27에 `rules-dir` 읽기와 멈춤 줄을 더함. 근거 `docs/cycles/19-author-angle-brackets/design-delta.md` "구조 그림".
 사이클 21 cycle-close (2026-10-16): 추천도서 세 목록 — 설계됨(미구현, 사이클 21). ADR-0122~0129. 흐름 46(이동진·서울대: 수집기 → export → apply → 화면), 47(사서 추천도서 주 1회 받기, 담는 표와 고르기 규칙만 바뀜), 48(목록 화면 요청)을 더하고, 흐름 24·25·27·28·33에 바뀐 그림을 가리키는 줄을 더함. 근거 `docs/cycles/21-recommended-books/design-delta.md` "구조 그림".
 사이클 21 회고 (2026-10-17): 흐름 46~48 구현됨 (dev main `836bd7b`, 운영 역할 DB 반영 기록 13번). 흐름 46에 export 앞 `check`·표지 차례 다섯·목록 넣기 실패 기록(`lists failed`)을, 흐름 47에 세트 규칙을, 흐름 48에 표지 아래 글자 없음·목록 이름 붙박이·책 창 조회 넓히기(3 → 6 → 10 → 20)를 반영. 머리말 큰 메뉴 셋·폰 줄 누르기는 "화면 공통" 절. 근거 `docs/cycles/21-recommended-books/retro.md`.
@@ -1509,11 +1509,11 @@ sequenceDiagram
   P-->>O: 보고서 (묻지 않음, 종료 코드 그대로)
 ```
 
-## 흐름 43: 호스트에 밑줄이 있는 도서관의 가져오기와 대출 조회 — 구현됨 (사이클 18 A2·B, dev main `a0e438a`, 회고 2026-10-15; 운영 반영 C는 사이클 17 첫 배포 뒤)
+## 흐름 43: 호스트에 밑줄이 있는 도서관의 가져오기와 대출 조회 — 구현됨 (사이클 18 A2·B, dev main `a0e438a`, 회고 2026-10-15; 운영 반영 C는 `docs/backlog.md`로 옮김, 2026-10-15)
 
 - 근거: `docs/cycles/18-empty-library-holdings/design-delta.md`, ADR-0111. 지금 해당 도서관은 현대제철 2624 한 곳(2026-10-14). 조회 서버 앱 모드도 같은 길
 - 회고 2026-10-15 (dev 구현 확인): 가져오기 쪽 호스트 읽기 `collection/internal/SiteHosts`(`host`·`httpHost`). 대출 조회 쪽 `HostRoutingSiteFetcher` → `UnderscoreHostSiteFetcher`(Apache HttpClient 5 `httpclient5` 5.6.4, SNI 없음, 인증서 이름 검사는 HttpClient `DefaultHostnameVerifier`·`HostnameVerificationPolicy.CLIENT`, redirect·재시도·쿠키·압축 없음, 로그 `via=direct-underscore`). 조회 서버 앱은 `UnderscoreHosts`·`UrlGuard`(authority의 `@` 거부, 내부망 거부)·`LibraryClient` (ADR-0112). 실제 확인: direct·조회 서버 모드 둘 다 「1984」 보유 1·대출 0
-- 241권 가져오기(B7)는 복사본 DB에서만 함(기록 11번, `detail_url_not_http` 283 → 42). 원래 DB와 첫 배포 데이터에는 아직 없음 [확인 필요: 넣는 길, 사이클 17·회고 결정]
+- 241권 가져오기(B7)는 복사본 DB에서 한 뒤(기록 11번, `detail_url_not_http` 283 → 42), 2026-10-15 원래 DB(5432)에도 같은 사본으로 가져옴(기록 11번, 숫자 같음, 2624 241권) [확정] (dev `plan-feedback.md` "# 사이클 18" 마무리, 2026-10-15). 운영 DB 반영은 `docs/backlog.md` "사이클 18 C"
 
 ```mermaid
 sequenceDiagram
