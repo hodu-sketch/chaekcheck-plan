@@ -48,18 +48,18 @@
 | 책 기준 검색 한 쪽 책 수 | 지금 기본 20 → **기본 10** (최대 20) | 지금 dev `catalog/internal/web/BookParams.java` 상수 `MAX_PAGE_SIZE = 20` 하나가 기본값·최대를 함께 맡음(2026-10-16 읽음) → 기본값을 설정 속성으로 분리. 값은 서버 설정 속성 하나에서 정함 [확정] (검토 #30 승인 2026-10-16: 서버 설정 속성 하나, 웹은 `pageSize`를 보내지 않음) | 인계 예정 | 사이클 20 명세 R15, 검토 #23 | 같음. 이어지는 대출 조회(`book-availabilities/stream`)도 대략 반 | 10 [확정] / 정하는 곳 [안] | — |
 | 책 화면 대출 상태 자동 이어 부르기 (적용: 책 기준 검색 결과 10권의 대출 상태, 서버·확장 모드 / 적용 안 됨: 바로 검색, 책 창 조회 넓히기 단계 수) | 첫 묶음 포함 최대 **3묶음**(약 24초), 그 뒤 남은 상태는 「더 보기」 | 웹 설정 `VITE_*` (이름 [안: dev], 인계 예정) | 인계 예정 (사이클 20 1단계) | [전반 점검 #7](cycles/20-lookup-status-and-extension/easy/2026-10-17-overall-review.html) (2026-10-17) | 사용자 승인 (2026-10-17). 결정 페이지 #7 설명: 소장 도서관이 많은 책이 몰리면 검색 하나가 자리를 여러 번 써 결과 10개로 아낀 몫을 깎음. 3이라는 수 [이유 미확인] (제안 → 승인) | [확정] | 사이클 21 책 창 넓히기(6절, 한 단계 안의 이어 부르기도 같은 3 [안]) |
 | 다음 묶음 후보 | 50 | `be.yml` `batch.max-candidates` | 구현됨 | dev | [이유 미확인] | [안] | — |
-| 한 길·한 사이트 동시 / 간격 | 동시 1건, 1초 | `be.yml` `host-max-concurrency`, `host-min-interval` | 구현됨 (길 하나) | ADR-0094·ADR-0130(0095를 대체), [multi-source-ip](research/deploy/multi-source-ip.md) 7절 #2 | 사용자 승인: 고정 IP마다 동시 1건·1초 (2026-10-16) | [확정] | 길이 늘면 길마다 |
-| 교보 구독형 서버 | 길마다 동시 3건, 느려지면 1건, 막힘 신호면 멈춤 | 인계 예정 (사이클 17) | 인계 예정 | ADR-0094, [사이클 17 scope](cycles/17-first-deploy/scope.md) 10번 | 사용자: "이거 지금 해" (2026-10-13) | [확정] | — |
+| 한 길·한 사이트 동시 / 간격 | 동시 1건, 1초 | `be.yml` `host-max-concurrency`, `host-min-interval` | 구현됨 (길 하나), 길마다는 인계 예정 (사이클 20 1단계 1-15, 사용자 결정 2026-10-17로 17에서 옮김) | ADR-0094·ADR-0130(0095를 대체), [multi-source-ip](research/deploy/multi-source-ip.md) 7절 #2 | 사용자 승인: 고정 IP마다 동시 1건·1초 (2026-10-16) | [확정] | 길이 늘면 길마다 |
+| 교보 구독형 서버 | 길마다 동시 3건, 느려지면 1건, 막힘 신호면 멈춤 | 인계 예정 (사이클 20 1단계 1-15, 속성 `chaekcheck.availability.kyobo.subscription-max-concurrency` 이름 [안]) | 인계 예정 (사이클 20 1단계 1-15, 사용자 결정 2026-10-17로 17에서 옮김) | ADR-0094, [사이클 17 scope](cycles/17-first-deploy/scope.md) 10번 | 사용자: "이거 지금 해" (2026-10-13) | [확정] | — |
 | 차례 기다림 → 시간 초과 | **따로 정한 값 없음** — 부른 쪽의 마감까지 기다림: 묶음은 `batch.deadline` 8초, 「더 보기」는 `request-deadline` 8초, 상세는 `detail.deadline` 30초 (마감까지 자리를 못 받으면 시간 초과) | dev `backend/.../availability/internal/fetch/InMemoryHostThrottle.java` 70~77행 `acquire(host, uri, deadline)`: 남은 시간 = 마감 − 지금, 그 안에 `tryAcquire` 못 하면 `UpstreamException.timeout` (2026-10-17 읽음) | 구현됨 | 마감 값은 2절 각 줄, 사이클 20 [spec](cycles/20-lookup-status-and-extension/spec.md) R4 (시간 초과를 "줄이 섬"으로 셈) | 세 마감의 근거는 2절 각 줄 | 구조 [확정] (dev 코드 확인) / 값은 2절 태그 | 2절 세 마감, 줄 선 도서관 60초 |
 
 ## 4. 나가는 길 (첫 배포)
 
 | 값 | 지금 값 | 들어 있는 곳 | 상태 | 정한 문서 | 근거 | 태그 | 함께 바꿀 곳 |
 |---|---|---|---|---|---|---|---|
-| 나가는 길 | 21개 = EC2 자기 IP 1 + Webshare 한국 정적 주거용(공유) 20 | 인계 예정 (설정 목록, 업체 주소·비밀번호는 서버 비밀 값) | 인계 예정 | [multi-source-ip](research/deploy/multi-source-ip.md) 7·8절 | 사용자: 프록시 없으면 "1초 제한에 걸려서 사용자가 거의 의미가 없어", 정적 20개 먼저 (2026-10-16) | [확정] | — |
-| 나가는 길 설정 | `모두`(기본, 21개) / `프록시만`(한국 20) / `직접만`(EC2 1). `프록시만`이면 Webshare가 모두 멈춰도 EC2로 넘어가지 않음 | 인계 예정 (ADR-0130 설정 자리) | 인계 예정 | 사이클 20 검토 #24, `cycles/17-first-deploy/from-cycle-20-proxy-only.md` | 사용자: "프록시만 하면 프록시만 하고 자체 서버 IP에서 … 안 하도록" (2026-10-16), 승인 | [확정] | 상태 불(사이클 20 R1) |
+| 나가는 길 | 21개 = EC2 자기 IP 1 + Webshare 한국 정적 주거용(공유) 20 | 인계 예정 (사이클 20 1단계 1-15: 설정 목록 `chaekcheck.availability.egress.proxies` 이름 [안], 업체 주소는 서버 비밀 값 — 운영 값 넣기는 사이클 17) | 인계 예정 (사이클 20 1단계 1-15, 사용자 결정 2026-10-17로 17에서 옮김) | [multi-source-ip](research/deploy/multi-source-ip.md) 7·8절 | 사용자: 프록시 없으면 "1초 제한에 걸려서 사용자가 거의 의미가 없어", 정적 20개 먼저 (2026-10-16) | [확정] | — |
+| 나가는 길 설정 | `모두`(기본, 21개) / `프록시만`(한국 20) / `직접만`(EC2 1). `프록시만`이면 Webshare가 모두 멈춰도 EC2로 넘어가지 않음 | 인계 예정 (사이클 20 1단계 1-15: `chaekcheck.availability.egress.mode` 이름 [안], ADR-0130 설정 자리) | 인계 예정 (사이클 20 1단계 1-15, 사용자 결정 2026-10-17로 17에서 옮김) | 사이클 20 검토 #24, `cycles/17-first-deploy/from-cycle-20-proxy-only.md` | 사용자: "프록시만 하면 프록시만 하고 자체 서버 IP에서 … 안 하도록" (2026-10-16), 승인 | [확정] | 상태 불(사이클 20 R1) |
 | 시간 (실측) | 시드니 → 한국 IP → 강동 전자도서관 1.7초, 교보 구독형 2.7초, 큰 홈페이지 3.5~5.0초 | — | 실측 | 같은 문서 9-4절 | 1회 측정 (2026-10-16) | [확정] | 2절 시간 제한 |
-| 막힌 길 다시 시험 | 10분 뒤 1건, 막혀 있으면 두 배, 최대 7일 | 인계 예정 (사이클 17) | 인계 예정 | [from-cycle-20-blocked-ip-resume](cycles/17-first-deploy/from-cycle-20-blocked-ip-resume.md) | 사용자 승인 (2026-10-15), 상한 "일주일로 가자" | [확정] | — |
+| 막힌 길 다시 시험 | 10분 뒤 1건, 막혀 있으면 두 배, 최대 7일 | 인계 예정 (사이클 20 1단계 1-15, 속성 이름 [안: dev]) | 인계 예정 (사이클 20 1단계 1-15, 사용자 결정 2026-10-17로 17에서 옮김) | [from-cycle-20-blocked-ip-resume](cycles/17-first-deploy/from-cycle-20-blocked-ip-resume.md) | 사용자 승인 (2026-10-15), 상한 "일주일로 가자" | [확정] | — |
 | Webshare 데이터 | 정적 20개 250GB/달, 80% 경고, 90%에서 정적 길만 멈춤 | 인계 예정 | 인계 예정 | [multi-source-ip](research/deploy/multi-source-ip.md) 8절 #3 (97행) | 사용자 승인 (2026-10-16). 확장 모드로 올라온 페이지는 세지 않음 (9-5절) | [확정] | — |
 | Webshare 업체 오류 | 407·429·계정 확인이면 Webshare 길 전체 즉시 멈춤 | 인계 예정 | 인계 예정 | 같은 문서 8절 #4 | 사용자 승인 (2026-10-16) | [확정] | 상태 불: 멈춘 동안 최소 노랑 (사이클 20 검토 #21 승인 2026-10-16) |
 | Webshare 동시 연결 | 기본 500 (High Concurrency $2.25/월이면 3,000+) | Webshare 계정 | — | [multi-source-ip](research/deploy/multi-source-ip.md) 9-2절 (142행) | 업체 기본값. Webshare 구매 화면 "Concurrency is limited to 500 by default" (2026-10-16 확인) | [확정] | — |
@@ -178,7 +178,8 @@
 | 상태 묻는 간격 | 웹 `VITE_LOOKUP_STATUS_POLL_SECONDS` [안] | 10 |
 | 책 화면 자동 이어 부르기 묶음 수 | 웹 `VITE_*` (이름 [안: dev], 전반 점검 #7) | 3 |
 | 확장 약속 판 번호 최소 판 | 웹 `VITE_EXTENSION_MIN_PROTOCOL` [안] + 확장 `extension/config.js`의 `protocol` (전반 점검 #8) | 1 [안] |
-| 나가는 길 설정 | ADR-0130 설정 자리 (사이클 17 인계) | `모두` |
+| 나가는 길 설정 / 프록시 길 목록 | `CHAEKCHECK_AVAILABILITY_EGRESS_MODE` / `CHAEKCHECK_AVAILABILITY_EGRESS_PROXIES`, 조회 서버 `FETCH_EGRESS_MODE` / `FETCH_EGRESS_PROXIES` (이름 [안], 사이클 20 1단계 1-15; 두 서비스에 같은 값 — 공통 `LOOKUP_EGRESS_*` [안], compose·`prod.env`는 사이클 17) | `all`(모두) / 빈 목록 |
+| 교보 구독형 길마다 동시 | `CHAEKCHECK_AVAILABILITY_KYOBO_SUBSCRIPTIONMAXCONCURRENCY` (이름 [안], 사이클 20 1단계 1-15) | 3 |
 
 - 위 표의 속성 이름은 dev `backend/src/main/resources/application.yml`(2026-10-16 읽음) 기준. 속성 이름이 바뀌면 환경 변수 이름도 바뀌므로 이 표를 함께 고침
 

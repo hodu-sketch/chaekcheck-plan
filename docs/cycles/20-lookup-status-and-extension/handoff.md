@@ -10,6 +10,7 @@
   - 0131: 화면을 떠나면 새 도서관을 띄우지 않음
   - 0132: 조회 부하 줄이기
   - 0133: 메모리 상태는 저장소 인터페이스 뒤 · 장부는 LRU 표
+- 1-15(나가는 길)가 따르는 ADR: 0130(Accepted, 0095를 대신함), 0094(교보 구독형 서버). 사이클 17에서 옮겨 온 몫입니다(사용자 결정 2026-10-17)
 
 ## 목표 한 줄
 
@@ -19,9 +20,8 @@
 
 - **dev 순서** [확정] (사용자, 2026-10-16: "사이클 20을 먼저 개발하고, 그다음 17 배포로 해"): 사이클 20 **1단계** → 사이클 17 배포 → 20 **2단계** → 20 **3단계**(조건부)
 - **3단계를 만드는 조건** [확정] (사용자 승인, 2026-10-17, 전반 점검 #1·마무리 확인 #9): 크롬 웹스토어에 올릴 때, 또는 거절 기록(`usagelog.rejected_event`)에 남용이 보일 때. 조건이 오기 전에는 만들지 않습니다
-- **사이클 17 코드(나가는 길·막힌 길·업체 길 멈춤)는 지금 dev에 없습니다** (dev `backend/src/main`에서 `lane`·`egress` 0건, 2026-10-17 확인). 그래서 1단계는 이렇게 만듭니다 [확정] (design-delta 전제)
-  - 길은 하나, 막힌 길은 빈 목록
-  - 나가는 길 포트가 없으면 `reason=NONE`
+- **나가는 길(길 목록 EC2 1 + Webshare 20 · 길 설정 · 길마다 간격 · 막힌 길 처리 · 나간 길 기록)은 이 사이클 1단계 1-15에서 만듭니다** [확정] (사용자, 2026-10-17: "Webshare 20개 길, 막힌 길 처리, 이건 20dev에서 할 수 있자나"). 처음 인계서(2026-10-17)는 이것이 사이클 17/22 몫이라 dev에 없다고 보고 "길 하나 · 막힌 길 빈 목록 · 포트 없으면 `reason=NONE`"으로 1단계를 만들게 했고, dev는 그대로 1-7(`HostQueueBoard.DEFAULT_LANE = "direct"`)·1-8(`EgressLaneStatus.NONE`)을 만들었습니다(dev `plan-feedback.md` `# 사이클 20`). 1-15가 그 자리에 진짜 길을 넣습니다
+  - 사이클 17에 남는 것: 업체 데이터 세기(80% · 90%, Webshare 사용량 API 키), 업체 오류(407 · 429 · 계정)면 Webshare 길 전체 멈춤, CloudWatch → SNS 메일. 그래서 1단계에서 `vendorLanesPaused()`는 늘 `false`입니다
 - 사이클 21은 main에 들어가 있습니다(836bd7b). 머리말 점 자리 `data-lookup-status-slot`은 이미 `web/src/components/AppLayout.tsx`에 있습니다(2026-10-17 읽음)
 - Liquibase 번호 [확정] (사이클 21 설계 검토 #4): 19 = `usagelog/002`, 21 = `usagelog/003`, 20 = `usagelog/004`. 둘 다 이미 main에 있으므로 004 include는 master **맨 끝**(지금 `usagelog/003` 다음)에 둡니다
 
@@ -65,7 +65,8 @@
 - 사이클 17로 넘긴 것: `docs/cycles/17-first-deploy/`의 아래 파일(17이 만들고, 20은 앱 쪽만 만듦)
   - `from-cycle-20-observability.md`: CloudWatch 경보 · `-XX:+ExitOnOutOfMemoryError` · graceful 종료
   - `from-cycle-20-prod-env-numbers.md`: `prod.env` "대출 조회 숫자" 묶음
-  - `from-cycle-20-blocked-ip-resume.md`, `from-cycle-20-proxy-only.md`
+  - `from-cycle-20-blocked-ip-resume.md`, `from-cycle-20-proxy-only.md`, `from-research-lookup-egress.md` — 이 셋의 길 목록 · 길 설정 · 막힌 길 처리 부분은 2026-10-17에 1-15로 옮겨 왔습니다(업체 데이터 세기 · 업체 오류 멈춤 · 경보는 17에 남음)
+- 1-15 기준: ADR-0130, ADR-0094, `docs/cycles/17-first-deploy/spec.md` R13 · AC-8 · AC-9, `docs/research/deploy/multi-source-ip.md` 7 · 8 · 9 · 11절
 - dev `docs/plan-feedback.md` `# 사이클 21` #9(폰 `.end`가 점 자리 탭을 받음, 2026-10-17)
 
 ## 개발 시작 전 확인
@@ -216,7 +217,7 @@
      - 상태를 계산할 때 시작한 지 **10초** 지난 기다림은 세지 않습니다(스스로 낫기) [확정]
      - 시간 초과는 **60초** 동안 줄 섬으로 봅니다 [확정] (R4)
      - 같은 호스트에 도서관이 여럿(통합 포털)이면 그 호스트에서 본 도서관 모두를 줄 섬으로 봅니다
-     - `laneId`는 사이클 17 길이 들어오기 전까지 상수 하나 [안], 막힌 길은 빈 목록
+     - `laneId`는 길이 들어오기 전까지 상수 하나 [안] (dev: `HostQueueBoard.DEFAULT_LANE = "direct"`). 길 목록 · 막힌 길은 1-15에서 넣고, 기다리는 동안 길이 정해지지 않는 문제는 1-15 할 일 3에서 다룹니다
      - 자료 구조 `ConcurrentHashMap` [안]
    - 설정: 기다림 창 10초, 시간 초과 창 60초 (이름 [안: dev], 예 `chaekcheck.availability.lookup-status.queue-wait-window: 10s`·`queue-timeout-window: 60s` → 8절 규칙으로 환경 변수)
    - 함께 바꿀 곳: 10초 = 묶음 마감 8초 + 2초(마감을 바꾸면 함께)
@@ -245,9 +246,9 @@
        - ③ `inUse >= slots/2` 또는 업체 길 멈춤 → `YELLOW`(업체면 `VENDOR_PAUSED`)
        - ④ 그 밖 `GREEN`, `reason=NONE`
      - `queuedLibraryIds`는 1-7 보드에서 최대 200개 [안]
-     - 나가는 길 포트는 사이클 17/22 코드가 줄 읽기 전용 인터페이스입니다(예: `vendorLanesPaused()`·`egressMode()`, 이름 [안])
-       - 17이 아직 없으므로 20이 인터페이스와 "멈춘 길 없음 · 모두" 기본 구현을 둡니다 → `reason=NONE` [안]
-       - **이 방식(20이 포트를 먼저 정의)은 `# 사이클 20`에 알립니다**
+     - 나가는 길 포트는 나가는 길 코드가 주는 읽기 전용 인터페이스입니다(예: `vendorLanesPaused()`·`egressMode()`, 이름 [안])
+       - 20이 인터페이스와 "멈춘 길 없음 · 모두" 기본 구현을 먼저 둡니다 → `reason=NONE` [안] (dev 1-8: `EgressLaneStatus` + `NONE`, `# 사이클 20`에 알림 완료)
+       - 1-15에서 진짜 구현으로 바꿉니다: `egressMode()`는 길 설정에서 읽은 실제 값, `pausedLaneCount()`는 막힌 길 수. **`vendorLanesPaused()`는 사이클 17이 업체 멈춤을 넣을 때까지 기본 `false`** [확정] (사용자 결정 2026-10-17의 나눔)
    - 설정(이름 [안: dev], 8절 규칙): 메모 1초, 503 뒤 빨강 10초, DB 오류 회색 30초, 목록 최대 200
 2. **`LookupStatusController`** (새 파일 [안]: `availability/internal/web/LookupStatusController.java`)
    - 할 일
@@ -287,7 +288,7 @@
 1. **요약 로그** (새 파일 [안]: `availability/internal/config/LookupOpsSummaryLog.java`. 지금 `CacheStatsLog.java`와 같은 방식, `AvailabilityConfiguration.java`에 bean)
    - 할 일
      - 1분마다 INFO 한 줄 `key=value` [안: 필드 이름 dev]
-     - 넣을 것: 검색 자리 사용(1분 최대·지금), 503 수, 힙 사용·최대, 멈춘 길 수(17 전 0), 1MB 넘음 수, DB 오류 수, 서버 도서관 요청 수
+     - 넣을 것: 검색 자리 사용(1분 최대·지금), 503 수, 힙 사용·최대, 멈춘 길 수(1-15 전 0), 1MB 넘음 수, DB 오류 수, 서버 도서관 요청 수
      - 2단계에서 확장 도서관 요청 수·계획 무게 합, 3단계에서 장부 크기를 더합니다
      - CloudWatch 지표 필터로 읽기 쉽게 한 줄로 씁니다
    - 설정: 간격 1분 (이름 [안: dev], 8절 규칙)
@@ -368,9 +369,131 @@
    - 시험: 가짜 스트림으로 남은 것이 계속 있으면 3번 부른 뒤 멈추고 「더 보기」, 누르면 이어서(AC-36). 남은 것이 없으면 이어 부르지 않음(AC-28)
    - 의존: 1-10-2 / 위험: 낮음
 
+### 1-15. 나가는 길: 길 목록과 막힌 길 (사이클 22 범위 일부, 사용자 결정 2026-10-17)
+
+- 왜 여기: 사용자 "Webshare 20개 길, 막힌 길 처리, 이건 20dev에서 할 수 있자나" (2026-10-17, webshare 세션 전달) [확정]. 사이클 17 인계 파일 `from-research-lookup-egress.md`의 #1~#4·#9를 이 번호로 옮깁니다. 같은 결정이 plan `docs/research/deploy/multi-source-ip.md` 11절, `docs/cycles/17-first-deploy/design-delta.md` 머리에 있습니다
+- 기준 문서(plan, 읽기 전용): ADR-0130(Accepted, ADR-0095를 대신함), ADR-0094(교보 구독형 서버), `docs/cycles/17-first-deploy/spec.md` R13 · AC-8 · AC-9, `docs/cycles/17-first-deploy/from-research-lookup-egress.md` #1~#4 · #9, `from-cycle-20-proxy-only.md`, `from-cycle-20-blocked-ip-resume.md`, `docs/research/deploy/multi-source-ip.md` 7 · 8 · 9 · 11절, `docs/settings-index.md` 3 · 4 · 8절
+- 이 번호에서 만들지 않는 것(사이클 17에 남음): 아래 "사이클 17에 남는 것"
+- 기록: 이 번호의 기록은 dev `docs/plan-feedback.md`의 **`# 사이클 22 (사이클 20 안에서)`** 절에 적습니다(dev 세션이 정한 절 이름). 나머지 1단계 기록은 `# 사이클 20` 그대로
+
+#### 정해진 값 (바꾸지 않음)
+
+| 값 | 내용 | 태그 |
+|---|---|---|
+| 길 목록 | EC2 자기 IP 1(시드니 <서버 IP>, 프록시 없이 직접) + Webshare 한국 정적 주거용(공유) 20(주소:포트 목록, IP Authorization = EC2 IP라 인증 값 없음). 바뀌는 주거용은 넣지 않음(나중, plan `docs/backlog.md`) | [확정] (사용자 승인 2026-10-16, ADR-0130, `from-research-lookup-egress.md` #2) |
+| 두 경로 모두 | 본 서비스가 직접 부르는 길(`fetch.mode=direct`)과 조회 서버를 거치는 길(`fetch-service`) **둘 다** 같은 길 설정을 씀 | [확정] (사용자: "이거 자체 서버에서 조회하는거랑 따로 조회서버 두는거랑 둘 다 개발되어야 해", 2026-10-16) |
+| 서버 자기 공인 IP 여러 개 | 길 종류로 지원. 구현 방법은 dev: IP마다 tinyproxy `Bind`로 "우리 프록시 목록"을 만들면 업체 프록시와 같은 코드 | 지원 [확정] (ADR-0130) / 방법 [안] |
+| 길 설정 | `모두`(기본, 21개) / `프록시만`(Webshare 20만) / `직접만`(EC2 1). 대출 조회 길에만(책 목록 수집기는 따로). 바꾸면 서비스 다시 켜기만. 설정 이름 · 값 철자는 dev | 값 셋 [확정] (사용자 승인 2026-10-16, 사이클 20 세 관점 검토 #24) / 철자 [안] |
+| `프록시만` | EC2 IP로는 도서관에 요청을 보내지 않음(**막힌 길 다시 시험 요청 포함**). Webshare 길이 모두 멈춰도 EC2로 자동으로 넘어가지 않음 | [확정] (`from-cycle-20-proxy-only.md` 결정 2·3) |
+| 길마다 호출 간격 | (길, 도서관 사이트 호스트)마다 동시 1건 · 앞 요청 끝 + 1초 | [확정] (사용자 승인 2026-10-16, ADR-0094 · ADR-0130, `settings-index.md` 3절) |
+| 교보 구독형 서버 | `*.dkyobobook.co.kr`은 길마다 묶어 세고 동시 3건, 1초 간격 없음. 3은 설정. 느려지거나 연달아 실패하면 동시 1건으로 내림, 막힘 신호면 그 길을 그 사이트에서 멈춤(아래 막힌 길) | 3 · 길마다 · 설정 [확정] (ADR-0094, 사용자 "추가로 동시 건수는 설정으로 조절 가능하게 해줘" 2026-10-13) / 내리고 멈추는 기준 숫자 [안: dev, ADR-0094: 수집기 값(평균 응답 12초, 5번 연달아 실패) 참고] |
+| 고르는 순서 | 그 사이트에 지금 보낼 수 있는 고정 IP 길을 먼저(지금 길 21개는 모두 고정 IP). 막힌 길은 고르지 않음 | [확정] (ADR-0130) |
+| 막힌 길 | 그 길만 그 사이트에서 멈추고 다른 길로는 계속. 다른 사이트는 영향 없음 | [확정] (spec R13-4, ADR-0130) |
+| 다시 시험 | 멈추고 **10분 뒤** 그 길에서 그 사이트에 시험 요청 1건(검색 첫 페이지 GET 하나, 그 길의 호스트 1건 · 1초 규칙 안에서). 정상(2xx, adapter가 해석하는 HTML)이면 바로 풂. 또 막혔으면 쉼을 **두 배**(10 → 20 → 40 → 80분 …), **상한 7일**. 사용자의 실제 검색은 시험에 쓰지 않음(막힌 길로는 사용자 요청을 보내지 않음) | [확정] (사용자 승인 2026-10-15, 상한 "상한은 일주일로 가자") |
+| 막힘으로 보는 기준 | ADR-0094대로 dev가 정함 | [안: dev] |
+| 모든 길이 막힌 사이트 | 그 도서관은 실패 → 화면 「확인하지 못한 도서관」(ADR-0094 "확인 불가") | [확정] (ADR-0094, `from-cycle-20-blocked-ip-resume.md` #3) |
+| 남길 것 | 조회 기록(요청마다 쓰는 서버 로그 줄)에 나간 길 · 업체. 멈춤 시작 · 시험 · 풀림은 로그 한 줄씩(사이트, 길, 다음 시험 시각) + 지표(길 · 사이트별 막힘 0/1, 시험 횟수). 수동 "풀기" 버튼 · 관리 화면 없음(급하면 설정에서 그 길을 빼고 다시 켬) | [확정] (ADR-0095 · 0130, `from-cycle-20-blocked-ip-resume.md` #2) |
+| 확장 모드 | `accept` 경로(2단계)는 길을 쓰지 않음 | [확정] (ADR-0119) |
+
+#### 할 일
+
+1. **길 목록과 길 설정** (새 파일 [안]: `availability/internal/egress/EgressLane.java`(길 하나: `id`, 종류 `DIRECT`|`PROXY`, 프록시 `host:port`, 업체 이름), `EgressLanes.java`(설정에서 목록을 만들고 길 설정으로 거름). 고칠 곳: `availability/internal/config/AvailabilityProperties.java`, `application.yml` `chaekcheck.availability`)
+   - 할 일
+     - 새 속성(이름 [안: dev], 환경 변수는 plan `docs/settings-index.md` 8절 규칙)
+       - `chaekcheck.availability.egress.mode`: `all`(기본) | `proxy-only` | `direct-only` → `CHAEKCHECK_AVAILABILITY_EGRESS_MODE`
+       - `chaekcheck.availability.egress.proxies`: 쉼표로 이은 `주소:포트` 목록(기본 빈 값) → `CHAEKCHECK_AVAILABILITY_EGRESS_PROXIES`. 운영 값은 서버 비밀 값(spec R13-2, Parameter Store `/chaekcheck/prod/*`)이고 `prod.env`에 넣는 것은 사이클 17 몫
+       - `chaekcheck.availability.egress.proxy-vendor`: 기록에 쓸 업체 이름(기본 `webshare`) → `CHAEKCHECK_AVAILABILITY_EGRESS_PROXYVENDOR`
+     - 길 번호: 직접 길 `direct`, 프록시 길은 목록 순서대로 `proxy-01` … `proxy-20` [안: dev]. 길 번호에 프록시 주소를 넣지 않습니다(로그에 비밀 값이 남지 않게) [안]
+     - `proxy-only`인데 프록시 목록이 비었으면 켤 때 멈춥니다 [안]. `all`에 목록이 비면 지금처럼 직접 길 하나(로컬 개발 기본)
+     - 켤 때 로그 한 줄: 길 설정 · 길 수 · 업체 이름(주소는 쓰지 않음) [안]
+   - 위험: 낮음
+2. **길마다 HTTP 클라이언트** (고칠 곳: `fetch/SiteFetcher.java`, `DirectSiteFetcher.java`, `UnderscoreHostSiteFetcher.java`, `HostRoutingSiteFetcher.java`, `config/AvailabilityConfiguration.java` `siteFetcher`)
+   - 할 일
+     - `SiteFetcher.fetch(URI, Instant deadline)`에 길을 넘깁니다(예: `fetch(URI, Instant, EgressLane)`, 모양 [안: dev])
+     - JDK `HttpClient`: 길마다 클라이언트 하나. 프록시 길은 `HttpClient.Builder.proxy(ProxySelector.of(new InetSocketAddress(host, port)))`, 직접 길은 `ProxySelector` 없이(기본 선택기를 끄려면 `HttpClient.Builder.NO_PROXY`). https 도서관은 프록시에 CONNECT 터널로 갑니다. 인증 값이 없으므로 `jdk.http.auth.tunneling.disabledSchemes`는 건드리지 않습니다 (https://docs.oracle.com/en/java/javase/25/docs/api/java.net.http/java/net/http/HttpClient.Builder.html , 2026-10-17 확인 [확정]). 서버 자기 IP 여러 개를 직접 붙일 때는 같은 문서의 `localAddress(InetAddress)`(Java 19+)도 쓸 수 있음 [안: 위 tinyproxy 방법과 dev가 고름]
+     - 밑줄 호스트 길(Apache HttpClient 5, `UnderscoreHostSiteFetcher`)도 길마다 프록시를 둡니다(`HttpClients.custom().setProxy(...)` 또는 `setRoutePlanner(...)`, dev `plan-feedback.md` 사이클 18 A2-6 기록 그대로 [확인 필요: dev가 Context7로 HttpClient 5 문서 확인])
+     - TLS(`LibrarySiteTls`) · 시간 제한 · 1MB · gzip(1-3) · User-Agent는 길과 상관없이 같게
+   - 위험: 중간
+3. **길 고르기 + 길마다 간격** (고칠 곳: `fetch/HostThrottle.java`, `fetch/InMemoryHostThrottle.java`, `fetch/LibraryPageFetcher.java` `throttled`, `resolve/DetailPageFetcher.java`)
+   - 할 일
+     - throttle 열쇠를 호스트에서 **(길, 호스트)**로 바꿉니다. `host-max-concurrency` 1 · `host-min-interval` 1s는 이제 "한 길 · 한 사이트" 값입니다(속성 이름은 그대로, 뜻만 바뀜 → dev 설정 색인에 적음)
+     - `HostThrottle.run`이 길을 골라 넘깁니다(예: `run(uri, deadline, lane -> siteFetcher.fetch(uri, deadline, lane))`, 모양 [안: dev])
+       - 고르기: 길 설정으로 걸러진 길 중 그 사이트에서 막히지 않은 길 → 지금 자리가 비고 간격이 지난 길을 먼저. 여럿이면 돌아가며 [안: dev] (17 AC-8 "번갈아")
+       - 모두 바쁘면 가장 먼저 비는 길을 마감까지 기다립니다(마감 규칙은 지금과 같음: 묶음 8초 · 「더 보기」 8초 · 상세 30초, `settings-index.md` 3절)
+       - 그 사이트에서 모든 길이 막혔으면 기다리지 않고 바로 ERROR(문제 코드 예 `no_lane_for_host` [안]) → 그 도서관만 `library-failed` · 사용 기록 `FAILED` · 캐시 안 넣음
+     - 교보 구독형: `*.dkyobobook.co.kr` 호스트는 길마다 하나로 묶어 세고 동시 `kyobo-subscription` 값(3), 1초 간격 없음. 느려지거나 연달아 실패하면 그 길에서 동시 1건으로 내림 [기준 숫자 안: dev]
+       - 새 속성(이름 [안: dev]) `chaekcheck.availability.kyobo.subscription-max-concurrency: 3` → `CHAEKCHECK_AVAILABILITY_KYOBO_SUBSCRIPTIONMAXCONCURRENCY`
+     - `HostQueueBoard`(1-7): 기다리는 동안은 아직 길이 정해지지 않으므로 `begin`은 지금 `HostQueueBoard.DEFAULT_LANE`을 "아무 길이나 기다림" 뜻으로 그대로 씁니다 [안: dev]. 막힌 길은 고르지 않으므로 줄 선 계산에 들어가지 않습니다(spec R4)
+     - 상태 저장소: (길, 호스트) 자리 · 막힌 길 표는 `HostThrottle`과 같은 인터페이스 뒤 메모리 구현(`state-store=memory`) [확정] (ADR-0133)
+   - 위험: 높음(모든 서버 모드 조회가 지나는 곳)
+4. **막힌 길과 다시 시험** (새 파일 [안]: `availability/internal/egress/BlockedLanes.java`(인터페이스) + `InMemoryBlockedLanes.java`, `BlockedLaneRetest.java`(예약 작업))
+   - 할 일
+     - (길, 호스트) → 멈춘 시각 · 다음 시험 시각 · 지금 쉼 길이 · 시험 횟수 · 시험에 쓸 주소(그 사이트에서 마지막으로 실패한 검색 첫 페이지 주소 [안])
+     - 막힘 판정: 그 길 · 그 사이트 응답을 보고 dev가 정한 기준으로(ADR-0094) [안: dev]. 1MB 넘음 · 해석 실패(`parse_busy` 포함) · 시간 초과 한 번은 막힘으로 보지 않는 안 [안: dev]
+     - 다시 시험: 다음 시험 시각이 지난 줄마다 그 길로 시험 요청 1건. 그 길 · 호스트의 1건 · 1초 자리를 함께 씀. 정상이면 줄을 지우고, 아니면 쉼 × 2(상한 7일)
+     - `프록시만`이면 `direct` 길은 목록에 없으므로 시험도 하지 않습니다
+     - 로그: `lane_paused host=… lane=… vendor=… nextRetestAt=…`, `lane_retest host=… lane=… result=… nextRetestAt=…`, `lane_resumed host=… lane=…`, 7일 상한에 닿을 때 `lane_retest_capped …` (모양 [안: dev]. 사이클 17 CloudWatch 경보 · 메일이 이 줄을 읽음 → 이름을 `# 사이클 22 (사이클 20 안에서)`에 적음)
+     - 지표: 길 · 사이트별 막힘 0/1, 시험 횟수(Actuator 또는 1-11 요약 로그. 방식 [안: dev])
+     - 메모리라 다시 켜면 막힌 길 표가 비고, 막힌 길은 다음 실제 요청에서 다시 막힘으로 판정됩니다 [안: 감수]
+   - 위험: 중간
+5. **조회 서버 경유** (고칠 곳: `fetch-service/src/main/java/com/chaekcheck/fetch/LibraryClient.java`, `FetchProperties.java`, `FetchController.java`, `fetch-service/src/main/resources/application.yml`; 본 서비스 `fetch/FetchServiceSiteFetcher.java` `FetchRequest`)
+   - 할 일
+     - 길 고르기 · 간격 · 막힌 길은 **본 서비스 한 곳**에서 합니다(조회 서버에는 throttle이 없음, ADR-0011). 본 서비스가 고른 길 번호를 요청에 실어 보냅니다: `FetchRequest(url, requestId, lane)`(칸 이름 [안])
+     - 조회 서버는 같은 길 설정을 읽어 길 번호 → 프록시를 찾고 그 길의 클라이언트로 부릅니다(JDK 길 · 밑줄 호스트 길 둘 다)
+       - 새 속성(이름 [안: dev]) `fetch.egress.mode` → `FETCH_EGRESS_MODE`, `fetch.egress.proxies` → `FETCH_EGRESS_PROXIES`, `fetch.egress.proxy-vendor` → `FETCH_EGRESS_PROXYVENDOR`. 운영 compose는 두 서비스에 같은 값을 넘깁니다(짧은 공통 이름 예 `LOOKUP_EGRESS_MODE` · `LOOKUP_EGRESS_PROXIES`, plan `settings-index.md` 8절 `LOOKUP_*` 방식 [안]; compose · `prod.env`는 사이클 17)
+     - `lane`이 없으면 직접 길(옛 본 서비스와 맞음), 모르는 길 번호거나 길 설정에서 빠진 길(`프록시만`에서 `direct` 등)이면 `outcome=ERROR`로 거절 [안]. 조회 서버를 먼저 배포해도 깨지지 않게 합니다
+     - 응답의 길 번호를 본 서비스 `SiteResponse.via`와 함께 남깁니다
+   - 시험: fetch-service에 아래 "시험" ①~③ 같은 것, 본 서비스 `FetchServiceSiteFetcher` 시험에 요청 본문의 `lane`
+   - 위험: 중간
+6. **조회 기록에 길** (고칠 곳: `DirectSiteFetcher` 126행 · `UnderscoreHostSiteFetcher` 167행 `upstream via=…` 줄, `FetchServiceSiteFetcher` 96행 `fetch-service via=…` 줄, fetch-service `LibraryClient` 194 · 252행 `library host=…` 줄, `resolve/DetailPageFetcher.java` 99행)
+   - 할 일
+     - 요청마다 쓰는 줄에 `lane=<길 번호> vendor=<업체 이름 | direct>`를 더합니다(모양 [안: dev]). 프록시 주소는 쓰지 않습니다 [안]
+     - 사용 기록(`usagelog`) 표에는 길 칸을 더하지 않습니다(Liquibase 변경 없음) [안]. "조회 기록"은 위 서버 로그 줄입니다
+   - 위험: 낮음
+7. **상태 불 · 요약 로그가 읽는 값** (고칠 곳: `status/EgressLaneStatus.java`, `config/AvailabilityConfiguration.java` `egressLaneStatus`, `ops/LookupOpsSummaryLog.java`)
+   - 할 일
+     - `EgressLaneStatus.NONE` bean을 진짜 구현으로 바꿉니다(이름 [안]): `egressMode()`는 길 설정에서 읽은 값, `pausedLaneCount()`는 막힌 (길, 사이트) 줄 수 [안: "길 수"로 셀지 dev]
+     - `vendorLanesPaused()`는 **사이클 17이 업체 멈춤을 넣을 때까지 늘 `false`** [확정] (이번 결정의 나눔: 업체 오류 · 데이터 90% 멈춤은 17). 그래서 `VENDOR_PAUSED` · `NO_LANE`은 1단계에서도 단위 시험(가짜 포트)까지만 봅니다
+     - 사이트 하나에서 모든 길이 막힌 것은 `NO_LANE`이 아닙니다(그 도서관만 「확인하지 못한 도서관」)
+     - 요약 로그 `pausedLanes`(지금 0)가 실제 값을 찍습니다
+   - 위험: 낮음
+
+#### 시험 (17 spec · ADR 기준과 대응)
+
+| 기준 | 시험 |
+|---|---|
+| 17 AC-8 / R13-1 · #9 (나간 길 · 업체 기록, 번갈아) | 시험용 HTTP 서버 둘을 프록시 길로 두고(`http://` 도서관 주소는 프록시에 절대 주소 요청으로 옴) 같은 사이트를 여러 번 부름 → 두 프록시가 번갈아 받고, `upstream … lane=` 줄이 두 길로 번갈아 남음. 조회 서버 경유도 같음 |
+| R13-3 (길마다 따로 셈, 동시 1건 · 1초) | 가짜 시계 단위 시험: 길 3개 · 같은 사이트 요청 3건 → 셋이 동시에 나감, 같은 길 둘째 요청은 앞 요청 끝 + 1초 뒤. 다른 사이트는 서로 막지 않음 |
+| ADR-0094 교보 3건 | `x.dkyobobook.co.kr`·`y.dkyobobook.co.kr`이 한 길에서 합쳐 동시 3건까지, 넷째는 기다림, 1초 간격 없음. 길이 둘이면 합쳐 6건 |
+| 17 AC-9 / R13-4 (막힌 길만 멈춤) | 한 프록시 길만 막힘을 돌려주는 시험 서버 → 그 사이트는 다른 길로 계속 결과, 다른 사이트는 막힌 길도 계속 씀 |
+| 막힌 길 다시 시험 (10분 · 두 배 · 7일) | 가짜 시계: 10분에 시험 1건 → 또 막힘 → 20분 → 40분 … 7일에서 멈춤. 정상 응답이면 바로 풂. 시험 요청도 그 길의 1건 · 1초 자리를 씀. 사용자 요청은 막힌 길로 0건 |
+| 모든 길이 막힌 사이트 | 길 둘이 모두 막힘 → 기다리지 않고 그 도서관만 `library-failed`, 사용 기록 `FAILED` |
+| `프록시만` · `직접만` (`from-cycle-20-proxy-only.md`) | `proxy-only`: 직접 길로 요청 0건(다시 시험 포함), 프록시가 모두 막혀도 직접으로 넘어가지 않음. `direct-only`: 프록시로 요청 0건. `proxy-only` + 빈 목록 → 켤 때 멈춤 |
+| 상태 포트 (AC-27 서버 부분) | `egressMode()`가 설정 값, `vendorLanesPaused()`는 false, `pausedLaneCount()`가 막힌 줄 수. 가짜 포트 판정 표(1-8)는 그대로 통과 |
+| 로그 · 지표 | 멈춤 · 시험 · 풀림 줄이 한 줄씩, 프록시 주소가 로그에 없음 |
+| 밑줄 호스트 | 밑줄 호스트 주소도 고른 길의 프록시로 감(본 서비스 · 조회 서버) |
+
+- 실제 Webshare 길: Webshare IP Authorization이 EC2 IP 하나뿐이라 **로컬 PC에서는 Webshare에 붙지 않습니다**(plan `multi-source-ip.md` 9-4절 · ADR-0130 감수). 로컬은 위 시험용 프록시로만 봅니다. 실제 21길 확인은 사이클 17 배포 때 EC2에서: 같은 도서관을 여러 번 불러 `lane=` 줄에 여러 길이 남는지, 부산 전자도서관(`ebook.busan.go.kr:8081/FxLibrary`)이 Webshare 길로 열리는지 [확인 필요: 17 배포 때 dev]
+
+#### 1-15 완료 기준
+
+- [ ] 위 "시험" 표 모두 통과, `backend/` · `fetch-service/` `./gradlew build`(모듈 검증 포함. 새 모듈 · 이벤트 없음, 모든 새 코드는 `availability/internal` 안)
+- [ ] `fetch.mode=direct`와 `fetch-service` 두 경로 모두 길을 씀
+- [ ] 로컬에서 시험용 프록시 둘을 `CHAEKCHECK_AVAILABILITY_EGRESS_PROXIES`로 넣고 `bootRun` → 실제 검색에서 `lane=` 줄이 길마다 남고, `CHAEKCHECK_AVAILABILITY_EGRESS_MODE=proxy-only`로 켜면 `lane=direct` 줄 0
+- [ ] dev `docs/maintenance/settings-index.md`에 새 속성 · 환경 변수 · 뜻이 바뀐 `host-max-concurrency`/`host-min-interval`, `# 사이클 22 (사이클 20 안에서)`에 정한 이름 · 막힘 기준 숫자 · 교보 내리기 기준 · 로그 줄 모양
+
+#### 사이클 17에 남는 것 (이 번호에서 만들지 않음)
+
+- 업체 데이터 세기: 우리 서버가 Webshare 프록시로 받은 데이터(확장 모드 응답은 빼기)와 1시간마다 Webshare 사용량 API `GET https://proxy.webshare.io/api/v2/stats/aggregate/`(`bandwidth_total`) 중 큰 값, 플랜 250GB의 80% 경고 · 90% Webshare 길 멈춤 · 다음 달 다시 켬, Webshare API 키(서버 비밀 값) (`from-research-lookup-egress.md` #5)
+- 업체 쪽 오류(407 · 429 `client_connect_high_concurrency` · 계정 확인 · 정지)면 Webshare 길 전체 즉시 멈춤, EC2 IP로 계속(#6). 이때 `EgressLaneStatus.vendorLanesPaused()`를 17이 채웁니다
+- CloudWatch 경보 → SNS 메일(같은 일 1시간에 한 번, 보낼 일 다섯 가지)(#7)
+- 운영 `prod.env` · compose의 길 설정 값과 Webshare 주소 비밀 값 넣기
+- 1-15는 17이 위 셋을 붙일 자리만 남깁니다: 길마다 받은 바이트를 셀 수 있는 곳(`SiteResponse` · 로그), 업체 길을 한꺼번에 멈출 수 있는 길 목록 [안: dev가 자리 모양을 `# 사이클 22 (사이클 20 안에서)`에 적음]
+
 ### 1단계 완료 기준
 
-- [ ] AC-1~8, 16, 18(서버 모드), 20, 21(서버 모드), 24, 27(포트가 없으면 단위 시험까지, 실제 확인은 17/22 코드 뒤), 28, 32, 33(서버 모드), 34, 36, 37, 40, 42
+- [ ] AC-1~8, 16, 18(서버 모드), 20, 21(서버 모드), 24, 27(길 설정은 1-15 뒤 실제 값, `VENDOR_PAUSED`·`NO_LANE`은 업체 멈춤이 오는 사이클 17 뒤 실제 확인 — 그전에는 단위 시험까지), 28, 32, 33(서버 모드), 34, 36, 37, 40, 42
+- [ ] 1-15 완료 기준(사이클 17 spec AC-8 · AC-9, R13-1 · 3 · 4, 막힌 길 다시 시험, 길 설정 셋), 두 경로(직접 · 조회 서버) 모두
 - [ ] `backend/` `./gradlew build` 통과(`ModularityTests.verifiesModularStructure`와 의존 방향 시험 그대로 통과. 새 모듈·이벤트 없음), `fetch-service/` `./gradlew build`, `web/` `npm run build` + vitest
 - [ ] Playwright로 데스크톱(1280) → 태블릿(768) → 폰(375 · 320) 머리말 · 말풍선 · 결과 묶음 확인
 - [ ] **사용자가 자기 폰(Samsung Internet)에서 dev 웹 서버 `web-lan-5174`(`.claude/launch.json`, 같은 Wi-Fi)로 확인한 뒤 1단계를 닫습니다**
@@ -379,7 +502,7 @@
   - 「확인하지 못한 도서관」 묶음 · 「밀려요」 글이 이름 아래
   - 책 화면 「더 보기」
   - Chrome 폰 흉내만으로는 부족합니다 (사용자 결정, 2026-10-12, `docs/cycles/10-popular-books/easy/2026-10-12-design-addendum-decisions.html` #3)
-- [ ] dev `docs/maintenance/settings-index.md`에 1단계 값 모두 + `docs/plan-feedback.md` `# 사이클 20` 1단계 기록
+- [ ] dev `docs/maintenance/settings-index.md`에 1단계 값 모두 + `docs/plan-feedback.md` `# 사이클 20` 1단계 기록 + 1-15는 `# 사이클 22 (사이클 20 안에서)` 기록
 
 ---
 
@@ -437,7 +560,7 @@
      - throttle · `SiteFetcher` · `detailPages.fetch`를 **부르지 않습니다**
      - 해석은 1-4 해석 자리, `detailUrl`·`detailItems`는 1-5 검사를 통과한 것만, 캐시는 2-2 규칙
      - `SiteListResolver`를 "상세 주소 뽑기 / 받은 상세로 판정" 둘로 나눕니다
-     - 확장 응답은 길 데이터 세기(사이클 22)에 넣지 않습니다 [안]
+     - 확장 응답은 업체 데이터 세기(사이클 17)에 넣지 않습니다 [안]
    - 시험: `accept` 경로에서 throttle · SiteFetcher · `detailPages.fetch` 호출 0건(목 검증) ◆
    - 위험: 중간
 
@@ -706,6 +829,13 @@
 | 1 | 요약 로그 간격 | 새 속성 (이름 [안]) | 1분 | [확정] |
 | 1 | 상태 묻는 간격 | `VITE_LOOKUP_STATUS_POLL_SECONDS` [안] | 10 | 값 [확정] |
 | 1 | 책 화면 자동 이어 부르기 | `VITE_*` (이름 [안]) | 3 | [확정] |
+| 1 (1-15) | 길 설정 | `chaekcheck.availability.egress.mode` / `CHAEKCHECK_AVAILABILITY_EGRESS_MODE`, 조회 서버 `FETCH_EGRESS_MODE` (이름 [안]) | `all`(모두) · `proxy-only`(프록시만) · `direct-only`(직접만), 기본 `all` | 값 셋 [확정] / 철자 [안] |
+| 1 (1-15) | 프록시 길 목록 | `chaekcheck.availability.egress.proxies` / `CHAEKCHECK_AVAILABILITY_EGRESS_PROXIES`, 조회 서버 `FETCH_EGRESS_PROXIES` (이름 [안], 운영 값은 비밀 값 · 사이클 17) | 운영 Webshare 한국 정적 20(+ 직접 길 EC2 1 = 21), 로컬 빈 값 | 21 [확정] / 이름 [안] |
+| 1 (1-15) | 업체 이름(기록용) | `…egress.proxy-vendor` (이름 [안]) | `webshare` | [안] |
+| 1 (1-15) | 한 길 · 한 사이트 동시 / 간격 | `host-max-concurrency` / `host-min-interval` (그대로, 뜻이 "길마다"로 바뀜) | 1 / 1초 | [확정] |
+| 1 (1-15) | 교보 구독형 길마다 동시 | `chaekcheck.availability.kyobo.subscription-max-concurrency` / `CHAEKCHECK_AVAILABILITY_KYOBO_SUBSCRIPTIONMAXCONCURRENCY` (이름 [안]) | 3, 1초 간격 없음 | [확정] |
+| 1 (1-15) | 막힌 길 다시 시험 | 새 속성 (이름 [안: dev], 예 `…egress.blocked.first-retest` · `max-retest`) | 10분부터 두 배, 상한 7일 | [확정] |
+| 1 (1-15) | 막힘으로 보는 기준 · 교보 동시 1건으로 내리는 기준 | 새 속성 (이름 [안: dev]) | dev가 정함(ADR-0094: 수집기 값 평균 응답 12초 · 5번 연달아 실패 참고) | [안] |
 | 2 | 확장 캐시 칸 / 만료 | 새 속성 (이름 [안]) | 500 / 처음 넣은 시각 + 3분 | [확정] |
 | 2 | 계획 보관함 무게 / 유지 | 새 속성 (이름 [안]) | 25,000 / 10분 | [확정] |
 | 2 | 허용 origin | 새 속성 (이름 [안]) | `https://chaekcheck.com`, 개발 `http://localhost:5173` | 도메인 [확정] |
@@ -769,6 +899,7 @@
 | 34 | 1 | 시험용 HTTP 서버 + `db-test` 통합(두 칸) |
 | 37 | 1 | MVC(`recordDbError`) + 단위(30초) + DB 멈춤 수동 |
 | 40 | 1 | 단위(로그 한 줄 필드) + `bootRun` 로그 |
+| 사이클 17 AC-8 · AC-9 (R13) | 1 (1-15) | 시험용 프록시 둘 + 단위(가짜 시계) — 1-15 "시험" 표, 실제 21길은 17 배포 때 EC2 |
 | 9 · 11 · 41 | 2 | `node --test` + 개발자 모드 수동 |
 | 10 · 10a · 45 | 2 | 단위(확장 캐시) + 두 브라우저 수동 |
 | 12 · 22 · 23 | 2 | MockMvc + 자리 2 수동 |
@@ -792,15 +923,16 @@
 
 - Redis 구현 · Redis 컨테이너(`state-store=redis`) — 나중에 분리할 때 (ADR-0133)
 - CloudWatch 경보 · 스왑 · `-XX:+ExitOnOutOfMemoryError` · `restart: unless-stopped` · graceful 종료 · `prod.env` 견본 · 일반 `/api/` nginx 구역 — 사이클 17
-- 나가는 길(길 21개) · 막힌 길 · 업체 길 멈춤 · 나가는 길 설정 자체 — 사이클 17/22 (20은 읽는 포트와 기본 구현만)
+- 업체 데이터 세기(80% 경고 · 90% Webshare 길 멈춤, Webshare 사용량 API 키) · 업체 오류(407 · 429 · 계정)면 Webshare 길 전체 멈춤 · CloudWatch → SNS 메일 알림 · 운영 `prod.env`의 길 설정 값과 Webshare 주소 비밀 값 — 사이클 17 (길 목록 · 길 설정 · 길마다 간격 · 막힌 길 처리 · 나간 길 기록은 1-15로 옮김, 사용자 결정 2026-10-17)
+- 바뀌는 주거용 프록시 길 — 나중 (plan `docs/backlog.md`)
 - 엣지 · 파이어폭스 · 사파리 확장, 폰 브라우저 확장, 웹 설치 안내 페이지, 웹스토어 올리기
 - 조회 대기열(줄 세우기), 조회 서버 쉼 상태를 신호에 합치기
 - 실패한 도서관을 서버가 대신 다시 부르기(서버 대행 목록에 처음부터 넣은 도서관만 3단계에서)
 - 처리방침 문구 변경(공개 전 사용자 확인)
 
-## dev `docs/plan-feedback.md`에 기록해 주세요 (`# 사이클 20` 새 절)
+## dev `docs/plan-feedback.md`에 기록해 주세요 (`# 사이클 20` 새 절, 1-15는 `# 사이클 22 (사이클 20 안에서)`)
 
-단계마다 끝날 때 다음을 적습니다. 다음 plan 회고(retro) 입력입니다. 사이클 18 · 21 회고도 아직이므로 겹치는 것은 이 절에 적습니다.
+단계마다 끝날 때 다음을 적습니다. 다음 plan 회고(retro) 입력입니다. 사이클 18 · 21 회고도 아직이므로 겹치는 것은 이 절에 적습니다. 1-15(나가는 길)의 기록은 dev 세션이 정한 절 **`# 사이클 22 (사이클 20 안에서)`**에 따로 적습니다: 정한 이름(속성 · 환경 변수 · 길 번호 · 클래스), 막힘 기준 숫자, 교보 동시 1건으로 내리는 기준, 멈춤 · 시험 · 풀림 로그 줄 모양(사이클 17 경보가 읽음), 사이클 17이 업체 데이터 세기 · 업체 길 멈춤을 붙일 자리, 사이클 17 배포 때 EC2에서 본 실제 21길 결과.
 
 - 설계와 달라진 점과 이유(사용자 발언은 그대로)
 - 정한 이름: 클래스 · 속성 · 환경 변수 · 코드(`DB_ERROR`, `BODY_TOO_LARGE`, `parse_busy`, `client_ip_changed`, `invalid_client_key`, `lookup_ip_limited`, 쿠키 이름, 계획 주소 끝 이름, `protocol`, `VITE_*`)
@@ -849,6 +981,7 @@
   - 확장 응답은 길 데이터 세기에 넣지 않음
   - 503 급증 경보 기준값 · 요약 로그 필드 모양
   - IPv6 nginx 한도(주소 전체) vs 서버 /64 차이 감수
+  - 1-15: 길 번호 `direct`·`proxy-01`…, 속성 `egress.mode`·`egress.proxies`·`egress.proxy-vendor`·`kyobo.subscription-max-concurrency`·다시 시험 속성, 조회 서버 `FETCH_EGRESS_*`·공통 `LOOKUP_EGRESS_*`, `FetchRequest.lane`, 문제 코드 `no_lane_for_host`, 길 돌아가며 고르기, 막힘 기준 숫자, 교보 내리기 기준, 기다리는 동안 `DEFAULT_LANE`, 시험 주소(마지막 실패 주소), 막힌 길 표 재시작 때 비움 감수, 로그 줄 모양, 사용 기록에 길 칸 없음
   - DNS 리바인딩 감수
   - 로그인을 끈 2단계의 CSRF 방어가 `Origin` 한 겹 + 만든 IP
 - [확인 필요]
@@ -859,6 +992,7 @@
   - 2-0 프로토타입: http · 인증서 · 리다이렉트 도서관, EUC-KR 해석(2단계 전)
   - 사이클 17 `prod.conf` 템플릿 방식(2단계 전)
   - Tomcat이 요청 `Content-Encoding`을 푸는지(참고, 415로 막으므로 막지 않음)
+  - 1-15: Apache HttpClient 5 프록시 설정(밑줄 호스트 길, dev Context7), 실제 Webshare 21길과 부산 전자도서관(사이클 17 배포 때 EC2에서)
   - 크롬 Private Network Access 적용 여부(참고)
   - 전체 호스트 CORS(참고)
   - 운영 2GB에서 JVM 전체 메모리 · 자리 60으로 올릴지(17 배포 뒤 요약 로그로)

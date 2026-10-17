@@ -1,5 +1,7 @@
 # 배포 조사(사이클 22 세션) → 사이클 17: 대출 조회 나가는 길·한도·알림 (인계에 넣을 것)
 
+- (2026-10-17) 길 목록·막힌 길 처리는 사이클 20 dev로 옮김 — 사용자 결정, 20 handoff 1-15. 업체 데이터 세기·업체 오류 멈춤·경보는 17에 남음.
+
 - 쓴 날: 2026-10-16, chaekcheck-plan-cycle-22 세션(사이클 밖 배포 조사). 사용자: "ADR-0095 바꾸는 ADR 초안이랑 사이클 17 인계 파일 만들어서 캔버스로 보여줘"
 - 상태: [확정] (사용자 승인, 2026-10-16, 결정 페이지 `docs/research/deploy/easy/2026-10-16-adr-0130-draft.html` #2). 덧붙임: "이거 자체 서버에서 조회하는거랑 따로 조회서버 두는거랑 둘 다 개발되어야 해"
 - 근거: `docs/research/deploy/multi-source-ip.md` 6~9절, [ADR-0130](../../adr/0130-lookup-egress-webshare-kr-static-and-alerts.md) (Proposed, ADR-0095를 대신함), ADR-0094
