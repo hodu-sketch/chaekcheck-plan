@@ -373,7 +373,7 @@ Webshare API 키를 Parameter Store(`/chaekcheck/prod/*`, 시드니)에 넣는 �
 - **이메일 구독** → `<알림 메일>`, 상태 **확인됨(Confirmed)** (사용자가 메일에서 Confirm 누름, 2026-10-16). 이제 경보가 울리면 이 주소로 메일이 감
 - **기본 경보 2개**(둘 다 chaekcheck-alerts로): `chaekcheck-server-down`(StatusCheckFailed_Instance ≥ 1, 최대, 5분), `chaekcheck-disk-high`(disk_used_percent > 90, 평균, 5분). 운영 서버 보호용. CloudWatch 경보 무료 10개 범위 안(2개 사용)
 - **배포 때 추가할 경보**: ADR-0130 #7의 대출-조회 전용(길 쉼·7일 상한·풀림, 모든 길 막힘, 업체 데이터 80·90%, 업체 계정 문제, 매일 아침 요약) — 앱 커스텀 지표가 생긴 뒤. [확인 필요]로 둔 경보 개수는 이들 더하면 10개에 가까워지므로 설계 때 셈
-- **Webshare 키 저장 완료**(2026-10-16): Parameter Store `/chaekcheck/prod/WEBSHARE_API_KEY`(SecureString, 시드니, KMS `alias/aws/ssm`). 사용자가 Webshare 대시보드(Integrations→API Keys)에서 토큰 발급 → 편집 화면에서 직접 붙여넣어 저장(버전 2). 비밀값 입력은 사용자가 함(Claude는 값 안 봄). ※ 발급 토큰이 한때 채팅에 노출됨 → 필요하면 Webshare에서 폐기·재발급 후 이 파라미터 값만 교체 권장. **[확인 필요] 앱이 쓰는 환경변수 이름이 `WEBSHARE_API_KEY`가 맞는지 dev 확인**(설계 규칙: 파라미터 이름 끝 = 환경변수 이름). 다르면 이 파라미터는 지우고 맞는 이름으로. **[확인 필요] SecureString 복호화**: 배포 때 역할이 `kms:Decrypt`(aws/ssm 키)도 필요(현재 인라인 정책은 ssm 읽기만). up.sh `--with-decryption`과 함께 점검
+- **Webshare 키 저장 완료**(2026-10-16): Parameter Store `/chaekcheck/prod/WEBSHARE_API_KEY`(SecureString, 시드니, KMS `alias/aws/ssm`). 사용자가 Webshare 대시보드(Integrations→API Keys)에서 토큰 발급 → 편집 화면에서 직접 붙여넣어 저장(버전 2). 비밀값 입력은 사용자가 함(Claude는 값 안 봄). ※ 발급 토큰이 한때 채팅에 노출됨 → 필요하면 Webshare에서 폐기·재발급 후 이 파라미터 값만 교체 권장. **환경변수 이름 `WEBSHARE_API_KEY` 확정**(dev 2026-10-18): 앱은 아직 이 키를 안 읽음 — 업체 데이터 세기(사용량 API `stats/aggregate`, 80/90%)는 17이 만들 몫이라 코드에 변수가 아직 없음. 17에서 만들 때 속성 `chaekcheck.availability.egress.vendor-api-key` ← `${WEBSHARE_API_KEY:}`로 받음. 파라미터 이름 그대로 둠. **kms:Decrypt**: up.sh가 `aws ssm get-parameter --with-decryption`으로 읽고, 기본 키 `aws/ssm`이면 `ssm:GetParameter` + 그 키 `kms:Decrypt`가 보통 필요 → 배포 리허설 때 dev가 up.sh로 확인, 필요하면 역할에 추가(IAM 변경은 사용자)
 
 ### 무료 플랜 추가 크레딧 전부 적립 ($200 달성, 2026-10-16)
 신규 AWS 무료 플랜은 가입 시 $100, 활동 5개를 하면 각 $20씩 최대 $100을 더 줌(계정 2026-10-13 생성, Moonshot Mode, 계정 135274608857). 다섯 활동 모두 완료해 **남은 크레딧 US$200.00** 달성(크레딧 만료 2027-10-13, 무료 플랜 기간 종료 약 2027-04-14).
@@ -382,6 +382,17 @@ Webshare API 키를 Parameter Store(`/chaekcheck/prod/*`, 시드니)에 넣는 �
 - 활동마다 자원 생성 요금이 발생하나 **크레딧에서 차감**(카드 청구 아님). 무료 플랜은 크레딧 소진·기간 종료 전까지 실제 과금 없음
 - **[주의] 활동·크레딧이 즉시 무효가 되는 행위**(공식 문서, 2026-10-16): AWS Organizations 가입, Control Tower 랜딩 존 설정, 플랜 업그레이드(고급 기능 활성화). 콘솔의 "플랜 업그레이드" 버튼을 누르면 안 됨
 - 출처(확인 2026-10-16): https://docs.aws.amazon.com/accounts/latest/reference/bcm-lite-free-tier-credits.html , https://aws.amazon.com/free/free-tier-faqs/
+
+### dev가 준 운영 compose 나가는-길 환경변수 (dev-cycle-20, 2026-10-18, dev main 5ab8e42)
+배포 때 운영 compose에 넘길 값(전체는 dev `docs/maintenance/settings-index.md` 1·2·4절):
+- `CHAEKCHECK_AVAILABILITY_EGRESS_MODE=all`
+- `CHAEKCHECK_AVAILABILITY_EGRESS_PROXIES=<Webshare 20개 host:port 쉼표>` (Webshare 대시보드 프록시 목록에서, 배포 때)
+- `CHAEKCHECK_AVAILABILITY_EGRESS_PROXYVENDOR=webshare`
+- `CHAEKCHECK_AVAILABILITY_EGRESS_PROXYUSERNAME`/`_PROXYPASSWORD` = **운영에서 빈 값**(IP Authorization이라 — 값이 있으면 선제 Basic 인증을 보내 버림)
+- `CHAEKCHECK_AVAILABILITY_KYOBO_SUBSCRIPTIONMAXCONCURRENCY=3`
+- 막힌 길: `CHAEKCHECK_AVAILABILITY_EGRESS_BLOCK_FAILURESTOBLOCK=5` (FIRSTPAUSE 10m, MAXPAUSE 7d)
+- 조회 서버를 띄우면 `FETCH_EGRESS_MODE/PROXIES/PROXYVENDOR(/PROXYUSERNAME/PROXYPASSWORD)` 같은 값
+- **[배포 확인 필요] 비표준 포트 사이트 CONNECT 타임아웃**: Webshare 프록시가 `:442`·`:8088` 같은 비표준 포트로의 CONNECT가 연결 시간 초과 → 그 길·그 사이트만 5회 실패 뒤 10분 멈추고 직접 길이 맡음. 배포 때 해당 사이트 확인 항목에 넣기(dev 전달)
 
 ## 18. 사이클 21 → 17 전달 (2026-10-15, `from-cycle-21.md`)
 
