@@ -17,3 +17,4 @@
 | [design-delta-original.html](design-delta-original.html) | design-delta.md 원문 + 그림 5장(모듈 구성, 상태 묻기, 확장 모드 검색, 개념 모델, 표) 렌더링 | `../design-delta.md` | — |
 | [2026-10-16-review-decisions.html](2026-10-16-review-decisions.html) | 세 관점(사용자·서버 자원·보안/안정성) 검토 결과: 바로 고친 것 21줄 + 정할 것 19개(화면 6, 서버 메모리 4, 보안 3, 앞 페이지에서 넘어온 6) | `../design-delta.md`(◆), `../spec.md`, `../flow.md`, ADR-0119 | 19개 기다림 |
 | [2026-10-16-review-decisions-artifact.html](2026-10-16-review-decisions-artifact.html) | 위 검토 페이지의 원격용 사본 (claude.ai Artifact https://claude.ai/artifact/9RHphpwGhriqZ6um2sqhyh, 저장 → db `choices`) | 위와 같음 | 19개 기다림 |
+- 2026-10-17 사이클 20 마무리 확인 (ADR 확정·작은 세부 10개): Artifact https://claude.ai/artifact/2EqFKkocbAShMsP4egVWFL , 기록 `2026-10-17-close-check-artifact.html`
