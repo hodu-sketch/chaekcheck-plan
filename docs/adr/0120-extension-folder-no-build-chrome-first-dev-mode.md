@@ -1,6 +1,6 @@
 # ADR-0120: 크롬 확장은 dev 저장소 `extension/` 폴더에 빌드 없이 두고, 크롬만 먼저, 이번에는 개발자 모드까지
 
-Status: Proposed
+Status: Accepted (2026-10-17, 사용자 승인 — 사이클 20 마무리 확인)
 Date: 2026-10-16
 Cycle: 20-lookup-status-and-extension
 Supersedes: 없음

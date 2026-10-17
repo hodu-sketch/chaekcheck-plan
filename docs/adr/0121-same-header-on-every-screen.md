@@ -1,6 +1,6 @@
 # ADR-0121: 공통 머리말은 약관·처리방침을 포함한 모든 화면에서 같다
 
-Status: Proposed
+Status: Accepted (2026-10-17, 사용자 승인 — 사이클 20 마무리 확인)
 Date: 2026-10-16
 Cycle: 20-lookup-status-and-extension
 Supersedes: 없음

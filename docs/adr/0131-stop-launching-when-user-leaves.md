@@ -1,6 +1,6 @@
 # ADR-0131: 사용자가 화면을 떠나면 서버 모드 묶음은 새 도서관을 띄우지 않고, 이미 넘긴 요청은 끝까지 받아 캐시에 넣는다
 
-Status: Proposed
+Status: Accepted (2026-10-17, 사용자 승인 — 사이클 20 마무리 확인)
 Date: 2026-10-16
 Cycle: 20-lookup-status-and-extension
 Supersedes: 없음

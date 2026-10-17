@@ -121,10 +121,10 @@
 | [ADR-0114](0114-grouping-supplier-codes-and-leading-notes.md) | 같은 책 묶기에서 같은 공급사의 상품 코드로 잇고, 제목 앞 괄호(관제)를 떼고 견줌 (ADR-0106에 덧붙임) | Accepted | 2026-10-15 | 19 |
 | [ADR-0115](0115-swapped-author-publisher-portals.md) | 저자·출판사가 뒤바뀐 세 포털은 가져올 때 규칙 파일로 바꿔 읽고, 수집기도 고치며, 검증 스크립트로 다시 확인하고 지움 | Accepted | 2026-10-15 | 19 |
 | [ADR-0117](0117-human-rules-index-for-ai.md) | 사람이 정한 수집·가져오기·도서관 규칙은 코드·표 파일에 두고 dev 규칙 목록 문서로 찾고 검증 (ADR-0085를 넓힘) | Accepted | 2026-10-15 | 19 |
-| [ADR-0118](0118-lookup-status-polling-and-host-queue-board.md) | 조회 상태 신호는 화면이 10초마다 묻고(SSE 아님), 서버는 자리·최근 503·길마다 줄 선 호스트를 메모리 `HostQueueBoard`에서 세어 1초 캐시로, 주소는 도서관 호출 구역 밖 | Proposed | 2026-10-16 | 20 |
-| [ADR-0119](0119-extension-as-user-side-fetcher-server-parses-and-checks.md) | 크롬 확장은 사용자 쪽 조회 서버: GET만 하고 화면이 계획 입구 셋으로 원본을 올리며, 서버가 `accept` 입구로 같은 코드로 해석·캐시·판정하고 검사 ①~⑩으로 가짜를 거름, 상한은 설정 하나 | Proposed | 2026-10-16 | 20 |
-| [ADR-0120](0120-extension-folder-no-build-chrome-first-dev-mode.md) | 확장은 dev `extension/` 폴더에 빌드 없이, 모든 사이트 권한, 호스트 1건·1초, 크롬만 먼저, 이번엔 개발자 모드까지 | Proposed | 2026-10-16 | 20 |
-| [ADR-0121](0121-same-header-on-every-screen.md) | 공통 머리말은 약관·처리방침 포함 모든 화면에서 같음(사이클 05·10·14 예외 폐지, `legal` 분기 제거) | Proposed | 2026-10-16 | 20 |
+| [ADR-0118](0118-lookup-status-polling-and-host-queue-board.md) | 조회 상태 신호는 화면이 10초마다 묻고(SSE 아님), 서버는 자리·최근 503·길마다 줄 선 호스트를 메모리 `HostQueueBoard`에서 세어 1초 캐시로, 주소는 도서관 호출 구역 밖 | Accepted | 2026-10-16 | 20 |
+| [ADR-0119](0119-extension-as-user-side-fetcher-server-parses-and-checks.md) | 크롬 확장은 사용자 쪽 조회 서버: GET만 하고 화면이 계획 입구 셋으로 원본을 올리며, 서버가 `accept` 입구로 같은 코드로 해석·캐시·판정하고 검사 ①~⑩으로 가짜를 거름, 상한은 설정 하나 | Accepted | 2026-10-16 | 20 |
+| [ADR-0120](0120-extension-folder-no-build-chrome-first-dev-mode.md) | 확장은 dev `extension/` 폴더에 빌드 없이, 모든 사이트 권한, 호스트 1건·1초, 크롬만 먼저, 이번엔 개발자 모드까지 | Accepted | 2026-10-16 | 20 |
+| [ADR-0121](0121-same-header-on-every-screen.md) | 공통 머리말은 약관·처리방침 포함 모든 화면에서 같음(사이클 05·10·14 예외 폐지, `legal` 분기 제거) | Accepted | 2026-10-16 | 20 |
 | [ADR-0122](0122-recommended-lists-one-module-one-table.md) | 추천 목록 셋(이동진·사서·서울대)은 `picks` 모듈 하나가 맡고, 책 줄은 표 `list_book` 하나에 담음 (`pick` 표 없앰) | Accepted | 2026-10-16 | 21 |
 | [ADR-0123](0123-curated-lists-ride-export-manifest.md) | 이동진·서울대 목록은 수집기가 만든 목록 파일을 가져오기 파일 목차(`notes.listPart`, 판 3)에 실어 운영 반영 때 넣고, 표지도 수집기가 줄여 함께 실음 | Accepted | 2026-10-16 | 21 |
 | [ADR-0124](0124-pinned-edition-matched-at-export.md) | 이동진·서울대의 판은 수집기가 내 PC DB를 읽어 고르고(고정 판), 가져오기 파일을 만들 때 같은 파일의 책 표에 대고 맞춰 책 번호를 저장함. 서버는 읽기만 | Accepted | 2026-10-16 | 21 |
@@ -134,4 +134,4 @@
 | [ADR-0128](0128-leedongjin-list-by-collector-youtube-api.md) | 이동진 추천도서는 수집기가 YouTube Data API(공식)와 국립중앙도서관 ISBN 서지 API로 모아 목록 파일(dev `scripts/crawl/lists/` TSV)에 적음 | Accepted | 2026-10-16 | 21 |
 | [ADR-0129](0129-picks-shown-title-from-matched-book.md) | 추천 목록 화면의 책 이름은 맞춘 우리 책 제목에서 판 표시를 덜어 낸 이름 (못 맞추면 목록 이름) | Accepted | 2026-10-16 | 21 |
 | [ADR-0130](0130-lookup-egress-webshare-kr-static-and-alerts.md) | 서비스 대출 조회는 첫 배포부터 서버 자기 IP + Webshare 한국 정적 주거용 20개로 나가고, 업체 프록시와 서버 공인 IP 여러 개를 모두 지원(자체 서버 조회·조회 서버 둘 다), 바뀌는 주거용은 허용하되 나중에, 업체 데이터 80% 경고·90% 멈춤·업체 오류면 업체 길 전체 멈춤, CloudWatch→메일 알림 (ADR-0095를 대신함) | Accepted | 2026-10-16 | 사이클 밖 (배포 조사) |
-| [ADR-0131](0131-stop-launching-when-user-leaves.md) | 화면을 떠나면 서버 모드 묶음(검색·책 화면)은 새 도서관·포털 상세를 띄우지 않고, 이미 넘긴 요청은 줄 대기 포함 끝까지 받아 캐시에 넣으며 자리는 그 뒤 반납 | Proposed | 2026-10-16 | 20 |
+| [ADR-0131](0131-stop-launching-when-user-leaves.md) | 화면을 떠나면 서버 모드 묶음(검색·책 화면)은 새 도서관·포털 상세를 띄우지 않고, 이미 넘긴 요청은 줄 대기 포함 끝까지 받아 캐시에 넣으며 자리는 그 뒤 반납 | Accepted | 2026-10-16 | 20 |
