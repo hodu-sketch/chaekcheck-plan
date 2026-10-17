@@ -1,7 +1,7 @@
 import json, sys
 d = json.load(open(sys.argv[1], encoding='utf-8'))
 SC = ['직접만 (EC2 IP 1개)', '모두 (EC2 1 + Webshare 20)', '프록시만 (Webshare 20)']
-SHORT = {'직접만 (EC2 IP 1개)': '직접만 · EC2 IP 1개', '모두 (EC2 1 + Webshare 20)': '모두 · EC2 1 + Webshare 20', '프록시만 (Webshare 20)': '프록시만 · Webshare 20'}
+SHORT = {'직접만 (EC2 IP 1개)': '프록시 없이 · 서버 IP 1개만', '모두 (EC2 1 + Webshare 20)': '서버 IP 1개 + 프록시 20개', '프록시만 (Webshare 20)': '프록시 20개만'}
 RATES = [0.5, 1, 2, 5, 8]
 COL = {0.5: '#86b6ef', 1: '#5598e7', 2: '#2a78d6', 5: '#1c5cab', 8: '#0d366b'}
 
