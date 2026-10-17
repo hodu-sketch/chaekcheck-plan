@@ -135,3 +135,5 @@
 | [ADR-0129](0129-picks-shown-title-from-matched-book.md) | 추천 목록 화면의 책 이름은 맞춘 우리 책 제목에서 판 표시를 덜어 낸 이름 (못 맞추면 목록 이름) | Accepted | 2026-10-16 | 21 |
 | [ADR-0130](0130-lookup-egress-webshare-kr-static-and-alerts.md) | 서비스 대출 조회는 첫 배포부터 서버 자기 IP + Webshare 한국 정적 주거용 20개로 나가고, 업체 프록시와 서버 공인 IP 여러 개를 모두 지원(자체 서버 조회·조회 서버 둘 다), 바뀌는 주거용은 허용하되 나중에, 업체 데이터 80% 경고·90% 멈춤·업체 오류면 업체 길 전체 멈춤, CloudWatch→메일 알림 (ADR-0095를 대신함) | Accepted | 2026-10-16 | 사이클 밖 (배포 조사) |
 | [ADR-0131](0131-stop-launching-when-user-leaves.md) | 화면을 떠나면 서버 모드 묶음(검색·책 화면)은 새 도서관·포털 상세를 띄우지 않고, 이미 넘긴 요청은 줄 대기 포함 끝까지 받아 캐시에 넣으며 자리는 그 뒤 반납 | Accepted | 2026-10-16 | 20 |
+| [ADR-0132](0132-lookup-load-reduction.md) | 조회 부하 줄이기: 결과 10, 책 화면 이어 부르기 최대 3묶음, 도서관 요청 gzip + 풀었을 때도 1MB(4MB → 1MB) + 1MB 넘음 기록(`body_too_large_count`), 1분 운영 요약 로그 | Accepted | 2026-10-17 | 20 |
+| [ADR-0133](0133-lookup-memory-state-behind-store-interfaces.md) | 브라우저 번호 장부는 가장 오래 안 쓴 줄을 밀어내는 LRU 표(Caffeine 크기 상한 아님), 대출 조회의 메모리 상태는 저장소 인터페이스 뒤 + 설정 하나(`state-store=memory`), Redis는 나중 | Accepted | 2026-10-17 | 20 |

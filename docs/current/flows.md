@@ -17,6 +17,7 @@
 사이클 15·16·18 회고 (2026-10-15): 구현됨으로 바꾸고 실제 이름·값을 맞춤. 15 `usagelog`·16 `sitecontent` 구현됨, 18은 A1·A2·B 구현됨(dev main `a0e438a`), C(운영 반영)는 사이클 17 첫 배포 뒤. 근거 `docs/cycles/15-usage-log/retro.md`, `docs/cycles/16-notices-and-policies/retro.md`, `docs/cycles/18-empty-library-holdings/retro.md`, dev `plan-feedback.md` "# 사이클 15"·"# 사이클 16"·"# 사이클 18".
 사이클 19 cycle-close (2026-10-15): 저자·제목 표기 정리 — 설계됨(미구현, 사이클 19). ADR-0113~0117. 흐름 44(다시 가져오기 → 비교 → 반영 → 다시 켜기), 45(캐시 답 세기)를 더하고, 흐름 20·27에 `rules-dir` 읽기와 멈춤 줄을 더함. 근거 `docs/cycles/19-author-angle-brackets/design-delta.md` "구조 그림".
 사이클 21 cycle-close (2026-10-16): 추천도서 세 목록 — 설계됨(미구현, 사이클 21). ADR-0122~0129. 흐름 46(이동진·서울대: 수집기 → export → apply → 화면), 47(사서 추천도서 주 1회 받기, 담는 표와 고르기 규칙만 바뀜), 48(목록 화면 요청)을 더하고, 흐름 24·25·27·28·33에 바뀐 그림을 가리키는 줄을 더함. 근거 `docs/cycles/21-recommended-books/design-delta.md` "구조 그림".
+사이클 20 cycle-close (2026-10-17): 조회 상태 신호와 브라우저 확장 조회 — 설계됨(미구현, 사이클 20). ADR-0118·0119·0131·0132. 흐름 49(상태 묻기, 1단계), 50(확장 모드 검색, 2·3단계), 51(떠난 묶음 멈추기, 1단계)을 더하고, "도서관 하나의 조회 상태"·흐름 1·6·22·26에 바뀌는 점을 가리키는 줄을 더함. 근거 `docs/cycles/20-lookup-status-and-extension/design-delta.md` "구조 그림".
 
 사이클 13 cycle-close (2026-10-12, 사이클 12와 나란히 미리 한 plan, 사이클 12 뒤에 개발): 새 도서관 넣기 — 흐름 32(넣기 미리 보기 → 넣기, 내 PC)와 흐름 33(운영 반영 판 2: 도서관 → 비교 → 책)을 더하고, "화면 공통"에 S12 `/about` 가입 조사 기준일 한 줄을 적음. 흐름 16·23-3의 seed로 넣기는 사이클 07~09 방식으로 남김 — 구현됨 (사이클 13, 회고 2026-10-14). 근거 `docs/cycles/13-crawler-to-dev/design-delta.md` "구조 그림", flow.md, ADR-0083~0088·0093.
 사이클 08 cycle-close (2026-10-11): 흐름 20(가져오기: 새 표에 쓰고 바꿔 끼우기), 21(검색 계획과 책 화면 소장 읽기), 22(막혔을 때 429·503)를 더하고, 흐름 6·16과 "화면 공통"에 바뀌는 점을 적음 — 구현됨 (사이클 08). 근거 `docs/cycles/08-polish-swap-memory/design-delta.md` "주요 흐름"(흐름 A~C), ADR-0065~0070.
@@ -54,8 +55,11 @@ stateDiagram-v2
 - `Failed`는 같은 검색에서 다시 조회하지 않습니다 [확정] (ADR-0014).
 - 필터, 조회 범위(`scope`), "방문 없이 가입"(`visit`), 지역, 검색 조건(제목/저자/출판사)이 바뀌면 상태를 버리고 첫 묶음부터 다시 검색합니다 [확정].
 - 조회 서버가 모두 멈춘 동안에는 후보가 곧바로 실패해 한 묶음이 계획 대부분을 `Failed`로 만듭니다. 그 검색에서는 다시 묻지 않습니다(알려진 한계, 다음 사이클 후보).
+- 사이클 20 — 설계됨(미구현, 사이클 20, 1단계): `Failed`와 판정 `UNKNOWN` 줄은 모든 묶음의 것을 모아 목록 맨 아래 「더 보기」 바로 위 「확인하지 못한 도서관」 묶음 하나로 보이고, 줄 글은 「대출 정보를 확인하지 못했어요」 [확정] (세 관점 검토 #1·#2). 확장 모드에서 보내지 못한 도서관(`notSent`)·`invalid_plan`으로 끝난 줄도 이 묶음(흐름 50)
 
 ## 흐름 1: 첫 묶음 검색
+
+- 사이클 20 — 설계됨(미구현, 사이클 20): 셈한 줄 상한 20 → 10(1단계), 동시 검색 상한 40(1단계), 화면을 떠나면 새 도서관을 띄우지 않음(흐름 51, 1단계). 확장 모드에서는 이 스트림 대신 흐름 50(2단계)
 
 ```mermaid
 sequenceDiagram
@@ -195,6 +199,8 @@ sequenceDiagram
 - 포털의 저자·출판사 검색은 1쪽부터 `table.do` + 거르기로 부릅니다(ADR-0026). `table.do`에서 목록 판정 칸이 비는 포털은 흐름 3(상세 판정)으로 이어집니다. 실측(dev, 2026-09-29): 부산·대구·경기교육청은 상세 0~1건, 수량 칸이 없는 전북은 쪽마다 10건(약 20초, 30초 안).
 
 ## 흐름 6: 책 목록 검색과 바로 보기 — 구현됨(dev `BookSearchController`·`BookAvailabilityStreamController`, 사이클 04)
+
+- 사이클 20 — 설계됨(미구현, 사이클 20, 1단계): `/books` 기본 10권, 대출 상태는 보이는 10권 모두(줄 상한 없음), 웹이 자동으로 이어 부르는 것은 첫 묶음 포함 최대 3묶음, 그 뒤 그 책 줄 아래 끝 「더 보기」 [확정] (세 관점 검토 #23·#26, 전반 점검 #7, ADR-0132)
 
 ```mermaid
 sequenceDiagram
@@ -724,6 +730,8 @@ sequenceDiagram
 
 ## 흐름 22: 막혔을 때 (429·503) — 구현됨 (사이클 08)
 
+- 사이클 20 — 설계됨(미구현, 사이클 20, 1단계): 503 `server_busy`를 받으면 머리말 상태 점이 바로 빨강(흐름 49), 상한은 40
+
 ```mermaid
 sequenceDiagram
   participant W as web
@@ -918,6 +926,8 @@ sequenceDiagram
 - 출처 줄의 받은 날은 `fetchedAt`(마지막으로 성공한 받기). 받기가 실패해도 앞 받은 날 그대로 [확정]
 
 ## 흐름 26: 가운데 창 열기 (S14, 앞의 3곳만 확인) — 구현됨 (사이클 10), 사이클 14 추천 줄도 구현됨 (사이클 14)
+
+- 사이클 20 — 설계됨(미구현, 사이클 20): 실패 줄 글이 「대출 정보를 확인하지 못했어요」로 바뀜(1단계), 확장 모드에서는 `POST /api/v1/lookup-plans/holdings`에 `holdingLimit`을 넘김(2단계, 흐름 50)
 
 ```mermaid
 sequenceDiagram
@@ -1723,4 +1733,115 @@ sequenceDiagram
     W-->>B: 전체 3×3, 표지 아래 26.06
     W->>UL: 사용 알림 {picks_list_view, list, category}
   end
+```
+
+## 흐름 49: 조회 상태 묻기 (머리말 상태 점) — 설계됨(미구현, 사이클 20, 1단계)
+
+- 근거: `docs/cycles/20-lookup-status-and-extension/design-delta.md` "주요 흐름 1", spec R1~R5, ADR-0118. 확장 모드(파란 불)에서는 묻지 않음
+- 단계: 자리 20 노랑·40 빨강(R1), 업체 길 멈춤이면 최소 노랑 + `VENDOR_PAUSED`, `프록시만`이고 업체 길이 모두 멈추면 빨강 + `NO_LANE` [확정] (세 관점 검토 #21·#24·#28)
+- 최근 30초 안 DB 오류면 회색 + `DB_ERROR`(값 이름 [안]) [확정] (전반 점검 #9), 빨강·노랑보다 앞섬 [확정] (사용자 승인, 2026-10-17, 설계 검토 #4). DB 오류 시각은 루트 `ApiExceptionHandler`가 `availability`의 공개 메서드(예: `LookupHealth.recordDbError()`, 이름 [안])로 남김 [확정] (사용자 승인, 2026-10-17, 설계 검토 #3)
+- `queuedLibraryIds`는 기다리기 시작한 지 10초 안의 기다림만, 막힌 길 제외 [확정] (전반 점검 #3)
+
+```mermaid
+sequenceDiagram
+  participant W as web (AppLayout Provider)
+  participant N as nginx /api/
+  participant C as LookupStatusController
+  participant S as LookupStatusService
+  participant B as HostQueueBoard · SearchSlots
+  participant H as ApiExceptionHandler (루트 패키지)
+  H->>S: DB 오류를 받으면 recordDbError() (마지막 DB 오류 시각)
+  loop 탭이 보이는 동안 10초마다 (TanStack Query refetchInterval)
+    W->>N: GET /api/v1/lookup-status
+    N->>C: (일반 구역, 도서관 호출 구역 아님)
+    C->>S: snapshot()
+    alt 1초 안에 계산한 값 있음
+      S-->>C: 메모 값 (동시에 여럿 와도 계산은 한 번)
+    else
+      S->>B: inUse, lastRefusedAt, 길마다 대기(시작 10초 안만)·시간 초과 (막힌 길 제외)
+      B-->>S: 숫자들
+      S->>S: 최근 30초 DB 오류면 GRAY · DB_ERROR (먼저), 아니면 R1 단계 · 업체 길 멈춤 · 나가는 길 설정(읽기 전용 포트) · queuedLibraryIds 최대 200
+    end
+    C-->>W: 200 {slots, inUse, level, reason, queuedLibraryIds, serverTime}
+  end
+  W->>W: 검색 중 503 server_busy → 바로 RED (R2)
+  W->>W: 마지막 성공에서 30초 지남 → GRAY 「상태 모름」 (R5, 탭 복귀 때도 바로 판정)
+```
+
+## 흐름 50: 확장 모드 검색 — 설계됨(미구현, 사이클 20, 2·3단계)
+
+- 근거: `docs/cycles/20-lookup-status-and-extension/design-delta.md` "주요 흐름 2", spec R6~R11, ADR-0119·0120
+- 그림은 3단계까지 들어간 모습. 2단계에는 번호 쿠키·장부·잠금·IP 울타리가 없고, 계획에 적은 만든 IP(/64)와 지금 IP를 대조(다르면 400 `client_ip_changed`)함 [확정] (전반 점검 #1)
+- 장부가 차면 가장 오래 쓰지 않은 줄(LRU)을 밀어내고 새 번호를 넣음, 방금 준 번호는 밀려나지 않음 [확정] (사용자 승인, 2026-10-17, 설계 검토 #1)
+- 서버 대행 목록 도서관(3단계)은 계획 응답의 `events`로 함께 옴. 2단계에서는 확장이 못 여는 도서관이 「확인하지 못한 도서관」
+
+```mermaid
+sequenceDiagram
+  participant W as web
+  participant X as extension
+  participant N as nginx
+  participant P as LookupPlanController · UploadGate
+  participant F as LibraryPageFetcher / DetailPageFetcher (accept)
+  participant L as 도서관
+  W->>X: 인사 runtime.sendMessage(VITE_EXTENSION_ID) (첫 검색은 답까지 최대 500ms)
+  X-->>W: {version, protocol} → 최소 판 이상이면 파란 불, 상태 묻기 없음 (낮으면 서버 모드 + 「확장을 새로 깔아 주세요」)
+  W->>N: POST /api/v1/lookup-plans/searches (검색 조건, replaces?, X-XSRF-TOKEN, 번호 쿠키는 브라우저가 붙임)
+  N->>P: (/api/v1/lookup-plans/ 블록 안 계획 구역)
+  P->>P: Origin → 울타리(무게 20% · 새 번호 1분 30) → 번호가 장부에 있고 받은 IP = 지금 IP인가 (아니면 새 번호를 장부에 적음, 차면 가장 오래 안 쓴 줄을 밀어냄) → 번호 잠금 → 계획 저장 (planId · 번호 · 10분)
+  alt IP 울타리에 걸림
+    P-->>W: 429 lookup_ip_limited → 화면 「잠시 후 다시」 (서버 모드로 넘기지 않음)
+  else 보관함 전체가 참
+    P-->>W: 503 → 그 검색 한 번만 서버 모드
+  end
+  P-->>W: 201 {planId, items[서버 대행 목록 밖 모든 주소], events?} + (새 번호면) Set-Cookie HttpOnly · Secure · SameSite=Strict · Path=/api/v1/lookup-plans · 1일 (캐시 안 봄)
+  W->>X: port: items (최대 100, URL 2KB)
+  loop 전역 호스트 큐: 호스트 1건 · 1초, 동시 5
+    X->>X: sender.origin · 주소 거르기 (http(s) · 공개 호스트 · 기본 포트)
+    X->>L: GET (머리 10초, 스트림으로 읽다 상한 넘으면 중단)
+    L-->>X: status · bytes
+    X-->>W: {itemId, status, contentType, base64, ms} → 화면은 바로 Uint8Array로
+    W->>N: POST /api/v1/lookup-plans/{planId}/items/{itemId} (octet-stream, CSRF, 번호 쿠키)
+    N->>P: (본문 1MB 이하 · 초당 한도 · 동시 연결 제한)
+    P->>P: 검사 순서: Origin → 장부 · 같은 IP → 번호 잠금 → 계획 · 쪽 번호 · 처음 · 같은 번호 → Content-Length · Content-Encoding 없음 → 해석 자리 (8, 서버 모드와 함께)
+    P->>F: accept(target, SiteResponse via=extension) (throttle · SiteFetcher · 서버 상세 호출 없음)
+    F->>F: adapter 해석 → detailUrl 같은 호스트 검사 → 확장 칸 캐시에 넣기 (500칸 · 3분)
+    alt 해석됨
+      F-->>P: page · verdict · detailItems(같은 호스트만)
+      P-->>W: 200 {events[library-result | row-verdict], detailItems[], stop}
+    else 해석 실패 · status≠200 · outcome TIMEOUT/ERROR
+      P-->>W: 200 {events[library-failed]} (캐시 안 넣음, usagelog FAILURE)
+    end
+  end
+  W->>X: detailItems (포털 빈 판정 줄)
+  X-->>W: 상세 바이트 → 같은 업로드 → row-verdict
+  W->>N: POST /api/v1/lookup-plans/{planId}/close {notSent} (화면 떠날 때는 keepalive)
+  P-->>W: 200 {batch-done} · usagelog source=EXTENSION
+  alt 계획 문제 (없음 · 만료 · 지워짐 · 중복 · 번호 다름 · Origin)
+    P-->>W: 400 invalid_plan → 남은 줄은 「확인하지 못한 도서관」, 오류 화면 없음
+  else 번호 쿠키 없음 · 장부에 없음 (서버 재시작 · 장부에서 밀려남 포함)
+    P-->>W: 400 invalid_client_key → 화면이 남은 도서관만 다시 계획 (새 번호, 사용자 조작 없음)
+  else 받은 IP와 지금 IP가 다름 (폰 와이파이 ↔ LTE)
+    P-->>W: 400 client_ip_changed → 화면이 남은 도서관만 다시 계획 (잠금에 안 셈)
+  else port 끊김
+    W->>X: 인사 최대 3번 (바로 · 1초 · 2초) → 답 있으면 남은 items 다시 요청, 셋 다 없으면 notSent → 「확인하지 못한 도서관」, 다음 검색부터 서버 모드
+  end
+```
+
+## 흐름 51: 떠난 묶음 멈추기 (서버 모드) — 설계됨(미구현, 사이클 20, 1단계)
+
+- 근거: `docs/cycles/20-lookup-status-and-extension/design-delta.md` "주요 흐름 3", ADR-0131 [확정] (세 관점 검토 #14). 직접 찾기 묶음과 책 화면 소장 조회 모두
+- 이미 넘긴 요청을 취소하지 않는 까닭: 받은 결과가 캐시로 다른 사용자와 공유될 수 있음
+
+```mermaid
+sequenceDiagram
+  participant W as web
+  participant E as SseEmitter / SseEventSink
+  participant R as BatchRunner · BatchSession
+  participant T as HostThrottle · fetcher
+  W->>E: 스트림 열림 (자리 1개)
+  W--xE: 화면 떠남 (abort)
+  E->>R: send 실패 또는 onError/onTimeout → clientGone
+  R->>R: 새 도서관 띄우지 않음 (StopReason CLIENT_GONE) · 남은 후보 notSent → SKIPPED · 포털 상세 새로 시작 안 함
+  T-->>R: 이미 넘긴 요청(줄 대기 포함)은 끝까지 → 캐시에 넣음
+  R->>R: 넘긴 요청이 모두 끝나면 자리 반납 (최대 묶음 마감 8초 · 상세 30초)
 ```

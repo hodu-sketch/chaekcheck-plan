@@ -103,6 +103,7 @@
 | plan `docs/current/data-model.md` `catalog` 절 "따로 하기", `flows.md` 흐름 27~29·"내 PC의 `catalog_next` 상태" | 모드별 할 일 표, 비교 항목, `load_manifest` 칸, `catalog_import.export_id`·`exported_at`, 색인 메모리(운영 반영 256MB, 내 PC 1GB), 운영 역할 DB `db-ops`(포트 5434, `mem_limit` 1GB) | 구현됨 (사이클 11, 회고 2026-10-14) |
 | plan `docs/research/deploy/easy/2026-10-12-memory-kinds.html`, `docs/research/deploy/aws-layout.md` 6절 | 서버 메모리 종류 쉬운 설명(힙, `shared_buffers`, `maintenance_work_mem`, 컨테이너 상한), 가져오기를 따로 할 때 EC2 크기 | 2026-10-12 |
 | dev `docs/maintenance/3-import.md` 13절(따로 하기), 3절 38~41행(묶는 방식·`regroup`·빼기 설정 `chaekcheck.collection.import.exclude-added-later-libraries`, 사이클 18까지 `exclude-candidate-libraries`), 5절 표, 154행(묶기 규칙을 바꿀 때) | 가져오기 절차 원본: 내보내기·반영·마저·지우기 절차, `step_seconds` 새 키, 묶는 방식별 힙(`objects`는 8GB 권장), `compare_grouping.py regroup` | 구현됨 (사이클 11·12, 회고 2026-10-14) |
+| plan `docs/cycles/20-lookup-status-and-extension/` (`research.md`, `spec.md`, `flow.md`, `design-delta.md` "개발 단계"·"전반 점검으로 바뀐 것"), `docs/adr/0118`~`0121`·`0131`~`0133`, `docs/current/module-map.md` "조회 상태 신호와 브라우저 확장 조회", `api.md` "조회 상태와 확장 모드 계획", `flows.md` 흐름 49~51 | **대출 조회 상태 신호와 크롬 확장 조회 (사이클 20)**: 조회 부담을 사용자 쪽으로 옮기는 방법 조사(`research.md`, 조사 당시 값은 역사 기록), 머리말 상태 점·`GET /api/v1/lookup-status`, 확장 모드 계획·올리기 `/api/v1/lookup-plans/*`, 세 단계 개발, 결과 10·gzip·1MB, 메모리 공유 상태의 저장소 인터페이스 | 설계됨(미구현, 사이클 20) |
 | plan `docs/adr/0116-usagelog-cached-answer-count.md`, `docs/current/flows.md` 흐름 45 | 대출 조회의 3분 캐시 답 수: 직접 찾기 묶음·도서관별 더 보기에서 캐시로 답하면 `usagelog.library_response_daily.cached_count`만 1 올림(결과 값 `CACHED`, 응답 시간·성공/실패 수·로그 줄 없음) | 설계됨(미구현, 사이클 19) |
 
 ## 4. 책 분류·정리·묶기 (정리 규칙, ISBN, 같은 책, 저자, 자료 종류)
@@ -226,7 +227,10 @@
 | plan `docs/cycles/17-first-deploy/from-cycle-20-proxy-only.md` | 나가는 길 설정 `모두`/`프록시만`/`직접만` | [확정] (사용자 승인, 2026-10-16) |
 | plan `docs/cycles/17-first-deploy/from-cycle-20-prod-env-numbers.md` | 운영 숫자를 `prod.env` 한 곳에 | [확정] (사용자 승인, 2026-10-16) |
 | plan `docs/research/deploy/multi-source-ip.md` | 서버 한 대에서 여러 공인 IP로 나가기, 업체 프록시 비교·한도·알림 근거 | 2026-10-16 조사 |
+| plan `docs/cycles/17-first-deploy/from-cycle-20-observability.md` | 사이클 20이 17에 넘긴 운영 감시: 1분 요약 로그를 읽는 CloudWatch 경보(요약 줄 없음·힙·503 급증·메모리), 메모리가 바닥나면 끝내고 다시 켜기 | 사이클 20 결정 (2026-10-17) |
+| plan `docs/research/maintenance/memory-state-and-redis.md`, `docs/adr/0133` | 서버 메모리에 두는 공유 상태(캐시·계획 보관함·브라우저 번호 장부·잠금·검색 자리) 목록과 저장소 인터페이스, 나중에 Redis로 옮길 때 볼 점 | 사이클 20 설계 검토 (2026-10-17) |
 | plan `docs/adr/0130-lookup-egress-webshare-kr-static-and-alerts.md` | 대출 조회 나가는 길과 한도 전 멈춤·메일 알림 (ADR-0095를 대신함) | Accepted (2026-10-16) |
+| plan `docs/research/maintenance/memory-state-and-redis.md` | 대출 조회가 메모리에 두는 상태 목록(크기·만료·여러 대일 때 공유 여부·dev 위치)과 나중에 Redis로 옮기는 방법·순서. 설정 `chaekcheck.lookup.state-store`(지금 `memory`만). 서비스 전체 목록은 `docs/research/scaling/in-memory-state.md` | 2026-10-17 작성 (사이클 20 설계 검토 #1, [ADR-0133](adr/0133-lookup-memory-state-behind-store-interfaces.md)) |
 | dev `docs/maintenance/README.md` | 정기 작업 체크리스트와 주기(0절 표, "체크리스트") | dev에 있음. 운영 서버 정기 작업은 아직 없음 |
 | dev `docs/maintenance/4-picks.md` | 사서추천도서 받기(매일 05:00 판단, 실패 읽는 법) | dev에 있음 |
 | dev `docs/maintenance/5-usage-log.md` | 사용 기록 04:30 정리, 자주 쓰는 SQL | dev에 있음 |

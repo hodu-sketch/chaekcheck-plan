@@ -17,6 +17,7 @@
 사이클 15·16·18 회고 (2026-10-15): 구현됨으로 바꾸고 실제 이름·값을 맞춤. 15 `usagelog`·16 `sitecontent` 구현됨, 18은 A1·A2·B 구현됨(dev main `a0e438a`), C(운영 반영)는 사이클 17 첫 배포 뒤. 근거 `docs/cycles/15-usage-log/retro.md`, `docs/cycles/16-notices-and-policies/retro.md`, `docs/cycles/18-empty-library-holdings/retro.md`, dev `plan-feedback.md` "# 사이클 15"·"# 사이클 16"·"# 사이클 18".
 사이클 19 cycle-close (2026-10-15): 저자·제목 표기 정리 — 설계됨(미구현, 사이클 19). ADR-0113~0117. `catalog` 표·칸 변경 없음(값의 뜻만: `book.author_display`, `book_contributor`, 수집 11·12·15의 `holding.author_raw`·`publisher_raw`), `usagelog.library_response_daily.cached_count` 새 칸(`usagelog/002`), dev 규칙 파일 `supplier_families.tsv`·`author_publisher_swapped.tsv`와 가져오기 설정 `rules-dir`. 근거 `docs/cycles/19-author-angle-brackets/design-delta.md` "데이터".
 사이클 21 cycle-close (2026-10-16): 추천도서 세 목록 — 설계됨(미구현, 사이클 21). ADR-0122~0126. 스키마 `picks`에 새 표 `list_field`·`list_book`, `pick`은 줄을 `list_book`으로 옮긴 뒤 지움(`picks/002-curated-lists.yaml`), `fetch_run`·`cover` 그대로. `usagelog.screen_event.picks_list` 새 칸(`usagelog/003`). 반영 파일 형식 번호 2 → 3, `load_manifest.notes.listPart`(새 표 없음). 이동진·서울대 줄은 `book_id`를 값으로 저장(FK 없음, ADR-0124). 근거 `docs/cycles/21-recommended-books/design-delta.md` "데이터".
+사이클 20 cycle-close (2026-10-17): 조회 상태 신호와 브라우저 확장 조회 — 설계됨(미구현, 사이클 20). ADR-0118·0119·0132·0133. 새 표 없음. `usagelog/004`: `library_response_daily.source` CHECK에 `extension`·`server_for_extension`, `rejected_event.reason` CHECK에 `invalid_plan`·`invalid_client_key`, 새 칸 `library_response_daily.body_too_large_count`. `availability`의 계획 보관함·호스트 대기·브라우저 번호 장부·확장 결과 캐시는 메모리만(아래 "`availability` 메모리 값"). 근거 `docs/cycles/20-lookup-status-and-extension/design-delta.md` "데이터".
 
 사이클 13 cycle-close (2026-10-12, 사이클 12와 나란히 미리 한 plan, 사이클 12 뒤에 개발): 수집기 dev로 갈아타기 + 새 도서관 넣기 명령 — 새 표 `collection.library_insert_run`(넣기 실행 기록), `collection.catalog_import.candidate_library_count` → `other_library_count` 이름 바꿈(배포 전 규칙으로 `collection/001`을 고치고 로컬 `db`·`db-ops`는 이름 바꾸기 SQL + 체크섬 비우기로 맞춤(데이터 유지, 사용자 선택 2026-10-12)), `library.library` 1215 이름 고침 changeset, 반영 파일 판 2(`load_manifest.notes.libraryPart`, 새 표 없음), 앞으로 도서관 seed changeset을 만들지 않음 — 구현됨 (사이클 13, 회고 2026-10-14). `library` 칸 변경 없음. 근거 `docs/cycles/13-crawler-to-dev/design-delta.md` "데이터", ADR-0083~0087·0093. 이름·번호는 따로 적지 않으면 [안] (dev가 바꿀 수 있음).
 사이클 08 cycle-close (2026-10-11): `catalog` 가져오기를 새 표(`catalog_next`)에 쓰고 바꿔 끼우기, 소장 번호 잇기, `collection.catalog_import` 칸 추가, `collection.national_bibliography_record`·`national_bibliography_source`, `library.library.mobile_site_differs`, 도서관 이름 고침 changeset, `library`·`region` `updated_at` 트리거, 교보 대여·혼합 11곳 seed에서 뺌, 정리 규칙을 바꿀 때의 순서 — 구현됨 (사이클 08). 근거 `docs/cycles/08-polish-swap-memory/design-delta.md` "데이터"·"정리 규칙을 바꿀 때"·"이름 고치기", ADR-0065~0070. 이름·숫자는 따로 적지 않으면 [안].
@@ -55,6 +56,7 @@
   - `auth/002-consent-version-number.yaml`(changeset id `auth-002-consent-version-number`): 테스트 계정 동의 기록 값 `'2026-10-04'` → `'1'` + 형식 CHECK(아래 `auth.account_consent`). 원래 DB(5432)에 사이클 16 `bootRun`으로 적용, 동의 값 2줄 바뀜 (회고 2026-10-15)
   - master 끝에 추가. 지금 끝줄은 `# cycle 14` `picks/001-picks-schema.yaml`(dev main 2026-10-14), 사이클 15가 `usagelog/001-usagelog-schema.yaml`을 붙임. main에 합치는 순서대로 끝에 붙이고, 나중에 합치는 쪽이 rebase해서 자기 줄을 맨 끝으로 옮김 [확정] (사이클 15 인계서와 같은 규칙). 실제: 18 `library/016` → 16 세 줄 → 15 `usagelog/001` (회고 2026-10-15)
   - 사이클 21 Liquibase — 설계됨(미구현, 사이클 21): 새 파일 `picks/002-curated-lists.yaml`, `usagelog/003-screen-event-picks-list.yaml`을 master 끝에 `# cycle 21` 주석과 함께 붙임, 기존 changeset은 고치지 않음(사이클 17 첫 배포가 21보다 먼저일 수 있으므로) [안: 파일 이름]. `usagelog` 번호: 002는 사이클 19, 003은 21, 사이클 20은 004 [확정] (사용자 승인, 2026-10-16). 21이 19보다 먼저 main에 들어가면 번호를 바꾸지 말고 master 순서만 맞춤(나중에 합치는 쪽이 자기 줄을 끝으로). 자세한 것은 아래 `picks`·`usagelog` 절
+  - 사이클 20 Liquibase — 설계됨(미구현, 사이클 20, 1단계): 새 파일 `usagelog/004-library-response-source-extension.yaml`을 master 끝에 `# cycle 20` 주석과 함께, 기존 changeset 수정 없음 [확정] (설계 결정 #6, 사이클 21 설계 검토 #4). 나중에 main에 합치는 쪽이 include를 master 맨 끝으로. 자세한 것은 아래 `usagelog` 절
   - 운영 첫 판: 운영 DB는 검토한 글(`docs/cycles/16-notices-and-policies/drafts/`, 승인 2026-10-13)부터 시작하고, 첫 판의 시행일은 모르는 사람에게도 공개하는 날(첫 배포일 아님). 그 전에 seed를 검토한 글·공개일로 바꾸고 개발 DB는 초기화, 테스트 계정은 다시 가입 [확정] (사용자 승인·제안, 2026-10-13). 이미 돈 `sitecontent/002`를 고치는 일이라 `PRE_DEPLOYMENT` 표시가 있는 동안에만 함 — 사이클 17이 표시를 지우기 전에 (사이클 17 체크리스트)
 - CHECK, 부분 인덱스, `UNIQUE NULLS NOT DISTINCT`는 Liquibase OSS YAML이 지원하지 않아 changeset 안의 `sql`로 만듦
 - **배포 전 규칙** [확정] (사용자, 2026-09-28): dev의 `db/changelog/PRE_DEPLOYMENT` 파일이 있는 동안에는 이미 적용된 changeset도 고칠 수 있습니다(로컬 DB를 지우고 다시 적용). 첫 배포 때 이 파일을 지우고, 그 뒤로는 새 파일만 더합니다. 그래서 사이클 02 스키마 변경은 `library/001`에 합쳐져 있습니다
@@ -887,6 +889,7 @@ erDiagram
     integer timeout_count
     integer skipped_count
     integer cached_count "사이클 19, 설계됨(미구현)"
+    integer body_too_large_count "사이클 20, 설계됨(미구현)"
     bigint ok_ms_total
     integer ok_ms_max
   }
@@ -928,9 +931,11 @@ erDiagram
 | `screen_event.kind` | `text` | CHECK (`picks_list_view`,`picks_book_view`,`region_change`,`my_library_add`,`my_library_remove`) | 화면 행동 | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2) |
 | `screen_event` 종류별 칸 | `picks_category`, `book_id`, 지역들, `library_id` | 종류에 맞지 않는 칸은 NULL (CHECK) | JSON 칸 없음, 회원 번호 없음 | [확정] ([늘린 기록 설계](../cycles/15-usage-log/easy/2026-10-13-more-actions-design.html) #3) |
 | `screen_event.picks_list` — 설계됨(미구현, 사이클 21) | `text` | NULL, CHECK IN (`librarian`,`leedongjin`,`snu100`), `picks_*` 종류일 때만 NOT NULL (종류별 칸 CHECK 고침) | 어느 목록 (사용 알림 `list`) | [확정] (ADR-0126) |
-| `library_response_daily` | (day, library_id, source) PK, 수 `integer`, 시간 ms | `source` CHECK (`direct_search`,`holding_fill`), `day`는 서울 날짜 | 서비스 메모리에서 세다가 5초 묶음 때 `ON CONFLICT (day, library_id, source) DO UPDATE SET …_count = …_count + EXCLUDED…, ok_ms_total = … + EXCLUDED…, ok_ms_max = GREATEST(…)`. 보관 1년 | [확정] ([요약 방법](../cycles/15-usage-log/easy/2026-10-13-summary-method.html) #1~#3, [남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2) |
+| `library_response_daily` | (day, library_id, source) PK, 수 `integer`, 시간 ms | `source` CHECK (`direct_search`,`holding_fill`; 사이클 20에서 `extension`·`server_for_extension`을 더함 — 아래 줄), `day`는 서울 날짜 | 서비스 메모리에서 세다가 5초 묶음 때 `ON CONFLICT (day, library_id, source) DO UPDATE SET …_count = …_count + EXCLUDED…, ok_ms_total = … + EXCLUDED…, ok_ms_max = GREATEST(…)`. 보관 1년 | [확정] ([요약 방법](../cycles/15-usage-log/easy/2026-10-13-summary-method.html) #1~#3, [남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2) |
 | `library_response_daily.cached_count` — 설계됨(미구현, 사이클 19) | `integer` | NOT NULL DEFAULT 0, CHECK `library_response_daily_cached_count_check (cached_count >= 0)` | 그 날·도서관·갈래에서 3분 캐시로 답한 수. 캐시에서 답을 꺼낼 때마다 1(결과 값 `CACHED`). 응답 시간·성공/실패 수·서버 로그 줄에는 넣지 않음 (ADR-0116) | [확정] (사용자 제안 2026-10-15 회고 결정 #3, 모양·때 사용자 승인 2026-10-15 회고 이어서 #2). 칸 이름 `cached_count` [확정] (명세 결정 #10), 제약 [확정] (설계 결정 #9) |
-| `rejected_event.reason` | `text` | CHECK | `unknown_library`,`invalid_place`,`invalid_screen`,`invalid_book_id`,`malformed`,`unknown_type`,`invalid_value` | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2, [검증](../cycles/15-usage-log/easy/2026-10-14-verify-decisions.html) #2) |
+| `library_response_daily.source` 값 더함 — 설계됨(미구현, 사이클 20) | `text` (그대로) | CHECK `library_response_daily_source_check`를 지우고 같은 이름으로 `IN ('direct_search','holding_fill','extension','server_for_extension')` | 확장 모드의 도서관 응답(검색·소장·더 보기)은 `extension`, 확장 모드 중 서버 대행 목록 도서관을 서버가 부른 것은 `server_for_extension`. 확장 모드는 서버 캐시를 보지 않아 `cached_count`는 0, 보내지 못한 것은 `skipped_count`(close의 `notSent`) | `extension` [확정] (설계 결정 #9) / `server_for_extension` 기록 [확정] (세 관점 검토 #16), 값 이름 [안] |
+| `library_response_daily.body_too_large_count` — 설계됨(미구현, 사이클 20) | `integer` | NOT NULL DEFAULT 0, CHECK `library_response_daily_body_too_large_count_check (body_too_large_count >= 0)` | 서버 모드 도서관 응답이 본문 상한(풀었을 때 포함 1MB)을 넘어 실패한 수. 같은 건이 `failed_count`에도 들어감 (ADR-0132) | [확정] (사용자 승인, 2026-10-17, 마무리 확인 #6) |
+| `rejected_event.reason` | `text` | CHECK | `unknown_library`,`invalid_place`,`invalid_screen`,`invalid_book_id`,`malformed`,`unknown_type`,`invalid_value`. 사이클 20 — 설계됨(미구현, 사이클 20): CHECK `rejected_event_reason_check`를 지우고 같은 이름으로 그 7개 + `invalid_plan`·`invalid_client_key`. 두 줄은 IP·이유마다 1분 1줄 [안], `raw_values`에 본문 없음(planId·itemId·이유만). `client_ip_changed`는 정상 경우라 남기지 않음 [안] | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2, [검증](../cycles/15-usage-log/easy/2026-10-14-verify-decisions.html) #2) |
 | `rejected_event.raw_values` | `jsonb` | 2KB 넘으면 잘라 냄 | 받은 값 | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #4) |
 | `dropped_batch.reason` | `text` | CHECK (`db_failure`,`buffer_full`) | 버린 이유 | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2) |
 | 색인 | BRIN `(received_at)` 각 표 | — | 지우기·기간 조회 | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #3) |
@@ -947,8 +952,24 @@ erDiagram
 - 다른 schema로 FK 없음 (모듈 경계, 번호만 남김)
 - Liquibase: 새 파일 `db/changelog/usagelog/001-usagelog-schema.yaml`을 master 끝에 [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2). 기존 changeset 수정 없음. changeset id `usagelog-001-*`, 제약 이름 `<표>_<칸>_check`. 실제 master 끝 순서: 18 `library/016` → 16 세 줄 → 15 `usagelog/001` 맨 끝 (회고 2026-10-15)
 - 사이클 19 — 설계됨(미구현, 사이클 19) (ADR-0116): 새 파일 `db/changelog/usagelog/002-library-response-cached-count.yaml`, changeset id `usagelog-002-cached-count`, master 끝(`usagelog/001` 뒤)에 `# cycle 19` 주석과 include. 기존 changeset 수정 없음 [확정: 설계 결정 #9, 이름 안]. `ALTER TABLE usagelog.library_response_daily ADD COLUMN cached_count integer NOT NULL DEFAULT 0 CONSTRAINT library_response_daily_cached_count_check CHECK (cached_count >= 0);` — 상수 기본값이라 표를 다시 쓰지 않음 [확정] (PostgreSQL 18 ALTER TABLE Notes, https://www.postgresql.org/docs/current/sql-altertable.html, 확인 2026-10-15), CHECK 확인을 위한 표 읽기는 한 번(작은 표). 5초 묶음 upsert에 `cached_count = cached_count + EXCLUDED.cached_count`가 더해짐(`UsageLogWriter`)
+- 사이클 20 — 설계됨(미구현, 사이클 20, 1단계) (ADR-0119·0132): 새 파일 `db/changelog/usagelog/004-library-response-source-extension.yaml` 하나에서 ① `library_response_daily_source_check`에 `extension`·`server_for_extension` ② `rejected_event_reason_check`에 `invalid_plan`·`invalid_client_key`(지금 7개 그대로) ③ 칸 `body_too_large_count` [확정] (마무리 확인 #6). changeset은 1단계에 한 번에 넣고 2·3단계 값은 미리 허용, 1단계 dev는 아직 쓰지 않는 값이 CHECK에 있는 것을 오류로 보지 않음 [확정] (사용자 승인, 2026-10-17, 마무리 확인 #10). 번호 004 [확정] (사이클 21 설계 검토 #4)
 - 사이클 21 — 설계됨(미구현, 사이클 21) (ADR-0126): 새 파일 `db/changelog/usagelog/003-screen-event-picks-list.yaml` — 칸 `screen_event.picks_list` 더함 → 있던 `picks_*` 줄을 `librarian`으로 채움 → CHECK [안: 파일 이름]. 번호: 002는 사이클 19, **003은 21, 사이클 20은 004** [확정] (사용자 승인, 2026-10-16, 사이클 21 설계 검토 #4). 21이 19보다 먼저 main에 들어가면 번호를 바꾸지 말고 master 순서만 맞춤(나중에 합치는 쪽이 자기 줄을 끝으로)
 - 사이클 15 [확인 필요] 결과 (회고 2026-10-15, dev `plan-feedback.md` 4354~4361행): pgjdbc 42.7.13 [확정] (dev 확인). 1만 줄 넣기 `id` PK·부분 색인 있음 27.6ms / 없음 13.1ms → 둘 다 둠. 공용 `@Scheduled` 실행기는 Spring Boot 기본 스레드 1개(04:30 정리가 회원 정리·사서추천 받기와 같은 스레드), 5초 쓰기는 자기 스레드 `usagelog-flush`. 남은 [확인 필요]: 모니터링 도구를 켠 상태의 메모리, nginx realip·광고 차단 비율·로봇의 API 호출(배포 뒤, 사이클 17·운영)
+
+## `availability` 메모리 값 (DB 표 없음) — 설계됨(미구현, 사이클 20)
+
+`availability`는 스키마가 없습니다. 사이클 20이 더하는 값은 모두 서버 메모리에 두고, 서버를 다시 켜면 비워집니다. 근거 `docs/cycles/20-lookup-status-and-extension/design-delta.md` "데이터", 도메인 모델은 `module-map.md` "대출 조회 상태·확장 계획 도메인 모델", 숫자 근거는 [`../settings-index.md`](../settings-index.md). 괄호 = dev 단계.
+
+| 값 | 꼴 | 상한·만료 | 설명 | 상태 태그 |
+|---|---|---|---|---|
+| 계획 보관함 `SearchPlanStore` (2) | Caffeine [안] | 쓴 뒤 10분 만료, 무게(주소 수) 25,000(약 10MB), 가득이면 새 계획 503(다른 사람 계획을 밀어내지 않음), close·`replaces`는 바로 지움 | `SearchPlan`(`planId` `SecureRandom` 16바이트, 2단계 만든 IP(/64) `creatorIp`, 3단계 `clientId`) + `PlanItem`. 3단계에는 번호당 열린 계획 20(넘으면 그 번호의 가장 오래된 것만 지움). 받은 본문은 보관 안 함. item당 약 400B | [확정] (명세 #11, 검토 #8·#22, 전반 점검 #1) / 번호 꼴 [안] |
+| 캐시 값 `FetchedPage` (2) | 기존 + `via`(`server`\|`extension`)·`storedAt` | 확장 값은 따로 둔 500칸, 처음 넣은 시각 + 3분 고정 | 해석 값만(원본 바이트 없음). 서버 모드는 서버 칸 → 확장 칸 차례로 봄. 확장 칸을 비우는 방법은 서비스 재시작 | [확정] (설계 결정 #4, 검토 #9·#10, 전반 점검 #2) |
+| `HostQueueBoard` 기다림 (1) | `ConcurrentHashMap` [안] | 시작한 지 10초 지난 기다림은 세지 않음, 비면 줄 지움 | `(laneId, hostKey, libraryId)` → 기다림마다 시작 시각 + 최근 시간 초과 시각. 길 21 × 실제로 기다리는 사이트만 | [확정] (전반 점검 #3) / 자료 구조 [안] |
+| 마지막 DB 오류 시각 (1) | 시각 하나 | 30초 안이면 상태 회색 | `availability` 공개 메서드(예: `LookupHealth.recordDbError()`, 이름 [안])를 루트 `ApiExceptionHandler`가 부름 | [확정] (사용자 승인, 2026-10-17, 설계 검토 #3) |
+| 브라우저 번호 장부 `LookupClientLedger` (3) | 접근 순서 `LinkedHashMap` + 잠금 | 5만 줄(약 5MB [안: 어림]), 받은 지 1일 지나면 지움, 차면 가장 오래 쓰지 않은 줄(LRU)을 밀어냄, 방금 준 번호는 밀려나지 않음 | 번호 → 받은 공인 IP(/64)·받은 시각·마지막 쓴 시각·열린 계획 수·계획 무게 합·최근 실패 수(1분)·잠긴 때까지(10분). 서명 없음, 장부에 없는 번호는 거절. 번호는 HttpOnly 쿠키로만 | 장부·5만 줄·1일 [확정] (검토 #32) / 밀어내기 [확정] (전반 점검 #10; LRU·`LinkedHashMap` 사용자 승인, 2026-10-17, 설계 검토 #1) |
+| 공인 IP별 합계 (3) | Caffeine [안] | 장부와 같은 상한 안 [안] | IP(/64) → 그 IP 번호들의 계획 무게 합·1분 새 번호 수 (울타리 둘) | 울타리 값 [확정] (검토 #31·전반 점검 #12) / 구조 [안] |
+
+- 위 값과 기존 검색 페이지 캐시·상세 판정 캐시·`SearchSlots`는 저장소 인터페이스 뒤에 두고 설정 하나로 구현을 고름, 지금은 메모리 구현만(Redis는 나중) [확정] (사용자 승인, 2026-10-17, 설계 검토 #1, ADR-0133). 옮길 때 볼 점: [`../research/maintenance/memory-state-and-redis.md`](../research/maintenance/memory-state-and-redis.md)
 
 ## 스키마 `sitecontent` (소유: `sitecontent` 모듈) — 구현됨 (사이클 16, 회고 2026-10-15)
 
@@ -1133,6 +1154,16 @@ erDiagram
 | 출판사 정리 함수 이름 (고정 판 맞추기 ②) | dev 코드 확인 | 개발 |
 | 반영 파일 형식 번호 3과 사이클 19 병합 순서(19는 번호를 올리지 않음). 형식 번호 3 배포 전에 내 PC에 기다리는 형식 번호 2 내보내기가 없어야 함 | 인계서에 적음 | 배포 |
 | 사이클 19 `name_exact` 변경 뒤 세 목록 맞은 수 다시 재기 (19 AC-14) | dev 측정 | 19 반영 뒤 |
+
+## 확인 필요 (사이클 20)
+
+설계됨(미구현, 사이클 20). 근거 `docs/cycles/20-lookup-status-and-extension/design-delta.md` "확인 필요".
+
+| 항목 | 방법 | 막는 단계 |
+|---|---|---|
+| 운영 2GB에서 JVM 전체 메모리(해석 자리 8·검색 자리 40·계획 보관함·확장 캐시·장부의 여유) | 사이클 17 배포 뒤 측정 | 없음(배포 뒤) |
+| 장부 줄 하나 크기(어림 약 100B → 5만 줄 약 5MB) | dev 측정 | 3단계 |
+| 도서관 응답 gzip 압축률 | dev가 도서관 몇 곳에서 잼(1초 간격) | 없음(참고) |
 
 ## 확인 필요 (사이클 14)
 
