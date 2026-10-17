@@ -167,6 +167,7 @@ svg .ah{fill:var(--accent)}
 <table><tr><th></th><th>최대 3묶음 (제안)</th><th>상한 없음 (#26 그대로)</th></tr>
 <tr><td>사용자</td><td>대부분 다 채워짐. 소장 도서관이 아주 많으면 남은 상태는 「더 보기」로</td><td>끝까지 자동으로 채워짐</td></tr>
 <tr><td>서버</td><td>검색 하나가 자리를 최대 3번</td><td>남은 게 있는 한 계속</td></tr></table>
+<p class="concl" style="border:2px solid var(--ok)"><b>정함 (2026-10-17)</b>: 승인 — 책 화면 이어 부르기는 최대 3묶음, 그 뒤 남은 상태는 「더 보기」. 값은 설정(settings-index에 적음).</p>
 <p class="concl">[안] 이어 부르기는 최대 3묶음(약 24초)까지, 그 뒤 남은 상태는 「더 보기」로. 값은 설정.</p>
 <p class="alt">다른 선택: 상한 없이 #26 그대로.</p>
 </div>
@@ -190,6 +191,19 @@ svg .ah{fill:var(--accent)}
 <h2><span class="num">10</span>브라우저 번호 장부(5만 줄)가 차면</h2>
 <p><b>어디서 생기나.</b> 보안 점검에서: 가정용 IPv6는 /64 주소 묶음을 수백 개 가질 수 있어, "IP당 새 번호 1분 30개"를 피해 몇 분 만에 장부를 채울 수 있습니다. 이때 "찼으면 503 → 서버 모드"로 하면 공격 한 번에 모두의 확장 모드가 꺼집니다.</p>
 <table><tr><th></th><th>오래된 줄 밀어내기 (제안)</th><th>찼으면 503 → 서버 모드</th></tr><tr><td>공격 효과</td><td>거의 없음 — 밀려난 사람은 자동으로 새 번호 받고 다시 계획</td><td>모두의 확장 모드가 꺼짐</td></tr><tr><td>만들 것</td><td>캐시 기본 동작</td><td>분기 하나</td></tr></table>
+<h3 style="font-size:20px;margin:18px 0 6px">그림으로: 어느 화면의 어느 요청이고, 장부가 차면 무슨 일이 생기나</h3>
+<p class="concl"><b>화면</b>: 확장이 깔린 PC에서 하는 바로 검색·책 화면(파란 불, 확장 모드). <b>요청</b>: 그 화면이 보내는 계획 요청(<code>POST …/plans</code>)과 받은 페이지 올리기(<code>POST /api/v1/lookup-plans/{계획}/items/{쪽}</code>). 이 요청마다 브라우저가 "브라우저 번호" 쿠키를 붙이고, 서버는 메모리의 <b>번호 장부</b>(#32: 번호 → 받은 IP·시각·열린 계획)에서 그 번호를 찾아 봅니다. 장부는 최대 5만 줄입니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 300" role="img" aria-label="번호 장부가 찼을 때">
+<defs><marker id="ah10" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="var(--accent)"/></marker></defs>
+<rect class="bx" x="10" y="20" width="200" height="110" rx="8"/><text class="s14" x="20" y="44">화면 (확장 모드)</text><text class="s13m" x="20" y="68" font-size="11">검색 → 계획 요청</text><text class="s13m" x="20" y="88" font-size="11">쿠키: 브라우저 번호 b-7f3a</text>
+<rect class="bxa" x="260" y="20" width="300" height="110" rx="8"/><text class="s14" x="270" y="44">서버: 번호 장부 (최대 5만 줄)</text><text class="s13" x="270" y="68" font-size="12">b-7f3a → 1.2.3.0, 10:01</text><text class="s13" x="270" y="88" font-size="12">b-91c0 → 5.6.7.0, 10:02 …</text><text class="s13 sred" x="270" y="112" font-size="12">공격자가 IPv6로 번호를 마구 받아 꽉 참</text>
+<path d="M210 75 H260" class="ar" marker-end="url(#ah10)"/>
+<rect class="bxok" x="600" y="10" width="290" height="130" rx="8"/><text class="s14" x="610" y="34">가. 오래된 줄 밀어내기 (제안)</text><text class="s13" x="610" y="58" font-size="12">새 번호를 넣고 가장 오래 안 쓴 줄을 지움</text><text class="s13" x="610" y="80" font-size="12">밀려난 사람의 다음 요청 → 400</text><text class="s13" x="610" y="100" font-size="12">→ 화면이 조용히 새 번호를 받고</text><text class="s13" x="610" y="120" font-size="12">   남은 도서관만 다시 계획 (사용자 모름)</text>
+<rect class="bxno" x="600" y="160" width="290" height="110" rx="8"/><text class="s14" x="610" y="184">나. 찼으면 거절 (처음 안)</text><text class="s13" x="610" y="208" font-size="12">새 번호 요청을 모두 503</text><text class="s13 sred" x="610" y="230" font-size="12">→ 그 뒤 오는 모든 사람의 확장 모드가</text><text class="s13 sred" x="610" y="250" font-size="12">   꺼짐 (공격이 성공)</text>
+<path d="M560 70 L600 70" class="ar" marker-end="url(#ah10)"/><path d="M560 100 L600 210" class="ar" marker-end="url(#ah10)"/>
+<text class="s13m" x="10" y="170" font-size="12">공격자가 장부를 채우는 방법: 집 IPv6 하나에 /64 묶음이 수백 개 →</text><text class="s13m" x="10" y="190" font-size="12">"IP당 새 번호 1분 30개"를 묶음마다 따로 받음 → 몇 분이면 5만 줄</text>
+<text class="s13" x="10" y="230" font-size="12">"가"면 공격자가 채워도 정상 사용자는</text><text class="s13" x="10" y="250" font-size="12">400 한 번 뒤 새 번호로 계속 — 공격 효과 거의 없음</text>
+</svg><p class="cap">장부가 꽉 찼을 때 오래된 줄을 밀어내면, 밀려난 사람은 화면이 알아서 새 번호를 받아 이어 갑니다. 거절하면 공격 한 번에 모두의 확장 모드가 꺼집니다.</p></div>
 <p class="concl">[안] 장부가 차면 오래된 줄부터 밀어냅니다(밀려난 사람은 400 → 새 번호로 조용히 다시 계획). 3단계에 함께.</p>
 <p class="alt">다른 선택: 찼으면 503 → 그 검색은 서버 모드.</p>
 </div>
@@ -197,6 +211,26 @@ svg .ah{fill:var(--accent)}
 <h2><span class="num">11</span>「더 보기」 계획 주소를 계획 경로 밑으로 옮기기</h2>
 <p><b>어디서 생기나.</b> 두 가지가 걸립니다. ① 쿠키는 경로 하나만 가지므로 #33의 번호 쿠키를 경로 4개로 나눠 줬는데, 그중 「더 보기」용 <code>/api/v1/availability/libraries</code>는 서버 모드 「더 보기」에도 쿠키가 붙습니다(MDN Set-Cookie 경로 규칙, 2026-10-17 확인). ② dev nginx에 <code>location ^~ /api/v1/availability/</code>가 있어 정규식으로 잡으려던 「더 보기」 계획 주소가 계획 한도(1분 300)가 아니라 도서관 호출 한도(1분 30)에 걸립니다(nginx 공식 문서 location 규칙).</p>
 
+<h3 style="font-size:20px;margin:18px 0 6px">그림으로: 어느 화면의 어느 요청이고, 무엇이 문제인가</h3>
+<p class="concl"><b>화면</b>: 바로 검색 결과에서 한 도서관 줄의 「더 보기」 버튼(그 도서관의 다음 쪽 결과). <b>요청</b>: 확장 모드에서 「더 보기」를 누르면 화면이 서버에 <code>POST /api/v1/availability/libraries/{도서관}/ebooks/plans</code>(「더 보기」 계획)를 보냅니다. 다른 두 계획 주소(<code>/api/v1/ebook-searches/plans</code>, <code>/api/v1/book-availabilities/plans</code>)와 올리기(<code>/api/v1/lookup-plans/…</code>)는 경로가 다 다릅니다. 여기서 두 가지 문제가 생깁니다.</p>
+<div class="fig wide"><svg viewBox="0 0 900 330" role="img" aria-label="더 보기 계획 주소 문제">
+<defs><marker id="ah11" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="var(--accent)"/></marker></defs>
+<rect class="bx" x="10" y="20" width="220" height="80" rx="8"/><text class="s14" x="20" y="44">화면: 도서관 줄</text><text class="s13" x="20" y="70" font-size="12">강동 · 결과 10건 「더 보기」</text>
+<path d="M230 60 H280" class="ar" marker-end="url(#ah11)"/>
+<rect class="bxa" x="280" y="20" width="610" height="80" rx="8"/><text class="s13" x="290" y="44" font-size="12">POST /api/v1/availability/libraries/1215/ebooks/plans</text><text class="s13m" x="290" y="66" font-size="11">이 주소가 /api/v1/availability/ 밑이라 생기는 일 ↓</text>
+<rect class="bxno" x="10" y="130" width="430" height="180" rx="8"/><text class="s14" x="20" y="154">문제 1: 번호 쿠키 경로</text>
+<text class="s13" x="20" y="180" font-size="12">쿠키는 경로를 하나만 가짐 → 계획 주소 넷에</text><text class="s13" x="20" y="200" font-size="12">같은 번호 쿠키를 경로 4개로 나눠 줘야 함</text>
+<text class="s13" x="20" y="224" font-size="12">「더 보기」용 경로 /api/v1/availability/libraries 는</text><text class="s13 sred" x="20" y="244" font-size="12">서버 모드 「더 보기」(GET)에도 쿠키가 따라감</text>
+<text class="s13m" x="20" y="272" font-size="11">근거: MDN Set-Cookie Path는 그 경로 아래 전부에 보냄</text><text class="s13m" x="20" y="290" font-size="11">(2026-10-17 확인)</text>
+<rect class="bxno" x="460" y="130" width="430" height="180" rx="8"/><text class="s14" x="470" y="154">문제 2: nginx 한도가 잘못 걸림</text>
+<text class="s13" x="470" y="180" font-size="12">dev nginx에 location ^~ /api/v1/availability/ 가 있음</text><text class="s13" x="470" y="200" font-size="12">→ 이 접두가 맞으면 정규식 location은 안 봄</text>
+<text class="s13 sred" x="470" y="224" font-size="12">「더 보기」 계획이 계획 한도(1분 300)가 아니라</text><text class="s13 sred" x="470" y="244" font-size="12">도서관 호출 한도(1분 30)에 걸림 → 금방 429</text>
+<text class="s13m" x="470" y="272" font-size="11">근거: nginx 공식 문서 location 고르는 순서</text>
+</svg><p class="cap">「더 보기」 계획 주소만 /api/v1/availability/ 밑에 있어서, 쿠키와 nginx 한도 둘 다 꼬입니다.</p></div>
+<div class="fig wide"><svg viewBox="0 0 900 150" role="img" aria-label="제안: 주소 옮기기">
+<text class="s14" x="10" y="24">제안: 계획·올리기 주소를 모두 /api/v1/lookup-plans 밑으로</text>
+<rect class="bxok" x="10" y="40" width="880" height="96" rx="8"/><text class="s13" x="20" y="64" font-size="12">POST /api/v1/lookup-plans/more  ← 「더 보기」 계획 (도서관 번호는 본문에, 이름은 dev가 맞춤)</text><text class="s13" x="20" y="86" font-size="12">POST /api/v1/lookup-plans/{계획}/items/{쪽}  ← 올리기 (그대로)</text><text class="s13 sok" x="20" y="112" font-size="12">→ 쿠키 경로 하나(/api/v1/lookup-plans), nginx 구역 하나 — 두 문제가 함께 풀림 (나머지 두 계획 주소도 같은 밑으로 옮길지는 dev가 정리)</text>
+</svg></div>
 <p class="concl">[안] 「더 보기」 계획 주소를 <code>POST /api/v1/lookup-plans/more</code>(이름은 dev가 맞춤)로 옮겨 계획 주소를 모두 <code>/api/v1/lookup-plans</code> 밑에 둡니다 — 쿠키 경로 하나, nginx 구역 하나로 둘 다 해결. (설계 결정 #6의 주소 이름을 바꿈)</p>
 <p class="alt">다른 선택: 주소는 그대로 두고 nginx에 중첩 location을 넣고, 쿠키가 「더 보기」 GET에 붙는 것은 무해로 둠.</p>
 </div>
@@ -204,6 +238,7 @@ svg .ah{fill:var(--accent)}
 <h2><span class="num">12</span>IP 울타리 (3) "잠긴 번호 5개 → IP 10분"을 뺄까</h2>
 <p><b>어디서 생기나.</b> 보안 점검에서: (3)은 (1) IP 무게 20%, (2) 새 번호 1분 30개, 번호 잠금이 이미 막는 것과 겹칩니다. 개인 서비스에는 장치가 하나 많고, 같은 IP의 정상 사용자까지 10분 막을 수 있습니다.</p>
 
+<p class="concl" style="border:2px solid var(--ok)"><b>정함 (2026-10-17)</b>: 승인 — IP 울타리 (3) "잠긴 번호 5개 → IP 10분"을 뺌. 남용은 (1) IP 무게 20%·(2) 새 번호 1분 30개·번호 잠금과 거절 기록으로 봄. 3단계.</p>
 <p class="concl">[안] (3)을 뺍니다. 남용은 (1)·(2)·번호 잠금과 거절 기록으로 봄. 3단계에 함께.</p>
 <p class="alt">다른 선택: #31대로 (3) 유지.</p>
 </div>
@@ -217,8 +252,18 @@ svg .ah{fill:var(--accent)}
 <tr><td>60</td><td>약 9~12</td><td>약 230MB</td><td>30 노랑 · 60 빨강</td></tr>
 </table>
 <p class="cap">메모리는 보통 크기 페이지 기준 어림입니다. 1MB 페이지가 몰리는 최악은 #4(해석 자리를 서버·확장 모드가 함께 쓰는 상한 + 메모리 바닥나면 자동 재시작)로 막아야 안전합니다. 상태 불 기준은 명세 R1에 "자리 수가 설정에서 바뀌면 절반·전부도 그에 따름"이 이미 있어 따로 바꿀 것이 없습니다.</p>
+<h3 style="font-size:20px;margin:18px 0 6px">질문에 답: 동시 검색 상한은 왜 있고, 다른 것으로 조절할 수 없나</h3>
+<p class="concl"><b>상한이 하는 일은 셋입니다</b>: ① 서버 메모리 보호(진행 중인 도서관 응답을 통째로 메모리에 들고 있으므로), ② 넘치면 바로 「잠시 후 다시」(503)를 줘서 서버가 버티지 못할 만큼 받지 않기, ③ 상태 불의 기준(절반 노랑·전부 빨강). <b>도서관을 보호하는 건 이 상한이 아니라</b> 길(IP)·사이트마다 "동시 1건·1초" 규칙입니다.</p>
+<table>
+<tr><th>다른 조절 장치</th><th>지금 있나</th><th>상한 대신이 되나</th></tr>
+<tr><td>도서관마다 동시 1건·1초 (길 21개)</td><td>있음</td><td>도서관 보호는 이것이 함. 서버 메모리는 못 지킴</td></tr>
+<tr><td>해석 자리 8 (서버·확장 함께, #4 승인)</td><td>이번에 넣음</td><td><b>①의 큰 몫(해석 메모리)을 이것이 맡음</b> → 검색 상한을 올려도 메모리가 덜 위험해짐</td></tr>
+<tr><td>진행 중 도서관 요청 수 상한 (예: 200, 넘치면 1~2초 줄)</td><td>없음</td><td>검색 수 대신 "실제로 받는 중인 요청 수"로 묶는 방식. 더 정확하지만 상태 불 기준도 이 숫자로 바꿔야 함</td></tr>
+<tr><td>503 대신 1~2초 줄 세우기</td><td>없음 (범위 밖으로 뺐었음)</td><td>잠깐 몰릴 때 빨간 불이 깜빡이는 것을 줄임</td></tr>
+</table>
+<p>그래서 <b>#4(해석 자리 8)가 들어가면 검색 상한은 "메모리 보호"보다 "넘치면 바로 거절 + 상태 불 기준" 역할이 커지고</b>, 그만큼 올려도 됩니다. 제안 40은 그대로 두고, 배포 뒤 기록을 보고 "진행 중 요청 수 상한"으로 바꿀지 정하는 것을 다른 선택에 적었습니다.</p>
 <p class="concl">[안] 동시 검색 상한을 <b>40</b>으로 올립니다(설정값, 환경 변수 <code>CHAEKCHECK_AVAILABILITY_MAXCONCURRENTSEARCHES</code>). #4의 해석 상한·메모리 보호와 함께 넣고, 배포 뒤 힙과 503 기록(#5 요약 로그)을 보고 60까지 올릴지 정합니다. 상태 불은 R1대로 절반(20) 노랑·전부(40) 빨강.</p>
-<p class="alt">다른 선택: 60으로 바로(메모리 여유가 더 작음), 또는 20 그대로.</p>
+<p class="alt">다른 선택: 60으로 바로(메모리 여유가 더 작음), 20 그대로, 또는 검색 수 대신 "진행 중 도서관 요청 수 상한(예: 200) + 1~2초 줄"로 바꾸고 상태 불도 그 숫자로.</p>
 </div>
 <div class="card">
 <h2>결정 없이 바로 고친 것 (2026-10-17)</h2>
