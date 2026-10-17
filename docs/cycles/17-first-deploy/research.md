@@ -354,7 +354,17 @@ plan 15가 `docs/cycles/15-usage-log/to-cycle-17.md` "5차"에 올린 실제 값
 - **chaekcheck.com** 등록 완료: Cloudflare Registrar, **$10.46/년**(원가·마크업 없음), Active, 만료 **2027-10-18**, 자동 갱신 ON. WHOIS 개인정보는 Cloudflare가 기본 가림(redact). (2026-11-01부터 .com 표준가 $11.17로 오름 — 다음 갱신분부터)
 - **DNS가 자동으로 Cloudflare에** 붙음(Registrar가 Cloudflare라) → Cloudflare Tunnel(ADR-0103)에 바로 연결 가능. 네임서버 이전 불필요
 - 결제·개인정보 입력은 사용자가 함(Claude는 구매 직전까지 화면만 띄움). 처리방침: Cloudflare 등록은 새로 더할 것 없음(research 112절, 16 판단)
-- 다음: Cloudflare에서 chaekcheck.com용 Tunnel(cloudflared) 만들어 토큰을 Parameter Store에, DNS에 터널 라우트(`chaekcheck.com`·`grafana.`)를 걺 — 앱 배포 때. `AUTH_PUBLIC_BASE_URL`=`https://chaekcheck.com`, 카카오 운영 Redirect URI도 이 주소로
+- `AUTH_PUBLIC_BASE_URL`=`https://chaekcheck.com`, 카카오 운영 Redirect URI도 이 주소로
+
+### Cloudflare Tunnel 미리 만듦 (2026-10-18)
+배포 전에 터널·DNS까지 미리 구성(앱은 아직 없으니 터널은 "Inactive", cloudflared가 뜨면 살아남).
+- **Zero Trust Free 활성화**(사용자, $0/월·50명 한도, 카드는 도메인 결제분 그대로). 약관·과금승인 체크는 사용자가 함(금전 승인이라 Claude 안 함)
+- **터널 `chaekcheck`** 생성: Tunnel ID `6ab7232f-8d79-42aa-8a14-74ac3408ba87`, 타입 cloudflared(원격 관리·토큰 방식)
+- **라우트(Published application)**: `chaekcheck.com`(루트) → `http://nginx:80`. **DNS CNAME 자동 생성**: `chaekcheck.com` → `6ab7232f-8d79-42aa-8a14-74ac3408ba87.cfargotunnel.com`
+- **[확인 필요] 내부 서비스 주소** `http://nginx:80`은 cloudflared·nginx가 같은 compose 네트워크이고 nginx 서비스명이 `nginx`라고 가정 — dev compose와 다르면 배포 때 라우트 Service URL 수정(Cloudflare 터널 Routes 탭에서)
+- **터널 토큰**: 터널 Overview의 설치 명령(`--token eyJ…`) 또는 오른쪽 "Rotate token"으로 받음. 배포 때 Parameter Store에 넣음(토큰은 비밀값 → 사용자가 붙여넣기). **[확인 필요] compose 환경변수 이름**(cloudflared 표준은 `TUNNEL_TOKEN`) → dev 확인 후 파라미터 이름 맞춤
+- grafana.chaekcheck.com은 **안 넣음**(모니터링이 CloudWatch로 바뀜). 백업용 SSH 길(architect #8)은 배포 때 별도 구성
+- 남은 것: cloudflared 컨테이너를 compose에 넣고 토큰 주입(dev) → 뜨면 터널 Active, chaekcheck.com이 nginx로 들어옴
 
 ### CloudWatch 모니터링 설정 완료 (2026-10-16, SSH + 콘솔)
 앱 배포 전에 모니터링부터 켬(사용자 요청). 설계의 자체 Grafana 묶음 대신 **CloudWatch**(사용자 안 B, 2026-10-16).
