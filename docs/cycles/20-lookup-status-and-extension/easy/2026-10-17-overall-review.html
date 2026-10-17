@@ -243,6 +243,7 @@ svg .ah{fill:var(--accent)}
 <text class="s14" x="10" y="24">제안: 계획·올리기 주소를 모두 /api/v1/lookup-plans 밑으로</text>
 <rect class="bxok" x="10" y="40" width="880" height="96" rx="8"/><text class="s13" x="20" y="64" font-size="12">POST /api/v1/lookup-plans/more  ← 「더 보기」 계획 (도서관 번호는 본문에, 이름은 dev가 맞춤)</text><text class="s13" x="20" y="86" font-size="12">POST /api/v1/lookup-plans/{계획}/items/{쪽}  ← 올리기 (그대로)</text><text class="s13 sok" x="20" y="112" font-size="12">→ 쿠키 경로 하나(/api/v1/lookup-plans), nginx 구역 하나 — 두 문제가 함께 풀림 (나머지 두 계획 주소도 같은 밑으로 옮길지는 dev가 정리)</text>
 </svg></div>
+<p class="concl" style="border:2px solid var(--ok)"><b>정함 (2026-10-17)</b>: 승인 — 「더 보기」 계획 주소를 <code>/api/v1/lookup-plans/more</code>(이름은 dev가 맞춤)로, 계획·올리기 주소를 모두 <code>/api/v1/lookup-plans</code> 밑에. 쿠키 경로 하나, nginx 구역 하나.</p>
 <p class="concl">[안] 「더 보기」 계획 주소를 <code>POST /api/v1/lookup-plans/more</code>(이름은 dev가 맞춤)로 옮겨 계획 주소를 모두 <code>/api/v1/lookup-plans</code> 밑에 둡니다 — 쿠키 경로 하나, nginx 구역 하나로 둘 다 해결. (설계 결정 #6의 주소 이름을 바꿈)</p>
 <p class="alt">다른 선택: 주소는 그대로 두고 nginx에 중첩 location을 넣고, 쿠키가 「더 보기」 GET에 붙는 것은 무해로 둠.</p>
 </div>
