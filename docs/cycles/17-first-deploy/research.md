@@ -348,7 +348,13 @@ plan 15가 `docs/cycles/15-usage-log/to-cycle-17.md` "5차"에 올린 실제 값
 - 폴더: `/srv/chaekcheck`, `/srv/backup` (ubuntu 소유)
 - 메모리 2GB(여유 ~1.3Gi), 디스크 30GB(여유 26G)
 - **[중요] 이 서버는 arm64(Graviton)** → 앱 이미지도 **arm64로 빌드**해야 함. PC(x86)에서 그냥 빌드한 이미지는 안 뜸. 인계서에 반영: `docker buildx`로 arm64(멀티아치) 빌드하거나 서버에서 직접 빌드 [확인 필요: dev 빌드 방식]
-- 아직 못 하는 것(선행 조건): Cloudflare Tunnel 설정(도메인 chaekcheck.com 필요), 앱 배포(dev 인계서·arm64 이미지·compose·비밀값 필요), 비밀값(IAM 역할은 사용자), cycle 19 책목록 반영
+- 아직 못 하는 것(선행 조건): Cloudflare Tunnel 설정(도메인 확보됨 ↓), 앱 배포(dev 인계서·arm64 이미지·compose·비밀값 필요), 비밀값(IAM 역할은 사용자), cycle 19 책목록 반영
+
+### 도메인 chaekcheck.com 구매 완료 (2026-10-18, Cloudflare Registrar)
+- **chaekcheck.com** 등록 완료: Cloudflare Registrar, **$10.46/년**(원가·마크업 없음), Active, 만료 **2027-10-18**, 자동 갱신 ON. WHOIS 개인정보는 Cloudflare가 기본 가림(redact). (2026-11-01부터 .com 표준가 $11.17로 오름 — 다음 갱신분부터)
+- **DNS가 자동으로 Cloudflare에** 붙음(Registrar가 Cloudflare라) → Cloudflare Tunnel(ADR-0103)에 바로 연결 가능. 네임서버 이전 불필요
+- 결제·개인정보 입력은 사용자가 함(Claude는 구매 직전까지 화면만 띄움). 처리방침: Cloudflare 등록은 새로 더할 것 없음(research 112절, 16 판단)
+- 다음: Cloudflare에서 chaekcheck.com용 Tunnel(cloudflared) 만들어 토큰을 Parameter Store에, DNS에 터널 라우트(`chaekcheck.com`·`grafana.`)를 걺 — 앱 배포 때. `AUTH_PUBLIC_BASE_URL`=`https://chaekcheck.com`, 카카오 운영 Redirect URI도 이 주소로
 
 ### CloudWatch 모니터링 설정 완료 (2026-10-16, SSH + 콘솔)
 앱 배포 전에 모니터링부터 켬(사용자 요청). 설계의 자체 Grafana 묶음 대신 **CloudWatch**(사용자 안 B, 2026-10-16).
