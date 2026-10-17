@@ -200,3 +200,5 @@ ADR-0095의 세 길은 "서버 자기 IP 1개" 또는 "업체 프록시"였다. 
 - 알림: plan 20(handoff.md 795행·1단계 범위 고치기), dev 20(할 일 요약, 로컬에서는 Webshare가 IP 등록 때문에 안 붙음), plan 17(R13 구분)
 - 사이클 17 반영 (2026-10-17, 17 세션 알림): design-delta R13에 분담 명시. 배포 준비 이미 됨 — SNS 주제 `chaekcheck-alerts` + 메일 구독 확인됨, 기본 경보 2개(server-down·disk-high), Webshare API 키 Parameter Store `/chaekcheck/prod/WEBSHARE_API_KEY` 저장(사용자가 발급·붙여 넣음) [확정] (사이클 17 기록)
 - Webshare 인증 (2026-10-17) [확정] (사용자: "아이디·비밀번호 방식 같이 쓰기방식으로 하자고 해당 dev에게 알려줘"): 운영 EC2는 IP Authorization, 로컬 PC는 Webshare Proxy Username/Password(로컬 .env, 사용자가 붙여 넣음). 새 의존성 없음(JDK HttpClient ProxySelector·Authenticator, Apache HttpClient 5 기존). 로컬 https 거치기에 `-Djdk.http.auth.tunneling.disabledSchemes=` 필요할 수 있음(JDK 기본 Basic 막음, 실제 JDK에서 확인 필요). dev 20에 알림
+
+- (2026-10-18, dev 20 실측) Webshare 정적 프록시는 https(CONNECT)를 인증 없이 요청하면 407을 `Proxy-Authenticate` 헤더 없이 돌려주고 연결을 닫음(http 요청에는 `Proxy-Authenticate: Basic …`이 옴). JDK HttpClient는 챌린지가 있어야 인증을 보내므로 아이디·비밀번호 방식에서는 https 도서관에 쓸 수 없음 → dev는 프록시 길에 `Proxy-Authorization`을 선제로 보냄(Apache HttpClient 5). 운영(IP Authorization)은 영향 없음 [확정: dev 실측]

@@ -238,7 +238,7 @@ classDiagram
 | `extension/` | 신규(본 서비스 밖, dev 저장소 맨 위) | 아래 "확장 꾸러미" | 웹 ↔ 확장 메시지 | — | — |
 | nginx (deploy) | 변경 | 아래 "외부 연동 · nginx" | — | — | — |
 
-- 모듈 의존 방향은 그대로(`availability → catalog, library, usagelog`), 새 모듈·새 이벤트 없음. 루트 패키지 `ApiExceptionHandler` → `availability` 공개 메서드 `recordDbError()` 호출 하나가 더해지지만 루트 패키지는 모듈이 아니어서 모듈 사이 의존이 아님(설계 검토 #3). 상태 불이 읽는 나가는 길 값은 사이클 17/22의 나가는 길 코드가 주는 읽기 전용 포트(같은 `availability` 안, 아래)라 의존 방향을 바꾸지 않음. `ModularityTests`·`DocumentationTests` 변경 없음
+- 모듈 의존 방향은 그대로(`availability → catalog, library, usagelog`), 새 모듈·새 이벤트 없음. 루트 패키지 `ApiExceptionHandler` → `availability` 공개 메서드 `recordDbError()` 호출 하나가 더해지지만 루트 패키지는 모듈이 아니어서 모듈 사이 의존이 아님(설계 검토 #3). 상태 불이 읽는 나가는 길 값은 사이클 17·webshare 작업의 나가는 길 코드가 주는 읽기 전용 포트(같은 `availability` 안, 아래)라 의존 방향을 바꾸지 않음. `ModularityTests`·`DocumentationTests` 변경 없음
 - 사이클 17 의존: `HostQueueBoard`는 17의 길(lane) 개념과 막힌 길 기록을 읽음. 17이 먼저 들어가지 않으면 길은 하나(직접)로 두고 막힌 길은 빈 목록 [확정] (전제)
 - **사람(브라우저)마다 세기** [확정] (세 관점 검토 #22 승인 2026-10-16; 사용자: "아이피로만 하면 같은 공인아이피의 다른 상대가 피해가 갈 것 같은데 각각 클라이언트를 보호할 방법은?"): 계획·잠금을 사람(브라우저)마다 세고, 공인 IP는 울타리로만 씀. 그 "사람"을 가리키는 것이 **브라우저 번호**다. **이 절 전체가 3단계** [확정] (전반 점검 #1, 2026-10-17: 웹스토어에 올릴 때 또는 거절 기록에 남용이 보일 때). 2단계에서는 계획에 만든 IP(/64)를 적어 올리기·닫기·`replaces`를 같은 IP일 때만 받음(다르면 400 `client_ip_changed`, 아래와 같은 화면 처리)
   - **번호는 서버가 줌** [확정] (검토 #27, 사용자: "이걸로 해줘", 2026-10-16): 웹이 번호를 만들지 않음. 서버가 `SecureRandom` 16바이트(base64url [안])를 만들어 장부에 적고 쿠키로 줌. 처음 안의 "웹이 탭마다 만드는 열쇠"(#22)와 "서명(HMAC)"(#27 처음 안)은 쓰지 않음
@@ -259,7 +259,7 @@ classDiagram
 
 - **운영 숫자는 변수로 한 곳에서** [확정] (세 관점 검토 #25 승인 2026-10-16; 사용자: "이런 개수 말이야 변수로 통합적으로 관리 가능하도록"; 전반 점검 #4에서 다시: "이 변수 통합적으로 관리하도록 하고 AI가 읽기 쉽도록 잘 문서화", 2026-10-17): 이 사이클이 더하거나 바꾸는 숫자(해석 자리·검색 자리 40·이어 부르기 3묶음·계획 보관함·확장 캐시·잠금·결과 10·기다림 10초·DB 오류 30초 등)는 모두 설정 속성으로 두고 운영은 `prod.env`의 "대출 조회 숫자" 묶음에서 Spring 환경 변수로 덮어씀(이름 규칙·목록 `../../settings-index.md` 8절). nginx와 함께 쓰는 값만 `LOOKUP_*`, 화면 `VITE_*`, 확장 `extension/config.js`. dev 설정값 목록(#17)에 환경 변수 칸. 사이클 17 `prod.env` 견본은 `../17-first-deploy/from-cycle-20-prod-env-numbers.md`
 
-- **상태 불이 읽는 나가는 길 값** [확정] 검토 #28 승인 2026-10-16: R1 덧붙임(#21)·덧붙임 2(#24)를 판정하려면 `LookupStatusService`가 사이클 22의 "업체(Webshare) 길 멈춤" 여부와 사이클 17/22의 나가는 길 설정(`모두`/`프록시만`/`직접만`, ADR-0130)을 읽어야 한다. 이 값은 사이클 17/22의 나가는 길 코드가 주는 **읽기 전용 포트(인터페이스)** 하나로 읽음(예: `vendorLanesPaused()`·`egressMode()`, 이름 [안]). 상태 응답에 `reason`(`NONE` \| `VENDOR_PAUSED` \| `NO_LANE`)을 더해 화면이 둘째 줄을 고름: 업체 길이 멈췄으면 단계 최소 `YELLOW` + `VENDOR_PAUSED`, `프록시만`이고 업체 길이 모두 멈췄으면 `RED` + `NO_LANE`(빨강 우선). 포트가 없으면(17/22 코드가 아직 없음) `reason`은 `NONE`이고 R1 기본 규칙만 씀. **덧붙임 (전반 점검 #9)**: 최근 30초 안에 DB 오류가 있었으면 `level=GRAY`·`reason=DB_ERROR`(값 이름 [안])가 빨강(`NO_LANE` 포함)을 비롯한 다른 모든 판정보다 앞섬 [확정] (판정, 전반 점검 #9) / 우선순위 [확정] (사용자 승인, 2026-10-17, 설계 검토 #4). DB 오류 시각은 "마지막 DB 오류 시각" 값 하나로 `availability` 안에 둠. **잡는 곳** [확정] (사용자 승인, 2026-10-17, 설계 검토 #3): `availability`가 공개 메서드 하나 `LookupHealth.recordDbError()`(이름 [안], 모듈 맨 위 공개 패키지 `com.chaekcheck.availability` — 지금 이 패키지에는 타입이 없음, dev 2026-10-17 확인)를 내놓고, 루트 패키지 `com.chaekcheck.ApiExceptionHandler`(dev `backend/src/main/java/com/chaekcheck/ApiExceptionHandler.java`, `@Order(LOWEST_PRECEDENCE)`; 모듈 예외 처리기 중 `DataAccessException`을 잡는 곳은 없음 — 2026-10-17 읽음)가 `DataAccessException`·연결 얻기 실패를 처리할 때 부름. 그래서 검색·책 찾기(`catalog`)의 DB 오류도 모듈 경계를 넘지 않고 셈. `LookupStatusService`는 그 시각을 읽기만 함. 새 모듈·이벤트·공유 모듈 없음, `ModularityTests` 영향 없음. 감수 [안]: SSE 스트림 안이나 예약 작업에서 나서 이 처리기를 거치지 않는 DB 오류는 세지 않음
+- **상태 불이 읽는 나가는 길 값** [확정] 검토 #28 승인 2026-10-16: R1 덧붙임(#21)·덧붙임 2(#24)를 판정하려면 `LookupStatusService`가 webshare 작업의 "업체(Webshare) 길 멈춤" 여부와 사이클 17·webshare 작업의 나가는 길 설정(`모두`/`프록시만`/`직접만`, ADR-0130)을 읽어야 한다. 이 값은 사이클 17·webshare 작업의 나가는 길 코드가 주는 **읽기 전용 포트(인터페이스)** 하나로 읽음(예: `vendorLanesPaused()`·`egressMode()`, 이름 [안]). 상태 응답에 `reason`(`NONE` \| `VENDOR_PAUSED` \| `NO_LANE`)을 더해 화면이 둘째 줄을 고름: 업체 길이 멈췄으면 단계 최소 `YELLOW` + `VENDOR_PAUSED`, `프록시만`이고 업체 길이 모두 멈췄으면 `RED` + `NO_LANE`(빨강 우선). 포트가 없으면(17·webshare 코드가 아직 없음) `reason`은 `NONE`이고 R1 기본 규칙만 씀. **덧붙임 (전반 점검 #9)**: 최근 30초 안에 DB 오류가 있었으면 `level=GRAY`·`reason=DB_ERROR`(값 이름 [안])가 빨강(`NO_LANE` 포함)을 비롯한 다른 모든 판정보다 앞섬 [확정] (판정, 전반 점검 #9) / 우선순위 [확정] (사용자 승인, 2026-10-17, 설계 검토 #4). DB 오류 시각은 "마지막 DB 오류 시각" 값 하나로 `availability` 안에 둠. **잡는 곳** [확정] (사용자 승인, 2026-10-17, 설계 검토 #3): `availability`가 공개 메서드 하나 `LookupHealth.recordDbError()`(이름 [안], 모듈 맨 위 공개 패키지 `com.chaekcheck.availability` — 지금 이 패키지에는 타입이 없음, dev 2026-10-17 확인)를 내놓고, 루트 패키지 `com.chaekcheck.ApiExceptionHandler`(dev `backend/src/main/java/com/chaekcheck/ApiExceptionHandler.java`, `@Order(LOWEST_PRECEDENCE)`; 모듈 예외 처리기 중 `DataAccessException`을 잡는 곳은 없음 — 2026-10-17 읽음)가 `DataAccessException`·연결 얻기 실패를 처리할 때 부름. 그래서 검색·책 찾기(`catalog`)의 DB 오류도 모듈 경계를 넘지 않고 셈. `LookupStatusService`는 그 시각을 읽기만 함. 새 모듈·이벤트·공유 모듈 없음, `ModularityTests` 영향 없음. 감수 [안]: SSE 스트림 안이나 예약 작업에서 나서 이 처리기를 거치지 않는 DB 오류는 세지 않음
 
 - **책 화면 대출 상태 조회는 줄 상한 없이 보이는 10권 모두** [확정] (사용자: "책 기준 검색 말이야 이거 5개 고대로 안 가져가고 그냥 한 번에 보여지는 10개대로 하는 게 맞지 않아?", 세 관점 검토 #26 승인 2026-10-16): `BatchRunner.startHoldings`(dev 201~223행)의 `HoldingSession`에 `row-limit`을 넘기지 않음(또는 "제한 없음") — 바로 검색(`start`)만 `row-limit` 10. 동시 5곳·8초 마감·마감 3초 전 새 출발 멈춤은 그대로. 마감 때 남은 holding은 지금처럼 `notSent`로 돌려주고, 웹은 남은 것이 있으면 `…/book-availabilities/batches/stream`을 바로 다시 부름(사용자 조작 없이, 10권 범위 안에서만). **자동으로 이어 부르는 것은 첫 묶음 포함 최대 3묶음(약 24초)까지, 그 뒤 남은 상태는 「더 보기」** [확정] (전반 점검 #7 승인 2026-10-17; 값은 설정, 위 "전반 점검으로 바뀐 것" #7). 확장 모드 계획(`/api/v1/lookup-plans/holdings`, 전반 점검 #11)도 같은 규칙
 
@@ -423,17 +423,17 @@ Set-Cookie: lookup_client=…; Path=/api/v1/lookup-plans; Max-Age=86400; HttpOnl
 | 도서관 응답 gzip 압축률 | 전반 점검 #6 효과 | dev가 도서관 몇 곳에서 잼(1초 간격) | 없음(참고) |
 | 503 급증 경보 기준값, 1분 요약 로그 필드 모양 | 전반 점검 #5 | dev가 정하고 사이클 17과 맞춤 | 없음(배포 뒤) |
 
-## 사이클 22 나가는 길·알림과 맞춤 (2026-10-16)
+## webshare 작업 나가는 길·알림과 맞춤 (2026-10-16)
 
-공유 파일 [`../../research/deploy/multi-source-ip.md`](../../research/deploy/multi-source-ip.md) 6~9절(사이클 22 결정과 시드니 실측)과 겹치는 곳을 확인했다. 운영 = 시드니 EC2 + 나가는 길 21개(EC2 자기 IP 1 + Webshare 한국 정적 주거용 20, IP마다 동시 1건·1초) [확정] (사이클 22, 사용자 승인 2026-10-16).
+공유 파일 [`../../research/deploy/multi-source-ip.md`](../../research/deploy/multi-source-ip.md) 6~9절(webshare 작업 결정과 시드니 실측)과 겹치는 곳을 확인했다. 운영 = 시드니 EC2 + 나가는 길 21개(EC2 자기 IP 1 + Webshare 한국 정적 주거용 20, IP마다 동시 1건·1초) [확정] (webshare 작업, 사용자 승인 2026-10-16).
 
-| 사이클 22 결정·실측 | 이 사이클에 미치는 것 | 처리 |
+| webshare 작업 결정·실측 | 이 사이클에 미치는 것 | 처리 |
 |---|---|---|
 | 시드니 → 한국 IP → 강동 전자도서관 약 1.7초, 교보 구독형 2.7초, 큰 홈페이지 3.5~5.0초 (9-4절 실측) | 묶음 마감 8초·호스트 대기 8초 안에 들어감. 검색 자리를 잡는 시간이 조금 길어져 노랑이 조금 더 자주 보일 수 있음 | 값 그대로, 배포 뒤 기록으로 조정 [안] |
 | 집(한국) → 도서관 쪽 약 0.7초 | 확장 모드 = 0.7초 + 시드니로 올리기(어림 0.2~0.4초) → 도서관 한 곳마다 약 0.6~1초 빠름 | 올리기 시간 [확인 필요: 배포 뒤 `ms`·서버 기록으로 측정] |
 | 길 21개 | `HostQueueBoard`는 이미 `(laneId, hostKey, libraryId)`별이라 그대로. 같은 도서관도 21건까지 함께 가 줄이 거의 안 섬 | 바꿀 것 없음 |
 | 길 쉼 10분부터 두 배·7일 상한, 모든 길이 막힌 호스트 "확인 불가"(ADR-0094) | 이 사이클이 17에 넘긴 규칙(`../17-first-deploy/from-cycle-20-blocked-ip-resume.md`)과 같음. 막힌 길은 줄 선 도서관 계산에서 뺌(R4) | 바꿀 것 없음 |
-| 업체 데이터 세기(우리가 센 양 vs Webshare 사용량 API) | 확장 모드 응답은 사용자 브라우저가 받아 와 프록시를 거치지 않음 → `accept` 경로는 길 데이터 세기에 넣지 않음 | 규칙 [안] (사이클 22 세기 구현과 맞춤, 인계 때 확인) |
+| 업체 데이터 세기(우리가 센 양 vs Webshare 사용량 API) | 확장 모드 응답은 사용자 브라우저가 받아 와 프록시를 거치지 않음 → `accept` 경로는 길 데이터 세기에 넣지 않음 | 규칙 [안] (webshare 작업 세기 구현과 맞춤, 인계 때 확인) |
 | Webshare 업체 오류·데이터 90% → Webshare 길 20개 한꺼번에 멈춤 | 길이 1개로 줄어도 상태 불은 검색 자리만 봐서 초록일 수 있음 | [확정] 세 관점 검토 #21 승인 (2026-10-16): 멈춘 동안 최소 노랑, 둘째 줄 "지금은 조회가 평소보다 느려요"(상태 응답 `reason=VENDOR_PAUSED`, 필드·읽는 포트 [확정] 검토 #28 승인 2026-10-16) |
 | 메일 알림 5가지(CloudWatch → SNS) | 이 사이클은 메일 보낼 일을 더하지 않음(올리기 거절·번호 잠금은 `rejected_event` 집계만) | 바꿀 것 없음 [안] |
 | 나가는 길 설정 `모두`/`프록시만`/`직접만` (사이클 20 검토 #24에서 사용자 요청, 17·22에 넘김) | `프록시만`이고 Webshare 길이 모두 멈추면 서버 모드 길 0개 → 상태 불 빨강 "지금은 도서관 조회를 할 수 없어요"(`reason=NO_LANE`, [확정] 검토 #28 승인 2026-10-16), 확장 모드는 그대로 | [확정] (사용자 승인, 2026-10-16, 세 관점 검토 #24; 인계 `../17-first-deploy/from-cycle-20-proxy-only.md`) |

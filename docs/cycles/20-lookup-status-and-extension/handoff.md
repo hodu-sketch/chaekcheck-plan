@@ -20,7 +20,7 @@
 
 - **dev 순서** [확정] (사용자, 2026-10-16: "사이클 20을 먼저 개발하고, 그다음 17 배포로 해"): 사이클 20 **1단계** → 사이클 17 배포 → 20 **2단계** → 20 **3단계**(조건부)
 - **3단계를 만드는 조건** [확정] (사용자 승인, 2026-10-17, 전반 점검 #1·마무리 확인 #9): 크롬 웹스토어에 올릴 때, 또는 거절 기록(`usagelog.rejected_event`)에 남용이 보일 때. 조건이 오기 전에는 만들지 않습니다
-- **나가는 길(길 목록 EC2 1 + Webshare 20 · 길 설정 · 길마다 간격 · 막힌 길 처리 · 나간 길 기록)은 이 사이클 1단계 1-15에서 만듭니다** [확정] (사용자, 2026-10-17: "Webshare 20개 길, 막힌 길 처리, 이건 20dev에서 할 수 있자나"). 처음 인계서(2026-10-17)는 이것이 사이클 17/22 몫이라 dev에 없다고 보고 "길 하나 · 막힌 길 빈 목록 · 포트 없으면 `reason=NONE`"으로 1단계를 만들게 했고, dev는 그대로 1-7(`HostQueueBoard.DEFAULT_LANE = "direct"`)·1-8(`EgressLaneStatus.NONE`)을 만들었습니다(dev `plan-feedback.md` `# 사이클 20`). 1-15가 그 자리에 진짜 길을 넣습니다
+- **나가는 길(길 목록 EC2 1 + Webshare 20 · 길 설정 · 길마다 간격 · 막힌 길 처리 · 나간 길 기록)은 이 사이클 1단계 1-15에서 만듭니다** [확정] (사용자, 2026-10-17: "Webshare 20개 길, 막힌 길 처리, 이건 20dev에서 할 수 있자나"). 처음 인계서(2026-10-17)는 이것이 사이클 17·webshare 작업 몫이라 dev에 없다고 보고 "길 하나 · 막힌 길 빈 목록 · 포트 없으면 `reason=NONE`"으로 1단계를 만들게 했고, dev는 그대로 1-7(`HostQueueBoard.DEFAULT_LANE = "direct"`)·1-8(`EgressLaneStatus.NONE`)을 만들었습니다(dev `plan-feedback.md` `# 사이클 20`). 1-15가 그 자리에 진짜 길을 넣습니다
   - 사이클 17에 남는 것: 업체 데이터 세기(80% · 90%, Webshare 사용량 API 키), 업체 오류(407 · 429 · 계정)면 Webshare 길 전체 멈춤, CloudWatch → SNS 메일. 그래서 1단계에서 `vendorLanesPaused()`는 늘 `false`입니다
 - 사이클 21은 main에 들어가 있습니다(836bd7b). 머리말 점 자리 `data-lookup-status-slot`은 이미 `web/src/components/AppLayout.tsx`에 있습니다(2026-10-17 읽음)
 - Liquibase 번호 [확정] (사이클 21 설계 검토 #4): 19 = `usagelog/002`, 21 = `usagelog/003`, 20 = `usagelog/004`. 둘 다 이미 main에 있으므로 004 include는 master **맨 끝**(지금 `usagelog/003` 다음)에 둡니다
@@ -369,7 +369,7 @@
    - 시험: 가짜 스트림으로 남은 것이 계속 있으면 3번 부른 뒤 멈추고 「더 보기」, 누르면 이어서(AC-36). 남은 것이 없으면 이어 부르지 않음(AC-28)
    - 의존: 1-10-2 / 위험: 낮음
 
-### 1-15. 나가는 길: 길 목록과 막힌 길 (사이클 22 범위 일부, 사용자 결정 2026-10-17)
+### 1-15. 나가는 길: 길 목록과 막힌 길 (webshare 작업 범위 일부, 사용자 결정 2026-10-17)
 
 - **대출 조회 요청 User-Agent** = 일반 브라우저와 같은 값, 우리 이름을 넣지 않음 [확정] (사이클 17 spec R13-5, 사용자 2026-10-14; ADR-0095 → ADR-0130이 이어받음). 수집기는 대상 아님. 17 design-delta의 "연락처를 넣은 값"은 이것과 어긋난 것이라 17이 맞춤
 
@@ -377,7 +377,7 @@
 - 왜 여기: 사용자 "Webshare 20개 길, 막힌 길 처리, 이건 20dev에서 할 수 있자나" (2026-10-17, webshare 세션 전달) [확정]. 사이클 17 인계 파일 `from-research-lookup-egress.md`의 #1~#4·#9를 이 번호로 옮깁니다. 같은 결정이 plan `docs/research/deploy/multi-source-ip.md` 11절, `docs/cycles/17-first-deploy/design-delta.md` 머리에 있습니다
 - 기준 문서(plan, 읽기 전용): ADR-0130(Accepted, ADR-0095를 대신함), ADR-0094(교보 구독형 서버), `docs/cycles/17-first-deploy/spec.md` R13 · AC-8 · AC-9, `docs/cycles/17-first-deploy/from-research-lookup-egress.md` #1~#4 · #9, `from-cycle-20-proxy-only.md`, `from-cycle-20-blocked-ip-resume.md`, `docs/research/deploy/multi-source-ip.md` 7 · 8 · 9 · 11절, `docs/settings-index.md` 3 · 4 · 8절
 - 이 번호에서 만들지 않는 것(사이클 17에 남음): 아래 "사이클 17에 남는 것"
-- 기록: 이 번호의 기록은 dev `docs/plan-feedback.md`의 **`# 사이클 22 (사이클 20 안에서)`** 절에 적습니다(dev 세션이 정한 절 이름). 나머지 1단계 기록은 `# 사이클 20` 그대로
+- 기록: 이 번호의 기록은 dev `docs/plan-feedback.md`의 **`# 사이클 webshare (사이클 20 안에서, 2026-10-17)`** 절에 적습니다(dev 세션이 정한 절 이름). 나머지 1단계 기록은 `# 사이클 20` 그대로
 
 #### 정해진 값 (바꾸지 않음)
 
@@ -435,7 +435,7 @@
      - 막힘 판정: 그 길 · 그 사이트 응답을 보고 dev가 정한 기준으로(ADR-0094) [안: dev]. 1MB 넘음 · 해석 실패(`parse_busy` 포함) · 시간 초과 한 번은 막힘으로 보지 않는 안 [안: dev]
      - 다시 시험: 다음 시험 시각이 지난 줄마다 그 길로 시험 요청 1건. 그 길 · 호스트의 1건 · 1초 자리를 함께 씀. 정상이면 줄을 지우고, 아니면 쉼 × 2(상한 7일)
      - `프록시만`이면 `direct` 길은 목록에 없으므로 시험도 하지 않습니다
-     - 로그: `lane_paused host=… lane=… vendor=… nextRetestAt=…`, `lane_retest host=… lane=… result=… nextRetestAt=…`, `lane_resumed host=… lane=…`, 7일 상한에 닿을 때 `lane_retest_capped …` (모양 [안: dev]. 사이클 17 CloudWatch 경보 · 메일이 이 줄을 읽음 → 이름을 `# 사이클 22 (사이클 20 안에서)`에 적음)
+     - 로그: `lane_paused host=… lane=… vendor=… nextRetestAt=…`, `lane_retest host=… lane=… result=… nextRetestAt=…`, `lane_resumed host=… lane=…`, 7일 상한에 닿을 때 `lane_retest_capped …` (모양 [안: dev]. 사이클 17 CloudWatch 경보 · 메일이 이 줄을 읽음 → 이름을 `# 사이클 webshare (사이클 20 안에서, 2026-10-17)`에 적음)
      - 지표: 길 · 사이트별 막힘 0/1, 시험 횟수(Actuator 또는 1-11 요약 로그. 방식 [안: dev])
      - 메모리라 다시 켜면 막힌 길 표가 비고, 막힌 길은 다음 실제 요청에서 다시 막힘으로 판정됩니다 [안: 감수]
    - 위험: 중간
@@ -483,7 +483,7 @@
 - [ ] 위 "시험" 표 모두 통과, `backend/` · `fetch-service/` `./gradlew build`(모듈 검증 포함. 새 모듈 · 이벤트 없음, 모든 새 코드는 `availability/internal` 안)
 - [ ] `fetch.mode=direct`와 `fetch-service` 두 경로 모두 길을 씀
 - [ ] 로컬에서 시험용 프록시 둘을 `CHAEKCHECK_AVAILABILITY_EGRESS_PROXIES`로 넣고 `bootRun` → 실제 검색에서 `lane=` 줄이 길마다 남고, `CHAEKCHECK_AVAILABILITY_EGRESS_MODE=proxy-only`로 켜면 `lane=direct` 줄 0
-- [ ] dev `docs/maintenance/settings-index.md`에 새 속성 · 환경 변수 · 뜻이 바뀐 `host-max-concurrency`/`host-min-interval`, `# 사이클 22 (사이클 20 안에서)`에 정한 이름 · 막힘 기준 숫자 · 교보 내리기 기준 · 로그 줄 모양
+- [ ] dev `docs/maintenance/settings-index.md`에 새 속성 · 환경 변수 · 뜻이 바뀐 `host-max-concurrency`/`host-min-interval`, `# 사이클 webshare (사이클 20 안에서, 2026-10-17)`에 정한 이름 · 막힘 기준 숫자 · 교보 내리기 기준 · 로그 줄 모양
 
 #### 사이클 17에 남는 것 (이 번호에서 만들지 않음)
 
@@ -491,7 +491,7 @@
 - 업체 쪽 오류(407 · 429 `client_connect_high_concurrency` · 계정 확인 · 정지)면 Webshare 길 전체 즉시 멈춤, EC2 IP로 계속(#6). 이때 `EgressLaneStatus.vendorLanesPaused()`를 17이 채웁니다
 - CloudWatch 경보 → SNS 메일(같은 일 1시간에 한 번, 보낼 일 다섯 가지)(#7)
 - 운영 `prod.env` · compose의 길 설정 값과 Webshare 주소 비밀 값 넣기
-- 1-15는 17이 위 셋을 붙일 자리만 남깁니다: 길마다 받은 바이트를 셀 수 있는 곳(`SiteResponse` · 로그), 업체 길을 한꺼번에 멈출 수 있는 길 목록 [안: dev가 자리 모양을 `# 사이클 22 (사이클 20 안에서)`에 적음]
+- 1-15는 17이 위 셋을 붙일 자리만 남깁니다: 길마다 받은 바이트를 셀 수 있는 곳(`SiteResponse` · 로그), 업체 길을 한꺼번에 멈출 수 있는 길 목록 [안: dev가 자리 모양을 `# 사이클 webshare (사이클 20 안에서, 2026-10-17)`에 적음]
 
 ### 1단계 완료 기준
 
@@ -505,7 +505,7 @@
   - 「확인하지 못한 도서관」 묶음 · 「밀려요」 글이 이름 아래
   - 책 화면 「더 보기」
   - Chrome 폰 흉내만으로는 부족합니다 (사용자 결정, 2026-10-12, `docs/cycles/10-popular-books/easy/2026-10-12-design-addendum-decisions.html` #3)
-- [ ] dev `docs/maintenance/settings-index.md`에 1단계 값 모두 + `docs/plan-feedback.md` `# 사이클 20` 1단계 기록 + 1-15는 `# 사이클 22 (사이클 20 안에서)` 기록
+- [ ] dev `docs/maintenance/settings-index.md`에 1단계 값 모두 + `docs/plan-feedback.md` `# 사이클 20` 1단계 기록 + 1-15는 `# 사이클 webshare (사이클 20 안에서, 2026-10-17)` 기록
 
 ---
 
@@ -933,9 +933,9 @@
 - 실패한 도서관을 서버가 대신 다시 부르기(서버 대행 목록에 처음부터 넣은 도서관만 3단계에서)
 - 처리방침 문구 변경(공개 전 사용자 확인)
 
-## dev `docs/plan-feedback.md`에 기록해 주세요 (`# 사이클 20` 새 절, 1-15는 `# 사이클 22 (사이클 20 안에서)`)
+## dev `docs/plan-feedback.md`에 기록해 주세요 (`# 사이클 20` 새 절, 1-15는 `# 사이클 webshare (사이클 20 안에서, 2026-10-17)`)
 
-단계마다 끝날 때 다음을 적습니다. 다음 plan 회고(retro) 입력입니다. 사이클 18 · 21 회고도 아직이므로 겹치는 것은 이 절에 적습니다. 1-15(나가는 길)의 기록은 dev 세션이 정한 절 **`# 사이클 22 (사이클 20 안에서)`**에 따로 적습니다: 정한 이름(속성 · 환경 변수 · 길 번호 · 클래스), 막힘 기준 숫자, 교보 동시 1건으로 내리는 기준, 멈춤 · 시험 · 풀림 로그 줄 모양(사이클 17 경보가 읽음), 사이클 17이 업체 데이터 세기 · 업체 길 멈춤을 붙일 자리, 사이클 17 배포 때 EC2에서 본 실제 21길 결과.
+단계마다 끝날 때 다음을 적습니다. 다음 plan 회고(retro) 입력입니다. 사이클 18 · 21 회고도 아직이므로 겹치는 것은 이 절에 적습니다. 1-15(나가는 길)의 기록은 dev 세션이 정한 절 **`# 사이클 webshare (사이클 20 안에서, 2026-10-17)`**에 따로 적습니다: 정한 이름(속성 · 환경 변수 · 길 번호 · 클래스), 막힘 기준 숫자, 교보 동시 1건으로 내리는 기준, 멈춤 · 시험 · 풀림 로그 줄 모양(사이클 17 경보가 읽음), 사이클 17이 업체 데이터 세기 · 업체 길 멈춤을 붙일 자리, 사이클 17 배포 때 EC2에서 본 실제 21길 결과.
 
 - 설계와 달라진 점과 이유(사용자 발언은 그대로)
 - 정한 이름: 클래스 · 속성 · 환경 변수 · 코드(`DB_ERROR`, `BODY_TOO_LARGE`, `parse_busy`, `client_ip_changed`, `invalid_client_key`, `lookup_ip_limited`, 쿠키 이름, 계획 주소 끝 이름, `protocol`, `VITE_*`)
