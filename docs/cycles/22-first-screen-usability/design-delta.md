@@ -64,7 +64,7 @@ sequenceDiagram
   participant RL as ResultList
   participant S1 as SearchPage
   participant API as 서버
-  U->>RL: [전국에서 더 찾기] 또는 ①이 빈 줄의 [전국에서 찾기]
+  U->>RL: [전국에서 더 찾기] 또는 ①이 빈 줄의 [전국에서 찾기] (또는 상세검색 ☐ 전국에서 찾기 + [검색])
   RL->>S1: 주소에 scope=all (브라우저 저장 안 함)
   S1->>API: 같은 조건으로 검색 스트림 (scope=all)
   API-->>S1: targets 약 376곳 → 접힌 줄 옆 "전국에서 찾는 중 · N곳" [내 도서관만]
@@ -159,7 +159,7 @@ stateDiagram-v2
 | D7 | 로그인한 사람: `RegionContext.ready=false` 동안 검색을 시작하지 않음(`bookQuery=null`). 계정 읽기 실패: 지역 없이 `joinable`, 접힌 줄에 "내 도서관을 불러오지 못했어요 [다시 시도]", 녹색 안내 줄 숨김 | 설계 결정 #7 [확정] (사이클 06 flow S1 "읽는 동안 all" 대체) |
 | D8 | 방문 가입을 뺀 뒤 제목 자리 "방문 가입 도서관을 뺐어요 · [다시 넣기]" (수 없음) | 설계 결정 #8 [확정] |
 | D9 | `BookPage`는 `ResultList grouped=false`, `PicksBookDialog`는 `ResultRow tags=false`. 가입 정보 창의 "누구나 가입" → "어디 살든 온라인 가입"은 공통이라 그 화면들에서도 바뀜(AC-17 예외). 추천도서·책 화면의 범위는 늘 `joinable`(주소 `scope=all`일 때만 전국) | 설계 결정 #9 [확정] |
-| D10 | 범위 읽기 `readScope(params)`: 주소 `scope=all`이면 `all`, 아니면 `joinable`. `search()`는 새 주소에 `scope`를 싣지 않음. 책 링크(`bookLinkSearch`)는 주소에 있던 `scope=all`을 이어서 실음 | 흐름 후속 #2 [확정] / 책 링크 [안] |
+| D10 | 범위 읽기 `readScope(params)`: 주소 `scope=all`이면 `all`, 아니면 `joinable`. `search()`는 상세검색의 "☐ 전국에서 찾기"가 체크됐을 때만 새 주소에 `scope=all`을 실음(체크 상태는 저장하지 않고 검색 뒤 풀림). 결과 안 [전국에서 찾기]·[전국에서 더 찾기]는 주소에 `scope=all`을 붙여 다시 검색. 책 링크(`bookLinkSearch`)는 주소에 있던 `scope=all`을 이어서 실음 | 흐름 후속 #2, ADR-0135 [확정] / 책 링크 [안] |
 | D11 | `RegionGrid` 크기: 글자 16px 이상, 체크 칸 높이 40px 이상, 너비 100%(PC 상자 최대 약 640px, 시군구 4칸 → 좁으면 3·2칸), 폰은 화면 너비 전체 | spec R12-1 [확정] |
 
 ## 데이터
@@ -192,9 +192,9 @@ stateDiagram-v2
 
 ## 결정 기록
 
-- ADR-0135 검색 범위 스위치 삭제, 전국은 결과 안 링크로 그 검색만, 로그인 계정 읽을 때까지 대기 (초안 → 사용자 승인 뒤 Accepted)
-- ADR-0136 결과 묶음 넷·꼬리표·말풍선, 서버 변경 없음, 접힌 줄 수는 계획 길이
-- ADR-0137 지역 격자 공통 부품(창 삭제, 크기), 체크는 저장만·검색은 [검색] 단추
+- [ADR-0135](../../adr/0135-no-scope-switch-nationwide-per-search.md) 검색 범위 스위치 삭제, 전국은 결과 안 링크·상세검색 칸으로 그 검색만, 로그인 계정 읽을 때까지 대기 — Accepted (2026-10-18)
+- [ADR-0136](../../adr/0136-result-groups-and-tags.md) 결과 묶음 넷·꼬리표·말풍선, 서버 변경 없음, 접힌 줄 수는 계획 길이 — Accepted (2026-10-18)
+- [ADR-0137](../../adr/0137-region-grid-component-save-only.md) 지역 격자 공통 부품(창 삭제, 크기), 체크는 저장만·검색은 [검색] 단추 — Accepted (2026-10-18)
 
 ## 세 관점 자체 점검 (2026-10-18)
 
