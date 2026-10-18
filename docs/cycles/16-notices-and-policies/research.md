@@ -171,6 +171,18 @@
 - Cloudflare 한국 이용자 부속서 https://www.cloudflare.com/privacypolicy/southkorea-addendum/ : Cloudflare 자신의 해외 수탁자 표(회사·나라·항목·"Over the network, upon collection of personal information"). 검색 요약으로만 봄, 원문 표는 직접 열지 않음
 - 맘맘 https://mom-mom.net/policy/overseas-transfer , 삼성SDS https://www.samsungsds.com/kr/notice/1284131_4408.html : Cloudflare 언급 없음(Cloudflare를 쓰는지는 모름)
 
+### 6.6 덧붙임: 공개 전 채운 값 — AWS 계약 법인·지역, Cloudflare 연락처·보유기간 (사이클 17, 확인 2026-10-18)
+
+오늘 배포(사이클 17) 기준으로 privacy-policy.md의 [확인 필요]를 채우며 공식 출처에서 확인함. 위 6절 정리표의 "AWS는 서울 리전이라 국외 이전 아님"(150행)은 이번 배포로 **바뀜**: 운영 EC2가 시드니(ap-southeast-2, 호주)로 정해져(사이클 17 `research.md` §17, [from-research-lookup-egress.md](../17-first-deploy/from-research-lookup-egress.md) "운영 EC2는 시드니") AWS도 **국외 이전(호주)**가 됨.
+
+- **AWS 계약 법인** [확정]: 한국 고객의 AWS 계약 당사자는 **Amazon Web Services Korea LLC**, 주소 "L12, East Tower, 231, Teheran-ro, Gangnam-gu, Seoul, Republic of Korea, 06142". 출처 https://aws.amazon.com/legal/aws-contracting-party/ (확인 2026-10-18). 2026-08-14 판 한국어 AWS Customer Agreement도 "제12항에 명시된 AWS 계약 당사자"로 같은 법인을 가리킴
+- **AWS 지역·국외 이전** [확정]: 운영 서버 ap-southeast-2 = 호주(시드니). 데이터가 호주에 저장됨 → 국외 이전 국가 = 호주. 받는 자 명칭은 계약 법인 Amazon Web Services Korea LLC로 적음(리디가 AWS를 위탁+국외이전 양쪽에 적는 방식과 같음, 165행)
+- **Cloudflare 연락처** [확정]: Cloudflare, Inc., 101 Townsend St., San Francisco, CA 94107, USA / 개인정보 문의 privacyquestions@cloudflare.com (DPO dpo@cloudflare.com, 권리행사 sar@cloudflare.com). 출처 https://www.cloudflare.com/privacypolicy/ (확인 2026-10-18)
+- **Cloudflare 보유기간** [확정]: 고정 기간을 공개하지 않음. 방침 원문 "We store your personal information for a period of time that is consistent with the business purposes … When the data retention period expires for a given type of data, we will delete or destroy it." → 처리방침에는 "업무에 필요한 기간 동안 보관하고 기간이 지나면 지웁니다"로 적음. 출처 https://www.cloudflare.com/privacypolicy/ (확인 2026-10-18)
+- **쿠키 여부** [확정]: 로그인 유지·상태 확인 쿠키와 CSRF 보안 쿠키(`XSRF-TOKEN`)만, 기록용 쿠키 없음 — privacy-policy.md §3에 이미 반영됨(사이클 15 정정). README의 "쿠키 여부 [확인 필요]"는 해소됨
+- **안전 조치** [확정, 침해 위협 고려해 표현 수준 조절 — 6.2 작성지침]: 접근 권한 제한, 전송 구간 암호화(HTTPS), 비밀값 암호화 보관(AWS Parameter Store). 터널·포트 등 구조 세부는 적지 않음
+- **최종 최소판 결정** [확정] (사용자 "최소한만", 2026-10-18, `easy/2026-10-18-deploy-content-decisions.html` 안#1·#2 승인): 위에서 확인한 값 중 처리방침에 **실제로 공개하는 것은 업체 이름·나라·맡긴 일·(Cloudflare)옮기는 항목·보유기간**뿐. 거리 주소(AWS·Cloudflare)와 Cloudflare 문의 이메일은 공개하지 않고, 국외이전·개인정보 문의는 §4 담당자(chaekcheck9104@gmail.com) 한 곳으로 모음(리디·KED 방식, 6.3·6.4). 확인한 주소·법인명·이메일은 근거로 이 절에 남김
+
 ### 6.5 덧붙임: 다른 서비스도 처리방침에 IP를 적나 (사용자 질문 "보통 다른 방침/공지들도 이래? ... ip쓴다는 것도 명시해?", 확인 2026-10-13)
 - 카카오 https://www.kakao.com/policy/privacy : "2. 개인정보 수집"의 서비스 이용 내역 "IP주소, 쿠키, 방문 및 접속기록, 서비스 부정이용 기록" [확정]
 - 리디 https://policy.ridi.com/legal/privacy : 동의 없이 수집하는 항목 표 "IP주소, 쿠키, 브라우저 종류, 모바일 기기정보(앱 버전, OS 버전, Device ID)", 접속 기록 90일, 문서 15개 절 [확정]

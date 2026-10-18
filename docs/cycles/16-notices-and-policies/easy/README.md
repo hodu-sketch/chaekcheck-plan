@@ -24,3 +24,4 @@
 | [2026-10-14-easy-modules.html](2026-10-14-easy-modules.html) | docs/current 모듈 맵의 사이클 16 부분 쉬운 설명 | `../../../current/module-map.md` | 없음 (설명) |
 | [2026-10-14-easy-flows.html](2026-10-14-easy-flows.html) | docs/current 흐름 38~41 쉬운 설명 | `../../../current/flows.md` | 없음 (설명) |
 | [2026-10-14-easy-data.html](2026-10-14-easy-data.html) | docs/current 데이터 모델의 sitecontent 표 쉬운 설명 | `../../../current/data-model.md` | 없음 (설명) |
+| [2026-10-18-deploy-content-decisions.html](2026-10-18-deploy-content-decisions.html) | 오늘(2026-10-18) 공개용 문서 — 처리방침 §2 최소판(업체 이름·나라만, AWS 호주), §4 안전 조치, 나머지 네 글·첫 공지 이대로 공개 | `../drafts/privacy-policy.md` 외 | 없음 (2026-10-18, 안 3개 전부 승인; 서비스 안내 연락처는 "문의:"로 사용자 제안 반영) |
