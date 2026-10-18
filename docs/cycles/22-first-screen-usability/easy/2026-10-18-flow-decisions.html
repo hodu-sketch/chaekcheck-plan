@@ -195,6 +195,42 @@ th{color:var(--muted);font-weight:500}
 <p><b>왜:</b> 만들 것이 가장 적고(기본 부품), 키보드·화면 읽기 도우미가 그대로 되며, 폰에서는 손가락 크기 문제가 운영체제 몫이 됩니다. 지역 창이 작았던 문제(P7)가 생길 자리가 없습니다.</p>
 <div class="prop">제안: 승인.</div>
 <p class="alt">다른 선택: 우리가 그린 목록(검색 가능한 드롭다운) — 모양은 통일되지만 폰 접근성·키보드 처리를 직접 만들어야 하고, 시군구 최대 31개(경기)라 검색 기능이 꼭 필요하지도 않습니다.</p>
+
+<h3>질문에 답 (2026-10-18): "그냥 기존 것대로, 프론트만 잘 하면 작은 노트북 화면에서도 잘 보이는 거 아니야?"</h3>
+<p class="concl">네, <b>크기 문제만이라면 기존 격자(시도 목록 + 시군구 체크 칸)를 그대로 두고 글자·칸 크기만 키우면 됩니다.</b> 지금 창은 너비 약 830px·글자 "작음(xs/sm)"으로 고정돼 있어서(dev <code>RegionModal.module.css</code> 15·104·117행, 2026-10-18 읽음) TV나 작은 노트북에서 작아 보였고, 이것은 CSS만 고치면 됩니다(범위 결정 #5의 (가)). 두 단계 고르기를 낸 이유는 크기가 아니라 <b>자리</b>입니다: 이번 사이클에서 지역 고르기가 첫 화면 줄·펼친 상자·상세검색·폰 시트 네 곳에 들어가는데, 격자는 서울만 25칸이라 그 자리에 넣으면 상자가 세로로 길어집니다. 아래에 두 방식을 같은 자리(첫 화면 펼친 상자)에 그렸으니 보고 골라 주세요.</p>
+<div class="two">
+<div><p><b>(A) 기존 격자를 그대로, 크기만 키워 상자 안에</b></p>
+<div class="real"><div class="bd" style="padding:12px 18px">
+<div class="ln"><span class="seg2"><span class="on">내 도서관</span><span>전국</span></span><span class="k p">내 도서관: 서울 강남구 ⌃</span></div>
+<div style="background:#fff;border:1px solid #d9d9e0;border-radius:12px;padding:12px 16px;box-shadow:0 8px 24px rgba(0,0,0,.10)">
+<div class="ln"><b>사는 곳</b><span class="tg me" style="margin:0">서울 강남구 ×</span></div>
+<div style="display:flex;gap:10px;margin:6px 0">
+<div style="width:90px;border-right:1px solid #eee;font-size:13px;line-height:1.9"><div style="color:#5b4bd1;font-weight:700">서울 <span class="tg me" style="margin:0;padding:0 5px">1</span></div><div>전남광주</div><div>부산</div><div>대구</div><div>인천</div><div>대전</div><div style="color:#999">… 10개 더</div></div>
+<div style="flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;font-size:13px"><span class="k">☐ 종로구</span><span class="k">☐ 중구</span><span class="k">☐ 용산구</span><span class="k">☐ 성동구</span><span class="k">☐ 광진구</span><span class="k">☐ 동대문구</span><span class="k">☐ 중랑구</span><span class="k">☐ 성북구</span><span class="k">☐ 강북구</span><span class="k">☐ 도봉구</span><span class="k">☐ 노원구</span><span class="k">☐ 은평구</span><span class="k">☐ 서대문구</span><span class="k">☐ 마포구</span><span class="k">☐ 양천구</span><span class="k">☐ 강서구</span><span class="k">☐ 구로구</span><span class="k">☐ 금천구</span><span class="k">☐ 영등포구</span><span class="k">☐ 동작구</span><span class="k">☐ 관악구</span><span class="k">☐ 서초구</span><span class="k p">☑ 강남구</span><span class="k">☐ 송파구</span><span class="k">☐ 강동구</span></div>
+</div>
+<div class="ln"><b>일하는 곳</b><span style="color:#666">없음 · 고르려면 위와 같은 격자가 한 번 더</span></div>
+<div class="ln"><span>☐ 직접 가야 가입되는 도서관은 빼기</span><span style="margin-left:auto"><u style="color:#5b4bd1">마이페이지에서 전체 보기</u></span></div>
+</div></div></div>
+<p class="cap">(A): 한눈에 여러 구를 고를 수 있지만, 상자가 세로 약 300px 이상이 되고 일하는 곳까지 열면 두 배. 폰에서는 시트가 한 화면을 넘어 스크롤됩니다(지금 창과 같음).</p></div>
+<div><p><b>(B) 두 단계 고르기 (안 1)</b></p>
+<div class="real"><div class="bd" style="padding:12px 18px">
+<div class="ln"><span class="seg2"><span class="on">내 도서관</span><span>전국</span></span><span class="k p">내 도서관: 서울 강남구 ⌃</span></div>
+<div style="background:#fff;border:1px solid #d9d9e0;border-radius:12px;padding:12px 16px;box-shadow:0 8px 24px rgba(0,0,0,.10)">
+<div class="ln"><b style="width:64px">사는 곳</b><span class="tg me" style="margin:0">서울 강남구 ×</span><span class="k">시도 ⌄</span><span class="k">시군구 ⌄</span></div>
+<div class="ln"><b style="width:64px">일하는 곳</b><span style="color:#666">없음</span><span class="k">시도 ⌄</span><span class="k">시군구 ⌄</span></div>
+<div class="ln"><span>☐ 직접 가야 가입되는 도서관은 빼기</span><span style="margin-left:auto"><u style="color:#5b4bd1">마이페이지에서 전체 보기</u></span></div>
+</div></div></div>
+<p class="cap">(B): 상자가 세 줄로 끝나고 폰 시트도 짧습니다. 대신 구를 여러 개 고르려면 고르기를 그만큼 반복합니다.</p></div>
+</div>
+<table>
+<tr><th style="width:24%"></th><th>(A) 기존 격자 + 크기 키움</th><th>(B) 두 단계 고르기</th></tr>
+<tr><td>작은 노트북·TV</td><td>CSS로 글자·칸을 키우면 해결</td><td>기본 부품이라 기기 글자 크기를 따름</td></tr>
+<tr><td>첫 화면 펼친 상자</td><td>세로로 길어짐(서울 25칸, 경기 31칸)</td><td>세 줄</td></tr>
+<tr><td>폰 시트</td><td>한 화면 넘어 스크롤(지금 창과 같음)</td><td>짧음</td></tr>
+<tr><td>구 여러 개 고르기</td><td>한눈에 체크</td><td>한 개씩 반복</td></tr>
+<tr><td>만들 것</td><td>지금 창의 격자를 떼어 상자·상세검색·시트·마이페이지에 넣고 크기 손질</td><td>새 부품 하나(작음)</td></tr>
+</table>
+<div class="prop">다시 낸 제안: 그대로 (B). 이유는 자리입니다 — 첫 화면 상자와 폰 시트가 짧아야 "지역 먼저 묻기"가 부담 없이 보입니다. 여러 구를 고르는 사람은 드물고, 그 사람은 마이페이지에서 반복해 고르면 됩니다. <b>(A)를 원하시면 안 1을 미승인하고 "기존 격자"라고 적어 주세요</b> — 그러면 (A)로 바꾸고 격자 크기 규칙(글자 16px 이상, 칸 높이 40px)을 명세에 더합니다.</div>
 </div>
 
 <div class="card item"><h2><span class="num">2</span>PC에서 접힌 줄을 펼치면 검색창 아래에 떠 있는 상자,<br>결과 목록은 밀리지 않음</h2>
@@ -230,10 +266,13 @@ th{color:var(--muted);font-weight:500}
 <p class="concl">[안] 폰에서 [상세검색 ⌄]을 누르면 지금처럼 검색창 아래로 패널이 펼쳐지고, 출판사 줄 아래에 "지역"(사는 곳·일하는 곳 꼬리표 + 고르기)과 "도서관"(이름으로 찾기) 두 줄이 더해집니다. 시트로 바꾸지 않습니다. (flow S1-adv)</p>
 <div class="ph"><div class="body"><div class="sbox">책 제목 <span class="btn p">검색</span></div><div class="row l"><span class="btn p">상세검색 ⌃</span><span class="btn">⚙</span></div>
 <div class="panel"><div class="frow"><label>제목</label><span>☐ 완전 일치</span></div><div class="frow"><label>저자</label><span class="in">저자</span></div><div class="frow"><label>출판사</label><span class="in">출판사</span></div>
-<div class="frow new"><label>지역</label><span class="tag me">서울 강남구 ×</span></div><div class="row l" style="margin-left:52px"><span class="sel">시도 ▾</span><span class="sel">시군구 ▾</span></div>
+<div class="frow new"><label>사는 곳</label><span class="tag me">서울 강남구 ×</span></div><div class="row l" style="margin-left:52px"><span class="sel">시도 ▾</span><span class="sel">시군구 ▾</span></div>
+<div class="frow new"><label>일하는 곳</label><span style="color:var(--muted)">없음</span></div><div class="row l" style="margin-left:52px"><span class="sel">시도 ▾</span><span class="sel">시군구 ▾</span></div>
 <div class="frow new"><label>도서관</label><span class="in">도서관 이름으로 찾기</span></div><div class="hint" style="text-align:left;margin-left:52px">직접 추가 0/20</div></div>
 </div></div>
-<p class="cap">폰 상세검색: 아래 두 줄(빨간 점선)이 새로. 폰에서는 지역 값이 ⚙ 시트와 상세검색 두 곳에서 보이지만 같은 값입니다.</p>
+<p class="cap">폰 상세검색: 아래 세 줄(빨간 점선)이 새로 — <b>사는 곳·일하는 곳은 따로 줄</b>이고, 그다음 도서관. 폰에서는 지역 값이 ⚙ 시트와 상세검색 두 곳에서 보이지만 같은 값입니다.</p>
+<h3>질문에 답 (2026-10-18): "이러면 거주랑 직장이 구분이 안 되는데?"</h3>
+<p class="concl">맞습니다, 처음 그림이 "지역" 한 줄로 뭉쳐 있어서 그렇게 보였습니다. 바로잡았습니다: 상세검색에서도 PC·폰 모두 <b>"사는 곳" 줄과 "일하는 곳" 줄이 따로</b> 있고(각각 꼬리표 + 시도·시군구 고르기), 첫 화면의 펼친 상자·마이페이지와 같은 모양입니다. 위 폰 그림을 고쳤고, flow.md·spec.md의 "지역 줄"도 "사는 곳 줄·일하는 곳 줄"로 고쳤습니다.</p>
 <div class="prop">제안: 승인. 상세검색의 모양을 바꾸지 않고 줄만 더하는 것이 가장 작은 변경입니다.</div>
 <p class="alt">다른 선택: 폰 상세검색에는 지역·도서관을 넣지 않고 ⚙ 시트에만 — 폰에서 입구가 하나로 단순하지만, 범위 결정 #4(상세검색에 두 줄)가 PC에만 적용되는 셈이 됩니다.</p>
 </div>

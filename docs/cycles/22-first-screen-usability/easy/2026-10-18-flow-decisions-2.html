@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 22 화면 흐름 결정 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:1080px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.card h3{margin:18px 0 8px;font-size:20px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+.quote{border-left:4px solid var(--line);margin:8px 0;padding:4px 14px;color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+.v-flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.v-box{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:7px 11px;font-size:15px;text-align:center;min-width:90px}
+.v-box small{display:block;color:var(--muted);font-size:12px}
+.v-hi{border-color:var(--accent);background:var(--accent-bg)}
+.v-warn{border-color:var(--warn);background:var(--warn-bg)}
+.v-ok{border-color:var(--ok);background:var(--ok-bg)}
+.v-no{border-color:var(--no);background:var(--no-bg)}
+.v-arr{color:var(--muted);font-size:18px}
+/* 화면 그림: 자리와 순서만 보여 줍니다 (색·모양은 실제 디자인이 아님) */
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0}
+.pc{flex:1 1 520px;max-width:640px;border:2px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;font-size:13px}
+.ph{flex:0 0 250px;width:250px;border:2px solid var(--line);border-radius:22px;background:var(--bg);overflow:hidden;font-size:12px}
+.tbar{display:flex;gap:12px;align-items:center;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line)}
+.tbar b{color:#5b4bd1;font-size:15px}
+.tbar .r{margin-left:auto;display:flex;gap:8px;align-items:center}
+.btn{display:inline-block;border:1px solid var(--line);border-radius:7px;padding:2px 9px;background:var(--card);white-space:nowrap}
+.btn.p{background:#ede9fb;border-color:#c9bff5;color:#5b4bd1;font-weight:700}
+.btn.on{background:#5b4bd1;color:#fff;border-color:#5b4bd1}
+.body{padding:14px 16px}
+.ph .body{padding:12px 10px}
+.title{text-align:center;font-weight:700;font-size:17px;margin:8px 0 10px}
+.ph .title{font-size:15px}
+.title span{color:#5b4bd1}
+.sbox{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;background:var(--card);padding:6px 12px;color:var(--muted)}
+.sbox .btn{margin-left:auto}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0;justify-content:center}
+.row.l{justify-content:flex-start}
+.tag{display:inline-block;border-radius:999px;padding:0 8px;font-size:11px;font-weight:700;border:1px solid}
+.tag.me{color:#5b4bd1;border-color:#c9bff5;background:#ede9fb}
+.tag.open{color:var(--ok);border-color:var(--ok);background:var(--ok-bg)}
+.tag.add{color:var(--warn);border-color:var(--warn);background:var(--warn-bg)}
+.hint{color:var(--muted);font-size:12px;text-align:center;margin:4px 0}
+/* 실제 화면에 가깝게 그린 큰 그림 (chaekcheck.com 2026-10-18 모양을 따라 그림) */
+.real{border:2px solid var(--line);border-radius:12px;background:#f6f6f8;overflow:hidden;font-size:14px;max-width:780px;margin:10px 0;color:#1f2328}
+.real .hd{display:flex;gap:18px;align-items:center;padding:12px 18px;background:#fff;border-bottom:1px solid #e6e6ea}
+.real .hd b{color:#5b4bd1;font-size:20px}.real .hd .r{margin-left:auto;display:flex;gap:10px;align-items:center}
+.real .bd{padding:14px 18px}
+.real .sb{display:flex;align-items:center;gap:8px;border:1px solid #d9d9e0;border-radius:10px;background:#fff;padding:9px 14px}
+.real .sb .k{margin-left:auto}
+.real .k{display:inline-block;border:1px solid #d9d9e0;border-radius:8px;padding:4px 12px;background:#fff;white-space:nowrap}
+.real .k.p{background:#ede9fb;border-color:#c9bff5;color:#5b4bd1;font-weight:700}
+.real .seg2{display:inline-flex;border:1px solid #d9d9e0;border-radius:8px;overflow:hidden;background:#fff}
+.real .seg2 span{padding:4px 12px}.real .seg2 span.on{background:#ede9fb;color:#5b4bd1;font-weight:700}
+.real .ln{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+.real .tabs{display:flex;gap:18px;border-bottom:1px solid #e6e6ea;margin:12px 0 10px;padding:0 4px}
+.real .tabs span{padding:6px 0;color:#777}.real .tabs span.on{color:#1f2328;font-weight:700;border-bottom:2px solid #1f2328}
+.real .grp{font-weight:700;font-size:15px;margin:14px 0 6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.real .grp i{width:9px;height:9px;border-radius:50%;background:#5b4bd1;display:inline-block}
+.real .grp.g2 i{background:#1f7a45}.real .grp.g3 i{background:#999}
+.real .grp small{font-weight:400;color:#666;font-size:13px}
+.real .sub{color:#5b4bd1;font-size:13px;margin:2px 0 6px 17px}
+.real .card2{display:flex;gap:16px;align-items:center;background:#fff;border:1px solid #e6e6ea;border-radius:12px;padding:12px 16px;margin:6px 0}
+.real .card2 .bk{flex:1 1 42%}.real .card2 .bk b{font-size:16px}.real .card2 .bk small{display:block;color:#666}
+.real .card2 .lb{flex:1 1 42%}.real .card2 .lb b{font-size:15px}.real .card2 .lb small{display:block;color:#666}
+.real .cnt2{background:#f3f0ff;color:#5b4bd1;border-radius:8px;padding:6px 10px;white-space:nowrap;font-size:13px;line-height:1.3;text-align:center}
+.real .cnt2 b{display:block;font-size:15px;color:#1f2328}
+.real .tg{display:inline-block;border-radius:999px;padding:0 9px;font-size:12px;font-weight:700;border:1px solid;vertical-align:middle;margin-left:4px}
+.real .tg.me{color:#5b4bd1;border-color:#c9bff5;background:#ede9fb}
+.real .tg.op{color:#1f7a45;border-color:#1f7a45;background:#e3f3ea}
+.real .tg.vi{color:#8a5a00;border-color:#8a5a00;background:#fbf0d9}
+.real .tg.ad{color:#a13b78;border-color:#a13b78;background:#fbe6f1}
+.real .note{background:#e3f3ea;border:1px solid #1f7a45;border-radius:10px;padding:8px 12px;margin:10px 0;font-size:13px}
+.real .pop{background:#fff;border:1px solid #d9d9e0;border-radius:8px;padding:6px 10px;font-size:12px;box-shadow:0 4px 12px rgba(0,0,0,.12);display:inline-block;margin:0 0 4px 40%}
+.realph{border:2px solid var(--line);border-radius:22px;background:#f6f6f8;overflow:hidden;font-size:13px;width:360px;max-width:100%;margin:10px 0;color:#1f2328}
+.realph .hd{display:flex;align-items:center;padding:10px 14px;background:#fff;border-bottom:1px solid #e6e6ea}.realph .hd b{color:#5b4bd1;font-size:18px}.realph .hd .r{margin-left:auto}
+.realph .bd{padding:10px 12px}
+.realph .card2{background:#fff;border:1px solid #e6e6ea;border-radius:12px;padding:10px 12px;margin:6px 0}
+.realph .card2 b{font-size:15px}.realph .card2 small{display:block;color:#666}
+.realph .lb{border-top:1px solid #eee;margin-top:6px;padding-top:6px}
+.realph .cnt3{display:inline-block;background:#f3f0ff;color:#5b4bd1;border-radius:6px;padding:2px 8px;font-size:12px;margin-top:4px}
+.realph .grp{font-weight:700;margin:10px 0 4px}.realph .grp small{font-weight:400;color:#666;display:block;font-size:12px}
+.realph .note{background:#e3f3ea;border:1px solid #1f7a45;border-radius:10px;padding:6px 10px;margin:8px 0;font-size:12px}
+.realph .tg{display:inline-block;border-radius:999px;padding:0 8px;font-size:11px;font-weight:700;border:1px solid;vertical-align:middle;margin-left:3px}
+.realph .tg.me{color:#5b4bd1;border-color:#c9bff5;background:#ede9fb}.realph .tg.op{color:#1f7a45;border-color:#1f7a45;background:#e3f3ea}.realph .tg.vi{color:#8a5a00;border-color:#8a5a00;background:#fbf0d9}
+.realph .k{display:inline-block;border:1px solid #d9d9e0;border-radius:8px;padding:3px 10px;background:#fff}
+.realph .k.p{background:#ede9fb;border-color:#c9bff5;color:#5b4bd1;font-weight:700}
+.lvl{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:10px 0}
+@media (max-width:700px){.lvl{grid-template-columns:1fr}}
+.lvl div{border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:16px;background:var(--card)}
+.lvl div b{display:block;margin-bottom:4px}
+.lvl div.pick{border-color:var(--accent);background:var(--accent-bg)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;background:var(--card)}
+.seg span{padding:2px 10px;white-space:nowrap}
+.seg span.on{background:#ede9fb;color:#5b4bd1;font-weight:700}
+.new{outline:2px dashed var(--no);outline-offset:3px;border-radius:8px}
+.res{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:8px 10px;margin:6px 0;display:flex;gap:10px;align-items:center}
+.res .bk{flex:1 1 40%;font-weight:700}.res .bk small{display:block;font-weight:400;color:var(--muted)}
+.res .lib{flex:1 1 40%}.res .lib small{display:block;color:var(--muted)}
+.res .cnt{background:#f3f0ff;color:#5b4bd1;border-radius:6px;padding:2px 6px;white-space:nowrap;font-size:11px}
+.sec{font-weight:700;margin:10px 0 2px;display:flex;align-items:center;gap:6px}
+.sec i{width:8px;height:8px;border-radius:50%;background:#5b4bd1;display:inline-block}
+.sec.grey i{background:var(--muted)}
+.panel{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:10px 12px;margin:8px 0}
+.frow{display:flex;gap:8px;align-items:center;margin:5px 0}
+.frow label{width:48px;font-weight:700}
+.frow .in{flex:1;border:1px solid var(--line);border-radius:6px;padding:3px 8px;color:var(--muted);background:var(--card)}
+.sel{display:inline-block;border:1px solid var(--line);border-radius:6px;padding:3px 8px;background:var(--card)}
+.modal{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:10px 12px;margin:8px auto;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:6px 0}
+.grid span{border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:11px}
+.ph .grid{grid-template-columns:repeat(2,1fr)}
+.big .grid span{font-size:14px;padding:5px 8px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}main table{display:block;overflow-x:auto;max-width:100%}.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="doc">
+
+<p class="lead">지역 고르기를 "기존 격자를 그대로, 크기만 키워 상자 안에"(흐름 결정 #1 (A))로 정하셨습니다. 그러면 처음 온 사람의 첫 화면에서 격자를 어디에 놓을지 하나가 새로 생깁니다. 이 한 가지를 골라 주세요. 앞 페이지의 안 6("누구나 가입" 말 빼기)은 앞 페이지에서 그대로 골라 주시면 됩니다.</p>
+<p class="sub">원문: docs/cycles/22-first-screen-usability/flow.md "지역 격자 부품"(2026-10-18 고침), spec.md R1-2·R12. 격자 크기 규칙(글자 16px 이상, 칸 높이 40px 이상, 들어간 자리 너비 100%)은 "크기만 키워"라는 말에 따라 적었습니다.</p>
+
+<div class="card item"><h2><span class="num">1</span>처음 온 사람의 첫 화면: 격자를 바로 펼치지 않고<br>[사는 곳 고르기] 단추 → 떠 있는 상자에 격자</h2>
+<p class="concl">[안] 지역이 없는 사람의 첫 화면 줄은 "어디서 빌리실 건가요? <b>[사는 곳 고르기]</b>"이고, 누르면 지역을 고른 사람이 접힌 줄을 눌렀을 때와 같은 떠 있는 상자가 사는 곳 격자로 열립니다. 격자를 첫 화면에 바로 펼쳐 두지는 않습니다. 시군구를 체크하면 바로 저장되고, 상자를 닫으면 "내 도서관: 서울 강남구 ▾"로 접힙니다.</p>
+<p><b>왜 바로 펼치지 않나:</b> 격자는 시도 16줄 + 시군구 최대 31칸이라 세로 300px이 넘습니다. 첫 화면 제목 글·검색창 아래에 늘 펼쳐 두면 첫 화면이 격자 화면이 되고, 폰에서는 검색창이 밀립니다. 단추 하나면 "지역을 묻는다"는 뜻은 그대로 보이고 화면은 짧습니다.</p>
+<p><b>장면 1 · 처음 온 사람</b></p>
+<div class="real"><div class="bd" style="text-align:center;padding:30px 18px">
+<div style="font-size:22px;font-weight:700;line-height:1.3;margin-bottom:16px"><span style="color:#5b4bd1">지금 빌릴 수 있는</span><br>전자도서관을 찾아 드려요</div>
+<div class="sb" style="max-width:560px;margin:0 auto;color:#999">책 제목을 입력하세요 <span class="k p" style="margin-left:auto">검색</span><span class="k">상세검색 ⌄</span><span class="k">⚙</span></div>
+<div class="ln" style="justify-content:center;margin-top:14px"><span class="seg2"><span class="on">내 도서관</span><span>전국</span></span><span style="font-weight:700">어디서 빌리실 건가요?</span><span class="k p">사는 곳 고르기</span></div>
+<div style="color:#666;font-size:13px">고르면 그 지역 기준으로 찾아요 · 안 고르면 전국에서 찾아요</div>
+</div></div>
+<p><b>장면 2 · [사는 곳 고르기]를 누름 — 상자에 격자</b></p>
+<div class="real"><div class="bd" style="text-align:center;padding:30px 18px 16px">
+<div class="sb" style="max-width:560px;margin:0 auto;color:#999">책 제목을 입력하세요 <span class="k p" style="margin-left:auto">검색</span><span class="k">상세검색 ⌄</span><span class="k">⚙</span></div>
+<div class="ln" style="justify-content:center;margin-top:14px"><span class="seg2"><span class="on">내 도서관</span><span>전국</span></span><span class="k p">어디서 빌리실 건가요? ⌃</span></div>
+<div style="max-width:640px;margin:0 auto;text-align:left;background:#fff;border:1px solid #d9d9e0;border-radius:12px;padding:12px 16px;box-shadow:0 8px 24px rgba(0,0,0,.12)">
+<div class="ln"><b>사는 곳</b><span style="color:#666">아직 고른 지역이 없어요</span></div>
+<div style="display:flex;gap:12px;margin:6px 0">
+<div style="width:96px;border-right:1px solid #eee;font-size:15px;line-height:2"><div style="color:#5b4bd1;font-weight:700">서울</div><div>전남광주</div><div>부산</div><div>대구</div><div>인천</div><div>대전</div><div>울산</div><div style="color:#999">… 9개 더</div></div>
+<div style="flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;font-size:15px"><span class="k" style="padding:7px 10px">☐ 종로구</span><span class="k" style="padding:7px 10px">☐ 중구</span><span class="k" style="padding:7px 10px">☐ 용산구</span><span class="k" style="padding:7px 10px">☐ 성동구</span><span class="k" style="padding:7px 10px">☐ 광진구</span><span class="k" style="padding:7px 10px">☐ 동대문구</span><span class="k" style="padding:7px 10px">☐ 중랑구</span><span class="k" style="padding:7px 10px">☐ 성북구</span><span class="k" style="padding:7px 10px;color:#999">… 17칸 더</span></div>
+</div>
+<div class="ln" style="border-top:1px solid #eee;padding-top:8px"><u style="color:#5b4bd1">일하는 곳도 더하기</u><span style="margin-left:auto">☐ 직접 가야 가입되는 도서관은 빼기</span></div>
+</div>
+</div></div>
+<p class="cap">격자의 글자 15~16px, 칸 높이 40px 정도로 키운 모양. 강남구를 체크하면 바로 꼬리표 "서울 강남구 ×"가 위에 붙고, 상자 밖을 누르면 "내 도서관: 서울 강남구 ▾"로 접힙니다.</p>
+<p><b>폰</b>: 칩 "어디서 빌리실 건가요? ▾" → ⚙ 시트의 "찾을 도서관" 칸에 같은 격자(화면 너비 전체, 지금 창의 폰 모양과 같음). 명세 결정 #2 그대로.</p>
+<div class="prop">제안: 승인. 범위 결정 #1 "처음 온 사람에게는 고르기 자체를 보인다"에서 "고르기 자체"가 격자로 바뀌면서 단추 한 번이 더 생기는 것뿐이고, 나머지 흐름은 그대로입니다.</div>
+<p class="alt">다른 선택: 첫 화면에 격자를 바로 펼쳐 두기 — 단추 한 번이 줄지만 첫 화면이 격자 화면이 되고 폰에서는 검색창이 밀립니다.</p>
+</div>
+
+<div class="card">
+<h2>격자로 바뀌면서 같이 고친 것 (결정 아님, 알림)</h2>
+<ul>
+<li>flow.md "두 단계 고르기 부품" → "지역 격자 부품": 왼쪽 시도 목록 + 오른쪽 시군구 체크 칸, 체크 즉시 저장, 저장 단추 없음. 사는 곳·일하는 곳은 각각 격자(지금 창의 거주/직장 탭을 두 줄로 펼침).</li>
+<li>spec.md R12: 크기 규칙(글자 16px 이상, 칸 높이 40px 이상, 너비 100%). R12-2 "이미 고른 시군구 흐리게" → "체크된 채 보이고 다시 누르면 풀림"(명세 결정 #3을 격자에 맞게).</li>
+<li>scope.md 결정 #5: "두 단계 고르기" → "지금 창 안의 격자를 그대로 크게".</li>
+<li>마이페이지 "지역 선택" 칸: 창 대신 칸 안에 같은 격자(사는 곳·일하는 곳 두 줄).</li>
+</ul>
+</div>
+
+<p class="foot">원본: docs/cycles/22-first-screen-usability/flow.md. 이 1개와 앞 페이지 안 6이 정해지면 /design-delta(설계)로 넘어갑니다.</p>
+</main></body></html>
