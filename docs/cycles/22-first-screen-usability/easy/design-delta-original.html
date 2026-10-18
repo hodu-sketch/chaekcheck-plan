@@ -66,12 +66,12 @@ a{color:var(--accent)}
 <tr><td>D3&#39;</td><td><code>libraryGroup(target)</code>: <code>chosen</code> ∨ <code>priorityGroup∈{MY_SIGUNGU, MY_SIDO}</code> ∨ <code>eligibility=ELIGIBLE</code> → MINE; <code>eligibility=OPEN</code> → OPEN; 그 밖 → OTHER; 실패·UNKNOWN 판정 줄은 <code>sortBatch.unchecked</code> → UNCHECKED(사이클 20 그대로)</td><td>spec R5-1 [확정]</td></tr>
 <tr><td>D4</td><td>펼친 상자의 직접 추가 이름과 상세검색 도서관 이름 찾기는 <code>GET /api/v1/libraries</code>(지역 없이)를 <strong>필요할 때 한 번</strong> 받아 페이지 안에서 캐시(React Query key <code>[&#39;libraries&#39;,&#39;&#39;,&#39;&#39;]</code>, staleTime 5분). 직접 추가 0이고 이름 찾기를 안 쓰면 요청 없음</td><td>설계 결정 #4 [확정]</td></tr>
 <tr><td>D5</td><td>브라우저 저장 <code>chaekcheck.searchSettings.v1</code>에 <code>planCount {key, count}</code>, <code>openCount</code>, <code>saveHintClosed</code> 추가; <code>guestScope</code>·<code>myScope</code>는 <code>DROPPED_PREFS</code>로 지움. <code>planCount.key</code> = `source</td><td>residence</td><td>work</td><td>libraryIds</td><td>visit<code> 지문 — 같을 때만 수를 보임(바뀌면 자연히 숨김). </code>scope=all` 검색의 수는 저장 안 함</td><td>설계 결정 #5 [확정]</td></tr>
-<tr><td>D6</td><td>격자 체크 = 저장만(로그인 전 localStorage, 뒤 PUT을 한 번에 하나씩 — 보내는 중 또 바뀌면 마지막 값만 다음에; 실패 시 마지막 저장값으로 되돌리고 사이클 06 문구, 422는 해석 안내). 검색은 [검색] 단추로만. 자동 재검색·debounce 없음. <code>region_change</code> 기록은 저장마다(지금과 같음). 마이페이지 &quot;자동 N곳&quot; 목록은 격자 체크 뒤 다시 받음(지금과 같음)</td><td>설계 결정 #6 [확정] (사용자 규칙)</td></tr>
+<tr><td>D6</td><td>격자 체크 = 저장만(로그인 전 localStorage, 뒤 PUT을 한 번에 하나씩 — 보내는 중 또 바뀌면 마지막 값만 다음에; 실패 시 마지막 저장값으로 되돌리고 사이클 06 문구, 422는 해석 안내). 검색은 [검색] 단추로만. 자동 재검색·debounce 없음. <code>region_change</code> 기록은 체크마다 한 줄(지금은 저장 단추 한 번에 한 줄이라 줄 수가 늘어남; 모양은 같음). 마이페이지 &quot;자동 N곳&quot; 목록은 격자 체크 뒤 다시 받음(지금과 같음)</td><td>설계 결정 #6 [확정] (사용자 규칙)</td></tr>
 <tr><td>D7</td><td>로그인한 사람: <code>RegionContext.ready=false</code> 동안 검색을 시작하지 않음(<code>bookQuery=null</code>). 계정 읽기 실패: 지역 없이 <code>joinable</code>, 접힌 줄에 &quot;내 도서관을 불러오지 못했어요 [다시 시도]&quot;, 녹색 안내 줄 숨김</td><td>설계 결정 #7 [확정] (사이클 06 flow S1 &quot;읽는 동안 all&quot; 대체)</td></tr>
 <tr><td>D8</td><td>방문 가입을 뺀 뒤 제목 자리 &quot;방문 가입 도서관을 뺐어요 · [다시 넣기]&quot; (수 없음)</td><td>설계 결정 #8 [확정]</td></tr>
-<tr><td>D9</td><td><code>BookPage</code>는 <code>ResultList grouped=false</code>, <code>PicksBookDialog</code>는 <code>ResultRow tags=false</code>. 가입 정보 창의 &quot;누구나 가입&quot; → &quot;어디 살든 온라인 가입&quot;은 공통이라 그 화면들에서도 바뀜(AC-17 예외). 추천도서·책 화면의 범위는 늘 <code>joinable</code>(주소 <code>scope=all</code>일 때만 전국)</td><td>설계 결정 #9 [확정]</td></tr>
+<tr><td>D9</td><td><code>BookPage</code>는 <code>ResultList grouped=false</code>, <code>PicksBookDialog</code>는 <code>ResultRow tags=false</code>. 가입 정보 창의 &quot;누구나 가입&quot; → &quot;어디 살든 온라인 가입&quot;은 공통이라 그 화면들에서도 바뀜(AC-17 예외). 옛 문구가 남는 곳도 고침: <code>SortSelect.tsx:89</code> 기본 순서 설명(묶음 순서로), <code>MyLibrariesPage.tsx:150</code> 폰용 &quot;누구나 가입 N곳은 늘 포함돼요&quot;, <code>picksText.ts:27</code> &quot;고른 지역·범위 기준이에요&quot; → &quot;고른 지역 기준이에요&quot;. 추천도서·책 화면의 범위는 늘 <code>joinable</code>(주소 <code>scope=all</code>일 때만 전국)</td><td>설계 결정 #9 [확정]</td></tr>
 <tr><td>D10</td><td>범위 읽기 <code>readScope(params)</code>: 주소 <code>scope=all</code>이면 <code>all</code>, 아니면 <code>joinable</code>. <code>search()</code>는 상세검색의 &quot;☐ 전국에서 찾기&quot;가 체크됐을 때만 새 주소에 <code>scope=all</code>을 실음(체크 상태는 저장하지 않고 검색 뒤 풀림). 결과 안 [전국에서 찾기]·[전국에서 더 찾기]는 주소에 <code>scope=all</code>을 붙여 다시 검색. 책 링크(<code>bookLinkSearch</code>)는 주소에 있던 <code>scope=all</code>을 이어서 실음</td><td>흐름 후속 #2, ADR-0135 [확정] / 책 링크는 지금 동작 그대로(사이클 06) [확정]</td></tr>
-<tr><td>D11</td><td><code>RegionGrid</code> 크기: 글자 16px 이상, 체크 칸 높이 40px 이상, 너비 100%(PC 상자 최대 약 640px, 시군구 4칸 → 좁으면 3·2칸), 폰은 화면 너비 전체</td><td>spec R12-1 [확정]</td></tr>
+<tr><td>D11</td><td><code>RegionGrid</code> 크기: 글자 16px 이상, 체크 칸 높이 40px 이상, 너비 100%(PC 상자 최대 약 640px, 시군구 4칸 → 좁으면 3·2칸), 폰은 화면 너비 전체</td><td>사용자 &quot;크기만 키워&quot;(흐름 #1 (A)); 숫자(16px·40px·640px)는 [안] — dev가 정하고 보고 (사용자, 2026-10-18)</td></tr>
 </tbody>
 </table>
 <h2 id="">데이터</h2>
@@ -112,6 +112,8 @@ a{color:var(--accent)}
 <li><a href="../../../adr/0135-no-scope-switch-nationwide-per-search.md">ADR-0135</a> 검색 범위 스위치 삭제, 전국은 결과 안 링크·상세검색 칸으로 그 검색만, 로그인 계정 읽을 때까지 대기 — Accepted (2026-10-18)</li>
 <li><a href="../../../adr/0136-result-groups-and-tags.md">ADR-0136</a> 결과 묶음 넷·꼬리표·말풍선, 서버 변경 없음, 접힌 줄 수는 계획 길이 — Accepted (2026-10-18)</li>
 <li><a href="../../../adr/0137-region-grid-component-save-only.md">ADR-0137</a> 지역 격자 공통 부품(창 삭제, 크기), 체크는 저장만·검색은 [검색] 단추 — Accepted (2026-10-18)</li>
+<li>ADR-0138 첫 화면 &quot;찾을 도서관&quot; 줄 하나로 합침(부품 셋 삭제, 처음 온 사람은 지역부터), 방문 가입 빼기는 값 하나에 입구 셋, 브라우저 저장 칸 셋, 도서관 목록은 필요할 때만 — <a href="../../../adr/0138-first-screen-scope-line-and-browser-hints.md">ADR-0138</a> Accepted (2026-10-18)</li>
+<li>부분 대체 알림: ADR-0049 3항(&quot;전체/내 도서관 스위치 값을 브라우저에 적어 둠&quot;)과 ADR-0050의 &quot;스위치가 전체 도서관이어도&quot; 문구는 ADR-0135로 뜻을 잃음(Accepted ADR은 고치지 않으므로 여기와 ADR-0138 배경에 적음)</li>
 </ul>
 <h2 id="2026-10-18">세 관점 자체 점검 (2026-10-18)</h2>
 <table>
@@ -122,7 +124,7 @@ a{color:var(--accent)}
 <tr><td>사용자</td><td>결과 화면에서 지역을 바꾼 뒤 [검색]을 안 누르면 결과와 접힌 줄이 어긋남</td><td>접힌 줄은 저장값을, 결과는 검색 당시 값을 보이므로 &quot;· N곳&quot;은 지문이 달라 숨겨짐(D5). 안내 줄은 따로 두지 않음(단순하게) [확정: 설계자 정리, 2026-10-18]</td></tr>
 <tr><td>사용자</td><td>전국 링크 검색 중에 [결과 더 보기]를 누르면?</td><td>같은 주소(<code>scope=all</code>)의 다음 배치 → 전국 그대로. 새 검색만 <code>joinable</code>로 돌아감 [확정] (D10)</td></tr>
 <tr><td>사용자</td><td>로그인 직후 가져오기 창(S11)과 새 저장 안내가 겹침</td><td>S11은 그대로, 저장 안내는 로그인한 사람에게 안 보임(R9-2)이라 겹치지 않음</td></tr>
-<tr><td>서버 자원</td><td>체크마다 검색이 사라져 외부 조회 낭비 없음(D6). 전체 목록 870KB는 직접 추가 있는 사람이 상자를 열 때·이름 찾기 때만(D4). 전국 링크는 사용자가 누른 그 검색만(계획 약 376곳, 첫 배치는 똑같이 10곳)</td><td>지금보다 늘어나는 요청 없음. 계정 PUT이 체크 수만큼 늘지만 DB 쓰기 한 줄</td></tr>
+<tr><td>서버 자원</td><td>체크마다 검색이 사라져 외부 조회 낭비 없음(D6). 전체 목록 870KB는 직접 추가 있는 사람이 상자를 열 때·이름 찾기 때만(D4). 전국 링크는 사용자가 누른 그 검색만(계획 약 376곳, 첫 배치는 똑같이 10곳)</td><td>검색·외부 조회 요청은 늘지 않음. 계정 PUT과 <code>region_change</code> 기록은 체크 수만큼 늘지만 각각 DB 쓰기 한 줄. PUT 연타가 nginx 요청 제한(429)에 걸리지 않는지 dev 구현 때 확인 [확인 필요]</td></tr>
 <tr><td>보안·안정성</td><td>주소 <code>scope=all</code>은 지금도 받는 값(검증 그대로). 브라우저 저장 칸 셋은 숫자·불리언·문자열이고 읽을 때 기본값으로 떨어짐(<code>loadPrefs</code> 방식). PUT 순서 보장으로 되돌아감 방지</td><td>새 공격면 없음. 격자가 받는 지역 ID는 지금처럼 <code>resolutions</code>로 해석</td></tr>
 </tbody>
 </table>

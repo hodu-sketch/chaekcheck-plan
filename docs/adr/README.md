@@ -141,3 +141,4 @@
 | [ADR-0136](0136-result-groups-and-tags.md) | 검색 결과를 내 도서관 → 어디 살든 가입 → 그 밖 → 확인 못 함 묶음으로, 줄마다 꼬리표·말풍선, 서버 변경 없음(묶음·꼬리표·곳 수는 `targets`에서) | Accepted | 2026-10-18 | 22 |
 | [ADR-0137](0137-region-grid-component-save-only.md) | 지역 고르기는 내 지역 창 대신 격자 공통 부품(크기 키움), 체크는 저장만·검색은 [검색] 단추로(자동 재검색·debounce 없음) | Accepted | 2026-10-18 | 22 |
 | [ADR-0135](0135-no-scope-switch-nationwide-per-search.md) | 검색 범위 스위치를 없애고 늘 빌릴 수 있는 곳으로 찾음; 전국은 결과 안 링크·상세검색 "☐ 전국에서 찾기"로 그 검색에만(저장 안 함); 로그인 계정 값을 읽을 때까지 대기(사이클 06 "읽는 동안 전체"를 바꿈) | Accepted | 2026-10-18 | 22 |
+| [ADR-0138](0138-first-screen-scope-line-and-browser-hints.md) | 첫 화면 "찾을 도서관" 줄 하나로(부품 셋 삭제, 처음 온 사람은 [사는 곳·일하는 곳 고르기] 단추만), 방문 가입 빼기는 값 하나에 입구 셋, 브라우저 저장 칸 `planCount`·`openCount`·`saveHintClosed`, 전체 도서관 목록은 필요할 때만 | Accepted | 2026-10-18 | 22 |
