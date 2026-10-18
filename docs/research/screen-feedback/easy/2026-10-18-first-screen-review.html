@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>첫 화면 사용성 검토와 개선안</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:1080px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.card h3{margin:18px 0 8px;font-size:20px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+.quote{border-left:4px solid var(--line);margin:8px 0;padding:4px 14px;color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+.v-flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.v-box{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:7px 11px;font-size:15px;text-align:center;min-width:90px}
+.v-box small{display:block;color:var(--muted);font-size:12px}
+.v-hi{border-color:var(--accent);background:var(--accent-bg)}
+.v-warn{border-color:var(--warn);background:var(--warn-bg)}
+.v-ok{border-color:var(--ok);background:var(--ok-bg)}
+.v-no{border-color:var(--no);background:var(--no-bg)}
+.v-arr{color:var(--muted);font-size:18px}
+/* 화면 그림: 자리와 순서만 보여 줍니다 (색·모양은 실제 디자인이 아님) */
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0}
+.pc{flex:1 1 520px;max-width:640px;border:2px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;font-size:13px}
+.ph{flex:0 0 250px;width:250px;border:2px solid var(--line);border-radius:22px;background:var(--bg);overflow:hidden;font-size:12px}
+.tbar{display:flex;gap:12px;align-items:center;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line)}
+.tbar b{color:#5b4bd1;font-size:15px}
+.tbar .r{margin-left:auto;display:flex;gap:8px;align-items:center}
+.btn{display:inline-block;border:1px solid var(--line);border-radius:7px;padding:2px 9px;background:var(--card);white-space:nowrap}
+.btn.p{background:#ede9fb;border-color:#c9bff5;color:#5b4bd1;font-weight:700}
+.btn.on{background:#5b4bd1;color:#fff;border-color:#5b4bd1}
+.body{padding:14px 16px}
+.ph .body{padding:12px 10px}
+.title{text-align:center;font-weight:700;font-size:17px;margin:8px 0 10px}
+.ph .title{font-size:15px}
+.title span{color:#5b4bd1}
+.sbox{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;background:var(--card);padding:6px 12px;color:var(--muted)}
+.sbox .btn{margin-left:auto}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0;justify-content:center}
+.row.l{justify-content:flex-start}
+.tag{display:inline-block;border-radius:999px;padding:0 8px;font-size:11px;font-weight:700;border:1px solid}
+.tag.me{color:#5b4bd1;border-color:#c9bff5;background:#ede9fb}
+.tag.open{color:var(--ok);border-color:var(--ok);background:var(--ok-bg)}
+.tag.add{color:var(--warn);border-color:var(--warn);background:var(--warn-bg)}
+.hint{color:var(--muted);font-size:12px;text-align:center;margin:4px 0}
+.new{outline:2px dashed var(--no);outline-offset:3px;border-radius:8px}
+.res{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:8px 10px;margin:6px 0;display:flex;gap:10px;align-items:center}
+.res .bk{flex:1 1 40%;font-weight:700}.res .bk small{display:block;font-weight:400;color:var(--muted)}
+.res .lib{flex:1 1 40%}.res .lib small{display:block;color:var(--muted)}
+.res .cnt{background:#f3f0ff;color:#5b4bd1;border-radius:6px;padding:2px 6px;white-space:nowrap;font-size:11px}
+.sec{font-weight:700;margin:10px 0 2px;display:flex;align-items:center;gap:6px}
+.sec i{width:8px;height:8px;border-radius:50%;background:#5b4bd1;display:inline-block}
+.sec.grey i{background:var(--muted)}
+.panel{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:10px 12px;margin:8px 0}
+.frow{display:flex;gap:8px;align-items:center;margin:5px 0}
+.frow label{width:48px;font-weight:700}
+.frow .in{flex:1;border:1px solid var(--line);border-radius:6px;padding:3px 8px;color:var(--muted);background:var(--card)}
+.sel{display:inline-block;border:1px solid var(--line);border-radius:6px;padding:3px 8px;background:var(--card)}
+.modal{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:10px 12px;margin:8px auto;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:6px 0}
+.grid span{border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:11px}
+.ph .grid{grid-template-columns:repeat(2,1fr)}
+.big .grid span{font-size:14px;padding:5px 8px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}main table{display:block;overflow-x:auto;max-width:100%}.two{grid-template-columns:1fr}}
+</style>
+</head>
+
+<body>
+<main class="doc">
+
+<p class="lead">첫 화면이 "어디서 빌릴지"를 묻지 않고 전국 누구나 가입 도서관 39곳을 찾기 때문에, 처음 온 사람은 전국 결과를 보고 놀랍니다. 지역을 정하는 길은 마이페이지 안쪽 세 단계에 숨어 있습니다. 아래 개선안 9개를 승인·미승인·기타로 골라 주세요.</p>
+<p class="sub">2026-10-18 친구분 피드백(카카오톡 대화 두 묶음)을 받아, 공개 사이트 chaekcheck.com을 PC 1440px·1920px와 폰 375px 크기로 제가 직접 열어 보고 적었습니다. dev 코드(<code>sortBatch.ts</code>, <code>useLibraryScope.ts</code>, <code>SortSelect.tsx</code>)와 공개 API <code>/api/v1/libraries</code>도 같은 날 읽었습니다. 화면 그림은 자리와 순서만 보여 주고, 색과 모양은 실제 디자인이 아닙니다.</p>
+
+<div class="card">
+<h2>이 페이지에 나오는 말</h2>
+<table>
+<tr><th style="width:30%">말</th><th>뜻</th></tr>
+<tr><td>누구나 가입 도서관</td><td>사는 곳과 상관없이 누구나 온라인으로 가입할 수 있는 전자도서관. 지금 39곳 [확정] (API <code>eligibility=OPEN</code>, 2026-10-18 센 값). 지역을 고르지 않은 사람에게는 이 39곳만 찾습니다.</td></tr>
+<tr><td>가입 가능한 곳</td><td>지역을 고른 뒤 검색 스위치 왼쪽에 보이는 말. 그 지역 거주자·직장인이 가입할 수 있는 곳 + 누구나 가입 39곳. 서울 강남구를 고르면 29곳이 더해집니다 [확정] (화면에서 본 값).</td></tr>
+<tr><td>내 도서관</td><td>로그인한 뒤 같은 스위치에 보이는 말. 가입 가능한 곳 + 직접 추가한 도서관. 마이페이지 안내문은 로그인 전에도 "내 도서관"이라고 부릅니다.</td></tr>
+<tr><td>방문 가입</td><td>가입하려면 도서관에 직접 가야 하는 곳. 125곳 [확정] (API <code>visitRequired</code>, 2026-10-18). 첫 화면의 "방문 없이 가입" 단추를 켜면 이 도서관들을 빼고 찾습니다.</td></tr>
+<tr><td>조회 계획</td><td>검색 한 번에 서버가 실제로 물어보는 도서관 목록. 스위치가 "전체 도서관"이면 약 376곳 [확정] (API에서 누구나 가입 39 + 지역 조건 276 + 조건 미확인 61을 더한 값, 2026-10-18), 지역 없이 기본값이면 39곳, 강남구를 고르면 68곳.</td></tr>
+</table>
+</div>
+
+<div class="card">
+<h2>제가 지역을 정하기까지 밟은 길: 일곱 단계</h2>
+<p>친구분이 "순서가 잘못됐다"고 한 부분입니다. 검색하기 전에 내 지역을 넣으려면 지금은 이렇게 갑니다.</p>
+<div class="v-flow">
+<div class="v-box">① 첫 화면<small>검색창만 보임</small></div><span class="v-arr">→</span>
+<div class="v-box">② [내 도서관 설정]<small>필터 줄 맨 오른쪽</small></div><span class="v-arr">→</span>
+<div class="v-box">③ 내 도서관 화면<small>/my-libraries</small></div><span class="v-arr">→</span>
+<div class="v-box">④ [변경]<small>지역 선택 칸 오른쪽</small></div><span class="v-arr">→</span>
+<div class="v-box v-warn">⑤ 내 지역 창<small>시도 → 시군구 체크</small></div><span class="v-arr">→</span>
+<div class="v-box">⑥ [저장]</div><span class="v-arr">→</span>
+<div class="v-box">⑦ [돌아가기]<small>다시 첫 화면</small></div>
+</div>
+<p class="cap">지역을 모르고 바로 검색하면 ①에서 ⑦을 건너뛰고 누구나 가입 39곳(울산동부·김천시립·목포 등 전국)을 찾습니다. 친구분이 본 "전국 책이 다 뜨는" 결과가 이것입니다.</p>
+</div>
+
+<div class="card">
+<h2>사용자 관점에서 본 문제 아홉 가지</h2>
+<table>
+<tr><th style="width:4%">#</th><th style="width:30%">장면</th><th style="width:33%">겪는 일</th><th>왜 그런가 (지금 규칙)</th></tr>
+<tr><td>P1</td><td>첫 화면에서 책 제목을 넣고 검색</td><td>서울 사는 사람에게 울산동부·김천시립 결과가 먼저 보입니다. "전국 책 다 뜨는 거 보고 식겁했네."</td><td>기본 범위가 누구나 가입 39곳(전국)이고, 첫 화면이 지역을 묻지 않습니다. 사이클 07에서 "가입할 수 있는 쪽"을 기본으로 정했을 때 지역 없는 사람은 자연히 전국이 됩니다.</td></tr>
+<tr><td>P2</td><td>지역을 정하려 함</td><td>검색창 근처에 지역이 없고, 위 일곱 단계를 거쳐야 합니다.</td><td>지역은 "내 도서관" 화면(S10)의 창(S2)에만 있습니다 (사이클 06 결정).</td></tr>
+<tr><td>P3</td><td>[상세검색]을 펼침</td><td>제목·저자·출판사만 있고 지역·도서관 조건이 없습니다. "상세검색에 오히려 지역을 넣지."</td><td>상세검색은 책을 거르는 조건만 두고, 어느 도서관을 찾을지는 스위치 줄이 맡는 구조입니다.</td></tr>
+<tr><td>P4</td><td>같은 단추의 이름이 상황마다 바뀜</td><td>"누구나 가입" → 지역을 고르면 "가입 가능한 곳" → 로그인하면 "내 도서관". 마이페이지는 로그인 전에도 "내 도서관 스위치"라고 부릅니다. 네 이름이 한 가지를 가리킵니다.</td><td>사이클 07 결정 (dev <code>joinableLabel</code>). 상태를 정확히 쓰려다 보니 처음 보는 사람에게는 서로 다른 기능처럼 보입니다.</td></tr>
+<tr><td>P5</td><td>[방문 없이 가입] 단추</td><td>"방문 가입"이 무엇인지 모르면 뜻을 알 수 없습니다. 한 번 켜면 주소에 <code>visit=none</code>이 붙어 다음 방문까지 남습니다.</td><td>사용자 요청(2026-09-29)으로 넣은 거름 단추. 뜻 설명이 화면에 없습니다.</td></tr>
+<tr><td>P6</td><td>검색 결과 순서</td><td>강남구를 골라도 강남구 전자도서관이 맨 위에 오지 않았습니다(PC에서는 조회 실패로 맨 아래 "확인하지 못한 도서관"에, 폰에서는 맨 위). 줄마다 왜 이 도서관이 나왔는지(내 지역인지, 누구나 가입인지) 표시가 없고 이름을 눌러야 창이 열립니다.</td><td>결과는 ① 지금 빌릴 수 있어요 / 예약 묶음 → ② 책 → ③ 책 안에서 직접 추가 → 가입 등급 순입니다 (dev <code>sortBatch.ts</code>). 즉 "내 지역 먼저"는 세 번째 기준이라 눈에 띄지 않습니다. 친구분 말: "내 즐겨찾기 도서관이 포함되면 1빠로 보이게."</td></tr>
+<tr><td>P7</td><td>내 지역 창 (PC)</td><td>1440px 화면에서 창 너비 약 1000px, 글자 13~14px, 체크 칸이 작습니다. 1920px 화면에서는 창이 화면의 절반이고 TV처럼 멀리서 보면 더 작게 보입니다. "지역 선택 창 너무 작음."</td><td>창 너비가 고정값이고 글자 크기가 화면 크기를 따라 커지지 않습니다. 폰(375px)에서는 창이 화면을 다 써서 괜찮았습니다.</td></tr>
+<tr><td>P8</td><td>폰 첫 화면</td><td>찾을 도서관·지역이 아예 보이지 않습니다. ⚙ 모양 단추 안 "찾을 도서관" 줄에 접혀 있습니다.</td><td>사이클 08 결정(폰은 설정을 아래에서 올라오는 창에 모음). 첫 화면에는 지역이 있다는 힌트가 없습니다.</td></tr>
+<tr><td>P9</td><td>지역을 저장함</td><td>"이 브라우저에만 저장돼요." 다른 기기에서는 다시 골라야 합니다. 친구분 생각은 "가입한 사용자 id에 즐겨찾기가 저장"되는 모양입니다.</td><td>로그인 없이도 쓰게 하려고 브라우저에 저장합니다(사이클 06). 로그인하면 계정에 저장되지만, 그 사실을 저장 순간에 알려 주지 않습니다.</td></tr>
+</table>
+<p class="ex">P6의 "확인하지 못한 도서관"에 강남구 전자도서관이 들어간 것은 그 순간 도서관 사이트 조회가 실패한 탓이고 화면 구조 문제는 아닙니다. 다만 내 지역 도서관이 실패하면 가장 아쉬우니 개선안 2에서 함께 다룹니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">1</span>첫 화면 검색창 바로 아래에서<br>"어디서 빌리실 건가요?"를 묻기</h2>
+<p class="concl">[안] 검색창 아래에 지역 고르기 한 줄(시도 → 시군구 두 단계 고르기)을 둡니다. 고르면 그 자리가 "내 도서관: 서울 강남구 (가입 가능 29곳 + 누구나 가입 39곳)"로 바뀌고, 안 고르면 "전국 누구나 가입 39곳에서 찾아요"라고 그대로 써 줍니다. 마이페이지 창을 거치지 않아도 첫 화면에서 끝납니다.</p>
+<p><b>어디에 붙는 값인가:</b> 지금 "내 도서관" 화면의 거주 지역과 같은 값입니다. 첫 화면에서 고르면 그 화면에도 같은 값이 들어갑니다. 직장 지역·직접 추가는 지금처럼 마이페이지에서 합니다.</p>
+<p><b>예시:</b> 처음 온 사람이 "데미안"을 넣기 전에 [서울 ▾][강남구 ▾]를 고릅니다. 검색하면 강남구에서 가입할 수 있는 29곳과 누구나 가입 39곳만 찾습니다. 지역을 모르고 바로 검색해도 "전국 누구나 가입 39곳에서 찾아요"가 결과 위에 보여서 왜 울산 결과가 나오는지 압니다.</p>
+<div class="shots">
+<div class="pc"><div class="tbar"><b>책첵</b><span>도서검색</span><span>추천도서</span><span>마이페이지</span><span class="r"><span class="btn">로그인</span></span></div>
+<div class="body"><div class="title"><span>지금 빌릴 수 있는</span><br>전자도서관을 찾아 드려요</div>
+<div class="sbox">책 제목을 입력하세요 <span class="btn p">검색</span><span class="btn">상세검색 ⌄</span></div>
+<div class="row new"><span>어디서 빌리실 건가요?</span><span class="sel">서울 ▾</span><span class="sel">강남구 ▾</span><span class="btn">직장·다른 도서관 더하기</span></div>
+<div class="hint">고르면 → <b>내 도서관: 서울 강남구</b> (가입 가능 29곳 + 누구나 가입 39곳) · <u>전국에서 찾기</u></div>
+</div></div>
+<div class="ph"><div class="tbar"><b>책첵</b><span class="r"><span class="btn">로그인</span></span></div>
+<div class="body"><div class="title"><span>지금 빌릴 수 있는</span><br>전자도서관을 찾아 드려요</div>
+<div class="sbox">책 제목 <span class="btn p">검색</span></div>
+<div class="row new"><span class="sel">서울 ▾</span><span class="sel">강남구 ▾</span></div>
+<div class="hint">안 고르면: 전국 누구나 가입 39곳</div>
+<div class="row"><span class="btn">상세검색 ⌄</span><span class="btn">⚙</span></div>
+</div></div>
+</div>
+<p class="cap">PC(왼쪽)와 폰(오른쪽). 빨간 점선이 새로 생기는 줄입니다. 지역을 고른 뒤에는 그 줄이 "내 도서관: 서울 강남구" 한 줄로 접힙니다.</p>
+<div class="prop">제안: 승인. 친구분의 "애초에 사용하기 쉽게", "그걸 먼저 하게 해야죠"에 가장 직접 답하는 안이고, 서버 쪽 변화가 없습니다(지역 값은 지금 API 그대로).</div>
+<p class="alt">다른 선택 ①: 처음 한 번 작은 안내 창을 띄워 "내 도서관 설정에서 지역을 고르세요"라고 알리기(대화에서 내신 생각). 만들기는 가장 쉽지만 친구분이 "알려주는 것보다 애초에 사용하기 쉽게"라고 거절했고, 안내를 닫으면 또 일곱 단계입니다.<br>다른 선택 ②: 지역 없이 검색하면 결과 위에 "지역을 고르면 가입할 수 있는 곳만 보여요 [지역 고르기]" 줄만 넣기. 첫 화면은 그대로 두는 대신 한 번 검색해 봐야 알게 됩니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">2</span>검색 결과를 "내 도서관" 묶음부터 보이고<br>줄마다 왜 나왔는지 꼬리표 달기</h2>
+<p class="concl">[안] 결과를 세 묶음으로 나눕니다: ① 내 도서관에 있어요(내 지역·직접 추가) → ② 누구나 가입 도서관에 있어요 → ③ 확인하지 못한 도서관. 묶음 안에서는 지금처럼 "지금 빌릴 수 있어요 → 예약" 순입니다. 각 줄의 도서관 이름 옆에 [내 지역] [직접 추가] [누구나 가입] 꼬리표를 바로 보입니다(지금은 이름을 눌러야 창에서 보임). 스위치 "내 도서관 / 전국"은 그대로 둡니다.</p>
+<p><b>어디에 붙는 값인가:</b> 화면이 결과 줄을 늘어놓는 순서(dev <code>sortBatch.ts</code>)와 줄 모양(<code>ResultRow.tsx</code>)입니다. 서버가 주는 데이터는 이미 도서관마다 등급(<code>eligibility</code>, <code>chosen</code>)을 담고 있어서 새 API가 필요 없습니다.</p>
+<p><b>예시:</b> 강남구를 고른 사람이 "데미안"을 찾으면 맨 위에 "내 도서관에 있어요 (2)" 아래 강남구 전자도서관 [내 지역]이 먼저, 그 아래 "누구나 가입 도서관에 있어요 (6)"에 울산동부 [누구나 가입] 같은 줄이 옵니다. 지금은 울산동부가 보유 5권으로 맨 위입니다.</p>
+<div class="shots">
+<div class="pc"><div class="tbar"><b>책첵</b><span>도서검색</span><span class="r"><span class="btn">로그인</span></span></div>
+<div class="body"><div class="sbox">데미안 <span class="btn p">검색</span></div>
+<div class="row l"><span class="btn on">내 도서관 · 서울 강남구</span><span class="btn">전국</span><span class="btn">기본 순서 ⌄</span></div>
+<div class="sec new"><i></i>내 도서관에 있어요 (2)</div>
+<div class="res"><div class="bk">데미안<small>헤르만 헤세 · 소담출판사</small></div><div class="lib">강남구 전자도서관 <span class="tag me">내 지역</span><small>자체 · 소장</small></div><span class="cnt">보유 10 대출 중 4</span></div>
+<div class="res"><div class="bk">데미안<small>헤르만 헤세 · 스타북스</small></div><div class="lib">송파구통합도서관 <span class="tag add">직접 추가</span><small>교보 · 구독</small></div><span class="cnt">바로 대출</span></div>
+<div class="sec"><i></i>누구나 가입 도서관에 있어요 (6)</div>
+<div class="res"><div class="bk">데미안<small>헤르만 헤세 · 소담출판사</small></div><div class="lib">울산동부도서관 전자책도서관 <span class="tag open">누구나 가입</span><small>북큐브 · 소장</small></div><span class="cnt">보유 5 대출 중 0</span></div>
+<div class="sec grey"><i></i>확인하지 못한 도서관 (1)</div>
+</div></div>
+<div class="ph"><div class="tbar"><b>책첵</b></div>
+<div class="body"><div class="sbox">데미안 <span class="btn p">검색</span></div>
+<div class="row l"><span class="btn on">내 도서관</span><span class="btn">전국</span></div>
+<div class="sec new"><i></i>내 도서관에 있어요 (2)</div>
+<div class="res" style="flex-direction:column;align-items:stretch"><div class="bk">데미안<small>헤르만 헤세</small></div><div class="lib">강남구 전자도서관 <span class="tag me">내 지역</span></div><span class="cnt">보유 10 대출 중 4</span></div>
+<div class="sec"><i></i>누구나 가입 도서관 (6)</div>
+<div class="res" style="flex-direction:column;align-items:stretch"><div class="bk">데미안</div><div class="lib">울산동부도서관 <span class="tag open">누구나 가입</span></div></div>
+</div></div>
+</div>
+<p class="cap">묶음 제목과 꼬리표가 새로 생깁니다. 책·도서관 줄의 모양은 지금 그대로입니다.</p>
+<p><b>서버 자원 쪽 확인:</b> 친구분은 "탭(스위치)으로 분리할 필요가 없다"고 했지만, 스위치를 없애고 늘 전국을 찾으면 조회 계획이 68곳에서 약 376곳으로 늘어 검색 한 번의 도서관 요청이 다섯 배가 됩니다. 동시 검색 자리 40개(사이클 20 결정)를 더 빨리 채우므로, 스위치는 두고 <b>순서와 꼬리표로 "내 도서관 먼저"를 보이게</b> 하는 쪽을 권합니다.</p>
+<div class="prop">제안: 승인. 사이클 06의 "직접 추가 도서관은 같은 책 안에서 맨 앞" 규칙(ADR-0050)을 "묶음으로 맨 위"로 넓히는 것이라, 이전 결정을 바꾸는 부분은 "지금 빌릴 수 있어요 묶음이 맨 위" 하나입니다.</p>
+<p class="alt">다른 선택: 스위치를 없애고 늘 전국 조회 + 순서만 바꾸기(친구분 말 그대로). 화면은 가장 단순하지만 위에 적은 대로 서버 요청이 다섯 배, 그리고 "방문 없이 가입"·"가입 자격 확인 필요" 도서관까지 늘 요청이 갑니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">3</span>찾을 도서관의 이름을 "내 도서관 / 전국" 둘로 통일하기</h2>
+<p class="concl">[안] 스위치 왼쪽은 상황과 관계없이 늘 "내 도서관", 오른쪽은 "전국"으로 씁니다. 내 도서관이 비어 있을 때(지역도 직접 추가도 없음)는 스위치 아래에 "지금은 누구나 가입 39곳이에요. 지역을 고르면 더 찾아요"라고 한 줄 씁니다. 마이페이지의 "내 도서관 스위치를 켜면"이라는 안내도 같은 말로 맞춥니다.</p>
+<table>
+<tr><th>상황</th><th>지금 보이는 말</th><th>바꾼 뒤</th></tr>
+<tr><td>로그인 전, 지역 없음</td><td>누구나 가입 | 전체 도서관</td><td>내 도서관 | 전국 (+ "지금은 누구나 가입 39곳이에요")</td></tr>
+<tr><td>로그인 전, 지역 있음</td><td>가입 가능한 곳 | 전체 도서관</td><td>내 도서관 · 서울 강남구 | 전국</td></tr>
+<tr><td>로그인 뒤</td><td>내 도서관 | 전체 도서관</td><td>내 도서관 · 서울 강남구 | 전국</td></tr>
+</table>
+<p><b>왜:</b> P4에서 본 대로 한 가지에 이름이 넷이라, 처음 온 사람은 "누구나 가입"이 범위 이름인지 안내문인지 모릅니다. 이 프로젝트 규칙(한 낱말은 한 뜻)에도 맞춥니다.</p>
+<div class="prop">제안: 승인. 사이클 07 결정("지역 없음 '누구나 가입', 지역 있음 '가입 가능한 곳'")을 바꾸는 안입니다. 그때 이유는 상태를 정확히 쓰려는 것이었고, 정확함은 아래 한 줄 설명이 맡습니다.</div>
+<p class="alt">다른 선택: 이름은 두고 스위치 옆에 ⓘ를 달아 누르면 설명 — 이름이 바뀌는 혼란은 그대로 남습니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">4</span>상세검색 안에도 지역·도서관 줄 두기</h2>
+<p class="concl">[안] [상세검색]을 펼치면 제목·저자·출판사 아래에 "지역" 줄(거주·직장 고르기)과 "도서관 이름" 줄(이름으로 찾아 직접 추가)을 둡니다. 친구분 말 그대로입니다: "딴데는 상세 설정에 다 있는 걸 왜 여기서는 내 도서관에서 따로 해야만 나오는지."</p>
+<p><b>어디에 붙는 값인가:</b> 개선안 1과 같은 값(거주·직장 지역, 직접 추가 도서관)을 한 곳 더에서 고칠 수 있게 하는 것입니다. 값은 하나이고 입구만 둘입니다.</p>
+<div class="shots">
+<div class="pc"><div class="body"><div class="sbox">책 제목을 입력하세요 <span class="btn p">검색</span><span class="btn p">상세검색 ⌃</span></div>
+<div class="panel">
+<div class="frow"><label>제목</label><span>☐ 완전 일치</span></div>
+<div class="frow"><label>저자</label><span class="in">저자</span><span>☐ 완전 일치 ☐ 옮긴이 ☐ 그림 ☐ 엮은이</span></div>
+<div class="frow"><label>출판사</label><span class="in">출판사</span><span>☐ 완전 일치</span></div>
+<div class="frow new"><label>지역</label><span class="sel">거주: 서울 강남구 ▾</span><span class="sel">직장: 없음 ▾</span></div>
+<div class="frow new"><label>도서관</label><span class="in">도서관 이름으로 찾아 더하기</span><span class="tag add">직접 추가 0/20</span></div>
+</div></div></div>
+</div>
+<p class="cap">상세검색 패널의 아래 두 줄이 새로 생깁니다. 개선안 1을 받으면 첫 화면에도 같은 지역 고르기가 있어, 이 줄은 "직장 지역·직접 추가까지 한 번에"의 자리가 됩니다.</p>
+<div class="prop">제안: 승인하되 개선안 1 다음에. 개선안 1 없이 이것만 하면, 상세검색을 안 펼치는 사람은 여전히 전국 결과를 봅니다(검색 전에 펼치는 사람은 드뭅니다).</div>
+<p class="alt">다른 선택: 상세검색에는 두지 않고 개선안 1·7만 — 입구가 하나라 단순하지만 직장 지역·직접 추가는 여전히 마이페이지까지 가야 합니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">5</span>내 지역 창을 크게 만들거나, 창 없이 두 단계 고르기로 바꾸기</h2>
+<p class="concl">[안] (가) 창을 화면 너비의 90%(최대 1200px)까지 넓히고 글자 16px 이상, 체크 칸을 손가락 크기(40px)로 키웁니다. (나) 창을 없애고 개선안 1의 [시도 ▾][시군구 ▾] 두 단계 고르기를 마이페이지에서도 같이 씁니다. 제안은 <b>(나)</b>이고, (가)는 (나)를 하지 않을 때의 최소 수정입니다.</p>
+<div class="two">
+<div><p><b>(가) 창을 키움</b></p>
+<div class="modal big"><b>내 지역</b> <span class="btn p">거주 1</span><span class="btn">직장 0</span>
+<div class="grid"><span>종로구</span><span>중구</span><span>용산구</span><span>성동구</span><span>광진구</span><span>동대문구</span><span>중랑구</span><span>성북구</span><span>…</span><span>☑ 강남구</span><span>송파구</span><span>강동구</span></div>
+<div class="row l"><span class="btn">취소</span><span class="btn on">저장</span></div></div>
+<p class="cap">같은 창, 글자와 칸만 큼. TV·큰 모니터에서도 읽힙니다.</p></div>
+<div><p><b>(나) 창 없이 두 단계</b></p>
+<div class="panel"><b>거주 지역</b> <span class="sel">서울 ▾</span><span class="sel">강남구 ▾</span> <span class="tag me">서울 강남구 ×</span><br><b>직장 지역</b> <span class="sel">시도 ▾</span><span class="sel">시군구 ▾</span></div>
+<p class="cap">고르는 즉시 저장. 체크 격자·스크롤·저장 단추가 없어집니다. 여러 구를 고를 때는 고른 만큼 꼬리표가 늘어납니다.</p></div>
+</div>
+<p><b>왜 (나)인가:</b> 지금 창은 시도 16개 세로 목록 + 시군구 체크 격자 + 거주/직장 탭 + 저장/취소라 요소가 많고, 그래서 작게 만들어야 다 들어갑니다. 두 단계 고르기는 어느 화면 크기에서도 글자 크기를 본문과 같게 둘 수 있습니다.</p>
+<div class="prop">제안: (나) 승인. 사이클 06의 "내 지역 창(S2)" 구조를 바꾸는 안입니다. 거주·직장에 여러 구를 고르는 기능(지금 가능)은 꼬리표로 그대로 유지합니다.</div>
+<p class="alt">다른 선택 (가): 구조는 두고 크기만 — 수정이 작지만 폰에서는 이미 전체 화면이라 PC·TV만 좋아집니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">6</span>"방문 없이 가입" 단추는 설정 안으로 옮기고 말을 풀어 쓰기</h2>
+<p class="concl">[안] 첫 화면 줄에서 빼고 ⚙ 설정 안 "찾을 도서관" 아래에 "직접 가야 가입되는 도서관은 빼기 (125곳)"로 둡니다. 기본은 지금처럼 끔입니다.</p>
+<p><b>왜:</b> 처음 온 사람은 "방문 가입"이 무슨 뜻인지 모르고(P5), 첫 화면 줄은 개선안 1의 지역 고르기가 들어오면 자리가 좁습니다. 켜 두면 주소에 남아 다음에도 켜지는 동작은 그대로 둡니다(사용자 요청 2026-10-05).</p>
+<div class="prop">제안: 승인. 2026-09-29의 "방문 없이 가입 거름" 기능 자체는 그대로이고 자리와 말만 바뀝니다.</div>
+<p class="alt">다른 선택: 지금 자리 그대로 두고 ⓘ 설명만 더하기 — 첫 화면 한 줄이 네 가지(스위치·방문·지역·내 도서관)로 더 붐빕니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">7</span>폰 첫 화면에도 "내 도서관: 서울 강남구" 칩을 늘 보이기</h2>
+<p class="concl">[안] 폰에서는 지금 찾을 도서관이 ⚙ 안에 접혀 있어 보이지 않습니다(P8). 검색창 아래에 [내 도서관: 서울 강남구 ▾] 칩 하나를 늘 보이고, 누르면 ⚙의 "찾을 도서관" 칸이 열립니다. 지역이 없으면 칩은 "전국 누구나 가입 39곳 ▾"입니다.</p>
+<div class="shots">
+<div class="ph"><div class="tbar"><b>책첵</b><span class="r"><span class="btn">로그인</span></span></div>
+<div class="body"><div class="title"><span>지금 빌릴 수 있는</span><br>전자도서관을 찾아 드려요</div>
+<div class="sbox">책 제목 <span class="btn p">검색</span></div>
+<div class="row new"><span class="btn on">내 도서관: 서울 강남구 ▾</span></div>
+<div class="row"><span class="btn">상세검색 ⌄</span><span class="btn">⚙</span></div>
+</div></div>
+<div class="ph"><div class="tbar"><b>책첵</b><span class="r"><span class="btn">로그인</span></span></div>
+<div class="body"><div class="title"><span>지금 빌릴 수 있는</span><br>전자도서관을 찾아 드려요</div>
+<div class="sbox">책 제목 <span class="btn p">검색</span></div>
+<div class="row new"><span class="btn">전국 누구나 가입 39곳 ▾</span></div>
+<div class="hint">지역을 고르면 더 찾아요</div>
+<div class="row"><span class="btn">상세검색 ⌄</span><span class="btn">⚙</span></div>
+</div></div>
+</div>
+<p class="cap">왼쪽: 지역을 고른 뒤. 오른쪽: 아직 안 골랐을 때. 개선안 1의 폰 그림과 같은 자리입니다.</p>
+<div class="prop">제안: 승인. 사이클 08의 "폰은 설정을 ⚙ 안에"는 그대로 두고, 무엇이 설정돼 있는지 한 칩만 밖으로 꺼냅니다.</div>
+<p class="alt">다른 선택: 폰은 지금처럼 ⚙ 안에만 — 폰에서 처음 온 사람은 지역이 있다는 것을 알 길이 없습니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">8</span>지역을 저장할 때 "로그인하면 다른 기기에서도 그대로예요" 알리기</h2>
+<p class="concl">[안] 로그인 없이 쓰는 지금 방식(브라우저에 저장)은 그대로 두고, 지역이나 직접 추가 도서관을 저장한 순간에 "이 브라우저에만 저장됐어요. 로그인하면 다른 기기에서도 그대로예요 [카카오 로그인]" 한 줄을 보입니다. 로그인하면 지금처럼 계정으로 옮겨 붙습니다.</p>
+<p><b>왜:</b> 친구분은 즐겨찾기가 "실제 가입한 사용자 id에 저장"되는 그림을 그렸습니다(P9). 지금도 로그인하면 그렇게 되지만, 로그인 전 사용자는 그 사실을 모릅니다. 로그인을 강제하면 처음 온 사람이 검색도 하기 전에 가입부터 해야 하므로 권하지 않습니다.</p>
+<div class="prop">제안: 승인. 사이클 05·06의 "로그인 없이도 지역·직접 추가 가능" 결정은 그대로입니다.</div>
+<p class="alt">다른 선택: 즐겨찾기(직접 추가)는 로그인한 사람만 — 친구분 모델과 같지만, 첫 방문의 문턱이 높아지고 지역만 브라우저에 두는 반쪽 상태가 됩니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">9</span>어느 것부터 할지: 첫 화면·결과 순서·이름(1·2·3·7)을<br>사이클 22로 먼저</h2>
+<p class="concl">[안] 개선안 1(첫 화면 지역 고르기), 2(결과 내 도서관 묶음·꼬리표), 3(이름 통일), 7(폰 칩)을 한 묶음으로 사이클 22에서 합니다. 4(상세검색 줄), 5(지역 창), 6(방문 없이 가입 자리), 8(저장 안내)은 그다음 사이클에 둡니다. 모두 화면 쪽 일이고 서버 API는 바뀌지 않습니다.</p>
+<table>
+<tr><th>묶음</th><th>들어가는 안</th><th>왜 이 순서인가</th></tr>
+<tr><td>먼저 (사이클 22)</td><td>1 · 2 · 3 · 7</td><td>친구분이 겪은 "전국 결과"와 "순서가 잘못됐다"를 바로 없애는 것들. 넷이 같은 자리(검색창 아래 한 줄·결과 위)를 손대서 따로 하면 두 번 고칩니다.</td></tr>
+<tr><td>다음</td><td>4 · 5 · 6 · 8</td><td>입구를 더 늘리거나(4) 창 구조를 바꾸는 것(5)이라, 먼저 묶음을 쓴 뒤 보고 정해도 늦지 않습니다.</td></tr>
+</table>
+<div class="prop">제안: 승인. 사이클 20·21 dev가 끝난 뒤 시작하며, 사이클 22 번호는 비어 있습니다(docs/cycles/README.md).</div>
+<p class="alt">다른 선택: 1~8을 한 사이클에 — 화면 일이 많아 dev 한 번에 길어지고, 5(창 구조)는 아직 (가)·(나) 중 무엇이든 골라야 합니다.</p>
+</div>
+
+<div class="card">
+<h2>세 관점 자체 점검에서 걸러 낸 것</h2>
+<table>
+<tr><th style="width:22%">관점</th><th>본 것</th><th>어떻게 했나</th></tr>
+<tr><td>사용자</td><td>개선안 1·4·5가 같은 값(지역)을 세 입구에서 고치게 됨</td><td>값은 하나(지금 "내 도서관" 저장소)이고 입구만 늘린다고 각 안에 적음. 한 곳에서 바꾸면 모두 같이 바뀝니다.</td></tr>
+<tr><td>서버 자원</td><td>"스위치 없애고 전국" 안은 조회 계획 68 → 약 376곳</td><td>개선안 2의 다른 선택으로 내리고, 스위치는 두는 쪽을 제안.</td></tr>
+<tr><td>보안·안정성</td><td>새 API·새 저장 없음. 지역 값은 지금 주소·브라우저 저장 그대로</td><td>바뀌는 것이 없어 적을 것 없음. 개선안 2의 꼬리표는 서버가 이미 주는 등급 값을 그대로 보임.</td></tr>
+</table>
+</div>
+
+<p class="foot">원본: docs/research/screen-feedback/first-screen-review.md (2026-10-18). 피드백 출처: 사용자가 붙여 넣은 카카오톡 대화(2026-10-18 오후 8:14~8:25). 화면은 chaekcheck.com을 2026-10-18에 직접 열어 본 것이고, 규칙은 dev 코드와 docs/current/flows.md 사이클 06·07·08 결정에서 읽었습니다. 승인된 안은 사이클 22 scope.md로 옮깁니다.</p>
+</main></body></html>
