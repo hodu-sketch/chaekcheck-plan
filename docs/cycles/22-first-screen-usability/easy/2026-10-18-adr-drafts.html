@@ -154,6 +154,23 @@ th{color:var(--muted);font-weight:500}
 <tr><td>결과</td><td>좋아지는 점: 첫 화면 줄이 하나, 처음 온 사람도 기본이 "빌릴 수 있는 곳". 감수하는 점: 늘 전국으로 쓰려는 사람은 매번 링크를 누름; 추천도서·책 화면도 저장된 "전체" 값이 없어져 빌릴 수 있는 곳 기준. 나중 비용: 서버 API 그대로(`scope` 값 유지)라 되돌리기 쉬움.</td></tr>
 </table>
 <div class="prop">승인하면 ADR-0135로 씁니다(Accepted).</div>
+
+<h3>질문에 답 (2026-10-18): "전국 찾기는 상세 검색 창에서 하도록 못하나? 지금 상세 검색 창 좀 보여줘"</h3>
+<p class="concl">됩니다. 상세검색에 <b>"☐ 전국에서 찾기"</b> 칸을 두면, 그 검색 한 번만 전국(주소 `scope=all`)으로 찾는 지금 링크와 같은 동작을 검색 전에 고를 수 있습니다. 저장하지 않는 것은 같습니다(검색 조건처럼 그 검색에만). 결과 안 링크([전국에서 찾기]·[전국에서 더 찾기])는 그대로 두고 입구를 하나 더하는 쪽을 제안합니다 — 검색하고 나서 "내 도서관엔 없네"를 알게 되는 때가 더 많기 때문입니다.</p>
+<p><b>지금 상세검색 창 (2026-10-18 chaekcheck.com):</b> [상세검색 ⌄]을 누르면 검색창 아래로 패널이 펼쳐지고 줄 셋 — 제목(☐ 완전 일치) / 저자 입력(☐ 완전 일치 ☐ 옮긴이 ☐ 그림 ☐ 엮은이) / 출판사 입력(☐ 완전 일치). 지역·도서관·전국은 없습니다.</p>
+<div class="real"><div class="bd">
+<div class="sb" style="color:#999">책 제목을 입력하세요 <span class="k p" style="margin-left:auto">검색</span><span class="k p">상세검색 ⌃</span><span class="k">⚙</span></div>
+<div style="background:#fff;border:1px solid #d9d9e0;border-radius:12px;padding:12px 16px;margin-top:8px">
+<div class="ln"><b style="width:64px">제목</b><span>☐ 완전 일치</span></div>
+<div class="ln"><b style="width:64px">저자</b><span class="k" style="color:#999;min-width:180px">저자</span><span>☐ 완전 일치 ☐ 옮긴이 ☐ 그림 ☐ 엮은이</span></div>
+<div class="ln"><b style="width:64px">출판사</b><span class="k" style="color:#999;min-width:180px">출판사</span><span>☐ 완전 일치</span></div>
+<div class="ln" style="border-top:1px dashed #d9d9e0;padding-top:8px"><b style="width:64px">사는 곳</b><span class="tg me" style="margin:0">서울 강남구 ×</span><span style="color:#666;font-size:12px">(격자, 사이클 22)</span></div>
+<div class="ln"><b style="width:64px">일하는 곳</b><span style="color:#666">없음</span></div>
+<div class="ln"><b style="width:64px">도서관</b><span class="k" style="color:#999;min-width:180px">도서관 이름으로 찾기</span></div>
+<div class="ln" style="outline:2px dashed #a1302b;outline-offset:3px;border-radius:6px"><b style="width:64px">범위</b><span>☐ 전국에서 찾기</span><span style="color:#666;font-size:12px">이번 검색만 · 저장 안 함</span></div>
+</div></div></div>
+<p class="cap">위 셋이 지금 상세검색, 점선 아래는 사이클 22에서 더해지는 줄, 빨간 점선이 이 답에서 새로 제안하는 "전국에서 찾기" 칸. 체크하고 [검색]을 누르면 그 검색만 전국이고, 결과 위에 "전국에서 찾는 중 · N곳 [내 도서관만]"이 보입니다.</p>
+<div class="prop">안 1(ADR-0135)을 "전국은 결과 안 링크 + 상세검색의 ☐ 전국에서 찾기"로 승인해 주시면 그렇게 적습니다. 링크 없이 상세검색 칸만 원하시면 기타에 "상세검색만"이라고 적어 주세요.</div>
 </div>
 
 <div class="card item"><h2><span class="num">2</span>ADR-0136: 결과를 내 도서관 → 어디 살든 가입 → 그 밖 → 확인 못 함 묶음으로, 줄마다 꼬리표</h2>

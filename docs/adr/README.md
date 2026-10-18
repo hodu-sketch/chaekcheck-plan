@@ -138,3 +138,5 @@
 | [ADR-0132](0132-lookup-load-reduction.md) | 조회 부하 줄이기: 결과 10, 책 화면 이어 부르기 최대 3묶음, 도서관 요청 gzip + 풀었을 때도 1MB(4MB → 1MB) + 1MB 넘음 기록(`body_too_large_count`), 1분 운영 요약 로그 | Accepted | 2026-10-17 | 20 |
 | [ADR-0133](0133-lookup-memory-state-behind-store-interfaces.md) | 브라우저 번호 장부는 가장 오래 안 쓴 줄을 밀어내는 LRU 표(Caffeine 크기 상한 아님), 대출 조회의 메모리 상태는 저장소 인터페이스 뒤 + 설정 하나(`state-store=memory`), Redis는 나중 | Accepted | 2026-10-17 | 20 |
 | [ADR-0134](0134-usage-log-member-id-and-visit-key.md) | 이용 기록 `book_view`·`library_click`·`screen_event`에 회원 번호(로그인한 경우)·방문 번호(탭 난수, 쿠키 아님) 칸을 더함 — AI 추천용; ADR-0096의 "회원 번호 안 남김·기록끼리 잇는 칸 없음"을 바꿈, 검색 기록 제외, 탈퇴·끄기 때 비움 | Accepted (2026-10-18) | 2026-10-18 | 없음 (dev 전달: 사이클 20 인계서) |
+| [ADR-0136](0136-result-groups-and-tags.md) | 검색 결과를 내 도서관 → 어디 살든 가입 → 그 밖 → 확인 못 함 묶음으로, 줄마다 꼬리표·말풍선, 서버 변경 없음(묶음·꼬리표·곳 수는 `targets`에서) | Accepted | 2026-10-18 | 22 |
+| [ADR-0137](0137-region-grid-component-save-only.md) | 지역 고르기는 내 지역 창 대신 격자 공통 부품(크기 키움), 체크는 저장만·검색은 [검색] 단추로(자동 재검색·debounce 없음) | Accepted | 2026-10-18 | 22 |
