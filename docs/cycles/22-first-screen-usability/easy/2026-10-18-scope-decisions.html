@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 22 범위 결정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:1080px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.card h3{margin:18px 0 8px;font-size:20px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+.quote{border-left:4px solid var(--line);margin:8px 0;padding:4px 14px;color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+.v-flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.v-box{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:7px 11px;font-size:15px;text-align:center;min-width:90px}
+.v-box small{display:block;color:var(--muted);font-size:12px}
+.v-hi{border-color:var(--accent);background:var(--accent-bg)}
+.v-warn{border-color:var(--warn);background:var(--warn-bg)}
+.v-ok{border-color:var(--ok);background:var(--ok-bg)}
+.v-no{border-color:var(--no);background:var(--no-bg)}
+.v-arr{color:var(--muted);font-size:18px}
+/* 화면 그림: 자리와 순서만 보여 줍니다 (색·모양은 실제 디자인이 아님) */
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0}
+.pc{flex:1 1 520px;max-width:640px;border:2px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;font-size:13px}
+.ph{flex:0 0 250px;width:250px;border:2px solid var(--line);border-radius:22px;background:var(--bg);overflow:hidden;font-size:12px}
+.tbar{display:flex;gap:12px;align-items:center;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line)}
+.tbar b{color:#5b4bd1;font-size:15px}
+.tbar .r{margin-left:auto;display:flex;gap:8px;align-items:center}
+.btn{display:inline-block;border:1px solid var(--line);border-radius:7px;padding:2px 9px;background:var(--card);white-space:nowrap}
+.btn.p{background:#ede9fb;border-color:#c9bff5;color:#5b4bd1;font-weight:700}
+.btn.on{background:#5b4bd1;color:#fff;border-color:#5b4bd1}
+.body{padding:14px 16px}
+.ph .body{padding:12px 10px}
+.title{text-align:center;font-weight:700;font-size:17px;margin:8px 0 10px}
+.ph .title{font-size:15px}
+.title span{color:#5b4bd1}
+.sbox{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;background:var(--card);padding:6px 12px;color:var(--muted)}
+.sbox .btn{margin-left:auto}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0;justify-content:center}
+.row.l{justify-content:flex-start}
+.tag{display:inline-block;border-radius:999px;padding:0 8px;font-size:11px;font-weight:700;border:1px solid}
+.tag.me{color:#5b4bd1;border-color:#c9bff5;background:#ede9fb}
+.tag.open{color:var(--ok);border-color:var(--ok);background:var(--ok-bg)}
+.tag.add{color:var(--warn);border-color:var(--warn);background:var(--warn-bg)}
+.hint{color:var(--muted);font-size:12px;text-align:center;margin:4px 0}
+.new{outline:2px dashed var(--no);outline-offset:3px;border-radius:8px}
+.res{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:8px 10px;margin:6px 0;display:flex;gap:10px;align-items:center}
+.res .bk{flex:1 1 40%;font-weight:700}.res .bk small{display:block;font-weight:400;color:var(--muted)}
+.res .lib{flex:1 1 40%}.res .lib small{display:block;color:var(--muted)}
+.res .cnt{background:#f3f0ff;color:#5b4bd1;border-radius:6px;padding:2px 6px;white-space:nowrap;font-size:11px}
+.sec{font-weight:700;margin:10px 0 2px;display:flex;align-items:center;gap:6px}
+.sec i{width:8px;height:8px;border-radius:50%;background:#5b4bd1;display:inline-block}
+.sec.grey i{background:var(--muted)}
+.panel{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:10px 12px;margin:8px 0}
+.frow{display:flex;gap:8px;align-items:center;margin:5px 0}
+.frow label{width:48px;font-weight:700}
+.frow .in{flex:1;border:1px solid var(--line);border-radius:6px;padding:3px 8px;color:var(--muted);background:var(--card)}
+.sel{display:inline-block;border:1px solid var(--line);border-radius:6px;padding:3px 8px;background:var(--card)}
+.modal{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:10px 12px;margin:8px auto;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:6px 0}
+.grid span{border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:11px}
+.ph .grid{grid-template-columns:repeat(2,1fr)}
+.big .grid span{font-size:14px;padding:5px 8px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}main table{display:block;overflow-x:auto;max-width:100%}.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="doc">
+
+<p class="lead">사이클 22(첫 화면 사용성)의 범위를 정했습니다. 어제 결정 페이지에서 승인한 개선안 8개가 그대로 들어가고, 그 안을 화면에 놓을 때 생기는 작은 선택 다섯 가지만 남았습니다. 아래 다섯 개를 승인·미승인·기타로 골라 주세요.</p>
+<p class="sub">원문: docs/cycles/22-first-screen-usability/scope.md (2026-10-18). 근거: docs/research/screen-feedback/first-screen-review.md와 그 결정 페이지(안 1~8 승인, 안 9 미승인 → 전부 이 사이클). 화면 그림은 자리와 순서만 보여 주고, 색과 모양은 실제 디자인이 아닙니다.</p>
+
+<div class="card">
+<h2>이 사이클이 하는 일 (이미 정해진 것)</h2>
+<table>
+<tr><th style="width:6%">#</th><th>무엇</th><th style="width:30%">어디</th></tr>
+<tr><td>1</td><td>첫 화면 검색창 아래 "사는 곳" 고르기 줄, [일하는 곳도 더하기], 고르면 "내 도서관: …" 한 줄로 접힘. 여러 지역은 꼬리표로 쌓임(거주 20·직장 20)</td><td>첫 화면 PC·폰</td></tr>
+<tr><td>2</td><td>결과를 내 도서관에 있어요 → 누구나 가입 도서관에 있어요 → 확인하지 못한 도서관 세 묶음으로, 줄마다 [내 지역]·[직접 추가]·[누구나 가입] 꼬리표. 누구나 가입은 "사는 곳과 상관없이 가입돼요" 안내. 지역 없이 검색한 첫 사용자에게 결과 맨 위 안내 줄</td><td>검색 결과</td></tr>
+<tr><td>3</td><td>스위치 이름을 늘 "내 도서관 / 전국"으로. 비어 있으면 "지금은 누구나 가입 39곳이에요" 한 줄</td><td>첫 화면·결과·마이페이지 안내문</td></tr>
+<tr><td>4</td><td>상세검색에 "지역"·"도서관 이름" 줄 (같은 값의 두 번째 입구)</td><td>상세검색</td></tr>
+<tr><td>5</td><td>내 지역 창을 없애고 [시도 ▾][시군구 ▾] 두 단계 고르기를 마이페이지에서도</td><td>마이페이지 내 도서관</td></tr>
+<tr><td>6</td><td>주황 [방문 가입] 꼬리표, 묶음 아래 "이 중 N곳은 가야 해요 · [그 N곳 빼기]", ⚙ 설정의 스위치 이름 "직접 가야 가입되는 도서관은 빼기". 첫 화면의 따로 된 단추는 없앰</td><td>검색 결과·⚙ 설정</td></tr>
+<tr><td>7</td><td>폰 첫 화면에 [내 도서관: 서울 강남구 ▾] 칩 늘 보임</td><td>첫 화면 폰</td></tr>
+<tr><td>8</td><td>지역·직접 추가를 저장한 순간 "로그인하면 다른 기기에서도 그대로예요 [카카오 로그인]" 한 줄</td><td>저장하는 모든 곳</td></tr>
+</table>
+<p class="ex">모두 웹 화면 쪽 일이고, 서버 API와 표는 바뀌지 않는 것으로 시작합니다(설계 단계에서 확인). 사이클에서 뺀 것(백로그): 스위치 없애고 늘 전국 조회, 처음 한 번 안내 창, 직접 추가를 로그인한 사람만, 현재 위치로 지역 찾기, 추천도서 책 창·책 먼저 고르기 화면의 꼬리표.</p>
+</div>
+
+<div class="card item"><h2><span class="num">1</span>첫 화면에 지금 있는 부품 셋을<br>접힌 "내 도서관: …" 줄 하나로 합치기</h2>
+<p class="concl">[안] 지금 첫 화면 필터 줄에 있는 [내 도서관 설정] 링크, [내 도서관 관리 ⌄] 드롭다운, [방문 없이 가입] 단추를 모두 없애고, 접힌 <b>"내 도서관: 사는 곳 서울 강남구 · 방문 가입 포함 ▾"</b> 한 줄로 합칩니다. 누르면 지역 고르기가 펼쳐지고, 그 안에 [마이페이지에서 전체 보기] 링크가 있습니다.</p>
+<p><b>어디에 붙는가:</b> 첫 화면과 결과 화면의 스위치 줄입니다. 지금은 스위치 [가입 가능한 곳 | 전체 도서관] 오른쪽에 [방문 없이 가입]과 [내 도서관 관리 ⌄]가 나란히 있습니다(2026-10-18 chaekcheck.com에서 본 모양).</p>
+<p><b>예시:</b> 강남구를 고른 사람의 첫 화면은 "[내 도서관 | 전국]  내 도서관: 사는 곳 서울 강남구 · 방문 가입 포함 ▾" 두 덩어리뿐입니다. ▾를 누르면 사는 곳·일하는 곳 고르기와 [마이페이지에서 전체 보기]가 펼쳐집니다.</p>
+<div class="shots">
+<div class="pc"><div class="body"><div class="sbox">책 제목을 입력하세요 <span class="btn p">검색</span><span class="btn">상세검색 ⌄</span><span class="btn">⚙</span></div>
+<div class="row l"><span class="btn on">내 도서관</span><span class="btn">전국</span><span class="btn new">내 도서관: 사는 곳 서울 강남구 · 방문 가입 포함 ▾</span></div>
+<div class="panel new" style="max-width:520px"><div class="frow"><label>사는 곳</label><span class="tag me">서울 강남구 ×</span><span class="sel">시도 ▾</span><span class="sel">시군구 ▾</span></div><div class="hint" style="text-align:left"><u>일하는 곳도 더하기</u> · <u>마이페이지에서 전체 보기</u></div></div>
+<div class="hint" style="text-align:left">지금: [가입 가능한 곳 | 전체 도서관] [☑ 방문 없이 가입] [내 도서관 관리 ⌄] → 바뀐 뒤: [내 도서관 | 전국] [내 도서관: … ▾]</div>
+</div></div>
+<div class="ph"><div class="body"><div class="sbox">책 제목 <span class="btn p">검색</span></div>
+<div class="row new"><span class="btn on">내 도서관: 서울 강남구 ▾</span></div>
+<div class="row"><span class="btn">상세검색 ⌄</span><span class="btn">⚙</span></div>
+</div></div>
+</div>
+<p class="cap">PC는 스위치 옆 한 줄, 폰은 칩 하나(개선안 7). 빨간 점선이 새 부품이고, 지금의 세 부품은 사라집니다.</p>
+<div class="prop">제안: 승인. 사이클 07의 "[내 도서관 관리] 단추(사이클 06 S1)"와 2026-09-29의 [방문 없이 가입] 단추 자리를 바꾸는 것이고, 기능은 모두 접힌 줄 안과 ⚙ 설정에 남습니다.</div>
+<p class="alt">다른 선택: [내 도서관 관리 ⌄]는 남기고 지역 줄만 더하기 — 같은 값을 여는 입구가 한 줄에 둘이라 "이게 뭐가 다르지"가 됩니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">2</span>꼬리표와 묶음은 검색 결과 화면까지만</h2>
+<p class="concl">[안] 묶음 세 개와 [내 지역]·[누구나 가입]·[방문 가입] 꼬리표는 <b>검색 결과(바로 보기, 도서관에서 직접 찾기)</b>에만 넣습니다. "책 먼저 고르기" 화면(책 줄 → 도서관별)과 추천도서 책 창의 대출 줄(최대 3곳)은 이번 사이클에서 손대지 않습니다.</p>
+<p><b>왜:</b> 친구분이 본 화면은 기본 보기(바로 보기)의 결과입니다. 책 먼저 고르기 화면은 책 한 권 아래 도서관이 나열되는 다른 모양이라 묶음 규칙을 따로 정해야 하고, 추천도서 책 창은 3곳만 보여 묶음이 의미가 없습니다.</p>
+<div class="prop">제안: 승인. 두 화면은 백로그에 "꼬리표 넣기"로 두고, 이 사이클이 끝난 뒤 같은 꼬리표 부품을 그대로 옮겨 쓰면 됩니다.</div>
+<p class="alt">다른 선택: 세 화면 모두 이번에 — 사이클이 커지고, 책 먼저 고르기 화면의 묶음 규칙을 새로 정해야 합니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">3</span>스위치를 "전국"으로 두었을 때의 결과 묶음은 넷</h2>
+<p class="concl">[안] "전국"일 때는 ① 내 도서관에 있어요 → ② 누구나 가입 도서관에 있어요 → ③ <b>그 밖의 도서관</b>(내 지역 조건에 맞지 않거나 가입 자격 확인이 필요한 곳) → ④ 확인하지 못한 도서관 순입니다. "내 도서관"일 때는 ③이 없어 셋입니다.</p>
+<p><b>어디에 붙는가:</b> 개선안 2의 묶음 규칙을 "전국" 스위치에도 적용할 때입니다. 전국은 약 376곳을 찾으므로 내 지역도 누구나 가입도 아닌 도서관(예: 서울 사람이 보는 부산 시립도서관)이 많이 섞입니다.</p>
+<div class="shots">
+<div class="pc"><div class="body"><div class="row l"><span class="btn">내 도서관</span><span class="btn on">전국</span></div>
+<div class="sec"><i></i>내 도서관에 있어요 (2)</div>
+<div class="sec"><i></i>누구나 가입 도서관에 있어요 (6)</div>
+<div class="sec new"><i></i>그 밖의 도서관에 있어요 (14) <span class="hint" style="margin:0;display:inline">— 그 지역에 살거나 일해야 가입돼요</span></div>
+<div class="res"><div class="bk">데미안<small>헤르만 헤세 · 소담출판사</small></div><div class="lib">부산시민도서관 <span class="tag" style="color:var(--muted);border-color:var(--line)">부산 거주·직장</span><small>교보 · 소장</small></div><span class="cnt">보유 4 대출 중 1</span></div>
+<div class="sec grey"><i></i>확인하지 못한 도서관 (1)</div>
+</div></div>
+</div>
+<p class="cap">③ 묶음의 꼬리표는 그 도서관의 가입 조건 요약(지금 API가 주는 "부산 거주·직장" 같은 글)을 그대로 씁니다.</p>
+<div class="prop">제안: 승인. ③의 이름 "그 밖의 도서관"은 제안이고, 설계에서 바꿀 수 있습니다.</div>
+<p class="alt">다른 선택: "전국"일 때는 묶음 없이 지금 순서 그대로 — 전국을 고른 사람도 내 도서관이 맨 위에 오기를 바랄 것이라 권하지 않습니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">4</span>로그인한 사람의 첫 화면 줄도 같은 모양,<br>바꾸면 계정에 바로 저장</h2>
+<p class="concl">[안] 로그인한 사람에게도 첫 화면 지역 줄은 같은 모양이고, 값은 계정의 거주·직장 지역입니다. 거기서 지역을 바꾸면 지금 마이페이지에서 바꿀 때와 같이 <b>계정에 바로 저장</b>됩니다(서버 <code>PUT /api/v1/me/regions</code>, 사이클 06에 이미 있음).</p>
+<p><b>예시:</b> 로그인한 사람이 첫 화면에서 [일하는 곳도 더하기] → 경기 성남시를 고르면, 다른 기기에서 로그인해도 성남시가 들어 있습니다. 로그인 전 사람은 이 브라우저에만 남고, 저장 순간 안내 한 줄(개선안 8)이 뜹니다.</p>
+<div class="prop">제안: 승인. 새 API 없이 지금 저장 길을 그대로 씁니다.</div>
+<p class="alt">다른 선택: 로그인한 사람은 첫 화면에서 지역을 못 바꾸고 마이페이지로 보내기 — 첫 사용자에게만 쉬운 화면이 되고, 친구분이 지적한 "순서" 문제가 로그인 뒤에 다시 생깁니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">5</span>"누구나 가입 39곳"은 사이트 수로 셈</h2>
+<p class="concl">[안] 안내 줄과 접힌 줄의 "누구나 가입 39곳"은 지금 마이페이지와 같이 <b>사이트 수</b>입니다. 국립세종도서관(사이트 3개)·군산시립도서관(3개)처럼 한 도서관이 여러 사이트를 쓰면 각각 셉니다.</p>
+<p><b>왜 묻나:</b> 사람 눈에는 도서관 수(이름이 같은 것을 하나로)가 더 자연스럽지만, 결과 줄은 사이트마다 한 줄이고 마이페이지도 사이트 수로 "39곳"이라고 써 왔습니다. 두 곳의 수가 다르면 더 헷갈립니다.</p>
+<table><tr><th>세는 법</th><th>값 (2026-10-18)</th><th>어디와 같나</th></tr>
+<tr><td>사이트 수</td><td>39</td><td>마이페이지 "누구나 가입하는 도서관 39곳", 결과 줄 수</td></tr>
+<tr><td>도서관 이름 수</td><td>39보다 적음 (설계에서 셈)</td><td>어디와도 같지 않음</td></tr></table>
+<div class="prop">제안: 승인(사이트 수). 이름이 같은 사이트가 여럿인 것은 결과 줄의 "· 2번째 사이트" 표기(사이클 09)가 이미 설명합니다.</div>
+<p class="alt">다른 선택: 도서관 이름 수로 세고 마이페이지도 같이 바꾸기 — 수는 자연스럽지만 결과 줄 수와 어긋나고 마이페이지 문구까지 손댑니다.</p>
+</div>
+
+<p class="foot">원본: docs/cycles/22-first-screen-usability/scope.md "먼저 정할 것". 다섯 개가 모두 정해지면 /feature-spec(명세)으로 넘어갑니다.</p>
+</main></body></html>
