@@ -1,6 +1,6 @@
 # 설계 제안: 사이클 22 첫 화면 사용성
 
-- 작성 2026-10-18 (architect 서브에이전트, 읽기만 함). 결정은 `easy/2026-10-18-design-decisions.html`에서. 결정 뒤 `design-delta.md`로 정리.
+- 작성 2026-10-18 (architect 서브에이전트, 읽기만 함). 결정은 `easy/2026-10-18-design-decisions.html`에서. 결정 뒤 `design-delta.md`로 정리. **이 문서의 결정 6 B안(0.7초 debounce)과 "스위치" 문장은 design-delta·ADR-0135·0137로 대체됨** — 기록용으로만 둠.
 - 읽은 자료(2026-10-18): 사이클 22의 scope.md·spec.md·flow.md, `docs/current/data-model.md`(`library` 절), `api.md` 329행, dev `web/src/features/{search,region,mylibrary,book,picks}`, `api/types.ts`, `api/usageEvents.ts`, dev 백엔드 `library/internal/Library.java`·`001-library-schema.yaml`·`LibraryListController.java`, dev 스킬 `api-design` 버전 절.
 
 ## 현재 상태
