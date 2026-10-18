@@ -8,6 +8,7 @@
 - 이메일은 `<…>` 꼴로 써서 react-markdown이 메일 쓰기 링크로 그림(맨 주소는 링크가 안 됨, spec AC-12)
 - 사이클 13의 "가입 조건은 ○○에 조사한 내용입니다" 줄은 화면이 이 글 전체 아래에 자동으로 붙임 (spec R5-1; 지금 dev 화면의 "첫 문단 아래"에서 옮김, 사용자 승인 2026-10-14, `easy/2026-10-14-handoff-review.html` #3)
 - 연락처 줄을 "문의·로고·표지 내림 요청"에서 "문의"로 줄임 [확정] (사용자 제안 "이거 따로 안 적어도 될 것 같아 문의에 포함되는 거니까", 2026-10-18, `easy/2026-10-18-deploy-content-decisions.html`). 같은 이메일로 로고·표지 내림 요청도 받으므로 사이클 14 권리자 창구 요건은 그대로 충족
+- "만든 사람" GitHub 소개 링크 한 줄 추가 [확정] (사용자 승인 안#4, 2026-10-18, `easy/2026-10-18-github-intro-draft.html`). 저장소 `hodu-sketch/chaekcheck-about`는 공개로 생성됨(2026-10-18, README = `drafts/github-about-readme.md`). 링크 대상이 실재하므로 공개 가능. `<...>`는 react-markdown이 링크로 그림(문의 이메일과 같은 방식)
 -->
 
 책첵은 여러 전자도서관에서 지금 빌릴 수 있는 전자책을 한 번에 찾아 주는 서비스예요.
@@ -17,3 +18,5 @@
 각 도서관의 로고와 이름은 그 기관의 것이며 책첵은 제휴·후원 관계가 없습니다.
 
 문의: <chaekcheck9104@gmail.com>
+
+만든 사람: <https://github.com/hodu-sketch/chaekcheck-about>

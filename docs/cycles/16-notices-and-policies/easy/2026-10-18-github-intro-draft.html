@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>소개 저장소 초안</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{font-size:25px;margin:0 0 14px;display:flex;gap:12px;align-items:baseline}
+.num{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px}
+.gist{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 20px;font-weight:500}
+.item{border-top:1px solid var(--line);padding:18px 0 6px}
+.item:first-of-type{border-top:none}
+.item h3{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.an{font-size:15px;font-weight:600;color:var(--warn)}
+.item p{margin:6px 0}
+.alt{color:var(--muted)}
+.alt b{color:var(--text);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--code-bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.foot{color:var(--muted);font-size:17px;margin-top:40px}
+table{border-collapse:collapse;width:100%;font-size:17px;margin:10px 0 14px}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code-bg);font-weight:700}
+.ok{background:var(--ok-bg);border-left:4px solid var(--ok);padding:10px 14px;border-radius:0 8px 8px 0;margin:10px 0;font-size:18px}
+.warn{background:var(--warn-bg);border-left:4px solid var(--warn);padding:10px 14px;border-radius:0 8px 8px 0;margin:10px 0;font-size:18px}
+
+/* GitHub-style mock */
+.gh{border:1px solid #d0d7de;border-radius:12px;overflow:hidden;background:#fff;margin:12px 0 16px;font-size:16px;color:#1f2328}
+.gh .bar{background:#f6f8fa;border-bottom:1px solid #d0d7de;padding:12px 16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.gh .path{font-size:18px}
+.gh .path b{color:#0969da;font-weight:600}
+.gh .path .slash{color:#636c76;margin:0 4px}
+.gh .pub{font-size:12px;border:1px solid #d0d7de;border-radius:20px;padding:1px 8px;color:#636c76;margin-left:4px}
+.gh .tabs{display:flex;gap:16px;padding:6px 16px 0;border-bottom:1px solid #d0d7de;font-size:14px;color:#636c76;flex-wrap:wrap}
+.gh .tabs span{padding:6px 2px 10px}
+.gh .tabs .on{color:#1f2328;font-weight:600;box-shadow:inset 0 -2px #fd8c73}
+.gh .files{padding:8px 16px;border-bottom:1px solid #d0d7de;font-size:14px;color:#636c76;display:flex;gap:8px;align-items:center}
+.gh .readmebar{padding:8px 16px;border-bottom:1px solid #d0d7de;font-size:14px;font-weight:600;background:#f6f8fa;display:flex;align-items:center;gap:8px}
+.gh .body{padding:18px 20px}
+.gh .body h1{font-size:26px;border-bottom:1px solid #d8dee4;padding-bottom:8px;margin:2px 0 14px}
+.gh .body h2{font-size:20px;border-bottom:1px solid #d8dee4;padding-bottom:6px;margin:22px 0 10px}
+.gh .body p{margin:8px 0}
+.gh .body a{color:#0969da;text-decoration:none}
+.gh .body .pill{display:inline-block;background:#ddf4ff;color:#0969da;border-radius:6px;padding:2px 8px;font-size:14px}
+.gh .body code{background:#eff1f3;color:#1f2328}
+.ghcap{font-size:15px;color:var(--muted);margin:-6px 0 14px}
+.mdsrc{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-family:ui-monospace,Consolas,monospace;font-size:15px;line-height:1.55;white-space:pre-wrap;color:var(--text)}
+</style>
+</head>
+<body><main class="doc">
+<p class="lead">만든 사람 소개 저장소,<br>이렇게 만들면 어떨까요 (초안)</p>
+<p class="sub">아직 <b>실제로 만들지 않았습니다.</b> 말씀하신 대로 "만든 사람 소개 + 문의 + 커피 한 잔"을 담는 GitHub 저장소의 README가 어떻게 보일지 그려 본 안입니다. 아래 그림을 보시고, 네 가지(저장소·소개 글·커피 링크·서비스 안내 연결)를 정해 주세요. 정하면 그때 저장소는 사용자님이 만들고, 글·연결은 제가 마무리합니다.</p>
+
+<div class="card"><h2><span class="num">1</span>GitHub에서 이렇게 보입니다</h2>
+<p class="gist">저장소 하나를 열면 README가 아래처럼 "소개 페이지"로 보입니다. 주소 하나로 소개·문의·커피가 다 들어갑니다.</p>
+
+<div class="gh">
+  <div class="bar"><span class="path"><b>hodu-sketch</b><span class="slash">/</span><b>chaekcheck-about</b></span><span class="pub">Public</span></div>
+  <div class="tabs"><span class="on">Code</span><span>Issues</span><span>Pull requests</span><span>Settings</span></div>
+  <div class="files">📄 README.md</div>
+  <div class="readmebar">📖 README.md</div>
+  <div class="body">
+    <h1>책첵 (chaekcheck)</h1>
+    <p>여러 전자도서관에서 지금 빌릴 수 있는 전자책을 한 번에 찾아 주는 서비스입니다.<br>
+    👉 <a href="#">https://chaekcheck.com</a></p>
+    <h2>만든 사람</h2>
+    <p>3년차 자바 개발자입니다. 취미로 책첵을 만들어 혼자 운영하고 있어요.</p>
+    <h2>문의</h2>
+    <p>궁금한 점이나 고칠 점이 있으면 메일로 보내 주세요.<br>
+    📧 <a href="#">chaekcheck9104@gmail.com</a></p>
+    <h2>커피 한 잔 ☕</h2>
+    <p>책첵이 도움이 됐다면 커피 한 잔 사주셔도 좋아요. (선택)<br>
+    <span class="pill">카카오페이 송금 링크</span> &nbsp;<span style="color:#636c76;font-size:14px">← 실제 링크는 사용자가 나중에 붙입니다</span></p>
+  </div>
+</div>
+<p class="ghcap">GitHub 저장소 페이지를 흉내 낸 그림입니다(실제 아님). 위치·순서만 보여 주며, 글자·이모지는 바꿀 수 있습니다.</p>
+
+<div class="item"><h3><span class="no" style="flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5">1</span>소개 저장소 <code>chaekcheck-about</code>를 만들어 README를 소개 페이지로 씀 <span class="an">[안]</span></h3>
+<p>공개 저장소 하나(파일은 README.md 하나)면 됩니다. 비공개인 <code>chaekcheck-plan</code>·<code>chaekcheck-dev</code>는 그대로 두고, 이 저장소만 공개합니다.</p>
+<p class="alt"><b>이름:</b> 한글 <code>chaekcheck-소개</code>도 되지만 주소가 <code>chaekcheck-%EC%86%8C...</code>로 깨져 보여, 영문 <code>chaekcheck-about</code>을 권합니다(<code>about</code>, <code>hello</code>도 가능). <b>다른 선택:</b> 저장소 대신 프로필용 저장소 <code>hodu-sketch/hodu-sketch</code>로 만들면 같은 글이 프로필 첫 화면(<code>github.com/hodu-sketch</code>)에 바로 보입니다.</p></div>
+</div>
+
+<div class="card"><h2><span class="num">2</span>소개 글 (초안 — 말씀하신 내용 그대로)</h2>
+<p class="gist">실명·회사·사는 곳은 넣지 않았습니다(방금 최소 노출로 맞춘 방향). "3년차 자바 개발자, 취미로 운영"만 담았어요.</p>
+<p>README에 넣을 원문(그대로 복사해 씁니다):</p>
+<div class="mdsrc"># 책첵 (chaekcheck)
+
+여러 전자도서관에서 지금 빌릴 수 있는 전자책을 한 번에 찾아 주는 서비스입니다.
+👉 https://chaekcheck.com
+
+## 만든 사람
+3년차 자바 개발자입니다. 취미로 책첵을 만들어 혼자 운영하고 있어요.
+
+## 문의
+궁금한 점이나 고칠 점이 있으면 메일로 보내 주세요.
+📧 chaekcheck9104@gmail.com
+
+## 커피 한 잔 ☕
+책첵이 도움이 됐다면 커피 한 잔 사주셔도 좋아요. (선택)
+카카오페이: &lt;여기에 송금 링크&gt;</div>
+<div class="item"><h3><span class="no" style="flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5">2</span>소개 글을 위 초안대로 함 <span class="an">[안]</span></h3>
+<p>문구를 바꾸고 싶으면 승인 대신 "기타"에 고칠 말을 적어 주세요. 이모지(👉 📧 ☕)는 빼도 됩니다.</p>
+<p class="alt"><b>문의 방식:</b> 지금은 메일(말씀하신 대로). <b>다른 선택:</b> 메일 대신 저장소의 <b>Issues</b>로 받으면 공개 게시판이 되지만, 글 남기려면 GitHub 계정이 필요하고 글이 공개됩니다. 메일이 더 넓어요.</p></div>
+</div>
+
+<div class="card"><h2><span class="num">3</span>커피 한 잔 (카카오페이)</h2>
+<p class="gist">"커피 사주고 싶으면" 한 줄과 카카오페이 송금 링크 자리를 넣었습니다. 선택 항목으로, 부담 주지 않는 말투로 적었어요.</p>
+<div class="warn">실제 송금 링크는 <b>제가 만들지 않습니다</b>(지어내지 않음). 카카오페이 앱에서 "송금 링크"를 만들어 그 주소를 사용자님이 직접 붙이시면 됩니다. 저는 자리(<code>&lt;여기에 송금 링크&gt;</code>)만 비워 둡니다.</div>
+<div class="item"><h3><span class="no" style="flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5">3</span>"커피 한 잔" + 카카오페이 링크 자리를 넣음 <span class="an">[안]</span></h3>
+<p class="alt"><b>다른 선택:</b> 커피 항목을 아예 빼기(소개·문의만), 또는 카카오페이 대신 Buy Me a Coffee·토스 링크. 바꾸시려면 "기타"에 적어 주세요.</p></div>
+</div>
+
+<div class="card"><h2><span class="num">4</span>서비스 안내에서 이 페이지로 연결</h2>
+<p class="gist">책첵 안의 '서비스 안내' 맨 아래에 "만든 사람" 링크 한 줄을 더해, 이 GitHub 소개 페이지로 가게 합니다. 문의 메일 줄은 그대로 둡니다.</p>
+<div class="mdsrc">책첵은 여러 전자도서관에서 지금 빌릴 수 있는 전자책을 한 번에 찾아 주는 서비스예요.
+사서추천도서 목록과 일부 표지는 국립중앙도서관 자료(공공누리 제1유형)예요.
+각 도서관의 로고와 이름은 그 기관의 것이며 책첵은 제휴·후원 관계가 없습니다.
+문의: chaekcheck9104@gmail.com
+만든 사람: github.com/hodu-sketch/chaekcheck-about   ← 더하는 줄</div>
+<div class="item"><h3><span class="no" style="flex:none;font-size:16px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:8px;padding:0 8px;line-height:1.5">4</span>서비스 안내에 "만든 사람: github.com/…" 한 줄 추가 <span class="an">[안]</span></h3>
+<p><b>오늘 배포에 넣을지:</b> 저장소를 오늘 만드시면 오늘 서비스 안내에 같이 넣을 수 있고, 아니면 저장소 만든 뒤 다음에 넣어도 됩니다. 넣을 시점을 "기타"에 적어 주세요.</p>
+<p class="alt"><b>다른 선택:</b> 서비스 안내에서 문의 메일을 빼고 GitHub 링크 하나로 모으기(앱 안 노출은 줄지만, 메일은 어차피 GitHub 페이지에 보임).</p></div>
+</div>
+
+<p class="foot">이 페이지는 보여 드리는 초안입니다. 저장소는 아직 만들지 않았고, 정하시면 사용자님이 저장소를 만들고 제가 README 글과 서비스 안내 연결(<code>about.md</code>)을 마무리합니다. 바탕: 사용자 요청(2026-10-18), 서비스 안내 <code>drafts/about.md</code>.</p>
+</main></body>
+</html>
