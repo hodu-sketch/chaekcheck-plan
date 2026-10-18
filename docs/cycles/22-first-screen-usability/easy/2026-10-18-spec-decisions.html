@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이클 22 명세 결정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:1080px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.card h3{margin:18px 0 8px;font-size:20px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+.quote{border-left:4px solid var(--line);margin:8px 0;padding:4px 14px;color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+.v-flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.v-box{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:7px 11px;font-size:15px;text-align:center;min-width:90px}
+.v-box small{display:block;color:var(--muted);font-size:12px}
+.v-hi{border-color:var(--accent);background:var(--accent-bg)}
+.v-warn{border-color:var(--warn);background:var(--warn-bg)}
+.v-ok{border-color:var(--ok);background:var(--ok-bg)}
+.v-no{border-color:var(--no);background:var(--no-bg)}
+.v-arr{color:var(--muted);font-size:18px}
+/* 화면 그림: 자리와 순서만 보여 줍니다 (색·모양은 실제 디자인이 아님) */
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0}
+.pc{flex:1 1 520px;max-width:640px;border:2px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;font-size:13px}
+.ph{flex:0 0 250px;width:250px;border:2px solid var(--line);border-radius:22px;background:var(--bg);overflow:hidden;font-size:12px}
+.tbar{display:flex;gap:12px;align-items:center;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line)}
+.tbar b{color:#5b4bd1;font-size:15px}
+.tbar .r{margin-left:auto;display:flex;gap:8px;align-items:center}
+.btn{display:inline-block;border:1px solid var(--line);border-radius:7px;padding:2px 9px;background:var(--card);white-space:nowrap}
+.btn.p{background:#ede9fb;border-color:#c9bff5;color:#5b4bd1;font-weight:700}
+.btn.on{background:#5b4bd1;color:#fff;border-color:#5b4bd1}
+.body{padding:14px 16px}
+.ph .body{padding:12px 10px}
+.title{text-align:center;font-weight:700;font-size:17px;margin:8px 0 10px}
+.ph .title{font-size:15px}
+.title span{color:#5b4bd1}
+.sbox{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;background:var(--card);padding:6px 12px;color:var(--muted)}
+.sbox .btn{margin-left:auto}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0;justify-content:center}
+.row.l{justify-content:flex-start}
+.tag{display:inline-block;border-radius:999px;padding:0 8px;font-size:11px;font-weight:700;border:1px solid}
+.tag.me{color:#5b4bd1;border-color:#c9bff5;background:#ede9fb}
+.tag.open{color:var(--ok);border-color:var(--ok);background:var(--ok-bg)}
+.tag.add{color:var(--warn);border-color:var(--warn);background:var(--warn-bg)}
+.hint{color:var(--muted);font-size:12px;text-align:center;margin:4px 0}
+/* 실제 화면에 가깝게 그린 큰 그림 (chaekcheck.com 2026-10-18 모양을 따라 그림) */
+.real{border:2px solid var(--line);border-radius:12px;background:#f6f6f8;overflow:hidden;font-size:14px;max-width:780px;margin:10px 0;color:#1f2328}
+.real .hd{display:flex;gap:18px;align-items:center;padding:12px 18px;background:#fff;border-bottom:1px solid #e6e6ea}
+.real .hd b{color:#5b4bd1;font-size:20px}.real .hd .r{margin-left:auto;display:flex;gap:10px;align-items:center}
+.real .bd{padding:14px 18px}
+.real .sb{display:flex;align-items:center;gap:8px;border:1px solid #d9d9e0;border-radius:10px;background:#fff;padding:9px 14px}
+.real .sb .k{margin-left:auto}
+.real .k{display:inline-block;border:1px solid #d9d9e0;border-radius:8px;padding:4px 12px;background:#fff;white-space:nowrap}
+.real .k.p{background:#ede9fb;border-color:#c9bff5;color:#5b4bd1;font-weight:700}
+.real .seg2{display:inline-flex;border:1px solid #d9d9e0;border-radius:8px;overflow:hidden;background:#fff}
+.real .seg2 span{padding:4px 12px}.real .seg2 span.on{background:#ede9fb;color:#5b4bd1;font-weight:700}
+.real .ln{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+.real .tabs{display:flex;gap:18px;border-bottom:1px solid #e6e6ea;margin:12px 0 10px;padding:0 4px}
+.real .tabs span{padding:6px 0;color:#777}.real .tabs span.on{color:#1f2328;font-weight:700;border-bottom:2px solid #1f2328}
+.real .grp{font-weight:700;font-size:15px;margin:14px 0 6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.real .grp i{width:9px;height:9px;border-radius:50%;background:#5b4bd1;display:inline-block}
+.real .grp.g2 i{background:#1f7a45}.real .grp.g3 i{background:#999}
+.real .grp small{font-weight:400;color:#666;font-size:13px}
+.real .sub{color:#5b4bd1;font-size:13px;margin:2px 0 6px 17px}
+.real .card2{display:flex;gap:16px;align-items:center;background:#fff;border:1px solid #e6e6ea;border-radius:12px;padding:12px 16px;margin:6px 0}
+.real .card2 .bk{flex:1 1 42%}.real .card2 .bk b{font-size:16px}.real .card2 .bk small{display:block;color:#666}
+.real .card2 .lb{flex:1 1 42%}.real .card2 .lb b{font-size:15px}.real .card2 .lb small{display:block;color:#666}
+.real .cnt2{background:#f3f0ff;color:#5b4bd1;border-radius:8px;padding:6px 10px;white-space:nowrap;font-size:13px;line-height:1.3;text-align:center}
+.real .cnt2 b{display:block;font-size:15px;color:#1f2328}
+.real .tg{display:inline-block;border-radius:999px;padding:0 9px;font-size:12px;font-weight:700;border:1px solid;vertical-align:middle;margin-left:4px}
+.real .tg.me{color:#5b4bd1;border-color:#c9bff5;background:#ede9fb}
+.real .tg.op{color:#1f7a45;border-color:#1f7a45;background:#e3f3ea}
+.real .tg.vi{color:#8a5a00;border-color:#8a5a00;background:#fbf0d9}
+.real .tg.ad{color:#a13b78;border-color:#a13b78;background:#fbe6f1}
+.real .note{background:#e3f3ea;border:1px solid #1f7a45;border-radius:10px;padding:8px 12px;margin:10px 0;font-size:13px}
+.real .pop{background:#fff;border:1px solid #d9d9e0;border-radius:8px;padding:6px 10px;font-size:12px;box-shadow:0 4px 12px rgba(0,0,0,.12);display:inline-block;margin:0 0 4px 40%}
+.realph{border:2px solid var(--line);border-radius:22px;background:#f6f6f8;overflow:hidden;font-size:13px;width:360px;max-width:100%;margin:10px 0;color:#1f2328}
+.realph .hd{display:flex;align-items:center;padding:10px 14px;background:#fff;border-bottom:1px solid #e6e6ea}.realph .hd b{color:#5b4bd1;font-size:18px}.realph .hd .r{margin-left:auto}
+.realph .bd{padding:10px 12px}
+.realph .card2{background:#fff;border:1px solid #e6e6ea;border-radius:12px;padding:10px 12px;margin:6px 0}
+.realph .card2 b{font-size:15px}.realph .card2 small{display:block;color:#666}
+.realph .lb{border-top:1px solid #eee;margin-top:6px;padding-top:6px}
+.realph .cnt3{display:inline-block;background:#f3f0ff;color:#5b4bd1;border-radius:6px;padding:2px 8px;font-size:12px;margin-top:4px}
+.realph .grp{font-weight:700;margin:10px 0 4px}.realph .grp small{font-weight:400;color:#666;display:block;font-size:12px}
+.realph .note{background:#e3f3ea;border:1px solid #1f7a45;border-radius:10px;padding:6px 10px;margin:8px 0;font-size:12px}
+.realph .tg{display:inline-block;border-radius:999px;padding:0 8px;font-size:11px;font-weight:700;border:1px solid;vertical-align:middle;margin-left:3px}
+.realph .tg.me{color:#5b4bd1;border-color:#c9bff5;background:#ede9fb}.realph .tg.op{color:#1f7a45;border-color:#1f7a45;background:#e3f3ea}.realph .tg.vi{color:#8a5a00;border-color:#8a5a00;background:#fbf0d9}
+.realph .k{display:inline-block;border:1px solid #d9d9e0;border-radius:8px;padding:3px 10px;background:#fff}
+.realph .k.p{background:#ede9fb;border-color:#c9bff5;color:#5b4bd1;font-weight:700}
+.lvl{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:10px 0}
+@media (max-width:700px){.lvl{grid-template-columns:1fr}}
+.lvl div{border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:16px;background:var(--card)}
+.lvl div b{display:block;margin-bottom:4px}
+.lvl div.pick{border-color:var(--accent);background:var(--accent-bg)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;background:var(--card)}
+.seg span{padding:2px 10px;white-space:nowrap}
+.seg span.on{background:#ede9fb;color:#5b4bd1;font-weight:700}
+.new{outline:2px dashed var(--no);outline-offset:3px;border-radius:8px}
+.res{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:8px 10px;margin:6px 0;display:flex;gap:10px;align-items:center}
+.res .bk{flex:1 1 40%;font-weight:700}.res .bk small{display:block;font-weight:400;color:var(--muted)}
+.res .lib{flex:1 1 40%}.res .lib small{display:block;color:var(--muted)}
+.res .cnt{background:#f3f0ff;color:#5b4bd1;border-radius:6px;padding:2px 6px;white-space:nowrap;font-size:11px}
+.sec{font-weight:700;margin:10px 0 2px;display:flex;align-items:center;gap:6px}
+.sec i{width:8px;height:8px;border-radius:50%;background:#5b4bd1;display:inline-block}
+.sec.grey i{background:var(--muted)}
+.panel{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:10px 12px;margin:8px 0}
+.frow{display:flex;gap:8px;align-items:center;margin:5px 0}
+.frow label{width:48px;font-weight:700}
+.frow .in{flex:1;border:1px solid var(--line);border-radius:6px;padding:3px 8px;color:var(--muted);background:var(--card)}
+.sel{display:inline-block;border:1px solid var(--line);border-radius:6px;padding:3px 8px;background:var(--card)}
+.modal{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:10px 12px;margin:8px auto;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:6px 0}
+.grid span{border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:11px}
+.ph .grid{grid-template-columns:repeat(2,1fr)}
+.big .grid span{font-size:14px;padding:5px 8px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}main table{display:block;overflow-x:auto;max-width:100%}.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="doc">
+
+<p class="lead">사이클 22 명세(spec.md)를 썼습니다. 큰 동작은 범위에서 이미 정했고, 화면에서 생기는 작은 규칙 11개가 남았습니다. 아래 11개를 승인·미승인·기타로 골라 주세요. 다 정해지면 바로 화면 흐름(/screen-flow)으로 넘어갑니다.</p>
+<p class="sub">원문: docs/cycles/22-first-screen-usability/spec.md (2026-10-18). 조사(spec 2절, 2026-10-18 dev 코드·공개 API 확인): 꼬리표에 필요한 값은 결과 첫 묶음에 이미 다 오고, 서버 API는 바뀌지 않습니다. 새로 안 것 하나: 도서관 전체 목록 API는 응답이 약 870KB(압축 62KB)라 첫 화면에서 "곳 수" 하나 때문에 부르기엔 무겁습니다(4번). 화면 그림은 자리와 순서만 보여 줍니다.</p>
+
+<div class="card">
+<h2>이 페이지에 나오는 말</h2>
+<table>
+<tr><th style="width:26%">말</th><th>뜻</th></tr>
+<tr><td>접힌 줄</td><td>검색창 아래 "내 도서관: 서울 강남구 · 68곳 ▾" 한 줄. 누르면 사는 곳·일하는 곳·직접 추가·방문 가입 빼기가 펼쳐집니다(범위 결정 #1).</td></tr>
+<tr><td>조회 계획</td><td>검색 한 번에 서버가 실제로 물어보는 도서관 목록. 결과의 첫 묶음에 `targets`라는 이름으로 통째로 옵니다. 그 길이가 "찾는 도서관 수"입니다.</td></tr>
+<tr><td>묶음</td><td>결과 목록의 큰 제목 줄: 내 도서관에 있어요 / 누구나 가입 도서관에 있어요 / (전국일 때) 그 밖의 도서관에 있어요 / 확인하지 못한 도서관.</td></tr>
+<tr><td>배치(「결과 더 보기」)</td><td>검색 한 번에 도서관 10곳씩 묻고, [결과 더 보기]를 누르면 다음 10곳을 묻습니다(2026-10-18 배포 v1.0.1 기준).</td></tr>
+<tr><td>방문 가입</td><td>가입하려면 도서관에 가야 하는 곳. 누구나 가입 39곳 중 19곳, 강남구 거주로 가입되는 27곳 중 9곳이 그렇습니다(API 2026-10-18).</td></tr>
+</table>
+</div>
+
+<div class="card item"><h2><span class="num">1</span>스위치를 "전국"으로 두어도<br>접힌 줄은 "내 도서관: …" 그대로</h2>
+<p class="concl">[안] 스위치를 "전국"으로 바꿔도 옆의 접힌 줄은 "내 도서관: 서울 강남구 · 68곳 ▾" 그대로입니다. 전국일 때 결과의 첫 묶음 "내 도서관에 있어요"가 바로 이 정보로 만들어지기 때문입니다. (spec R1-5)</p>
+<p><b>예시:</b> 강남구 사람이 "전국"을 누르면 스위치만 바뀌고 옆 줄은 그대로. 결과는 ① 내 도서관(강남구) → ② 누구나 가입 → ③ 그 밖 → ④ 확인 못 함 네 묶음.</p>
+<div class="prop">제안: 승인. 전국을 골라도 "내 도서관"이 무엇인지 계속 보여야 ①묶음의 뜻이 통합니다.</div>
+<p class="alt">다른 선택: 전국일 때 접힌 줄을 "전국 · 약 376곳 ▾"로 바꾸기 — 전국 도서관 수를 알려면 무거운 전체 목록 API를 불러야 하고(4번), 내 도서관 정보가 안 보여 ①묶음과 어긋납니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">2</span>폰: 처음 온 사람의 칩 글은 "어디서 빌리실 건가요? ▾"</h2>
+<p class="concl">[안] 폰(640px 이하) 첫 화면의 칩은 지역이 있으면 "내 도서관: 서울 강남구 · 68곳 ▾", 없으면 <b>"어디서 빌리실 건가요? ▾"</b>입니다. 누르면 ⚙ 시트의 "찾을 도서관" 칸이 열리고 거기서 시도·시군구를 고릅니다. (spec R2-1)</p>
+<div class="shots">
+<div class="ph"><div class="body"><div class="sbox">책 제목 <span class="btn p">검색</span></div><div class="row new"><span class="btn">어디서 빌리실 건가요? ▾</span></div><div class="hint">안 고르면 전국 누구나 가입 도서관에서 찾아요</div></div></div>
+<div class="ph"><div class="body"><div class="sbox">책 제목 <span class="btn p">검색</span></div><div class="row new"><span class="btn on">내 도서관: 서울 강남구 · 68곳 ▾</span></div></div></div>
+</div>
+<p class="cap">왼쪽 처음 온 사람, 오른쪽 지역을 고른 뒤.</p>
+<div class="prop">제안: 승인. PC처럼 폰 첫 화면에 시도·시군구 고르기를 바로 펼치면 검색창과 함께 세 줄이 되어 폰에서 너무 길어집니다.</div>
+<p class="alt">다른 선택: 폰 첫 화면에도 [시도 ▾][시군구 ▾]를 바로 보이기 — 처음 온 사람에게는 더 직접적이지만 첫 화면이 길어지고, 사이클 08의 "폰은 설정을 시트에"와 어긋납니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">3</span>사는 곳이 여럿이면 "서울 강남구·서초구",<br>셋을 넘으면 "서울 강남구 외 2곳"</h2>
+<p class="concl">[안] 접힌 줄에서 사는 곳이 둘 이상이면 시도는 한 번만 쓰고 시군구를 ·로 잇습니다: "서울 강남구·서초구". 시도가 다르면 "서울 강남구 · 경기 성남시". 셋을 넘으면 "서울 강남구 외 2곳". 펼친 상자에서는 모두 꼬리표로 보입니다. 이미 고른 시군구는 고르기 목록에서 흐리게 하여 두 번 못 고릅니다. (spec R3-1, R12-2)</p>
+<div class="prop">제안: 승인. 접힌 줄은 한 줄이어야 하므로 셋부터 줄입니다.</div>
+<p class="alt">다른 선택: 모두 다 쓰기 — 다섯 곳을 고른 사람은 줄이 두 줄로 넘어갑니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">4</span>"68곳"은 조회 계획의 길이로,<br>첫 화면에서는 마지막 값 또는 생략</h2>
+<p class="concl">[안] 접힌 줄의 "N곳"은 <b>결과 화면에서는 첫 묶음 `targets`의 길이</b>(스위치·방문 빼기·지역이 다 반영된, 실제로 찾는 도서관 수)입니다. <b>첫 화면에서는 마지막 검색에서 본 값을 이 브라우저에 기억해 보이고, 한 번도 검색하지 않았으면 수 없이</b> "내 도서관: 서울 강남구 ▾"입니다. 처음 온 사람의 작은 글도 "누구나 가입 도서관 39곳"의 39를 서버에서 새로 받지 않고, 마지막으로 안 값이 없으면 "누구나 가입 도서관에서 찾아요"로 씁니다. (spec R3-3, R3-4, R7-1)</p>
+<p><b>왜:</b> 수를 정확히 세려면 도서관 전체 목록 API(<code>GET /api/v1/libraries</code>)를 불러야 하는데, 2026-10-18에 재 보니 2,642줄·약 870KB(압축해도 62KB)입니다. 마이페이지는 이미 이것을 부르지만, 첫 화면을 여는 모든 사람이 수 하나 때문에 이것을 받는 것은 서버와 폰 데이터 모두에 낭비입니다. 결과 화면에서는 어차피 오는 `targets`가 정확한 수를 공짜로 줍니다.</p>
+<table><tr><th>어디</th><th>N의 출처</th><th>정확도</th></tr>
+<tr><td>결과 화면</td><td>첫 묶음 `targets` 길이</td><td>정확(지금 이 검색이 묻는 수)</td></tr>
+<tr><td>첫 화면 (검색한 적 있음)</td><td>마지막 검색의 값(브라우저 기억)</td><td>지역을 바꾸면 지움 → 다음 검색까지 생략</td></tr>
+<tr><td>첫 화면 (처음)</td><td>없음</td><td>"내 도서관: 서울 강남구 ▾"</td></tr></table>
+<div class="prop">제안: 승인. 범위 결정 #1의 "중간 수준(지역 · 곳 수)"에서 곳 수가 결과 화면부터 보이는 것으로 좁히는 것입니다.</div>
+<p class="alt">다른 선택 ①: 첫 화면에서도 전체 목록 API를 불러 정확히 세기 — 첫 화면 방문마다 62KB 전송, 서버 DB 조회 한 번 더.<br>다른 선택 ②: 서버에 "수만 주는" 가벼운 API를 새로 만들기 — 이 사이클은 "서버 API 안 바꿈"이라 다음 사이클 후보(백로그).</p>
+</div>
+
+<div class="card item"><h2><span class="num">5</span>마이페이지 첫 문장을<br>"검색 스위치를 '내 도서관'에 두면 여기 있는 도서관에서 찾아요"로</h2>
+<p class="concl">[안] 지금 마이페이지 첫 문장 `"내 도서관" 스위치를 켜면 여기 있는 도서관에서 찾아요`를 <b>"검색 스위치를 '내 도서관'에 두면 여기 있는 도서관에서 찾아요"</b>로 바꿉니다. 스위치 이름이 "내 도서관 / 전국"으로 통일되니 "켠다"가 아니라 "둔다"가 맞습니다. (spec R4-2)</p>
+<div class="prop">제안: 승인.</div>
+<p class="alt">다른 선택: "검색할 때 '내 도서관'을 고르면 …" — 비슷하지만 "고르면"은 스위치 모양(두 칸)을 떠올리기 어렵습니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">6</span>[결과 더 보기]로 온 줄은 자기 묶음의 끝에 붙이기</h2>
+<p class="concl">[안] [결과 더 보기]로 다음 10곳이 오면 새 줄은 자기 묶음(내 도서관 / 누구나 가입 / 그 밖)의 <b>끝에</b> 이어 붙고, 이미 보이던 줄은 자리를 지킵니다. 묶음 제목의 수 (n)만 늘어납니다. 지금 규칙("앞 배치는 순서를 지키고, 배치 안에서만 정렬")을 묶음 안으로 옮긴 것입니다. (spec R5-3)</p>
+<div class="v-flow"><div class="v-box">① 내 도서관 (3)<small>줄 a, b, c</small></div><span class="v-arr">더 보기 →</span><div class="v-box v-hi">① 내 도서관 (5)<small>a, b, c, <b>d, e</b></small></div><span class="v-arr">·</span><div class="v-box">② 누구나 가입 (6)<small>f … k</small></div><span class="v-arr">→</span><div class="v-box v-hi">② 누구나 가입 (8)<small>f … k, <b>l, m</b></small></div></div>
+<p class="cap">새로 온 d·e는 ① 끝에, l·m은 ② 끝에. 보던 줄이 밀리지 않습니다.</p>
+<div class="prop">제안: 승인. 읽던 줄이 움직이지 않는 것이 더 보기의 기본입니다(사용자 2026-10-18: "정렬은 똑같아야 해").</div>
+<p class="alt">다른 선택: 묶음 안을 매번 다시 정렬 — 보유 수가 많은 새 줄이 위로 끼어들어 읽던 줄이 밀립니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">7</span>"내 도서관에 있어요"가 비면 "내 도서관에는 없어요 (0)"로 보이기,<br>다른 묶음은 비면 숨기기</h2>
+<p class="concl">[안] 첫 묶음 ①이 비면 제목을 <b>"내 도서관에는 없어요 (0)"</b>로 그대로 보이고, ②·③은 비면 제목째 숨깁니다. ①만 보이는 이유: "내 도서관엔 없구나"를 알아야 "전국"으로 바꿀 생각을 합니다. (spec R5-4)</p>
+<div class="shots"><div class="pc"><div class="body"><div class="sec"><i></i>내 도서관에는 없어요 (0) <span class="hint" style="display:inline;margin:0">· 전국으로 바꾸면 다른 지역 도서관도 찾아요</span></div><div class="sec"><i></i>누구나 가입 도서관에 있어요 (6)</div><div class="res"><div class="bk">데미안<small>헤르만 헤세 · 소담출판사</small></div><div class="lib">울산동부도서관 전자책도서관 <span class="tag open">누구나 가입</span></div><span class="cnt">보유 5</span></div></div></div></div>
+<p class="cap">① 제목 옆 작은 글 "전국으로 바꾸면 …"은 이 안에 들어 있는 제안입니다.</p>
+<div class="prop">제안: 승인.</div>
+<p class="alt">다른 선택: 빈 묶음은 모두 숨기기 — 화면이 깔끔하지만 처음 온 사람이 왜 내 지역 줄이 없는지 모릅니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">8</span>첫 사용자용 녹색 안내 줄에는 닫기 ×가 없고,<br>지역을 고르면 사라짐</h2>
+<p class="concl">[안] 지역 없이 검색한 사람의 결과 맨 위 녹색 줄("지금은 전국 누구나 가입 도서관 N곳에서 찾았어요 … [지역 고르기]")에는 닫기 ×를 두지 않습니다. 지역을 고르는 것이 닫는 길이고, 지역을 안 고르면 검색마다 다시 보입니다. (spec R7-2)</p>
+<div class="prop">제안: 승인. 닫아 버리면 친구분이 겪은 "왜 전국이 나오지"가 그대로 남습니다. 줄은 한 줄이라 읽는 부담이 작습니다.</div>
+<p class="alt">다른 선택: ×로 닫고 이 브라우저에서 다시 안 보이기 — 전국만 쓰려는 사람에게 편하지만, 그 사람은 스위치 "전국"을 쓰면 됩니다(그러면 이 줄은 원래 안 보임).</p>
+</div>
+
+<div class="card item"><h2><span class="num">9</span>"이 중 N곳은 가야 해요"의 N은<br>지금 화면에 보이는 줄 기준</h2>
+<p class="concl">[안] 누구나 가입 묶음 제목 옆 "이 중 N곳은 가입하려면 도서관에 가야 해요 · [그 N곳 빼기]"의 N은 <b>지금 화면에 보이는 그 묶음 줄 가운데</b> 방문 가입 도서관 수입니다(사이트 수). [더 보기]로 줄이 늘면 N도 늡니다. [그 N곳 빼기]를 누르면 방문 가입 도서관 전부(보이는 것뿐 아니라 계획의 모든 방문 가입 도서관)가 다음 검색부터 빠집니다 — 지금의 "방문 없이 가입"과 같은 값이기 때문입니다. (spec R8-2)</p>
+<p><b>예시:</b> 결과에 울산동부(온라인)·국립세종(방문) 두 줄이 보이면 "이 중 1곳은 … [그 1곳 빼기]". 누르면 다시 검색되어 국립세종 줄이 없고, 아직 안 보였던 다른 방문 가입 도서관도 안 옵니다. 제목 자리는 "방문 가입 도서관을 뺐어요 · [다시 넣기]".</p>
+<div class="prop">제안: 승인. 제목 옆 수는 "지금 보고 있는 것" 이야기여야 자연스럽고, 빼기는 값 하나(전체)로 단순합니다.</div>
+<p class="alt">다른 선택: N을 계획 전체의 방문 가입 수로 — 아직 안 보인 도서관까지 세어 "이 중"이라는 말과 어긋납니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">10</span>저장 안내 한 줄은 저장할 때마다, ×로 닫으면 이 브라우저에서 그만</h2>
+<p class="concl">[안] 로그인 전 사람이 지역·직접 추가를 저장할 때마다 그 아래에 "이 브라우저에만 저장됐어요. 로그인하면 다른 기기에서도 그대로예요 [카카오 로그인] ×"가 보이고, ×를 누르면 이 브라우저에서는 다시 보이지 않습니다. 로그인한 사람에게는 보이지 않습니다. (spec R9-2)</p>
+<div class="prop">제안: 승인. 매번 보이되 끌 수 있어야 귀찮지 않고, 로그인 뒤에는 뜻이 없습니다.</div>
+<p class="alt">다른 선택 ①: 한 브라우저에서 딱 한 번만 — 처음에 못 읽고 지나가면 다시 못 봅니다.<br>다른 선택 ②: 매번, 닫기 없음 — 로그인 안 할 사람에게 잔소리가 됩니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">11</span>지역 목록을 못 받았을 때는 한 줄 + [다시 시도], 검색은 그대로</h2>
+<p class="concl">[안] 시도·시군구 목록(<code>GET /api/v1/regions</code>)을 받지 못하면 고르기 자리에 "지역 목록을 불러오지 못했어요 [다시 시도]" 한 줄을 보이고, 검색 자체는 됩니다(이미 저장된 지역은 그대로 쓰임). (spec 5절)</p>
+<div class="prop">제안: 승인. 지금 내 지역 창도 목록을 못 받으면 비슷하게 알립니다(사이클 06).</div>
+<p class="alt">다른 선택: 조용히 고르기만 숨기기 — 왜 지역을 못 고르는지 알 수 없습니다.</p>
+</div>
+
+<div class="card">
+<h2>조사해서 정한 것 (결정 아님, 알림)</h2>
+<ul>
+<li><b>마이페이지 "자동 29곳"과 조회 계획 27곳이 다른 이유</b>(2026-10-18 dev 읽음): 마이페이지는 지역이 맞는 도서관을 가입 조건 확인 여부와 상관없이 세고(29), 조회 계획에는 가입이 확정된 곳만 들어갑니다(27). 뜻이 달라 접힌 줄은 계획 수(4번)를, 마이페이지는 지금 수를 그대로 씁니다.</li>
+<li><b>서버 API는 바뀌지 않습니다.</b> 꼬리표·묶음에 필요한 값(등급, 직접 추가, 방문 가입, 가입 정보)은 결과 첫 묶음에 이미 있습니다. 이용 기록도 바뀌지 않습니다(스위치·방문 값은 지금 값 그대로).</li>
+<li><b>남은 확인(설계·화면 흐름에서):</b> [누구나 가입] 말풍선의 "울산에 살지 않아도"에 쓸 도서관의 시도가 결과 줄 데이터에 있는지(없으면 "그 지역에 살지 않아도"), 폰에서 시도·시군구 고르기 모양.</li>
+</ul>
+<p class="ex">판정: <b>설계 진행 가능</b>. 설계를 막는 항목은 없습니다.</p>
+</div>
+
+<p class="foot">원본: docs/cycles/22-first-screen-usability/spec.md. 11개가 모두 정해지면 /screen-flow(화면 흐름)로 넘어갑니다.</p>
+</main></body></html>
