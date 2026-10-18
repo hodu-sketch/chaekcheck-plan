@@ -187,12 +187,33 @@ th{color:var(--muted);font-weight:500}
 <tr><td>결과 화면</td><td>첫 묶음 `targets` 길이</td><td>정확(지금 이 검색이 묻는 수)</td></tr>
 <tr><td>첫 화면 (검색한 적 있음)</td><td>마지막 검색의 값(브라우저 기억)</td><td>지역을 바꾸면 지움 → 다음 검색까지 생략</td></tr>
 <tr><td>첫 화면 (처음)</td><td>없음</td><td>"내 도서관: 서울 강남구 ▾"</td></tr></table>
+<h3>그림으로 (사용자 요청 2026-10-18: "화면 그림 표, 선으로 간단하게")</h3>
+<p>수 "68"이 어디서 생겨서 어디에 보이는지, 세 장면입니다.</p>
+<div class="shots">
+<div class="ph" style="flex:0 0 220px;width:220px"><div class="body"><div class="hint" style="text-align:left;font-weight:700">① 첫 화면 (아직 검색 안 함)</div><div class="sbox">책 제목 <span class="btn p">검색</span></div><div class="row"><span class="btn on">내 도서관: 서울 강남구 ▾</span></div><div class="hint">수 없음 — 서버에 묻지 않음</div></div></div>
+<div class="ph" style="flex:0 0 220px;width:220px"><div class="body"><div class="hint" style="text-align:left;font-weight:700">② 결과 화면</div><div class="sbox">데미안 <span class="btn p">검색</span></div><div class="row"><span class="btn on new">내 도서관: 서울 강남구 · 68곳 ▾</span></div><div class="hint">서버가 결과와 함께 보낸<br>"물어본 도서관 68곳 목록"의 길이</div><div class="sec"><i></i>내 도서관에 있어요 (4)</div></div></div>
+<div class="ph" style="flex:0 0 220px;width:220px"><div class="body"><div class="hint" style="text-align:left;font-weight:700">③ 다시 첫 화면</div><div class="sbox">책 제목 <span class="btn p">검색</span></div><div class="row"><span class="btn on">내 도서관: 서울 강남구 · 68곳 ▾</span></div><div class="hint">②에서 본 68을 브라우저가 기억<br>지역을 바꾸면 지움 → ①처럼</div></div></div>
+</div>
+<div class="v-flow"><div class="v-box">① 첫 화면<small>수 없음</small></div><span class="v-arr">검색 →</span><div class="v-box v-hi">서버 응답<small>결과 + 물어본 도서관 목록(68)</small></div><span class="v-arr">→</span><div class="v-box v-ok">② 결과 화면<small>"· 68곳" 표시, 68을 기억</small></div><span class="v-arr">→</span><div class="v-box">③ 첫 화면<small>기억한 68 표시</small></div><span class="v-arr">지역 바꿈 →</span><div class="v-box v-warn">기억 지움<small>다음 검색까지 수 없음</small></div></div>
+<table><tr><th>장면</th><th>"N곳"</th><th>서버 요청</th></tr>
+<tr><td>① 처음 첫 화면</td><td>없음</td><td>없음</td></tr>
+<tr><td>② 결과 화면</td><td>정확한 수(물어본 도서관 목록 길이)</td><td>검색 요청에 이미 포함, 추가 없음</td></tr>
+<tr><td>③ 그 뒤 첫 화면</td><td>②의 수를 기억해 보임</td><td>없음</td></tr>
+<tr><td>지역·스위치·방문 빼기를 바꾼 뒤</td><td>다음 검색까지 없음(틀린 수를 보이지 않기 위해)</td><td>없음</td></tr></table>
+<p class="cap">선 하나로: 수는 검색할 때 서버가 어차피 보내는 목록에서 세고, 그 뒤 첫 화면은 그 수를 기억해 보일 뿐 서버에 따로 묻지 않습니다.</p>
 <div class="prop">제안: 승인. 범위 결정 #1의 "중간 수준(지역 · 곳 수)"에서 곳 수가 결과 화면부터 보이는 것으로 좁히는 것입니다.</div>
 <p class="alt">다른 선택 ①: 첫 화면에서도 전체 목록 API를 불러 정확히 세기 — 첫 화면 방문마다 62KB 전송, 서버 DB 조회 한 번 더.<br>다른 선택 ②: 서버에 "수만 주는" 가벼운 API를 새로 만들기 — 이 사이클은 "서버 API 안 바꿈"이라 다음 사이클 후보(백로그).</p>
 </div>
 
 <div class="card item"><h2><span class="num">5</span>마이페이지 첫 문장을<br>"검색 스위치를 '내 도서관'에 두면 여기 있는 도서관에서 찾아요"로</h2>
 <p class="concl">[안] 지금 마이페이지 첫 문장 `"내 도서관" 스위치를 켜면 여기 있는 도서관에서 찾아요`를 <b>"검색 스위치를 '내 도서관'에 두면 여기 있는 도서관에서 찾아요"</b>로 바꿉니다. 스위치 이름이 "내 도서관 / 전국"으로 통일되니 "켠다"가 아니라 "둔다"가 맞습니다. (spec R4-2)</p>
+<div class="real"><div class="hd"><b>책첵</b><span>도서검색</span><span>추천도서</span><span style="color:#5b4bd1;border-bottom:2px solid #5b4bd1">마이페이지</span><span class="r"><span class="k">로그인</span></span></div>
+<div class="bd"><div style="font-size:22px;font-weight:700">내 도서관 <span style="color:#999;font-size:14px">ⓘ</span></div>
+<div style="color:#444;margin:4px 0 10px">검색 스위치를 '내 도서관'에 두면 여기 있는 도서관에서 찾아요.</div>
+<div class="note" style="background:#ede9fb;border-color:#c9bff5;color:#5b4bd1">누구나 가입하는 도서관 39곳도 늘 내 도서관에 들어 있어요 ⌄</div>
+<div class="card2" style="display:block"><b>지역 선택</b><div class="ln"><b style="width:64px">사는 곳</b><span class="tg me" style="margin:0">서울 강남구 ×</span><span class="k">시도 ⌄</span><span class="k">시군구 ⌄</span><span style="color:#5b4bd1;margin-left:auto">자동 29곳 ⌄</span></div><div class="ln"><b style="width:64px">일하는 곳</b><span style="color:#666">없음</span><span class="k">시도 ⌄</span><span class="k">시군구 ⌄</span></div></div>
+</div></div>
+<p class="cap">마이페이지 첫 문장(둘째 줄)만 바뀝니다. 지역 선택 칸은 범위 결정 #5(창 없이 두 단계)대로 그린 것입니다.</p>
 <div class="prop">제안: 승인.</div>
 <p class="alt">다른 선택: "검색할 때 '내 도서관'을 고르면 …" — 비슷하지만 "고르면"은 스위치 모양(두 칸)을 떠올리기 어렵습니다.</p>
 </div>
@@ -201,20 +222,62 @@ th{color:var(--muted);font-weight:500}
 <p class="concl">[안] [결과 더 보기]로 다음 10곳이 오면 새 줄은 자기 묶음(내 도서관 / 누구나 가입 / 그 밖)의 <b>끝에</b> 이어 붙고, 이미 보이던 줄은 자리를 지킵니다. 묶음 제목의 수 (n)만 늘어납니다. 지금 규칙("앞 배치는 순서를 지키고, 배치 안에서만 정렬")을 묶음 안으로 옮긴 것입니다. (spec R5-3)</p>
 <div class="v-flow"><div class="v-box">① 내 도서관 (3)<small>줄 a, b, c</small></div><span class="v-arr">더 보기 →</span><div class="v-box v-hi">① 내 도서관 (5)<small>a, b, c, <b>d, e</b></small></div><span class="v-arr">·</span><div class="v-box">② 누구나 가입 (6)<small>f … k</small></div><span class="v-arr">→</span><div class="v-box v-hi">② 누구나 가입 (8)<small>f … k, <b>l, m</b></small></div></div>
 <p class="cap">새로 온 d·e는 ① 끝에, l·m은 ② 끝에. 보던 줄이 밀리지 않습니다.</p>
+<p><b>실제 화면: [결과 더 보기]를 누르기 전과 뒤</b></p>
+<div class="two">
+<div><div class="real"><div class="bd">
+<div class="grp"><i></i>내 도서관에 있어요 <small>(2)</small></div>
+<div class="card2"><div class="bk"><b>데미안</b><small>소담출판사</small></div><div class="lb"><b>강남구 전자도서관</b><span class="tg me">내 지역</span></div><div class="cnt2">보유 <b>10</b></div></div>
+<div class="card2"><div class="bk"><b>데미안</b><small>스타북스</small></div><div class="lb"><b>광진구립도서관</b><span class="tg me">내 지역</span></div><div class="cnt2">보유 <b>3</b></div></div>
+<div class="grp g2"><i></i>누구나 가입 도서관에 있어요 <small>(2)</small></div>
+<div class="card2"><div class="bk"><b>데미안</b><small>소담출판사</small></div><div class="lb"><b>울산동부도서관</b><span class="tg op">누구나 가입</span></div><div class="cnt2">보유 <b>5</b></div></div>
+<div class="card2"><div class="bk"><b>데미안</b><small>소담출판사</small></div><div class="lb"><b>김천시립도서관</b><span class="tg op">누구나 가입</span></div><div class="cnt2">보유 <b>5</b></div></div>
+<div style="text-align:center;margin-top:8px"><span class="k p">결과 더 보기 · 이 책들을 가진 도서관 35곳 남음</span></div>
+</div></div><p class="cap">누르기 전: ① 2줄, ② 2줄.</p></div>
+<div><div class="real"><div class="bd">
+<div class="grp"><i></i>내 도서관에 있어요 <small>(3)</small></div>
+<div class="card2"><div class="bk"><b>데미안</b><small>소담출판사</small></div><div class="lb"><b>강남구 전자도서관</b><span class="tg me">내 지역</span></div><div class="cnt2">보유 <b>10</b></div></div>
+<div class="card2"><div class="bk"><b>데미안</b><small>스타북스</small></div><div class="lb"><b>광진구립도서관</b><span class="tg me">내 지역</span></div><div class="cnt2">보유 <b>3</b></div></div>
+<div class="card2" style="outline:2px dashed #a1302b;outline-offset:2px"><div class="bk"><b>데미안</b><small>스타북스</small></div><div class="lb"><b>송파구통합도서관</b><span class="tg me">내 지역</span></div><div class="cnt2">바로 대출</div></div>
+<div class="grp g2"><i></i>누구나 가입 도서관에 있어요 <small>(3)</small></div>
+<div class="card2"><div class="bk"><b>데미안</b><small>소담출판사</small></div><div class="lb"><b>울산동부도서관</b><span class="tg op">누구나 가입</span></div><div class="cnt2">보유 <b>5</b></div></div>
+<div class="card2"><div class="bk"><b>데미안</b><small>소담출판사</small></div><div class="lb"><b>김천시립도서관</b><span class="tg op">누구나 가입</span></div><div class="cnt2">보유 <b>5</b></div></div>
+<div class="card2" style="outline:2px dashed #a1302b;outline-offset:2px"><div class="bk"><b>데미안</b><small>소담출판사</small></div><div class="lb"><b>목포시통합도서관</b><span class="tg op">누구나 가입</span></div><div class="cnt2">보유 <b>4</b></div></div>
+<div style="text-align:center;margin-top:8px"><span class="k p">결과 더 보기 · 25곳 남음</span></div>
+</div></div><p class="cap">누른 뒤: 새 줄(빨간 점선)이 각 묶음 끝에 붙고 제목의 수만 늘어납니다. 보던 네 줄은 그 자리.</p></div>
+</div>
 <div class="prop">제안: 승인. 읽던 줄이 움직이지 않는 것이 더 보기의 기본입니다(사용자 2026-10-18: "정렬은 똑같아야 해").</div>
 <p class="alt">다른 선택: 묶음 안을 매번 다시 정렬 — 보유 수가 많은 새 줄이 위로 끼어들어 읽던 줄이 밀립니다.</p>
 </div>
 
 <div class="card item"><h2><span class="num">7</span>"내 도서관에 있어요"가 비면 "내 도서관에는 없어요 (0)"로 보이기,<br>다른 묶음은 비면 숨기기</h2>
 <p class="concl">[안] 첫 묶음 ①이 비면 제목을 <b>"내 도서관에는 없어요 (0)"</b>로 그대로 보이고, ②·③은 비면 제목째 숨깁니다. ①만 보이는 이유: "내 도서관엔 없구나"를 알아야 "전국"으로 바꿀 생각을 합니다. (spec R5-4)</p>
-<div class="shots"><div class="pc"><div class="body"><div class="sec"><i></i>내 도서관에는 없어요 (0) <span class="hint" style="display:inline;margin:0">· 전국으로 바꾸면 다른 지역 도서관도 찾아요</span></div><div class="sec"><i></i>누구나 가입 도서관에 있어요 (6)</div><div class="res"><div class="bk">데미안<small>헤르만 헤세 · 소담출판사</small></div><div class="lib">울산동부도서관 전자책도서관 <span class="tag open">누구나 가입</span></div><span class="cnt">보유 5</span></div></div></div></div>
-<p class="cap">① 제목 옆 작은 글 "전국으로 바꾸면 …"은 이 안에 들어 있는 제안입니다.</p>
+<div class="real">
+<div class="bd">
+<div class="sb">코스모스 <span class="k p" style="margin-left:auto">검색</span><span class="k">상세검색 ⌄</span><span class="k">⚙</span></div>
+<div class="ln"><span class="seg2"><span class="on">내 도서관</span><span>전국</span></span><span class="k">내 도서관: 서울 강남구 · 68곳 ⌄</span></div>
+<div class="tabs"><span class="on">지금 빌릴 수 있는 책만</span><span>전체</span></div>
+<div class="grp" style="color:#777"><i style="background:#bbb"></i>내 도서관에는 없어요 <small>(0) · 전국으로 바꾸면 다른 지역 도서관도 찾아요</small></div>
+<div class="grp g2"><i></i>누구나 가입 도서관에 있어요 <small>(2) · 사는 곳과 상관없이 온라인으로 가입할 수 있어요</small></div>
+<div class="card2"><div class="bk"><b>코스모스</b><small>칼 세이건 · 사이언스북스</small></div><div class="lb"><b>울산동부도서관 전자책도서관</b><span class="tg op">누구나 가입</span><small>북큐브 · 소장</small></div><div class="cnt2">보유 <b>2</b> 대출 중 1</div></div>
+<div class="card2"><div class="bk"><b>코스모스</b><small>칼 세이건 · 사이언스북스</small></div><div class="lb"><b>군산시립도서관</b><span class="tg op">누구나 가입</span><small>교보 · 소장</small></div><div class="cnt2">보유 <b>1</b> 대출 중 0</div></div>
+</div></div>
+<p class="cap">실제 화면: 내 지역 도서관에는 없는 책. ① 제목이 회색으로 "없어요 (0)"로 남고, 그 옆 "전국으로 바꾸면 …"이 다음 행동을 알려 줍니다. 책 이름과 수는 그림용 예시입니다.</p>
 <div class="prop">제안: 승인.</div>
 <p class="alt">다른 선택: 빈 묶음은 모두 숨기기 — 화면이 깔끔하지만 처음 온 사람이 왜 내 지역 줄이 없는지 모릅니다.</p>
 </div>
 
 <div class="card item"><h2><span class="num">8</span>첫 사용자용 녹색 안내 줄에는 닫기 ×가 없고,<br>지역을 고르면 사라짐</h2>
 <p class="concl">[안] 지역 없이 검색한 사람의 결과 맨 위 녹색 줄("지금은 전국 누구나 가입 도서관 N곳에서 찾았어요 … [지역 고르기]")에는 닫기 ×를 두지 않습니다. 지역을 고르는 것이 닫는 길이고, 지역을 안 고르면 검색마다 다시 보입니다. (spec R7-2)</p>
+<div class="real">
+<div class="bd">
+<div class="sb">데미안 <span class="k p" style="margin-left:auto">검색</span><span class="k">상세검색 ⌄</span><span class="k">⚙</span></div>
+<div class="ln"><span class="seg2"><span class="on">내 도서관</span><span>전국</span></span><span style="font-weight:700">어디서 빌리실 건가요?</span><span class="k">시도 ⌄</span><span class="k">시군구 ⌄</span></div>
+<div class="tabs"><span class="on">지금 빌릴 수 있는 책만</span><span>전체</span></div>
+<div class="note">지금은 전국 <b>누구나 가입 도서관 39곳</b>에서 찾았어요. 모두 사는 곳과 상관없이 온라인 가입이 돼요. 사는 곳을 고르면 그 지역 도서관도 더 찾아요 <span class="k">지역 고르기</span></div>
+<div class="grp g2"><i></i>누구나 가입 도서관에 있어요 <small>(7)</small></div>
+<div class="card2"><div class="bk"><b>데미안</b><small>헤르만 헤세 · 소담출판사</small></div><div class="lb"><b>울산동부도서관 전자책도서관</b><span class="tg op">누구나 가입</span><small>북큐브 · 소장</small></div><div class="cnt2">보유 <b>5</b> 대출 중 0</div></div>
+</div></div>
+<p class="cap">실제 화면: 녹색 줄 오른쪽 끝에 ×가 없습니다. [지역 고르기]를 누르면 위 "어디서 빌리실 건가요?" 고르기로 초점이 가고, 시군구를 고르는 순간 녹색 줄이 사라지며 다시 검색됩니다.</p>
 <div class="prop">제안: 승인. 닫아 버리면 친구분이 겪은 "왜 전국이 나오지"가 그대로 남습니다. 줄은 한 줄이라 읽는 부담이 작습니다.</div>
 <p class="alt">다른 선택: ×로 닫고 이 브라우저에서 다시 안 보이기 — 전국만 쓰려는 사람에게 편하지만, 그 사람은 스위치 "전국"을 쓰면 됩니다(그러면 이 줄은 원래 안 보임).</p>
 </div>
@@ -222,18 +285,50 @@ th{color:var(--muted);font-weight:500}
 <div class="card item"><h2><span class="num">9</span>"이 중 N곳은 가야 해요"의 N은<br>지금 화면에 보이는 줄 기준</h2>
 <p class="concl">[안] 누구나 가입 묶음 제목 옆 "이 중 N곳은 가입하려면 도서관에 가야 해요 · [그 N곳 빼기]"의 N은 <b>지금 화면에 보이는 그 묶음 줄 가운데</b> 방문 가입 도서관 수입니다(사이트 수). [더 보기]로 줄이 늘면 N도 늡니다. [그 N곳 빼기]를 누르면 방문 가입 도서관 전부(보이는 것뿐 아니라 계획의 모든 방문 가입 도서관)가 다음 검색부터 빠집니다 — 지금의 "방문 없이 가입"과 같은 값이기 때문입니다. (spec R8-2)</p>
 <p><b>예시:</b> 결과에 울산동부(온라인)·국립세종(방문) 두 줄이 보이면 "이 중 1곳은 … [그 1곳 빼기]". 누르면 다시 검색되어 국립세종 줄이 없고, 아직 안 보였던 다른 방문 가입 도서관도 안 옵니다. 제목 자리는 "방문 가입 도서관을 뺐어요 · [다시 넣기]".</p>
+<p><b>실제 화면: 누르기 전과 뒤</b></p>
+<div class="two">
+<div><div class="real"><div class="bd">
+<div class="ln"><span class="seg2"><span class="on">내 도서관</span><span>전국</span></span><span class="k">내 도서관: 서울 강남구 · 68곳 ⌄</span></div>
+<div class="grp g2"><i></i>누구나 가입 도서관에 있어요 <small>(3) · 사는 곳과 상관없이 온라인으로 가입할 수 있어요 · 이 중 <b>1곳</b>은 가입하려면 도서관에 가야 해요 <span class="k" style="padding:1px 8px">그 1곳 빼기</span></small></div>
+<div class="card2"><div class="bk"><b>데미안</b><small>소담출판사</small></div><div class="lb"><b>울산동부도서관</b><span class="tg op">누구나 가입</span></div><div class="cnt2">보유 <b>5</b></div></div>
+<div class="card2"><div class="bk"><b>데미안</b><small>소담출판사</small></div><div class="lb"><b>김천시립도서관</b><span class="tg op">누구나 가입</span></div><div class="cnt2">보유 <b>5</b></div></div>
+<div class="card2"><div class="bk"><b>데미안</b><small>소담출판사</small></div><div class="lb"><b>국립세종도서관</b><span class="tg op">누구나 가입</span><span class="tg vi">방문 가입</span></div><div class="cnt2">보유 <b>2</b></div></div>
+</div></div><p class="cap">누르기 전: 보이는 3줄 중 방문 가입 1줄 → "이 중 1곳".</p></div>
+<div><div class="real"><div class="bd">
+<div class="ln"><span class="seg2"><span class="on">내 도서관</span><span>전국</span></span><span class="k">내 도서관: 서울 강남구 · 방문 가입 뺌 · 49곳 ⌄</span></div>
+<div class="grp g2"><i></i>누구나 가입 도서관에 있어요 <small>(2) · 사는 곳과 상관없이 온라인으로 가입할 수 있어요 · <b>방문 가입 도서관을 뺐어요</b> <span class="k" style="padding:1px 8px">다시 넣기</span></small></div>
+<div class="card2"><div class="bk"><b>데미안</b><small>소담출판사</small></div><div class="lb"><b>울산동부도서관</b><span class="tg op">누구나 가입</span></div><div class="cnt2">보유 <b>5</b></div></div>
+<div class="card2"><div class="bk"><b>데미안</b><small>소담출판사</small></div><div class="lb"><b>김천시립도서관</b><span class="tg op">누구나 가입</span></div><div class="cnt2">보유 <b>5</b></div></div>
+</div></div><p class="cap">누른 뒤: 다시 검색되어 국립세종 줄이 없고, 접힌 줄에 "· 방문 가입 뺌", 곳 수도 줄어듭니다(49는 예시). ⚙ 설정의 스위치도 켜져 있습니다.</p></div>
+</div>
 <div class="prop">제안: 승인. 제목 옆 수는 "지금 보고 있는 것" 이야기여야 자연스럽고, 빼기는 값 하나(전체)로 단순합니다.</div>
 <p class="alt">다른 선택: N을 계획 전체의 방문 가입 수로 — 아직 안 보인 도서관까지 세어 "이 중"이라는 말과 어긋납니다.</p>
 </div>
 
 <div class="card item"><h2><span class="num">10</span>저장 안내 한 줄은 저장할 때마다, ×로 닫으면 이 브라우저에서 그만</h2>
 <p class="concl">[안] 로그인 전 사람이 지역·직접 추가를 저장할 때마다 그 아래에 "이 브라우저에만 저장됐어요. 로그인하면 다른 기기에서도 그대로예요 [카카오 로그인] ×"가 보이고, ×를 누르면 이 브라우저에서는 다시 보이지 않습니다. 로그인한 사람에게는 보이지 않습니다. (spec R9-2)</p>
+<div class="real"><div class="bd" style="text-align:center;padding:24px 18px 20px">
+<div class="sb" style="max-width:560px;margin:0 auto;color:#999">책 제목을 입력하세요 <span class="k p" style="margin-left:auto">검색</span><span class="k">상세검색 ⌄</span><span class="k">⚙</span></div>
+<div class="ln" style="justify-content:center;margin-top:14px"><span class="seg2"><span class="on">내 도서관</span><span>전국</span></span><span class="k p">내 도서관: 서울 강남구 ⌃</span></div>
+<div style="max-width:560px;margin:0 auto;text-align:left;background:#fff;border:1px solid #d9d9e0;border-radius:12px;padding:12px 16px;box-shadow:0 8px 24px rgba(0,0,0,.10)">
+<div class="ln"><b style="width:64px">사는 곳</b><span class="tg me" style="margin:0">서울 강남구 ×</span><span class="k">시도 ⌄</span><span class="k">시군구 ⌄</span></div>
+<div class="note" style="background:#fbf0d9;border-color:#8a5a00;display:flex;gap:10px;align-items:center;margin:6px 0">이 브라우저에만 저장됐어요. 로그인하면 다른 기기에서도 그대로예요 <span class="k" style="background:#fee500;border-color:#fee500;font-weight:700">카카오 로그인</span><span style="margin-left:auto;color:#666">×</span></div>
+<div class="ln"><b style="width:64px">일하는 곳</b><span style="color:#666">없음</span><span class="k">시도 ⌄</span><span class="k">시군구 ⌄</span></div>
+<div class="ln"><span>☐ 직접 가야 가입되는 도서관은 빼기</span></div>
+</div></div></div>
+<p class="cap">실제 화면: 강남구를 고른 직후, 사는 곳 줄 바로 아래에 노란 안내 한 줄이 생깁니다. 오른쪽 끝 ×로 닫으면 이 브라우저에서는 다시 보이지 않습니다. 상세검색·마이페이지에서 저장할 때도 같은 자리(저장한 부품 바로 아래)에 뜹니다.</p>
 <div class="prop">제안: 승인. 매번 보이되 끌 수 있어야 귀찮지 않고, 로그인 뒤에는 뜻이 없습니다.</div>
 <p class="alt">다른 선택 ①: 한 브라우저에서 딱 한 번만 — 처음에 못 읽고 지나가면 다시 못 봅니다.<br>다른 선택 ②: 매번, 닫기 없음 — 로그인 안 할 사람에게 잔소리가 됩니다.</p>
 </div>
 
 <div class="card item"><h2><span class="num">11</span>지역 목록을 못 받았을 때는 한 줄 + [다시 시도], 검색은 그대로</h2>
 <p class="concl">[안] 시도·시군구 목록(<code>GET /api/v1/regions</code>)을 받지 못하면 고르기 자리에 "지역 목록을 불러오지 못했어요 [다시 시도]" 한 줄을 보이고, 검색 자체는 됩니다(이미 저장된 지역은 그대로 쓰임). (spec 5절)</p>
+<div class="real"><div class="bd" style="text-align:center;padding:24px 18px">
+<div class="sb" style="max-width:560px;margin:0 auto;color:#999">책 제목을 입력하세요 <span class="k p" style="margin-left:auto">검색</span><span class="k">상세검색 ⌄</span><span class="k">⚙</span></div>
+<div class="ln" style="justify-content:center;margin-top:14px"><span class="seg2"><span class="on">내 도서관</span><span>전국</span></span><span style="color:#a1302b">지역 목록을 불러오지 못했어요</span><span class="k">다시 시도</span></div>
+<div style="color:#666;font-size:13px">지금은 전국 누구나 가입 도서관에서 찾아요</div>
+</div></div>
+<p class="cap">실제 화면(처음 온 사람): "어디서 빌리실 건가요?" 고르기 자리에 한 줄과 [다시 시도]. 검색창은 그대로 쓸 수 있습니다. 이미 지역을 고른 사람은 접힌 줄이 그대로 보이고, 펼친 상자 안의 고르기 자리에만 이 줄이 뜹니다.</p>
 <div class="prop">제안: 승인. 지금 내 지역 창도 목록을 못 받으면 비슷하게 알립니다(사이클 06).</div>
 <p class="alt">다른 선택: 조용히 고르기만 숨기기 — 왜 지역을 못 고르는지 알 수 없습니다.</p>
 </div>
