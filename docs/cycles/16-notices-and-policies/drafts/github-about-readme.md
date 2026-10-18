@@ -14,6 +14,4 @@
 
 ## 커피 한 잔 ☕
 
-책첵이 도움이 됐다면 커피 한 잔 사주셔도 좋아요. (선택)
-
-[카카오페이로 커피 한 잔 ☕](https://link.kakaopay.com/__/Ef-jmYK)
+[카카오페이로 커피 한 잔 후원하기☕](https://link.kakaopay.com/__/Ef-jmYK)
