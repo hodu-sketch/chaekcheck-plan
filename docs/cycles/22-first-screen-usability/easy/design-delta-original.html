@@ -26,7 +26,7 @@ a{color:var(--accent)}
 <ul>
 <li>작성 2026-10-18. 근거: <a href="../architect-proposal.md">architect-proposal.md</a>(설계 결정 9개, 2026-10-18 모두 정함), <a href="../spec.md">spec.md</a>, <a href="../flow.md">flow.md</a>. 결정 페이지 <code>easy/2026-10-18-design-decisions.html</code>.</li>
 <li><strong>서버(백엔드 모듈·API·표·이벤트)는 바뀌지 않습니다.</strong> 바뀌는 것은 웹(<code>web/src/</code>)뿐입니다. 그래서 모듈·데이터·API 표는 &quot;변경 없음&quot;을 확인하는 표이고, 설계는 웹 부품 단위입니다.</li>
-<li>버전: 화면만 바뀌고 API 호환이라 dev 17의 유의적 버전에서 MINOR(v1.1.0) 후보 [안] (인계서에 CHANGELOG 절).</li>
+<li>버전: 화면만 바뀌고 API 호환이라 dev 17의 유의적 버전에서 MINOR(v1.1.0) 후보 [안: dev가 배포 때 정함] (인계서에 CHANGELOG 절).</li>
 </ul>
 <h2 id="">구조 그림</h2>
 <h3 id="">웹 부품 구성도 (바뀌는 것만)</h3>
@@ -70,7 +70,7 @@ a{color:var(--accent)}
 <tr><td>D7</td><td>로그인한 사람: <code>RegionContext.ready=false</code> 동안 검색을 시작하지 않음(<code>bookQuery=null</code>). 계정 읽기 실패: 지역 없이 <code>joinable</code>, 접힌 줄에 &quot;내 도서관을 불러오지 못했어요 [다시 시도]&quot;, 녹색 안내 줄 숨김</td><td>설계 결정 #7 [확정] (사이클 06 flow S1 &quot;읽는 동안 all&quot; 대체)</td></tr>
 <tr><td>D8</td><td>방문 가입을 뺀 뒤 제목 자리 &quot;방문 가입 도서관을 뺐어요 · [다시 넣기]&quot; (수 없음)</td><td>설계 결정 #8 [확정]</td></tr>
 <tr><td>D9</td><td><code>BookPage</code>는 <code>ResultList grouped=false</code>, <code>PicksBookDialog</code>는 <code>ResultRow tags=false</code>. 가입 정보 창의 &quot;누구나 가입&quot; → &quot;어디 살든 온라인 가입&quot;은 공통이라 그 화면들에서도 바뀜(AC-17 예외). 추천도서·책 화면의 범위는 늘 <code>joinable</code>(주소 <code>scope=all</code>일 때만 전국)</td><td>설계 결정 #9 [확정]</td></tr>
-<tr><td>D10</td><td>범위 읽기 <code>readScope(params)</code>: 주소 <code>scope=all</code>이면 <code>all</code>, 아니면 <code>joinable</code>. <code>search()</code>는 새 주소에 <code>scope</code>를 싣지 않음. 책 링크(<code>bookLinkSearch</code>)는 주소에 있던 <code>scope=all</code>을 이어서 실음</td><td>흐름 후속 #2 [확정] / 책 링크 [안]</td></tr>
+<tr><td>D10</td><td>범위 읽기 <code>readScope(params)</code>: 주소 <code>scope=all</code>이면 <code>all</code>, 아니면 <code>joinable</code>. <code>search()</code>는 상세검색의 &quot;☐ 전국에서 찾기&quot;가 체크됐을 때만 새 주소에 <code>scope=all</code>을 실음(체크 상태는 저장하지 않고 검색 뒤 풀림). 결과 안 [전국에서 찾기]·[전국에서 더 찾기]는 주소에 <code>scope=all</code>을 붙여 다시 검색. 책 링크(<code>bookLinkSearch</code>)는 주소에 있던 <code>scope=all</code>을 이어서 실음</td><td>흐름 후속 #2, ADR-0135 [확정] / 책 링크는 지금 동작 그대로(사이클 06) [확정]</td></tr>
 <tr><td>D11</td><td><code>RegionGrid</code> 크기: 글자 16px 이상, 체크 칸 높이 40px 이상, 너비 100%(PC 상자 최대 약 640px, 시군구 4칸 → 좁으면 3·2칸), 폰은 화면 너비 전체</td><td>spec R12-1 [확정]</td></tr>
 </tbody>
 </table>
@@ -109,9 +109,9 @@ a{color:var(--accent)}
 <p>없음(바뀌지 않음).</p>
 <h2 id="">결정 기록</h2>
 <ul>
-<li>ADR-0135 검색 범위 스위치 삭제, 전국은 결과 안 링크로 그 검색만, 로그인 계정 읽을 때까지 대기 (초안 → 사용자 승인 뒤 Accepted)</li>
-<li>ADR-0136 결과 묶음 넷·꼬리표·말풍선, 서버 변경 없음, 접힌 줄 수는 계획 길이</li>
-<li>ADR-0137 지역 격자 공통 부품(창 삭제, 크기), 체크는 저장만·검색은 [검색] 단추</li>
+<li><a href="../../../adr/0135-no-scope-switch-nationwide-per-search.md">ADR-0135</a> 검색 범위 스위치 삭제, 전국은 결과 안 링크·상세검색 칸으로 그 검색만, 로그인 계정 읽을 때까지 대기 — Accepted (2026-10-18)</li>
+<li><a href="../../../adr/0136-result-groups-and-tags.md">ADR-0136</a> 결과 묶음 넷·꼬리표·말풍선, 서버 변경 없음, 접힌 줄 수는 계획 길이 — Accepted (2026-10-18)</li>
+<li><a href="../../../adr/0137-region-grid-component-save-only.md">ADR-0137</a> 지역 격자 공통 부품(창 삭제, 크기), 체크는 저장만·검색은 [검색] 단추 — Accepted (2026-10-18)</li>
 </ul>
 <h2 id="2026-10-18">세 관점 자체 점검 (2026-10-18)</h2>
 <table>
@@ -119,7 +119,7 @@ a{color:var(--accent)}
 <tr><th>관점</th><th>본 것</th><th>결과</th></tr>
 </thead>
 <tbody>
-<tr><td>사용자</td><td>결과 화면에서 지역을 바꾼 뒤 [검색]을 안 누르면 결과와 접힌 줄이 어긋남</td><td>접힌 줄은 저장값을, 결과는 검색 당시 값을 보이므로 &quot;· N곳&quot;은 지문이 달라 숨겨짐(D5). 상자를 닫을 때 지역이 바뀌어 있으면 검색창 아래 한 줄 &quot;지역이 바뀌었어요 · [검색]을 눌러 다시 찾기&quot; [안]</td></tr>
+<tr><td>사용자</td><td>결과 화면에서 지역을 바꾼 뒤 [검색]을 안 누르면 결과와 접힌 줄이 어긋남</td><td>접힌 줄은 저장값을, 결과는 검색 당시 값을 보이므로 &quot;· N곳&quot;은 지문이 달라 숨겨짐(D5). 안내 줄은 따로 두지 않음(단순하게) [확정: 설계자 정리, 2026-10-18]</td></tr>
 <tr><td>사용자</td><td>전국 링크 검색 중에 [결과 더 보기]를 누르면?</td><td>같은 주소(<code>scope=all</code>)의 다음 배치 → 전국 그대로. 새 검색만 <code>joinable</code>로 돌아감 [확정] (D10)</td></tr>
 <tr><td>사용자</td><td>로그인 직후 가져오기 창(S11)과 새 저장 안내가 겹침</td><td>S11은 그대로, 저장 안내는 로그인한 사람에게 안 보임(R9-2)이라 겹치지 않음</td></tr>
 <tr><td>서버 자원</td><td>체크마다 검색이 사라져 외부 조회 낭비 없음(D6). 전체 목록 870KB는 직접 추가 있는 사람이 상자를 열 때·이름 찾기 때만(D4). 전국 링크는 사용자가 누른 그 검색만(계획 약 376곳, 첫 배치는 똑같이 10곳)</td><td>지금보다 늘어나는 요청 없음. 계정 PUT이 체크 수만큼 늘지만 DB 쓰기 한 줄</td></tr>
@@ -132,7 +132,7 @@ a{color:var(--accent)}
 <tr><th>항목</th><th>왜</th><th>확인 방법</th><th>막는 단계</th></tr>
 </thead>
 <tbody>
-<tr><td>상자를 닫을 때 &quot;지역이 바뀌었어요 · [검색]을 눌러 다시 찾기&quot; 한 줄 [안]</td><td>세 관점 점검 첫 줄</td><td>사용자 결정(설계 검토 페이지)</td><td>없음(인계서에 [안]으로 넣어도 됨)</td></tr>
+<tr><td><del>상자를 닫을 때 &quot;지역이 바뀌었어요 · [검색]을 눌러 다시 찾기&quot; 한 줄</del> → 넣지 않음(사용자 규칙 &quot;체크와 검색이 따로&quot;에 맞춰 단순하게; 접힌 줄의 곳 수가 숨겨지는 것으로 충분). 필요해지면 백로그</td><td>세 관점 점검 첫 줄</td><td>—</td><td>없음</td></tr>
 <tr><td><code>GET /api/v1/libraries</code> 지역 없이 받은 목록으로 직접 추가 이름을 찾을 때 꺼진 도서관(목록에 없음)은 &quot;꺼진 도서관&quot;으로</td><td>사이클 06 S10 규칙 재사용</td><td>dev 구현 때 확인</td><td>없음</td></tr>
 </tbody>
 </table>
