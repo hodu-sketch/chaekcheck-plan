@@ -343,7 +343,7 @@ plan 15가 `docs/cycles/15-usage-log/to-cycle-17.md` "5차"에 올린 실제 값
 - 남은 콘솔·배포: IAM 역할(사용자), 서버 접속(SSH + .pem) → Docker·cloudflared 설치 → 비밀값 → 서비스 띄우기. 도메인·카카오·cycle 19 책목록 반영은 별개로 진행
 
 ### 서버 기본 세팅 완료 (2026-10-15, SSH로 직접)
-- 접속: `ssh -i chaekcheck-key.pem ubuntu@<서버 IP>` (SSH 보안그룹=사용자 IP만). 키는 `C:\Users\yujun\Downloads\chaekcheck-key.pem`
+- 접속: `ssh -i chaekcheck-key.pem ubuntu@<서버 IP>` (SSH 보안그룹=사용자 IP만). 키는 `C:\Users\yujun\Documents\Claude\Projects\chaekcheck-dev\.secrets\chaekcheck-key.pem` (사용자 요청으로 Downloads에서 옮김, 2026-10-18 dev-17 전달; git은 `.secrets/`·`*.pem` 무시 dev c1c1469)
 - 설치: Docker 29.9.1, Docker Compose v5.6.0, cloudflared 2026.10.0. Docker 부팅 자동 시작(enabled). hello-world arm64 동작 확인
 - 폴더: `/srv/chaekcheck`, `/srv/backup` (ubuntu 소유)
 - 메모리 2GB(여유 ~1.3Gi), 디스크 30GB(여유 26G)
