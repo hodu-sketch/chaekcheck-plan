@@ -170,6 +170,25 @@ body{background:var(--bg);color:var(--text)}
 <p class="cap">PC(왼쪽)와 폰(오른쪽). 빨간 점선이 새로 생기는 줄입니다. 지역을 고른 뒤에는 그 줄이 "내 도서관: 서울 강남구" 한 줄로 접힙니다.</p>
 <div class="prop">제안: 승인. 친구분의 "애초에 사용하기 쉽게", "그걸 먼저 하게 해야죠"에 가장 직접 답하는 안이고, 서버 쪽 변화가 없습니다(지역 값은 지금 API 그대로).</div>
 <p class="alt">다른 선택 ①: 처음 한 번 작은 안내 창을 띄워 "내 도서관 설정에서 지역을 고르세요"라고 알리기(대화에서 내신 생각). 만들기는 가장 쉽지만 친구분이 "알려주는 것보다 애초에 사용하기 쉽게"라고 거절했고, 안내를 닫으면 또 일곱 단계입니다.<br>다른 선택 ②: 지역 없이 검색하면 결과 위에 "지역을 고르면 가입할 수 있는 곳만 보여요 [지역 고르기]" 줄만 넣기. 첫 화면은 그대로 두는 대신 한 번 검색해 봐야 알게 됩니다.</p>
+
+<h3>질문에 답 (2026-10-18): 첫 화면에서 고르면 직장과 거주는 어떻게 구분하나?</h3>
+<p class="concl">첫 화면 줄은 <b>"사는 곳"</b>만 묻고, 그 옆의 작은 글자 <b>[일하는 곳도 더하기]</b>를 누르면 같은 줄 아래에 "일하는 곳: [시도 ▾][시군구 ▾]"가 하나 더 생깁니다. 두 값은 지금 "내 도서관" 화면의 거주·직장 값 그대로이고, 첫 화면에서 고른 것이 그 화면에도 들어갑니다. 이 방식은 [확정]입니다 (사용자 제안, 2026-10-18: "거주를 우선으로 하고 직장은 따로 선택해서 보이도록은?" — 바로 이 모양이라 그대로 적었습니다). 개선안 1의 칩은 첫 화면에 지역 고르기 줄을 두는 것 자체에 대한 결정으로 남겨 둡니다.</p>
+<p><b>왜 둘을 따로 두나:</b> 도서관의 가입 조건이 "그 지역에 사는 사람만"인 곳과 "사는 사람·일하는 사람 모두"인 곳으로 나뉘기 때문입니다(사이클 06에서 거주·직장을 따로 받기로 한 이유). 사는 곳 하나만 받으면 직장 조건으로 가입할 수 있는 도서관을 놓칩니다.</p>
+<p><b>예시:</b> 강남구에 살고 성남시에서 일하는 사람은 [서울 ▾][강남구 ▾]를 고른 뒤 [일하는 곳도 더하기]를 눌러 [경기 ▾][성남시 ▾]를 고릅니다. 접힌 뒤에는 "내 도서관: 사는 곳 서울 강남구 · 일하는 곳 경기 성남시"로 보입니다. 직장이 없거나 같은 구면 누르지 않으면 됩니다.</p>
+<div class="shots">
+<div class="pc"><div class="body"><div class="sbox">책 제목을 입력하세요 <span class="btn p">검색</span><span class="btn">상세검색 ⌄</span></div>
+<div class="row new"><span>사는 곳</span><span class="sel">서울 ▾</span><span class="sel">강남구 ▾</span><span class="hint" style="margin:0"><u>일하는 곳도 더하기</u></span></div>
+<div class="row new" style="border-top:1px dashed var(--line);padding-top:6px"><span>일하는 곳</span><span class="sel">경기 ▾</span><span class="sel">성남시 ▾</span><span class="hint" style="margin:0"><u>지우기</u></span></div>
+<div class="hint">접히면 → <b>내 도서관: 사는 곳 서울 강남구 · 일하는 곳 경기 성남시</b> (가입 가능 N곳 + 누구나 가입 39곳)</div>
+</div></div>
+<div class="ph"><div class="body"><div class="sbox">책 제목 <span class="btn p">검색</span></div>
+<div class="row new"><span style="width:100%;text-align:center">사는 곳</span><span class="sel">서울 ▾</span><span class="sel">강남구 ▾</span></div>
+<div class="hint"><u>일하는 곳도 더하기</u></div>
+<div class="row new"><span style="width:100%;text-align:center">일하는 곳</span><span class="sel">경기 ▾</span><span class="sel">성남시 ▾</span></div>
+</div></div>
+</div>
+<p class="cap">위 줄이 "사는 곳", [일하는 곳도 더하기]를 누르면 아래 줄이 생깁니다. 안 누르면 아래 줄은 없습니다.</p>
+<p class="alt">다른 선택 ①: 처음부터 "사는 곳"·"일하는 곳" 두 줄을 다 보이기 — 묻는 것이 분명하지만 직장이 없는 사람에게도 빈 줄이 하나 보입니다.<br>다른 선택 ②: 구분 없이 지역 하나만 받고 거주·직장 둘 다로 쳐 주기 — 가장 단순하지만, 사는 곳으로만 가입되는 도서관을 직장 지역 사람에게도 "가입 가능"으로 잘못 보입니다.</p>
 </div>
 
 <div class="card item"><h2><span class="num">2</span>검색 결과를 "내 도서관" 묶음부터 보이고<br>줄마다 왜 나왔는지 꼬리표 달기</h2>
@@ -200,6 +219,32 @@ body{background:var(--bg);color:var(--text)}
 <p><b>서버 자원 쪽 확인:</b> 친구분은 "탭(스위치)으로 분리할 필요가 없다"고 했지만, 스위치를 없애고 늘 전국을 찾으면 조회 계획이 68곳에서 약 376곳으로 늘어 검색 한 번의 도서관 요청이 다섯 배가 됩니다. 동시 검색 자리 40개(사이클 20 결정)를 더 빨리 채우므로, 스위치는 두고 <b>순서와 꼬리표로 "내 도서관 먼저"를 보이게</b> 하는 쪽을 권합니다.</p>
 <div class="prop">제안: 승인. 사이클 06의 "직접 추가 도서관은 같은 책 안에서 맨 앞" 규칙(ADR-0050)을 "묶음으로 맨 위"로 넓히는 것이라, 이전 결정을 바꾸는 부분은 "지금 빌릴 수 있어요 묶음이 맨 위" 하나입니다.</p>
 <p class="alt">다른 선택: 스위치를 없애고 늘 전국 조회 + 순서만 바꾸기(친구분 말 그대로). 화면은 가장 단순하지만 위에 적은 대로 서버 요청이 다섯 배, 그리고 "방문 없이 가입"·"가입 자격 확인 필요" 도서관까지 늘 요청이 갑니다.</p>
+
+<h3>덧붙인 요청 (사용자, 2026-10-18): 다른 지역의 누구나 가입 도서관도<br>"가입할 수 있다"는 것을 처음 온 사람도 알게</h3>
+<p class="concl">사용자 말: "'누구나 가입' 도서관에 자신 지역 외의 지역들이 나타날텐데 사용자가 이것들도 가입이 가능하다는 걸 인지했으면 좋겠어. 처음 사용자 기준으로도." 개선안 2에 다음 세 가지를 더합니다 [확정] (사용자 요청, 2026-10-18). 결정 칩은 개선안 2 하나로 같이 봐 주시면 됩니다.</p>
+<table>
+<tr><th style="width:28%">어디</th><th>무엇을 보이나</th></tr>
+<tr><td>누구나 가입 묶음 제목</td><td>"누구나 가입 도서관에 있어요 (6)" 아래에 작은 글씨 한 줄: <b>"사는 곳과 상관없이 온라인으로 가입할 수 있는 도서관이에요"</b></td></tr>
+<tr><td>각 줄의 꼬리표</td><td>[누구나 가입] 꼬리표를 녹색으로 두고, 누르면(또는 PC에서 올리면) "울산에 살지 않아도 온라인으로 가입할 수 있어요 · 가입 방법 보기"가 뜹니다. 가입 방법은 지금 이름을 눌러 열리는 창과 같은 내용입니다.</td></tr>
+<tr><td>지역 없이 검색한 첫 사용자 (결과 맨 위)</td><td>결과 위에 안내 줄: <b>"지금은 전국 누구나 가입 도서관 39곳에서 찾았어요. 모두 사는 곳과 상관없이 온라인 가입이 돼요. 사는 곳을 고르면 그 지역 도서관도 더 찾아요 [지역 고르기]"</b></td></tr>
+</table>
+<div class="shots">
+<div class="pc"><div class="body"><div class="sbox">데미안 <span class="btn p">검색</span></div>
+<div class="row l"><span class="btn on">내 도서관</span><span class="btn">전국</span></div>
+<div class="panel new" style="font-size:12px;background:var(--ok-bg);border-color:var(--ok)">지금은 전국 <b>누구나 가입 도서관 39곳</b>에서 찾았어요. 모두 사는 곳과 상관없이 온라인 가입이 돼요. 사는 곳을 고르면 그 지역 도서관도 더 찾아요 <span class="btn">지역 고르기</span></div>
+<div class="sec"><i></i>누구나 가입 도서관에 있어요 (6)</div>
+<div class="hint new" style="text-align:left;margin:0 0 6px">사는 곳과 상관없이 온라인으로 가입할 수 있는 도서관이에요</div>
+<div class="res"><div class="bk">데미안<small>헤르만 헤세 · 소담출판사</small></div><div class="lib">울산동부도서관 전자책도서관 <span class="tag open">누구나 가입</span><small>북큐브 · 소장</small></div><span class="cnt">보유 5 대출 중 0</span></div>
+<div class="panel new" style="font-size:12px;max-width:360px;margin-left:200px">울산에 살지 않아도 온라인으로 가입할 수 있어요 · <u>가입 방법 보기</u></div>
+</div></div>
+<div class="ph"><div class="body"><div class="sbox">데미안 <span class="btn p">검색</span></div>
+<div class="panel new" style="font-size:11px;background:var(--ok-bg);border-color:var(--ok)">전국 <b>누구나 가입 39곳</b>에서 찾았어요. 사는 곳과 상관없이 가입돼요. <span class="btn">지역 고르기</span></div>
+<div class="sec"><i></i>누구나 가입 도서관 (6)</div>
+<div class="hint new" style="text-align:left">사는 곳과 상관없이 가입할 수 있어요</div>
+<div class="res" style="flex-direction:column;align-items:stretch"><div class="bk">데미안</div><div class="lib">울산동부도서관 <span class="tag open">누구나 가입</span></div></div>
+</div></div>
+</div>
+<p class="cap">지역을 고르지 않은 첫 사용자가 본 결과. 녹색 안내 줄과 묶음 아래 한 줄, 꼬리표를 누르면 뜨는 말이 새로 생깁니다. 지역을 고른 사람에게는 맨 위 녹색 줄만 빠지고 나머지는 같습니다.</p>
 </div>
 
 <div class="card item"><h2><span class="num">3</span>찾을 도서관의 이름을 "내 도서관 / 전국" 둘로 통일하기</h2>
@@ -231,6 +276,35 @@ body{background:var(--bg);color:var(--text)}
 <p class="cap">상세검색 패널의 아래 두 줄이 새로 생깁니다. 개선안 1을 받으면 첫 화면에도 같은 지역 고르기가 있어, 이 줄은 "직장 지역·직접 추가까지 한 번에"의 자리가 됩니다.</p>
 <div class="prop">제안: 승인하되 개선안 1 다음에. 개선안 1 없이 이것만 하면, 상세검색을 안 펼치는 사람은 여전히 전국 결과를 봅니다(검색 전에 펼치는 사람은 드뭅니다).</div>
 <p class="alt">다른 선택: 상세검색에는 두지 않고 개선안 1·7만 — 입구가 하나라 단순하지만 직장 지역·직접 추가는 여전히 마이페이지까지 가야 합니다.</p>
+
+<h3>질문에 답 (2026-10-18): 이렇게 하면 사용자별 도서관 정보는 따로 어떻게 되나?</h3>
+<p class="concl">사용자별 도서관 정보(사는 곳·일하는 곳·직접 추가한 도서관)는 <b>지금과 같은 한 곳</b>에 그대로 저장됩니다. 상세검색의 두 줄은 그 정보를 고치는 <b>두 번째 입구</b>일 뿐이고, 어디서 고쳐도 같은 값이 바뀝니다. 마이페이지 "내 도서관" 화면도 그대로 남아, 자동으로 들어온 도서관 이름 목록과 직접 추가 20곳 관리를 하는 곳입니다.</p>
+<div class="v-flow">
+<div class="v-box">첫 화면 지역 줄<small>개선안 1</small></div><span class="v-arr">↘</span>
+<div class="v-box v-hi">사용자별 도서관 정보 (한 곳)<small>사는 곳 · 일하는 곳 · 직접 추가<br>로그인 전: 이 브라우저 / 로그인 뒤: 계정</small></div><span class="v-arr">→</span>
+<div class="v-box v-ok">검색<small>내 도서관 = 이 정보로 계산</small></div>
+</div>
+<div class="v-flow">
+<div class="v-box">상세검색 지역·도서관 줄<small>개선안 4</small></div><span class="v-arr">↗</span>
+<div class="v-box">마이페이지 내 도서관<small>목록 전체 보기·관리</small></div><span class="v-arr">↗</span>
+</div>
+<p class="cap">입구 셋, 저장은 한 곳. 어느 입구에서 바꿔도 다른 입구에 바로 같은 값이 보입니다.</p>
+<p><b>예시:</b> 상세검색에서 "일하는 곳"을 경기 성남시로 고르면, 첫 화면의 "내 도서관: …" 줄과 마이페이지의 직장 칸에도 성남시가 들어갑니다. 로그인한 사람이면 계정에 저장돼 다른 기기에서도 같고, 로그인 전이면 지금처럼 이 브라우저에만 남습니다(개선안 8).</p>
+<h3>덧붙인 질문에 답 (2026-10-18): 지금은 거주를 여러 개 고를 수 있는데, 두 단계 고르기에서는?</h3>
+<p class="concl">여러 개 그대로 됩니다. [시도 ▾][시군구 ▾]에서 하나 고를 때마다 그 옆에 <b>"서울 강남구 ×"</b> 꼬리표가 하나씩 붙고, 다시 고르면 둘째 꼬리표가 붙습니다. 지우기는 꼬리표의 ×. 한도는 지금과 같은 <b>거주 20개·직장 20개</b>입니다 [확정] (API 지역 ID "필드당 최대 20개", docs/current/api.md). 안 1(첫 화면)·안 4(상세검색)·안 5(마이페이지) 세 입구 모두 같은 모양입니다.</p>
+<div class="shots">
+<div class="pc"><div class="body">
+<div class="frow new"><label>사는 곳</label><span class="tag me">서울 강남구 ×</span><span class="tag me">서울 서초구 ×</span><span class="sel">시도 ▾</span><span class="sel">시군구 ▾</span></div>
+<div class="frow new"><label>일하는 곳</label><span class="tag me">경기 성남시 ×</span><span class="sel">시도 ▾</span><span class="sel">시군구 ▾</span></div>
+<div class="hint" style="text-align:left">접히면 → 내 도서관: 사는 곳 서울 강남구·서초구 · 일하는 곳 경기 성남시</div>
+</div></div>
+<div class="ph"><div class="body">
+<div class="row l new"><span style="width:100%">사는 곳</span><span class="tag me">서울 강남구 ×</span><span class="tag me">서울 서초구 ×</span></div>
+<div class="row l"><span class="sel">시도 ▾</span><span class="sel">시군구 ▾</span></div>
+</div></div>
+</div>
+<p class="cap">고른 지역은 꼬리표로 쌓이고, 고르기 칸은 비어 있는 채로 남아 다음 지역을 받습니다. 지금 창의 체크 격자와 같은 결과를 냅니다.</p>
+<p><b>검색마다 다른 지역을 쓰고 싶을 때:</b> 상세검색에서 고친 값은 그 검색뿐 아니라 사용자별 정보 자체를 바꿉니다. "이번 검색만 다른 지역"은 따로 두지 않습니다. 그 경우는 스위치를 "전국"으로 바꾸는 것으로 충분하고, 검색마다 지역이 다르면 "내 도서관"의 뜻이 흐려지기 때문입니다.</p>
 </div>
 
 <div class="card item"><h2><span class="num">5</span>내 지역 창을 크게 만들거나, 창 없이 두 단계 고르기로 바꾸기</h2>
@@ -255,6 +329,41 @@ body{background:var(--bg);color:var(--text)}
 <p><b>왜:</b> 처음 온 사람은 "방문 가입"이 무슨 뜻인지 모르고(P5), 첫 화면 줄은 개선안 1의 지역 고르기가 들어오면 자리가 좁습니다. 켜 두면 주소에 남아 다음에도 켜지는 동작은 그대로 둡니다(사용자 요청 2026-10-05).</p>
 <div class="prop">제안: 승인. 2026-09-29의 "방문 없이 가입 거름" 기능 자체는 그대로이고 자리와 말만 바뀝니다.</div>
 <p class="alt">다른 선택: 지금 자리 그대로 두고 ⓘ 설명만 더하기 — 첫 화면 한 줄이 네 가지(스위치·방문·지역·내 도서관)로 더 붐빕니다.</p>
+
+<h3>질문에 답 (2026-10-18): "이것도 보여주는 건 어때? 방문 꽤 큰데" — 보이게 두는 판</h3>
+<p class="concl">맞습니다. 숫자를 세어 보니 방문 가입이 생각보다 큽니다: <b>누구나 가입 39곳 중 19곳</b>, 지역 조건 도서관 276곳 중 102곳이 가입하려면 도서관에 가야 합니다 [확정] (API 2026-10-18 센 값, 사이트 수 기준이라 국립세종도서관처럼 사이트가 여럿인 곳은 여러 번 셈). 서울 사람에게 "누구나 가입"인 통영시립도서관은 통영에 가야 가입되니 사실상 못 씁니다. 그래서 개선안 6을 <b>"설정 안으로 숨기기"에서 "결과에서 바로 보이게"로 바꿉니다.</b> 안 6 칩을 승인하면 아래 "보이게 두는 판"으로 승인한 것으로 적겠습니다.</p>
+<table>
+<tr><th style="width:28%">어디</th><th>무엇을 보이나</th></tr>
+<tr><td>결과 각 줄의 꼬리표</td><td>[누구나 가입]·[내 지역] 옆에 주황색 <b>[방문 가입]</b> 꼬리표. 누르면 "가입하려면 통영시립도서관에 한 번 가야 해요 · 가입 방법 보기".</td></tr>
+<tr><td>묶음 제목 아래 한 줄</td><td>"누구나 가입 도서관에 있어요 (6)" 아래에 <b>"이 중 2곳은 가입하려면 도서관에 가야 해요 · [그 2곳 빼기]"</b>. 누르면 지금의 "방문 없이 가입" 거름과 같은 동작(다음 검색부터 그 도서관들은 요청하지 않음)이고, 켜진 동안 같은 자리에 "방문 가입 2곳을 뺐어요 · [다시 넣기]"가 보입니다.</td></tr>
+<tr><td>첫 화면 (개선안 1의 접힌 줄)</td><td>"내 도서관: 서울 강남구 · 방문 가입 포함"처럼 상태만 한 낱말로 보이고, 끄고 켜기는 결과 화면의 위 줄과 ⚙ 설정 두 곳에서 합니다. 첫 화면의 따로 된 단추는 없앱니다.</td></tr>
+<tr><td>기본값</td><td>지금처럼 <b>포함(끔)</b>. 방문 가입 도서관도 결과에 나오되 꼬리표로 바로 알 수 있습니다.</td></tr>
+</table>
+<div class="shots">
+<div class="pc"><div class="body"><div class="sbox">데미안 <span class="btn p">검색</span></div>
+<div class="row l"><span class="btn on">내 도서관 · 서울 강남구</span><span class="btn">전국</span></div>
+<div class="sec"><i></i>내 도서관에 있어요 (2)</div>
+<div class="res"><div class="bk">데미안<small>헤르만 헤세 · 소담출판사</small></div><div class="lib">강남구 전자도서관 <span class="tag me">내 지역</span><small>자체 · 소장</small></div><span class="cnt">보유 10 대출 중 4</span></div>
+<div class="sec"><i></i>누구나 가입 도서관에 있어요 (6)</div>
+<div class="hint new" style="text-align:left;margin:0 0 6px">사는 곳과 상관없이 가입할 수 있어요 · 이 중 <b>2곳</b>은 가입하려면 도서관에 가야 해요 <span class="btn">그 2곳 빼기</span></div>
+<div class="res"><div class="bk">데미안<small>헤르만 헤세 · 소담출판사</small></div><div class="lib">울산동부도서관 전자책도서관 <span class="tag open">누구나 가입</span><small>북큐브 · 소장</small></div><span class="cnt">보유 5 대출 중 0</span></div>
+<div class="res"><div class="bk">데미안<small>헤르만 헤세 · 스타북스</small></div><div class="lib">통영시립도서관 <span class="tag open">누구나 가입</span> <span class="tag add new">방문 가입</span><small>교보 · 소장</small></div><span class="cnt">보유 3 대출 중 1</span></div>
+<div class="panel new" style="font-size:12px;max-width:380px;margin-left:200px">가입하려면 통영시립도서관에 한 번 가야 해요 · <u>가입 방법 보기</u></div>
+</div></div>
+<div class="ph"><div class="body"><div class="sbox">데미안 <span class="btn p">검색</span></div>
+<div class="sec"><i></i>누구나 가입 도서관 (6)</div>
+<div class="hint new" style="text-align:left">2곳은 도서관에 가야 가입돼요 <span class="btn">빼기</span></div>
+<div class="res" style="flex-direction:column;align-items:stretch"><div class="bk">데미안</div><div class="lib">울산동부도서관 <span class="tag open">누구나 가입</span></div></div>
+<div class="res" style="flex-direction:column;align-items:stretch"><div class="bk">데미안</div><div class="lib">통영시립도서관 <span class="tag open">누구나 가입</span> <span class="tag add new">방문 가입</span></div></div>
+</div></div>
+</div>
+<p class="cap">주황 [방문 가입] 꼬리표와 묶음 아래 "N곳은 가야 해요 · 빼기" 줄이 새로 생깁니다. 통영시립도서관의 보유 수는 그림용 예시입니다.</p>
+<p><b>왜 묶음 줄에 두나:</b> 처음 온 사람이 "방문 없이 가입"이라는 단추를 미리 알고 켜기는 어렵습니다. 결과를 보다가 "2곳은 가야 한다"를 읽고 그 자리에서 빼는 쪽이 자연스럽습니다. 서버 쪽은 지금의 <code>visit=none</code> 거름을 그대로 쓰므로 바뀌지 않습니다.</p>
+<h3>덧붙인 질문에 답 (2026-10-18): 방문 가입은 설정에서도 뺄 수 있나?</h3>
+<p class="concl">네. 빼는 곳은 <b>두 곳</b>입니다: ① 결과 묶음 아래 "[그 N곳 빼기]" 줄, ② ⚙ 설정의 "찾을 도서관" 안 <b>"직접 가야 가입되는 도서관은 빼기"</b> 스위치. 어느 쪽에서 켜도 같은 값(지금의 <code>visit=none</code>)이라 둘 다 켜진 모양으로 바뀌고, 지금처럼 다음 방문까지 기억합니다. 첫 화면의 따로 된 단추만 없어집니다.</p>
+<div class="v-flow"><div class="v-box">결과 묶음 아래<br>[그 N곳 빼기]</div><span class="v-arr">→</span><div class="v-box v-hi">방문 가입 빼기 (값 하나)<small>이 브라우저에 기억</small></div><span class="v-arr">←</span><div class="v-box">⚙ 설정 · 찾을 도서관<br>"직접 가야 가입되는 도서관은 빼기"</div></div>
+<p class="cap">켜는 곳은 둘, 값은 하나. 다음 검색부터 방문 가입 도서관에는 요청이 가지 않습니다.</p>
+<p class="alt">다른 선택: 처음 제안대로 ⚙ 설정 안에만 두기 — 화면은 덜 붐비지만, 누구나 가입 39곳 중 19곳이 방문 가입인 것을 모르고 헛걸음하는 사람이 생깁니다.</p>
 </div>
 
 <div class="card item"><h2><span class="num">7</span>폰 첫 화면에도 "내 도서관: 서울 강남구" 칩을 늘 보이기</h2>
