@@ -402,6 +402,8 @@ Webshare API 키를 Parameter Store(`/chaekcheck/prod/*`, 시드니)에 넣는 �
 - `CHAEKCHECK_AVAILABILITY_KYOBO_SUBSCRIPTIONMAXCONCURRENCY=3`
 - 막힌 길: `CHAEKCHECK_AVAILABILITY_EGRESS_BLOCK_FAILURESTOBLOCK=5` (FIRSTPAUSE 10m, MAXPAUSE 7d)
 - 조회 서버를 띄우면 `FETCH_EGRESS_MODE/PROXIES/PROXYVENDOR(/PROXYUSERNAME/PROXYPASSWORD)` 같은 값
+- **운영 MODE는 `proxy-only`** (위 `=all`은 코드 기본/예시). 사용자 결정 2026-10-18, settings-index 4절
+- **Parameter Store 비밀값 이름** [확정: 17 몫, 2026-10-18 dev-17에 전달] (`/chaekcheck/prod/`, SecureString): `TUNNEL_TOKEN`(이미 있음) · `WEBSHARE_PROXIES`(20개 host:port 쉼표) · `WEBSHARE_API_KEY`(사용량 API). up.sh(ADR-0103)가 EC2 인스턴스 역할로 읽어 매핑: `WEBSHARE_PROXIES`→`CHAEKCHECK_AVAILABILITY_EGRESS_PROXIES`, `WEBSHARE_API_KEY`→`WEBSHARE_API_KEY`. username/password는 설정하지 않음(IP Authorization). **두 값은 아직 Parameter Store에 없음** — Webshare 대시보드의 20개 주소·키를 배포 때 사용자와 콘솔에서 넣음(역할 분담 379행)
 - **[배포 확인 필요] 비표준 포트 사이트 CONNECT 타임아웃**: Webshare 프록시가 `:442`·`:8088` 같은 비표준 포트로의 CONNECT가 연결 시간 초과 → 그 길·그 사이트만 5회 실패 뒤 10분 멈추고 직접 길이 맡음. 배포 때 해당 사이트 확인 항목에 넣기(dev 전달)
 
 ## 18. 사이클 21 → 17 전달 (2026-10-15, `from-cycle-21.md`)
