@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>저자 칸 대괄호 정리 확인</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+</style>
+</head>
+<body>
+<main class="doc">
+<h1>저자 칸 [ ] 정리 결과 확인 (2026-10-18)</h1>
+<p class="concl">사이클 19 회고 #5대로 dev가 저자 칸 <code>[ ]</code> 정리를 만들었습니다(dev main <code>eadc9a3</code>, 시험 1,109개 통과). 대상은 수집 원문 8,165줄(0.03%)입니다. 운영 반영은 사이클 17 배포 때 가져오기와 함께 됩니다. 두 가지만 정해 주세요.</p>
+<div class="card item">
+<h2><span class="num">1</span>dev가 더한 규칙: 괄호 역할 뒤에 붙은 역할 낱말 하나 떼기</h2>
+<p><b>무엇인가.</b> 사이트가 저자 칸 끝에 「저」를 한 번 더 붙이는 경우가 193가지 있었습니다(예: 「김삼웅 [편] 저」). 괄호만 떼면 「김삼웅 편 저」가 되어 역할이 둘로 꼬입니다. 그래서 dev가 "마지막 괄호 역할 뒤에 역할 낱말 하나만 남으면 뗌" 규칙을 더했습니다(표본 38개 전후 확인, dev plan-feedback "# 사이클 19" 「저자 칸 [ ] 정리」).</p>
+<table>
+<tr><th>저자 칸 원문</th><th>정리 뒤</th><th>규칙</th></tr>
+<tr><td>존 버거 [지음]</td><td>존 버거 · 역할 "지음"</td><td>승인하신 것</td></tr>
+<tr><td>정도전[저]정병철[편]</td><td>정도전(저), 정병철(편) 두 사람</td><td>승인하신 것</td></tr>
+<tr><td>KBS [슈퍼차이나] 제작팀</td><td>KBS 슈퍼차이나 제작팀</td><td>승인하신 것</td></tr>
+<tr><td><b>김삼웅 [편] 저</b></td><td><b>김삼웅 · 역할 "편"</b> (뒤 "저"는 뗌)</td><td><b>dev가 더한 것</b></td></tr>
+</table>
+<p class="concl">[안] 이 규칙을 승인합니다.</p>
+<p class="alt">다른 선택: 떼지 않고 그대로 둠.</p>
+</div>
+<div class="card item">
+<h2><span class="num">2</span>남은 것: 지금 같이 고칠지</h2>
+<p><b>무엇인가.</b> 이번 일에서 손대지 않은 것(전보다 나빠지지는 않음): ① 「원저」·「역주」가 역할 낱말 목록에 없음 ② 영문 옛 목록 주기 <code>pseud.</code>(1,517줄)·<code>from old catalog</code>(1,028줄)가 이름 낱말로 남음(예: 「Victor [pseud.] Appleton 저」) ③ <code>;</code>로 이어진 여러 사람을 나누지 않음 ④ <code>/</code> 조각은 뒤 역할을 받지 못함.</p>
+
+<p class="concl">[안] ①·②는 작고 분명해 지금 같은 일로 더합니다(역할 낱말 두 개 추가, 두 주기 문구 떼기). ③·④는 나누는 규칙이 다른 표기를 깰 수 있어 백로그에 둡니다. 운영 반영은 그대로 17 배포 가져오기 때.</p>
+<p class="alt">다른 선택: 넷 다 백로그 / 넷 다 지금.</p>
+</div>
+<p class="foot">근거: dev 사이클 20 세션 보고(2026-10-18), 사이클 19 retro.md 회고 결정 #5, 명세 R1-2, ADR-0113.</p></main></body></html>
