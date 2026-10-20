@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>메인 화면 세 안: 머리글·카드·검색창·지역 줄</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:1080px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.card h3{margin:18px 0 8px;font-size:20px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+.quote{border-left:4px solid var(--line);margin:8px 0;padding:4px 14px;color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+.v-flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.v-box{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:7px 11px;font-size:15px;text-align:center;min-width:90px}
+.v-box small{display:block;color:var(--muted);font-size:12px}
+.v-hi{border-color:var(--accent);background:var(--accent-bg)}
+.v-warn{border-color:var(--warn);background:var(--warn-bg)}
+.v-ok{border-color:var(--ok);background:var(--ok-bg)}
+.v-no{border-color:var(--no);background:var(--no-bg)}
+.v-arr{color:var(--muted);font-size:18px}
+/* 화면 그림: 자리와 순서만 보여 줍니다 (색·모양은 실제 디자인이 아님) */
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0}
+.pc{flex:1 1 520px;max-width:640px;border:2px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;font-size:13px}
+.ph{flex:0 0 250px;width:250px;border:2px solid var(--line);border-radius:22px;background:var(--bg);overflow:hidden;font-size:12px}
+.tbar{display:flex;gap:12px;align-items:center;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line)}
+.tbar b{color:#5b4bd1;font-size:15px}
+.tbar .r{margin-left:auto;display:flex;gap:8px;align-items:center}
+.btn{display:inline-block;border:1px solid var(--line);border-radius:7px;padding:2px 9px;background:var(--card);white-space:nowrap}
+.btn.p{background:#ede9fb;border-color:#c9bff5;color:#5b4bd1;font-weight:700}
+.btn.on{background:#5b4bd1;color:#fff;border-color:#5b4bd1}
+.body{padding:14px 16px}
+.ph .body{padding:12px 10px}
+.title{text-align:center;font-weight:700;font-size:17px;margin:8px 0 10px}
+.ph .title{font-size:15px}
+.title span{color:#5b4bd1}
+.sbox{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;background:var(--card);padding:6px 12px;color:var(--muted)}
+.sbox .btn{margin-left:auto}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0;justify-content:center}
+.row.l{justify-content:flex-start}
+.tag{display:inline-block;border-radius:999px;padding:0 8px;font-size:11px;font-weight:700;border:1px solid}
+.tag.me{color:#5b4bd1;border-color:#c9bff5;background:#ede9fb}
+.tag.open{color:var(--ok);border-color:var(--ok);background:var(--ok-bg)}
+.tag.add{color:var(--warn);border-color:var(--warn);background:var(--warn-bg)}
+.hint{color:var(--muted);font-size:12px;text-align:center;margin:4px 0}
+.new{outline:2px dashed var(--no);outline-offset:3px;border-radius:8px}
+.res{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:8px 10px;margin:6px 0;display:flex;gap:10px;align-items:center}
+.res .bk{flex:1 1 40%;font-weight:700}.res .bk small{display:block;font-weight:400;color:var(--muted)}
+.res .lib{flex:1 1 40%}.res .lib small{display:block;color:var(--muted)}
+.res .cnt{background:#f3f0ff;color:#5b4bd1;border-radius:6px;padding:2px 6px;white-space:nowrap;font-size:11px}
+.sec{font-weight:700;margin:10px 0 2px;display:flex;align-items:center;gap:6px}
+.sec i{width:8px;height:8px;border-radius:50%;background:#5b4bd1;display:inline-block}
+.sec.grey i{background:var(--muted)}
+.panel{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:10px 12px;margin:8px 0}
+.frow{display:flex;gap:8px;align-items:center;margin:5px 0}
+.frow label{width:48px;font-weight:700}
+.frow .in{flex:1;border:1px solid var(--line);border-radius:6px;padding:3px 8px;color:var(--muted);background:var(--card)}
+.sel{display:inline-block;border:1px solid var(--line);border-radius:6px;padding:3px 8px;background:var(--card)}
+.modal{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:10px 12px;margin:8px auto;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:6px 0}
+.grid span{border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:11px}
+.ph .grid{grid-template-columns:repeat(2,1fr)}
+.big .grid span{font-size:14px;padding:5px 8px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}main table{display:block;overflow-x:auto;max-width:100%}.two{grid-template-columns:1fr}}
+.hero{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:12px 14px;margin:8px 0}
+.hero .eb{color:#5b4bd1;font-size:11px;font-weight:700}
+.hero .hl{font-size:18px;font-weight:700;line-height:1.3;margin:4px 0 6px}
+.ph .hero .hl{font-size:15px}
+.hero .ld{color:var(--muted);font-size:12px;line-height:1.5}
+.cond{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:8px 12px;display:flex;gap:8px;align-items:center;margin:8px 0;font-weight:700}
+.cond .btn{margin-left:auto}
+.chipline{display:flex;gap:4px;flex-wrap:wrap;margin:5px 0;align-items:center}
+.chipline span{border:1px solid var(--line);border-radius:999px;padding:0 8px;font-size:11px;background:var(--card)}
+.chipline .k{border:0;background:none;font-weight:700;padding:0;min-width:56px}
+.chipline .x{border:0;background:none;color:var(--muted);padding:0}
+.why{border-left:3px solid var(--warn);background:var(--warn-bg);padding:5px 10px;font-size:11px;margin:6px 0;border-radius:0 6px 6px 0}
+.two-col{display:grid;grid-template-columns:3fr 2fr;gap:10px;align-items:start}
+.opt{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:12px 0;background:var(--card)}
+.opt h3{margin:0 0 8px}
+.opt .rec{color:var(--ok);font-weight:700;font-size:16px;margin-left:8px}
+.shots .pc{flex:1 1 560px;max-width:680px}
+.done{background:var(--ok-bg);border-radius:10px;padding:12px 16px;margin:0 0 18px}
+.order{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:17px;margin:6px 0}
+.order span{border:1px solid var(--line);border-radius:8px;padding:2px 10px;background:var(--card)}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">메인 화면을 통째로 세 가지로 짰습니다 — "강서구에 살아도 강동구 전자도서관에서 빌릴 수 있다"를 문구에 녹여서</p>
+<p class="sub">후속 페이지의 답(2026-10-20): 머리글 문구 미승인 "여기에 강서구 살아도 강동구 책 빌릴 수 있다 이런 것을 녹이고 싶어", 카드 모양 기타 "1안이랑 합쳐서", 폰 카드 승인 "1·2안과 함께 종합적으로 메인페이지 구성 좀". 그래서 머리글·카드·검색창·지역 줄을 한 화면으로 묶어 PC와 폰을 각각 그렸습니다. 세 안은 같은 부품의 **말과 순서**만 다릅니다. 예시 지역은 문구에만 쓰고(사용자 예), 사는 곳을 고르면 안 10대로 그 사람의 실제 이름·수로 바뀝니다. 그림은 자리와 순서이고 디자인이 아닙니다.</p>
+
+<div class="card">
+<h2>세 안에 공통인 것</h2>
+<div class="done">
+<ul>
+<li>부품 넷: 머리글(눈썹·제목·본문) / 알약 카드(거주 · 재직 · 상관없이 세 줄, 안 9+2 합침) / 검색창 "어떤 책을 찾으세요?" / 지역 줄 "사는 곳을 알려 주시면 가입할 수 있는 도서관을 골라 드려요 [사는 곳 고르기]"(안 3).</li>
+<li>예시 문구의 사실 확인(2026-10-20 공개 API): 서울 강서구 거주 → 강동구립도서관("서울 거주·재직·재학"), 송파구전자도서관("서울·경기 거주·재직·재학"), 마포구 전자도서관, 광진구립도서관 등 31곳 가입 가능. 어디 살든 가입 38곳(고흥군립·목포시통합·군산시립·국립세종 …).</li>
+<li>PC(641px 이상)는 지금처럼 머리글 왼쪽·카드 오른쪽 두 칸, 그 아래 검색창·지역 줄. 폰은 한 줄 세로이고 순서가 안마다 다릅니다.</li>
+<li>사는 곳을 고르면 카드의 예시 이름·수가 그 사람 것으로 바뀝니다(안 10: "서울 강서구 → 70곳: 강서구 1 · 서울 다른 구 31 · 어디 살든 38"). 지역을 고른 사람의 첫 화면에서는 카드가 그 숫자판이 됩니다.</li>
+</ul>
+</div>
+</div>
+
+<div class="card">
+<h2><span class="num">가</span>예시를 제목으로: "강서구에 살아도 강동구 전자도서관에서 빌릴 수 있어요"<span class="rec">제안</span></h2>
+<div class="concl">제목 한 줄이 오해를 바로 깹니다. 본문이 "왜(조건이 도서관마다)"와 "그래서 책첵이(사기 전에 찾기)"를 잇고, 카드가 같은 예로 세 갈래를 보여 줍니다. 폰은 머리글 → 카드 → 검색창 → 지역 줄.</div>
+<div class="shots">
+<div class="pc"><div class="tbar"><b>책첵</b> <span style="color:var(--muted)">책첵이란?</span> <span>도서검색</span><span>추천도서</span><span>마이페이지</span><span class="r"><span class="btn">로그인</span></span></div>
+<div class="body">
+<div class="two-col">
+<div class="hero new"><div class="eb">공공 전자도서관은 회원이면 무료예요</div><div class="hl">강서구에 살아도<br>강동구 전자도서관에서<br>빌릴 수 있어요.</div><div class="ld">가입 조건은 도서관마다 달라요 — 거주, 재직, 또는 상관없이.<br>읽고 싶은 전자책, 사기 전에 빌릴 수 있는 도서관부터 찾아보세요. <u>책첵이 하는 일 자세히 →</u></div></div>
+<div class="panel new"><b>예: 서울 강서구에 살면</b>
+<div class="chipline"><span class="k">거주</span><span class="tag me">강서구</span><span class="tag me">강동구</span><span class="tag me">송파구</span><span class="tag me">마포구</span><span class="x">+ 27곳</span></div>
+<div class="chipline"><span class="k">재직</span><span class="tag me">일하는 곳의 도서관</span><span class="x">더하면</span></div>
+<div class="chipline"><span class="k">상관없이</span><span class="tag open">고흥</span><span class="tag open">목포</span><span class="tag open">군산</span><span class="x">+ 35곳</span></div>
+<div class="why">가야 하는 곳도 있어요 (방문 가입)</div></div>
+</div>
+<b>어떤 책을 찾으세요?</b>
+<div class="sbox">책 제목을 입력하세요 <span class="btn on">검색</span></div>
+<div class="cond new">사는 곳을 알려 주시면 가입할 수 있는 도서관을 골라 드려요 <span class="btn p">사는 곳 고르기</span></div>
+<div class="hint">안 골라도 어디 살든 가입되는 도서관 38곳에서 찾아요 · 일하는 곳도 더할 수 있어요</div>
+</div></div>
+<div class="ph"><div class="tbar">☰ <b>책첵</b> <span style="color:var(--muted)">책첵이란?</span></div><div class="body">
+<div class="hero new"><div class="eb">공공 전자도서관은 회원이면 무료예요</div><div class="hl">강서구에 살아도<br>강동구 전자도서관에서<br>빌릴 수 있어요.</div><div class="ld">가입 조건은 도서관마다 — 거주, 재직, 또는 상관없이. 사기 전에 빌릴 수 있는 도서관부터 찾아보세요.</div></div>
+<div class="panel new"><b>예: 서울 강서구에 살면</b>
+<div class="chipline"><span class="k">거주</span><span class="tag me">강서구</span><span class="tag me">강동구</span><span class="tag me">송파구</span><span class="x">+ 28</span></div>
+<div class="chipline"><span class="k">재직</span><span class="tag me">일하는 곳</span></div>
+<div class="chipline"><span class="k">상관없이</span><span class="tag open">고흥</span><span class="tag open">목포</span><span class="x">+ 36</span></div></div>
+<b>어떤 책을 찾으세요?</b><div class="sbox">책 제목 <span class="btn on">검색</span></div>
+<div class="cond new" style="font-size:11px">사는 곳을 알려 주시면 가입할 수 있는 도서관을 골라요 <span class="btn p">고르기</span></div>
+</div></div>
+</div>
+<div class="order">폰 순서: <span>머리글</span>→<span>카드</span>→<span>검색창</span>→<span>지역 줄</span></div>
+<p class="ex">약점: 강서구·강동구가 아닌 사람에게는 남의 예라, 제목 아래 본문에서 "도서관마다"로 바로 일반화합니다. 폰에서 검색창이 두 번째 화면으로 내려갑니다.</p>
+<div class="prop">제안: (가). [안]</div>
+</div>
+
+<div class="card">
+<h2><span class="num">나</span>질문을 제목으로, 예시는 본문에: "우리 동네 도서관만 될까요? 아니요."</h2>
+<div class="concl">제목이 오해를 묻고 바로 답합니다. 예시("강서구에 살아도 강동구·송파구 …")는 본문 첫 줄. 카드는 (가)와 같습니다. 폰은 검색창을 먼저: 머리글 → 검색창 → 지역 줄 → 카드.</div>
+<div class="shots">
+<div class="pc"><div class="tbar"><b>책첵</b> <span style="color:var(--muted)">책첵이란?</span> <span>도서검색</span><span>추천도서</span><span>마이페이지</span><span class="r"><span class="btn">로그인</span></span></div>
+<div class="body">
+<div class="two-col">
+<div class="hero new"><div class="eb">공공 전자도서관은 회원이면 무료예요</div><div class="hl">우리 동네 도서관만<br>될까요? 아니요.</div><div class="ld">강서구에 살아도 강동구·송파구 전자도서관에 가입할 수 있어요.<br>조건은 도서관마다 달라요 — 거주, 재직, 또는 상관없이.<br>책첵이 가입할 수 있는 도서관부터 찾아 드려요. <u>자세히 →</u></div></div>
+<div class="panel new"><b>예: 서울 강서구에 살면</b>
+<div class="chipline"><span class="k">거주</span><span class="tag me">강서구</span><span class="tag me">강동구</span><span class="tag me">송파구</span><span class="tag me">마포구</span><span class="x">+ 27곳</span></div>
+<div class="chipline"><span class="k">재직</span><span class="tag me">일하는 곳의 도서관</span><span class="x">더하면</span></div>
+<div class="chipline"><span class="k">상관없이</span><span class="tag open">고흥</span><span class="tag open">목포</span><span class="tag open">군산</span><span class="x">+ 35곳</span></div>
+<div class="why">가야 하는 곳도 있어요 (방문 가입)</div></div>
+</div>
+<b>어떤 책을 찾으세요?</b>
+<div class="sbox">책 제목을 입력하세요 <span class="btn on">검색</span></div>
+<div class="cond new">사는 곳을 알려 주시면 가입할 수 있는 도서관을 골라 드려요 <span class="btn p">사는 곳 고르기</span></div>
+</div></div>
+<div class="ph"><div class="tbar">☰ <b>책첵</b> <span style="color:var(--muted)">책첵이란?</span></div><div class="body">
+<div class="hero new"><div class="eb">공공 전자도서관은 회원이면 무료예요</div><div class="hl">우리 동네 도서관만<br>될까요? 아니요.</div><div class="ld">강서구에 살아도 강동구·송파구 전자도서관에 가입할 수 있어요. 조건은 도서관마다 — 거주, 재직, 또는 상관없이.</div></div>
+<b>어떤 책을 찾으세요?</b><div class="sbox">책 제목 <span class="btn on">검색</span></div>
+<div class="cond new" style="font-size:11px">사는 곳을 알려 주시면 가입할 수 있는 도서관을 골라요 <span class="btn p">고르기</span></div>
+<div class="panel new"><b>예: 서울 강서구에 살면</b>
+<div class="chipline"><span class="k">거주</span><span class="tag me">강서구</span><span class="tag me">강동구</span><span class="tag me">송파구</span><span class="x">+ 28</span></div>
+<div class="chipline"><span class="k">재직</span><span class="tag me">일하는 곳</span></div>
+<div class="chipline"><span class="k">상관없이</span><span class="tag open">고흥</span><span class="tag open">목포</span><span class="x">+ 36</span></div></div>
+</div></div>
+</div>
+<div class="order">폰 순서: <span>머리글</span>→<span>검색창</span>→<span>지역 줄</span>→<span>카드</span></div>
+<p class="ex">강점: 폰에서 검색창이 첫 화면 안에 남고, 카드는 내려서 보는 보충. 약점: 제목이 질문이라 검색창 "어떤 책을 찾으세요?"와 질문이 둘.</p>
+<div class="prop">(나). [안]</div>
+</div>
+
+<div class="card">
+<h2><span class="num">다</span>이득을 제목으로, 예시는 카드 제목에: "읽고 싶은 전자책, 사기 전에 빌릴 수 있는 도서관부터."</h2>
+<div class="concl">제목은 이득, 본문은 조건이 다르다는 불편, 예시는 카드 제목 "강서구에 살아도 강동구에서 빌려요"로 그림 쪽에 둡니다. 폰은 머리글 → 검색창 → 카드 → 지역 줄.</div>
+<div class="shots">
+<div class="pc"><div class="tbar"><b>책첵</b> <span style="color:var(--muted)">책첵이란?</span> <span>도서검색</span><span>추천도서</span><span>마이페이지</span><span class="r"><span class="btn">로그인</span></span></div>
+<div class="body">
+<div class="two-col">
+<div class="hero new"><div class="eb">공공 전자도서관은 회원이면 무료예요</div><div class="hl">읽고 싶은 전자책,<br>사기 전에 빌릴 수 있는<br>도서관부터.</div><div class="ld">가입 조건은 도서관마다 달라요 — 거주, 재직, 또는 상관없이.<br>책첵이 그 책이 있는 도서관과 내가 가입할 수 있는지를 한 번에 보여 드려요. <u>자세히 →</u></div></div>
+<div class="panel new"><b>강서구에 살아도 강동구에서 빌려요</b>
+<div class="chipline"><span class="k">거주</span><span class="tag me">강서구</span><span class="tag me">강동구</span><span class="tag me">송파구</span><span class="tag me">마포구</span><span class="x">+ 27곳</span></div>
+<div class="chipline"><span class="k">재직</span><span class="tag me">일하는 곳의 도서관</span><span class="x">더하면</span></div>
+<div class="chipline"><span class="k">상관없이</span><span class="tag open">고흥</span><span class="tag open">목포</span><span class="tag open">군산</span><span class="x">+ 35곳</span></div>
+<div class="why">가야 하는 곳도 있어요 (방문 가입)</div></div>
+</div>
+<b>어떤 책을 찾으세요?</b>
+<div class="sbox">책 제목을 입력하세요 <span class="btn on">검색</span></div>
+<div class="cond new">사는 곳을 알려 주시면 가입할 수 있는 도서관을 골라 드려요 <span class="btn p">사는 곳 고르기</span></div>
+</div></div>
+<div class="ph"><div class="tbar">☰ <b>책첵</b> <span style="color:var(--muted)">책첵이란?</span></div><div class="body">
+<div class="hero new"><div class="eb">공공 전자도서관은 회원이면 무료예요</div><div class="hl">읽고 싶은 전자책,<br>사기 전에 빌릴 수 있는<br>도서관부터.</div><div class="ld">가입 조건은 도서관마다 — 거주, 재직, 또는 상관없이.</div></div>
+<b>어떤 책을 찾으세요?</b><div class="sbox">책 제목 <span class="btn on">검색</span></div>
+<div class="panel new"><b>강서구에 살아도 강동구에서 빌려요</b>
+<div class="chipline"><span class="k">거주</span><span class="tag me">강서구</span><span class="tag me">강동구</span><span class="tag me">송파구</span><span class="x">+ 28</span></div>
+<div class="chipline"><span class="k">재직</span><span class="tag me">일하는 곳</span></div>
+<div class="chipline"><span class="k">상관없이</span><span class="tag open">고흥</span><span class="tag open">목포</span><span class="x">+ 36</span></div></div>
+<div class="cond new" style="font-size:11px">사는 곳을 알려 주시면 가입할 수 있는 도서관을 골라요 <span class="btn p">고르기</span></div>
+</div></div>
+</div>
+<div class="order">폰 순서: <span>머리글</span>→<span>검색창</span>→<span>카드</span>→<span>지역 줄</span></div>
+<p class="ex">강점: 이득이 제일 크게 보이고 예시는 그림과 붙어 있어 읽지 않아도 됩니다. 약점: 폰에서 카드가 검색창과 지역 줄 사이에 끼어, 지역 줄이 카드 아래로 밀립니다.</p>
+<div class="prop">(다). [안]</div>
+</div>
+
+<div class="card">
+<h2>고르신 뒤</h2>
+<p>고른 안의 문구와 순서를 사이클 22 인계서 5-A단계·문구표에 그대로 넣습니다. 세 안 중 하나를 승인하고, 바꾸고 싶은 낱말·순서는 "기타"에 적어 주시면 그대로 반영합니다(예: "(가)인데 폰은 (나) 순서로").</p>
+</div>
+
+<p class="foot">원문: 후속 결정 페이지 `easy/2026-10-20-first-user-copy.html`의 저장 결과(2026-10-20 13:00~13:01), ADR-0139, `docs/research/screen-feedback/first-user-retention.md`. 숫자: 공개 API 2026-10-20.</p>
+</main></body></html>
