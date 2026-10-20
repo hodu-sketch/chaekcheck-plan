@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>첫 사용자 안내: 문구와 카드 모양 고르기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:1080px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.card h3{margin:18px 0 8px;font-size:20px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+.quote{border-left:4px solid var(--line);margin:8px 0;padding:4px 14px;color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+.v-flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.v-box{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:7px 11px;font-size:15px;text-align:center;min-width:90px}
+.v-box small{display:block;color:var(--muted);font-size:12px}
+.v-hi{border-color:var(--accent);background:var(--accent-bg)}
+.v-warn{border-color:var(--warn);background:var(--warn-bg)}
+.v-ok{border-color:var(--ok);background:var(--ok-bg)}
+.v-no{border-color:var(--no);background:var(--no-bg)}
+.v-arr{color:var(--muted);font-size:18px}
+/* 화면 그림: 자리와 순서만 보여 줍니다 (색·모양은 실제 디자인이 아님) */
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0}
+.pc{flex:1 1 520px;max-width:640px;border:2px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;font-size:13px}
+.ph{flex:0 0 250px;width:250px;border:2px solid var(--line);border-radius:22px;background:var(--bg);overflow:hidden;font-size:12px}
+.tbar{display:flex;gap:12px;align-items:center;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line)}
+.tbar b{color:#5b4bd1;font-size:15px}
+.tbar .r{margin-left:auto;display:flex;gap:8px;align-items:center}
+.btn{display:inline-block;border:1px solid var(--line);border-radius:7px;padding:2px 9px;background:var(--card);white-space:nowrap}
+.btn.p{background:#ede9fb;border-color:#c9bff5;color:#5b4bd1;font-weight:700}
+.btn.on{background:#5b4bd1;color:#fff;border-color:#5b4bd1}
+.body{padding:14px 16px}
+.ph .body{padding:12px 10px}
+.title{text-align:center;font-weight:700;font-size:17px;margin:8px 0 10px}
+.ph .title{font-size:15px}
+.title span{color:#5b4bd1}
+.sbox{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;background:var(--card);padding:6px 12px;color:var(--muted)}
+.sbox .btn{margin-left:auto}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0;justify-content:center}
+.row.l{justify-content:flex-start}
+.tag{display:inline-block;border-radius:999px;padding:0 8px;font-size:11px;font-weight:700;border:1px solid}
+.tag.me{color:#5b4bd1;border-color:#c9bff5;background:#ede9fb}
+.tag.open{color:var(--ok);border-color:var(--ok);background:var(--ok-bg)}
+.tag.add{color:var(--warn);border-color:var(--warn);background:var(--warn-bg)}
+.hint{color:var(--muted);font-size:12px;text-align:center;margin:4px 0}
+.new{outline:2px dashed var(--no);outline-offset:3px;border-radius:8px}
+.res{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:8px 10px;margin:6px 0;display:flex;gap:10px;align-items:center}
+.res .bk{flex:1 1 40%;font-weight:700}.res .bk small{display:block;font-weight:400;color:var(--muted)}
+.res .lib{flex:1 1 40%}.res .lib small{display:block;color:var(--muted)}
+.res .cnt{background:#f3f0ff;color:#5b4bd1;border-radius:6px;padding:2px 6px;white-space:nowrap;font-size:11px}
+.sec{font-weight:700;margin:10px 0 2px;display:flex;align-items:center;gap:6px}
+.sec i{width:8px;height:8px;border-radius:50%;background:#5b4bd1;display:inline-block}
+.sec.grey i{background:var(--muted)}
+.panel{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:10px 12px;margin:8px 0}
+.frow{display:flex;gap:8px;align-items:center;margin:5px 0}
+.frow label{width:48px;font-weight:700}
+.frow .in{flex:1;border:1px solid var(--line);border-radius:6px;padding:3px 8px;color:var(--muted);background:var(--card)}
+.sel{display:inline-block;border:1px solid var(--line);border-radius:6px;padding:3px 8px;background:var(--card)}
+.modal{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:10px 12px;margin:8px auto;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:6px 0}
+.grid span{border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:11px}
+.ph .grid{grid-template-columns:repeat(2,1fr)}
+.big .grid span{font-size:14px;padding:5px 8px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}main table{display:block;overflow-x:auto;max-width:100%}.two{grid-template-columns:1fr}}
+.hero{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:12px 14px;margin:8px 0}
+.hero .eb{color:#5b4bd1;font-size:11px;font-weight:700}
+.hero .hl{font-size:18px;font-weight:700;line-height:1.3;margin:4px 0 6px}
+.hero .ld{color:var(--muted);font-size:12px;line-height:1.5}
+.chipline{display:flex;gap:4px;flex-wrap:wrap;margin:6px 0;align-items:center}
+.chipline span{border:1px solid var(--line);border-radius:999px;padding:0 8px;font-size:11px;background:var(--card)}
+.chipline .k{border:0;background:none;font-weight:700;padding:0;min-width:52px}
+.opt{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:12px 0;background:var(--card)}
+.opt h3{margin:0 0 8px}
+.opt .rec{color:var(--ok);font-weight:700;font-size:16px;margin-left:8px}
+.why{border-left:3px solid var(--warn);background:var(--warn-bg);padding:6px 10px;font-size:11px;margin:6px 0;border-radius:0 6px 6px 0}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0}
+.pair>div{min-width:0}
+.pair .pc{max-width:none;flex:none}
+.done{background:var(--ok-bg);border-radius:10px;padding:12px 16px;margin:0 0 18px}
+.done table{font-size:17px}
+@media (max-width:760px){.pair{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">결정 11개 중 8개는 그대로 반영했고, 문구를 더 달라고 하신 3개(머리글, 가입 조건 카드, 오해 그림)의 대안을 냈습니다</p>
+<p class="sub">2026-10-20 결정 페이지(첫 사용자가 나가지 않게)에서 고르신 결과를 읽어 반영한 뒤, "다른 안·더 짧게"라고 적으신 항목만 다시 냅니다. 여기서 고르면 사이클 22 인계서의 문구표에 그대로 들어갑니다.</p>
+
+<div class="card">
+<h2>반영한 결정 (다시 묻지 않음)</h2>
+<div class="done">
+<table>
+<tr><th>안</th><th>고른 것</th><th>반영</th></tr>
+<tr><td>3 지역 줄 문구·왜 묻나요?</td><td>승인 + "고르는 데만 쓰고 … 증명은 도서관이 확인해요" 빼기</td><td>"왜 묻나요?"는 <b>"도서관마다 가입 조건이 달라서요."</b> 한 줄만</td></tr>
+<tr><td>4 뺀 도서관 알리기 줄</td><td>승인</td><td>결과 맨 아래 "가입 조건이 맞지 않는 도서관은 찾지 않았어요 · [전국에서 찾기]"</td></tr>
+<tr><td>5 로그인 창 문구</td><td>미승인 + "거주, 재직, 직접추가로"</td><td>낱말을 그 셋으로: <b>"로그인하면 거주·재직 지역과 직접 추가한 도서관이 계정에 저장돼 폰과 PC에서 똑같이 보여요. 로그인하지 않아도 모든 기능을 쓸 수 있어요."</b></td></tr>
+<tr><td>6 소개 창 없음</td><td>승인</td><td>그대로</td></tr>
+<tr><td>7 탈퇴 자리</td><td>승인</td><td>마이페이지 계정 칸 안 회색 글자 "탈퇴하기" + [로그아웃]</td></tr>
+<tr><td>8 어느 사이클</td><td>승인 + "현재 사이클 22 진행 중인데 넣어줘라"</td><td>사이클 22 인계서에 "5-A단계: 첫 사용자 안내"로 넣음(오늘)</td></tr>
+<tr><td>10 고른 직후 내 숫자</td><td>승인</td><td>체크 직후 목록 요청 1회(5분 재사용), 시군구/시도를 못 가르면 "서울 거주로 32곳"으로 합침</td></tr>
+<tr><td>11 꼬리표 근거 표기</td><td>승인</td><td>[강서구 거주 가입] / [서울 거주 가입] / [서울 재직 가입]</td></tr>
+</table>
+</div>
+</div>
+
+<div class="card">
+<h2><span class="num">1</span>첫 화면 머리글 문구: 세 가지 중 하나</h2>
+<div class="concl">안 1을 승인하시며 "문구는 다른 안 여러 개 주라 — 거주, 재직 또는 상관없이, 이렇게는?"이라 하셨습니다. 그 말("거주 · 재직 · 상관없이")을 세 갈래 이름으로 삼아 세 벌을 냈습니다. 어느 벌이든 세 갈래 이름은 지역 줄·카드·꼬리표에서도 같은 말로 씁니다(한 낱말 한 뜻).</div>
+
+<div class="opt"><h3>(가) 사용자 말 그대로<span class="rec">제안</span></h3>
+<div class="hero"><div class="eb">공공 전자도서관은 회원이면 무료예요</div><div class="hl">읽고 싶은 전자책,<br>사기 전에 빌릴 수 있는 도서관부터 찾아보세요.</div><div class="ld">도서관마다 가입 조건이 달라요 — 거주, 재직, 또는 상관없이.<br>책첵이 그 책이 있는 도서관과 내가 가입할 수 있는지를 한 번에 보여 드려요.</div></div>
+<p class="ex">이득 → 불편(세 갈래 한 줄) → 책첵이 하는 일. 본문 두 줄.</p></div>
+
+<div class="opt"><h3>(나) 더 짧게</h3>
+<div class="hero"><div class="eb">전자책, 사지 말고 빌리세요</div><div class="hl">가입할 수 있는 전자도서관,<br>생각보다 많아요.</div><div class="ld">거주 · 재직 · 상관없이 — 조건은 도서관마다 달라요.<br>책첵이 내가 가입할 수 있는 곳부터 찾아 드려요.</div></div>
+<p class="ex">"생각보다 많아요"가 안 9의 그림("우리 동네만?")과 바로 이어집니다. "무료"가 눈썹에서 빠집니다.</p></div>
+
+<div class="opt"><h3>(다) 질문으로</h3>
+<div class="hero"><div class="eb">공공 전자도서관은 무료예요</div><div class="hl">이 책, 어느 전자도서관에서<br>빌릴 수 있을까요?</div><div class="ld">도서관마다 가입 조건이 달라요 (거주 · 재직 · 상관없이).<br>책첵이 가입할 수 있는 도서관과 지금 빌릴 수 있는지를 한 번에 알려 드려요.</div></div>
+<p class="ex">제목이 검색창("어떤 책을 찾으세요?")과 같은 질문 말투라 둘이 겹칩니다. 그래서 (가)를 제안합니다.</p></div>
+<p class="alt">고르신 벌의 낱말을 바꾸고 싶으면 "기타"에 적어 주세요. 그대로 문구표에 넣습니다.</p>
+<div class="prop">제안: (가). 세 갈래 이름은 "거주 · 재직 · 상관없이"로 모든 화면에서 통일합니다. [안]</div>
+</div>
+
+<div class="card">
+<h2><span class="num">2</span>가입 조건 카드(안 2)와 오해 그림(안 9)을 하나로: 세 가지 모양</h2>
+<div class="concl">안 2에는 "다른 안 좀", 안 9에는 승인 + "문구 좀 더 짧고 간단하게"라고 하셨습니다. 둘은 같은 자리(PC 첫 화면 머리글 옆 카드)이므로 하나로 합쳐 세 모양을 냅니다. 글은 알약 이름뿐이고, 세 갈래 이름은 안 1과 같은 "거주 · 재직 · 상관없이"입니다.</div>
+
+<div class="opt"><h3>(가) 세 줄 알약: 갈래마다 한 줄<span class="rec">제안</span></h3>
+<div class="pc"><div class="body"><div class="panel"><b>우리 동네만? 아니요</b>
+<div class="chipline"><span class="k">거주</span><span class="tag me">우리 동네</span><span class="tag me">같은 시·도의 다른 구</span><span class="tag me">…</span></div>
+<div class="chipline"><span class="k">재직</span><span class="tag me">일하는 곳의 도서관</span><span class="tag me">…</span></div>
+<div class="chipline"><span class="k">상관없이</span><span class="tag open">어디 살든</span><span class="tag open">어디 살든</span><span class="tag open">+ 36곳</span></div>
+<div class="why">가야 하는 곳도 있어요 (방문 가입)</div>
+<div class="hint" style="text-align:left">사는 곳을 고르면 실제 이름과 수로 보여 드려요</div></div></div></div>
+<p class="ex">제목 5글자. 세 갈래가 줄 머리말로 보여 안 2(세 갈래)와 안 9(오해 풀기)를 한 번에 합니다. 폰도 같은 세 줄(알약 두 개씩).</p></div>
+
+<div class="opt"><h3>(나) 오해 → 실제 두 칸 (3차 판 그림, 글만 줄임)</h3>
+<div class="pc"><div class="body"><div class="panel"><b>우리 동네만? 아니요</b>
+<div style="display:grid;grid-template-columns:1fr 24px 2fr;gap:8px;align-items:center;margin:6px 0">
+<div style="text-align:center"><div class="v-box v-no" style="display:inline-block">우리 동네 1곳</div></div>
+<div class="v-arr" style="text-align:center">→</div>
+<div><div class="chipline"><span class="tag me">같은 시·도</span><span class="tag me">같은 시·도</span><span class="tag me">…</span><span class="tag open">상관없이 38곳</span></div></div>
+</div>
+<div class="hint" style="text-align:left">거주 · 재직 · 상관없이 — 조건은 도서관마다</div></div></div></div>
+<p class="ex">화살표가 "오해 → 실제"를 가장 직접 보여 주지만, 재직 갈래가 아래 한 줄 글로만 남습니다.</p></div>
+
+<div class="opt"><h3>(다) 카드 없이 머리글 아래 알약 세 개만</h3>
+<div class="pc"><div class="body"><div class="hero"><div class="hl" style="font-size:14px">읽고 싶은 전자책, 사기 전에 빌릴 수 있는 도서관부터 찾아보세요.</div><div class="chipline"><span class="tag me">거주</span><span class="tag me">재직</span><span class="tag open">상관없이</span><span style="border:0;background:none;color:var(--muted)">가입 조건은 도서관마다 달라요</span></div></div>
+<b>어떤 책을 찾으세요?</b><div class="sbox">책 제목을 입력하세요 <span class="btn on">검색</span></div></div></div>
+<p class="ex">가장 짧고 검색창이 위로 올라오지만, "우리 동네만 되는 줄"이라는 오해는 풀지 못합니다(안 10이 고른 뒤에 풀어 줌).</p></div>
+<div class="prop">제안: (가) 세 줄 알약. 제목 "우리 동네만? 아니요". [안]</div>
+</div>
+
+<div class="card">
+<h2><span class="num">3</span>폰 첫 화면에도 이 카드를 둘지</h2>
+<div class="concl">폰 첫 화면에는 지금 카드가 없습니다(사용자 2026-10-19). 안 9에서 "폰에도 짧은 판"을 제안했고 승인하셨지만 "기타"로 빼 달라는 말은 없었으므로, 폰에도 두는 것으로 읽었습니다. 확인만 받습니다.</div>
+<div class="pair">
+<div><div class="ph"><div class="body"><div class="hero"><div class="eb">공공 전자도서관은 회원이면 무료예요</div><div class="hl" style="font-size:15px">읽고 싶은 전자책,<br>사기 전에 빌릴 수 있는<br>도서관부터 찾아보세요.</div></div><div class="panel new"><b>우리 동네만? 아니요</b><div class="chipline"><span class="k">거주</span><span class="tag me">우리 동네</span><span class="tag me">같은 시·도</span></div><div class="chipline"><span class="k">재직</span><span class="tag me">일하는 곳</span></div><div class="chipline"><span class="k">상관없이</span><span class="tag open">어디 살든 38곳</span></div></div><b>어떤 책을 찾으세요?</b><div class="sbox">책 제목 <span class="btn on">검색</span></div></div></div></div>
+<div><p>폰(375px)에서는 머리글 + 카드 + 검색창이 한 화면에 들어가지 않아 검색창이 첫 화면 아래로 내려갑니다(지금은 "폰 첫 화면 스크롤 없음"). 카드를 두면 그 규칙을 바꾸고, 두지 않으면 폰 첫 사용자는 오해 풀기를 지역 고른 뒤(안 10)에만 봅니다.</p><p class="alt">다른 선택: 폰에는 두지 않음(지금처럼 머리글·검색창·지역 줄만).</p></div>
+</div>
+<div class="prop">제안: 폰에도 둡니다(세 줄 알약, 검색창은 스크롤 아래로). [안]</div>
+</div>
+
+<p class="foot">원문: 결정 페이지 `easy/2026-10-20-first-user-retention.html`의 저장 결과(2026-10-20 12:47~12:51, 11개), `docs/research/screen-feedback/first-user-retention.md`.</p>
+</main></body></html>
