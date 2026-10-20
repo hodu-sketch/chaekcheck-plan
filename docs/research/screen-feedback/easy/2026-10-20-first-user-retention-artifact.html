@@ -138,7 +138,7 @@ body{background:var(--bg);color:var(--text)}
 <div class="bar" id="bar">불러오는 중</div>
 
 <p class="lead">첫 사용자가 나가지 않게 하려면, 첫 화면이 "왜 필요한지"부터 말해야 합니다</p>
-<p class="sub">2026-10-20 친구분 두 분의 피드백(카카오톡 09:22~10:22)과 사용자 방향("가입을 위한 정보 제공이 핵심, 왜 필요한지 납득, 가입 조건이 제멋대로인 현실을 알리기, 자연스러운 문구")을 바탕으로, chaekcheck.com(2026-10-20 확인)과 dev 코드(사이클 22 반영본, 2026-10-19·20 사용자 변경 포함)를 화면기획 관점에서 돌아본 결과입니다. 결정할 것 8개입니다. 안마다 <b>기존</b>과 <b>제안</b> 화면을 나란히 두었고, 맨 아래 "한 흐름" 절에 안을 모두 적용한 첫 사용자의 길을 처음부터 끝까지 적었습니다. 화면 그림은 자리와 순서만 보여 주며 실제 디자인이 아닙니다. 2차 판(2026-10-20): 1차의 안 4(상세검색 지역 줄 빼기)는 dev에 이미 상세검색 패널이 없어(사용자 2026-10-19 안 C: 좁히기 칩) 뺐고, 그 자리에 "검색에서 뺀 도서관을 어디서 보나"를 넣었습니다.</p>
+<p class="sub">2026-10-20 친구분 두 분의 피드백(카카오톡 09:22~10:22)과 사용자 방향("가입을 위한 정보 제공이 핵심, 왜 필요한지 납득, 가입 조건이 제멋대로인 현실을 알리기, 자연스러운 문구")을 바탕으로, chaekcheck.com(2026-10-20 확인)과 dev 코드(사이클 22 반영본, 2026-10-19·20 사용자 변경 포함)를 화면기획 관점에서 돌아본 결과입니다. 결정할 것 11개입니다(안 9~11은 3차 판, 2026-10-20: "강서구 살면 강서구만?"을 그림으로). 안마다 <b>기존</b>과 <b>제안</b> 화면을 나란히 두었고, 맨 아래 "한 흐름" 절에 안을 모두 적용한 첫 사용자의 길을 처음부터 끝까지 적었습니다. 화면 그림은 자리와 순서만 보여 주며 실제 디자인이 아닙니다. 2차 판(2026-10-20): 1차의 안 4(상세검색 지역 줄 빼기)는 dev에 이미 상세검색 패널이 없어(사용자 2026-10-19 안 C: 좁히기 칩) 뺐고, 그 자리에 "검색에서 뺀 도서관을 어디서 보나"를 넣었습니다.</p>
 
 <div class="card">
 <h2>진단: 친구분들이 막힌 곳은 기능이 아니라 "왜"였습니다</h2>
@@ -367,13 +367,90 @@ body{background:var(--bg);color:var(--text)}
 </div>
 
 <div class="card">
+<h2><span class="num">9</span>"우리 동네 도서관만 될까?"를 글 대신 그림으로:<br>첫 화면 카드를 "오해 → 실제" 그림으로</h2>
+<div class="concl">사용자 요청(2026-10-20): "서울 강서구에 거주하면 강서구만 되는 줄 아는데 강동구나 송파구도 되거든 … 문장만 있으면 길고 안 읽으니까 읽게끔". 강서구는 예시일 뿐이므로 첫 화면 그림에는 특정 구를 쓰지 않습니다. 안 2의 글 카드를, 왼쪽 "우리 동네 도서관 하나"라는 오해 → 오른쪽 "같은 시·도의 다른 구·시 도서관들 + 어디 살든 가입되는 도서관들" 알약 그림으로 바꿉니다. 실제 구 이름과 수는 사는 곳을 고른 뒤 안 10에서 그 사람 것으로 보입니다.</div>
+<p>근거(2026-10-20 공개 API, 사이트 수): 서울의 구립 전자도서관 대부분이 "서울 거주·재직·재학"을 조건으로 해, 서울 어느 구에 살든 가입됩니다(예: 강서구 거주로 32곳 — 강서구 자기 것 1 + 강동구립·송파구·마포구·광진구·용산구 등 31). 어디 살든 가입 38곳. 다른 시·도도 같은 구조인지는 [확인 필요: 부산·대구·경기 등 시도 단위 조건의 비율].</p>
+<div class="pair">
+<div><span class="lbl was">안 2 (글 카드)</span>
+<div class="pc"><div class="body"><div class="panel"><b>가입 조건, 도서관마다 달라요</b><div class="kinds"><div><b>사는 곳이어야 가입</b><small>그 시·군·구 주민만</small></div><div><b>일하는 곳이어도 가입</b><small>직장이 그 지역이면</small></div><div><b>어디 살든 가입</b><small>온라인으로 누구나 · 39곳</small></div></div></div></div></div></div>
+<div><span class="lbl now">제안 (그림 카드, 특정 지역 없음)</span>
+<div class="pc"><div class="body"><div class="panel new"><b>우리 동네 도서관만 될까요?</b>
+<div style="display:grid;grid-template-columns:1fr 24px 2fr;gap:8px;align-items:center;margin:8px 0">
+<div style="text-align:center"><div class="v-box v-no" style="display:inline-block">우리 동네 도서관 1곳<small>여기만 되는 줄 알지만</small></div></div>
+<div class="v-arr" style="text-align:center">→</div>
+<div><div class="chipline"><span class="tag me">우리 동네</span><span class="tag me">같은 시·도의 다른 구</span><span class="tag me">다른 구</span><span class="tag me">다른 시</span><span class="tag me">…</span></div><small style="color:var(--muted)">같은 시·도에 살면 되는 도서관이 많아요</small>
+<div class="chipline" style="margin-top:6px"><span class="tag open">어디 살든</span><span class="tag open">어디 살든</span><span class="tag open">어디 살든</span><span class="tag open">+ 35곳</span></div><small style="color:var(--muted)">어디 살든 온라인으로 가입되는 도서관 38곳</small></div>
+</div>
+<div class="hint" style="text-align:left">사는 곳을 고르면 내 지역 기준으로 실제 이름과 수를 보여 드려요 · 도서관마다 조건이 달라요(일하는 곳으로 되는 곳, 가야 하는 곳)</div>
+</div></div></div></div>
+</div>
+<div class="pair">
+<div><span class="lbl now">제안 · 폰 (첫 화면에 짧게)</span>
+<div class="ph"><div class="body"><div class="panel new"><b>우리 동네 도서관만 될까요?</b>
+<div class="chipline"><span class="tag me">우리 동네</span><span class="tag me">같은 시·도 다른 구</span><span class="tag me">…</span></div><small style="color:var(--muted)">같은 시·도에 살면 되는 곳이 많아요</small>
+<div class="chipline"><span class="tag open">어디 살든</span><span class="tag open">어디 살든</span><span class="tag open">+ 36곳</span></div><small style="color:var(--muted)">어디 살든 가입 38곳</small></div></div></div></div>
+<div></div>
+</div>
+<p class="cap">첫 화면은 누구의 지역도 모르므로 알약에 실제 이름 대신 자리말("우리 동네", "같은 시·도의 다른 구")을 씁니다. 사는 곳을 고르면 안 10의 그림이 실제 이름(강동구립도서관 …)과 수로 이 자리를 대신합니다. 폰은 지금 첫 화면에 카드가 없는데, 이 안은 폰에도 알약 두 줄짜리 짧은 판을 둡니다 — 폰에 두지 않으려면 "기타"로 적어 주세요.</p>
+<p class="alt">다른 선택 ① 안 2의 글 카드 그대로 — "왜 거주/재직?"까지는 답하지만 "우리 구만 되는 줄"이라는 오해는 글을 읽어야 풀립니다. ② 한 지역(예: 서울 강서구)을 예로 든 실제 이름 그림 — 읽기는 쉽지만 다른 지역 사람에게는 남의 예라 사용자가 뺐습니다("강서구는 예시야").</p>
+<div class="prop">제안: 안 2의 카드를 특정 지역 없는 "오해 → 실제" 알약 그림으로 바꾸고, 실제 이름·수는 안 10(고른 뒤)에서 보입니다. 안 2와 안 9가 모두 승인되면 안 9의 모양으로 만듭니다. <span class="chip" data-n="9">안 #9</span></div>
+</div>
+<div class="card">
+<h2><span class="num">10</span>사는 곳을 고른 직후, 내 숫자로 같은 그림 보여 주기</h2>
+<div class="concl">상자에서 시군구를 체크한 직후, 그 사람의 실제 수로 같은 그림을 상자 안(체크한 격자 바로 아래)에 보여 줍니다: "서울 강서구 → 가입할 수 있는 도서관 70곳: 강서구 1 · 서울 다른 구 31 · 어디 살든 38 [이름 보기 ▾]". 지역을 고른 보람이 그 자리에서 보이고, 친구분의 "지역 설정이 왜 필요한지"가 숫자로 답해집니다.</div>
+<div class="pair">
+<div><span class="lbl was">기존 (dev) · 체크한 직후</span>
+<div class="pc"><div class="body"><div class="modal"><b>찾을 도서관</b>
+<div class="row l"><b>사는 곳</b> <span class="tag me">서울 강서구 ×</span></div>
+<div class="grid"><span>서울</span><span>부산</span><span>강서구 ✓</span><span>강동구</span></div>
+<div class="why" style="background:#fff8e1">이 브라우저에만 저장됐어요. 로그인하면 다른 기기에서도 그대로예요 [카카오 로그인] ×</div>
+<div class="row l"><b>일하는 곳</b> <span class="btn">일하는 곳도 더하기</span></div>
+</div></div></div></div>
+<div><span class="lbl now">제안 · 체크한 직후</span>
+<div class="pc"><div class="body"><div class="modal"><b>찾을 도서관</b>
+<div class="row l"><b>사는 곳</b> <span class="tag me">서울 강서구 ×</span></div>
+<div class="grid"><span>서울</span><span>부산</span><span>강서구 ✓</span><span>강동구</span></div>
+<div class="panel new" style="background:var(--ok-bg);border-color:var(--ok)"><b>서울 강서구 → 가입할 수 있는 도서관 70곳</b>
+<div class="chipline"><span class="tag me">강서구 1</span><span class="tag me">서울 다른 구 31</span><span class="tag open">어디 살든 38</span><span class="tag add">그중 가야 하는 곳 9</span></div>
+<div class="chipline"><span class="tag me">강동구립도서관</span><span class="tag me">송파구전자도서관</span><span class="tag me">마포구 전자도서관</span><span>… 이름 보기 ▾</span></div></div>
+<div class="why" style="background:#fff8e1">이 브라우저에만 저장됐어요. 로그인하면 다른 기기에서도 그대로예요 [카카오 로그인] ×</div>
+<div class="row l"><b>일하는 곳</b> <span class="btn">일하는 곳도 더하기</span></div>
+</div></div></div></div>
+</div>
+<p class="cap">폰 시트도 같은 자리(격자 아래)에 같은 녹색 칸. 숫자의 뜻: "강서구 1" = 고른 시군구 자기 도서관, "서울 다른 구 31" = 고른 시도 기준으로 가입되는 다른 도서관, "어디 살든 38" = 지역과 상관없이 가입되는 곳, "가야 하는 곳 9" = 그중 방문 가입. 세는 기준은 사이트 수(사이클 22 결정 #5와 같음).</p>
+<p class="ex">어떻게 알아내나: 마이페이지가 이미 쓰는 도서관 목록 요청(<code>GET /api/v1/libraries?residenceRegionIds=…</code>, 약 870KB·gzip 62KB)을 <b>체크한 직후 한 번</b> 보내고 5분 동안 다시 씁니다. 사이클 22는 "첫 화면을 열 때마다 이 요청을 보내지 않는다"(명세 결정 #4)고 정했는데, 이 안은 열 때가 아니라 사람이 체크했을 때만 보내므로 그 결정과 어긋나지 않습니다. 다만 체크할 때마다 한 번씩이라 한 사람이 지역을 다섯 번 바꾸면 다섯 번입니다(5분 안에는 같은 지역이면 다시 안 보냄). 자기 시군구 도서관과 "서울 다른 구"를 가르는 기준은 응답의 <code>matchedBy</code>만으로는 모자라 [확인 필요: 도서관의 시군구 칸이 응답에 없음 → 이름이 시군구 이름으로 시작하는지로 가르거나, 가르지 않고 "서울 거주로 32곳"으로 합쳐 보임]. 합쳐 보이는 쪽이 안전합니다.</p>
+<p class="alt">다른 선택 ① 숫자 없이 "서울에 살면 다른 구 도서관도 가입돼요" 한 줄만 — 요청이 없지만 그림이 아니라 글입니다. ② 마이페이지에서만 보기(지금) — 상자를 닫고 마이페이지까지 가야 합니다.</p>
+<div class="prop">제안: 체크한 직후 상자 안에 내 숫자 그림을 보이고, 숫자는 목록 요청 한 번(5분 재사용)으로 셉니다. 자기 시군구/시도 가르기는 dev가 응답으로 가를 수 없으면 합쳐서 "서울 거주로 32곳"으로 보입니다. <span class="chip" data-n="10">안 #10</span></div>
+</div>
+
+<div class="card">
+<h2><span class="num">11</span>결과 꼬리표 [내 지역 가입]을<br>"[서울 거주 가입]"처럼 어느 지역으로 가입되는지로</h2>
+<div class="concl">강서구에 사는 사람의 결과에서 강동구립도서관에 [내 지역 가입] 꼬리표가 붙으면 "강동구가 왜 내 지역?"이 됩니다. 꼬리표를 가입되는 근거로 바꿉니다: 고른 시군구 자기 도서관이면 [강서구 거주 가입], 시도 기준으로 되는 곳이면 [서울 거주 가입], 일하는 곳이면 [서울 재직 가입]. 누르면 지금처럼 가입 안내 창이 열립니다.</div>
+<div class="pair">
+<div><span class="lbl was">기존 (dev)</span>
+<div class="pc"><div class="body">
+<div class="res"><span class="bk">경험의 멸종<small>크리스틴 로젠</small></span><span class="lib">강동구립도서관 <span class="tag me">내 지역 가입</span></span><span class="cnt">1/1</span></div>
+<div class="res"><span class="bk">경험의 멸종<small>크리스틴 로젠</small></span><span class="lib">서울 강서구 전자도서관 <span class="tag me">내 지역 가입</span></span><span class="cnt">0/1</span></div>
+</div></div></div>
+<div><span class="lbl now">제안</span>
+<div class="pc"><div class="body">
+<div class="res"><span class="bk">경험의 멸종<small>크리스틴 로젠</small></span><span class="lib">강동구립도서관 <span class="tag me new">서울 거주 가입</span></span><span class="cnt">1/1</span></div>
+<div class="res"><span class="bk">경험의 멸종<small>크리스틴 로젠</small></span><span class="lib">서울 강서구 전자도서관 <span class="tag me new">강서구 거주 가입</span></span><span class="cnt">0/1</span></div>
+</div></div></div>
+</div>
+<p class="cap">책·수는 예시입니다. 가르는 값은 결과 흐름의 <code>priorityGroup</code>(MY_SIGUNGU = 내 시군구, MY_SIDO = 내 시도)으로 이미 옵니다(사이클 22 명세 2절). 시도 짧은 이름("서울")은 지역 목록에 있습니다. 거주와 재직을 가르는 값은 결과 흐름에 없어(<code>matchedBy</code>는 마이페이지 목록에만) [확인 필요: 사는 곳만 골랐으면 "거주", 일하는 곳만이면 "재직", 둘 다면 "거주·재직"으로 씀].</p>
+<p class="alt">다른 선택: [내 지역 가입] 그대로 — 묶음 제목 "서울 강서구에서 가입할 수 있는 곳"이 있지만, 줄 하나만 보는 사람에게는 "강동구 = 내 지역"이 이상합니다.</p>
+<div class="prop">제안: 꼬리표를 [{시군구} 거주 가입] / [{시도} 거주 가입] / [{시도} 재직 가입]으로 바꿉니다. <span class="chip" data-n="11">안 #11</span></div>
+</div>
+
+<div class="card">
 <h2>한 흐름: 안을 모두 적용했을 때 첫 사용자의 길</h2>
-<div class="concl">서울 강남구에 사는 사람이 「경험의 멸종」(사용자가 대화에서 든 예)을 찾는 장면입니다. 어느 단계에서도 "왜?"가 남지 않도록 앞 단계의 말이 다음 단계의 말로 이어지게 했습니다.</div>
+<div class="concl">서울 강서구에 사는 사람이 「경험의 멸종」(사용자가 대화에서 든 예)을 찾는 장면입니다. 어느 단계에서도 "왜?"가 남지 않도록 앞 단계의 말이 다음 단계의 말로 이어지게 했습니다.</div>
 <div class="journey">
-<div><div><b>첫 화면에 들어옴 (안 1·2)</b><small>"읽고 싶은 전자책, 사기 전에 빌릴 수 있는 도서관부터 찾아보세요" + "도서관마다 가입 조건이 달라요(사는 곳만 / 일하는 곳도 / 어디 살든)". 여기서 "가입 조건이 다르다"는 말을 처음 봅니다.</small></div></div>
+<div><div><b>첫 화면에 들어옴 (안 1·2·9)</b><small>"읽고 싶은 전자책, 사기 전에 빌릴 수 있는 도서관부터 찾아보세요" + 그림 "우리 동네 도서관만 될까요? → 같은 시·도의 다른 구 … + 어디 살든 가입 …". 읽지 않아도 "우리 구만이 아니구나"가 보입니다.</small></div></div>
 <div><div><b>지역 줄을 읽음 (안 3)</b><small>"사는 곳을 알려 주시면 가입할 수 있는 도서관을 골라 드려요 [사는 곳 고르기] · 안 골라도 어디 살든 가입되는 도서관 39곳에서 찾아요". 1단계의 "가입 조건이 다르다"를 이어받아 "그래서 사는 곳을 묻는다"가 됩니다. 급하면 안 고르고 바로 검색해도 됩니다.</small></div></div>
-<div><div><b>[사는 곳 고르기] → 상자 (안 3)</b><small>맨 위 "왜 묻나요? 도서관마다 가입 조건이 달라서요 … 증명은 도서관이 가입할 때 확인해요". 서울 → 강남구 체크. 즉시 저장되고 줄이 "서울 강남구에 살아요 [바꾸기]"로 바뀝니다. 로그인 전이라 노란 줄 "이 브라우저에만 저장됐어요. 로그인하면 다른 기기에서도 그대로예요 [카카오 로그인]"(사이클 22).</small></div></div>
-<div><div><b>「경험의 멸종」 검색 → 결과 (사이클 22 + 안 4)</b><small>① "내 도서관에 있어요 · 서울 강남구에서 가입할 수 있는 곳과 직접 추가한 곳" → ② "어디 살든 가입되는 도서관에 있어요 · 온라인으로 바로 가입할 수 있어요" (고흥 같은 다른 지역 도서관이 여기 옴, 줄마다 [어디 살든 가입] 꼬리표) → ④ 확인하지 못한 도서관 → 맨 아래 "가입 조건이 맞지 않는 도서관은 찾지 않았어요 · [전국에서 찾기]". 2단계의 "어디 살든 가입되는 도서관"이라는 말이 묶음 이름으로 다시 나옵니다.</small></div></div>
+<div><div><b>[사는 곳 고르기] → 상자 (안 3)</b><small>맨 위 "왜 묻나요? 도서관마다 가입 조건이 달라서요 … 증명은 도서관이 가입할 때 확인해요". 서울 → 강서구 체크. 즉시 저장되고, 격자 아래에 "서울 강서구 → 가입할 수 있는 도서관 70곳: 강서구 1 · 서울 다른 구 31 · 어디 살든 38"(안 10)이 뜨며, 줄이 "서울 강서구에 살아요 [바꾸기]"로 바뀝니다. 로그인 전이라 노란 줄 "이 브라우저에만 저장됐어요. 로그인하면 다른 기기에서도 그대로예요 [카카오 로그인]"(사이클 22).</small></div></div>
+<div><div><b>「경험의 멸종」 검색 → 결과 (사이클 22 + 안 4)</b><small>① "내 도서관에 있어요 · 서울 강서구에서 가입할 수 있는 곳과 직접 추가한 곳"(강동구립도서관 줄에 [서울 거주 가입], 강서구 전자도서관 줄에 [강서구 거주 가입], 안 11) → ② "어디 살든 가입되는 도서관에 있어요 · 온라인으로 바로 가입할 수 있어요" (고흥 같은 다른 지역 도서관이 여기 옴, 줄마다 [어디 살든 가입] 꼬리표) → ④ 확인하지 못한 도서관 → 맨 아래 "가입 조건이 맞지 않는 도서관은 찾지 않았어요 · [전국에서 찾기]". 2단계의 "어디 살든 가입되는 도서관"이라는 말이 묶음 이름으로 다시 나옵니다.</small></div></div>
 <div><div><b>도서관 이름이나 꼬리표를 누름 → 가입 안내 창 (지금 그대로)</b><small>"○○도서관 가입 안내 · 가입 대상: 어디 살든 가입 · 가입 방법: 온라인 가입 · 준비할 것: 본인인증 수단 · [공식 가입 안내 보기] · 이미 회원이에요 · 책 보기". 3단계의 "증명은 도서관이 확인해요"가 여기 "준비할 것"으로 이어집니다. [대여하기]는 도서관 사이트로.</small></div></div>
 <div><div><b>며칠 뒤 폰에서 다시 옴 (안 5)</b><small>폰에는 지역이 없어 2단계 줄이 다시 보입니다. 로그인 창을 열면 "로그인하면 사는 곳·… 폰과 PC에서 똑같이 보여요. 로그인하지 않아도 모든 기능을 쓸 수 있어요". 로그인하면 사이클 07의 가져오기 창으로 PC에서 고른 지역이 계정에 들어갑니다.</small></div></div>
 <div><div><b>마이페이지 (안 7)</b><small>지역 선택 · 직접 도서관 추가 · 직접 추가한 도서관 · 계정(로그인되어 있어요 [로그아웃] / 탈퇴하기) · 돌아가기. 떠날 때도 찾아 헤매지 않습니다.</small></div></div>
