@@ -39,3 +39,7 @@ AI 도서 추천을 하려면 (가) "이 책을 본 방문에서 같이 본 책"
 
 ## 결정 페이지
 - [1차](../research/ai-recommend/easy/2026-10-17-ai-recommend-decisions.html) #8·#9, [2차](../research/ai-recommend/easy/2026-10-17-ai-recommend-decisions-2.html) #2·#3. 근거 `docs/research/ai-recommend/overview.md` 3-1·3-2′·4′
+
+## 구현
+- 구현됨 (dev 보고 2026-10-23, main 머지 6b40067; dev `docs/plan-feedback.md` "# 기록 변경 (ADR-0134, 사이클 20 1단계와 함께)"). `LoginStatusReader.read` → `LoginState(status, accountId)`, `UsageLogAccountDeletedCleanup`, `web/src/api/visitKey.ts`, 처리방침 7차 문구(이후 사이클 22 릴리스에서 v2로 정리). 시험 backend 1,111·web 507 통과, 원래 DB로 헤더 저장·틀린 형식 NULL·`search_event` 칸 없음 확인.
+- 감수 1건(dev): 탈퇴 뒤 만료 토큰이 남은 브라우저가 책을 열면 subject의 번호가 다시 들어갈 수 있음 → 3단계 "맞춤 추천 끄기"와 함께 볼 것(예: 비우기 뒤 그 번호는 다시 쓰지 않도록, 또는 탈퇴 때 쿠키 삭제 확인) [확인 필요]
