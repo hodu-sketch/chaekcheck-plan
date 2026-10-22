@@ -1052,3 +1052,9 @@
 ## 사이클 22 인계 알림 (2026-10-18)
 
 사이클 22 첫 화면 사용성(지역 먼저 묻기 · 결과는 내 도서관부터 · 방문 가입 표시 · 범위 스위치 삭제)의 인계서는 `docs/cycles/22-first-screen-usability/handoff.md`에 있습니다(웹만 바뀜, 서버 변경 없음). **dev 순서: 사이클 22를 먼저, 사이클 20 2단계는 그 뒤** [확정] (사용자, 2026-10-18). ADR-0135~0138.
+
+---
+
+## 표지 받기 작업 요청 (2026-10-23, 사이클 밖)
+
+책 표지를 책마다 한 장 받아 200px JPEG로 줄여 데이터 폴더에 모으는 수집기 명령 요청: plan `docs/research/ebook-catalog/to-dev-fetch-covers-2026-10-23.md` (`../chaekcheck-plan/docs/research/ebook-catalog/to-dev-fetch-covers-2026-10-23.md`). 서비스 화면은 바꾸지 않습니다. 이 세션(plan)이 2026-10-23 08:10에 전체 목록 수집을 시작했으니, 그 수집이 끝난 뒤 돌립니다.

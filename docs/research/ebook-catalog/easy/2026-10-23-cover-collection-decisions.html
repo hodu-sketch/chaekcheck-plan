@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>책 표지 같이 모으기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:1080px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.card h3{margin:18px 0 8px;font-size:20px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+.quote{border-left:4px solid var(--line);margin:8px 0;padding:4px 14px;color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+.v-flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.v-box{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:7px 11px;font-size:15px;text-align:center;min-width:90px}
+.v-box small{display:block;color:var(--muted);font-size:12px}
+.v-hi{border-color:var(--accent);background:var(--accent-bg)}
+.v-warn{border-color:var(--warn);background:var(--warn-bg)}
+.v-ok{border-color:var(--ok);background:var(--ok-bg)}
+.v-no{border-color:var(--no);background:var(--no-bg)}
+.v-arr{color:var(--muted);font-size:18px}
+/* 화면 그림: 자리와 순서만 보여 줍니다 (색·모양은 실제 디자인이 아님) */
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0}
+.pc{flex:1 1 520px;max-width:640px;border:2px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;font-size:13px}
+.ph{flex:0 0 250px;width:250px;border:2px solid var(--line);border-radius:22px;background:var(--bg);overflow:hidden;font-size:12px}
+.tbar{display:flex;gap:12px;align-items:center;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line)}
+.tbar b{color:#5b4bd1;font-size:15px}
+.tbar .r{margin-left:auto;display:flex;gap:8px;align-items:center}
+.btn{display:inline-block;border:1px solid var(--line);border-radius:7px;padding:2px 9px;background:var(--card);white-space:nowrap}
+.btn.p{background:#ede9fb;border-color:#c9bff5;color:#5b4bd1;font-weight:700}
+.btn.on{background:#5b4bd1;color:#fff;border-color:#5b4bd1}
+.body{padding:14px 16px}
+.ph .body{padding:12px 10px}
+.title{text-align:center;font-weight:700;font-size:17px;margin:8px 0 10px}
+.ph .title{font-size:15px}
+.title span{color:#5b4bd1}
+.sbox{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;background:var(--card);padding:6px 12px;color:var(--muted)}
+.sbox .btn{margin-left:auto}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0;justify-content:center}
+.row.l{justify-content:flex-start}
+.tag{display:inline-block;border-radius:999px;padding:0 8px;font-size:11px;font-weight:700;border:1px solid}
+.tag.me{color:#5b4bd1;border-color:#c9bff5;background:#ede9fb}
+.tag.open{color:var(--ok);border-color:var(--ok);background:var(--ok-bg)}
+.tag.add{color:var(--warn);border-color:var(--warn);background:var(--warn-bg)}
+.hint{color:var(--muted);font-size:12px;text-align:center;margin:4px 0}
+/* 실제 화면에 가깝게 그린 큰 그림 (chaekcheck.com 2026-10-18 모양을 따라 그림) */
+.real{border:2px solid var(--line);border-radius:12px;background:#f6f6f8;overflow:hidden;font-size:14px;max-width:780px;margin:10px 0;color:#1f2328}
+.real .hd{display:flex;gap:18px;align-items:center;padding:12px 18px;background:#fff;border-bottom:1px solid #e6e6ea}
+.real .hd b{color:#5b4bd1;font-size:20px}.real .hd .r{margin-left:auto;display:flex;gap:10px;align-items:center}
+.real .bd{padding:14px 18px}
+.real .sb{display:flex;align-items:center;gap:8px;border:1px solid #d9d9e0;border-radius:10px;background:#fff;padding:9px 14px}
+.real .sb .k{margin-left:auto}
+.real .k{display:inline-block;border:1px solid #d9d9e0;border-radius:8px;padding:4px 12px;background:#fff;white-space:nowrap}
+.real .k.p{background:#ede9fb;border-color:#c9bff5;color:#5b4bd1;font-weight:700}
+.real .seg2{display:inline-flex;border:1px solid #d9d9e0;border-radius:8px;overflow:hidden;background:#fff}
+.real .seg2 span{padding:4px 12px}.real .seg2 span.on{background:#ede9fb;color:#5b4bd1;font-weight:700}
+.real .ln{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+.real .tabs{display:flex;gap:18px;border-bottom:1px solid #e6e6ea;margin:12px 0 10px;padding:0 4px}
+.real .tabs span{padding:6px 0;color:#777}.real .tabs span.on{color:#1f2328;font-weight:700;border-bottom:2px solid #1f2328}
+.real .grp{font-weight:700;font-size:15px;margin:14px 0 6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.real .grp i{width:9px;height:9px;border-radius:50%;background:#5b4bd1;display:inline-block}
+.real .grp.g2 i{background:#1f7a45}.real .grp.g3 i{background:#999}
+.real .grp small{font-weight:400;color:#666;font-size:13px}
+.real .sub{color:#5b4bd1;font-size:13px;margin:2px 0 6px 17px}
+.real .card2{display:flex;gap:16px;align-items:center;background:#fff;border:1px solid #e6e6ea;border-radius:12px;padding:12px 16px;margin:6px 0}
+.real .card2 .bk{flex:1 1 42%}.real .card2 .bk b{font-size:16px}.real .card2 .bk small{display:block;color:#666}
+.real .card2 .lb{flex:1 1 42%}.real .card2 .lb b{font-size:15px}.real .card2 .lb small{display:block;color:#666}
+.real .cnt2{background:#f3f0ff;color:#5b4bd1;border-radius:8px;padding:6px 10px;white-space:nowrap;font-size:13px;line-height:1.3;text-align:center}
+.real .cnt2 b{display:block;font-size:15px;color:#1f2328}
+.real .tg{display:inline-block;border-radius:999px;padding:0 9px;font-size:12px;font-weight:700;border:1px solid;vertical-align:middle;margin-left:4px}
+.real .tg.me{color:#5b4bd1;border-color:#c9bff5;background:#ede9fb}
+.real .tg.op{color:#1f7a45;border-color:#1f7a45;background:#e3f3ea}
+.real .tg.vi{color:#8a5a00;border-color:#8a5a00;background:#fbf0d9}
+.real .tg.ad{color:#a13b78;border-color:#a13b78;background:#fbe6f1}
+.real .note{background:#e3f3ea;border:1px solid #1f7a45;border-radius:10px;padding:8px 12px;margin:10px 0;font-size:13px}
+.real .pop{background:#fff;border:1px solid #d9d9e0;border-radius:8px;padding:6px 10px;font-size:12px;box-shadow:0 4px 12px rgba(0,0,0,.12);display:inline-block;margin:0 0 4px 40%}
+.realph{border:2px solid var(--line);border-radius:22px;background:#f6f6f8;overflow:hidden;font-size:13px;width:360px;max-width:100%;margin:10px 0;color:#1f2328}
+.realph .hd{display:flex;align-items:center;padding:10px 14px;background:#fff;border-bottom:1px solid #e6e6ea}.realph .hd b{color:#5b4bd1;font-size:18px}.realph .hd .r{margin-left:auto}
+.realph .bd{padding:10px 12px}
+.realph .card2{background:#fff;border:1px solid #e6e6ea;border-radius:12px;padding:10px 12px;margin:6px 0}
+.realph .card2 b{font-size:15px}.realph .card2 small{display:block;color:#666}
+.realph .lb{border-top:1px solid #eee;margin-top:6px;padding-top:6px}
+.realph .cnt3{display:inline-block;background:#f3f0ff;color:#5b4bd1;border-radius:6px;padding:2px 8px;font-size:12px;margin-top:4px}
+.realph .grp{font-weight:700;margin:10px 0 4px}.realph .grp small{font-weight:400;color:#666;display:block;font-size:12px}
+.realph .note{background:#e3f3ea;border:1px solid #1f7a45;border-radius:10px;padding:6px 10px;margin:8px 0;font-size:12px}
+.realph .tg{display:inline-block;border-radius:999px;padding:0 8px;font-size:11px;font-weight:700;border:1px solid;vertical-align:middle;margin-left:3px}
+.realph .tg.me{color:#5b4bd1;border-color:#c9bff5;background:#ede9fb}.realph .tg.op{color:#1f7a45;border-color:#1f7a45;background:#e3f3ea}.realph .tg.vi{color:#8a5a00;border-color:#8a5a00;background:#fbf0d9}
+.realph .k{display:inline-block;border:1px solid #d9d9e0;border-radius:8px;padding:3px 10px;background:#fff}
+.realph .k.p{background:#ede9fb;border-color:#c9bff5;color:#5b4bd1;font-weight:700}
+.lvl{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:10px 0}
+@media (max-width:700px){.lvl{grid-template-columns:1fr}}
+.lvl div{border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:16px;background:var(--card)}
+.lvl div b{display:block;margin-bottom:4px}
+.lvl div.pick{border-color:var(--accent);background:var(--accent-bg)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;background:var(--card)}
+.seg span{padding:2px 10px;white-space:nowrap}
+.seg span.on{background:#ede9fb;color:#5b4bd1;font-weight:700}
+.new{outline:2px dashed var(--no);outline-offset:3px;border-radius:8px}
+.res{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:8px 10px;margin:6px 0;display:flex;gap:10px;align-items:center}
+.res .bk{flex:1 1 40%;font-weight:700}.res .bk small{display:block;font-weight:400;color:var(--muted)}
+.res .lib{flex:1 1 40%}.res .lib small{display:block;color:var(--muted)}
+.res .cnt{background:#f3f0ff;color:#5b4bd1;border-radius:6px;padding:2px 6px;white-space:nowrap;font-size:11px}
+.sec{font-weight:700;margin:10px 0 2px;display:flex;align-items:center;gap:6px}
+.sec i{width:8px;height:8px;border-radius:50%;background:#5b4bd1;display:inline-block}
+.sec.grey i{background:var(--muted)}
+.panel{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:10px 12px;margin:8px 0}
+.frow{display:flex;gap:8px;align-items:center;margin:5px 0}
+.frow label{width:48px;font-weight:700}
+.frow .in{flex:1;border:1px solid var(--line);border-radius:6px;padding:3px 8px;color:var(--muted);background:var(--card)}
+.sel{display:inline-block;border:1px solid var(--line);border-radius:6px;padding:3px 8px;background:var(--card)}
+.modal{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:10px 12px;margin:8px auto;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:6px 0}
+.grid span{border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:11px}
+.ph .grid{grid-template-columns:repeat(2,1fr)}
+.big .grid span{font-size:14px;padding:5px 8px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}main table{display:block;overflow-x:auto;max-width:100%}.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body><main class="doc"><p class="lead">이번 수집에 책 표지도 같이 모으기</p>
+<p class="sub">요청: "이번에는 책 이미지도 같이 수집해줬으면 해. 대신 우리가 사용하는 크기로 압축해서" (2026-10-23). 목록 수집은 아직 시작하지 않았어요.</p>
+
+<section class="card"><h2>먼저 알아 둘 것</h2>
+<table><tr><th>말</th><th>뜻</th></tr>
+<tr><td>목록 수집</td><td>도서관 사이트마다 "어떤 책이 있나"를 받아 수집 DB에 넣는 일. 지금 수집기가 하는 일</td></tr>
+<tr><td>표지 주소</td><td>목록을 받을 때 같이 적어 두는 표지 그림의 인터넷 주소. 그림 파일은 받지 않음 (2026-09-30에 정함)</td></tr>
+<tr><td>우리 크기</td><td>사서추천 표지에 쓰는 폭 200px JPEG, 품질 0.8 (ADR-0091). dev 수집기 <code>recommended_lists.py</code>에 이미 이 줄이는 코드가 있음. 지금 있는 3,000장 평균 12KB</td></tr></table>
+<ul><li><b>이 요청은 2026-09-30 결정 "표지는 그림을 받지 않고 주소만"을 바꿔요.</b></li>
+<li>목록 수집에 필요한 "교보 구독형 서버 빼기"와 "IP가 다르면 동시에"는 dev 수집기에 이미 들어 있어요(<code>resume.cmd</code>, 사이클 13). 표지 받기는 아직 없어서 dev 코드를 고쳐야 해요.</li></ul></section>
+
+<section class="card"><h2>지금 수집 DB에 있는 표지 주소 (2026-10-23 직접 셈)</h2>
+<p>빠지지 않은 소장 줄 2,614만 줄에 표지 주소가 있고, 서로 다른 주소는 920만 개, 서버는 783곳이에요.</p><div style="display:flex;align-items:center;gap:8px;margin:4px 0;font-size:13px"><span style="width:190px">bookimg.bookcube.com (북큐브)</span><span style="display:inline-block;height:14px;width:560px;background:var(--accent);border-radius:3px"></span><span>548,494</span></div><div style="display:flex;align-items:center;gap:8px;margin:4px 0;font-size:13px"><span style="width:190px">dcontent.dkyobobook.co.kr (교보 구독형 — 막힘)</span><span style="display:inline-block;height:14px;width:441px;background:var(--warn);border-radius:3px"></span><span>432,904</span></div><div style="display:flex;align-items:center;gap:8px;margin:4px 0;font-size:13px"><span style="width:190px">image.yes24.com (YES24)</span><span style="display:inline-block;height:14px;width:246px;background:var(--accent);border-radius:3px"></span><span>241,692</span></div><div style="display:flex;align-items:center;gap:8px;margin:4px 0;font-size:13px"><span style="width:190px">contents.dasangng.co.kr</span><span style="display:inline-block;height:14px;width:194px;background:var(--accent);border-radius:3px"></span><span>190,865</span></div>
+<p class="note">같은 책이라도 도서관마다 주소가 달라요. 서비스의 책은 약 160만 권(2026-10-11 가져오기 기준, 지금 수는 다시 세지 않음).</p></section>
+
+<section class="card" style="border-left:4px solid var(--accent)"><h2>답: "국가 사이트에서 책 표지 따로 받는 거"</h2>
+<p>국립중앙도서관에서 표지를 받는 길은 이미 우리 수집기에 있어요(사이클 21 추천도서, dev <code>recommended_lists.py</code>). 두 곳이에요.</p>
+<table><tr><th>국가 사이트</th><th>무엇으로 찾나</th><th>해 본 결과</th></tr>
+<tr><td>ISBN 서지 API (<code>nl.go.kr/seoji</code>)의 <code>TITLE_URL</code></td><td>ISBN</td><td>이동진 추천 43권 중 <b>40권이 표지 칸이 비어</b> 있었어요(dev 0단계 2026-10-16). 하루 한도는 안내에 없음</td></tr>
+<tr><td>소장자료 검색 <code>imageUrl</code> (<code>cover.nl.go.kr</code>)</td><td>제목</td><td>추천도서 표지 차례의 4번째로 씀. 전체 책에서 얼마나 채워지는지는 재지 않았어요</td></tr></table>
+<ul><li><b>걸리는 것: 한 곳이라 느려요.</b> 국립중앙도서관은 서버 하나라 예절(1초에 1건)을 지키면 160만 권을 묻는 데 <b>약 19일</b>이 걸려요. 도서관 표지는 서버가 783곳이라 동시에 받을 수 있어요.</li>
+<li>좋은 점: API 데이터는 "이용허락범위 제한 없음"(data.go.kr, 2026-10-17 확인). 그래도 표지 그림 자체의 출판사 권리는 확인 못 함(backlog 308행).</li>
+<li>그래서 "국가 사이트만"과 "도서관 표지 먼저 + 없으면 국가 사이트"를 다음 페이지 "표지 어디서"에서 고르시게 했어요. 아래 3·4번은 그 답에 따라 바뀌어요.</li></ul></section>
+<section class="card"><h2><span class="num">1</span>목록 수집과 표지 받기를 나누기</h2>
+<p>표지 주소는 이미 DB에 있어요. 그래서 표지를 받으려고 목록을 다시 읽을 필요가 없어요.</p>
+<p>[안] <b>목록 수집은 지금 그대로 바로 시작</b>하고, 표지는 그 뒤에 따로 "표지 받기"로 해요. 표지 받기는 수집이 끝난 DB의 표지 주소를 읽어 그림만 받아요.</p>
+<table><tr><th>안</th><th>좋은 점</th><th>드는 것</th></tr>
+<tr><td><b>나눔 (추천)</b></td><td>목록 수집을 오늘 시작. 표지 받기가 실패해도 목록은 그대로</td><td>단계가 둘</td></tr>
+<tr><td>수집기를 고친 뒤 함께</td><td>한 번에 끝</td><td>dev 코드 고칠 때까지 수집을 못 함. 목록 한 쪽마다 그림 수십 장을 더 받아 수집이 몇 배 느려짐</td></tr></table></section>
+
+<section class="card"><h2><span class="num">2</span>목록 수집을 누가 돌리나</h2>
+<p>2026-10-12에 "사이클 13 뒤 수집은 dev 쪽 별도 수집 세션"으로 정했어요. 이번에 저(plan 세션)에게 돌려 달라고 하셨어요.</p>
+<p>[안] <b>이번 목록 수집은 제가 dev 수집기(<code>resume.cmd</code>)를 그대로 돌려요.</b> dev 코드는 고치지 않고, 로그는 데이터 폴더 <code>logs\</code>에 남아요. 다음부터는 원래대로 dev 수집 세션.</p>
+<p class="note">다른 선택: dev 수집 세션을 열어 맡김(정한 그대로, 그 세션을 여셔야 함).</p></section>
+
+<section class="card"><h2><span class="num">3</span>표지를 몇 장 받나</h2>
+<p>[안] <b>서비스의 책 한 권에 표지 한 장</b>. 그 책을 가진 도서관들의 표지 주소 중 하나만 받아요. 약 160만 장 × 12KB ≈ <b>약 20GB</b> [추정].</p>
+<table><tr><th>안</th><th>장 수·크기</th><th>요청 수</th></tr>
+<tr><td><b>책마다 한 장 (추천)</b></td><td>약 160만 장, 약 20GB</td><td>약 160만 번</td></tr>
+<tr><td>표지 주소마다</td><td>920만 장, 약 110GB</td><td>920만 번 — 같은 그림을 여러 번 받음</td></tr></table></section>
+
+<section class="card"><h2><span class="num">4</span>어느 서버에서 받나</h2>
+<p>교보 구독형 표지(<code>dcontent.dkyobobook.co.kr</code>, 43만 개)는 우리 IP를 막은 <code>*.dkyobobook.co.kr</code>에 있어요. 그 서버에는 보내지 않아요(사이클 13 원칙).</p>
+<p>[안] 한 책의 표지 주소가 여럿이면 <b>YES24 → 북큐브 → 그 밖</b> 순서로 고르고, 교보 구독형 주소는 쓰지 않아요. 교보 구독형에만 있는 책은 표지 없이(화면은 제목 글자). 받는 예절은 목록 수집과 같게: 서버(IP)마다 한 번에 1건, 1초 간격, 서버가 다르면 동시에.</p>
+<p class="note">시간 [추정]: 한 서버에 1초 1장이면 하루 약 8.6만 장. 북큐브 표지 서버 하나에 몰리면 그 몫만 며칠. 정확한 날 수는 책마다 고른 뒤 다시 셈.</p></section>
+
+<section class="card"><h2><span class="num">5</span>받은 표지를 어디까지 쓰나</h2>
+<p>표지 그림은 출판사 저작물이에요. 서비스에서 보여 줘도 되는지는 아직 확인하지 않았어요(backlog "표지 저작권 다시 조사"). 서비스 DB에는 표지 칸도 아직 없어요.</p>
+<p>[안] <b>이번에는 내 PC 데이터 폴더(<code>covers\</code>)에 모아 두기만</b> 해요. 서비스 화면에 보이기는 따로 사이클에서 이용 조건을 확인하고 정해요(backlog 136행 "우리 전자책 표지를 서비스 DB로").</p>
+<p class="note">다른 선택: 이번에 서비스에 보이기까지 — 표지 칸·가져오기·반영 파일·화면이 모두 바뀌어 사이클 하나 크기예요.</p></section>
+
+<section class="card"><h2><span class="num">6</span>표지 받기 코드는 누가 만드나</h2>
+<p>[안] dev에 작은 작업 요청서로 넘겨요: 새 명령 <code>fetch-covers</code> [안 이름] — 수집 DB 표지 주소 + 서비스 책 번호로 책마다 하나 고르고, 200px JPEG 0.8로 줄여 데이터 폴더에 저장, 이어 받기 가능. <code>recommended_lists.py</code>의 줄이는 코드를 같이 씀. 사이클을 따로 열지 않아요.</p>
+<p class="note">다른 선택: 사이클로 열기(5번에서 "서비스에 보이기까지"를 고르면 이쪽).</p></section>
+</main></body></html>
