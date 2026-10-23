@@ -111,12 +111,12 @@ svg .ah{fill:var(--accent)}
 <body>
 <main class="doc">
 <p class="lead">추천도서 메뉴에 "나에게 맞는 책" 탭 하나를 더하는 모양입니다.<br>화면부터 보시고 6가지를 골라 주세요.</p>
-<p class="sub">"아주아주 간단한 사용자 기반 추천 도서 탭 … 오래 머물거나 누르거나 선택한 것을 기반으로 … 도서 이미지랑 문구랑 활용해서 … 보유량이 있는 것이어야" (2026-10-23). 지금 추천도서 화면(dev <code>PicksPage.tsx</code>, 2026-10-23 읽음: 탭 셋 → 회색 선 → 지역 조건 카드 → 분야 칩 → 표지 카드 격자 PC 4칸·태블릿 3칸·폰 2칸, 더 보기 20권)에 탭 하나를 더하고 카드 모양만 조금 바꿉니다. 그림은 자리와 순서만 보여 주고 디자인은 아닙니다. 뒤 계산은 이미 승인된 구성(서지 임베딩 이웃 20권, AI 소개 문구, 기록의 방문 번호·회원 번호)을 그대로 씁니다.</p>
+<p class="sub">"아주아주 간단한 사용자 기반 추천 도서 탭 … 오래 머물거나 누르거나 선택한 것을 기반으로 … 도서 이미지랑 문구랑 활용해서 … 보유량이 있는 것이어야" (2026-10-23). 지금 추천도서 화면(dev <code>PicksPage.tsx</code>, 2026-10-23 읽음: 탭 셋 → 회색 선 → 지역 조건 카드 → 분야 칩 → 표지 카드 격자 PC 4칸·태블릿 3칸·폰 2칸, 더 보기 20권)에 탭 하나를 더하고 카드 모양만 조금 바꿉니다. 탭 이름은 dev 현재 값(KAIST·국립중앙도서관·서울대·노벨연구소, 2026-10-23 읽음; 이동진은 탭에서 빠지고 주소로만 열림). 그림은 자리와 순서만 보여 주고 디자인은 아닙니다. 뒤 계산은 이미 승인된 구성(서지 임베딩 이웃 20권, AI 소개 문구, 기록의 방문 번호·회원 번호)을 그대로 씁니다.</p>
 
 <div class="card"><h2>PC</h2>
 <div class="scr">
 <div class="bar"><span class="pill">책첵</span><span>검색</span><span><b>추천도서</b></span><span>내 도서관</span></div>
-<div class="tabs"><span>사서 추천</span><span>이동진 추천</span><span>서울대 100선</span><span class="on">나에게 맞는 책</span></div>
+<div class="tabs"><span>KAIST</span><span>국립중앙도서관</span><span>서울대</span><span>노벨연구소</span><span class="on">나에게 맞는 책</span></div>
 <div class="body">
 <p class="why">최근 본 책 「불편한 편의점」「아몬드」「달러구트 꿈 백화점」과 비슷한 책 · 내 도서관에 있는 책만 · <u>기준 책 바꾸기</u><br>책 소개 글은 AI가 썼어요. 사실과 다를 수 있으니 자세한 건 도서관 페이지에서 확인해 주세요.</p>
 
@@ -146,7 +146,7 @@ svg .ah{fill:var(--accent)}
 <div class="row">
 <div class="scr phone">
 <div class="bar"><span class="pill">책첵</span></div>
-<div class="tabs"><span>서울대 100선</span><span class="on">나에게 맞는 책</span></div>
+<div class="tabs"><span>노벨연구소</span><span class="on">나에게 맞는 책</span></div>
 <div class="body">
 <p class="why">최근 본 책 3권과 비슷한 책 · <u>바꾸기</u><br>소개 글은 AI가 썼어요.</p>
 <div class="top">
@@ -164,9 +164,9 @@ svg .ah{fill:var(--accent)}
 
 <div class="scr phone">
 <div class="bar"><span class="pill">책첵</span></div>
-<div class="tabs"><span>서울대 100선</span><span class="on">나에게 맞는 책</span></div>
+<div class="tabs"><span>노벨연구소</span><span class="on">나에게 맞는 책</span></div>
 <div class="body">
-<div style="background:var(--accent-bg);border-radius:10px;padding:12px;font-size:13px;line-height:1.5">아직 본 책이 없어요. 책을 몇 권 열어 보면 비슷한 책을 골라 드려요.<br><br>그동안은 <b>사서·이동진·서울대 목록에서 많이 찾는 책</b>을 보여 드려요.</div>
+<div style="background:var(--accent-bg);border-radius:10px;padding:12px;font-size:13px;line-height:1.5">아직 본 책이 없어요. 책을 몇 권 열어 보면 비슷한 책을 골라 드려요.<br><br>그동안은 <b>KAIST·국립중앙도서관·서울대·노벨연구소 목록에서 많이 찾는 책</b>을 보여 드려요.</div>
 <div class="grid" style="margin-top:10px">
 <div class="item"><div class="cover img">표지</div><p class="t">책 제목</p><p class="a">저자</p><p class="meta"><span class="ok">내 도서관 4곳</span></p></div>
 <div class="item"><div class="cover img">표지</div><p class="t">책 제목</p><p class="a">저자</p><p class="meta"><span class="ok">내 도서관 2곳</span></p></div>
@@ -187,8 +187,8 @@ svg .ah{fill:var(--accent)}
 <p class="cap">서버는 표 조회 몇 번만 합니다. AI는 여기서 돌지 않고, 이웃 표와 소개 문구는 PC에서 미리 만들어 둔 것입니다(승인됨, 2026-10-17).</p>
 </div>
 
-<div class="card item"><h2><span class="num">1</span>탭 이름 "나에게 맞는 책", 자리는 네 번째</h2>
-<p class="concl">[안] 추천도서 메뉴의 탭 줄에 네 번째 탭 "나에게 맞는 책"(주소 <code>/picks/for-you</code>)을 더합니다. 탭 아래 구조(회색 선 → 지역 조건 카드 → 격자 → 더 보기)는 세 목록과 같고, 분야 칩 자리에는 대신 "최근 본 책 ○○·○○·○○과 비슷한 책 · 기준 책 바꾸기" 한 줄이 옵니다.</p>
+<div class="card item"><h2><span class="num">1</span>탭 이름 "나에게 맞는 책", 자리는 맨 끝(다섯 번째)</h2>
+<p class="concl">[안] 추천도서 메뉴의 탭 줄에 다섯 번째 탭 "나에게 맞는 책"(주소 <code>/picks/for-you</code>)을 더합니다. 탭 아래 구조(회색 선 → 지역 조건 카드 → 격자 → 더 보기)는 세 목록과 같고, 분야 칩 자리에는 대신 "최근 본 책 ○○·○○·○○과 비슷한 책 · 기준 책 바꾸기" 한 줄이 옵니다.</p>
 <p class="alt">다른 선택: 첫 번째 탭으로 — 처음 온 사람에겐 빈 탭이 먼저 보여 세 목록 뒤가 낫습니다. 이름 "맞춤 추천"·"추천 받기"도 가능하니 기타로 적어 주세요.</p>
 </div>
 
@@ -211,7 +211,7 @@ svg .ah{fill:var(--accent)}
 </div>
 
 <div class="card item"><h2><span class="num">5</span>로그인·비로그인·처음 온 사람</h2>
-<p class="concl">[안] 로그인: 회원 번호로 최근 30일 기록(3번 점수). 비로그인: 이 탭(브라우저 탭)의 방문 번호 기록만 — 탭을 닫으면 사라지므로 "이번에 본 책" 기준. 둘 다 본 책이 없으면 오른쪽 폰 그림처럼 안내 한 줄 + 세 추천목록에서 책 창을 많이 연 책(최근 30일, 내 도서관에 있는 것) 20권.</p>
+<p class="concl">[안] 로그인: 회원 번호로 최근 30일 기록(3번 점수). 비로그인: 이 탭(브라우저 탭)의 방문 번호 기록만 — 탭을 닫으면 사라지므로 "이번에 본 책" 기준. 둘 다 본 책이 없으면 오른쪽 폰 그림처럼 안내 한 줄 + 네 추천목록에서 책 창을 많이 연 책(최근 30일, 내 도서관에 있는 것) 20권.</p>
 <p class="ex">비로그인이 쿠키 없이 되는 이유: 승인된 방문 번호(탭 난수)가 책 창 열기·도서관 클릭에 붙기 때문입니다. 다만 탭 단위라 다음 날엔 비어 있습니다 — 로그인하면 이어집니다, 라고 안내 한 줄.</p>
 </div>
 
