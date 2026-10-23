@@ -15,5 +15,5 @@
 | [2026-10-23-cover-collection-decisions.html](2026-10-23-cover-collection-decisions.html) | 이번 수집에 책 표지도 받기 (1~6) | `../crawl-method.md` 1절 | 없음 (모두 정함, 2026-10-23) |
 | [2026-10-23-cover-source-decisions.html](2026-10-23-cover-source-decisions.html) | 표지 어디서, 수집 범위 | `../crawl-method.md` 1절 | 없음 (#1 승인, #2 "전체 다시") |
 | [2026-10-23-recommend-tags.html](2026-10-23-recommend-tags.html) | 추천 목록 이름표 (질문을 잘못 읽은 페이지, 닫음) | — | 쓰지 않음 |
-| [2026-10-23-book-intro-decisions.html](2026-10-23-book-intro-decisions.html) | 책 소개 수집, Haiku 꼬리표와 사전, Thema 한국어판 (1~4). 외부용 Artifact https://claude.ai/artifact/XVfcnkwyDRsYLsuGjk6XpF , 사본 [2026-10-23-book-intro-artifact.html](2026-10-23-book-intro-artifact.html) | `../../ai-recommend/tag-vocabulary.md` | 4 |
+| [2026-10-23-book-intro-decisions.html](2026-10-23-book-intro-decisions.html) | 책 소개 수집, Haiku 꼬리표와 사전, Thema 한국어판 (1~4). 외부용 Artifact https://claude.ai/artifact/XVfcnkwyDRsYLsuGjk6XpF , 사본 [2026-10-23-book-intro-artifact.html](2026-10-23-book-intro-artifact.html) | `../../ai-recommend/tag-vocabulary.md` | 없음 (#1 나, #2 지금 멈춤, #3·#4 승인, 2026-10-23) |
 
