@@ -78,9 +78,24 @@ $g = Invoke-RestMethod -Uri "http://localhost:11434/api/generate" -Method Post -
 
 4B와 8B를 같은 글로 재서 적어 둡니다. 8B는 `ollama pull qwen3:8b` 뒤 위 명령의 모델 이름만 바꿉니다.
 
-## 6. 적어 둘 것 (다음 단계 Haiku 비교의 바탕)
+## 6. 첫 시험 결과 (2026-10-24, 노트북 원격 접속용 세션이 사용자 승인 뒤 실행)
+
+설치·설정 변경 없이 기본값(127.0.0.1:11434) 그대로. Ollama 0.40.10(설치 파일 서명 Valid, CN=Ollama Inc.). **PowerShell 5.1 `Invoke-WebRequest`는 진행 표시 때문에 10분 넘게 걸려 `curl.exe`로 받음** → 설치 파일은 `curl.exe -L -o OllamaSetup.exe https://ollama.com/download/OllamaSetup.exe`로 받기를 권함. C: 123.2 → 107.5GB
+
+| 모델 | 토큰/초 | Processor | 메모리 | JSON(4절) | 4절 걸린 시간 |
+|---|---|---|---|---|---|
+| qwen3:4b (2.5GB) | 6.6 | 100% CPU | 3.2GB, ctx 4096 | 지킴, 1권 골라 지시대로 2~3문장 | 315초 (생각 글 포함 1,894토큰) |
+| qwen3:8b (5.2GB) | 4.7 | 100% CPU | 5.9GB, ctx 4096 | 형식은 맞으나 빈 배열 (생각 글에서는 1번을 고름) | 36초 (127토큰) |
+
+- Iris Xe는 쓰이지 않음(둘 다 100% CPU) [확정] (`ollama ps`)
+- 생각 글은 `message.reasoning`으로 따로 오고 영어. 길이가 들쭉날쭉해 걸린 시간이 크게 흔들림
+- Ollama `/api/chat`에 `think=false`: 4B 20초·8B 7.5초로 빨라지지만 설명 없이 제목만 씀(2~3문장 지시를 따르지 않음)
+- 빈 배열을 막으려면 JSON 형식에 `minItems: 1`(맞는 책이 없을 때를 따로 다룰 칸과 함께)·`maxItems`가 필요
+- 정리 [추론]: 이 노트북 CPU로는 요청 하나에 수십 초~5분이라 서비스용으로는 맞지 않음. 학습·비교 용도로만. Ollama 트레이 앱이 로그인 때 자동 시작되는지 [확인 필요]
+
+## 7. 적어 둘 것 (다음 단계 Haiku 비교의 바탕)
 
 | 모델 | 토큰/초 | `ollama ps` Processor | JSON 형식 지켰나 | 한국어 글 느낌 |
 |---|---|---|---|---|
-| qwen3:4b | | | | |
-| qwen3:8b | | | | |
+| qwen3:4b | 6.6 | 100% CPU | ○ | 지시대로 씀, 생각 켜면 5분 |
+| qwen3:8b | 4.7 | 100% CPU | 빈 배열 | (생각 켬) 고르지 않음 |
