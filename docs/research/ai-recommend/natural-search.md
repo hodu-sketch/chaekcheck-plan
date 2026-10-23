@@ -62,3 +62,11 @@
 - Anthropic OpenAI SDK 호환: "primarily intended to test and compare model capabilities, and is not considered a long-term or production-ready solution" [확정] https://platform.claude.com/docs/en/api/openai-sdk
 - Ollama 모델 이름(크기 표기): ollama.com이 이 환경에서 막혀 [확인 필요: 공식 문서 확인]
 - 사용자 PC 사양(그래픽카드·메모리) [확인 필요: 사용자에게 질문]
+
+## 8. 3차 응답 (2026-10-23)
+
+| # | 사용자 | 상태 |
+|---|---|---|
+| 2 | 기타: "노트북이고 저 그래픽카드는 모르겠다 다른 로컬 세션에게 물어봐봐" | 노트북의 원격 접속용 세션(session_01Pr8cf9fJBDY5Tee8GYAwuq)에 읽기 전용 사양 확인을 부탁함(2026-10-23, 사용자가 세션 간 메시지 허락). 답을 받으면 모델 크기 [안] |
+| 3 | "PC에서 비교해 보고 정함" 선택 | [확정] 원문·내용 메모는 PC에서 같은 질문 20개로 비교한 뒤 정함. 그동안 서비스 입력은 미리 만든 소개 + 꼬리표 |
+| 4 | "(나) 탭 두 개, 처음은 AI" 선택 | [확정] 첫 화면 검색창에 탭 두 개("도서관에서 책 찾기" / "AI 책 찾기"), 처음 열면 AI 책 찾기. AI 결과는 도서관 결과와 섞이지 않는 따로 된 화면(같은 브라우저 탭 안). 주소·이름은 사이클에서 |
