@@ -346,3 +346,4 @@
 - **각 전자도서관 앱 바로 열기(딥링크)** — 친구 피드백 2026-10-20 "모바일은 각 전자도서관 어플이랑 연결시켜 줘야". 지금 [대여하기]는 도서관 사이트(웹)로 감. 업체(교보·북큐브·YES24·자체)마다 앱·딥링크 방식이 달라 조사 필요. 출처 `docs/research/screen-feedback/first-user-retention.md`
 - 표지 받기(데이터 폴더 `covers\`, 책마다 한 장, 200px)를 서비스 화면에 보이기 — 출판사 권리 확인 뒤 사이클로. 받기 자체는 dev 요청 `docs/research/ebook-catalog/to-dev-fetch-covers-2026-10-23.md` (사용자 승인 2026-10-23, 결정 #5)
 - 책 꼬리표(Thema 한국어판 뼈대 + 느낌 축, Haiku 배치, 사전에서만 고름) — AI 추천(맞춤 탭) 사이클에서. 결정 `docs/research/ai-recommend/tag-vocabulary.md` 3절 (사용자 승인 2026-10-23)
+- **말로 책 찾기 (AI 책 찾기, 실시간 LLM)** — 첫 화면 검색창 탭 "AI 책 찾기"(처음 열면 이 탭), 따로 된 결과 화면, 질문에 맞춘 글 실시간, Haiku 먼저·내 LLM(Ollama→vast.ai)도 부를 수 있게. 사용자 요청 2026-10-23, 결정 기록 `docs/research/ai-recommend/natural-search.md`, 시험 세트 `llm-test-set.md`. 표지 보이기는 위 "표지 받기" 줄의 권리 확인에 묶임
