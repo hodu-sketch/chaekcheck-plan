@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>트렌드 목록 출처 결정 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+
+.v-flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.v-box{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:7px 11px;font-size:15px;text-align:center;min-width:90px}
+.v-box small{display:block;color:var(--muted);font-size:12px}
+.v-hi{border-color:var(--accent);background:var(--accent-bg)}
+.v-warn{border-color:var(--warn);background:var(--warn-bg)}
+.v-ok{border-color:var(--ok);background:var(--ok-bg)}
+.v-arr{color:var(--muted);font-size:18px}
+.v-file{border:2px solid var(--line);border-radius:12px;background:var(--card);padding:10px;margin:10px 0;max-width:560px}
+.v-file .v-part{border:1px dashed var(--line);border-radius:8px;padding:8px 10px;margin:6px 0;font-size:14px}
+.v-file .v-part.v-new{border-color:var(--accent);background:var(--accent-bg)}
+.v-tl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0;font-size:13px;text-align:center}
+.v-tl div{border-top:4px solid var(--line);padding-top:6px}
+.v-tl div.v-hi{border-top-color:var(--accent);background:none}
+.v-cv{display:inline-flex;width:70px;aspect-ratio:2/3;border-radius:7px;border:1px solid var(--line);background:var(--accent-bg);align-items:center;justify-content:center;font-size:11px;text-align:center;padding:3px;vertical-align:top;margin:4px}
+.v-cv.v-img{background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 6px,var(--card) 6px,var(--card) 12px)}
+.v-mini{border:1px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;margin:8px 0;max-width:420px}
+.v-mini .v-bar{display:flex;gap:10px;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line);font-size:13px}
+.v-mini .v-body{padding:10px 12px;font-size:13px}
+.v-pill{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-weight:800;font-size:12px}
+@media (max-width:700px){main table{display:block;overflow-x:auto;max-width:100%}.v-tl{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.v-code{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:var(--code-bg);border-radius:8px;padding:8px 10px;overflow-x:auto;white-space:pre}
+</style>
+</head>
+
+<body>
+<main class="doc">
+<p class="lead">트렌드 기본 목록은 정보나루 인기대출에서<br>아동·청소년 책을 빼고 받는 쪽으로 다시 냅니다.</p>
+<p class="sub">"좀 더 대상을 넓혀봐" (2026-10-24)에 따라 서점·전자책 플랫폼·지자체 오픈데이터·검색 API까지 찾아봤습니다. 판매 순위는 모두 막혀 있고(교보 약관 자동 수집 금지, 알라딘 API 종료, YES24·리디·북큐브 robots), 성인 대상·매일 갱신·ISBN·깨끗한 이용 조건을 모두 갖춘 곳은 정보나루 하나였습니다. 앞 페이지의 교보 인기순 제안을 이것으로 바꿉니다. 근거 <code>docs/research/popular-books/alternatives.md</code> 5절.</p>
+
+<div class="card"><h2>예전 결정과 달라지는 점</h2>
+<p class="concl">2026-10-12에 정보나루를 "쓰지 않음"으로 정하셨습니다(사용자: "아동 도서가 20대 30대 무슨 필터를 걸어도 너무 많아서 쓸 수가 없어"). 그때 건 것은 <b>연령</b> 필터였고, 이번에 찾은 것은 <b>ISBN 부가기호</b> 필터입니다.</p>
+<table>
+<tr><th>필터</th><th>무엇을 기준으로 거르나</th><th>아동 책</th></tr>
+<tr><td>연령 (10-12에 씀)</td><td>빌린 사람의 나이</td><td>부모가 아이 책을 빌리면 "30대 대출"로 셈 → 남음</td></tr>
+<tr><td>부가기호 (이번)</td><td>책에 붙은 ISBN 부가기호(출판사가 정한 독자 대상)</td><td>7 아동·4 청소년·5·6 학습참고서를 빼면 책 자체가 빠짐</td></tr>
+</table>
+<p class="cap">매뉴얼(v20260620) 원문: <code>addCode</code> "ISBN 부가기호(다중선택가능)" 0 교양 · 1 실용 · 2 여성 · 4 청소년 · 5 학습참고서1(중고) · 6 학습참고서2(초등) · 7 아동 · 9 전문. 실제로 충분히 빠지는지는 키로 한 번 불러 봐야 압니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">1</span>정보나루 인기대출(부가기호 0·1·2·9, 최근 30일)을<br>매일 받아 기본 목록으로 — 먼저 한 번 시험</h2>
+<p class="concl">[안] 수집 쪽 배치가 하루 한 번 <code>loanItemSrch</code>를 <code>startDt=오늘-30일</code>, <code>addCode=0;1;2;9</code>(교양·실용·여성·전문), <code>pageSize=200</code>으로 불러 표 하나(<code>book_trend</code>, 이름은 사이클에서)에 ISBN·순위를 넣습니다. 받은 뒤 <code>addition_symbol</code>로 한 번 더 거르고, ISBN으로 우리 책과 맞춘 것 중 내 계획 도서관에 있는 책만 탭에 보입니다. 사이클 첫 단계에서 <b>한 번 불러 상위 50권을 페이지로 보여 드리고</b>, 아동 책이 여전히 많으면 이 출처를 버립니다.</p>
+<p><b>지켜야 할 조건 (매뉴얼 원문):</b> 표지 <code>bookImageURL</code>은 "비영리 서비스의 화면 표시에 한하여 이용 가능하며, 영리적 목적의 이용과 복사저장재배포 및 AI 입력학습 등 그 밖의 활용을 금함" → 우리는 표지를 쓰지 않고(우리 표지 사용), 정보나루 자료를 AI 소개 글 입력에도 넣지 않습니다. 호출은 하루 1~2번(한도 1일 30,000건). 출처 표시 "도서관 정보나루"(이용허락 "저작자표시(BY)").</p>
+<p><b>필요한 것 — 이때 한 번만 부탁드립니다:</b> 정보나루 회원가입과 인증키 신청(<a href="https://www.data4library.kr">data4library.kr</a>, 승인 뒤 사용). 키를 주시면 시험 호출은 제가 합니다.</p>
+<p class="ex">아직 모르는 것: 정보나루 대출에 전자책이 들어 있는지(대부분 종이책일 것) — 종이책 인기 순위라도 같은 책의 전자책이 우리 목록에 있으면 보여 줄 수 있습니다. ISBN이 종이책 것이라 맞추기는 사이클 04의 국가서지 방식(제목+저자 보조)을 함께 씁니다.</p>
+<p class="alt">다른 선택: (가) 교보 전자도서관 인기순 — 전자책이고 맞추기가 쉽지만, 교보문고 약관(2026-02-09)이 자동 수집을 금지하고 전자도서관에도 걸리는지 모름, 인기순 자체도 시험 못 함. (나) 바깥 출처 없이 네 추천목록(KAIST·국립중앙도서관·서울대·노벨연구소)을 기본으로 쓰다가 우리 기록이 쌓이면 트렌드로 — 키 신청이 필요 없지만 "요즘 많이 읽히는 책"은 아님. (다) 정보나루 <code>hotTrend</code>(급상승)를 위에 한 줄 더 — 하루 5권뿐이라 나중에.</p>
+</div>
+
+<p class="foot">원본: 사용자 "좀 더 대상을 넓혀봐" (2026-10-24, 2026-10-24-trend-source-decisions.html). 근거 docs/research/popular-books/alternatives.md 1·5절, 정보나루 매뉴얼 v20260620. 승인되면 overview.md 6-1절에 적고, 10-12 결정("정보나루 쓰지 않음")을 이 용도에 한해 바꾼 것으로 alternatives.md에 표시합니다.</p>
+</main></body></html>
