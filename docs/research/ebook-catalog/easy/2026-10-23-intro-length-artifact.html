@@ -1,0 +1,221 @@
+<title>소개 길이와 경기도서관</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:1080px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.card h3{margin:18px 0 8px;font-size:20px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+.quote{border-left:4px solid var(--line);margin:8px 0;padding:4px 14px;color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+.v-flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.v-box{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:7px 11px;font-size:15px;text-align:center;min-width:90px}
+.v-box small{display:block;color:var(--muted);font-size:12px}
+.v-hi{border-color:var(--accent);background:var(--accent-bg)}
+.v-warn{border-color:var(--warn);background:var(--warn-bg)}
+.v-ok{border-color:var(--ok);background:var(--ok-bg)}
+.v-no{border-color:var(--no);background:var(--no-bg)}
+.v-arr{color:var(--muted);font-size:18px}
+/* 화면 그림: 자리와 순서만 보여 줍니다 (색·모양은 실제 디자인이 아님) */
+.shots{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin:14px 0}
+.pc{flex:1 1 520px;max-width:640px;border:2px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;font-size:13px}
+.ph{flex:0 0 250px;width:250px;border:2px solid var(--line);border-radius:22px;background:var(--bg);overflow:hidden;font-size:12px}
+.tbar{display:flex;gap:12px;align-items:center;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line)}
+.tbar b{color:#5b4bd1;font-size:15px}
+.tbar .r{margin-left:auto;display:flex;gap:8px;align-items:center}
+.btn{display:inline-block;border:1px solid var(--line);border-radius:7px;padding:2px 9px;background:var(--card);white-space:nowrap}
+.btn.p{background:#ede9fb;border-color:#c9bff5;color:#5b4bd1;font-weight:700}
+.btn.on{background:#5b4bd1;color:#fff;border-color:#5b4bd1}
+.body{padding:14px 16px}
+.ph .body{padding:12px 10px}
+.title{text-align:center;font-weight:700;font-size:17px;margin:8px 0 10px}
+.ph .title{font-size:15px}
+.title span{color:#5b4bd1}
+.sbox{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;background:var(--card);padding:6px 12px;color:var(--muted)}
+.sbox .btn{margin-left:auto}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0;justify-content:center}
+.row.l{justify-content:flex-start}
+.tag{display:inline-block;border-radius:999px;padding:0 8px;font-size:11px;font-weight:700;border:1px solid}
+.tag.me{color:#5b4bd1;border-color:#c9bff5;background:#ede9fb}
+.tag.open{color:var(--ok);border-color:var(--ok);background:var(--ok-bg)}
+.tag.add{color:var(--warn);border-color:var(--warn);background:var(--warn-bg)}
+.hint{color:var(--muted);font-size:12px;text-align:center;margin:4px 0}
+/* 실제 화면에 가깝게 그린 큰 그림 (chaekcheck.com 2026-10-18 모양을 따라 그림) */
+.real{border:2px solid var(--line);border-radius:12px;background:#f6f6f8;overflow:hidden;font-size:14px;max-width:780px;margin:10px 0;color:#1f2328}
+.real .hd{display:flex;gap:18px;align-items:center;padding:12px 18px;background:#fff;border-bottom:1px solid #e6e6ea}
+.real .hd b{color:#5b4bd1;font-size:20px}.real .hd .r{margin-left:auto;display:flex;gap:10px;align-items:center}
+.real .bd{padding:14px 18px}
+.real .sb{display:flex;align-items:center;gap:8px;border:1px solid #d9d9e0;border-radius:10px;background:#fff;padding:9px 14px}
+.real .sb .k{margin-left:auto}
+.real .k{display:inline-block;border:1px solid #d9d9e0;border-radius:8px;padding:4px 12px;background:#fff;white-space:nowrap}
+.real .k.p{background:#ede9fb;border-color:#c9bff5;color:#5b4bd1;font-weight:700}
+.real .seg2{display:inline-flex;border:1px solid #d9d9e0;border-radius:8px;overflow:hidden;background:#fff}
+.real .seg2 span{padding:4px 12px}.real .seg2 span.on{background:#ede9fb;color:#5b4bd1;font-weight:700}
+.real .ln{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+.real .tabs{display:flex;gap:18px;border-bottom:1px solid #e6e6ea;margin:12px 0 10px;padding:0 4px}
+.real .tabs span{padding:6px 0;color:#777}.real .tabs span.on{color:#1f2328;font-weight:700;border-bottom:2px solid #1f2328}
+.real .grp{font-weight:700;font-size:15px;margin:14px 0 6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.real .grp i{width:9px;height:9px;border-radius:50%;background:#5b4bd1;display:inline-block}
+.real .grp.g2 i{background:#1f7a45}.real .grp.g3 i{background:#999}
+.real .grp small{font-weight:400;color:#666;font-size:13px}
+.real .sub{color:#5b4bd1;font-size:13px;margin:2px 0 6px 17px}
+.real .card2{display:flex;gap:16px;align-items:center;background:#fff;border:1px solid #e6e6ea;border-radius:12px;padding:12px 16px;margin:6px 0}
+.real .card2 .bk{flex:1 1 42%}.real .card2 .bk b{font-size:16px}.real .card2 .bk small{display:block;color:#666}
+.real .card2 .lb{flex:1 1 42%}.real .card2 .lb b{font-size:15px}.real .card2 .lb small{display:block;color:#666}
+.real .cnt2{background:#f3f0ff;color:#5b4bd1;border-radius:8px;padding:6px 10px;white-space:nowrap;font-size:13px;line-height:1.3;text-align:center}
+.real .cnt2 b{display:block;font-size:15px;color:#1f2328}
+.real .tg{display:inline-block;border-radius:999px;padding:0 9px;font-size:12px;font-weight:700;border:1px solid;vertical-align:middle;margin-left:4px}
+.real .tg.me{color:#5b4bd1;border-color:#c9bff5;background:#ede9fb}
+.real .tg.op{color:#1f7a45;border-color:#1f7a45;background:#e3f3ea}
+.real .tg.vi{color:#8a5a00;border-color:#8a5a00;background:#fbf0d9}
+.real .tg.ad{color:#a13b78;border-color:#a13b78;background:#fbe6f1}
+.real .note{background:#e3f3ea;border:1px solid #1f7a45;border-radius:10px;padding:8px 12px;margin:10px 0;font-size:13px}
+.real .pop{background:#fff;border:1px solid #d9d9e0;border-radius:8px;padding:6px 10px;font-size:12px;box-shadow:0 4px 12px rgba(0,0,0,.12);display:inline-block;margin:0 0 4px 40%}
+.realph{border:2px solid var(--line);border-radius:22px;background:#f6f6f8;overflow:hidden;font-size:13px;width:360px;max-width:100%;margin:10px 0;color:#1f2328}
+.realph .hd{display:flex;align-items:center;padding:10px 14px;background:#fff;border-bottom:1px solid #e6e6ea}.realph .hd b{color:#5b4bd1;font-size:18px}.realph .hd .r{margin-left:auto}
+.realph .bd{padding:10px 12px}
+.realph .card2{background:#fff;border:1px solid #e6e6ea;border-radius:12px;padding:10px 12px;margin:6px 0}
+.realph .card2 b{font-size:15px}.realph .card2 small{display:block;color:#666}
+.realph .lb{border-top:1px solid #eee;margin-top:6px;padding-top:6px}
+.realph .cnt3{display:inline-block;background:#f3f0ff;color:#5b4bd1;border-radius:6px;padding:2px 8px;font-size:12px;margin-top:4px}
+.realph .grp{font-weight:700;margin:10px 0 4px}.realph .grp small{font-weight:400;color:#666;display:block;font-size:12px}
+.realph .note{background:#e3f3ea;border:1px solid #1f7a45;border-radius:10px;padding:6px 10px;margin:8px 0;font-size:12px}
+.realph .tg{display:inline-block;border-radius:999px;padding:0 8px;font-size:11px;font-weight:700;border:1px solid;vertical-align:middle;margin-left:3px}
+.realph .tg.me{color:#5b4bd1;border-color:#c9bff5;background:#ede9fb}.realph .tg.op{color:#1f7a45;border-color:#1f7a45;background:#e3f3ea}.realph .tg.vi{color:#8a5a00;border-color:#8a5a00;background:#fbf0d9}
+.realph .k{display:inline-block;border:1px solid #d9d9e0;border-radius:8px;padding:3px 10px;background:#fff}
+.realph .k.p{background:#ede9fb;border-color:#c9bff5;color:#5b4bd1;font-weight:700}
+.lvl{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:10px 0}
+@media (max-width:700px){.lvl{grid-template-columns:1fr}}
+.lvl div{border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:16px;background:var(--card)}
+.lvl div b{display:block;margin-bottom:4px}
+.lvl div.pick{border-color:var(--accent);background:var(--accent-bg)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;background:var(--card)}
+.seg span{padding:2px 10px;white-space:nowrap}
+.seg span.on{background:#ede9fb;color:#5b4bd1;font-weight:700}
+.new{outline:2px dashed var(--no);outline-offset:3px;border-radius:8px}
+.res{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:8px 10px;margin:6px 0;display:flex;gap:10px;align-items:center}
+.res .bk{flex:1 1 40%;font-weight:700}.res .bk small{display:block;font-weight:400;color:var(--muted)}
+.res .lib{flex:1 1 40%}.res .lib small{display:block;color:var(--muted)}
+.res .cnt{background:#f3f0ff;color:#5b4bd1;border-radius:6px;padding:2px 6px;white-space:nowrap;font-size:11px}
+.sec{font-weight:700;margin:10px 0 2px;display:flex;align-items:center;gap:6px}
+.sec i{width:8px;height:8px;border-radius:50%;background:#5b4bd1;display:inline-block}
+.sec.grey i{background:var(--muted)}
+.panel{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:10px 12px;margin:8px 0}
+.frow{display:flex;gap:8px;align-items:center;margin:5px 0}
+.frow label{width:48px;font-weight:700}
+.frow .in{flex:1;border:1px solid var(--line);border-radius:6px;padding:3px 8px;color:var(--muted);background:var(--card)}
+.sel{display:inline-block;border:1px solid var(--line);border-radius:6px;padding:3px 8px;background:var(--card)}
+.modal{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:10px 12px;margin:8px auto;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:6px 0}
+.grid span{border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:11px}
+.ph .grid{grid-template-columns:repeat(2,1fr)}
+.big .grid span{font-size:14px;padding:5px 8px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}main table{display:block;overflow-x:auto;max-width:100%}.two{grid-template-columns:1fr}}
+
+:root{color-scheme:light}
+body{background:var(--bg);color:var(--text)}
+.chip{display:inline-block;font-size:15px;font-weight:700;color:var(--warn);background:var(--warn-bg);border:1px solid var(--warn);border-radius:999px;padding:0 10px;margin-right:6px;line-height:1.6}
+.chip.done{color:var(--ok);background:var(--ok-bg);border-color:var(--ok)}
+.dec{margin:12px 0 18px;padding:14px 16px;border:1px solid var(--line);border-radius:10px;background:var(--code-bg);display:flex;flex-direction:column;gap:10px}
+.dec .btns{display:flex;flex-wrap:wrap;gap:8px}
+.dec button{font:inherit;font-size:17px;padding:6px 16px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer}
+.dec button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.dec button[aria-pressed="true"][data-c="승인"]{background:var(--ok-bg);border-color:var(--ok);color:var(--ok);font-weight:700}
+.dec button[aria-pressed="true"][data-c="미승인"]{background:var(--no-bg);border-color:var(--no);color:var(--no);font-weight:700}
+.dec button[aria-pressed="true"][data-c="기타"]{background:var(--accent-bg);border-color:var(--accent);color:var(--accent);font-weight:700}
+.dec textarea{font:inherit;font-size:17px;width:100%;min-height:64px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--text);resize:vertical}
+.dec .save{background:var(--accent);color:var(--card);border-color:var(--accent);font-weight:700}
+.dec .st{font-size:15px;color:var(--muted)}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:0 0 24px;font-size:17px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.bar b{font-variant-numeric:tabular-nums}
+</style>
+<main class="doc">
+<div class="bar" id="bar">불러오는 중</div>
+<p class="lead">책 소개 길이, 경기도서관</p>
+<p class="sub">dev 수집 세션 보고(2026-10-23): 책 소개 저장을 넣고 15:15에 전체 수집을 다시 시작했어요. 두 가지를 정해 주세요.</p>
+<section class="card"><h2>지금 저장되는 소개</h2>
+<table><tr><th>업체</th><th>저장되는 것</th></tr>
+<tr><td>교보 일반</td><td>목록의 소개 — <b>사이트가 500자에서 자른 글</b></td></tr>
+<tr><td>YES24</td><td>목록의 소개 — <b>"..."로 줄인 글</b></td></tr>
+<tr><td>북큐브</td><td>긴 소개(없으면 짧은 소개), 목차는 뺌</td></tr>
+<tr><td>강남구</td><td>소개 칸</td></tr>
+<tr><td>알라딘·통합 포털·서울도서관</td><td>목록에 소개가 없어 비어 있음</td></tr></table>
+<p class="note">상세 쪽은 열지 않아서 요청 수는 그대로예요(칸 이름 <code>holding.intro_raw</code>, 내 PC 수집 DB에만).</p></section>
+<section class="card"><h2><span class="num">1</span>잘린 소개를 끝까지 받을까</h2>
+<table><tr><th>안</th><th>좋은 점</th><th>드는 것</th></tr>
+<tr><td><b>잘린 그대로 (추천)</b></td><td>요청이 늘지 않음. 꼬리표 고르기(분야·주제·느낌)에는 앞부분 몇 문장이면 대개 충분 [추론]</td><td>긴 소개의 뒷부분은 없음</td></tr>
+<tr><td>상세 쪽을 열어 전체</td><td>소개가 완전함</td><td>교보·YES24 책마다 요청 1번 더(수십만~백만 번 [추정], 며칠), 창작 문장을 더 많이 모음</td></tr></table>
+<p><span class="chip" data-n="1">안 #1</span> <b>잘린 그대로</b> 둬요. 꼬리표 표본 500권을 돌려 보고 소개가 짧아서 틀리는 게 많으면 그때 다시 정해요.</p></section>
+<section class="card"><h2><span class="num">2</span>경기도서관이 "막힘"으로 빠짐</h2>
+<p>서비스에 있는 <b>경기도서관(23번, 교보 일반, <code>ebookdrm.library.kr</code>)</b>이 08:10 수집에서 다시 시도까지 모두 시간 초과가 나서 수집기가 "막힘(2026-10-23, time-out)"으로 표시했어요. 그래서 이번 수집에서도 빠져요. 지금 가진 목록은 <b>18,644권, 마지막 성공 2026-09-30</b>이에요(수집 DB 직접 확인).</p>
+<p>시간 초과는 우리를 막은 것일 수도, 그날 사이트가 느렸던 것일 수도 있어요. 다른 IP로 돌아가는 건 하지 않아요(원칙).</p>
+<p><span class="chip" data-n="2">안 #2</span> <b>이번 전체 수집이 끝난 뒤 같은 IP로 한 번만 다시 시도</b>해요(1건·1초 그대로). 또 시간 초과면 "막힘"을 그대로 두고, 서비스는 9-30 목록을 계속 써요. 국내 IP 프록시 사이클(backlog)에서 함께 봐요.</p>
+<p class="note">다른 선택: 그대로 둠(다시 시도 안 함).</p></section>
+<section class="card"><h2>알려 드릴 것 (정할 것 아님)</h2>
+<ul><li>수집이 끝나면 dev가 표지 받기를 바로 띄워요. 표지는 내 PC 서비스 DB의 책 목록으로 고르므로, 이번 수집에서 새로 생긴 책은 <b>가져오기 뒤에 표지 받기를 한 번 더</b> 돌리면 채워져요(이미 받은 표지는 건너뜀).</li></ul></section>
+
+</main>
+
+<script>
+(function(){
+  const items=[...document.querySelectorAll('.chip')].map(ch=>{
+    const n=+ch.dataset.n; const box=ch.closest('.item')||ch.parentElement;
+    const h=box.querySelector('h3'); const t=(h?h.textContent:'').replace(/^\s*\d+/, '').trim();
+    const d=document.createElement('div'); d.className='dec';
+    d.innerHTML='<div class="btns" role="group" aria-label="안 #'+n+' 결정">'+
+      ['승인','미승인','기타'].map(c=>'<button type="button" data-c="'+c+'" aria-pressed="false">'+c+'</button>').join('')+'</div>'+
+      '<textarea id="note-'+n+'" placeholder="덧붙일 말 (미승인 이유, 질문, 제안)"></textarea>'+
+      '<div class="btns"><button type="button" class="save">저장</button><span class="st" aria-live="polite">아직 고르지 않았습니다</span></div>';
+    box.appendChild(d);
+    const st={n,title:t,chip:ch,el:d,pick:null};
+    d.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{st.pick=b.dataset.c;paint(st);d.querySelector('.st').textContent='"저장"을 눌러야 기록됩니다';});
+    d.querySelector('.save').onclick=()=>save(st);
+    return st;
+  });
+  const bar=document.getElementById('bar');
+  function paint(st){st.el.querySelectorAll('[data-c]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.c===st.pick)));}
+  let db=null; const saved={};
+  function count(){const k=Object.keys(saved).length;bar.innerHTML='고른 것 <b>'+k+' / '+items.length+'</b>'+(db?' · 저장하면 Claude가 읽습니다':' · 저장 기능을 아직 불러오지 못했습니다');}
+  count();
+  async function save(st){
+    const s=st.el.querySelector('.st');
+    if(!st.pick){s.textContent='먼저 승인·미승인·기타 중 하나를 고르세요';return;}
+    if(!db){s.textContent='저장할 수 없습니다. 로그인한 채로 claude.ai에서 열어 주세요';return;}
+    const note=st.el.querySelector('textarea').value.trim();
+    s.textContent='저장하는 중…';
+    try{await db.doc('choices/q'+st.n).set({n:st.n,title:st.title,choice:st.pick,note,savedAt:new Date().toISOString()});s.textContent='저장했습니다';}
+    catch(e){s.textContent='저장하지 못했습니다 ('+(e&&e.code||'오류')+'). 잠시 뒤 다시 눌러 주세요';}
+  }
+  (async()=>{
+    try{db=window.claude&&await window.claude.use('db');}catch(e){db=null;}
+    count(); if(!db) return;
+    db.collection('choices').onSnapshot(snap=>{
+      snap.docs.forEach(doc=>{const v=doc.data();const st=items.find(i=>i.n===v.n);if(!st)return;saved[v.n]=v;
+        if(document.activeElement!==st.el.querySelector('textarea')) st.el.querySelector('textarea').value=v.note||'';
+        st.pick=v.choice;paint(st);st.chip.classList.add('done');st.chip.textContent='안 #'+v.n+' · '+v.choice;
+        st.el.querySelector('.st').textContent='저장됨: '+v.choice+' ('+new Date(v.savedAt).toLocaleString('ko-KR')+')';});
+      count();
+    },()=>{});
+  })();
+})();
+</script>
