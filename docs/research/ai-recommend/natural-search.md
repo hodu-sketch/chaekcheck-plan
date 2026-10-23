@@ -76,3 +76,4 @@
 - Intel Iris Xe Graphics(내장, 전용 VRAM 없음, NVIDIA 없음), RAM 32GB, i7-1260P, Windows 11 Home 빌드 10.0.26200, C: 남은 약 123GB, Ollama 설치 안 됨 [확정] (로컬 세션 확인)
 - Ollama Windows는 Vulkan으로 추가 GPU 지원, "most GPU vendors drivers come bundled with Vulkan support" [확정] https://github.com/ollama/ollama/blob/main/docs/gpu.mdx — Iris Xe에서 실제로 쓰이는지 [확인 필요: 프로토타입, `ollama ps` Processor 칸]
 - 3차 페이지 [안] #5: Qwen3-4B로 시작, 속도를 재 보고 Qwen3-8B 시험 (Qwen3-4B·8B https://github.com/QwenLM/Qwen3, 2026-10-24 확인). CPU 속도·모델별 메모리 [확인 필요: 프로토타입]
+- 3차 #5 [확정] (사용자 선택 "Qwen3-4B로 시작, 되면 8B", 2026-10-24). 3차 #2 로컬 시작 순서는 따로 고르지 않았으나 #5로 이어 감. 따라 할 순서: [local-llm-guide.md](local-llm-guide.md)
