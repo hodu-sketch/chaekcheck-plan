@@ -22,7 +22,7 @@ ollama pull qwen3:4b
 ollama run qwen3:4b "출근길에 가볍게 읽을 과학책의 특징을 두 문장으로 말해 줘"
 ```
 
-- `qwen3:8b`는 Ollama 문서 예시에 나오는 이름이라 [확정] (https://github.com/ollama/ollama/blob/main/docs/api/openai-compatibility.mdx). `qwen3:4b`는 같은 규칙으로 쓴 이름이라 [확인 필요: Ollama 모델 목록 https://ollama.com/library/qwen3]. 받기가 실패하면 그 목록에서 이름을 확인합니다.
+- `qwen3:4b` 2.5GB, `qwen3:8b` 5.2GB(= `qwen3:latest`) [확정] (https://ollama.com/library/qwen3/tags , 노트북 원격 접속용 세션이 확인, 2026-10-24). `qwen3:8b`는 Ollama 문서 예시에도 나옴 (https://github.com/ollama/ollama/blob/main/docs/api/openai-compatibility.mdx)
 
 ## 3. CPU로 도는지 그래픽카드로 도는지
 
