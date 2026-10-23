@@ -159,7 +159,8 @@
 - 네이버 책 검색 `sort` = sim·date, 카카오 책 검색 `sort` = accuracy·latest — 인기순 없음 [확정] (https://developers.naver.com/docs/serviceapi/search/book/book.md , https://developers.kakao.com/docs/ko/daum-search/dev-guide)
 - 국립중앙도서관 대출 순위 API, 국회도서관·대학도서관 대출 순위 공개 데이터, 독서로 인기도서 API: 찾지 못함
 
-### 5-5. 정리 (추론)
+### 5-5. 정리
 
-- 성인 대상·자주 갱신·ISBN·깨끗한 조건을 모두 갖춘 곳은 **정보나루 `loanItemSrch` + `addCode` 필터** 하나. 보조로 `hotTrend`
+- 정보나루는 부가기호 필터가 있어도 **쓰지 않음** [확정] (사용자: "도서관 정보나루 하지 말라고", 2026-10-24). 10-12 결정 그대로
+- 남은 바깥 출처: 교보 전자도서관 인기순(시험 전, 교보문고 약관 범위 [확인 필요]), 경기도 인기대출 API(ISBN 없음, 한 지역), 부산 주간인기대출 API(ISBN 없음, 한 지역)
 - 2절의 교보 전자도서관 인기순은 여전히 시험 전이고, 교보 약관 범위가 [확인 필요]
