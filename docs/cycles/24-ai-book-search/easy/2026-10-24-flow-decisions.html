@@ -1,0 +1,282 @@
+<title>사이클 24 화면 흐름</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+
+.v-flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.v-box{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:7px 11px;font-size:15px;text-align:center;min-width:90px}
+.v-box small{display:block;color:var(--muted);font-size:12px}
+.v-hi{border-color:var(--accent);background:var(--accent-bg)}
+.v-warn{border-color:var(--warn);background:var(--warn-bg)}
+.v-ok{border-color:var(--ok);background:var(--ok-bg)}
+.v-arr{color:var(--muted);font-size:18px}
+.v-file{border:2px solid var(--line);border-radius:12px;background:var(--card);padding:10px;margin:10px 0;max-width:560px}
+.v-file .v-part{border:1px dashed var(--line);border-radius:8px;padding:8px 10px;margin:6px 0;font-size:14px}
+.v-file .v-part.v-new{border-color:var(--accent);background:var(--accent-bg)}
+.v-tl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0;font-size:13px;text-align:center}
+.v-tl div{border-top:4px solid var(--line);padding-top:6px}
+.v-tl div.v-hi{border-top-color:var(--accent);background:none}
+.v-cv{display:inline-flex;width:70px;aspect-ratio:2/3;border-radius:7px;border:1px solid var(--line);background:var(--accent-bg);align-items:center;justify-content:center;font-size:11px;text-align:center;padding:3px;vertical-align:top;margin:4px}
+.v-cv.v-img{background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 6px,var(--card) 6px,var(--card) 12px)}
+.v-mini{border:1px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;margin:8px 0;max-width:420px}
+.v-mini .v-bar{display:flex;gap:10px;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line);font-size:13px}
+.v-mini .v-body{padding:10px 12px;font-size:13px}
+.v-pill{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-weight:800;font-size:12px}
+@media (max-width:700px){main table{display:block;overflow-x:auto;max-width:100%}.v-tl{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.v-code{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:var(--code-bg);border-radius:8px;padding:8px 10px;overflow-x:auto;white-space:pre}
+main{padding-block:40px 90px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.flow{display:grid;gap:10px;margin:14px 0}
+.step{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:start;border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--card)}
+.step b.k{display:inline-block;min-width:30px;height:30px;line-height:30px;border-radius:50%;text-align:center;background:var(--accent-bg);color:var(--accent);font-size:16px}
+.step.llm{border-color:var(--warn);background:var(--warn-bg)}
+.step.db{border-color:var(--accent);background:var(--accent-bg)}
+.step p{margin:0;font-size:17px}.step p small{color:var(--muted);display:block;font-size:15px}
+.mocks{display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,1.4fr) minmax(0,1fr);gap:14px;align-items:start;margin:12px 0}
+.dev{border:2px solid var(--line);border-radius:12px;background:var(--bg);padding:10px;min-width:0}
+.dev .lbl{font-size:13px;color:var(--muted);margin:0 0 6px}
+.qbox{display:flex;gap:6px;margin:0 0 8px}
+.qbox span{flex:1;min-width:0;border:1px solid var(--accent);border-radius:8px;background:var(--card);padding:5px 8px;font-size:12px}
+.qbox i{font-style:normal;border-radius:8px;background:var(--accent);color:var(--card);padding:5px 8px;font-size:12px}
+.note{font-size:11px;color:var(--muted);margin:0 0 6px}
+.res{display:grid;gap:8px}
+.res.two{grid-template-columns:1fr 1fr}
+.bk{display:flex;gap:8px;border:1px solid var(--line);border-radius:8px;background:var(--card);padding:7px;min-width:0}
+.bk .cv{flex:0 0 auto;width:38px;aspect-ratio:2/3;border-radius:4px;border:1px solid var(--line);background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 5px,var(--card) 5px,var(--card) 10px)}
+.bk.big .cv{width:60px}
+.bk div{min-width:0;font-size:11px;line-height:1.45}
+.bk .t{font-weight:700;font-size:12px}.bk.big .t{font-size:14px}
+.bk .why{display:block;margin-top:3px;color:var(--warn);font-weight:500}
+.bk .lib{color:var(--ok)}
+@media (max-width:760px){.mocks{grid-template-columns:minmax(0,1fr)}.res.two{grid-template-columns:1fr}}
+.opt{width:100%}
+.chip{display:inline-block;font-size:15px;font-weight:700;color:var(--warn);background:var(--warn-bg);border:1px solid var(--warn);border-radius:999px;padding:0 10px;margin-right:6px;line-height:1.6}
+.chip.done{color:var(--ok);background:var(--ok-bg);border-color:var(--ok)}
+.dec{margin:14px 0 0;padding:14px 16px;border:1px solid var(--line);border-radius:10px;background:var(--code-bg);display:flex;flex-direction:column;gap:10px}
+.dec .btns{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.dec button{font:inherit;font-size:16px;padding:6px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer;text-align:left}
+.dec button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.dec button[aria-pressed="true"]{background:var(--accent-bg);border-color:var(--accent);color:var(--accent);font-weight:700}
+.dec textarea{font:inherit;font-size:17px;width:100%;min-height:64px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--text);resize:vertical}
+.dec .save{background:var(--accent);color:var(--card);border-color:var(--accent);font-weight:700}
+.dec .st{font-size:15px;color:var(--muted)}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:0 0 24px;font-size:17px}
+.bar b{font-variant-numeric:tabular-nums}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.card{max-width:100%;overflow-x:auto}
+.ex2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin:10px 0}
+.ex2>div{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--card);font-size:16px;min-width:0}
+.ex2 .q{color:var(--accent);font-weight:700}
+.same{background:var(--code-bg);border-radius:8px;padding:6px 10px;font-size:15px;margin:6px 0}
+.ai{border:2px solid var(--accent);border-radius:10px;background:var(--accent-bg);padding:8px;margin:0 0 8px}
+.ai .h{font-size:12px;font-weight:700;color:var(--accent);margin:0 0 6px}
+.row3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.row2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.libres{border:1px dashed var(--line);border-radius:8px;padding:6px 8px;font-size:11px;color:var(--muted);background:var(--card)}
+.steps{display:grid;gap:8px;margin:10px 0}
+.steps div{border-left:4px solid var(--accent);padding:4px 12px;font-size:17px}
+@media (max-width:760px){.ex2{grid-template-columns:1fr}}
+.decided{background:var(--ok-bg);border:1px solid var(--ok);border-radius:10px;padding:12px 16px;margin:0 0 10px}
+.decided b{color:var(--ok)}
+.tabs{display:flex;gap:4px;margin:0 0 -1px}
+.tabs span{font-size:11px;border:1px solid var(--line);border-bottom:none;border-radius:6px 6px 0 0;padding:3px 8px;background:var(--code-bg);color:var(--muted)}
+.tabs span.on{background:var(--card);color:var(--accent);font-weight:700;border-color:var(--accent)}
+.qbox.t span{border-radius:0 8px 8px 8px}
+.arrow{font-size:13px;color:var(--muted);margin:6px 0;text-align:center}
+.flowrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+.flowrow .v-box{font-size:15px}
+</style>
+<main class="doc">
+<div class="bar" id="bar">불러오는 중</div>
+<p class="lead">AI 책 찾기의 화면 흐름입니다. 화면은 첫 화면(바뀜)과 새 AI 결과 화면 두 개이고, 정하실 것이 네 개입니다.</p>
+<p class="sub">그림은 위치와 순서만 보여 줍니다. 색과 모양은 디자인이 아닙니다. 지금 첫 화면은 사이클 22 문서와 회고를 바탕으로 그렸고, dev 코드로는 맞춰 보지 않았습니다. 각 카드 맨 아래에서 고르고 "저장"을 눌러 주세요.</p>
+
+<div class="card">
+<h2>화면 사이 이동</h2>
+<p class="concl">첫 화면에서 AI 책 찾기 탭(처음 열림)으로 찾으면 AI 결과 화면으로 넘어가고, 카드를 누르면 지금 책 화면으로 갑니다. 도서관에서 책 찾기 탭은 지금 검색 그대로입니다.</p>
+<pre class="mermaid">
+flowchart LR
+  A["첫 화면 · AI 책 찾기 탭"] -->|탭 누름| B["첫 화면 · 도서관에서 책 찾기 탭"]
+  B -->|탭 누름| A
+  A -->|찾기| L["AI 결과 · 로딩"]
+  L -->|성공| R["AI 결과"]
+  L -->|Haiku 실패| RN["AI 결과 · 글 없이"]
+  L -->|맞는 책 없음| R0["맞는 책 없음 + 예시 질문"]
+  L -->|횟수 초과| RL["잠시 뒤에 다시"]
+  L -->|하루 비용 상한| RP["오늘은 쉬어요"]
+  RP -->|도서관 탭으로| B
+  R -->|카드 누름| S3["책 화면"]
+  RN -->|카드 누름| S3
+  S3 -->|뒤로 가기| R
+  R -->|뒤로 가기| A
+  R0 -->|예시 질문| L
+</pre>
+<p class="cap">모든 상태가 AI 결과 화면 안에서 바뀌고, 책 화면은 지금 그대로입니다.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">1</span>첫 화면의 탭 두 개</h2>
+<p class="concl">검색창 위에 탭 두 개를 두고 AI 책 찾기가 왼쪽에서 처음 열립니다. AI 탭에는 안내 글과 예시 질문 칩 3개가 있고, 제목·저자를 고르는 상세검색과 ⚙은 보이지 않습니다. 찾을 도서관 줄과 그 아래 내용(KAIST 추천 책장 등)은 두 탭 모두 그대로입니다.</p>
+<div class="mocks">
+<div class="dev"><p class="lbl">PC · 첫 화면</p>
+<div class="tabs"><span class="on">AI 책 찾기</span><span>도서관에서 책 찾기</span></div>
+<div class="qbox t"><span>어떤 책을 찾으세요? 예: 잠들기 전에 조금씩 읽을 과학책</span><i>찾기</i></div>
+<p class="note">[출근길 가벼운 과학책] [위로가 되는 에세이] [경제 입문서]</p>
+<div class="libres">찾을 도서관 줄 (지금 그대로)</div>
+<p class="arrow">첫 화면 아래 내용 (KAIST 추천 책장 등) 그대로</p>
+</div>
+<div class="dev"><p class="lbl">태블릿</p>
+<div class="tabs"><span class="on">AI 책 찾기</span><span>도서관에서</span></div>
+<div class="qbox t"><span>어떤 책을 찾으세요?</span><i>찾기</i></div>
+<p class="note">[예시 1] [예시 2] [예시 3]</p>
+<div class="libres">찾을 도서관 줄</div>
+</div>
+<div class="dev"><p class="lbl">폰</p>
+<div class="tabs"><span class="on">AI 책 찾기</span><span>도서관</span></div>
+<div class="qbox t"><span>어떤 책을…</span><i>찾기</i></div>
+<p class="note">[예시 1] [예시 2] → 옆으로</p>
+<div class="libres">내 도서관 칩</div>
+</div>
+</div>
+<p class="prop"><span class="chip" data-n="1" data-title="첫 화면 탭" data-opts="이대로|예시 칩 없이|AI 탭에도 상세검색 남김|기타">[안] #1</span> AI 탭 왼쪽·처음 열림, 안내 글 + 예시 질문 칩 3개, AI 탭에서는 상세검색·⚙을 숨깁니다. 탭을 오가도 각 탭의 입력 글은 남습니다.</p>
+<p class="alt">예시 질문 문구는 시험 세트(<code>llm-test-set.md</code>) 질문에서 고릅니다.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">2</span>AI 결과 화면의 짜임</h2>
+<p class="concl">맨 위에 질문이 든 입력칸과 AI 표시 한 줄, 그 아래 맨 위 한 권은 크게, 나머지는 두 권씩입니다(「나에게 맞는 책」과 같은 짜임). 폰은 큰 카드 아래로 한 줄에 한 권입니다. 책 화면에 갔다가 뒤로 오면 같은 결과·같은 자리로 돌아옵니다.</p>
+<div class="mocks">
+<div class="dev"><p class="lbl">PC · AI 결과</p>
+<div class="qbox"><span>잠들기 전에 조금씩 읽을 과학책</span><i>다시 찾기</i></div>
+<p class="note">책 설명은 AI가 질문에 맞춰 썼어요. 실제 내용과 다를 수 있어요</p>
+<div class="res">
+<div class="bk big"><span class="cv"></span><div><span class="t">책 A</span><br>저자 <span class="lib">· 내 도서관 3곳</span><span class="why">질문에 맞춘 글 2~3문장, 자르지 않음</span></div></div>
+<div class="res two">
+<div class="bk"><span class="cv"></span><div><span class="t">책 B</span><span class="why">맞춘 글</span></div></div>
+<div class="bk"><span class="cv"></span><div><span class="t">책 C</span><span class="why">맞춘 글</span></div></div>
+</div></div></div>
+<div class="dev"><p class="lbl">태블릿</p>
+<div class="qbox"><span>잠들기 전에…</span><i>다시</i></div>
+<div class="res">
+<div class="bk big"><span class="cv"></span><div><span class="t">책 A</span><span class="why">맞춘 글</span></div></div>
+<div class="res two">
+<div class="bk"><span class="cv"></span><div><span class="t">B</span></div></div>
+<div class="bk"><span class="cv"></span><div><span class="t">C</span></div></div>
+</div></div></div>
+<div class="dev"><p class="lbl">폰</p>
+<div class="qbox"><span>잠들기…</span><i>다시</i></div>
+<div class="res">
+<div class="bk big"><span class="cv"></span><div><span class="t">A</span><span class="why">맞춘 글</span></div></div>
+<div class="bk"><span class="cv"></span><div><span class="t">B</span><span class="why">맞춘 글</span></div></div>
+<div class="bk"><span class="cv"></span><div><span class="t">C</span><span class="why">맞춘 글</span></div></div>
+</div></div>
+</div>
+<p class="prop"><span class="chip" data-n="2" data-title="결과 짜임" data-opts="이대로|모두 같은 크기 카드|기타">[안] #2</span> 큰 카드 1 + 두 권씩(폰은 한 권씩), 표지가 없으면 제목 글자 표지, 책 화면에서 뒤로 오면 같은 결과·자리.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">3</span>기다리는 동안과<br>새로 고침</h2>
+<p class="concl">찾는 동안에는 "책을 찾고 있어요"와 회색 카드 틀 3개를 보여 주고, [다시 찾기]는 누를 수 없게 합니다. 결과 화면을 새로 고치면 질문이 남아 있지 않으므로 빈 입력칸만 보입니다.</p>
+<table>
+<tr><td>로딩</td><td>"책을 찾고 있어요" + 회색 카드 틀 3개. 글은 다 쓰인 뒤 한 번에 나옴</td></tr>
+<tr><td>연결 오류</td><td>"연결이 원활하지 않아요" [다시 시도]</td></tr>
+<tr><td>새로 고침</td><td>빈 입력칸, 결과 없음, 따로 안내 없음</td></tr>
+</table>
+<p class="prop"><span class="chip" data-n="3" data-title="로딩·새로 고침" data-opts="이대로|새로 고침 때 안내 한 줄|기타">[안] #3</span> 위 표대로 합니다. (이미 정한 상태: 글 없이, 맞는 책 없음, 횟수 초과, 하루 비용 상한 문구는 명세 그대로)</p>
+<p class="alt">다른 선택: 새로 고친 뒤 "새로 고치면 결과가 사라져요. 다시 찾아 주세요" 한 줄을 보여 주기.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">4</span>결과 화면 주소와 번호</h2>
+<p class="concl">AI 결과 화면의 주소는 <code>/ai-search</code>로 하고, 문서 속 화면 번호는 S30으로 합니다. 사이클 23이 다른 브랜치에서 새 화면 번호를 쓸 수 있어 S18~S29는 비워 둡니다.</p>
+<p class="prop"><span class="chip" data-n="4" data-title="주소·번호" data-opts="/ai-search, S30|다른 주소|기타">[안] #4</span> 주소 <code>/ai-search</code>, 화면 번호 S30. 질문은 주소에 넣지 않습니다(이미 정함).</p>
+</div>
+
+<p class="foot">바탕: <code>docs/cycles/24-ai-book-search/flow.md</code>, <code>spec.md</code>. 지금 첫 화면: 사이클 22 <code>flow.md</code>, 22 회고(23 브랜치). 수용 기준 AC-1~12가 어느 화면에 있는지는 <code>flow.md</code> 끝 표.</p>
+</main>
+
+
+
+
+
+
+
+<script>
+(function(){
+  const items=[...document.querySelectorAll('.chip')].map(ch=>{
+    const n=+ch.dataset.n, title=ch.dataset.title, opts=ch.dataset.opts.split('|');
+    const box=ch.closest('.card');
+    const d=document.createElement('div'); d.className='dec';
+    const g=document.createElement('div'); g.className='btns'; g.setAttribute('role','group'); g.setAttribute('aria-label',n+'번 '+title+' 고르기');
+    opts.forEach(c=>{const b=document.createElement('button');b.type='button';b.dataset.c=c;b.setAttribute('aria-pressed','false');b.textContent=c;g.appendChild(b);});
+    const ta=document.createElement('textarea'); ta.id='note-'+n; ta.placeholder='덧붙일 말 (기타를 고르셨다면 내용, 질문, 조건)';
+    const r=document.createElement('div'); r.className='btns';
+    const sv=document.createElement('button'); sv.type='button'; sv.className='save'; sv.textContent='저장';
+    const st=document.createElement('span'); st.className='st'; st.setAttribute('aria-live','polite'); st.textContent='아직 고르지 않았습니다';
+    r.append(sv,st); d.append(g,ta,r); box.appendChild(d);
+    const it={n,title,chip:ch,el:d,ta,st,pick:null};
+    g.querySelectorAll('button').forEach(b=>b.onclick=()=>{it.pick=b.dataset.c;paint(it);st.textContent='"저장"을 눌러야 기록됩니다';});
+    sv.onclick=()=>save(it);
+    return it;
+  });
+  const bar=document.getElementById('bar');
+  function paint(it){it.el.querySelectorAll('[data-c]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.c===it.pick)));}
+  let db=null; const saved={};
+  function count(){const k=Object.keys(saved).length;bar.innerHTML='고른 것 <b>'+k+' / '+items.length+'</b>'+(db?' · 저장하면 Claude가 읽습니다':' · 저장 기능을 아직 불러오지 못했습니다');}
+  count();
+  async function save(it){
+    if(!it.pick){it.st.textContent='먼저 하나를 고르세요';return;}
+    if(!db){it.st.textContent='저장할 수 없습니다. 로그인한 채로 claude.ai에서 열어 주세요';return;}
+    const note=it.ta.value.trim();
+    if(it.pick==='기타'&&!note){it.st.textContent='기타를 고르셨다면 덧붙일 말을 적어 주세요';return;}
+    it.st.textContent='저장하는 중…';
+    try{await db.doc('flow24/q'+it.n).set({n:it.n,title:it.title,choice:it.pick,note,savedAt:new Date().toISOString()});it.st.textContent='저장했습니다';}
+    catch(e){it.st.textContent='저장하지 못했습니다 ('+(e&&e.code||'오류')+'). 잠시 뒤 다시 눌러 주세요';}
+  }
+  (async()=>{
+    try{db=window.claude&&await window.claude.use('db');}catch(e){db=null;}
+    count(); if(!db) return;
+    db.collection('flow24').onSnapshot(snap=>{
+      snap.docs.forEach(doc=>{const v=doc.data();const it=items.find(i=>i.n===v.n);if(!it)return;saved[v.n]=v;
+        if(document.activeElement!==it.ta) it.ta.value=v.note||'';
+        it.pick=v.choice;paint(it);it.chip.classList.add('done');it.chip.textContent='#'+v.n+' · '+v.choice;
+        it.st.textContent='저장됨: '+v.choice+' ('+new Date(v.savedAt).toLocaleString('ko-KR')+')';});
+      count();
+    },()=>{});
+  })();
+})();
+</script>
