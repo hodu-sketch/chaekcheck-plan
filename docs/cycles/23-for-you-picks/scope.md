@@ -4,6 +4,7 @@
 
 - 계기: 사용자 "나는 추천 도서탭을 만들고 싶어 그러기 위해서 방향을 조사 중이야" (2026-10-23), "추천 알고리즘을 해서 사용자별 추천 탭이 먼저이지 … 그것을 위해서 별개의 추천글이 들어갈 수 있는거고 지금 이미 있는 소개글과는 별개야" (2026-10-23)
 - 사전 조사(사이클 밖): [`docs/research/ai-recommend/`](../../research/ai-recommend/) — [overview.md](../../research/ai-recommend/overview.md) 6·6-1·7절, [session-state.md](../../research/ai-recommend/session-state.md), [industry.md](../../research/ai-recommend/industry.md), [infra-cost.md](../../research/ai-recommend/infra-cost.md), [law.md](../../research/ai-recommend/law.md), [tag-vocabulary.md](../../research/ai-recommend/tag-vocabulary.md); 트렌드 출처 [`popular-books/alternatives.md`](../../research/popular-books/alternatives.md) 5절; 로깅 [ADR-0134](../../adr/0134-usage-log-member-id-and-visit-key.md)
+- 병렬 조사 세션: 클라우드 세션 "도서 추천 시스템 설계"(브랜치 `claude/compassionate-lovelace-mzvp4f`, "말로 책 찾기 제안" 페이지 https://claude.ai/artifact/GTS6MLsWodDCeKLmP5dFhu)는 사이클 23과 따로 조사하는 세션이고 나중에 도움을 받을 수 있음 (사용자 2026-10-23 "이것은 병렬로 조사하는 세션이야 나중에 도움을 줄 수 있어"). 그 세션 결과는 사이클 23 문서에 바로 섞지 않고, 쓸 때 출처로 링크함
 - 바탕 화면: 사이클 21 「추천도서」 메뉴(dev `web/src/features/picks/`, 지금 탭 KAIST · 국립중앙도서관 · 서울대 · 노벨연구소, 이동진은 주소로만) — 사이클 22 회고 [`../22-first-screen-usability/retro.md`](../22-first-screen-usability/retro.md)
 
 ## 목표 (한 문장)
