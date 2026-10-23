@@ -8,3 +8,4 @@
 | 2026-10-23-for-you-tab-decisions.html | "나에게 맞는 책" 탭: PC·폰 화면 그림, 신호·고르기·보유 조건 6개 | 사용자 요청 2026-10-23, overview.md | 6 |
 | 2026-10-23-for-you-tab-screens.html | "나에게 맞는 책" 탭 화면 예시만(맨 위 한 권 크게 + 두 권씩, 소개 글 전부) PC·태블릿·폰 | 사용자 요청 2026-10-23 | 1 |
 | 2026-10-23-for-you-tab-decisions-artifact.html | 위 6개 페이지의 외부용(claude.ai Artifact, 저장 버튼) 판 — https://claude.ai/artifact/UtNkYG5eC7dUFYU8HZPUCv | 2026-10-23-for-you-tab-decisions.html | 6 |
+| 2026-10-24-trend-source-decisions.html | "나에게 맞는 책" 기본 목록(트렌드)의 바깥 출처 — 교보 인기순 / 부산 API 등 | 사용자 기타 #5 (2026-10-24), popular-books/alternatives.md | 1 |
