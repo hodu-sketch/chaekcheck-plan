@@ -1,0 +1,90 @@
+<title>북튜버 채널 고르기</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;color-scheme:light}
+*{box-sizing:border-box}
+html,body{overflow-x:hidden;max-width:100%}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding-block:40px 90px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px;max-width:100%;overflow-x:auto}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+.changed{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:10px 14px;font-size:18px;margin:12px 0 0}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0;min-width:520px}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.bx{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:7px 12px;font-size:16px;text-align:center}
+.bx small{display:block;color:var(--muted);font-size:13px}
+.bx.hi{border-color:var(--accent);background:var(--accent-bg)}
+.bx.ok{border-color:var(--ok);background:var(--ok-bg)}
+.bx.dash{border-style:dashed;color:var(--muted)}
+.arr{color:var(--muted)}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 12px}
+.chip{display:inline-block;font-size:15px;font-weight:700;color:var(--warn);background:var(--warn-bg);border:1px solid var(--warn);border-radius:999px;padding:0 10px;margin-right:6px;line-height:1.6}
+.chip.done{color:var(--ok);background:var(--ok-bg);border-color:var(--ok)}
+.dec{margin:16px 0 0;padding:14px 16px;border:1px solid var(--line);border-radius:10px;background:var(--code-bg);display:flex;flex-direction:column;gap:10px}
+.dec .btns{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.dec button{font:inherit;font-size:17px;padding:6px 16px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer}
+.dec button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.dec button[aria-pressed="true"][data-c="승인"]{background:var(--ok-bg);border-color:var(--ok);color:var(--ok);font-weight:700}
+.dec button[aria-pressed="true"][data-c="미승인"]{background:var(--no-bg);border-color:var(--no);color:var(--no);font-weight:700}
+.dec button[aria-pressed="true"][data-c="기타"]{background:var(--accent-bg);border-color:var(--accent);color:var(--accent);font-weight:700}
+.dec textarea{font:inherit;font-size:17px;width:100%;min-height:64px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--text);resize:vertical}
+.dec .save{background:var(--accent);color:var(--card);border-color:var(--accent);font-weight:700}
+.dec .st{font-size:15px;color:var(--muted)}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:0 0 24px;font-size:17px}
+.bar b{font-variant-numeric:tabular-nums}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+</style>
+<main class="doc">
+<div class="bar" id="bar">불러오는 중</div>
+<p class="lead">기본 목록에 쓸 북튜버 채널을 골라 주세요.<br>고른 채널의 새 영상에서만 책을 찾습니다.</p>
+<p class="sub">사이클 23 결정 #4(2026-10-23 승인)의 다음 단계입니다. 정해 둔 채널 10~30곳의 새 영상 제목·설명에서 책을 찾고, 여러 채널이 함께 다룬 책을 트렌드로 봅니다. 영상 제목·설명은 저장하지 않고 책 이름과 영상 링크만 남깁니다.</p>
+<div class="card"><h2><span class="num">1</span>먼저 알아 둘 것: 숫자는 기사에서 가져온 옛 값입니다</h2>
+<p class="concl">이 환경에서 유튜브와 채널 통계 사이트가 열리지 않아, 채널 페이지를 하나도 직접 보지 못했습니다. 구독자 수는 2019~2025년 기사에 나온 값이고, 지금 운영 중인지·영상 제목이나 설명에 책 제목을 적는지는 확인 못 함입니다.</p>
+<p class="ex">고르신 채널은 개발 전에 유튜브 API로 한 번 불러 최근 영상에 책 제목이 실제로 적히는지 셉니다. 적히지 않는 채널은 빼자고 다시 여쭙겠습니다. 이동진 「파이아키아」는 사이클 21에서 따로 쓰고 있어 이 표에 넣지 않았습니다.</p>
+</div>
+<div class="card"><h2><span class="num">2</span>후보 22곳</h2>
+<p class="concl">쓰고 싶은 채널에 체크하고, 표에 없는 채널은 아래 칸에 적은 뒤 "저장"을 눌러 주세요.</p>
+<table><tr><th>채널</th><th>운영</th><th>구독자 (기사 시점)</th><th>비고</th></tr><tr><td><label><input type="checkbox" class="pick" value="겨울서점"> 겨울서점</label></td><td>개인</td><td>28만+ (2024-08)</td><td>낭독·리뷰·북토크</td></tr><tr><td><label><input type="checkbox" class="pick" value="너 진짜 똑똑하다"> 너 진짜 똑똑하다</label></td><td>개인</td><td>130만+ (2024-08)</td><td>고전 요약, 영상 제목이 책 제목이 아닌 경우가 많음</td></tr><tr><td><label><input type="checkbox" class="pick" value="책그림"> 책그림</label></td><td>개인</td><td>약 51.8만 (2023-11)</td><td>심리학 책 요약</td></tr><tr><td><label><input type="checkbox" class="pick" value="북툰"> 북툰</label></td><td>개인</td><td>약 46.3만 (2023-11)</td><td>과학책을 만화로</td></tr><tr><td><label><input type="checkbox" class="pick" value="편집자K"> 편집자K</label></td><td>개인</td><td>약 5.24만 (2024-08)</td><td>매월 3권 추천</td></tr><tr><td><label><input type="checkbox" class="pick" value="민음사TV"> 민음사TV</label></td><td>출판사</td><td>약 32만 (2025-06)</td><td>책 이야기가 아닌 영상도 많음</td></tr><tr><td><label><input type="checkbox" class="pick" value="출근한 문동씨"> 출근한 문동씨</label></td><td>출판사(문학동네)</td><td>확인 못 함</td><td>브이로그</td></tr><tr><td><label><input type="checkbox" class="pick" value="문학동네 공식"> 문학동네 공식</label></td><td>출판사</td><td>확인 못 함</td><td></td></tr><tr><td><label><input type="checkbox" class="pick" value="TV창비"> TV창비</label></td><td>출판사</td><td>확인 못 함</td><td>저자 인터뷰·대담</td></tr><tr><td><label><input type="checkbox" class="pick" value="위즈덤하우스"> 위즈덤하우스</label></td><td>출판사</td><td>확인 못 함</td><td>저자 특강</td></tr><tr><td><label><input type="checkbox" class="pick" value="북이십일(21세기북스)"> 북이십일(21세기북스)</label></td><td>출판사</td><td>확인 못 함</td><td></td></tr><tr><td><label><input type="checkbox" class="pick" value="한빛비즈"> 한빛비즈</label></td><td>출판사</td><td>확인 못 함</td><td></td></tr><tr><td><label><input type="checkbox" class="pick" value="교보문고 공식"> 교보문고 공식</label></td><td>서점</td><td>확인 못 함</td><td>오리지널 콘텐츠</td></tr><tr><td><label><input type="checkbox" class="pick" value="예스24·채널예스"> 예스24·채널예스</label></td><td>서점</td><td>확인 못 함</td><td>「리드윗미」</td></tr><tr><td><label><input type="checkbox" class="pick" value="김미경TV"> 김미경TV</label></td><td>개인</td><td>약 180만 (시점 미상)</td><td>책은 일부 콘텐츠</td></tr><tr><td><label><input type="checkbox" class="pick" value="책읽찌라"> 책읽찌라</label></td><td>개인</td><td>약 3만 (2021)</td><td>지금도 운영 중인지 모름</td></tr><tr><td><label><input type="checkbox" class="pick" value="쩜"> 쩜</label></td><td>개인</td><td>확인 못 함</td><td>한국소설</td></tr><tr><td><label><input type="checkbox" class="pick" value="공백의 책단장"> 공백의 책단장</label></td><td>개인</td><td>확인 못 함</td><td>2019년 기사</td></tr><tr><td><label><input type="checkbox" class="pick" value="사월이네 북리뷰"> 사월이네 북리뷰</label></td><td>개인</td><td>확인 못 함</td><td>고전, 2019년 기사</td></tr><tr><td><label><input type="checkbox" class="pick" value="책선비"> 책선비</label></td><td>개인</td><td>확인 못 함</td><td>2019년 기사</td></tr><tr><td><label><input type="checkbox" class="pick" value="문학줍줍"> 문학줍줍</label></td><td>개인</td><td>확인 못 함</td><td>고전문학, 2019년 기사</td></tr><tr><td><label><input type="checkbox" class="pick" value="북바이북"> 북바이북</label></td><td>서점(추정)</td><td>8.4천 (시점 미상)</td><td></td></tr></table>
+<div class="dec"><textarea id="extra" placeholder="표에 없는 채널, 빼야 할 이유, 질문 등"></textarea>
+<div class="btns"><button type="button" class="save" id="save">저장</button><span class="st" id="st" aria-live="polite">아직 저장하지 않았습니다</span></div></div>
+</div>
+<p class="foot">원본: <code>docs/research/ai-recommend/booktuber-candidates.md</code> (2026-10-23 조사, 출처 URL은 그 문서). 유튜브 API 한도(하루 10,000단위, 목록 읽기 1단위)는 2차 출처라 공식 문서로 다시 확인합니다.</p>
+</main>
+<script>
+(function(){
+  const bar=document.getElementById('bar'),st=document.getElementById('st'),extra=document.getElementById('extra');
+  const boxes=[...document.querySelectorAll('.pick')];
+  let db=null;
+  function count(){bar.innerHTML='고른 채널 <b>'+boxes.filter(b=>b.checked).length+'</b>곳'+(db?' · 저장하면 Claude가 읽습니다':' · 저장 기능을 아직 불러오지 못했습니다(claude.ai에 로그인한 채로 열어 주세요)');}
+  boxes.forEach(b=>b.onchange=()=>{count();st.textContent='"저장"을 눌러야 기록됩니다';});
+  count();
+  document.getElementById('save').onclick=async()=>{
+    if(!db){st.textContent='저장할 수 없습니다. 로그인한 채로 claude.ai에서 열어 주세요';return;}
+    st.textContent='저장하는 중…';
+    try{await db.doc('choices/channels').set({selected:boxes.filter(b=>b.checked).map(b=>b.value),note:extra.value.trim(),savedAt:new Date().toISOString()});st.textContent='저장했습니다';}
+    catch(e){st.textContent='저장하지 못했습니다 ('+(e&&e.code||'오류')+'). 잠시 뒤 다시 눌러 주세요';}
+  };
+  (async()=>{
+    try{db=window.claude?await window.claude.use('db'):null;}catch(e){db=null;}
+    count(); if(!db) return;
+    db.doc('choices/channels').onSnapshot(doc=>{const v=doc&&doc.data&&doc.data();if(!v)return;
+      boxes.forEach(b=>b.checked=(v.selected||[]).includes(b.value));
+      if(document.activeElement!==extra) extra.value=v.note||'';
+      st.textContent='저장됨 ('+new Date(v.savedAt).toLocaleString('ko-KR')+')';count();},()=>{});
+  })();
+})();
+</script>
