@@ -22,3 +22,11 @@
 
 ## 보고
 - dev `docs/plan-feedback.md`에 `# 표지 받기 (2026-10-23 요청)` 절: 명령·저장 꼴, 받은 장 수(출처별), 못 받은 책 수, 걸린 시간, 디스크 크기
+
+## dev 보고 (2026-10-23, dev 수집 세션, dev main `ce3b7d8`)
+- 코드: `scripts/crawl/fetch_covers.py` (`crawl_catalog.py fetch-covers`). 책 번호는 내 PC 서비스 DB SELECT만(`catalog.book`·`holding`·`collection_link`)
+- 짝 표: 데이터 폴더 `covers\covers.sqlite` 표 `book_cover`, 키 `book_key` = `isbn:<ISBN>` 또는 `item:<수집 도서관>:<책 코드>`(가져오기로 책 번호가 바뀌어도 받은 표지 유지). 파일 `covers\<sha1 앞 2자리>\<sha1(주소)>.jpg`, `--export`로 `book-covers.tsv`
+- 차례 그대로(YES24 → 북큐브 → 그 밖 6개까지 → NLK ISBN 서지 → 소장자료 검색), `dkyobobook` 계획·요청 양쪽에서 거름, 서버(IP)마다 1건·1초, NLK 한 줄
+- 요청서와 다른 점: 사이클 21 `cover_sources.tsv`는 차례가 달라 같이 쓰지 않고 `fetch_cover_sources.tsv`·`fetch_cover_hosts.tsv`로 나눔 → plan 확인: 정한 차례를 지키므로 받아들임 [확정] (plan, 2026-10-23; 사용자가 다르게 보면 바꿈)
+- 계획만 돌린 결과(요청 없음, 21분): 1,340,875권. 첫 후보 북큐브 310,362 / YES24 200,510 / 그 밖 654곳 721,358 / NLK만 108,637. 8권 시험 받기 성공
+- 실제 받기: 지금 도는 full 수집이 끝난 뒤 `fetch-covers --fetch-only --workers 32`(수집 중이면 스스로 시작 안 함). 예상 4~6일, 약 20GB [dev 추정]. 결과 수치는 dev `docs/plan-feedback.md` "# 표지 받기 (2026-10-23 요청)" 절에 덧붙임
