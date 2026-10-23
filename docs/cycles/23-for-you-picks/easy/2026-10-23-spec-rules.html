@@ -1,0 +1,129 @@
+<title>사이클 23 명세 규칙</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;color-scheme:light}
+*{box-sizing:border-box}
+html,body{overflow-x:hidden;max-width:100%}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding-block:40px 90px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px;max-width:100%;overflow-x:auto}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+.changed{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:10px 14px;font-size:18px;margin:12px 0 0}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0;min-width:520px}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.bx{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:7px 12px;font-size:16px;text-align:center}
+.bx small{display:block;color:var(--muted);font-size:13px}
+.bx.hi{border-color:var(--accent);background:var(--accent-bg)}
+.bx.ok{border-color:var(--ok);background:var(--ok-bg)}
+.bx.dash{border-style:dashed;color:var(--muted)}
+.arr{color:var(--muted)}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 12px}
+.chip{display:inline-block;font-size:15px;font-weight:700;color:var(--warn);background:var(--warn-bg);border:1px solid var(--warn);border-radius:999px;padding:0 10px;margin-right:6px;line-height:1.6}
+.chip.done{color:var(--ok);background:var(--ok-bg);border-color:var(--ok)}
+.dec{margin:16px 0 0;padding:14px 16px;border:1px solid var(--line);border-radius:10px;background:var(--code-bg);display:flex;flex-direction:column;gap:10px}
+.dec .btns{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.dec button{font:inherit;font-size:17px;padding:6px 16px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer}
+.dec button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.dec button[aria-pressed="true"][data-c="승인"]{background:var(--ok-bg);border-color:var(--ok);color:var(--ok);font-weight:700}
+.dec button[aria-pressed="true"][data-c="미승인"]{background:var(--no-bg);border-color:var(--no);color:var(--no);font-weight:700}
+.dec button[aria-pressed="true"][data-c="기타"]{background:var(--accent-bg);border-color:var(--accent);color:var(--accent);font-weight:700}
+.dec textarea{font:inherit;font-size:17px;width:100%;min-height:64px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--text);resize:vertical}
+.dec .save{background:var(--accent);color:var(--card);border-color:var(--accent);font-weight:700}
+.dec .st{font-size:15px;color:var(--muted)}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:0 0 24px;font-size:17px}
+.bar b{font-variant-numeric:tabular-nums}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+</style>
+<main class="doc">
+<div class="bar" id="bar">불러오는 중</div>
+<p class="lead">명세를 쓰다 보니 정해야 할 규칙이 넷 나왔습니다.<br>각 항목을 고르고 저장해 주세요.</p>
+<p class="sub">범위 결정(2026-10-23)과 앞서 승인된 탭 화면·신호 점수·고르기 규칙 위에서, 명세에 적을 규칙만 묻습니다.</p>
+
+<div class="card item"><h2><span class="num">1</span>로그인한 사람도 "최근 본 책"을<br>브라우저가 들고 있게</h2>
+<p class="concl"><span class="chip" data-n="1">안 #1</span> 이번 사이클에서는 로그인 여부와 상관없이 <b>모든 사람의 "최근 본 책"을 그 브라우저가 30일 들고 있다가</b> 상위 3권 번호만 서버에 보냅니다. 서버는 회원 번호로 개인 추천을 계산하지 않습니다. 그래서 약관·처리방침 고치기와 "맞춤 추천 끄기" 설정이 이번에는 필요 없습니다.</p>
+<p><b>왜 다시 묻나.</b> 범위 결정 #2(승인)는 "로그인한 사람은 서버 기록(회원 번호)으로"였습니다. 그런데 회원 번호로 본 책을 모아 추천하면 개인정보위 작성지침상 "개인을 식별하여 행태정보를 처리"하는 것이라, 처리방침에 근거·항목·방법·목적·보유기간·<b>거부 방법</b>을 적어야 하고(작성지침 p.55), 거부 방법으로 회원 설정 "맞춤 추천 끄기"를 두는 것이 가장 단순합니다(<code>docs/research/ai-recommend/law.md</code> 1·6절). 앞서 이 일은 3단계로 미뤄 두었습니다(session-state 1-3절). 한편 개인을 식별하지 않고 행태정보를 처리하면 동의 없이 할 수 있다는 개인정보위 정책 방안(2024-01-31)이 있습니다.</p>
+<table><tr><th></th><th>브라우저가 들고 있기 (이 안)</th><th>로그인한 사람은 서버 기록 (범위 결정 #2 그대로)</th></tr>
+<tr><td>다른 기기</td><td>이어지지 않음</td><td>이어짐</td></tr>
+<tr><td>이번에 더 할 일</td><td>없음</td><td>약관에 맞춤 추천을 서비스 내용으로, 처리방침 항목, 마이페이지 "맞춤 추천 끄기"</td></tr>
+<tr><td>서버가 새로 모으는 것</td><td>없음 (기준 책 번호는 요청 때만 받음)</td><td>회원 번호가 붙은 기록으로 30일 계산</td></tr></table>
+<p class="changed">범위 결정 #2를 바꾸는 안입니다. 고르지 않으시면 #2 그대로 가고, 약관·처리방침·끄기 설정이 이번 범위에 들어옵니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">2</span>기본 목록: 여러 출처에 겹친 책 먼저,<br>그다음 세 출처를 한 권씩 번갈아, 40권</h2>
+<p class="concl"><span class="chip" data-n="2">안 #2</span> 기본 목록은 하루 한 번 만듭니다. ① 두 출처 이상에 나온 책을 먼저(겹친 출처 수가 많은 순) ② 그다음 교보 인기순 → 북튜버 → 추천목록 차례로 한 권씩 번갈아 채웁니다. 모두 40권까지이고, 보는 사람의 계획 도서관에 없는 책은 빼므로 사람마다 40권보다 적게 보일 수 있습니다.</p>
+<p class="ex">예: 어떤 책이 교보 인기순과 북튜버 두 곳에 함께 나오면 맨 앞에 옵니다. 추천목록에 있는 책은 카드에 "KAIST 추천목록에 있어요"처럼 그 목록 이름을 적습니다(범위의 확정 사항).</p>
+<p class="ex">각 출처 안의 차례: 교보 인기순은 사이트 순위, 북튜버는 최근 4주에 다룬 채널 수가 많은 순, 추천목록은 보유 도서관 수가 많은 순. 40권과 4주는 처음 값입니다.</p>
+<p class="alt">다른 선택: 출처마다 칸을 나눠 보이기("교보 인기" 줄, "유튜브 소개" 줄) — 짜임이 승인된 화면(맨 위 한 권 + 두 권씩)과 달라집니다. 숫자는 기타에 적어 주세요.</p>
+</div>
+
+<div class="card item"><h2><span class="num">3</span>"책 창 열기"는 책 화면과 추천도서 책 창 둘 다</h2>
+<p class="concl"><span class="chip" data-n="3">안 #3</span> 신호 점수의 "책 창 열기 1점"과 "10초 넘게 열어 둠 2점"은 책 화면(<code>/books/{번호}</code>)과 추천도서의 책 창 둘 다에서 셉니다. "도서관 클릭 3점"은 두 곳 모두에서 도서관을 누른 것입니다. 검색 결과 목록에서 바로 도서관을 누른 것은 세지 않습니다(책을 연 적이 없으므로).</p>
+<p class="alt">다른 선택: 책 화면만 — 추천도서에서 본 책이 빠집니다. 추천도서 책 창만 — 검색으로 본 책이 빠집니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">4</span>꼬리표는 카드에 2~3개만 보이고,<br>거르기는 이번에 하지 않음</h2>
+<p class="concl"><span class="chip" data-n="4">안 #4</span> 추천도서 목록 책에 붙인 꼬리표는 「나에게 맞는 책」 카드 아래에 작게 2~3개(예: "잔잔함 · 가족 · 한국 소설") 보입니다. 꼬리표를 눌러 거르기, 꼬리표로 비슷한 책 고르기는 이번에 하지 않습니다. 추천목록 책 창에도 같은 꼬리표를 보일지는 화면 단계에서 여쭙니다.</p>
+<p class="ex">꼬리표 사전은 Thema 1.6 한국어판을 뼈대로 분야·주제·독자 100~150개 + 느낌 15~20개(2026-10-23 결정, tag-vocabulary.md 3·4절). 책마다 Haiku가 사전 번호만 고르고, 근거 자료는 소개 원문·검색 결과 등으로 모읍니다(범위 결정 #1의 "따로 검색하든 뭐든 해서").</p>
+<p class="alt">다른 선택: 탭 위에 꼬리표 칩을 두고 눌러 거르기 — 꼬리표가 추천목록 책에만 있어 걸러진 목록이 비기 쉽습니다. 화면에 보이지 않고 추천 점수에만 쓰기 — 사용자가 꼬리표를 볼 수 없습니다.</p>
+</div>
+
+<p class="foot">원본: <code>docs/cycles/23-for-you-picks/scope.md</code>, <code>docs/research/ai-recommend/law.md</code>, <code>overview.md</code> 6-1절. 이 답을 받아 <code>spec.md</code>를 씁니다.</p>
+</main>
+
+<script>
+(function(){
+  const items=[...document.querySelectorAll('.chip')].map(ch=>{
+    const n=+ch.dataset.n; const box=ch.closest('.item');
+    const h=box.querySelector('h2'); const t=(h?h.textContent:'').replace(/^\s*\d+/,'').trim();
+    const d=document.createElement('div'); d.className='dec';
+    d.innerHTML='<div class="btns" role="group" aria-label="안 #'+n+' 결정">'+
+      ['승인','미승인','기타'].map(c=>'<button type="button" data-c="'+c+'" aria-pressed="false">'+c+'</button>').join('')+'</div>'+
+      '<textarea id="note-'+n+'" placeholder="덧붙일 말 (미승인 이유, 질문, 채널 이름 등)"></textarea>'+
+      '<div class="btns"><button type="button" class="save">저장</button><span class="st" aria-live="polite">아직 고르지 않았습니다</span></div>';
+    box.appendChild(d);
+    const st={n,title:t,chip:ch,el:d,pick:null};
+    d.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{st.pick=b.dataset.c;paint(st);d.querySelector('.st').textContent='"저장"을 눌러야 기록됩니다';});
+    d.querySelector('.save').onclick=()=>save(st);
+    return st;
+  });
+  const bar=document.getElementById('bar');
+  function paint(st){st.el.querySelectorAll('[data-c]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.c===st.pick)));}
+  let db=null; const saved={};
+  function count(){const k=Object.keys(saved).length;bar.innerHTML='저장한 것 <b>'+k+' / '+items.length+'</b>'+(db?' · 저장하면 Claude가 읽습니다':' · 저장 기능을 아직 불러오지 못했습니다(claude.ai에 로그인한 채로 열어 주세요)');}
+  count();
+  async function save(st){
+    const s=st.el.querySelector('.st');
+    if(!st.pick){s.textContent='먼저 승인·미승인·기타 중 하나를 고르세요';return;}
+    if(!db){s.textContent='저장할 수 없습니다. 로그인한 채로 claude.ai에서 열어 주세요';return;}
+    const note=st.el.querySelector('textarea').value.trim();
+    s.textContent='저장하는 중…';
+    try{await db.doc('choices/q'+st.n).set({n:st.n,title:st.title,choice:st.pick,note,savedAt:new Date().toISOString()});s.textContent='저장했습니다';}
+    catch(e){s.textContent='저장하지 못했습니다 ('+(e&&e.code||'오류')+'). 잠시 뒤 다시 눌러 주세요';}
+  }
+  (async()=>{
+    try{db=window.claude?await window.claude.use('db'):null;}catch(e){db=null;}
+    count(); if(!db) return;
+    db.collection('choices').onSnapshot(snap=>{
+      snap.docs.forEach(doc=>{const v=doc.data();const st=items.find(i=>i.n===v.n);if(!st)return;saved[v.n]=v;
+        if(document.activeElement!==st.el.querySelector('textarea')) st.el.querySelector('textarea').value=v.note||'';
+        st.pick=v.choice;paint(st);st.chip.classList.add('done');st.chip.textContent='안 #'+v.n+' · '+v.choice;
+        st.el.querySelector('.st').textContent='저장됨: '+v.choice+' ('+new Date(v.savedAt).toLocaleString('ko-KR')+')';});
+      count();
+    },()=>{});
+  })();
+})();
+</script>
