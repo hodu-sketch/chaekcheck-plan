@@ -10,4 +10,4 @@
 | 2026-10-23-for-you-tab-decisions-artifact.html | 위 6개 페이지의 외부용(claude.ai Artifact, 저장 버튼) 판 — https://claude.ai/artifact/UtNkYG5eC7dUFYU8HZPUCv | 2026-10-23-for-you-tab-decisions.html | 6 |
 | 2026-10-24-trend-source-decisions.html | "나에게 맞는 책" 기본 목록(트렌드)의 바깥 출처 — 교보 인기순 / 부산 API 등 | 사용자 기타 #5 (2026-10-24), popular-books/alternatives.md | 1 |
 | 2026-10-24-trend-source-decisions-2.html | 넓혀 찾은 뒤 다시 낸 제안: 정보나루 인기대출 + 부가기호로 아동·청소년 빼기, 먼저 한 번 시험 | 사용자 "좀 더 대상을 넓혀봐" (2026-10-24), alternatives.md 5절 | 1 |
-| 2026-10-23-natural-search-proposal.html | 말로 책 찾기(실시간 LLM, 표지·소개·찾은 이유): 찾는 방식, vast.ai/Haiku, LLM에 보내는 정보, 화면 자리 (claude.ai Artifact) | 사용자 요청 2026-10-23, overview.md·infra-cost.md | 4 |
+| 2026-10-23-natural-search-proposal.html | 말로 책 찾기(실시간 LLM, 표지·소개·찾은 이유): 찾는 방식, vast.ai/Haiku, LLM에 보내는 정보, 화면 자리 (claude.ai Artifact, 고르고 저장 — https://claude.ai/artifact/GTS6MLsWodDCeKLmP5dFhu) | 사용자 요청 2026-10-23, overview.md·infra-cost.md | 4 |

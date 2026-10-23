@@ -84,10 +84,25 @@ main{padding-block:40px 90px;padding-left:max(16px,env(safe-area-inset-left,0px)
 .bk .lib{color:var(--ok)}
 @media (max-width:760px){.mocks{grid-template-columns:minmax(0,1fr)}.res.two{grid-template-columns:1fr}}
 .opt{width:100%}
+.chip{display:inline-block;font-size:15px;font-weight:700;color:var(--warn);background:var(--warn-bg);border:1px solid var(--warn);border-radius:999px;padding:0 10px;margin-right:6px;line-height:1.6}
+.chip.done{color:var(--ok);background:var(--ok-bg);border-color:var(--ok)}
+.dec{margin:14px 0 0;padding:14px 16px;border:1px solid var(--line);border-radius:10px;background:var(--code-bg);display:flex;flex-direction:column;gap:10px}
+.dec .btns{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.dec button{font:inherit;font-size:16px;padding:6px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer;text-align:left}
+.dec button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.dec button[aria-pressed="true"]{background:var(--accent-bg);border-color:var(--accent);color:var(--accent);font-weight:700}
+.dec textarea{font:inherit;font-size:17px;width:100%;min-height:64px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--text);resize:vertical}
+.dec .save{background:var(--accent);color:var(--card);border-color:var(--accent);font-weight:700}
+.dec .st{font-size:15px;color:var(--muted)}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:0 0 24px;font-size:17px}
+.bar b{font-variant-numeric:tabular-nums}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.card{max-width:100%;overflow-x:auto}
 </style>
 <main class="doc">
+<div class="bar" id="bar">불러오는 중</div>
 <p class="lead">"이런 책 찾고 싶어"라고 쓰면 우리 DB에 있는 책 중에서 맞는 책 5~8권을 표지, 소개, 찾은 이유와 함께 보여 주는 기능의 제안입니다.</p>
-<p class="sub">아래 네 가지를 골라 주시면 됩니다. 원칙은 하나입니다. LLM이 책을 지어내지 않도록 <b>후보는 우리 DB에서 뽑고</b>, LLM은 후보 번호 중에서 고르고 이유만 씁니다. 표지, 제목, 저자는 LLM의 답이 아니라 DB에서 붙입니다. 이 페이지는 사이클 밖 제안이라 아직 아무것도 정해지지 않았습니다.</p>
+<p class="sub">아래 네 가지를 각 카드 맨 아래에서 고르고 "저장"을 눌러 주세요. 저장한 것은 Claude가 읽습니다. 원칙은 하나입니다. LLM이 책을 지어내지 않도록 <b>후보는 우리 DB에서 뽑고</b>, LLM은 후보 번호 중에서 고르고 이유만 씁니다. 표지, 제목, 저자는 LLM의 답이 아니라 DB에서 붙입니다. 이 페이지는 사이클 밖 제안이라 아직 아무것도 정해지지 않았습니다.</p>
 
 <div class="card">
 <h2>한 번 찾을 때 일어나는 일</h2>
@@ -143,7 +158,7 @@ main{padding-block:40px 90px;padding-left:max(16px,env(safe-area-inset-left,0px)
 <tr><td>(나) 두 번 호출: 꼬리표로 바꾸기 + 고르기·소개·이유</td><td>모은 꼬리표를 제대로 씀</td><td>느림. 출력이 길어 비용도 큼</td></tr>
 <tr><td>(다) 두 번 호출 + 소개는 미리: 실시간 LLM은 "찾은 이유"만 씀</td><td>출력이 짧아 빠름. 소개 글이 늘 같음</td><td>소개를 미리 만드는 일이 필요함. 이 일은 이미 정하신 Haiku 배치 문구와 같은 작업이라 따로 생기지 않음</td></tr>
 </table>
-<p class="prop">[안] 방식 (다): 꼬리표로 바꾸기 → DB 후보 30권 → LLM이 5~8권과 찾은 이유. 책 소개는 미리 만든 글을 씁니다.</p>
+<p class="prop"><span class="chip" data-n="1" data-title="찾는 방식" data-opts="(다) 두 번 호출 + 소개는 미리|(가) 한 번 호출|(나) 두 번 호출, 소개도 실시간|기타">[안] #1</span> 방식 (다): 꼬리표로 바꾸기 → DB 후보 30권 → LLM이 5~8권과 찾은 이유. 책 소개는 미리 만든 글을 씁니다.</p>
 <p class="alt">다른 선택: (가) 한 번 호출, (나) 두 번 호출하고 소개도 실시간.</p>
 </div>
 
@@ -157,7 +172,7 @@ main{padding-block:40px 90px;padding-left:max(16px,env(safe-area-inset-left,0px)
 <tr><td>멈출 때</td><td>장비 주인이 내리거나 주소가 바뀌면 이유 없이 보여 줌</td><td>Anthropic 장애 때만</td></tr>
 <tr><td>보안</td><td>vLLM의 <code>--api-key</code>는 일부 주소만 막는다고 공식 문서가 경고함. 우리 서버 주소만 들어오게 막아야 함. vast.ai 보안 FAQ에 "장비 주인이 데이터를 못 본다"는 문장은 없음</td><td>따로 할 일 적음</td></tr>
 </table>
-<p class="prop">[안] 실시간은 Claude Haiku 5.5 API로 시작하고, 하루 이용이 많아져 켜 두는 비용이 더 싸지면 vast.ai로 옮깁니다. vast.ai로 가더라도 서버는 OpenAI 호환 형식 하나로 부르게 만들어 주소만 바꾸면 되게 합니다.</p>
+<p class="prop"><span class="chip" data-n="2" data-title="실시간 LLM을 어디서" data-opts="Haiku API로 시작, 나중에 vast.ai|처음부터 vast.ai에 켜 두기|기타">[안] #2</span> 실시간은 Claude Haiku 5.5 API로 시작하고, 하루 이용이 많아져 켜 두는 비용이 더 싸지면 vast.ai로 옮깁니다. vast.ai로 가더라도 서버는 OpenAI 호환 형식 하나로 부르게 만들어 주소만 바꾸면 되게 합니다.</p>
 <p class="alt">다른 선택: 처음부터 vast.ai에 켜 두기. 내 LLM을 쓰고 프롬프트가 밖으로 나가지 않지만, 이용자가 적을 때도 한 달 $115 이상 들고, 내려가면 이유 없이 보여 줍니다. 이 선택은 2026-10-17 결정을 바꾸므로 ADR로 남깁니다.</p>
 <p class="ex">근거: vast.ai 시세와 보안 FAQ는 <code>infra-cost.md</code> 1절(2026-10-17 확인), Haiku 가격은 같은 문서 3절(https://platform.claude.com/docs/en/about-claude/pricing). vLLM의 OpenAI 호환 서버와 <code>--api-key</code> 경고: https://github.com/vllm-project/vllm/blob/main/docs/serving/online_serving/openai_compatible_server.md, JSON 형식 강제(<code>response_format</code> <code>json_schema</code>): https://github.com/vllm-project/vllm/blob/main/docs/features/structured_outputs.md (둘 다 2026-10-23 확인). 한 번에 드는 토큰 수는 재 보지 않은 가정입니다.</p>
 </div>
@@ -166,7 +181,7 @@ main{padding-block:40px 90px;padding-left:max(16px,env(safe-area-inset-left,0px)
 <h2><span class="num">3</span>LLM에 보내는 책 정보:<br>소개 원문은 보내지 않음</h2>
 <p class="concl">2026-10-23에 "책 소개 원문은 내 PC 수집 DB에만 저장, 서비스에는 올리지 않음"으로 정하셨습니다. 실시간 LLM은 운영 서버에서 부르므로 원문 대신 미리 만든 짧은 소개와 꼬리표를 보냅니다.</p>
 <p>LLM에 가는 것: 사용자가 쓴 문장, 후보 30권의 번호·제목·저자·꼬리표·미리 만든 소개 1~2문장.<br>가지 않는 것: 소개 원문, 회원 번호, 이용 기록, 내 도서관 목록.</p>
-<p class="prop">[안] 원문 대신 미리 만든 소개와 꼬리표만 보냅니다. 2026-10-23 결정을 그대로 지킵니다.</p>
+<p class="prop"><span class="chip" data-n="3" data-title="LLM에 보내는 책 정보" data-opts="원문은 보내지 않음 (미리 만든 소개 + 꼬리표)|원문 일부도 보냄|기타">[안] #3</span> 원문 대신 미리 만든 소개와 꼬리표만 보냅니다. 2026-10-23 결정을 그대로 지킵니다.</p>
 <p class="alt">다른 선택: 원문 일부를 운영 DB에 올려 LLM에 보내기. 이유가 더 정확해질 수 있지만 2026-10-23 결정을 바꾸고, 원문 저작권 검토(<code>law.md</code>)가 다시 필요합니다.</p>
 </div>
 
@@ -174,7 +189,7 @@ main{padding-block:40px 90px;padding-left:max(16px,env(safe-area-inset-left,0px)
 <h2><span class="num">4</span>화면 자리:<br>"나에게 맞는 책" 탭 맨 위 입력칸</h2>
 <p class="concl">이미 정하신 "나에게 맞는 책" 탭(추천도서 메뉴 맨 앞) 맨 위에 입력칸을 두고, 찾으면 그 아래 목록이 바뀝니다. AI 표시는 탭 맨 위 한 줄로 이미 정하셨으니 그 문구를 "책 소개와 찾은 이유는 AI가 썼어요"로 넓힙니다.</p>
 <p>"나에게 맞는 책" 탭은 폰에서 이유 줄을 빼기로 하셨습니다. 이 기능은 찾은 이유가 핵심이라 폰에서도 이유 한 줄을 보여 주는 것으로 제안합니다.</p>
-<p class="prop">[안] "나에게 맞는 책" 탭 맨 위 입력칸, 폰에서도 찾은 이유를 보여 줌, AI 표시는 탭 맨 위 한 줄.</p>
+<p class="prop"><span class="chip" data-n="4" data-title="화면 자리" data-opts="&quot;나에게 맞는 책&quot; 탭 맨 위 입력칸|첫 화면 검색창 옆 &quot;말로 찾기&quot; 단추|기타">[안] #4</span> "나에게 맞는 책" 탭 맨 위 입력칸, 폰에서도 찾은 이유를 보여 줌, AI 표시는 탭 맨 위 한 줄.</p>
 <p class="alt">다른 선택: 첫 화면 책 검색창 옆에 "말로 찾기" 단추. 더 눈에 띄지만, 제목을 찾는 검색과 섞여 어느 쪽 결과인지 헷갈릴 수 있습니다.</p>
 </div>
 
@@ -202,3 +217,49 @@ main{padding-block:40px 90px;padding-left:max(16px,env(safe-area-inset-left,0px)
 
 <p class="foot">바탕: 사용자 요청 (2026-10-23) "내가 모은 수집 데이터베이스로(도서,상세설명,태그) … 책 표지랑 같이 그의 요구에 맞는 여러 책을 찾아주고 싶은데 … vast.ai(내가 llm)랑 소통하도록 해서 … 책에 대한 간단한 설명과 찾은이유도 있어야 해". 근거 문서 <code>docs/research/ai-recommend/overview.md</code> (1절, 6-1절), <code>infra-cost.md</code>, <code>tag-vocabulary.md</code> 3절, <code>law.md</code>. 사이클 밖 제안이라 모듈·표·API는 정하지 않았습니다.</p>
 </main>
+
+<script>
+(function(){
+  const items=[...document.querySelectorAll('.chip')].map(ch=>{
+    const n=+ch.dataset.n, title=ch.dataset.title, opts=ch.dataset.opts.split('|');
+    const box=ch.closest('.card');
+    const d=document.createElement('div'); d.className='dec';
+    const g=document.createElement('div'); g.className='btns'; g.setAttribute('role','group'); g.setAttribute('aria-label',n+'번 '+title+' 고르기');
+    opts.forEach(c=>{const b=document.createElement('button');b.type='button';b.dataset.c=c;b.setAttribute('aria-pressed','false');b.textContent=c;g.appendChild(b);});
+    const ta=document.createElement('textarea'); ta.id='note-'+n; ta.placeholder='덧붙일 말 (기타를 고르셨다면 내용, 질문, 조건)';
+    const r=document.createElement('div'); r.className='btns';
+    const sv=document.createElement('button'); sv.type='button'; sv.className='save'; sv.textContent='저장';
+    const st=document.createElement('span'); st.className='st'; st.setAttribute('aria-live','polite'); st.textContent='아직 고르지 않았습니다';
+    r.append(sv,st); d.append(g,ta,r); box.appendChild(d);
+    const it={n,title,chip:ch,el:d,ta,st,pick:null};
+    g.querySelectorAll('button').forEach(b=>b.onclick=()=>{it.pick=b.dataset.c;paint(it);st.textContent='"저장"을 눌러야 기록됩니다';});
+    sv.onclick=()=>save(it);
+    return it;
+  });
+  const bar=document.getElementById('bar');
+  function paint(it){it.el.querySelectorAll('[data-c]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.c===it.pick)));}
+  let db=null; const saved={};
+  function count(){const k=Object.keys(saved).length;bar.innerHTML='고른 것 <b>'+k+' / '+items.length+'</b>'+(db?' · 저장하면 Claude가 읽습니다':' · 저장 기능을 아직 불러오지 못했습니다');}
+  count();
+  async function save(it){
+    if(!it.pick){it.st.textContent='먼저 하나를 고르세요';return;}
+    if(!db){it.st.textContent='저장할 수 없습니다. 로그인한 채로 claude.ai에서 열어 주세요';return;}
+    const note=it.ta.value.trim();
+    if(it.pick==='기타'&&!note){it.st.textContent='기타를 고르셨다면 덧붙일 말을 적어 주세요';return;}
+    it.st.textContent='저장하는 중…';
+    try{await db.doc('choices/q'+it.n).set({n:it.n,title:it.title,choice:it.pick,note,savedAt:new Date().toISOString()});it.st.textContent='저장했습니다';}
+    catch(e){it.st.textContent='저장하지 못했습니다 ('+(e&&e.code||'오류')+'). 잠시 뒤 다시 눌러 주세요';}
+  }
+  (async()=>{
+    try{db=window.claude&&await window.claude.use('db');}catch(e){db=null;}
+    count(); if(!db) return;
+    db.collection('choices').onSnapshot(snap=>{
+      snap.docs.forEach(doc=>{const v=doc.data();const it=items.find(i=>i.n===v.n);if(!it)return;saved[v.n]=v;
+        if(document.activeElement!==it.ta) it.ta.value=v.note||'';
+        it.pick=v.choice;paint(it);it.chip.classList.add('done');it.chip.textContent='#'+v.n+' · '+v.choice;
+        it.st.textContent='저장됨: '+v.choice+' ('+new Date(v.savedAt).toLocaleString('ko-KR')+')';});
+      count();
+    },()=>{});
+  })();
+})();
+</script>
