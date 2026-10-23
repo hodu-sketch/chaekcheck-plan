@@ -348,4 +348,3 @@
 - 책 꼬리표(Thema 한국어판 뼈대 + 느낌 축, Haiku 배치, 사전에서만 고름) — AI 추천(맞춤 탭) 사이클에서. 결정 `docs/research/ai-recommend/tag-vocabulary.md` 3절 (사용자 승인 2026-10-23)
 - → 사이클 24 (`docs/cycles/24-ai-book-search`, 2026-10-24; 로컬 LLM·vast.ai·튜닝·원문 대 메모 비교는 사이클 밖으로 남음) **말로 책 찾기 (AI 책 찾기, 실시간 LLM)** — 첫 화면 검색창 탭 "AI 책 찾기"(처음 열면 이 탭), 따로 된 결과 화면, 질문에 맞춘 글 실시간, Haiku 먼저·내 LLM(Ollama→vast.ai)도 부를 수 있게. 사용자 요청 2026-10-23, 결정 기록 `docs/research/ai-recommend/natural-search.md`, 시험 세트 `llm-test-set.md`. 표지 보이기는 위 "표지 받기" 줄의 권리 확인에 묶임
 - 로컬 LLM(Ollama, 노트북 qwen3:4b·8b) → vast.ai vLLM 연결, LoRA 튜닝 — 사이클 24에서 뺌, 사용자 "로컬 llm은 별개야" (2026-10-24). 시험 `docs/research/ai-recommend/local-llm-guide.md`, 서버에 붙일 때 2026-10-17 결정 3번(vast.ai 실시간 호출 안 함)을 바꾸는 ADR
-- AI 책 찾기 결과를 조금씩 흘려 보내기(스트리밍) — 사이클 24 비목표 (2026-10-24, `docs/cycles/24-ai-book-search/spec.md`; 이어서 묻기는 같은 날 24 범위로 옮김)
