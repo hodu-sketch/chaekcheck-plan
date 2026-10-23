@@ -119,38 +119,43 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .arrow{font-size:13px;color:var(--muted);margin:6px 0;text-align:center}
 .flowrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
 .flowrow .v-box{font-size:15px}
+.topline{font-size:11px;color:var(--muted);border-bottom:1px solid var(--line);padding:0 0 6px;margin:0 0 8px}
+.topline b{color:var(--accent)}
+.me{margin:6px 0 6px auto;max-width:75%;width:fit-content;background:var(--accent);color:var(--card);border-radius:12px 12px 2px 12px;padding:6px 10px;font-size:12px}
+.ai2{margin:6px 0;max-width:95%;background:var(--card);border:1px solid var(--line);border-radius:12px 12px 12px 2px;padding:8px}
+.lead2{font-size:12px;margin:0 0 6px;font-weight:500}
+.bk.ghost{min-height:34px;background:var(--code-bg);border-style:dashed}
+.qbox.bottom{margin:10px 0 0;border-top:1px solid var(--line);padding-top:8px}
 </style>
 <main class="doc">
 <div class="bar" id="bar">불러오는 중</div>
-<p class="lead">AI 책 찾기의 화면 흐름입니다. 화면은 첫 화면(바뀜)과 새 AI 결과 화면 두 개이고, 정하실 것이 네 개입니다.</p>
-<p class="sub">그림은 위치와 순서만 보여 줍니다. 색과 모양은 디자인이 아닙니다. 지금 첫 화면은 사이클 22 문서와 회고를 바탕으로 그렸고, dev 코드로는 맞춰 보지 않았습니다. 각 카드 맨 아래에서 고르고 "저장"을 눌러 주세요.</p>
+<p class="lead">AI 책 찾기 결과를 ChatGPT처럼 대화 모양으로 바꾸고, 질문을 이어서 할 수 있게 화면 흐름을 다시 그렸습니다. 정하실 것이 여섯 개입니다.</p>
+<p class="sub">적으신 말: "그리고 ai 책 검색칸 결과 ui는 마치 chatgpt처럼하고 질문을 연달아서 하는것이 가능했으면 해" (2026-10-24). 이어서 묻기는 범위에서 "제외"였는데 이번에 "포함"으로 옮겼습니다. 그림은 위치와 순서만 보여 주고, 지금 첫 화면은 dev 코드로 맞춰 보지 않았습니다. 각 카드 맨 아래에서 고르고 "저장"을 눌러 주세요.</p>
 
 <div class="card">
 <h2>화면 사이 이동</h2>
-<p class="concl">첫 화면에서 AI 책 찾기 탭(처음 열림)으로 찾으면 AI 결과 화면으로 넘어가고, 카드를 누르면 지금 책 화면으로 갑니다. 도서관에서 책 찾기 탭은 지금 검색 그대로입니다.</p>
+<p class="concl">첫 화면 AI 탭에서 찾으면 대화 화면이 열리고, 같은 화면 아래 입력칸으로 계속 물을 수 있습니다. 카드를 누르면 지금 책 화면으로 가고, 뒤로 오면 대화가 그대로 있습니다.</p>
 <pre class="mermaid">
 flowchart LR
-  A["첫 화면 · AI 책 찾기 탭"] -->|탭 누름| B["첫 화면 · 도서관에서 책 찾기 탭"]
-  B -->|탭 누름| A
-  A -->|찾기| L["AI 결과 · 로딩"]
-  L -->|성공| R["AI 결과"]
-  L -->|Haiku 실패| RN["AI 결과 · 글 없이"]
-  L -->|맞는 책 없음| R0["맞는 책 없음 + 예시 질문"]
-  L -->|횟수 초과| RL["잠시 뒤에 다시"]
-  L -->|하루 비용 상한| RP["오늘은 쉬어요"]
-  RP -->|도서관 탭으로| B
-  R -->|카드 누름| S3["책 화면"]
-  RN -->|카드 누름| S3
-  S3 -->|뒤로 가기| R
-  R -->|뒤로 가기| A
-  R0 -->|예시 질문| L
+  A["첫 화면 · AI 책 찾기 탭"] -->|탭| B["첫 화면 · 도서관 탭"]
+  B -->|탭| A
+  A -->|찾기| C["대화 화면 · 답 기다림"]
+  C -->|답 옴| D["답 말풍선 · 머리말 + 책 카드"]
+  C -->|못 찾음| D0["못 찾았어요 + 예시"]
+  C -->|제한 · 오류| DX["안내 말풍선"]
+  D -->|이어서 물음| C
+  D0 -->|이어서 물음| C
+  D -->|카드 누름| S3["책 화면"]
+  S3 -->|뒤로 가기| D
+  D -->|새 대화| E["빈 대화"]
+  E -->|물음| C
 </pre>
-<p class="cap">모든 상태가 AI 결과 화면 안에서 바뀌고, 책 화면은 지금 그대로입니다.</p>
+<p class="cap">한 대화 안에서 "질문 → 답"이 계속 반복됩니다.</p>
 </div>
 
 <div class="card">
 <h2><span class="num">1</span>첫 화면의 탭 두 개</h2>
-<p class="concl">검색창 위에 탭 두 개를 두고 AI 책 찾기가 왼쪽에서 처음 열립니다. AI 탭에는 안내 글과 예시 질문 칩 3개가 있고, 제목·저자를 고르는 상세검색과 ⚙은 보이지 않습니다. 찾을 도서관 줄과 그 아래 내용(KAIST 추천 책장 등)은 두 탭 모두 그대로입니다.</p>
+<p class="concl">검색창 위에 탭 두 개, AI 책 찾기가 왼쪽에서 처음 열립니다. AI 탭에는 안내 글과 예시 질문 칩 3개가 있고, 상세검색과 ⚙은 숨깁니다. 찾기를 누르면 그 질문이 대화 화면의 첫 말풍선이 됩니다.</p>
 <div class="mocks">
 <div class="dev"><p class="lbl">PC · 첫 화면</p>
 <div class="tabs"><span class="on">AI 책 찾기</span><span>도서관에서 책 찾기</span></div>
@@ -172,62 +177,92 @@ flowchart LR
 <div class="libres">내 도서관 칩</div>
 </div>
 </div>
-<p class="prop"><span class="chip" data-n="1" data-title="첫 화면 탭" data-opts="이대로|예시 칩 없이|AI 탭에도 상세검색 남김|기타">[안] #1</span> AI 탭 왼쪽·처음 열림, 안내 글 + 예시 질문 칩 3개, AI 탭에서는 상세검색·⚙을 숨깁니다. 탭을 오가도 각 탭의 입력 글은 남습니다.</p>
-<p class="alt">예시 질문 문구는 시험 세트(<code>llm-test-set.md</code>) 질문에서 고릅니다.</p>
+<p class="prop"><span class="chip" data-n="1" data-title="첫 화면 탭" data-opts="이대로|예시 칩 없이|기타">[안] #1</span> AI 탭 왼쪽·처음 열림, 안내 글 + 예시 질문 칩 3개, AI 탭에서는 상세검색·⚙을 숨깁니다.</p>
 </div>
 
 <div class="card">
-<h2><span class="num">2</span>AI 결과 화면의 짜임</h2>
-<p class="concl">맨 위에 질문이 든 입력칸과 AI 표시 한 줄, 그 아래 맨 위 한 권은 크게, 나머지는 두 권씩입니다(「나에게 맞는 책」과 같은 짜임). 폰은 큰 카드 아래로 한 줄에 한 권입니다. 책 화면에 갔다가 뒤로 오면 같은 결과·같은 자리로 돌아옵니다.</p>
+<h2><span class="num">2</span>대화 화면의 모양<br>(ChatGPT식)</h2>
+<p class="concl">내 질문은 오른쪽 말풍선, 답은 왼쪽에 머리말 한 줄과 책 카드로 쌓입니다. 입력칸은 화면 맨 아래에 붙어 있고, 맨 위에는 [새 대화]와 AI 표시 한 줄이 있습니다. 답의 머리말("잠들기 전에 읽기 좋은 과학책 5권이에요")도 Haiku가 씁니다.</p>
 <div class="mocks">
-<div class="dev"><p class="lbl">PC · AI 결과</p>
-<div class="qbox"><span>잠들기 전에 조금씩 읽을 과학책</span><i>다시 찾기</i></div>
-<p class="note">책 설명은 AI가 질문에 맞춰 썼어요. 실제 내용과 다를 수 있어요</p>
+<div class="dev"><p class="lbl">PC · 대화</p>
+<div class="topline"><b>[새 대화]</b> · 책 설명은 AI가 질문에 맞춰 썼어요 · 내 도서관: 서울 강남구</div>
+<div class="me">잠들기 전에 조금씩 읽을 과학책</div>
+<div class="ai2"><p class="lead2">잠들기 전에 읽기 좋은 과학책 5권이에요.</p>
 <div class="res">
-<div class="bk big"><span class="cv"></span><div><span class="t">책 A</span><br>저자 <span class="lib">· 내 도서관 3곳</span><span class="why">질문에 맞춘 글 2~3문장, 자르지 않음</span></div></div>
+<div class="bk big"><span class="cv"></span><div><span class="t">책 A</span><br>저자 <span class="lib">· 내 도서관 3곳</span><span class="why">질문에 맞춘 글 2~3문장</span></div></div>
 <div class="res two">
 <div class="bk"><span class="cv"></span><div><span class="t">책 B</span><span class="why">맞춘 글</span></div></div>
 <div class="bk"><span class="cv"></span><div><span class="t">책 C</span><span class="why">맞춘 글</span></div></div>
 </div></div></div>
+<div class="me">이 중에 소설만</div>
+<div class="ai2"><p class="lead2">책을 찾고 있어요…</p><div class="res two"><div class="bk ghost"></div><div class="bk ghost"></div></div></div>
+<div class="qbox bottom"><span>이어서 물어보세요. 예: 더 짧은 걸로</span><i>보내기</i></div>
+</div>
 <div class="dev"><p class="lbl">태블릿</p>
-<div class="qbox"><span>잠들기 전에…</span><i>다시</i></div>
-<div class="res">
-<div class="bk big"><span class="cv"></span><div><span class="t">책 A</span><span class="why">맞춘 글</span></div></div>
-<div class="res two">
-<div class="bk"><span class="cv"></span><div><span class="t">B</span></div></div>
-<div class="bk"><span class="cv"></span><div><span class="t">C</span></div></div>
-</div></div></div>
+<div class="topline"><b>[새 대화]</b> · AI가 썼어요</div>
+<div class="me">잠들기 전에 읽을 과학책</div>
+<div class="ai2"><p class="lead2">5권이에요.</p>
+<div class="res"><div class="bk big"><span class="cv"></span><div><span class="t">책 A</span><span class="why">맞춘 글</span></div></div>
+<div class="res two"><div class="bk"><span class="cv"></span><div><span class="t">B</span></div></div><div class="bk"><span class="cv"></span><div><span class="t">C</span></div></div></div></div></div>
+<div class="qbox bottom"><span>이어서 물어보세요</span><i>보내기</i></div>
+</div>
 <div class="dev"><p class="lbl">폰</p>
-<div class="qbox"><span>잠들기…</span><i>다시</i></div>
-<div class="res">
-<div class="bk big"><span class="cv"></span><div><span class="t">A</span><span class="why">맞춘 글</span></div></div>
-<div class="bk"><span class="cv"></span><div><span class="t">B</span><span class="why">맞춘 글</span></div></div>
-<div class="bk"><span class="cv"></span><div><span class="t">C</span><span class="why">맞춘 글</span></div></div>
-</div></div>
+<div class="topline"><b>[새 대화]</b> · AI</div>
+<div class="me">잠들기 전에…</div>
+<div class="ai2"><p class="lead2">5권이에요.</p>
+<div class="res"><div class="bk big"><span class="cv"></span><div><span class="t">A</span><span class="why">맞춘 글</span></div></div>
+<div class="bk"><span class="cv"></span><div><span class="t">B</span><span class="why">맞춘 글</span></div></div></div></div>
+<div class="qbox bottom"><span>이어서…</span><i>보내기</i></div>
 </div>
-<p class="prop"><span class="chip" data-n="2" data-title="결과 짜임" data-opts="이대로|모두 같은 크기 카드|기타">[안] #2</span> 큰 카드 1 + 두 권씩(폰은 한 권씩), 표지가 없으면 제목 글자 표지, 책 화면에서 뒤로 오면 같은 결과·자리.</p>
+</div>
+<p class="prop"><span class="chip" data-n="2" data-title="대화 모양" data-opts="이대로|머리말 없이 카드만|기타">[안] #2</span> 오른쪽 내 질문, 왼쪽 답(머리말 한 줄 + 큰 카드 1 + 두 권씩, 폰은 한 권씩), 아래 고정 입력칸, 맨 위 [새 대화]·AI 표시·내 도서관 요약.</p>
 </div>
 
 <div class="card">
-<h2><span class="num">3</span>기다리는 동안과<br>새로 고침</h2>
-<p class="concl">찾는 동안에는 "책을 찾고 있어요"와 회색 카드 틀 3개를 보여 주고, [다시 찾기]는 누를 수 없게 합니다. 결과 화면을 새로 고치면 질문이 남아 있지 않으므로 빈 입력칸만 보입니다.</p>
+<h2><span class="num">3</span>이어서 묻기의 규칙</h2>
+<p class="concl">서버는 대화를 저장하지 않습니다. 브라우저가 앞 대화(앞 질문과 그때 보여 준 책 번호)를 다음 질문과 함께 보내고, Haiku는 그걸 보고 "이 중에 소설만" 같은 말을 알아듣습니다. 범위에서 정한 "질문 글은 남기지 않음"을 지키는 방법입니다.</p>
 <table>
-<tr><td>로딩</td><td>"책을 찾고 있어요" + 회색 카드 틀 3개. 글은 다 쓰인 뒤 한 번에 나옴</td></tr>
-<tr><td>연결 오류</td><td>"연결이 원활하지 않아요" [다시 시도]</td></tr>
-<tr><td>새로 고침</td><td>빈 입력칸, 결과 없음, 따로 안내 없음</td></tr>
+<tr><th>규칙</th><th>처음 값</th><th>뜻</th></tr>
+<tr><td>Haiku에 보내는 앞 대화</td><td>최근 5번</td><td>길수록 문맥을 잘 알지만 입력이 늘어 비싸고 느려짐</td></tr>
+<tr><td>한 대화에서 물을 수 있는 수</td><td>20번</td><td>넘으면 "새 대화를 시작해 주세요"</td></tr>
+<tr><td>이미 보여 준 책</td><td>따로 묻지 않으면 다시 안 냄</td><td>"다른 책도"에 같은 책이 또 나오지 않게</td></tr>
+<tr><td>횟수·비용 제한</td><td>이어서 묻는 것도 똑같이 셈</td><td>1분 10번·하루 100번·하루 $2</td></tr>
 </table>
-<p class="prop"><span class="chip" data-n="3" data-title="로딩·새로 고침" data-opts="이대로|새로 고침 때 안내 한 줄|기타">[안] #3</span> 위 표대로 합니다. (이미 정한 상태: 글 없이, 맞는 책 없음, 횟수 초과, 하루 비용 상한 문구는 명세 그대로)</p>
-<p class="alt">다른 선택: 새로 고친 뒤 "새로 고치면 결과가 사라져요. 다시 찾아 주세요" 한 줄을 보여 주기.</p>
+<p class="prop"><span class="chip" data-n="3" data-title="이어서 묻기 규칙" data-opts="이 값으로|값을 바꾸고 싶음|기타">[안] #3</span> 브라우저가 앞 대화를 보내고 서버는 저장하지 않음, 앞 대화 최근 5번, 한 대화 20번, 본 책은 다시 안 냄.</p>
 </div>
 
 <div class="card">
-<h2><span class="num">4</span>결과 화면 주소와 번호</h2>
-<p class="concl">AI 결과 화면의 주소는 <code>/ai-search</code>로 하고, 문서 속 화면 번호는 S30으로 합니다. 사이클 23이 다른 브랜치에서 새 화면 번호를 쓸 수 있어 S18~S29는 비워 둡니다.</p>
-<p class="prop"><span class="chip" data-n="4" data-title="주소·번호" data-opts="/ai-search, S30|다른 주소|기타">[안] #4</span> 주소 <code>/ai-search</code>, 화면 번호 S30. 질문은 주소에 넣지 않습니다(이미 정함).</p>
+<h2><span class="num">4</span>새로 고치면 대화가<br>남아 있어야 하나</h2>
+<p class="concl">이 브라우저 탭 안에서는 새로 고쳐도 대화가 남고, 탭을 닫으면 사라지게 하는 것을 추천합니다. 대화는 사용자 브라우저에만 있고 서버에는 가지 않습니다.</p>
+<table class="opt">
+<tr><th>안</th><th>좋은 점</th><th>잃는 것</th></tr>
+<tr><td>(가) 새로 고치면 사라짐</td><td>가장 단순함</td><td>실수로 새로 고치면 대화가 다 없어짐</td></tr>
+<tr><td>(나) 이 탭 안에서는 남음, 탭을 닫으면 사라짐</td><td>새로 고침·책 화면 갔다 오기에 안전. 서버엔 안 감</td><td>같은 컴퓨터를 쓰는 사람이 그 탭을 열면 볼 수 있음</td></tr>
+<tr><td>(다) 브라우저를 닫아도 남음 (며칠)</td><td>다음에 와서 이어 봄</td><td>공용 컴퓨터에서 남이 볼 수 있음. 지울 방법을 따로 둬야 함</td></tr>
+</table>
+<p class="prop"><span class="chip" data-n="4" data-title="대화 보관" data-opts="(나) 이 탭 안에서는 남음|(가) 새로 고치면 사라짐|(다) 브라우저를 닫아도 남음|기타">[안] #4</span> (나) 대화는 이 브라우저 탭 안에서만 남고, 탭을 닫으면 사라집니다.</p>
 </div>
 
-<p class="foot">바탕: <code>docs/cycles/24-ai-book-search/flow.md</code>, <code>spec.md</code>. 지금 첫 화면: 사이클 22 <code>flow.md</code>, 22 회고(23 브랜치). 수용 기준 AC-1~12가 어느 화면에 있는지는 <code>flow.md</code> 끝 표.</p>
+<div class="card">
+<h2><span class="num">5</span>답이 나오는 방식:<br>한 번에 / 조금씩</h2>
+<p class="concl">ChatGPT는 글이 조금씩 써지며 나옵니다. 우리 답은 책 카드(번호)와 글이 함께 정해진 형식으로 와야 해서, 조금씩 흘리려면 일이 꽤 늘어납니다. 이번에는 기다리는 동안 "책을 찾고 있어요 → 설명을 쓰고 있어요"처럼 단계만 보여 주고 답은 한 번에 내는 것을 추천합니다.</p>
+<table class="opt">
+<tr><th>안</th><th>좋은 점</th><th>잃는 것</th></tr>
+<tr><td>(가) 단계 문구 + 답은 한 번에</td><td>만들기 쉬움. 후보 밖 책을 걸러낸 뒤 보여 줌</td><td>글이 써지는 모습은 없음</td></tr>
+<tr><td>(나) 카드 먼저, 글은 조금씩 (ChatGPT처럼)</td><td>더 빨라 보임</td><td>서버·화면 둘 다 일이 늘어남. 형식 검사를 다 끝내기 전에 글이 보임</td></tr>
+</table>
+<p class="prop"><span class="chip" data-n="5" data-title="답 나오는 방식" data-opts="(가) 단계 문구 + 한 번에|(나) 글이 조금씩|기타">[안] #5</span> (가) 기다리는 동안 단계 문구만 바꿔 보여 주고, 답은 한 번에 냅니다. 조금씩 흘리기는 백로그로.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">6</span>화면 주소와 번호</h2>
+<p class="concl">대화 화면 주소는 <code>/ai-search</code>, 문서 속 화면 번호는 S30입니다. 사이클 23이 새 번호를 쓸 수 있어 S18~S29는 비워 둡니다. 질문은 주소에 넣지 않습니다(이미 정함).</p>
+<p class="prop"><span class="chip" data-n="6" data-title="주소·번호" data-opts="/ai-search, S30|다른 주소|기타">[안] #6</span> 주소 <code>/ai-search</code>, 화면 번호 S30.</p>
+</div>
+
+<p class="foot">바탕: <code>docs/cycles/24-ai-book-search/flow.md</code>(대화 모양으로 고침), <code>spec.md</code> R2-0·R11(새로 더함), <code>scope.md</code> 포함 8. 이 페이지에서 처음 나온 것: 답 머리말, 이어서 묻기 값, 대화 보관 방식, 답 나오는 방식.</p>
 </main>
+
 
 
 
