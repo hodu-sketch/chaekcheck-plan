@@ -12,3 +12,4 @@
 | 2026-10-24-trend-source-decisions-2.html | 넓혀 찾은 뒤 다시 낸 제안: 정보나루 인기대출 + 부가기호로 아동·청소년 빼기, 먼저 한 번 시험 | 사용자 "좀 더 대상을 넓혀봐" (2026-10-24), alternatives.md 5절 | 1 |
 | 2026-10-23-natural-search-proposal.html | 말로 책 찾기(실시간 LLM, 표지·소개·찾은 이유): 찾는 방식, vast.ai/Haiku, LLM에 보내는 정보, 화면 자리 (claude.ai Artifact, 고르고 저장 — https://claude.ai/artifact/GTS6MLsWodDCeKLmP5dFhu) | 사용자 요청 2026-10-23, overview.md·infra-cost.md | 4 |
 | 2026-10-23-natural-search-proposal-2.html | 말로 책 찾기 2차: 1차 기타 4개에 답(소개 실시간?, 내 LLM vs Haiku·튜닝, 원문 보내기, 첫 화면 AI 칸) (claude.ai Artifact, 고르고 저장 — https://claude.ai/artifact/CjbVj9WsZojzMaHkYNxwb4) | 1차 저장 내용 2026-10-23 | 4 |
+| 2026-10-23-natural-search-proposal-3.html | 말로 책 찾기 3차: 정해진 것(질문 맞춤 글 실시간, Haiku 먼저 + 둘 다), 로컬 LLM 시작 순서, 원문 vs 메모 품질, 첫 화면 탭 두 개 (claude.ai Artifact, 고르고 저장 — https://claude.ai/artifact/4YXxsqH5d923JveU3hRiAL) | 2차 저장 내용 2026-10-23 | 3 |

@@ -41,3 +41,24 @@
 | 8B 모델과 Haiku의 한국어 이유 품질 | 프로토타입 (같은 질문 표본 비교) |
 | Haiku를 우리가 직접 튜닝할 수 있는지 | 공식 문서 확인 |
 | 내용 메모의 저작권 판단 | 사용자에게 질문 (법률 검토 여부) |
+
+## 6. 2차 응답 (2026-10-23)
+
+| # | 사용자 | 상태 |
+|---|---|---|
+| 1 | "(나) 질문에 맞춘 글 한 덩어리를 실시간" 선택 | [확정] 카드 글은 질문에 맞춘 2~3문장을 실시간으로 씀(소개·이유를 나누지 않음). "나에게 맞는 책" 탭의 미리 만든 소개는 그대로 |
+| 2 | 기타: "일단 둘 다 되도록 해주고, haiku로 먼저 하고 병렬적으로 llm 다루는 것 좀 알려줘 vast.ai이전에 먼저 내 로컬 컴퓨터에 간단한 모델 돌려보고 싶어" | [확정] 서버는 Haiku(Anthropic Messages API)와 내 LLM(OpenAI 호환: Ollama → vast.ai vLLM)을 둘 다 부를 수 있게, Haiku로 먼저. 로컬 시작 순서는 3차 [안] #2 |
+| 3 | 기타: "퀄리티 측면에서 어떤 게 나아? 소개글을 메모로 만들어서 올린다 vs llm이 다 한다" | 3차 [안] #3: PC에서 같은 질문 20개로 원문·메모 비교 뒤 결정 |
+| 4 | 기타: "나는 llm검색을 메인 창에 두고 싶었는데... 그리고 llm검색은 별도의 창으로 두고.." | 3차 [안] #4: 첫 화면 검색창 탭 두 개(처음은 도서관), AI 결과는 따로 된 화면 |
+
+- 3차 결정 페이지: [easy/2026-10-23-natural-search-proposal-3.html](easy/2026-10-23-natural-search-proposal-3.html) (https://claude.ai/artifact/4YXxsqH5d923JveU3hRiAL)
+- 내 LLM(vast.ai)을 실시간으로 부르게 되는 때 2026-10-17 결정 3번이 바뀜 → 그 사이클에서 ADR. Haiku 실시간 호출은 `overview.md` 1절 "자연어 요청 해석(나중) Claude Haiku 온라인 호출"과 같은 방향
+
+## 7. 3차에서 확인한 외부 사실 (2026-10-23, GitHub 원문)
+
+- Ollama: Windows 기본 프로그램, NVIDIA·AMD 지원, Windows 10 22H2 이상, NVIDIA 드라이버 551.61 이상, 설치 4GB 이상 [확정] https://github.com/ollama/ollama/blob/main/docs/windows.mdx
+- Ollama OpenAI 호환 `http://localhost:11434/v1/chat/completions`, `response_format` 지원 표시 [확정] https://github.com/ollama/ollama/blob/main/docs/api/openai-compatibility.mdx ; 기본 바인드 127.0.0.1:11434 [확정] https://github.com/ollama/ollama/blob/main/docs/faq.mdx
+- vLLM "does not support Windows natively" (WSL 필요) [확정] https://github.com/vllm-project/vllm/blob/main/docs/getting_started/installation/README.md
+- Anthropic OpenAI SDK 호환: "primarily intended to test and compare model capabilities, and is not considered a long-term or production-ready solution" [확정] https://platform.claude.com/docs/en/api/openai-sdk
+- Ollama 모델 이름(크기 표기): ollama.com이 이 환경에서 막혀 [확인 필요: 공식 문서 확인]
+- 사용자 PC 사양(그래픽카드·메모리) [확인 필요: 사용자에게 질문]
