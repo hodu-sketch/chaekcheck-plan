@@ -24,7 +24,7 @@
 
 | 바뀐 것 | 원래 설계 | 이유 (사용자 말) |
 |---|---|---|
-| 폰 지역 고르기를 시도·시군구 셀렉트로, 이어서 PC 격자도 셀렉트로. `RegionGrid` 큰 격자와 D11 크기 숫자는 쓰지 않음 (`e2919f0`, `abcd1e0`) | `RegionGrid` 격자, 글자 16px·칸 40px (ADR-0137, D11) | "폰에서 지역선택은 셀렉트박스로바꿔줘", "pc판 지역 고르는 것도 모바일처럼 바꾸고" (2026-10-19) |
+| 폰 지역 고르기를 시도·시군구 셀렉트로, 이어서 PC 격자도 셀렉트로. 큰 격자와 D11 크기 숫자는 쓰지 않음 (`e2919f0`, `abcd1e0`). 부품 파일 `RegionGrid.tsx`(안의 `RegionSelect`)·`LibraryScopeLine`·`SaveHint`는 남아 쓰임 | `RegionGrid` 격자, 글자 16px·칸 40px (ADR-0137, D11) | "폰에서 지역선택은 셀렉트박스로바꿔줘", "pc판 지역 고르는 것도 모바일처럼 바꾸고" (2026-10-19) |
 | PC 떠 있는 상자를 가운데 모달로 (`cb7f7a1`) | 검색창 아래 떠 있는 상자 (R1-4) | "버튼 누르면 모달 창이 나와서 거기에서 고르도록 해줘" (10-19) |
 | 접힌 줄: "내 도서관:"·곳 수·▾를 빼고 「서울 강서구 거주 · 서울 강남구 재직」 | "내 도서관: … · N곳 ▾" (R2, R3-3) | "이거 내 도서관: 이거빼줘", "아래방향 화살표 빼줘" (10-19) |
 | 「N곳」은 정확한 수를 알 때만. 바로 보기 `targets.libraries`는 결과 책을 가진 도서관만 담아서 `planCount`는 직접 찾기에서만 저장 | 첫 묶음 길이로 `planCount` 갱신 (3단계 1) | 사용자가 "수 없이 두기"를 고름 (10-19) |
@@ -58,7 +58,7 @@
 
 사이클 22는 "웹만"(AC-18)이었지만 그 뒤 판에서 서버 변경이 들어갔습니다. 세부와 `docs/current/` 반영은 이 회고와 같은 날 정리(사용자 2026-10-23 "전부 지금 맞춤").
 
-- ★ `GET /api/v1/regions/guess`: 방문자 IP로 시도를 추정(DB-IP Lite, CC BY 4.0), IP는 저장 안 함. 처리방침 2판(2026-10-20 시행)·공지 2번과 함께 나감 → ADR-0140
+- ★ `GET /api/v1/regions/guess`: 방문자 IP(`X-Real-IP`)로 시도를 추정(DB-IP Lite, CC BY 4.0), IP는 저장 안 함. 처리방침 2판(2026-10-20 시행, `sitecontent-003-privacy-policy-v2`)과 함께 나감. **v1.9.8(`e509551`)부터 웹이 부르지 않음**(예시 카드가 KAIST 책장으로 바뀜), 서버 길과 처리방침 문구는 남음 → ADR-0140
 - 예시 자료 `web/src/features/search/startExamples.ts`(233곳, `scripts/web/gen_start_examples.py`가 공개 도서관 목록 API로 만듦)
 - ★ `library.visit_outside_region`(library-017~019): 유효 방문 = `visit_required || (visit_outside_region && 지역 불일치)`, 누구나 가입 재검증 `library-021` → ADR-0141
 - ★ 추천목록 AI 요약 `PickBook.aiSummary`(v1.5.0) → ADR-0142
@@ -77,7 +77,7 @@
 - 이 프로젝트의 1rem은 약 19.6px (40rem 상자 ≈ 784px)
 - 결과 응답에 도서관 시군구가 없어 꼬리표 지역 이름은 검색한 지역이 한 시군구(또는 한 시도)일 때만 붙음
 - AI 요약 때문에 KAIST 탭 응답이 약 1.1MB(gzip 전)
-- 운영: 반영 때 힙 512MB에서 OOM → 1GB. 디스크 정리로 여유 7.2GB → 12GB
+- 운영: 반영 때 힙 512MB에서 OOM이 났다는 기록(plan-feedback)이 있으나 지금 운영 compose 값은 `-Xmx640m -XX:+ExitOnOutOfMemoryError` [확인 필요: 1GB로 돌린 것이 반영 명령만인지]. 디스크 정리로 여유 7.2GB → 12GB
 - 카카오 썸네일은 오래 저장할 수 없어 표지에 쓰지 않음. 그런데 AI 요약 입력에는 카카오 책 검색 `contents`를 씀 [확인 필요: 카카오 약관]
 
 ## dev가 plan에 묻거나 결정을 기다리는 것

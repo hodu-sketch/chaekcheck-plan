@@ -16,9 +16,9 @@
 사이클 15·16·18 회고 (2026-10-15): 구현됨으로 바꾸고 실제 이름·값을 맞춤. 15 `usagelog`·16 `sitecontent` 구현됨, 18은 A1·A2·B 구현됨(dev main `a0e438a`), C(운영 반영)는 `docs/backlog.md` "사이클 18 C"로 옮김 (사용자: "운영 반영은 백로그랑 CYCLE19 PLAN에게 알려주고 이거 마무리하자", 2026-10-15). 근거 `docs/cycles/15-usage-log/retro.md`, `docs/cycles/16-notices-and-policies/retro.md`, `docs/cycles/18-empty-library-holdings/retro.md`, dev `plan-feedback.md` "# 사이클 15"·"# 사이클 16"·"# 사이클 18".
 사이클 19 cycle-close (2026-10-15): 저자·제목 표기 정리 — 설계됨(미구현, 사이클 19). ADR-0113~0117. REST 모양 변경 없음, `GET /api/v1/books` 저자 검색어에 기호 떼기, 책 묶음·`author_display` 값만 바뀜. 근거 `docs/cycles/19-author-angle-brackets/design-delta.md` "API".
 사이클 21 cycle-close (2026-10-16): 추천도서 세 목록 — 설계됨(미구현, 사이클 21). ADR-0126. `GET /api/v1/picks/{listKey}`(`librarian`·`leedongjin`·`snu100`)가 `GET /api/v1/picks`를 대신하고 그 주소는 지움, 새 오류 코드 `list_not_found`, 책 칸 `recomNo` → `id` 등, 표지 주소 그대로, 사용 알림 `picks_*`에 `list` 필수. 근거 `docs/cycles/21-recommended-books/design-delta.md` "API".
-사이클 22 cycle-close (2026-10-18): 첫 화면 사용성 — 설계됨(미구현, 사이클 22), **웹만 바뀜·API 변경 없음**. 웹이 보내는 `scope`는 늘 `joinable`이고 결과 안 [전국에서 찾기]·[전국에서 더 찾기]·상세검색 "☐ 전국에서 찾기"일 때만 `all`(그 검색만). `GET /api/v1/libraries`(지역 없이)는 직접 추가 이름·이름 찾기에 필요할 때만 한 번. 이용 기록 새 이벤트 없음. ADR-0135~0137. 근거 `docs/cycles/22-first-screen-usability/design-delta.md`.
+사이클 22 cycle-close (2026-10-18): 첫 화면 사용성 — 구현됨 v1.1.0, 뒤에 화면이 많이 바뀜(사이클 22 회고 2026-10-23 — 지금 모습은 이 문서 끝 "사이클 22 이후 dev 변경" 절과 `docs/cycles/22-first-screen-usability/retro.md`), **웹만 바뀜·API 변경 없음**. 웹이 보내는 `scope`는 늘 `joinable`이고 결과 안 [전국에서 찾기]·[전국에서 더 찾기]·상세검색 "☐ 전국에서 찾기"일 때만 `all`(그 검색만). `GET /api/v1/libraries`(지역 없이)는 직접 추가 이름·이름 찾기에 필요할 때만 한 번. 이용 기록 새 이벤트 없음. ADR-0135~0137. 근거 `docs/cycles/22-first-screen-usability/design-delta.md`.
 
-사이클 20 cycle-close (2026-10-17): 조회 상태 신호와 브라우저 확장 조회 — 설계됨(미구현, 사이클 20). ADR-0118·0119·0131·0132. 새 요청 `GET /api/v1/lookup-status`(1단계), 확장 모드 계획·올리기·닫기 `POST /api/v1/lookup-plans/*`(2단계), 새 오류 코드 `invalid_plan`·`client_ip_changed`(2단계)·`invalid_client_key`·`lookup_ip_limited`(3단계)·`payload_too_large`, 결과 10(`/books` `pageSize` 기본 10, 묶음 `rowLimit` 10), 동시 검색 상한 40, 도서관 응답 본문 1MB·gzip, `stopReason` `CLIENT_GONE`. 기존 요청 모양은 그대로. 근거 `docs/cycles/20-lookup-status-and-extension/design-delta.md` "API"·"외부 연동". 이름은 따로 적지 않으면 [안].
+사이클 20 cycle-close (2026-10-17): 조회 상태 신호와 브라우저 확장 조회 — 설계됨, 1단계 일부만 구현(v1.4.0: `GET /api/v1/lookup-status`·`HostQueueBoard`·`ParseSlots`·`BodyLimit`·`usagelog-004`; 웹 머리말 상태 불은 지움, `extension/` 없음 — ADR-0146, 2026-10-23 dev main 확인. 사이클 20 회고 전). ADR-0118·0119·0131·0132. 새 요청 `GET /api/v1/lookup-status`(1단계), 확장 모드 계획·올리기·닫기 `POST /api/v1/lookup-plans/*`(2단계), 새 오류 코드 `invalid_plan`·`client_ip_changed`(2단계)·`invalid_client_key`·`lookup_ip_limited`(3단계)·`payload_too_large`, 결과 10(`/books` `pageSize` 기본 10, 묶음 `rowLimit` 10), 동시 검색 상한 40, 도서관 응답 본문 1MB·gzip, `stopReason` `CLIENT_GONE`. 기존 요청 모양은 그대로. 근거 `docs/cycles/20-lookup-status-and-extension/design-delta.md` "API"·"외부 연동". 이름은 따로 적지 않으면 [안].
 사이클 21 회고 (2026-10-17): `GET /api/v1/picks/{listKey}`·`list_not_found`·응답 칸(`list`, `id`, `listTitle`, `yearBook`, `videoId`, `tocNo`)·사용 알림 `list` 구현됨, 이름·칸이 설계 그대로 (dev `PicksController.java` 57·138~158행, main `836bd7b`). 웹은 `listTitle`을 받지만 화면에 쓰지 않음(사용자, 2026-10-17). 추천도서 책 창은 같은 대출 현황 스트림을 `holdingLimit` 3 → 6 → 10 → 20으로 넓혀 다시 부름(새 API 없음). 근거 `docs/cycles/21-recommended-books/retro.md`.
 사이클 19 회고 (2026-10-18): 책 검색 저자 칸 기호 떼기 구현됨 (dev main `1c129e8`, 운영 역할 DB 반영 기록 12번). REST 모양 변경 없음 그대로. 근거 `docs/cycles/19-author-angle-brackets/retro.md`, dev `plan-feedback.md` "# 사이클 19".
 
@@ -115,7 +115,7 @@
 - 사용 알림 예: `{"type":"picks_list_view","list":"snu100","category":"korean_lit"}`
 - 위 값(번호·영상 ID)은 예시 값
 
-## 조회 상태와 확장 모드 계획 (`availability`) — 설계됨(미구현, 사이클 20)
+## 조회 상태와 확장 모드 계획 (`availability`) — 설계됨, 1단계 일부만 구현(v1.4.0: `GET /api/v1/lookup-status`·`HostQueueBoard`·`ParseSlots`·`BodyLimit`·`usagelog-004`; 웹 머리말 상태 불은 지움, `extension/` 없음 — ADR-0146, 2026-10-23 dev main 확인. 사이클 20 회고 전)
 
 근거 `docs/cycles/20-lookup-status-and-extension/design-delta.md` "API"·"외부 연동"·"개발 단계", ADR-0118·0119·0131·0132. 괄호 = dev 단계. 흐름은 `flows.md` 흐름 49~51.
 
@@ -484,7 +484,7 @@
 | `library_not_found` | 404 | 더 보기 — 없거나 꺼진 도서관. 다음 묶음에서는 그 도서관만 `library-failed`. 사이클 06(구현됨 (사이클 06)): `PUT /api/v1/me/libraries/{libraryId}` — 없음·꺼짐·숫자가 아닌 id, `DELETE /api/v1/me/libraries/{libraryId}` — 숫자가 아닌 id |
 | `library_import_not_empty` | 409 | 사이클 07 (구현됨 (사이클 07)): `POST /api/v1/me/library-imports` — 계정에 이미 직접 추가한 도서관이 있음 [확정] (dev 구현 확인, 2026-10-05) |
 | `too_many_requests` | 429 | 사이클 07 (구현됨 (사이클 07)): nginx가 붙임(앱이 아님). 도서관을 부르는 API(검색·소장 스트림 4개, `/api/v1/availability/`)에서 IP별 `limit_req`·`limit_conn` 한도를 넘음. `Retry-After: 2` |
-| `server_busy` | 503 | 사이클 07 (구현됨 (사이클 07)): 묶음 스트림(묶음 실행기 `BatchRunner`를 쓰는 스트림)과 도서관별 더 보기 — 동시 검색 `max-concurrent-searches`(20 [안])이 다 참, 줄 세우지 않음. 사이클 08: `Retry-After: 5` [확정] (사용자 승인, 2026-10-11) — 구현됨 (사이클 08). 사이클 20 — 설계됨(미구현, 사이클 20): 상한 40 [확정] (전반 점검 #13), 화면은 받자마자 상태 점 빨강; 확장 모드 올리기(`/api/v1/lookup-plans/{planId}/items/{itemId}`)에서 해석 자리 8을 2초 못 얻음(2단계), 계획 보관함 가득이면 계획 요청 503(2단계) |
+| `server_busy` | 503 | 사이클 07 (구현됨 (사이클 07)): 묶음 스트림(묶음 실행기 `BatchRunner`를 쓰는 스트림)과 도서관별 더 보기 — 동시 검색 `max-concurrent-searches`(20 [안])이 다 참, 줄 세우지 않음. 사이클 08: `Retry-After: 5` [확정] (사용자 승인, 2026-10-11) — 구현됨 (사이클 08). 사이클 20 — 설계됨, 1단계 일부만 구현(v1.4.0: `GET /api/v1/lookup-status`·`HostQueueBoard`·`ParseSlots`·`BodyLimit`·`usagelog-004`; 웹 머리말 상태 불은 지움, `extension/` 없음 — ADR-0146, 2026-10-23 dev main 확인. 사이클 20 회고 전): 상한 40 [확정] (전반 점검 #13), 화면은 받자마자 상태 점 빨강; 확장 모드 올리기(`/api/v1/lookup-plans/{planId}/items/{itemId}`)에서 해석 자리 8을 2초 못 얻음(2단계), 계획 보관함 가득이면 계획 요청 503(2단계) |
 | `invalid_plan` | 400 | 사이클 20 — 설계됨(미구현, 사이클 20, 2단계): `/api/v1/lookup-plans/{planId}/items/{itemId}`·`/close` — 계획 없음·만료·지워짐·쪽 번호 없음·이미 받음·계획을 만든 번호와 다름·Origin 다름. 화면은 남은 줄을 「확인하지 못한 도서관」으로, 오류 화면 없음. 거절 기록 `invalid_plan` [확정] (설계 결정 #6) |
 | `client_ip_changed` | 400 | 사이클 20 — 설계됨(미구현, 사이클 20, 2단계): 올리기·닫기·`replaces` — 2단계는 계획을 만든 IP와, 3단계는 번호를 받은 IP와 지금 IP(/64)가 다름(폰 회선 바뀜). 화면이 남은 도서관만 조용히 다시 계획, 잠금에 안 셈 [확정] (검토 #32, 전반 점검 #1), 이름 [안] |
 | `invalid_client_key` | 400 | 사이클 20 — 설계됨(미구현, 사이클 20, 3단계): 올리기·닫기 — 번호 쿠키 없음·장부에 없음(서버 재시작·장부에서 밀려남 포함). 화면이 새 번호를 받고 남은 도서관만 다시 계획 [확정] (검토 #32, 전반 점검 #10), 이름 [안] |
@@ -513,3 +513,18 @@
 | `internal_error` | 5xx | 예상하지 못한 서버 오류(500)와 모듈이 `code`를 붙이지 않은 5xx. 사이클 13(구현됨 (사이클 13, 회고 2026-10-14)): `GET /api/v1/join-surveys/latest`의 유일한 오류 |
 
 `not_found`부터 7개는 dev `ApiExceptionHandler`가 붙입니다. 모듈이 `code`를 붙이지 않은 오류에만 HTTP 상태로 골라 붙입니다(2026-09-27 코드 확인).
+
+## 사이클 22 이후 dev 변경 (사후 정리, 2026-10-23)
+
+사이클 22 회고 때 dev main `d3c2696`(v1.9.10)을 읽고 정리함. 모두 [확정] (dev 구현 확인, 2026-10-23). 결정 기록은 ADR-0140~0146(사후 기록), 화면이 바뀐 이유는 `docs/cycles/22-first-screen-usability/retro.md`.
+
+| 주소 | 내용 | ADR |
+|---|---|---|
+| `GET /api/v1/regions/guess` | `{"sido": "부산" \| null}`, `Cache-Control: no-store`, `X-Real-IP`로 시·도 추정, 저장 안 함. **v1.9.8부터 웹이 부르지 않음** | 0140 |
+| `GET /api/v1/picks/{listKey}` | `listKey` = `librarian`·`leedongjin`·`snu100`·`kaist`·`nobel`, 그 밖 404 `list_not_found`. 응답 `{list, fetchedAt, categories:[{code, name, books:[{id, category, title, listTitle, coverUrl, bookId, available, recommendedMonth, yearBook, videoId, tocNo, aiSummary}]}]}`. 한 목록 안 같은 책 한 번. Cache-Control 따로 없음 | 0142·0143 |
+| `GET /api/v1/picks/shelf` | `{list: "kaist", books:[…위 책 모양]}`, `no-store`. 분야마다 1권(누구나 가입 도서관이 가진 책, 표지 있음, 보유 수 상위 10권 중 무작위) | 0143 |
+| `GET /api/v1/picks/covers/{id}` | 사서추천 표지만, `public, max-age=2592000, immutable` | 0144 |
+| `/covers/<sha1>.jpg` | nginx 정적 파일(API 아님), `public, max-age=604800` | 0144 |
+| 검색 스트림 `targets.libraries[]`, `GET /api/v1/libraries` | 칸 `visitRequired`(서버 계산 실효값), `visitOutsideRegion`(저장값) | 0141 |
+| `GET /api/v1/lookup-status` | `{slots, inUse, level(GREEN\|YELLOW\|RED\|GRAY), reason(NONE\|VENDOR_PAUSED\|NO_LANE\|DB_ERROR), queuedLibraryIds, serverTime}`, `no-cache`. 웹은 지금 부르지 않음(상태 불 지움) | 0146 |
+| 책 화면 요청 헤더 `X-Visit-Key`, 사용 알림 본문 `visitKey` | 형식이 틀리면 NULL로 저장 | 0134 |

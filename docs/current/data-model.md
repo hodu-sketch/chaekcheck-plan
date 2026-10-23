@@ -17,7 +17,7 @@
 사이클 15·16·18 회고 (2026-10-15): 구현됨으로 바꾸고 실제 이름·값을 맞춤. 15 `usagelog`·16 `sitecontent` 구현됨, 18은 A1·A2·B 구현됨(dev main `a0e438a`), C(운영 반영)는 `docs/backlog.md` "사이클 18 C"로 옮김 (사용자: "운영 반영은 백로그랑 CYCLE19 PLAN에게 알려주고 이거 마무리하자", 2026-10-15). 근거 `docs/cycles/15-usage-log/retro.md`, `docs/cycles/16-notices-and-policies/retro.md`, `docs/cycles/18-empty-library-holdings/retro.md`, dev `plan-feedback.md` "# 사이클 15"·"# 사이클 16"·"# 사이클 18".
 사이클 19 cycle-close (2026-10-15): 저자·제목 표기 정리 — 설계됨(미구현, 사이클 19). ADR-0113~0117. `catalog` 표·칸 변경 없음(값의 뜻만: `book.author_display`, `book_contributor`, 수집 11·12·15의 `holding.author_raw`·`publisher_raw`), `usagelog.library_response_daily.cached_count` 새 칸(`usagelog/002`), dev 규칙 파일 `supplier_families.tsv`·`author_publisher_swapped.tsv`와 가져오기 설정 `rules-dir`. 근거 `docs/cycles/19-author-angle-brackets/design-delta.md` "데이터".
 사이클 21 cycle-close (2026-10-16): 추천도서 세 목록 — 설계됨(미구현, 사이클 21). ADR-0122~0126. 스키마 `picks`에 새 표 `list_field`·`list_book`, `pick`은 줄을 `list_book`으로 옮긴 뒤 지움(`picks/002-curated-lists.yaml`), `fetch_run`·`cover` 그대로. `usagelog.screen_event.picks_list` 새 칸(`usagelog/003`). 반영 파일 형식 번호 2 → 3, `load_manifest.notes.listPart`(새 표 없음). 이동진·서울대 줄은 `book_id`를 값으로 저장(FK 없음, ADR-0124). 근거 `docs/cycles/21-recommended-books/design-delta.md` "데이터".
-사이클 20 cycle-close (2026-10-17): 조회 상태 신호와 브라우저 확장 조회 — 설계됨(미구현, 사이클 20). ADR-0118·0119·0132·0133. 새 표 없음. `usagelog/004`: `library_response_daily.source` CHECK에 `extension`·`server_for_extension`, `rejected_event.reason` CHECK에 `invalid_plan`·`invalid_client_key`, 새 칸 `library_response_daily.body_too_large_count`. `availability`의 계획 보관함·호스트 대기·브라우저 번호 장부·확장 결과 캐시는 메모리만(아래 "`availability` 메모리 값"). 근거 `docs/cycles/20-lookup-status-and-extension/design-delta.md` "데이터".
+사이클 20 cycle-close (2026-10-17): 조회 상태 신호와 브라우저 확장 조회 — 설계됨, 1단계 일부만 구현(v1.4.0: `GET /api/v1/lookup-status`·`HostQueueBoard`·`ParseSlots`·`BodyLimit`·`usagelog-004`; 웹 머리말 상태 불은 지움, `extension/` 없음 — ADR-0146, 2026-10-23 dev main 확인. 사이클 20 회고 전). ADR-0118·0119·0132·0133. 새 표 없음. `usagelog/004`: `library_response_daily.source` CHECK에 `extension`·`server_for_extension`, `rejected_event.reason` CHECK에 `invalid_plan`·`invalid_client_key`, 새 칸 `library_response_daily.body_too_large_count`. `availability`의 계획 보관함·호스트 대기·브라우저 번호 장부·확장 결과 캐시는 메모리만(아래 "`availability` 메모리 값"). 근거 `docs/cycles/20-lookup-status-and-extension/design-delta.md` "데이터".
 사이클 21 회고 (2026-10-17): 스키마 `picks`의 `list_field`·`list_book`, `pick` 지움, `usagelog.screen_event.picks_list`, 반영 파일 형식 번호 3·`notes.listPart` 구현됨 — dev main `836bd7b`, `picks/002-curated-lists.yaml`(changeset `picks-002-list-field`·`picks-002-list-book`·`picks-002-move-librarian`)·`usagelog/003-screen-event-picks-list.yaml`(changeset `usagelog-003-screen-event-picks-list`), 칸·목록별 CHECK가 설계와 같고 dev가 CHECK 둘·색인 하나를 더함. 운영 역할 DB(db-ops) 반영 기록 13번, 내 PC 원래 DB 13번 SUCCEEDED (2026-10-17). 근거 `docs/cycles/21-recommended-books/retro.md`.
 사이클 19 회고 (2026-10-18): 저자·제목 표기 정리 구현됨 (dev main `1c129e8`, 운영 역할 DB 반영 기록 12번, 2026-10-16). `catalog` 표·칸 변경 없음, 값만 바뀜(책 1,568,453 → 1,331,194, `author_display`·`name_exact`에 꺾쇠 0). `usagelog/002`의 `cached_count` 구현됨. 규칙 파일 두 개와 `rules-dir` 구현됨, 공급사 코드 키에 비교 제목·출판사가 더해짐(ADR-0114 "결정 고침 (2026-10-16)" 절 [확정] (사용자 승인, 2026-10-18, 회고 결정 #1)), 국가서지 원문 표 읽기 설정 `stored-bibliography`를 더함. 근거 `docs/cycles/19-author-angle-brackets/retro.md`, dev `plan-feedback.md` "# 사이클 19".
 
@@ -938,9 +938,9 @@ erDiagram
 | `screen_event.picks_list` — 구현됨 (사이클 21, 회고 2026-10-17) | `text` | NULL, CHECK IN (`librarian`,`leedongjin`,`snu100`), `picks_*` 종류일 때만 NOT NULL (종류별 칸 CHECK 고침) | 어느 목록 (사용 알림 `list`) | [확정] (ADR-0126) |
 | `library_response_daily` | (day, library_id, source) PK, 수 `integer`, 시간 ms | `source` CHECK (`direct_search`,`holding_fill`; 사이클 20에서 `extension`·`server_for_extension`을 더함 — 아래 줄), `day`는 서울 날짜 | 서비스 메모리에서 세다가 5초 묶음 때 `ON CONFLICT (day, library_id, source) DO UPDATE SET …_count = …_count + EXCLUDED…, ok_ms_total = … + EXCLUDED…, ok_ms_max = GREATEST(…)`. 보관 1년 | [확정] ([요약 방법](../cycles/15-usage-log/easy/2026-10-13-summary-method.html) #1~#3, [남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2) |
 | `library_response_daily.cached_count` — 구현됨 (사이클 19, 회고 2026-10-18) | `integer` | NOT NULL DEFAULT 0, CHECK `library_response_daily_cached_count_check (cached_count >= 0)` | 그 날·도서관·갈래에서 3분 캐시로 답한 수. 캐시에서 답을 꺼낼 때마다 1(결과 값 `CACHED`). 응답 시간·성공/실패 수·서버 로그 줄에는 넣지 않음 (ADR-0116) | [확정] (사용자 제안 2026-10-15 회고 결정 #3, 모양·때 사용자 승인 2026-10-15 회고 이어서 #2). 칸 이름 `cached_count` [확정] (명세 결정 #10), 제약 [확정] (설계 결정 #9) |
-| `library_response_daily.source` 값 더함 — 설계됨(미구현, 사이클 20) | `text` (그대로) | CHECK `library_response_daily_source_check`를 지우고 같은 이름으로 `IN ('direct_search','holding_fill','extension','server_for_extension')` | 확장 모드의 도서관 응답(검색·소장·더 보기)은 `extension`, 확장 모드 중 서버 대행 목록 도서관을 서버가 부른 것은 `server_for_extension`. 확장 모드는 서버 캐시를 보지 않아 `cached_count`는 0, 보내지 못한 것은 `skipped_count`(close의 `notSent`) | `extension` [확정] (설계 결정 #9) / `server_for_extension` 기록 [확정] (세 관점 검토 #16), 값 이름 [안] |
-| `library_response_daily.body_too_large_count` — 설계됨(미구현, 사이클 20) | `integer` | NOT NULL DEFAULT 0, CHECK `library_response_daily_body_too_large_count_check (body_too_large_count >= 0)` | 서버 모드 도서관 응답이 본문 상한(풀었을 때 포함 1MB)을 넘어 실패한 수. 같은 건이 `failed_count`에도 들어감 (ADR-0132) | [확정] (사용자 승인, 2026-10-17, 마무리 확인 #6) |
-| `rejected_event.reason` | `text` | CHECK | `unknown_library`,`invalid_place`,`invalid_screen`,`invalid_book_id`,`malformed`,`unknown_type`,`invalid_value`. 사이클 20 — 설계됨(미구현, 사이클 20): CHECK `rejected_event_reason_check`를 지우고 같은 이름으로 그 7개 + `invalid_plan`·`invalid_client_key`. 두 줄은 IP·이유마다 1분 1줄 [안], `raw_values`에 본문 없음(planId·itemId·이유만). `client_ip_changed`는 정상 경우라 남기지 않음 [안] | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2, [검증](../cycles/15-usage-log/easy/2026-10-14-verify-decisions.html) #2) |
+| `library_response_daily.source` 값 더함 — 설계됨, 1단계 일부만 구현(v1.4.0: `GET /api/v1/lookup-status`·`HostQueueBoard`·`ParseSlots`·`BodyLimit`·`usagelog-004`; 웹 머리말 상태 불은 지움, `extension/` 없음 — ADR-0146, 2026-10-23 dev main 확인. 사이클 20 회고 전) | `text` (그대로) | CHECK `library_response_daily_source_check`를 지우고 같은 이름으로 `IN ('direct_search','holding_fill','extension','server_for_extension')` | 확장 모드의 도서관 응답(검색·소장·더 보기)은 `extension`, 확장 모드 중 서버 대행 목록 도서관을 서버가 부른 것은 `server_for_extension`. 확장 모드는 서버 캐시를 보지 않아 `cached_count`는 0, 보내지 못한 것은 `skipped_count`(close의 `notSent`) | `extension` [확정] (설계 결정 #9) / `server_for_extension` 기록 [확정] (세 관점 검토 #16), 값 이름 [안] |
+| `library_response_daily.body_too_large_count` — 설계됨, 1단계 일부만 구현(v1.4.0: `GET /api/v1/lookup-status`·`HostQueueBoard`·`ParseSlots`·`BodyLimit`·`usagelog-004`; 웹 머리말 상태 불은 지움, `extension/` 없음 — ADR-0146, 2026-10-23 dev main 확인. 사이클 20 회고 전) | `integer` | NOT NULL DEFAULT 0, CHECK `library_response_daily_body_too_large_count_check (body_too_large_count >= 0)` | 서버 모드 도서관 응답이 본문 상한(풀었을 때 포함 1MB)을 넘어 실패한 수. 같은 건이 `failed_count`에도 들어감 (ADR-0132) | [확정] (사용자 승인, 2026-10-17, 마무리 확인 #6) |
+| `rejected_event.reason` | `text` | CHECK | `unknown_library`,`invalid_place`,`invalid_screen`,`invalid_book_id`,`malformed`,`unknown_type`,`invalid_value`. 사이클 20 — 설계됨, 1단계 일부만 구현(v1.4.0: `GET /api/v1/lookup-status`·`HostQueueBoard`·`ParseSlots`·`BodyLimit`·`usagelog-004`; 웹 머리말 상태 불은 지움, `extension/` 없음 — ADR-0146, 2026-10-23 dev main 확인. 사이클 20 회고 전): CHECK `rejected_event_reason_check`를 지우고 같은 이름으로 그 7개 + `invalid_plan`·`invalid_client_key`. 두 줄은 IP·이유마다 1분 1줄 [안], `raw_values`에 본문 없음(planId·itemId·이유만). `client_ip_changed`는 정상 경우라 남기지 않음 [안] | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2, [검증](../cycles/15-usage-log/easy/2026-10-14-verify-decisions.html) #2) |
 | `rejected_event.raw_values` | `jsonb` | 2KB 넘으면 잘라 냄 | 받은 값 | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #4) |
 | `dropped_batch.reason` | `text` | CHECK (`db_failure`,`buffer_full`) | 버린 이유 | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2) |
 | 색인 | BRIN `(received_at)` 각 표 | — | 지우기·기간 조회 | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #3) |
@@ -962,7 +962,7 @@ erDiagram
 - 사이클 21 — 구현됨 (사이클 21, 회고 2026-10-17) (ADR-0126): 새 파일 `db/changelog/usagelog/003-screen-event-picks-list.yaml`(changeset `usagelog-003-screen-event-picks-list`) — 칸 `screen_event.picks_list` + CHECK `screen_event_picks_list_check` 더함 → 있던 `picks_*` 줄을 `librarian`으로 채움 → `screen_event_kind_fields_check`를 지우고 picks 종류일 때 `picks_list IS NOT NULL`, 그 밖일 때 NULL로 다시 검 [확정] (dev 구현 확인, 2026-10-17). 번호: 002는 사이클 19, **003은 21, 사이클 20은 004** [확정] (사용자 승인, 2026-10-16, 사이클 21 설계 검토 #4). 21이 19보다 먼저 main에 들어가면 번호를 바꾸지 말고 master 순서만 맞춤(나중에 합치는 쪽이 자기 줄을 끝으로)
 - 사이클 15 [확인 필요] 결과 (회고 2026-10-15, dev `plan-feedback.md` 4354~4361행): pgjdbc 42.7.13 [확정] (dev 확인). 1만 줄 넣기 `id` PK·부분 색인 있음 27.6ms / 없음 13.1ms → 둘 다 둠. 공용 `@Scheduled` 실행기는 Spring Boot 기본 스레드 1개(04:30 정리가 회원 정리·사서추천 받기와 같은 스레드), 5초 쓰기는 자기 스레드 `usagelog-flush`. 남은 [확인 필요]: 모니터링 도구를 켠 상태의 메모리, nginx realip·광고 차단 비율·로봇의 API 호출(배포 뒤, 사이클 17·운영)
 
-## `availability` 메모리 값 (DB 표 없음) — 설계됨(미구현, 사이클 20)
+## `availability` 메모리 값 (DB 표 없음) — 설계됨, 1단계 일부만 구현(v1.4.0: `GET /api/v1/lookup-status`·`HostQueueBoard`·`ParseSlots`·`BodyLimit`·`usagelog-004`; 웹 머리말 상태 불은 지움, `extension/` 없음 — ADR-0146, 2026-10-23 dev main 확인. 사이클 20 회고 전)
 
 `availability`는 스키마가 없습니다. 사이클 20이 더하는 값은 모두 서버 메모리에 두고, 서버를 다시 켜면 비워집니다. 근거 `docs/cycles/20-lookup-status-and-extension/design-delta.md` "데이터", 도메인 모델은 `module-map.md` "대출 조회 상태·확장 계획 도메인 모델", 숫자 근거는 [`../settings-index.md`](../settings-index.md). 괄호 = dev 단계.
 
@@ -1166,7 +1166,7 @@ erDiagram
 
 ## 확인 필요 (사이클 20)
 
-설계됨(미구현, 사이클 20). 근거 `docs/cycles/20-lookup-status-and-extension/design-delta.md` "확인 필요".
+설계됨, 1단계 일부만 구현(v1.4.0: `GET /api/v1/lookup-status`·`HostQueueBoard`·`ParseSlots`·`BodyLimit`·`usagelog-004`; 웹 머리말 상태 불은 지움, `extension/` 없음 — ADR-0146, 2026-10-23 dev main 확인. 사이클 20 회고 전). 근거 `docs/cycles/20-lookup-status-and-extension/design-delta.md` "확인 필요".
 
 | 항목 | 방법 | 막는 단계 |
 |---|---|---|
@@ -1210,3 +1210,24 @@ erDiagram
 | 덤프 크기, 복원 시간, 운영 디스크 최대, 상한 1GB에서 색인 시간(AC-14) | 606MB, 복원 65초, 운영 역할 DB 최대 17.4GB(시작 9.0GB), 색인 2분 30초, `OOMKilled` 없음 [확정] (새 사본 2026-10-12 01:35) |
 | `sql` 방식 사슬 반복 수·시간·임시 표 디스크, 43분 안 | 실데이터(새 사본) 약 34분(43분 안), 1GB 힙에서 끝까지, 실행마다 임시 쓰기 약 61GB(그중 묶기 약 40GB), DB 최대 약 27GB(시작 약 9GB) [확정] (dev 측정, `plan-feedback.md` 3029·3105행). 실데이터 반복 수는 로그에 없음(시험 데이터: ② 6~14번, ③④ 1~2번, 3,000단위 사슬 12번, 상한 1000번) [확인 필요: 다음에 `sql`로 가져올 때 — 기본이 아니라 급하지 않음] |
 | 비교(`count(*)` 약 1,770만 줄 등) 시간 | `compare` 3.2초 [확정] |
+
+## 사이클 22 이후 dev 변경 (사후 정리, 2026-10-23)
+
+사이클 22 회고 때 dev main `d3c2696`(v1.9.10)을 읽고 정리함. 모두 [확정] (dev 구현 확인, 2026-10-23). 결정 기록은 ADR-0140~0146(사후 기록), 화면이 바뀐 이유는 `docs/cycles/22-first-screen-usability/retro.md`.
+
+| 표·칸 | 내용 | changeset | ADR |
+|---|---|---|---|
+| `library.library.visit_outside_region` | `boolean NOT NULL DEFAULT false`. 데이터 `library-018`·`019`·`021` | `library-017-visit-outside-region` | 0141 |
+| `library.library.platform_type` CHECK | `SEOUL_ELIB_V1` 더함 | `library-020-platform-seoul-elib` | 0145 |
+| `picks.list_field`·`list_book` | 목록 키 `kaist`(`year_book` 필수, 색인 `(year_book, position) WHERE list_key='kaist'`), `nobel`(부분 UNIQUE `(field_code, position) WHERE list_key='nobel'`) | `picks-003`·`004`·`005` | 0143 |
+| `picks.cover` | 사서추천 표지만 남음(나머지 목록 표지는 nginx 파일) | — | 0144 |
+| `availability.lookup_sample` | `sampled_at timestamptz` PK + 셈 칸 19개(`window_ms`, `slots_max`, `slots_in_use`, `slots_max_in_use`, `refused`, `library_requests`, `body_too_large`, `db_errors`, `parse_max`, `parse_in_use`, `parse_max_in_use`, `queued_libraries`, `paused_lanes`, `heap_used_mb`, `heap_max_mb`(NULL 허용), `egress_mode text`, `lane_requests`, `lane_pauses`, `lane_retests`, `lane_resumes`), `PARTITION BY RANGE (sampled_at)` 달마다 + 기본 파티션, 함수 `lookup_sample_ensure_partitions`·`lookup_sample_drop_before` | `availability-001`·`002`(runOnChange)·`003` | 0146 |
+| `usagelog.book_view`·`library_click`·`screen_event` | `visit_key text`(16~64 영숫자 CHECK), `account_id bigint`(>0), FK·색인 없음 | `usagelog-005-visit-key-account-id` | 0134 |
+| `usagelog.screen_event.picks_list` | CHECK에 `kaist`·`nobel` | `usagelog-006`·`007` | 0143 |
+| `sitecontent.document_version` | `('PRIVACY_POLICY', 2, DATE '2026-10-20', …)` | `sitecontent-003-privacy-policy-v2` | 0140 |
+
+DB 밖:
+- `backend/src/main/resources/picks/ai-summaries.tsv`(칸 `list, isbn13, title, summary`, 약 2,804줄) — 빌드에 실림 (ADR-0142)
+- `backend/src/main/resources/geo/kr-sido.csv.gz`(줄 `4|시작|끝|시도`·`6|…`) (ADR-0140)
+- 운영 `/srv/chaekcheck/covers/<sha1(url)>.jpg` (ADR-0144)
+- 수집 DB(내 PC): `holding.intro_raw`(목록 화면 소개 원문, 교보 500자·YES24 "…" 잘림, 알라딘·포털·서울 NULL), `covers/covers.sqlite`(`fetch-covers`, 서비스가 안 씀)
