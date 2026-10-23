@@ -1,7 +1,7 @@
 # 기능 명세: AI 책 찾기 (사이클 24)
 
 - 작성 2026-10-24. 바탕 [scope.md](scope.md) (범위 결정 6개 끝), [`natural-search.md`](../../research/ai-recommend/natural-search.md), [`llm-test-set.md`](../../research/ai-recommend/llm-test-set.md)
-- 규칙 번호 R1~R9. 결정 페이지: [easy/2026-10-24-spec-rules.html](easy/2026-10-24-spec-rules.html) (https://claude.ai/artifact/YAWUKS386nkro6nNSRSt6X)
+- 규칙 번호 R1~R9. 결정 페이지: [easy/2026-10-24-spec-rules.html](easy/2026-10-24-spec-rules.html) (https://claude.ai/artifact/YAWUKS386nkro6nNSRSt6X), 2차 [easy/2026-10-24-spec-rules-2.html](easy/2026-10-24-spec-rules-2.html) (https://claude.ai/artifact/F3mm5UVFCzGbjzgNuVHbuQ): 1차 #2 기타 "하이쿠가 전체 목록을 스캔을 rag로 할 수 있으면 좋지 않을까? 로직이 어떻게 되지?", #5 기타 "아니 지금 있는거랑 별개로해줘" (2026-10-24) → 목록 전체를 한 번에 넣는 안, 찾기용 한 줄을 따로 만드는 안 [안]
 
 ## 사용자 이야기
 
