@@ -12,3 +12,8 @@
 | [2026-10-12-same-book-isbn.html](2026-10-12-same-book-isbn.html) | 같은 책 묶기 네 단계, ISBN 출처, 알려진 문제, 문서에서 낡은 곳 | `../same-book-isbn.md`, dev `docs/plan-feedback.md` 1820~1829행 | 없음. "사이클 12 전에 문서 고쳐 두기" 승인(canvas, 2026-10-12) → 원본 5절·5.1·5.3 고침 |
 | [2026-10-12-grouping-samples.html](2026-10-12-grouping-samples.html) | 책 묶기 표본 조사: 판이 다른 책 합쳐짐 3,079권, 부제 차이로 갈라짐, 날짜 칸, `48090…`, "기타" 출판사, 사이트 확인 9건 | `../same-book-isbn.md` 5.4절 | 없음. 2개 승인(2026-10-12), #2는 "교보 구독형은 빼주라" |
 | [2026-10-12-grouping-rule-decisions.html](2026-10-12-grouping-rule-decisions.html) | 사이클 12 책 묶기 방향 질문 6: 판이 다른 책, "기타", 부제, 저자 없음, 새 도서관 이어 붙음, ISBN API | `../same-book-isbn.md` 5.5절 | 없음. 6개 승인(2026-10-12), #6은 "유의미하면 국가서지 다음에 ISBN API" |
+| [2026-10-23-cover-collection-decisions.html](2026-10-23-cover-collection-decisions.html) | 이번 수집에 책 표지도 받기 (1~6) | `../crawl-method.md` 1절 | 없음 (모두 정함, 2026-10-23) |
+| [2026-10-23-cover-source-decisions.html](2026-10-23-cover-source-decisions.html) | 표지 어디서, 수집 범위 | `../crawl-method.md` 1절 | 없음 (#1 승인, #2 "전체 다시") |
+| [2026-10-23-recommend-tags.html](2026-10-23-recommend-tags.html) | 추천 목록 이름표 (질문을 잘못 읽은 페이지, 닫음) | — | 쓰지 않음 |
+| [2026-10-23-book-intro-decisions.html](2026-10-23-book-intro-decisions.html) | 책 소개 수집, Haiku 꼬리표와 사전, Thema 한국어판 (1~4). 외부용 Artifact https://claude.ai/artifact/XVfcnkwyDRsYLsuGjk6XpF , 사본 [2026-10-23-book-intro-artifact.html](2026-10-23-book-intro-artifact.html) | `../../ai-recommend/tag-vocabulary.md` | 4 |
+
