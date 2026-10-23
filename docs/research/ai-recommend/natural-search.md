@@ -70,3 +70,9 @@
 | 2 | 기타: "노트북이고 저 그래픽카드는 모르겠다 다른 로컬 세션에게 물어봐봐" | 노트북의 원격 접속용 세션(session_01Pr8cf9fJBDY5Tee8GYAwuq)에 읽기 전용 사양 확인을 부탁함(2026-10-23, 사용자가 세션 간 메시지 허락). 답을 받으면 모델 크기 [안] |
 | 3 | "PC에서 비교해 보고 정함" 선택 | [확정] 원문·내용 메모는 PC에서 같은 질문 20개로 비교한 뒤 정함. 그동안 서비스 입력은 미리 만든 소개 + 꼬리표 |
 | 4 | "(나) 탭 두 개, 처음은 AI" 선택 | [확정] 첫 화면 검색창에 탭 두 개("도서관에서 책 찾기" / "AI 책 찾기"), 처음 열면 AI 책 찾기. AI 결과는 도서관 결과와 섞이지 않는 따로 된 화면(같은 브라우저 탭 안). 주소·이름은 사이클에서 |
+
+## 9. 노트북 사양 (원격 접속용 세션 확인, 읽기 전용, 2026-10-24)
+
+- Intel Iris Xe Graphics(내장, 전용 VRAM 없음, NVIDIA 없음), RAM 32GB, i7-1260P, Windows 11 Home 빌드 10.0.26200, C: 남은 약 123GB, Ollama 설치 안 됨 [확정] (로컬 세션 확인)
+- Ollama Windows는 Vulkan으로 추가 GPU 지원, "most GPU vendors drivers come bundled with Vulkan support" [확정] https://github.com/ollama/ollama/blob/main/docs/gpu.mdx — Iris Xe에서 실제로 쓰이는지 [확인 필요: 프로토타입, `ollama ps` Processor 칸]
+- 3차 페이지 [안] #5: Qwen3-4B로 시작, 속도를 재 보고 Qwen3-8B 시험 (Qwen3-4B·8B https://github.com/QwenLM/Qwen3, 2026-10-24 확인). CPU 속도·모델별 메모리 [확인 필요: 프로토타입]
