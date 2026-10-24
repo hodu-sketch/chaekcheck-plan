@@ -6,3 +6,4 @@
 | 2026-10-23-booktuber-channels.html (https://claude.ai/artifact/PLVQNPYVytjwX8YGCNuWoT) | 북튜버 채널 후보 22곳 고르기(결정 #4 다음 단계), 저장 db `choices/channels` | ../../../research/ai-recommend/booktuber-candidates.md | 채널 고르기 |
 | 2026-10-23-spec-rules.html (https://claude.ai/artifact/2HPs5rUgnbzPAeqX3rXfkz) | 명세 규칙 넷: 모든 사람의 신호를 브라우저가 들고 있기(범위 #2 바꿈), 기본 목록 섞기·40권, 책 창 열기 범위, 꼬리표 보이기 | ../scope.md, law.md | 4 |
 | 2026-10-24-spec-open-proposals.html (https://claude.ai/artifact/6TSj4LAEPZk7M9847bMzqF) | 명세 남은 안 일곱 묶음: 기본 목록 만드는 때, 꼬리말 문구, 최근 본 책 세기, 더 보기, 추천 글 규칙, 꼬리표 개수, 기록·상태 문구 | ../spec.md | 7 |
+| 2026-10-24-pretest-decisions.html (https://claude.ai/artifact/FHqz8q4FMjkB6SbxGvwZ3M) | 교보·YES24 시험 결과로 정할 것 다섯: 누적 순위 세는 법, 출처 사이트, 개인 추천이 비는 문제, 비슷한 책 입력에 소개 원문, 계산 방식. 저장 db `choices` | ../pretest-review.md, ../spec.md | 5 |
