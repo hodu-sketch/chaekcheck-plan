@@ -323,10 +323,10 @@ data: {"result":"ok","bookIds":[1203344,88012,51007]}
 
 ## 결정 기록
 
-- ADR-0150 AI 책 찾기: 새 모듈 `aisearch`, Haiku 실시간 두 번 호출, LLM 부르는 곳 하나(직접 요청) — 초안, 사용자 확인 전
-- ADR-0151 찾기용 한 줄: 따로 넣는 명령(`book-texts`, 23과 같이 쓸 수 있게), `aisearch` 표의 사본에서 DB 낱말 맞추기 — 초안
-- ADR-0152 질문 글과 대화를 서버에 남기지 않음: POST 본문, 대화는 브라우저 탭, IP 횟수는 메모리·하루 비용은 DB, 기록 칸 — 초안
-- ADR-0153 답을 조금씩 흘리되 책 번호를 먼저 확인, 제목만 넣으면 제목 줄 — 초안
+- [ADR-0150](../../adr/0150-aisearch-module-haiku-realtime.md) AI 책 찾기: 새 모듈 `aisearch`, Haiku 실시간 두 번 호출, LLM 부르는 곳 하나(직접 요청) — Accepted (2026-10-24)
+- [ADR-0151](../../adr/0151-search-lines-import-and-db-match.md) 찾기용 한 줄: 따로 넣는 명령(`book-texts`, 23과 같이 쓸 수 있게), `aisearch` 표의 사본에서 DB 낱말 맞추기 — Accepted (2026-10-24)
+- [ADR-0152](../../adr/0152-no-question-storage-quota.md) 질문 글과 대화를 서버에 남기지 않음: POST 본문, 대화는 브라우저 탭, IP 횟수는 메모리·하루 비용은 DB, 기록 칸 — Accepted (2026-10-24)
+- [ADR-0153](../../adr/0153-streamed-answers-number-first-title-guess.md) 답을 조금씩 흘리되 책 번호를 먼저 확인, 제목만 넣으면 제목 줄 — Accepted (2026-10-24)
 
 ## 확인 필요
 
