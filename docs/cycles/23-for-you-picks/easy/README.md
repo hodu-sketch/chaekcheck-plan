@@ -7,3 +7,4 @@
 | 2026-10-23-spec-rules.html (https://claude.ai/artifact/2HPs5rUgnbzPAeqX3rXfkz) | 명세 규칙 넷: 모든 사람의 신호를 브라우저가 들고 있기(범위 #2 바꿈), 기본 목록 섞기·40권, 책 창 열기 범위, 꼬리표 보이기 | ../scope.md, law.md | 4 |
 | 2026-10-24-spec-open-proposals.html (https://claude.ai/artifact/6TSj4LAEPZk7M9847bMzqF) | 명세 남은 안 일곱 묶음: 기본 목록 만드는 때, 꼬리말 문구, 최근 본 책 세기, 더 보기, 추천 글 규칙, 꼬리표 개수, 기록·상태 문구 | ../spec.md | 7 |
 | 2026-10-24-pretest-decisions.html (https://claude.ai/artifact/FHqz8q4FMjkB6SbxGvwZ3M) | 교보·YES24 시험 결과로 정할 것 다섯: 누적 순위 세는 법, 출처 사이트, 개인 추천이 비는 문제, 비슷한 책 입력에 소개 원문, 계산 방식. 저장 db `choices` | ../pretest-review.md, ../spec.md | 5 |
+| 2026-10-24-screen-flow-decisions.html (https://claude.ai/artifact/SGPYBwARzvnviNGDu5guf9) | 화면 흐름(Mermaid 두 개)·S18 PC/태블릿/폰 모형·S19 모형, 정할 것 넷: `/picks` 기본 탭, 기준 책 바꾸기, 추천 글 미리 쓰는 범위, 나머지 화면 세부. 저장 db `choices` | ../flow.md | 4 |
