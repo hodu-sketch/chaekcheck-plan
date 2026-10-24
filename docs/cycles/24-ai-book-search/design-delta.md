@@ -256,12 +256,13 @@ erDiagram
 ```json
 {
   "question": "잠들기 전에 조금씩 읽을 과학책",
+  "turnNo": 2,
   "history": [ { "question": "과학책 추천해줘", "bookIds": [1203344, 88012] } ],
   "residenceRegionIds": [1168], "workRegionIds": [], "libraryIds": [],
   "scope": "joinable", "visit": "none"
 }
 ```
-- `question` 2자 [확정]~200자 [확정] (결정 #8), `history` 최대 5 [확정] (화면 흐름 #3), 한 턴 `bookIds` 최대 8 [확정] (결정 #8), 목록 밖 번호는 조용히 버림. 20번 상한은 웹이 셈
+- `question` 2자 [확정]~200자 [확정] (결정 #8), `history` 최대 5 [확정] (화면 흐름 #3), 한 턴 `bookIds` 최대 8 [확정] (결정 #8), 목록 밖 번호는 조용히 버림. 20번 상한은 웹이 셈. `turnNo`(1~20)는 웹이 보내는 몇 번째 질문 — `usagelog.ai_search_event.turn_no`에 씀 [확정] (인계서 확인 #2, 2026-10-24; 서버는 `history`를 5개만 받아 셀 수 없음)
 
 스트림 이벤트 [안: 이름]
 
