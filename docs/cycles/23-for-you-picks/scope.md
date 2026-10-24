@@ -94,3 +94,10 @@
 - `auth`: 로그인 회원 번호 읽기(ADR-0134 `LoginStatusReader`) — 바꾸지 않을 수 있음
 - 웹: `web/src/features/picks/`(탭, 카드), 사용 알림 보내기
 - 수집기(dev `scripts/crawl/`): 교보 인기순, 유튜브 책 뽑기, 임베딩 계산
+
+## 사이클 24와 나눈 번호 (24 세션 전달, 2026-10-24)
+
+- ADR: 0147~0149는 23용, 24는 0150부터 [확정: 24 세션 전달]
+- 화면 번호: S18~S29는 23용으로 비어 있음, 24는 S30 [확정: 24 세션 전달]
+- `usagelog` 변경 파일: 두 브랜치를 합칠 때 다음 번호를 씀 (24 changeSet id `usagelog-ai-search-event`)
+- 24가 23의 꼬리표를 낱말 맞추기·Haiku 입력에 쓸 예정(`ListedBook`의 nullable 칸) → 꼬리표 배치 설계 때 함께 볼 것. 배치 합치기 제안은 spec.md 확인 필요 표에 둠
