@@ -9,3 +9,4 @@
 | 2026-10-24-design-decisions.html | 설계 결정 8개: 구역(모듈), 한 줄 넣는 길, 낱말 맞추기, 횟수·비용 세는 곳, Haiku 부르기, 제목만 넣음, 기록 칸, 값 세 개 (Mermaid 구성도·흐름; claude.ai Artifact — https://claude.ai/artifact/Bex3jp6arMgBiABGzC5fiC) | architect-proposal.md | 0 (모두 결정, 2026-10-24) |
 | 2026-10-24-design-adr-review.html | 설계 그림 7개(Mermaid) + ADR-0150~0153 초안 승인 (claude.ai Artifact — https://claude.ai/artifact/8A9EEUwiSNcAj3sMEyLJJp) | design-delta.md | 0 (4개 승인, 2026-10-24) |
 | 2026-10-24-handoff-review.html | 인계서 승인 + 몇 번째 질문(turnNo), 인계 파일 두는 방식, 처리방침 문장 (claude.ai Artifact — https://claude.ai/artifact/GCQh8FYZNSmRWyFT1J4xha) | handoff.md | 0 (승인·결정 4개, 2026-10-24) |
+| 2026-10-24-batch-merge-decisions.html | 23·24 PC Haiku 배치 하나로: Message Batches, 스크립트 순서, 한 줄 대상 (23 dev 세션 글을 받아, claude.ai Artifact — https://claude.ai/artifact/BeXmmpDjr7atTsPj35or1a) | 23 dev 글(사용자가 붙여 넣음), handoff.md 2단계 | 3 |
