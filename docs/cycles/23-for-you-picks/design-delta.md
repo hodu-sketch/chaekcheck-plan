@@ -344,10 +344,10 @@ erDiagram
 | GET | `/api/v1/for-you/books` [안] | 오늘 기본 목록 가운데 계획 도서관에 있는 책 | 계획 파라미터(`residenceRegionIds`·`workRegionIds`·`scope`·`visit`·`libraryIds`, `/api/v1/picks/{listKey}`와 같은 이름·검증) | 200 `{builtOn, books[]}`. 한 번도 못 만들면 `builtOn: null` + 추천목록만 | 400 `validation_error`, 422 `invalid_region`, 500 `internal_error` |
 | GET | `/api/v1/for-you/similar-books` [안] | 기준 책의 비슷한 책 | `baseBookIds`(1~3, 쉼표, 필수), `reshowBookIds`(0~6), 계획 파라미터 | 200 `{baseBooks[], books[] ≤60, reshowBooks[]}`. 모르는 번호는 조용히 뺌 | 400 `validation_error`(`errors[].field` `baseBookIds`·`reshowBookIds`, `code` `required`·`invalid_format`·`too_many`·`duplicate`), 422, 500 |
 
-- 인증 없음, GET이라 CSRF 없음. nginx 일반 `/api/` 구역(5r/s) [확정: 지금 설정]. `Cache-Control`은 정하지 않음(picks 목록과 같음) [안]
+- 인증 없음, GET이라 CSRF 없음. nginx 일반 `/api/` 구역(5r/s) [확정] (사용자 승인 2026-10-13, 사이클 17 결정 #1, `docs/settings-index.md` "nginx 기존 한도" 줄). `Cache-Control`은 정하지 않음(picks 목록과 같음) [안]
 - 카드 칸: `bookId`, `title`, `author`, `publisher`, `coverUrl`(없으면 null), `blurb`(없으면 null), `tags[{code, axis, name}]`(추천목록 책만), `planLibraryCount`(≥ 1), `lists`(목록 키만, "KAIST 추천목록에 있어요" 문구는 웹이 탭 이름으로 만듦), similar에는 `authorKey`(첫 저자 `name_exact`)
 - 인기 점수·출처 이름은 내보내지 않음(R3-2)
-- `similar-books` 정렬: 기준 책 빼기 → 계획 도서관 0곳 빼기 → 오늘 `book_score`가 있는 책 점수 높은 순 → 나머지 `planLibraryCount` 많은 순 → `bookId` [안: 마지막 차례]
+- `similar-books` 정렬: 기준 책 빼기 → 계획 도서관 0곳 빼기 → 마지막 succeeded 실행의 `book_score`가 있는 책 점수 높은 순(오늘 만들기가 실패해도 전날 점수로) → 나머지 `planLibraryCount` 많은 순 → `bookId` [안: 마지막 차례]
 
 요청/응답 예시 (값은 보기)
 
@@ -401,7 +401,7 @@ GET /api/v1/for-you/similar-books?baseBookIds=11,22,33&reshowBookIds=44&residenc
 | 교보 일반 전자도서관 4곳 (서초 반포·연천·도봉·부천) | 운영 서버 `availability` 길, `contentList.ink?…orderByKey=loanNmvl`, 앞 100권 | 호스트당 1건·1초, 나가는 길 설정(프록시) 그대로, 키 없음. 교보문고 약관 제11조⑨가 걸리는지 [확인 필요] | 그 사이트만 빠짐 | 사이트 [확정] (시험 결과 결정 #2), 쪽 크기 [확인 필요: 사전 시험은 쪽당 80 받음] |
 | YES24 V1 전자도서관 2곳 (국립세종·성남) | 같은 길, `/search/?…&sort=lending`, 앞 100권 | 같음 | 그 사이트만 빠짐 | [확정] (같음) |
 | `*.dkyobobook.co.kr` | 보내지 않음 | 사이트 목록에서 빼고 어댑터 앞에서 막음 | — | [확정] (사이클 13 R1-6) |
-| 출판유통통합전산망 판매 순위·「화제의 책 200선」 | `foryou` 안 HTTP 클라이언트, 간격 1초 | 위험 감수(ADR-0147). 출처만 끄는 설정 `chaekcheck.foryou.sources.<source>.enabled` [안: 이름]. 받을 범위(일·주·월 Top100 vs Thema 월간 Top50) [확인 필요] | 그 출처만 빠짐 | [확정: 쓰기] / 방식 [확인 필요] |
+| 출판유통통합전산망 판매 순위·「화제의 책 200선」 | `foryou` 안 HTTP 클라이언트, 간격 1초. 운영 나가는 길 설정("프록시만", 사용자 2026-10-18)을 따르는지 [확인 필요: dev·사이클 17 운영 설정] — 따르지 않으면 허용 근거를 인계서에 | 위험 감수(ADR-0147). 출처만 끄는 설정 `chaekcheck.foryou.sources.<source>.enabled` [안: 이름]. 받을 범위(일·주·월 Top100 vs Thema 월간 Top50) [확인 필요] | 그 출처만 빠짐 | [확정: 쓰기] / 방식 [확인 필요] |
 | KLWAVE (공공데이터포털 15159949) | 파일인지 API인지 [확인 필요] | 공공데이터 이용 조건 [확인 필요] | 그 출처만 빠짐 | [확인 필요]. 파일이면 PC 파일 모드가 더 필요함 |
 | 표지 | PC `fetch-covers` → 범위만 운영 `/srv/chaekcheck/covers/`로 복사 | 서버는 책 사이트에 요청하지 않음. 출처별 이용 조건은 공개 배포 전 [확인 필요] | 표지 없으면 제목 글자 표지 | 방식 [확정] (결정 #5), 범위 보고 수집 세션 [확인 필요] |
 | Claude Haiku (PC 배치) | Message Batches, 한 번 호출로 탭 글·꼬리표·찾기용 한 줄 | 키는 PC에만, 서비스는 부르지 않음 | 실패한 책은 다음 배치 | [확정] (결정 #7) |
@@ -417,7 +417,7 @@ GET /api/v1/for-you/similar-books?baseBookIds=11,22,33&reshowBookIds=44&residenc
 
 ## 결정 기록
 
-- ADR-0147 출판유통 판매 순위를 위험 감수하고 씀 (Accepted, 2026-10-24)
+- [ADR-0147](../../adr/0147-kpipa-sales-rank-as-for-you-input.md) 출판유통 판매 순위를 위험 감수하고 씀 (Accepted, 2026-10-24)
 - [ADR-0148](../../adr/0148-for-you-popular-fetch-and-covers.md) 「나에게 맞는 책」 인기 목록은 운영 서버가 새벽에 받고, 표지는 PC 표지를 옮김 (Accepted, 결정 #1·#5)
 - [ADR-0149](../../adr/0149-for-you-module-neighbours-and-split.md) 「나에게 맞는 책」 모듈 `foryou`, 이웃 표·넣는 길, 개인 추천 나누기, 판 모으기, 한 번 호출 배치, 꼬리표 사전 표 (Accepted, 결정 #2·#3·#4·#6·#7·#8·#9)
 
