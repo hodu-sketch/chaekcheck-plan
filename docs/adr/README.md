@@ -151,3 +151,5 @@
 | [ADR-0145](0145-seoul-elib-platform.md) | 서울도서관 화면 종류 `SEOUL_ELIB_V1` (사후 기록) | Accepted | 2026-10-23 | 22 회고 |
 | [ADR-0146](0146-lookup-sample-and-cycle20-phase1.md) | 조회 운영 표본 `availability.lookup_sample`(10초, 달 파티션, 90일), 사이클 20 1단계 일부 (사후 기록) | Accepted | 2026-10-23 | 22 회고 |
 | [ADR-0147](0147-kpipa-sales-rank-as-for-you-input.md) | 출판유통통합전산망 판매 순위·「화제의 책 200선」을 「나에게 맞는 책」 기본 목록 재료로 씀 (승인 거절을 알고 위험 감수, 카드 출처 표시 없음) | Accepted | 2026-10-24 | 23 |
+| [ADR-0148](0148-for-you-popular-fetch-and-covers.md) | 「나에게 맞는 책」 인기 목록은 운영 서버(`foryou`)가 새벽에 받음(`availability` 조회 줄, 출처마다 끄기, 수집 때마다 검증), 표지는 PC `fetch-covers`를 범위만 옮김 | Accepted | 2026-10-24 | 23 |
+| [ADR-0149](0149-for-you-module-neighbours-and-split.md) | 「나에게 맞는 책」 새 모듈 `foryou`, 꼬리표·사전(DB 표)은 `picks`, 이웃 표 책마다 한 줄(4바이트 배열)·`neighbours` 넣기, `book-texts` kind, 한 번 호출 배치, 개인 추천 서버·브라우저 나누기, 판 모으기 | Accepted | 2026-10-24 | 23 |

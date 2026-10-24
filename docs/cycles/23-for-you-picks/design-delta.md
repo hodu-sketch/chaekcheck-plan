@@ -1,5 +1,6 @@
 # 설계 변경: 사이클 23 추천 도서 탭 「나에게 맞는 책」
 
+- 사용자 검토 승인 2026-10-24 (검토 페이지 easy/2026-10-24-design-review.html #1)
 - 쓴 날: 2026-10-24. 기준: [spec.md](spec.md), [flow.md](flow.md), [architect-proposal.md](architect-proposal.md), 설계 결정 페이지 [easy/2026-10-24-design-decisions.html](easy/2026-10-24-design-decisions.html) (claude.ai Artifact, 사용자 답 2026-10-24)
 - dev 기준: main `adba2d3` (GitHub로 읽음). 사이클 24(`aisearch`, `ListedBooks`, `book-texts`)는 다른 브랜치에서 설계됨, 아직 dev에 없음 — 두 사이클 중 먼저 개발하는 쪽이 공통 부분(`ListedBooks`, `book-texts` 모드)을 만듦
 - `docs/current/`는 `/cycle-close`에서 고침
@@ -417,8 +418,8 @@ GET /api/v1/for-you/similar-books?baseBookIds=11,22,33&reshowBookIds=44&residenc
 ## 결정 기록
 
 - ADR-0147 출판유통 판매 순위를 위험 감수하고 씀 (Accepted, 2026-10-24)
-- ADR-0148 「나에게 맞는 책」 인기 목록은 운영 서버가 새벽에 받고, 표지는 PC 표지를 옮김 (초안, 결정 #1·#5)
-- ADR-0149 「나에게 맞는 책」 모듈 `foryou`, 이웃 표·넣는 길, 개인 추천 나누기, 판 모으기, 한 번 호출 배치, 꼬리표 사전 표 (초안, 결정 #2·#3·#4·#6·#7·#8·#9)
+- [ADR-0148](../../adr/0148-for-you-popular-fetch-and-covers.md) 「나에게 맞는 책」 인기 목록은 운영 서버가 새벽에 받고, 표지는 PC 표지를 옮김 (Accepted, 결정 #1·#5)
+- [ADR-0149](../../adr/0149-for-you-module-neighbours-and-split.md) 「나에게 맞는 책」 모듈 `foryou`, 이웃 표·넣는 길, 개인 추천 나누기, 판 모으기, 한 번 호출 배치, 꼬리표 사전 표 (Accepted, 결정 #2·#3·#4·#6·#7·#8·#9)
 
 ## 확인 필요
 
