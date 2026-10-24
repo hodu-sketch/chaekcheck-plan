@@ -1,5 +1,7 @@
 # 설계 제안: 사이클 24 AI 책 찾기 (architect, 2026-10-24)
 
+> **최신은 [design-delta.md](design-delta.md).** 이 문서의 결정 2(넣기 모드 이름 `search-lines` → `book-texts`, `kind` 칸)와 결정 3(메모리 색인 `SearchIndex` → DB 낱말 맞추기, 표 `search_line` → `search_book`)은 사용자 선택으로 대체됨 (2026-10-24)
+
 - 바탕: `scope.md`, `spec.md`(R1~R13, AC-1~15), `flow.md`(S1 탭 「AI」/「직접」, S30 `/ai-search`), main의 `docs/current/*`, 사이클 23 브랜치(`claude/server-status-library-crawl-test-uv7s8b`)의 `docs/current/*`·ADR-0140~0146·23 scope/spec(더 새 것이라 우선).
 - dev 코드는 열지 못함(Windows 경로). "현재 상태"는 plan 문서의 dev 확인 기록에 기댐 → dev 코드로 다시 맞춰 봐야 함 [확인 필요].
 - 결정 페이지: [easy/2026-10-24-design-decisions.html](easy/2026-10-24-design-decisions.html) (https://claude.ai/artifact/Bex3jp6arMgBiABGzC5fiC)

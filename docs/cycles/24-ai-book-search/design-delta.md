@@ -30,7 +30,7 @@ flowchart TB
   ais -->|UsageLog.recordAiSearch| ul["usagelog"]
   ais -->|HTTPS Messages API| ant["Anthropic Haiku 5.5"]
   col["collection (mode book-texts)"] -->|AiSearchBookTexts.replace| ais
-  col -->|ListedBooks.current| pk
+  col -->|ListedBooks.loadFromDb| pk
   pc["내 PC Haiku 배치 (원문은 PC에만)"] -.TSV.-> col
 ```
 
@@ -114,7 +114,7 @@ sequenceDiagram
   participant P as picks ListedBooks
   participant A as aisearch
   PC->>C: TSV (kind=search_line, book_id, source, made_on, text)
-  C->>P: current() → 목록 책 전부 (bookId, 제목, 저자)
+  C->>P: loadFromDb() → 목록 책 전부 (0권이면 거부)
   C->>A: AiSearchBookTexts.replace(목록 책 + 한 줄)
   A->>A: 한 트랜잭션: 지우고 넣음, search_text 다시 만듦
   A-->>C: 넣은 수 · 한 줄 있는 수 · 목록에 없는 번호 수
@@ -166,7 +166,7 @@ stateDiagram-v2
 | 모듈 | 신규/변경 | 책임 | 공개 API | 발행/구독 이벤트 | 소유 테이블 |
 |---|---|---|---|---|---|
 | `aisearch` | 신규 | 질문 → 낱말(Haiku 1차) → 후보(DB) → 고르기·글(Haiku 2차, 스트림), 횟수·비용 상한, 찾기용 한 줄 보관 | Java `AiSearchBookTexts.replace(rows)`(`collection`이 씀). REST `POST /api/v1/ai-searches/stream` | 없음 | `aisearch.search_book`, `aisearch.daily_usage` |
-| `picks` | 변경 | 목록 책 사본 읽기 창구 | 새 `ListedBooks.current()`(캐시 사본, DB 호출 없음) | 없음 | 바뀌지 않음 |
+| `picks` | 변경 | 목록 책 사본 읽기 창구 | 새 `ListedBooks.current()`(서버: 캐시 사본, DB 호출 없음), `ListedBooks.loadFromDb()`(넣기 명령용, 캐시 없이 DB에서) [안] | 없음 | 바뀌지 않음 |
 | `collection` | 변경 | 새 반영 모드 `book-texts` | 없음 | 없음 | 없음 |
 | `usagelog` | 변경 | AI 찾기 기록 | 새 `UsageLog.recordAiSearch(UsageRequest, AiSearchRecord)` | 없음 | 새 `usagelog.ai_search_event` |
 
@@ -230,7 +230,8 @@ erDiagram
 | `…input_tokens`·`output_tokens`·`cost_micro_usd` | bigint | NOT NULL DEFAULT 0 | 비용 = 입력 × 0.10 + 출력 × 0.50 (100만 토큰당 달러, 10만 토큰 이하 요청) → 백만분의 1달러 | 가격 [확정] (https://platform.claude.com/docs/en/about-claude/pricing , 2026-10-24) |
 | `usagelog.ai_search_event` | 위 그림 | `turn_no` 1~20, `keyword_result` IN ('ok','failed','timeout'), `pick_result` IN ('ok','no_match','no_text','partial','skipped'), `picked_book_ids` 최대 8 | 질문 글·IP·`visit_key`·`account_id` 없음. 보관은 지금 `usagelog` 정리 규칙 | 칸 [확정] (결정 #7 "이대로"), 보관 기간 [확인 필요] |
 
-- 낱말 맞추기 SQL 모양 [안]: `SELECT book_id, (search_text LIKE :k1)::int + … AS score FROM aisearch.search_book WHERE book_id = ANY(:eligible) AND (search_text LIKE :k1 OR …) ORDER BY score DESC, book_id LIMIT 30` — `:eligible`은 `ListedBooks`의 `libraryIds`와 계획 도서관이 겹치는 책(메모리에서 계산), 같은 점수의 계획 도서관 수 순서는 서버가 다시 정렬. 낱말은 정리 뒤 2자 이상만 [안]. 2,800줄이라 색인 없이도 빠를 수 있음 → dev 측정 [확인 필요]
+- 낱말 맞추기 [안]: 서버가 먼저 `ListedBooks`의 `libraryIds`와 계획 도서관을 맞춰 **계획 도서관 수**를 책마다 셈(메모리) → SQL에는 대상 책 번호와 그 수를 함께 넘겨 점수와 계획 도서관 수로 정렬한 뒤 30권을 자름(검토 지적 #5: 30권을 먼저 자르면 동점 책이 `book_id` 순으로 잘림). 모양: `SELECT s.book_id, (s.search_text LIKE :k1)::int + … AS score FROM aisearch.search_book s JOIN unnest(:ids, :planCounts) AS e(book_id, plan_count) USING (book_id) WHERE s.search_text LIKE :k1 OR … ORDER BY score DESC, e.plan_count DESC, s.book_id LIMIT 30`. 낱말은 정리 뒤 2자 이상만, 1차 `keywords` 최대 8개 [안]. 2,800줄이라 색인 없이도 빠를 수 있음 → dev 측정 [확인 필요]
+- 이어서 묻기 [안] (spec R11-8·R11-9): 1차가 `refersToShown`이면 후보 = 앞 답에서 보여 준 책(`history` 마지막 턴의 `bookIds`) + 낱말로 맞춘 책, 아니면 `history`의 보여 준 책을 후보에서 뺌. 앞 대화의 `bookIds`는 서버가 `ListedBooks` 제목으로 바꿔 1·2차 입력에 넣음
 - 목록 책이 새로 늘면(사서 월 1회, KAIST·노벨 `lists` 모드) **다음 넣기 전까지 AI 찾기에 안 나옴** — 결정 #3에서 감수
 - Liquibase(새 파일만): `aisearch/001-aisearch-schema.yaml` [안], `usagelog/00N-ai-search-event.yaml`(번호는 23과 합칠 때 다음 번호, changeSet id는 이름으로 `usagelog-ai-search-event`) [안]
 
@@ -239,7 +240,8 @@ erDiagram
 - 명령 [안]: `--spring.profiles.active=collection-import --chaekcheck.collection.import.mode=book-texts --chaekcheck.collection.import.book-texts-file=<path>`
 - TSV 머리줄 [안]: `kind\tbook_id\tsource\tmade_on\ttext`, UTF-8, 줄 안 탭·줄바꿈은 거절
 - `kind`: 이번에는 `search_line`만 받고 `aisearch`에 넘김. **사이클 23의 탭 추천 글은 나중에 `kind=for_you_blurb` 같은 값으로 같은 파일·같은 명령에 실을 수 있음** — `collection`이 종류마다 주인 모듈의 창구를 부름 [안] (결정 #2 덧붙임 "나중에 23이랑 같이 되도록 설계"). 모르는 `kind`는 그 줄을 건너뛰고 수를 보고
-- `search_line`을 넣을 때는 `ListedBooks.current()`의 목록 책 **전부**를 넣고(한 줄 없는 책은 `line` NULL), 한 트랜잭션에서 지우고 넣음. 목록에 없는 `book_id`의 줄은 건너뛰고 수를 보고
+- **넣기 명령은 `collection-import` 프로필로 따로 도는 프로세스라 `PicksCache`가 비어 있을 수 있음**(검토 지적 #6) → `ListedBooks`에 DB에서 바로 읽는 길 `loadFromDb()`를 두고 넣기 명령은 그 길을 씀. 읽은 목록 책이 0권이면 넣기를 거부하고 표를 지우지 않음 [안]
+- `search_line`을 넣을 때는 `ListedBooks`의 목록 책 **전부**를 넣고(한 줄 없는 책은 `line` NULL), 한 트랜잭션에서 지우고 넣음. 목록에 없는 `book_id`의 줄은 건너뛰고 수를 보고
 
 ## API
 
@@ -293,7 +295,7 @@ data: {"result":"ok","bookIds":[1203344,88012,51007]}
 
 | 대상 | 방식 | 제한·키 관리 | 실패 시 동작 | 상태 태그 |
 |---|---|---|---|---|
-| Anthropic Messages API, 모델 `claude-haiku-5-5` | JDK `HttpClient` 직접(결정 #5). 1차 보통 요청, 2차 스트림. 구조화 출력 `output_config.format` `json_schema`(2차 칸 `head`, `picks[].no`, `picks[].text` 모두 required → 차례 지킴) | 키: Parameter Store `/chaekcheck/prod/CHAEKCHECK_AISEARCH_ANTHROPIC_API_KEY` → env → `chaekcheck.aisearch.llm.anthropic.api-key` [안], 로그·예외에 안 남김. 키가 비면 1차·2차 모두 대신하는 길 | 1차 5초 → 낱말 나누기, 2차 15초 → 글 없이 / partial | 모델 ID·구조화 출력·스트리밍 [확정] (models overview·structured-outputs, 2026-10-24). `anthropic-version` 값·base URL·스트림의 `usage` 자리 [확인 필요: 공식 문서]. thinking 끄기·effort 낮추기로 5초 안에 드는지 [확인 필요: API 호출 시험] (Haiku 5.5 기본 adaptive thinking, effort `medium` [확정]) |
+| Anthropic Messages API, 모델 `claude-haiku-5-5` | JDK `HttpClient` 직접(결정 #5). 1차 보통 요청, 2차 스트림. 구조화 출력 `output_config.format` `json_schema`(2차 칸 `head`, `picks[].no`, `picks[].text` 모두 required → 차례 지킴) | 키: Parameter Store `/chaekcheck/prod/CHAEKCHECK_AISEARCH_ANTHROPIC_API_KEY` → env → `chaekcheck.aisearch.llm.anthropic.api-key` [안], 로그·예외에 안 남김. 키가 비면 1차·2차 모두 대신하는 길 | 1차 5초 → 낱말 나누기, 2차 15초 → 글 없이 / partial | 모델 ID·구조화 출력·스트리밍 [확정] (https://platform.claude.com/docs/en/about-claude/models/overview , https://platform.claude.com/docs/en/build-with-claude/structured-outputs , 2026-10-24 확인). `anthropic-version` 값·base URL·스트림의 `usage` 자리 [확인 필요: 공식 문서]. thinking 끄기·effort 낮추기로 5초 안에 드는지 [확인 필요: API 호출 시험] (Haiku 5.5 기본 adaptive thinking, effort `medium` [확정] — models overview, 2026-10-24) |
 | 내 PC Haiku 배치(찾기용 한 줄) | PC에서 돌림(서버 밖), 결과 TSV를 `book-texts` 모드로 | 원문은 PC에만 | — | [확정] (spec R10) |
 
 ## 설정값 (`docs/settings-index.md`에 더함)
@@ -319,7 +321,8 @@ data: {"result":"ok","bookIds":[1203344,88012,51007]}
 | `usagelog` 변경 파일 번호 | 합칠 때 다음 번호 |
 | 반영 파일 형식 번호 | 건드리지 않음 |
 | 첫 화면 / 추천도서 화면 | 24만 / 23만 |
-| ADR | 0150~ |
+| ADR | 0150~ (23이 0149를 넘기면 0154부터) |
+| `PicksCache` 구조 | 23이 `picks` 캐시를 바꾸면 `ListedBooks` 구현을 다시 확인 |
 
 ## 결정 기록
 
@@ -327,6 +330,14 @@ data: {"result":"ok","bookIds":[1203344,88012,51007]}
 - [ADR-0151](../../adr/0151-search-lines-import-and-db-match.md) 찾기용 한 줄: 따로 넣는 명령(`book-texts`, 23과 같이 쓸 수 있게), `aisearch` 표의 사본에서 DB 낱말 맞추기 — Accepted (2026-10-24)
 - [ADR-0152](../../adr/0152-no-question-storage-quota.md) 질문 글과 대화를 서버에 남기지 않음: POST 본문, 대화는 브라우저 탭, IP 횟수는 메모리·하루 비용은 DB, 기록 칸 — Accepted (2026-10-24)
 - [ADR-0153](../../adr/0153-streamed-answers-number-first-title-guess.md) 답을 조금씩 흘리되 책 번호를 먼저 확인, 제목만 넣으면 제목 줄 — Accepted (2026-10-24)
+
+## 검토 뒤 덧붙임 (2026-10-24, design-reviewer)
+
+- ADR-0151에 적지 않은 것: 새 의존 `collection → aisearch`, `collection`이 `ListedBooks.loadFromDb()`를 씀(`collection → picks`는 이미 있음). 찾는 범위를 추천도서 목록 책으로 시작한다는 범위 결정 #1은 이 문서와 `scope.md`에 기록(Accepted ADR은 고치지 않음)
+- ADR-0152에 적지 않은 것: Anthropic 보관 기간 [확인 필요: 공식 문서]
+- 하루 비용 상한은 질문을 **시작할 때만** 봄 → 이미 돌고 있는 질문만큼(몇 센트 [추론]) 넘을 수 있음
+- 시간: 1차 5초 + 2차 15초 = 한 질문 최대 약 21초 → nginx `proxy_read_timeout`이 이보다 길어야 함 [확인 필요: dev `deploy/nginx`]
+- `Retry-After` 값: 1분 제한이면 남은 초, 하루 제한이면 한국 자정까지 [안]
 
 ## 확인 필요
 
@@ -337,6 +348,8 @@ data: {"result":"ok","bookIds":[1203344,88012,51007]}
 | thinking 끄기·effort로 1차 5초 안 | API 호출 시험 |
 | 스트리밍 때 칸 차례·`maxItems` 지킴, 질문 하나 비용·시간, `max_tokens` | 프로토타입 (`llm-test-set.md` 20개, AC-12) |
 | 낱말 맞추기 속도(색인 필요 여부) | dev 측정 |
+| 넣기 명령에서 `ListedBooks.loadFromDb()`가 서버 캐시와 같은 책·제목을 주는지 | dev 코드 읽기 |
+| AI 기능이 꺼졌을 때 웹이 아는 방법(설정 API·빌드 값) | dev 코드 읽기 |
 | 서버 전체 동시 AI 찾기 상한(한 요청 최대 약 21초), 스레드 모델 | dev 코드 읽기 → 사용자에게 질문 |
 | 실제 사용자 IP(`X-Real-IP`, Cloudflare 터널 뒤) | dev·배포 설정 읽기 |
 | 웹 스트림 읽기 함수를 POST에 다시 쓸 수 있는지, CSRF | dev 코드 읽기 |

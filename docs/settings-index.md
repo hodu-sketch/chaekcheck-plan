@@ -222,6 +222,10 @@
 | 후보 / 한 답 / 앞 대화 / 대화 최대 | 30권 / 8권 / 5번 / 20번(웹) | `be.yml`, 웹 | 인계 예정 | spec R3-4·R11-3, 설계 결정 #8 | 사용자 선택 (2026-10-24) | [확정] | — |
 | 질문 / 카드 글 / 찾기용 한 줄 최대 | 200자 / 300자 / 300자 | `be.yml`, DB CHECK | 인계 예정 | 설계 결정 #8, spec R4-3·R12-3 | 사용자 "이 값으로" | [확정] | — |
 | 1차·2차 `max_tokens` | — | `be.yml` | — | — | — | [확인 필요: 프로토타입] | 비용 계산 |
+| 1차 낱말 수 / 낱말 최소 길이 | 8개 / 정리 뒤 2자 | `be.yml` | 인계 예정 | design-delta "낱말 맞추기" | [이유 미확인] | [안] | — |
+| `Retry-After` | 1분 제한: 남은 초, 하루 제한: 한국 자정까지 | 서버 코드 | 인계 예정 | design-delta "검토 뒤 덧붙임" | [이유 미확인] | [안] | — |
+| 한 질문 최대 시간과 nginx | 1차 5초 + 2차 15초 ≈ 21초 → `proxy_read_timeout`이 더 길어야 함 | nginx 템플릿 | — | design-delta | — | [확인 필요: dev `deploy/nginx`] | nginx |
+| API 키 이름 | SSM `/chaekcheck/prod/CHAEKCHECK_AISEARCH_ANTHROPIC_API_KEY` → env `CHAEKCHECK_AISEARCH_ANTHROPIC_API_KEY` | SSM, `up.sh` | 인계 예정 | design-delta "외부 연동" | 사이클 17 규칙 | [안] | 8절 환경 변수 표 |
 
 ## 확인 필요
 
