@@ -1942,3 +1942,98 @@ sequenceDiagram
 - **조회 운영 표본**: `OpsSampler`가 10초마다 한 줄 → 켤 때와 하루 한 번 다음 두 달 파티션 만들기 + 90일 지난 파티션 지우기. DB 오류면 그 줄만 버리고 WARN은 1분에 한 번 (ADR-0146)
 - **첫 화면에서 지역 고르기 (지금)**: [지역을 선택해 주세요] → 창(PC 팝오버, 폰 시트)에서 시도·시군구 셀렉트로 첫 거주 하나 → 저장만(로그인 전 브라우저, 로그인 뒤 `PUT /api/v1/me/regions` 한 번에 하나) → [검색]을 눌러야 찾음. 결과·책 화면·추천도서에서는 지역을 바꾸지 않고, 지역이 없으면 마이페이지로 가는 줄만. 거주·직장 여럿과 직접 추가는 `/mypage`에서 (사이클 22 회고)
 - **실효 방문 가입**: 계획을 만들 때 `LibraryService`가 도서관마다 `visitRequired || (visitOutsideRegion && 자격 아님)`을 계산 → 방문 가입이면 계획 맨 뒤(ADR-0027), 「온라인에서 가입 가능한 곳만 보기」가 켜져 있으면(기본) 뺌 (ADR-0141)
+
+
+## 흐름 55: 「나에게 맞는 책」 새벽 기본 목록 만들기 — 설계됨(미구현, 사이클 23)
+
+근거: `docs/cycles/23-for-you-picks/design-delta.md`, ADR-0147·0148·0149, spec·flow 같은 폴더. 사이클 24(`aisearch`, `ListedBooks`, `book-texts`)는 다른 브랜치 설계라 여기 없음 — 먼저 개발하는 쪽이 공통 부분을 만듦. 출처 하나가 0줄이거나 맞춤 90% 미만이면 그 출처만 빼고, 예외면 마지막 succeeded 목록을 그대로 씀(마지막 succeeded는 30일이 지나도 지우지 않음).
+
+```mermaid
+sequenceDiagram
+  participant S as foryou 만들기 작업
+  participant A as availability.RankedListings
+  participant K as 출판유통 · KLWAVE
+  participant C as catalog
+  participant P as picks.ListedBooks
+  participant DB as foryou 스키마
+  S->>DB: build_run 시작 (running)
+  loop 교보 일반 4 · YES24 V1 2, 각 앞 100권
+    S->>A: fetch(libraryId, 인기순, page)
+    A-->>S: 줄 (제목 · 저자 · 대출 중 · 예약) 또는 실패
+  end
+  S->>K: 판매 순위 · 화제의 책 200선 · KLWAVE (켜진 출처만)
+  K-->>S: 줄 또는 실패
+  Note over S: 출처 하나가 0줄 · 맞춤 90% 미만이면 그 출처만 뺌
+  S->>C: 줄 → 책 번호, 판 모으기 키, 출판 연도
+  S->>P: 추천목록 책 · 목록 키
+  S->>S: 점수 = 최근 수요 × 연도 가산 + 판매 × 1.5 + KLWAVE × 0.3, 판 모으기, R2-4 섞기, 40권
+  alt 만들기 성공 (인기 출처가 모두 실패해도 추천목록만으로)
+    S->>DB: popular_row · book_score · base_entry, succeeded, 출처별 줄 수 note
+    S->>S: 메모리 사본 바꿔 끼움
+  else 예외 · 저장 실패
+    S->>DB: failed
+    Note over S: 사본은 마지막 succeeded 그대로 (전날 목록)
+  end
+```
+
+실행 상태:
+
+```mermaid
+stateDiagram-v2
+  [*] --> running: 새벽 예약 · 켤 때 오늘 것이 없으면
+  running --> succeeded: 40권 이하 저장 (인기 출처 일부 · 전부 실패해도 추천목록으로)
+  running --> failed: 예외 · 저장 실패
+  failed --> [*]: 사본은 마지막 succeeded, 다음 날 다시
+  succeeded --> [*]: 메모리 사본 바꿔 끼움
+```
+
+## 흐름 56: 「나에게 맞는 책」 탭 열기 (S18 `/picks/for-you`) — 설계됨(미구현, 사이클 23)
+
+브라우저가 본 책 점수(30일, 최대 200권)를 들고 기준 책 ≤3과 다시 보여 줄 후보 ≤6 번호만 보냄. 본 책 빼기·같은 저자 2권·20권씩·8·16번째 다시 섞기는 브라우저. `/picks`는 `/picks/for-you`로 넘김, 「기준 책 바꾸기」(S19)는 브라우저 저장소만 고침.
+
+```mermaid
+sequenceDiagram
+  participant W as web S18
+  participant LS as 브라우저 저장소
+  participant F as foryou API
+  W->>LS: 본 책 점수 읽기 (30일, 빼기 기한)
+  LS-->>W: 기준 책 ≤3, 다시 보여 줄 후보 ≤6, 본 책 ≤200
+  par 기본 목록
+    W->>F: GET /for-you/books?계획
+    F-->>W: 40권 중 계획 도서관에 있는 책
+  and 기준 책이 있을 때만
+    W->>F: GET /for-you/similar-books?baseBookIds&reshowBookIds&계획
+    alt 성공
+      F-->>W: books ≤60 (인기 먼저 · 계획 도서관 수 순), reshowBooks
+      W->>W: 본 책 빼기 → 같은 저자 2권 → 20권씩 → 8·16번째에 다시 섞기 → 기본 목록과 겹침 빼기
+    else 실패
+      F-->>W: 5xx · 연결 실패
+      W->>W: 기본 목록만 + "비슷한 책을 불러오지 못했어요 [다시 시도]"
+    end
+  end
+  W->>W: 둘 다 0권이면 "내 도서관에 있는 추천 책이 없어요"
+```
+
+## 흐름 57: 「나에게 맞는 책」 PC 결과 넣기 — 설계됨(미구현, 사이클 23)
+
+```mermaid
+sequenceDiagram
+  participant PC as 내 PC
+  participant CO as collection (collection-import 프로필)
+  participant CL as catalog (CatalogLoad)
+  participant FY as foryou.ForYouTransfer
+  participant PK as picks.BookTagTransfer
+  PC->>CO: mode=tag-dictionary (사전 TSV)
+  CO->>PK: 사전 upsert
+  PC->>CO: mode=neighbours (머리말 export_id, full | add)
+  CO->>CL: 지금 export_id
+  alt 다름 (--force 없음)
+    CO-->>PC: 멈춤, 표는 그대로
+  else 같음
+    CO->>FY: full: _next에 COPY 뒤 바꿔 끼움 / add: upsert
+  end
+  PC->>CO: mode=book-texts
+  CO->>FY: kind for_you_blurb · cover_file (upsert)
+  CO->>PK: kind tags (사전에 없는 코드는 건너뜀 · 수 보고)
+  Note over CO: search_line은 24의 aisearch로, 모르는 kind는 건너뜀
+```

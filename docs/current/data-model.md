@@ -1231,3 +1231,114 @@ DB 밖:
 - `backend/src/main/resources/geo/kr-sido.csv.gz`(줄 `4|시작|끝|시도`·`6|…`) (ADR-0140)
 - 운영 `/srv/chaekcheck/covers/<sha1(url)>.jpg` (ADR-0144)
 - 수집 DB(내 PC): `holding.intro_raw`(목록 화면 소개 원문, 교보 500자·YES24 "…" 잘림, 알라딘·포털·서울 NULL), `covers/covers.sqlite`(`fetch-covers`, 서비스가 안 씀)
+
+
+## 사이클 23 「나에게 맞는 책」 — 설계됨(미구현, 사이클 23)
+
+근거: `docs/cycles/23-for-you-picks/design-delta.md`, ADR-0147·0148·0149, spec·flow 같은 폴더. 사이클 24(`aisearch`, `ListedBooks`, `book-texts`)는 다른 브랜치 설계라 여기 없음 — 먼저 개발하는 쪽이 공통 부분을 만듦
+
+
+- 스키마: `foryou` (새), `picks` (표 둘 더함)
+
+```mermaid
+erDiagram
+  BUILD_RUN {
+    bigint id PK
+    date built_on
+    timestamptz started_at
+    timestamptz finished_at
+    text status
+    text note
+  }
+  POPULAR_ROW {
+    bigint id PK
+    bigint run_id FK
+    text source
+    bigint site_library_id
+    text period
+    smallint rank
+    int loans_now
+    int reservations
+    text title
+    text author
+    text publisher
+    text isbn13
+    bigint book_id
+  }
+  BOOK_SCORE {
+    bigint run_id PK
+    bigint book_id PK
+    real score
+  }
+  BASE_ENTRY {
+    bigint run_id PK
+    smallint position PK
+    bigint book_id
+    boolean from_popular
+  }
+  BOOK_NEIGHBOUR {
+    bigint book_id PK
+    int_array neighbour_ids
+    date computed_on
+  }
+  BOOK_BLURB {
+    bigint book_id PK
+    text blurb
+    date made_on
+  }
+  BOOK_COVER {
+    bigint book_id PK
+    text file_key
+  }
+  TAG_DICTIONARY {
+    text code PK
+    text axis
+    text name
+    text thema_code
+  }
+  BOOK_TAG {
+    bigint book_id PK
+    text tag_code PK
+    date made_on
+  }
+  BUILD_RUN ||--o{ POPULAR_ROW : run_id
+  BUILD_RUN ||--o{ BOOK_SCORE : run_id
+  BUILD_RUN ||--o{ BASE_ENTRY : run_id
+  TAG_DICTIONARY ||--o{ BOOK_TAG : tag_code
+```
+
+| 테이블.컬럼 | 타입 | 제약 | 설명 | 상태 태그 |
+|---|---|---|---|---|
+| `foryou.build_run.id` | bigint | identity PK | | [안] |
+| `foryou.build_run.built_on` | date | NOT NULL | Asia/Seoul 날짜 | [안] |
+| `foryou.build_run.status` | text | NOT NULL, CHECK IN (`running`,`succeeded`,`failed`), 색인 `(status, built_on DESC)` | 마지막 성공 목록 찾기 | [안] |
+| `foryou.build_run.note` | text | NULL | 출처별 받은 줄 수·맞춘 수 (검증 노트 [to-dev-popular-list-check.md](to-dev-popular-list-check.md) 5번) | [안] |
+| `foryou.popular_row.run_id` | bigint | FK `build_run` ON DELETE CASCADE | 같은 모듈 안 FK | [안] |
+| `foryou.popular_row.source` | text | NOT NULL, CHECK IN (`kyobo_elib`,`yes24_elib`,`kpipa_rank`,`kpipa_200`,`klwave`) | 출처 | [안] |
+| `foryou.popular_row.site_library_id` | bigint | NULL (출판유통·KLWAVE), FK 없음 | `library.id` 값 | [안] |
+| `foryou.popular_row.period` | text | NULL, CHECK IN (`day`,`week`,`month`,`quarter`) | 출판유통·KLWAVE 기간 | [안] |
+| `foryou.popular_row.rank` | smallint | NOT NULL, ≥ 1 | | [안] |
+| `foryou.popular_row.loans_now`·`reservations` | int | NULL, ≥ 0 | 교보·YES24만 | [안] |
+| `foryou.popular_row.title`·`author`·`publisher`·`isbn13` | text | title NOT NULL | 맞추기 전 원래 값 | [안] |
+| `foryou.popular_row.book_id` | bigint | NULL | 맞춘 책 | [안] |
+| `foryou.popular_row` 보관 | | 실행 기록과 함께 30일 지난 것 지움. **마지막 succeeded 실행 하나는 30일이 지나도 지우지 않음** [확정] (사용자 승인 2026-10-24, 마무리 검토 페이지 #2) | 가중치 조정(R2-3a) 원재료 | 30일 [안] |
+| `foryou.popular_row.run_id` 색인 | | 색인 `(run_id)` | CASCADE·30일 정리 | [안] |
+| `foryou.build_run` 남은 `running` | | 서버를 켤 때 오래된 `running`은 `failed`로 바꿈 [확정] (사용자 승인 2026-10-24, 마무리 검토 페이지 #2) | 크래시 뒤 정리 | |
+| `foryou.book_score` | PK (`run_id`, `book_id`), `score real` NOT NULL ≥ 0 | FK `build_run` CASCADE | 판을 모은 뒤 대표 판에만. 개인 추천 "인기 먼저" 정렬 | [안] |
+| `foryou.base_entry` | PK (`run_id`, `position`), `book_id` NOT NULL, `from_popular boolean` NOT NULL | `position` 1~40, UNIQUE (`run_id`, `book_id`), FK CASCADE | 기본 목록 차례 | 40 [안] (R2-4) |
+| `foryou.book_neighbour.book_id` | bigint | PK | | [안] |
+| `foryou.book_neighbour.neighbour_ids` | integer[] | NOT NULL, CHECK `cardinality BETWEEN 1 AND 20`, `array_ndims = 1` | 가까운 차례. 자기 자신·중복 없음(넣을 때 검사). 책 번호가 2,147,483,647을 넘으면 넣기 거부 | 20 [확정] (R6-1), 4바이트 [확정] (결정 #3) |
+| `foryou.book_neighbour.computed_on` | date | NOT NULL | 반년 전체 다시(결정 #8) 판단용 | [안] |
+| `foryou.book_blurb` | `book_id` PK, `blurb text` NOT NULL, `made_on date` NOT NULL | `char_length(blurb)` 1~300 | 80~150자 규칙(R8-4)은 PC가 지킴 | 300 [안] |
+| `foryou.book_cover` | `book_id` PK, `file_key text` NOT NULL | `~ '^[0-9a-f]{40}$'` | `/covers/<file_key>.jpg` | [안] |
+| `picks.tag_dictionary` | `code text` PK, `axis text` NOT NULL, `name text` NOT NULL, `thema_code text` NULL, `active boolean` NOT NULL DEFAULT true | `code ~ '^[A-Za-z0-9_]{1,20}$'`, `axis` IN (`mood`,`subject`,`audience`) | 사전 (결정 #9). 사전에서 빠진 코드는 지우지 않고 `active=false` | [안] |
+| `picks.book_tag` | PK (`book_id`, `tag_code`), `made_on date` NOT NULL (사전 쪽 `tag_code` 색인은 두지 않음: 사전은 지우지 않고 `active=false`만 하므로 FK 검사 조회가 없음) | FK `tag_code → picks.tag_dictionary(code)` | 추천목록 책만(R9-1). 카드에는 `active` 코드 가운데 느낌 1 + 주제 1~2 | [안] |
+
+- 크기 어림 [추론]: 이웃 약 0.2GB(134만 줄), 탭 글 약 15MB(3.3만 줄), 표지 파일 약 0.3GB(3.3만 장 × 약 10KB, 수집 세션이 잼 [확인 필요]), 나머지 작음
+- 다른 모듈과 FK·조인 없음. 가져오기로 사라진 책 번호는 `BookLookup`이 돌려주지 않아 읽을 때 빠짐
+- 바뀌는 기존 CHECK: `usagelog.screen_event.picks_list`에 `for_you` 더함(서버 검사 상수도). `picks.list_field`·`list_book`의 목록 키 CHECK는 그대로(`for_you`는 목록이 아님)
+- Liquibase: 새 changelog 파일로 추가 (기존 changeset 수정 없음), 번호는 23·24를 합칠 때 다음 번호
+  - `db/changelog/foryou/001-for-you.yaml` — 스키마 `foryou`, 표 일곱, CHECK는 changeset 안 `sql`
+  - `db/changelog/picks/006-tag-dictionary-and-book-tag.yaml` [안: 번호]
+  - `db/changelog/usagelog/00N-picks-list-for-you.yaml` — CHECK 지우고 다시 만듦, 24 `usagelog-ai-search-event` 다음
+  - master 끝에 include

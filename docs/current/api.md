@@ -528,3 +528,76 @@
 | 검색 스트림 `targets.libraries[]`, `GET /api/v1/libraries` | 칸 `visitRequired`(서버 계산 실효값), `visitOutsideRegion`(저장값) | 0141 |
 | `GET /api/v1/lookup-status` | `{slots, inUse, level(GREEN\|YELLOW\|RED\|GRAY), reason(NONE\|VENDOR_PAUSED\|NO_LANE\|DB_ERROR), queuedLibraryIds, serverTime}`, `no-cache`. 웹은 지금 부르지 않음(상태 불 지움) | 0146 |
 | 책 화면 요청 헤더 `X-Visit-Key`, 사용 알림 본문 `visitKey` | 형식이 틀리면 NULL로 저장 | 0134 |
+
+
+## 사이클 23 「나에게 맞는 책」 (`foryou`) — 설계됨(미구현, 사이클 23)
+
+근거: `docs/cycles/23-for-you-picks/design-delta.md`, ADR-0147·0148·0149, spec·flow 같은 폴더. 사이클 24(`aisearch`, `ListedBooks`, `book-texts`)는 다른 브랜치 설계라 여기 없음 — 먼저 개발하는 쪽이 공통 부분을 만듦
+
+
+| 메서드 | 경로 | 설명 | 요청 | 응답 | 에러 |
+|---|---|---|---|---|---|
+| GET | `/api/v1/for-you/books` [안] | 오늘 기본 목록 가운데 계획 도서관에 있는 책 | 계획 파라미터(`residenceRegionIds`·`workRegionIds`·`scope`·`visit`·`libraryIds`, `/api/v1/picks/{listKey}`와 같은 이름·검증) | 200 `{builtOn, books[]}`. 한 번도 못 만들면 `builtOn: null` + 추천목록만 | 400 `validation_error`, 422 `invalid_region`, 500 `internal_error` |
+| GET | `/api/v1/for-you/similar-books` [안] | 기준 책의 비슷한 책 | `baseBookIds`(1~3, 쉼표, 필수), `reshowBookIds`(0~6), 계획 파라미터 | 200 `{baseBooks[], books[] ≤60, reshowBooks[]}`. 모르는 번호는 조용히 뺌 | 400 `validation_error`(`errors[].field` `baseBookIds`·`reshowBookIds`, `code` `required`·`invalid_format`·`too_many`·`duplicate`), 422, 500 |
+
+- 인증 없음, GET이라 CSRF 없음. nginx 일반 `/api/` 구역(5r/s) [확정] (사용자 승인 2026-10-13, 사이클 17 결정 #1, `docs/settings-index.md` "nginx 기존 한도" 줄). `Cache-Control`은 정하지 않음(picks 목록과 같음) [안]
+- 카드 칸: `bookId`, `title`, `author`, `publisher`, `coverUrl`(없으면 null), `blurb`(없으면 null), `tags[{code, axis, name}]`(추천목록 책만), `planLibraryCount`(≥ 1), `lists`(목록 키만, "KAIST 추천목록에 있어요" 문구는 웹이 탭 이름으로 만듦), similar에는 `authorKey`(첫 저자 `name_exact`)
+- 인기 점수·출처 이름은 내보내지 않음(R3-2)
+- `similar-books` 정렬: 기준 책 빼기 → 계획 도서관 0곳 빼기 → 마지막 succeeded 실행의 `book_score`가 있는 책 점수 높은 순(오늘 만들기가 실패해도 전날 점수로) → 나머지 `planLibraryCount` 많은 순 → `bookId` [안: 마지막 차례]
+
+요청/응답 예시 (값은 보기)
+
+```json
+GET /api/v1/for-you/books?residenceRegionIds=1114
+{
+  "builtOn": "2026-10-25",
+  "books": [
+    { "bookId": 1203344, "title": "책 제목", "author": "저자", "publisher": "출판사",
+      "coverUrl": "/covers/3f2a….jpg", "blurb": "해요체 한두 문장.", "tags": [],
+      "planLibraryCount": 3, "lists": [] },
+    { "bookId": 78100, "title": "책 제목", "author": "저자", "publisher": "출판사",
+      "coverUrl": null, "blurb": null,
+      "tags": [ {"code": "m03", "axis": "mood", "name": "잔잔한"} ],
+      "planLibraryCount": 1, "lists": ["snu100", "kaist"] }
+  ]
+}
+```
+
+```json
+GET /api/v1/for-you/similar-books?baseBookIds=11,22,33&reshowBookIds=44&residenceRegionIds=1114
+{
+  "baseBooks": [ {"bookId": 11, "title": "책 A"}, {"bookId": 22, "title": "책 B"} ],
+  "books": [ { "bookId": 501, "title": "…", "author": "…", "publisher": "…", "coverUrl": null,
+               "blurb": null, "tags": [], "planLibraryCount": 2, "lists": [], "authorKey": "…" } ],
+  "reshowBooks": [ { "bookId": 44, "title": "…", "author": "…", "publisher": "…", "coverUrl": null,
+                     "blurb": "…", "tags": [], "planLibraryCount": 1, "lists": [], "authorKey": "…" } ]
+}
+```
+
+```json
+400
+{ "title": "Bad Request", "status": 400, "code": "validation_error",
+  "errors": [ { "field": "baseBookIds", "code": "too_many" } ] }
+```
+
+- 사용 알림: `{"type":"picks_list_view","list":"for_you",…}`, `{"type":"picks_book_view","list":"for_you","bookId":501,…}`. `category` 값 [확인 필요]
+
+### 넣는 명령 (PC → 운영, `collection-import` 프로필)
+
+| 모드 | 파일 | 동작 | 상태 태그 |
+|---|---|---|---|
+| `neighbours` (새) | TSV `book_id\tneighbour_ids`(쉼표), 머리말 `export_id`, `full`·`add` | `full`: `foryou.book_neighbour_next`에 COPY → 한 트랜잭션에서 이름 바꿔 끼움. `add`: `ON CONFLICT (book_id) DO UPDATE`. 운영 `catalog_import.export_id`와 다르면 멈춤(`--force`로만) | [안] |
+| `tag-dictionary` (새) | TSV `code\taxis\tname\tthema_code` | upsert, 파일에 없는 코드는 `active=false` | [안] (결정 #9) |
+| `book-texts` (24가 정한 모드) | `kind\tbook_id\tsource\tmade_on\ttext` | kind `for_you_blurb` → `foryou.book_blurb`, `tags` → `picks.book_tag`(`text` = 코드 쉼표 목록, 그 책의 꼬리표를 통째로 바꿈, 사전에 없는 코드는 건너뜀), `cover_file` → `foryou.book_cover`(`text` = sha1), `search_line` → 24 `aisearch`. 모르는 kind는 건너뛰고 수 보고 | kind 이름 [안] |
+
+### 외부 연동
+
+| 대상 | 방식 | 제한·키 관리 | 실패 시 동작 | 상태 태그 |
+|---|---|---|---|---|
+| 교보 일반 전자도서관 4곳 (서초 반포·연천·도봉·부천) | 운영 서버 `availability` 길, `contentList.ink?…orderByKey=loanNmvl`, 앞 100권 | 호스트당 1건·1초, 나가는 길 설정(프록시) 그대로, 키 없음. 교보문고 약관 제11조⑨가 걸리는지 [확인 필요] | 그 사이트만 빠짐 | 사이트 [확정] (시험 결과 결정 #2), 쪽 크기 [확인 필요: 사전 시험은 쪽당 80 받음] |
+| YES24 V1 전자도서관 2곳 (국립세종·성남) | 같은 길, `/search/?…&sort=lending`, 앞 100권 | 같음 | 그 사이트만 빠짐 | [확정] (같음) |
+| `*.dkyobobook.co.kr` | 보내지 않음 | 사이트 목록에서 빼고 어댑터 앞에서 막음 | — | [확정] (사이클 13 R1-6) |
+| 출판유통통합전산망 판매 순위·「화제의 책 200선」 | `foryou` 안 HTTP 클라이언트, 간격 1초. 운영 나가는 길 설정("프록시만", 사용자 2026-10-18)을 따르는지 [확인 필요: dev·사이클 17 운영 설정] — 따르지 않으면 허용 근거를 인계서에 | 위험 감수(ADR-0147). 출처만 끄는 설정 `chaekcheck.foryou.sources.<source>.enabled` [안: 이름]. 받을 범위(일·주·월 Top100 vs Thema 월간 Top50) [확인 필요] | 그 출처만 빠짐 | [확정: 쓰기] / 방식 [확인 필요] |
+| KLWAVE (공공데이터포털 15159949) | 파일인지 API인지 [확인 필요] | 공공데이터 이용 조건 [확인 필요] | 그 출처만 빠짐 | [확인 필요]. 파일이면 PC 파일 모드가 더 필요함 |
+| 표지 | PC `fetch-covers` → 범위만 운영 `/srv/chaekcheck/covers/`로 복사 | 서버는 책 사이트에 요청하지 않음. 출처별 이용 조건은 공개 배포 전 [확인 필요] | 표지 없으면 제목 글자 표지 | 방식 [확정] (결정 #5), 범위 보고 수집 세션 [확인 필요] |
+| Claude Haiku (PC 배치) | Message Batches, 한 번 호출로 탭 글·꼬리표·찾기용 한 줄 | 키는 PC에만, 서비스는 부르지 않음 | 실패한 책은 다음 배치 | [확정] (결정 #7) |

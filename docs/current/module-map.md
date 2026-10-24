@@ -1410,3 +1410,125 @@ classDiagram
 - 결과: `resultGroups.ts` `MINE|OPEN|OTHER|UNCHECKED`, 꼬리표 [{강서구} 거주 가입]·[어디 살든 가입]·[직접 추가]·[방문 가입]·「지역 외는 방문 가입」. 결과·책 화면·추천도서에는 지역 칸 없음
 - 추천도서 탭 `picksLists.ts` `PICKS_TABS = [KAIST, 국립중앙도서관, 서울대, 노벨연구소]`, `/picks` → `/picks/kaist`, 이동진은 주소로만. 책 창 「AI 요약 ⓘ」
 - 지운 부품: `LibraryScopeToggle`, `VisitToggle`, `ScopeSummary`, `RegionSummary`, `RegionModal`, `MyLibrarySummary`, 큰 격자, `StartExample`, 머리말 상태 불. 남은 것: `RegionGrid`·`LibraryScopeLine`·`SaveHint`(쓰임), `startExamples.ts`·`MyNumbers.tsx`(파일만)
+
+
+## 사이클 23 「나에게 맞는 책」 — 설계됨(미구현, 사이클 23)
+
+근거: `docs/cycles/23-for-you-picks/design-delta.md`, ADR-0147·0148·0149, spec·flow 같은 폴더. 사이클 24(`aisearch`, `ListedBooks`, `book-texts`)는 다른 브랜치 설계라 여기 없음 — 먼저 개발하는 쪽이 공통 부분을 만듦
+
+### 모듈 구성도 (이번에 더하는 부분)
+
+```mermaid
+flowchart TB
+  subgraph PC["내 PC (수집 PC)"]
+    EMB["KURE-v1 이웃 계산<br/>처음 한 번 · 새 책만 · 반년마다 전체"]
+    HAI["Haiku 배치 (한 번 호출)<br/>탭 글 · 꼬리표 · 찾기용 한 줄(24)"]
+    FC["fetch-covers<br/>범위만 골라 옮김"]
+  end
+  subgraph BE["backend (Spring Modulith)"]
+    collection["collection<br/>neighbours · book-texts · tag-dictionary 모드"]
+    foryou["foryou (새)<br/>새벽 만들기 · API 둘"]
+    picks["picks<br/>ListedBooks · 꼬리표 · 사전"]
+    catalog["catalog<br/>BookLookup (+카드 칸 · workKeys)"]
+    library["library<br/>계획 도서관"]
+    availability["availability<br/>RankedListings (새)"]
+    usagelog["usagelog<br/>list=for_you"]
+  end
+  EMB -->|"neighbours.tsv"| collection
+  HAI -->|"book-texts.tsv"| collection
+  FC -->|"book-texts.tsv kind=cover_file"| collection
+  FC -. 파일 복사 .-> NG["nginx /covers/sha1.jpg"]
+  collection -->|"ForYouTransfer"| foryou
+  collection -->|"BookTagTransfer"| picks
+  foryou -->|"ListedBooks.current()"| picks
+  foryou -->|"BookLookup"| catalog
+  foryou -->|"planSearch"| library
+  foryou -->|"RankedListings.fetch"| availability
+  availability -->|"교보 일반 4 · YES24 V1 2<br/>호스트당 1건 · 1초"| LIB["전자도서관 사이트"]
+  foryou -->|"출처마다 끄기"| EXT["출판유통 · KLWAVE"]
+  WEB["web /picks/for-you<br/>브라우저 저장소: 본 책"] -->|"GET /api/v1/for-you/books"| foryou
+  WEB -->|"GET /api/v1/for-you/similar-books"| foryou
+  WEB -->|"POST /api/v1/usage-events"| usagelog
+```
+
+### 모듈
+
+
+| 모듈 | 신규/변경 | 책임 | 공개 API | 발행/구독 이벤트 | 소유 테이블 |
+|---|---|---|---|---|---|
+| `foryou` | 신규 [확정: 모듈] (결정 #2), 이름 [확정: 결정 페이지 문구] | 새벽 기본 목록 만들기(인기 수집·점수·판 모으기·섞기), 비슷한 책·탭 글·표지 연결 보관, API 둘 | `ForYouTransfer`(이웃 full/add, 탭 글·표지 연결 upsert — `collection`만 부름) [안: 이름] | 없음 | `foryou.build_run`, `popular_row`, `book_score`, `base_entry`, `book_neighbour`, `book_blurb`, `book_cover` |
+| `picks` | 변경 | 추천목록 + 꼬리표·사전 | `ListedBooks.current()`·`loadFromDb()`(24와 같음), `ListedBook`에 `bookId`·목록 키·`tags`(nullable). `BookTagTransfer`(꼬리표 upsert, 사전 upsert) [안: 이름] | 없음 | 새 `picks.tag_dictionary`, `picks.book_tag` |
+| `catalog` | 변경 | 카드용 서지와 판 모으기 키 | `BookLookup`에 카드 칸(첫 저자 표시·출판사·출판 연도·첫 저자 `name_exact`) [안: 모양], `workKeys(bookIds)` [안: 이름] (결정 #6) | 없음 | 그대로 |
+| `availability` | 변경 | 인기순 목록 한 쪽 받기 | `RankedListings.fetch(libraryId, sort, page)` [안: 이름]: 교보 일반 `orderByKey=loanNmvl`, YES24 V1 `sort=lending`, 기존 어댑터·`HostQueueBoard`·나가는 길 그대로. `*.dkyobobook.co.kr` 막음 | 없음 | 그대로 |
+| `collection` | 변경 | PC 결과 넣기 | 모드 `neighbours`·`tag-dictionary`(새), `book-texts` kind `for_you_blurb`·`tags`·`cover_file`(새, 모드는 24가 정한 것). 새 의존 `collection → foryou` | 없음 | 그대로 |
+| `usagelog` | 변경 | 사용 알림 | `picks_list_view`·`picks_book_view`의 `list` 값에 `for_you` | 없음 | CHECK만 |
+| `library` | 그대로 | | `planSearch` | | |
+
+- `foryou` allowedDependencies [안]: `catalog`, `library`, `picks`, `availability`. 고리 없음(`picks`·`availability`·`catalog`는 `foryou`를 모름)
+- 웹(`web/src/features/picks/`): `PICKS_TABS` 맨 앞 for-you, `/picks` → `/picks/for-you`, 본 책 저장소(번호·제목·점수 비트 셋·마지막 시각·빼기 기한, 200권, 30일), 10초는 `visibilitychange`로 멈춤, S18·S19, 결정 #4의 순서 규칙과 Vitest
+- 나중에 분리할 때: `foryou`는 추천 서비스 하나(`foryou` 스키마)로 떼고, `ListedBooks`·`BookLookup`·`planSearch`·`RankedListings`가 서비스 사이 읽기 API가 됨
+
+### 도메인 모델
+
+```mermaid
+classDiagram
+  class BuildRun {
+    builtOn
+    status
+    sourceNote
+  }
+  class PopularRow {
+    source
+    siteLibraryId
+    rank
+    loansNow
+    reservations
+    bookId
+  }
+  class BookScore {
+    bookId
+    score
+  }
+  class BaseEntry {
+    position
+    bookId
+    fromPopular
+  }
+  class BookNeighbours {
+    bookId
+    neighbourIds 최대 20
+    computedOn
+  }
+  class BookBlurb {
+    bookId
+    blurb
+    madeOn
+  }
+  class BookCover {
+    bookId
+    fileKey
+  }
+  class TagDictionary {
+    code
+    axis
+    name
+    themaCode
+  }
+  class BookTag {
+    bookId
+    tagCode
+  }
+  class ViewedBook {
+    bookId
+    title
+    opened
+    dwelled10s
+    libraryClicked
+    lastAt
+    removedUntil
+  }
+  BuildRun "1" --> "0..*" PopularRow
+  BuildRun "1" --> "0..*" BookScore
+  BuildRun "1" --> "0..40" BaseEntry
+  TagDictionary "1" --> "0..*" BookTag
+```

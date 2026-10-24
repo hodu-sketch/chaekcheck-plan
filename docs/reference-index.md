@@ -139,6 +139,15 @@
 | 넣는 길·표지·요약 (사이클 22 회고, 2026-10-23) | KAIST·노벨연구소 목록이 더해짐(목록 키 `kaist`·`nobel`). 이동진·서울대·KAIST·노벨은 가져오기 `lists` 모드로 지금 DB에 바로 넣음(ADR-0143), 표지는 nginx `/covers/<sha1>.jpg` 파일(ADR-0144, 사서 표지만 DB), 책 창 AI 요약은 빌드 리소스 `ai-summaries.tsv`(ADR-0142). dev 절차 `docs/maintenance/4-picks.md` 6·8절 | 구현됨 (dev main `d3c2696` 확인) |
 | 목록 조사 | 이동진 추천도서: `docs/research/leedongjin-picks/picks.md` (유튜브 재생목록 「이달의 책」, 알라딘 분류로 저자·ISBN). 서울대 100선: `docs/research/snu-100/picks.md` (서울대학교 기초교육원 『권장도서 해제집』 목차) | 2026-10-15 |
 
+## 4-2. 「나에게 맞는 책」 인기 출처·비슷한 책 (사이클 23)
+
+| 문서 | 무엇 | 상태 |
+|---|---|---|
+| plan `docs/cycles/23-for-you-picks/pretest-review.md` (원본 dev `docs/reports/cycle23-pretest-2026-10-24.md`) | 교보 일반 `loanNmvl`·YES24 V1 `sort=lending`은 누적 순위, YES24 V2는 대출순 안 됨, 책 맞춤 99%, KURE-v1 시간(134만 권 약 38시간)과 이웃 품질, 가중치별 상위 40권 | 2026-10-24 |
+| plan `docs/cycles/23-for-you-picks/to-dev-popular-list-check.md` | 책 수집 때마다 인기 목록 받기 검증 다섯 가지 | 설계됨(미구현, 사이클 23) |
+| plan `docs/cycles/23-for-you-picks/to-dev-intro-test-2026-10-24.md` | 소개 원문 채우기 차례(같은 책 다른 줄 → 카카오 → 정보나루 → 국립중앙도서관)와 이웃 다시 재기 시험 | 수집 세션 진행 중 |
+| plan `docs/research/popular-books/` (`kpipa.md`, `alternatives.md` 5·6절), ADR-0147·0148 | 출판유통·KLWAVE·서점 베스트셀러 이용 조건 | 출판유통 위험 감수, KLWAVE 형식 [확인 필요] |
+
 ## 5. 회원·알림 (다음 사이클)
 
 | 문서 | 무엇 |
