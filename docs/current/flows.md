@@ -36,6 +36,8 @@
 - 근거: `docs/cycles/02-library-expansion/design-delta.md` "구조 그림", `retro.md`, ADR-0011, ADR-0014, ADR-0015, ADR-0019, ADR-0020
 - 모듈 구성도와 도메인 모델은 `module-map.md`에 있습니다.
 
+사이클 24 cycle-close (2026-10-24, 브랜치 `claude/compassionate-lovelace-mzvp4f`, 사이클 23과 나란히): AI 책 찾기 — 흐름 55(질문 하나, 제목 같음 포함), 56(대신하는 길과 실패), 57(찾기용 한 줄 넣기)와 S1 탭 "AI"/"직접"·S30 대화 화면(`/ai-search`) — . 근거 `docs/cycles/24-ai-book-search/design-delta.md`, ADR-0150~0153. 설계됨(미구현, 사이클 24)
+
 ## 도서관 하나의 조회 상태 (브라우저)
 
 ```mermaid
@@ -1932,3 +1934,91 @@ sequenceDiagram
 ```
 
 - 켜는 곳 셋(펼친 상자·결과 묶음 ② 줄·⚙ 설정)이고 값은 하나(`visit`). 결과 안 단추만 바로 다시 검색, 상자·설정에서 바꾸면 저장만 하고 [검색] 때 적용 [확정] (사이클 22 명세 R8, 설계 결정 #6).
+
+## 흐름 55: AI 책 찾기 — 질문 하나 (S1 AI 탭 → S30) — 설계됨(미구현, 사이클 24)
+
+S1 첫 화면 탭 "AI"(처음 열림)/"직접", S30 대화 화면(ChatGPT식, 이어서 묻기 20번, 대화는 이 브라우저 탭에만). 화면 자세한 것은 `docs/cycles/24-ai-book-search/flow.md`.
+
+```mermaid
+sequenceDiagram
+  participant W as web S30
+  participant A as aisearch
+  participant Q as 횟수·비용
+  participant L as library
+  participant P as picks ListedBooks
+  participant D as aisearch DB
+  participant H as Haiku
+  participant U as usagelog
+  W->>A: POST stream {question, history≤5, plan}
+  A->>A: 검증 (2~200자)
+  A->>Q: IP 1분 10·하루 100, 오늘 비용 < $2
+  A->>L: planSearch → 계획 도서관
+  A->>P: current() → 목록 책 libraryIds·표지·화면 제목
+  A->>A: 계획 1곳 이상인 bookId 모음
+  A->>H: 1차 (질문 + 앞 대화 제목들) json_schema, 5초
+  H-->>A: {notBook, titleLike, title, refersToShown, keywords}
+  opt titleLike
+    A-->>W: title-guess {title}
+  end
+  A->>D: 낱말 × search_text (bigm), bookId = ANY(계획 책), 점수순 30권
+  D-->>A: 후보 30
+  A->>H: 2차 stream (질문 + 대화 + 후보) json_schema, 15초
+  loop 흘러오는 JSON
+    H-->>A: head 조각
+    A-->>W: head-delta
+    H-->>A: picks[i].no
+    A->>A: 후보 안? 중복 아님?
+    A-->>W: card
+    H-->>A: picks[i].text 조각
+    A-->>W: card-delta (300자에서 끊음)
+  end
+  A->>Q: 토큰으로 비용 더함 (daily_usage UPSERT)
+  A-->>W: done {result, bookIds}
+  A->>U: recordAiSearch (질문 글 없음)
+```
+
+## 흐름 56: AI 책 찾기 — 대신하는 길과 실패 — 설계됨(미구현, 사이클 24)
+
+```mermaid
+sequenceDiagram
+  participant W as web
+  participant A as aisearch
+  participant H as Haiku
+  alt IP 횟수 넘음
+    A-->>W: 429 too_many_requests + Retry-After
+  else 오늘 비용 상한
+    A-->>W: 503 ai_search_paused
+  end
+  A->>H: 1차
+  alt 1차 실패·5초
+    A->>A: 질문을 띄어쓰기로 나눈 낱말 (화면에 안 드러남)
+  else notBook 또는 후보 0
+    A-->>W: done {result:no_match}
+  end
+  A->>H: 2차 stream
+  alt 카드 0장에서 실패·15초
+    A-->>W: card × 앞 8권 (글 없음)
+    A-->>W: done {result:no_text}
+  else 카드 뒤 끊김
+    A-->>W: done {result:partial}
+  else 후보 밖 번호·중복
+    A->>A: 번호도 글도 보내지 않음
+  else picks 빈 목록
+    A-->>W: done {result:no_match}
+  end
+```
+
+## 흐름 57: 찾기용 한 줄 넣기 (`collection` 모드 `book-texts`) — 설계됨(미구현, 사이클 24)
+
+```mermaid
+sequenceDiagram
+  participant PC as 내 PC (Haiku 배치)
+  participant C as collection (book-texts)
+  participant P as picks ListedBooks
+  participant A as aisearch
+  PC->>C: TSV (kind=search_line, book_id, source, made_on, text)
+  C->>P: loadFromDb() → 목록 책 전부 (0권이면 거부)
+  C->>A: AiSearchBookTexts.replace(목록 책 + 한 줄)
+  A->>A: 한 트랜잭션: 지우고 넣음, search_text 다시 만듦
+  A-->>C: 넣은 수 · 한 줄 있는 수 · 목록에 없는 번호 수
+```

@@ -29,6 +29,7 @@
 - **번호 나누기**
   - ADR: 24는 0150부터 씁니다. 0147~0149는 23용으로 비워 두었습니다. 23이 0149를 넘기면 0154부터 써 주세요.
   - 화면: 24가 S30을 쓰고, S18~S29는 비워 두었습니다.
+  - `docs/current/flows.md` 흐름 번호: 24가 55~57을 씁니다. 23은 58부터 써 주세요.
   - `usagelog` 변경 파일: 두 브랜치를 합칠 때 다음 번호를 씁니다. 24의 changeSet id는 `usagelog-ai-search-event`입니다.
 
 **자세한 내용:** 24 브랜치의 `docs/cycles/24-ai-book-search/design-delta.md` "넣는 파일" 절과 `docs/adr/0151-search-lines-import-and-db-match.md`
