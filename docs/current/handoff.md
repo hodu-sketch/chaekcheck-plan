@@ -1058,3 +1058,7 @@
 ## 표지 받기 작업 요청 (2026-10-23, 사이클 밖)
 
 책 표지를 책마다 한 장 받아 200px JPEG로 줄여 데이터 폴더에 모으는 수집기 명령 요청: plan `docs/research/ebook-catalog/to-dev-fetch-covers-2026-10-23.md` (`../chaekcheck-plan/docs/research/ebook-catalog/to-dev-fetch-covers-2026-10-23.md`). 서비스 화면은 바꾸지 않습니다. 이 세션(plan)이 2026-10-23 08:10에 전체 목록 수집을 시작했으니, 그 수집이 끝난 뒤 돌립니다.
+
+## 사이클 23 「나에게 맞는 책」 인계 (2026-10-24, 사이클 폴더에만)
+
+추천도서 탭 맨 앞 「나에게 맞는 책」(새 모듈 `foryou`, ADR-0147~0149) 인계서는 plan `docs/cycles/23-for-you-picks/handoff.md`에 있습니다(dev에서는 `../chaekcheck-plan/docs/cycles/23-for-you-picks/handoff.md`). 이 파일(사이클 20)을 대신하지 않습니다. 사이클 24와 `picks.ListedBooks`·`collection` `book-texts` 모드를 같이 쓰며, 먼저 개발하는 쪽이 24 설계대로 만듭니다. 개발 차례는 사용자가 정합니다.
