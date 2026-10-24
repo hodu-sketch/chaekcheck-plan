@@ -258,6 +258,7 @@ erDiagram
     int reservations
     text title
     text author
+    text publisher
     text isbn13
     bigint book_id
   }
@@ -317,7 +318,9 @@ erDiagram
 | `foryou.popular_row.loans_now`·`reservations` | int | NULL, ≥ 0 | 교보·YES24만 | [안] |
 | `foryou.popular_row.title`·`author`·`publisher`·`isbn13` | text | title NOT NULL | 맞추기 전 원래 값 | [안] |
 | `foryou.popular_row.book_id` | bigint | NULL | 맞춘 책 | [안] |
-| `foryou.popular_row` 보관 | | 실행 기록과 함께 30일 지난 것 지움 | 가중치 조정(R2-3a) 원재료 | 30일 [안] |
+| `foryou.popular_row` 보관 | | 실행 기록과 함께 30일 지난 것 지움. **마지막 succeeded 실행 하나는 30일이 지나도 지우지 않음** [확정] (사용자 승인 2026-10-24, 마무리 검토 페이지 #2) | 가중치 조정(R2-3a) 원재료 | 30일 [안] |
+| `foryou.popular_row.run_id` 색인 | | 색인 `(run_id)` | CASCADE·30일 정리 | [안] |
+| `foryou.build_run` 남은 `running` | | 서버를 켤 때 오래된 `running`은 `failed`로 바꿈 [확정] (사용자 승인 2026-10-24, 마무리 검토 페이지 #2) | 크래시 뒤 정리 | |
 | `foryou.book_score` | PK (`run_id`, `book_id`), `score real` NOT NULL ≥ 0 | FK `build_run` CASCADE | 판을 모은 뒤 대표 판에만. 개인 추천 "인기 먼저" 정렬 | [안] |
 | `foryou.base_entry` | PK (`run_id`, `position`), `book_id` NOT NULL, `from_popular boolean` NOT NULL | `position` 1~40, UNIQUE (`run_id`, `book_id`), FK CASCADE | 기본 목록 차례 | 40 [안] (R2-4) |
 | `foryou.book_neighbour.book_id` | bigint | PK | | [안] |
@@ -326,7 +329,7 @@ erDiagram
 | `foryou.book_blurb` | `book_id` PK, `blurb text` NOT NULL, `made_on date` NOT NULL | `char_length(blurb)` 1~300 | 80~150자 규칙(R8-4)은 PC가 지킴 | 300 [안] |
 | `foryou.book_cover` | `book_id` PK, `file_key text` NOT NULL | `~ '^[0-9a-f]{40}$'` | `/covers/<file_key>.jpg` | [안] |
 | `picks.tag_dictionary` | `code text` PK, `axis text` NOT NULL, `name text` NOT NULL, `thema_code text` NULL, `active boolean` NOT NULL DEFAULT true | `code ~ '^[A-Za-z0-9_]{1,20}$'`, `axis` IN (`mood`,`subject`,`audience`) | 사전 (결정 #9). 사전에서 빠진 코드는 지우지 않고 `active=false` | [안] |
-| `picks.book_tag` | PK (`book_id`, `tag_code`), `made_on date` NOT NULL | FK `tag_code → picks.tag_dictionary(code)` | 추천목록 책만(R9-1). 카드에는 `active` 코드 가운데 느낌 1 + 주제 1~2 | [안] |
+| `picks.book_tag` | PK (`book_id`, `tag_code`), `made_on date` NOT NULL (사전 쪽 `tag_code` 색인은 두지 않음: 사전은 지우지 않고 `active=false`만 하므로 FK 검사 조회가 없음) | FK `tag_code → picks.tag_dictionary(code)` | 추천목록 책만(R9-1). 카드에는 `active` 코드 가운데 느낌 1 + 주제 1~2 | [안] |
 
 - 크기 어림 [추론]: 이웃 약 0.2GB(134만 줄), 탭 글 약 15MB(3.3만 줄), 표지 파일 약 0.3GB(3.3만 장 × 약 10KB, 수집 세션이 잼 [확인 필요]), 나머지 작음
 - 다른 모듈과 FK·조인 없음. 가져오기로 사라진 책 번호는 `BookLookup`이 돌려주지 않아 읽을 때 빠짐
@@ -414,9 +417,11 @@ GET /api/v1/for-you/similar-books?baseBookIds=11,22,33&reshowBookIds=44&residenc
 - 기록 30일, 기본 목록 40, 이웃 20, 개인 추천 60·한 쪽 20·다시 보여 주기 20권마다 2·후보 6
 - 브라우저: 본 책 200권·30일·10초·다시 보여 주기 3일·S19 빼기 30일
 - 메모리 사본: 만든 뒤와 10분마다 다시 읽음(PicksCache와 같게)
+- 점수 `chaekcheck.foryou.score.*` [안: 이름]: 예약 가중 2 [확정], 연도 구간 3·6·10년과 가산 1.5·1.0·0.6·0.3 [확정: 값, 조정 가능 R2-3a], 출판유통 1.5 [확정], KLWAVE 0.3 [안], 「화제의 책 200선」 보충 방식 [안]
 
 ## 결정 기록
 
+- 본 책 기록은 브라우저에만 두고 서버는 회원 번호로 계산하지 않음 — spec R5-1, scope "최근 본 책 보관" 줄(사용자 2026-10-23, 명세 규칙 #1). ADR-0149는 Accepted라 고치지 않고 여기서 링크함
 - [ADR-0147](../../adr/0147-kpipa-sales-rank-as-for-you-input.md) 출판유통 판매 순위를 위험 감수하고 씀 (Accepted, 2026-10-24)
 - [ADR-0148](../../adr/0148-for-you-popular-fetch-and-covers.md) 「나에게 맞는 책」 인기 목록은 운영 서버가 새벽에 받고, 표지는 PC 표지를 옮김 (Accepted, 결정 #1·#5)
 - [ADR-0149](../../adr/0149-for-you-module-neighbours-and-split.md) 「나에게 맞는 책」 모듈 `foryou`, 이웃 표·넣는 길, 개인 추천 나누기, 판 모으기, 한 번 호출 배치, 꼬리표 사전 표 (Accepted, 결정 #2·#3·#4·#6·#7·#8·#9)
@@ -436,3 +441,7 @@ GET /api/v1/for-you/similar-books?baseBookIds=11,22,33&reshowBookIds=44&residenc
 | for-you 사용 알림의 `category` 값 | AC-12 | dev `UsageEventController` |
 | 오늘 기본 목록의 새 책 가운데 글·표지 없는 것을 PC가 아는 방법 | R8-7, 결정 #5 | dev 절차 (운영 DB 질의 파일 등) |
 | 교보문고 약관 제11조⑨ | 결정 #1 | 공식 문서, 사용자 |
+| 개인 추천이 대부분 "계획 도서관 수 순"이 됨: 사전 시험에서 이웃 가운데 인기 책 1.8%(30권 중 24권은 인기 이웃 없음) | 의도한 결과인지, 소개 원문을 넣은 이웃 다시 재기 뒤 다시 봄 | 수집 세션 보고 뒤 사용자 |
+| 출판유통 범위·형식이 정해질 때까지 기본 목록에 2025년 이후 새 책이 적을 수 있음(교보·YES24 그물은 누적 상위) | "트렌디하게" 방향 | 출판유통 원문 확인 뒤 상위 40권을 사용자에게 보임(R2-3a) |
+| 개인 추천 요청의 책 번호가 접속 기록에 회원 번호와 함께 남는지 | R5-1 | dev 운영 설정 |
+| 모듈 경계 자동 검사 `ApplicationModules.verify()`, 새벽 인기 받기가 사이클 20 조회 상태 불·도서관 응답 일별 집계에 섞이지 않는지 | 결정 #1·#2 | dev 코드·시험 |
