@@ -20,6 +20,7 @@
 | `docs/research/maintenance/collection-areas.md` | 수집 일 나눔(① 도서관 정보 ② 도서관-책 ③ 가져오기)과 섞인 도구 옮기기 [확정] (2026-10-04) |
 | `docs/research/collection/1-libraries.md` | **수집 두 갈래 정리 (2026-10-05)** ① 도서관 수집: 수집 목록에서 새 도서관 찾기·확인·같은 사이트 거르기·넣기(seed — 사이클 13부터는 `collection` 넣기 명령, ADR-0084), 가입 조건, 구독형 규칙·마감 확인, 로고. 받는 것/내놓는 것/원칙/결정, 절차 원본은 dev `docs/maintenance/1-libraries.md` |
 | `docs/research/collection/2-books.md` | **수집 두 갈래 정리 (2026-10-05)** ② 도서관의 책 수집: 전체·신간 수집, 이어 받기, 호출 예의(IP 줄, 병렬 정도, `--host-slots`). 받는 것/내놓는 것/원칙/결정, 절차 원본은 dev `docs/maintenance/2-crawl.md`·`platforms.md`. 다음 단계 가져오기는 `collection` 모듈(ADR-0060) |
+| `docs/research/ai-collection/overview.md` | **AI 에이전트로 수집 자동화 조사 (2026-10-27, 결정 대기)** 세 갈래(도서관 찾기·도서관-책·가입 정보)에서 AI를 쓸 곳, LangGraph 공식 자료, 모델 가격, 사람 승인·PC 실행 방향 [안] |
 | `docs/research/maintenance/periodic-tasks.md` | **정기 유지보수 작업 → dev 문서 안내** (2026-10-04 작성, 2026-10-17 안내 문서로 바꿈): 원본이 dev `docs/maintenance/`로 옮겨 감. 정기 작업마다(① 도서관 수집, ② 책 수집, 가져오기, 사서추천 받기, 사용 기록 정리, 공지·약관 글, 날짜가 정해진 다시 확인) 주기와 dev 절차 문서 경로 표. 옛 절차 글은 지움 |
 | `docs/cycles/NN-<slug>/easy/README.md` (지금은 `docs/cycles/05-login-account/easy/`) | 쉬운 설명 페이지(HTML) 모음과 목록. 사이클별로 둠. 사용자가 상황을 빠르게 파악할 때 봄. 요약이므로 값의 원본은 각 문서 |
 
