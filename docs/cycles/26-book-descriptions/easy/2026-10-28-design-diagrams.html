@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>책 설명 설계 그림</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+
+.v-flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.v-box{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:7px 11px;font-size:15px;text-align:center;min-width:90px}
+.v-box small{display:block;color:var(--muted);font-size:12px}
+.v-hi{border-color:var(--accent);background:var(--accent-bg)}
+.v-warn{border-color:var(--warn);background:var(--warn-bg)}
+.v-ok{border-color:var(--ok);background:var(--ok-bg)}
+.v-arr{color:var(--muted);font-size:18px}
+.v-file{border:2px solid var(--line);border-radius:12px;background:var(--card);padding:10px;margin:10px 0;max-width:560px}
+.v-file .v-part{border:1px dashed var(--line);border-radius:8px;padding:8px 10px;margin:6px 0;font-size:14px}
+.v-file .v-part.v-new{border-color:var(--accent);background:var(--accent-bg)}
+.v-tl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0;font-size:13px;text-align:center}
+.v-tl div{border-top:4px solid var(--line);padding-top:6px}
+.v-tl div.v-hi{border-top-color:var(--accent);background:none}
+.v-cv{display:inline-flex;width:70px;aspect-ratio:2/3;border-radius:7px;border:1px solid var(--line);background:var(--accent-bg);align-items:center;justify-content:center;font-size:11px;text-align:center;padding:3px;vertical-align:top;margin:4px}
+.v-cv.v-img{background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 6px,var(--card) 6px,var(--card) 12px)}
+.v-mini{border:1px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;margin:8px 0;max-width:420px}
+.v-mini .v-bar{display:flex;gap:10px;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line);font-size:13px}
+.v-mini .v-body{padding:10px 12px;font-size:13px}
+.v-pill{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-weight:800;font-size:12px}
+@media (max-width:700px){main table{display:block;overflow-x:auto;max-width:100%}.v-tl{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.v-code{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:var(--code-bg);border-radius:8px;padding:8px 10px;overflow-x:auto;white-space:pre}
+.card h3{margin:0 0 14px;font-size:24px}
+
+.mk{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start;margin:12px 0}
+.mk .dev{border:2px solid var(--line);border-radius:12px;background:var(--bg);padding:10px;font-size:13px;line-height:1.5}
+.mk .dev b.t{display:block;color:var(--muted);font-weight:500;font-size:12px;margin-bottom:6px}
+.mk .pc{width:420px;max-width:100%}.mk .tab{width:300px;max-width:100%}.mk .ph{width:190px}
+.mk .row{display:flex;gap:10px}
+.mk .cv{flex:none;width:58px;aspect-ratio:2/3;border-radius:5px;border:1px solid var(--line);background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 5px,var(--card) 5px,var(--card) 10px)}
+.mk .ph .cv{width:44px}
+.mk .ttl{font-weight:700;font-size:15px}
+.mk .sum{background:var(--warn-bg);border:1px dashed var(--warn);border-radius:7px;padding:6px 8px;margin:8px 0}
+.mk .lib{border-top:1px solid var(--line);padding:5px 0;color:var(--muted)}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+</head><body><main class="doc"><p class="lead">사이클 26 설계 그림 6개</p><p class="sub">design-delta.md의 그림입니다. 설계 결정 6번(AI 찾기 표의 도서관 목록)은 속도 측정 결과를 기다립니다.</p><div class="card"><h2>모듈 구성: 모두 catalog 공개 API로 읽고, 그림은 CloudFront에서</h2><div style="overflow-x:auto"><pre class="mermaid">flowchart TB
+  collection --&gt;|&quot;BookTextsTransfer · AiSearchIndex.replace · MostHeldBooks&quot;| catalog
+  collection --&gt;|&quot;ListedBooks.loadFromDb (대상 고르기)&quot;| picks
+  picks --&gt;|&quot;BookTexts.summaries · listCoverUrls · tags · CoverUrls&quot;| catalog
+  foryou --&gt;|&quot;BookTexts.summaries · coverUrls · BookCards&quot;| catalog
+  foryou --&gt; picks
+  aisearch --&gt;|&quot;AiSearchIndex · BookTexts(겹쳐 읽기) · BookProfiles.all&quot;| catalog
+  aisearch --&gt;|&quot;ListedBooks&quot;| picks
+  web --&gt;|&quot;GET /api/v1/books/{id} (+coverUrl, summary)&quot;| catalog
+  web --&gt;|&quot;img&quot;| CF[&quot;CloudFront → S3 covers/&quot;]
+  PC -.-&gt;|&quot;aws s3 sync&quot;| CF
+</pre></div></div><div class="card"><h2>AI 검색 카드: 표지·요약은 AI 호출과 겹쳐 읽음(dev 24 요청 유지)</h2><div style="overflow-x:auto"><pre class="mermaid">sequenceDiagram
+  participant A as aisearch.AiSearchFlow
+  participant I as catalog.AiSearchIndex
+  participant T as catalog.BookTexts
+  participant L as Haiku
+  A-&gt;&gt;I: find(keywords, plan, excluded)
+  A-&gt;&gt;I: lines(ids) (동기, 2차 프롬프트에 들어감)
+  par 카드용 겹쳐 읽기
+    A-)T: coverUrls(ids)
+    A-)T: summaries(ids)
+  and
+    A-&gt;&gt;L: 2차 호출
+  end
+  L--&gt;&gt;A: 첫 카드
+  A-&gt;&gt;A: card(): join (실패면 빈 Map → 표지·요약 없이)
+</pre></div></div><div class="card"><h2>다시 가져오기: 버려진 책 번호의 설명을 같은 작업 안에서 지움</h2><div style="overflow-x:auto"><pre class="mermaid">sequenceDiagram
+  participant C as collection(apply/finish/replaceAll)
+  participant DB as PostgreSQL
+  C-&gt;&gt;DB: BEGIN, SET LOCAL lock_timeout
+  C-&gt;&gt;DB: DELETE 설명 표 6개 WHERE book_id NOT IN catalog_next.book
+  C-&gt;&gt;DB: DROP catalog 책 목록 표 4개, SET SCHEMA, DROP SCHEMA catalog_next
+  alt 잠금 시간 넘김
+    C-&gt;&gt;DB: ROLLBACK (지운 것도 되돌아감), 쉬었다 다시
+  else
+    C-&gt;&gt;DB: COMMIT, 지운 수를 기록에
+  end
+</pre></div></div><div class="card"><h2>추천목록 줄 표지 고르기 (명세 #11)</h2><div style="overflow-x:auto"><pre class="mermaid">flowchart TD
+  R{&quot;추천목록 줄&quot;} --&gt;|책 번호 있음| E{&quot;그 판의 book_cover?&quot;}
+  E --&gt;|있음| C1[&quot;그 판 표지&quot;]
+  E --&gt;|없음| F{&quot;같은 작품 다른 판의 book_cover?&quot;}
+  F --&gt;|있음| C2[&quot;최신 판 → 소장 많은 판&quot;]
+  F --&gt;|없음| L1[&quot;목록 그림 sha1(cover_source)&quot;]
+  R --&gt;|책 번호 없음| L2[&quot;목록 그림 sha1(cover_source)&quot;]
+</pre></div></div><div class="card"><h2>도메인 모델: 책 하나에 설명 종류마다 0~1개, 꼬리표는 여러 개</h2><div style="overflow-x:auto"><pre class="mermaid">classDiagram
+  class Book { id; title; libraryIds }
+  class Summary { text 1~300; madeOn }
+  class Cover { fileKey sha1 }
+  class Profile { field; subfield; fiction; genres; country; audience; level; forms }
+  class SearchEntry { line?; searchText; libraryIds? }
+  class Tag { code; madeOn }
+  class TagWord { code; axis; name; active }
+  Book &quot;1&quot; -- &quot;0..1&quot; Summary
+  Book &quot;1&quot; -- &quot;0..1&quot; Cover
+  Book &quot;1&quot; -- &quot;0..1&quot; Profile
+  Book &quot;1&quot; -- &quot;0..1&quot; SearchEntry
+  Book &quot;1&quot; -- &quot;0..*&quot; Tag
+  Tag &quot;*&quot; --&gt; &quot;1&quot; TagWord
+</pre></div></div><div class="card"><h2>catalog에 새로 생기는 표 6개</h2><div style="overflow-x:auto"><pre class="mermaid">erDiagram
+  book ||--o| book_summary : &quot;book_id&quot;
+  book ||--o| book_cover : &quot;book_id&quot;
+  book ||--o| book_profile : &quot;book_id&quot;
+  book ||--o| book_search : &quot;book_id&quot;
+  book ||--o{ book_tag : &quot;book_id&quot;
+  tag_dictionary ||--o{ book_tag : &quot;code&quot;
+  book_summary {
+    bigint book_id PK
+    text summary
+    date made_on
+  }
+  book_cover {
+    bigint book_id PK
+    text file_key
+  }
+  book_profile {
+    bigint book_id PK
+    text field
+    text subfield
+    boolean fiction
+    text_arr genres
+    text country
+    text audience
+    text level
+    text_arr forms
+  }
+  book_search {
+    bigint book_id PK
+    text line
+    text line_source
+    date line_made_on
+    text search_text
+    int_arr library_ids
+    timestamptz imported_at
+  }
+  tag_dictionary {
+    text code PK
+    text axis
+    text name
+    text thema_code
+    boolean active
+  }
+  book_tag {
+    bigint book_id PK
+    text tag_code PK
+    date made_on
+  }
+</pre></div></div><p class="foot">원본: docs/cycles/26-book-descriptions/design-delta.md</p></main><script>mermaid.initialize({startOnLoad:true,theme:'neutral'});</script></body></html>
