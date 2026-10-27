@@ -35,3 +35,12 @@
 **자세한 내용:** 24 브랜치의 `docs/cycles/24-ai-book-search/design-delta.md` "넣는 파일" 절과 `docs/adr/0151-search-lines-import-and-db-match.md`
 
 이 제안을 받을지는 사용자가 정합니다. 23에 맞지 않으면 그대로 두셔도 됩니다.
+
+## 2026-10-27: PC 배치 합치기는 dev가 이미 끝냄
+
+사이클 26 계획 세션의 답(사용자가 전함, 2026-10-27): 2026-10-26 10만 권 작업에서 dev 스크립트 하나(`scripts/aisearch/build_100k.py`)가 Haiku Message Batches로 세 가지를 함께 만들었음(dev `docs/maintenance/6-aisearch.md` 9절) [확정: dev 기록, 26 세션 전달]
+- 찾기용 한 줄 49,726권 / 책첵 요약 새로 43,227권 / 책 프로필 50,324권
+- 꼬리표는 사전이 없어 아직 만들지 않음
+- 그래서 [easy/2026-10-24-batch-merge-decisions.html](easy/2026-10-24-batch-merge-decisions.html)의 [안] 셋은 고르지 않고 닫음
+- 남은 일은 사이클 26이 맡음: 지금 종류별로 따로 나오는 세 파일(AI 검색 넣기 파일, 요약 파일, `book-profiles.tsv`)을 `catalog`에 넣는 `book-texts` 파일 하나로(프로필 포함, 첫 줄에 가져오기 번호) 내보내기
+- 이 결과는 24 회고에서 dev 코드와 대조함
