@@ -101,6 +101,8 @@ body{background:var(--bg);color:var(--text)}
 <tr><td>2 추천목록 표지</td><td>기타</td><td>"아니 왜 굳이 따로 있어야 해? … 일원화할건데" → 아래 5번에 답과 새 제안</td></tr>
 <tr><td>3 찾기용 한 줄</td><td class="red">미승인</td><td>"지금 더 군데 중복저장되는거는 없었으면해" → 찾기용 한 줄도 옮김. 같은 원칙에 걸리는 곳이 하나 더 있어 아래 6번</td></tr>
 <tr><td>4 한 번 배포, 옛 표는 다음 배포</td><td class="okc">승인</td><td>그대로</td></tr>
+<tr><td>6 AI 검색 사본 표 없앰</td><td class="okc">승인</td><td>그대로</td></tr>
+<tr><td>5 표지 한 곳</td><td>기타</td><td>"따로갈까 어떻게하지 / 어떻게 해야 결과적으로 데이터를 잘 나눈걸까" → 6번 아래 7번에 나누는 기준과 다시 낸 제안</td></tr>
 </table>
 </div>
 
@@ -148,6 +150,24 @@ body{background:var(--bg);color:var(--text)}
 <p class="concl"><span class="chip" data-n="6">안 #6</span> AI 검색의 사본 표를 없앱니다. 찾기용 한 줄과 그 글자 검색 색인을 <code>catalog</code>로 옮기고, AI 검색은 <code>catalog</code>의 찾기 기능을 불러 후보 책을 받습니다. 검색 방식(같은 글자 색인, 같은 질의)은 그대로 옮겨 빠르기가 같게 합니다. dev가 옮기기 전후 첫 글 시간을 재서, 늘었으면 옛 사본 표를 지우기 전에 알립니다(배포 2 전에 확인).</p>
 <p><b>dev 24에 생기는 일:</b> AI 검색 코드가 자기 표 대신 <code>catalog</code>의 찾기 기능을 부르도록 바뀝니다. 26 설계 뒤 알립니다.</p>
 <p class="alt">다른 선택: 찾기용 한 줄만 옮기고 사본 표(제목·저자·도서관 목록)는 AI 검색에 둠 — AI 검색 코드가 덜 바뀌지만, 제목·저자가 두 곳에 남습니다.</p>
+</div>
+
+<div class="card item"><h3><span class="num">7</span>(5번 질문 "어떻게 해야 데이터를 잘 나눈 걸까")<br>한 가지 사실은 그 사실의 주인에게 한 번만</h3>
+<p><b>나누는 기준:</b> 데이터마다 "이건 무엇에 대한 사실인가"를 묻고, 그 주인 모듈에 한 번만 둡니다. 다른 곳은 복사하지 않고 번호로 가리키기만 합니다.</p>
+<table>
+<tr><th>사실</th><th>무엇에 대한 것</th><th>주인</th></tr>
+<tr><td>이 책의 제목·저자·요약·표지</td><td>책</td><td><code>catalog</code></td></tr>
+<tr><td>이 목록에 어떤 책이 몇 번째로 있나, 추천한 달</td><td>목록</td><td>추천목록 (<code>picks</code>)</td></tr>
+<tr><td>이 이용자가 무엇을 봤나</td><td>이용 기록</td><td>이용 기록 (<code>usagelog</code>)</td></tr>
+<tr><td>표지 그림 파일 자체</td><td>그림</td><td>표지 파일 한 곳 (<code>/covers/…jpg</code>, 그림 내용으로 이름이 정해져 같은 그림은 한 장)</td></tr>
+</table>
+<p><b>이 기준으로 보면:</b> 표지는 "책"의 사실이라 <code>catalog</code>가 주인입니다. 추천목록은 "이 줄은 몇 번 책"이라고 가리키기만 하면 됩니다. 추천목록이 표지를 따로 가지면 같은 책의 표지가 두 곳에 생깁니다(따로 가는 안이 이것).</p>
+<p><b>예외처럼 보이는 곳:</b> 우리 책 목록에 없는 책(어느 전자도서관에도 없는 종이책)은 <code>catalog</code>에 그 책이 없습니다. 그 책에 대한 기록은 목록 줄 하나뿐이라, 그 책의 제목·저자는 지금도 목록 줄에 있습니다. 표지도 같은 자리에 두면 "그 책의 사실은 그 책의 유일한 기록에" 원칙과 맞습니다. 그 책이 나중에 전자도서관에 들어와 책 번호가 생기면, 목록 줄은 번호만 가리키고 표지는 <code>catalog</code>로 갑니다.</p>
+<div class="v-flow"><span class="v-box">목록 줄<small>책 번호 있음</small></span><span class="v-arr">가리킴 →</span><span class="v-box v-hi"><code>catalog</code> 책<small>제목·요약·표지</small></span><span class="v-arr">→</span><span class="v-box">표지 파일 한 장</span></div>
+<div class="v-flow"><span class="v-box">목록 줄<small>책 번호 없음: 제목·저자·표지를 줄에</small></span><span class="v-arr">→</span><span class="v-box">표지 파일 한 장</span></div>
+<p class="cap">어느 경우든 한 책의 표지는 한 곳에만 적히고, 그림은 한 장만 저장됩니다.</p>
+<p class="concl"><span class="chip" data-n="7">안 #7</span> 위 기준으로 5번 제안 그대로 갑니다: 책 번호가 있는 책의 표지는 <code>catalog</code>, 책 번호가 없는 목록 줄만 그 줄에. 사서추천 표지 그림(지금 DB 안)은 표지 파일로 옮겨 그림 저장 자리도 하나로 합니다. 이 기준은 설계 결정 기록(ADR)으로 남겨 다음 사이클에서도 씁니다.</p>
+<p class="alt">다른 선택: 따로 감(추천목록 표지는 모두 추천목록에) — 추천목록 갱신 코드는 덜 바뀌지만, 책 번호가 있는 추천목록 책은 표지가 두 곳에 있어 화면마다 다른 표지가 보일 수 있습니다.</p>
 </div>
 
 <div class="card"><h2>설계 단계로 넘기는 개발 세부 (묻지 않음)</h2>
