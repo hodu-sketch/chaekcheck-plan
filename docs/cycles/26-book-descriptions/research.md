@@ -20,6 +20,13 @@
 | 인터넷 전송 | 매달 처음 100GB 무료(서비스 합산) | https://aws.amazon.com/s3/pricing/ |
 | Lightsail | Free plan에서도 크레딧으로 사용 | https://aws.amazon.com/free/compute/lightsail/ |
 
+### 1-1-1. 무료 플랜에서 되는지 (2026-10-28, 사용자 "EC2도 일부만 되자나")
+- EC2 무료 플랜 대상: t3.micro, t3.small, t4g.micro, t4g.small, c7i-flex.large, m7i-flex.large. EBS 대상 종류: standard, st1, sc1, gp2, gp3. "You can't exceed your Free Tier limits" — https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-free-tier-usage.html [확정]
+- EBS를 30GB 넘게 늘리는 것이 무료 플랜에서 막히는지: 문서에 없음 [확인 필요: 콘솔 볼륨 수정 화면]
+- 무료 플랜은 "select services"만: S3·EC2는 "Available on both plans" — https://aws.amazon.com/free/ [확정]
+- Lightsail은 두 플랜에서 크레딧 사용 — https://aws.amazon.com/free/compute/lightsail/ [확정]
+- CloudFront 늘 무료 1TB — https://aws.amazon.com/free/networking/ [확정]
+
 ### 1-2. 시드니(ap-southeast-2) 가격 [확정]
 
 | 항목 | 가격 | 출처 |

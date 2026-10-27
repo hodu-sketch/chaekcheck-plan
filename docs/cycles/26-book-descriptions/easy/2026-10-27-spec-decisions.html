@@ -251,6 +251,16 @@ svg .ah{fill:var(--accent)}
 <tr><td>(마) WebP로 줄여 지금 디스크에</td><td>0</td><td>약 8~11GB로 줄지만 [추론] 여유 11GB와 거의 같아 곧 모자람. 134만 장 다시 만들기</td></tr>
 </table>
 <p class="cap">가격은 AWS·Cloudflare 공식 가격 자료(2026-10-28 확인). 그림 보기 전송은 한 달 1GB 미만으로 보아 무료 한도 안입니다 [추론]. 자세한 출처는 research.md 1절.</p>
+<p><b>무료 플랜(크레딧)에서 되는지 다시 확인한 것</b> (사용자 질문 "무료 크레딧에서 되는 것들인지 확인하고 그것들만 알려줘, EC2도 일부만 되자나", 2026-10-28):</p>
+<table>
+<tr><th>방법</th><th>무료 플랜에서</th><th>근거</th></tr>
+<tr><td>(가) 서버 디스크(EBS gp3) 늘리기</td><td>gp3는 무료 플랜 대상 종류. <b>30GB를 넘겨 늘리는 것이 막히는지는 문서에 없음</b> (확인 못 함)</td><td>EC2 문서 "Free Tier benefits" 표</td></tr>
+<tr><td>(나) S3 + CloudFront</td><td class="okc">됨. S3는 "두 플랜 모두"에 있음, CloudFront는 늘 무료(매달 1TB)</td><td>aws.amazon.com/free, /free/networking</td></tr>
+<tr><td>(다) 라이트세일</td><td class="okc">됨. "두 플랜에서 크레딧으로"</td><td>aws.amazon.com/free/compute/lightsail</td></tr>
+<tr><td>(라) Cloudflare R2</td><td>AWS 크레딧과 무관. R2 자체 무료 10GB</td><td>developers.cloudflare.com/r2/pricing</td></tr>
+<tr><td>(마) WebP로 줄이기</td><td>비용 없음</td><td>—</td></tr>
+</table>
+<p class="cap">EC2는 무료 플랜에서 t3.micro·t3.small·t4g.micro·t4g.small·c7i-flex.large·m7i-flex.large만 됩니다(지금 서버 t4g.small은 대상). (가)가 막히는지는 콘솔의 볼륨 수정 화면에서 바로 알 수 있습니다.</p>
 <p class="concl">[안] (가) 지금 서버 디스크를 30GB에서 50GB로 늘립니다. 한 달 약 2달러로, 바뀌는 코드·설정이 없고 지금 dev의 표지 올리기 절차 그대로 씁니다. 표지가 아주 많이 늘거나 서버를 옮길 때 S3·R2를 다시 봅니다.</p>
 <p class="alt">다른 선택: 가장 싼 쪽은 (라) R2(한 달 약 0.1달러)나 (나) S3(약 0.4달러)이지만, 새 저장소·키·도메인·보안 설정이 생겨 운영할 것이 늘어납니다. (다) 라이트세일 이사는 표지 때문만이라면 일이 가장 큽니다.</p>
 <p><b>방법과 상관없이 챙길 것:</b> 무료 플랜은 6개월(약 2027-04)이 지나면 끝나고, 그때 유료 플랜으로 올리지 않으면 계정이 정지되고 90일 뒤 지워집니다(AWS 공식 문서). 크레딧 만료일은 공식 문서끼리 6개월·12개월로 달라 콘솔에서 확인해야 합니다. 이건 사이클 17 운영 일로 넘깁니다.</p>
