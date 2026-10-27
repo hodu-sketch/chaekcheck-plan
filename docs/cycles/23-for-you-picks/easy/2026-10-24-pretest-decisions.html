@@ -1,0 +1,169 @@
+<title>사이클 23 시험 결과 결정</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;color-scheme:light}
+*{box-sizing:border-box}
+html,body{overflow-x:hidden;max-width:100%}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding-block:40px 90px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px;max-width:100%;overflow-x:auto}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+.changed{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:10px 14px;font-size:18px;margin:12px 0 0}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0;min-width:520px}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.bx{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:7px 12px;font-size:16px;text-align:center}
+.bx small{display:block;color:var(--muted);font-size:13px}
+.bx.hi{border-color:var(--accent);background:var(--accent-bg)}
+.bx.ok{border-color:var(--ok);background:var(--ok-bg)}
+.bx.dash{border-style:dashed;color:var(--muted)}
+.arr{color:var(--muted)}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 12px}
+.chip{display:inline-block;font-size:15px;font-weight:700;color:var(--warn);background:var(--warn-bg);border:1px solid var(--warn);border-radius:999px;padding:0 10px;margin-right:6px;line-height:1.6}
+.chip.done{color:var(--ok);background:var(--ok-bg);border-color:var(--ok)}
+.dec{margin:16px 0 0;padding:14px 16px;border:1px solid var(--line);border-radius:10px;background:var(--code-bg);display:flex;flex-direction:column;gap:10px}
+.dec .btns{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.dec button{font:inherit;font-size:17px;padding:6px 16px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer}
+.dec button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.dec button[aria-pressed="true"][data-c="승인"]{background:var(--ok-bg);border-color:var(--ok);color:var(--ok);font-weight:700}
+.dec button[aria-pressed="true"][data-c="미승인"]{background:var(--no-bg);border-color:var(--no);color:var(--no);font-weight:700}
+.dec button[aria-pressed="true"][data-c="기타"]{background:var(--accent-bg);border-color:var(--accent);color:var(--accent);font-weight:700}
+.dec textarea{font:inherit;font-size:17px;width:100%;min-height:64px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--text);resize:vertical}
+.dec .save{background:var(--accent);color:var(--card);border-color:var(--accent);font-weight:700}
+.dec .st{font-size:15px;color:var(--muted)}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:0 0 24px;font-size:17px}
+.bar b{font-variant-numeric:tabular-nums}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+</style>
+<main class="doc">
+<div class="bar" id="bar">불러오는 중</div>
+<p class="lead">교보·YES24 시험 결과가 왔습니다.<br>정할 것 다섯 가지입니다.</p>
+<p class="sub">수집 PC 세션이 2026-10-24에 교보 일반 사이트 4곳, YES24 사이트 3곳, 추천목록 책 30권으로 시험했습니다. 고르고 저장해 주세요. 일부만 바꾸고 싶으시면 "기타"에 적어 주세요.</p>
+
+<div class="card"><h2>시험이 알려 준 것</h2>
+<table>
+<tr><th>물어본 것</th><th>답</th></tr>
+<tr><td>교보·YES24 인기순은 누적일까, 최근일까</td><td><b>누적입니다.</b> 상위 100권의 출판 연도 가운데값이 2013~2020년이고 2025년 이후 책은 0권. YES24는 화면에 누적 대출 수가 보이는데 정확히 그 차례(국립세종 1위 1,179회)</td></tr>
+<tr><td>YES24를 검색어 없이 대출순으로 받을 수 있나</td><td>옛 화면(V1, 91곳)만 됩니다. 새 화면(V2, 432곳)은 대출순 요청을 무시합니다</td></tr>
+<tr><td>교보 구독형은</td><td>모두 요청하지 않기로 한 서버(<code>*.dkyobobook.co.kr</code>)에 있어 시험하지 않았습니다</td></tr>
+<tr><td>우리 책과 맞춰지나</td><td>2,600줄 중 2,590줄(99%)</td></tr>
+<tr><td>비슷한 책 계산은 얼마나 걸리나</td><td>내 PC로 1,000권에 약 100초 → 서비스 책 134만 권 전체 약 <b>38시간</b></td></tr>
+<tr><td>비슷한 책은 그럴듯한가</td><td>같은 저자(괴테, 쇼펜하우어, 최재천)는 잘 묶습니다. 「대구」(물고기 책), 「에밀」, 「신곡」처럼 제목이 한 낱말이면 엉뚱한 책이 나옵니다. 지금은 제목·저자·출판사만 넣기 때문입니다</td></tr>
+<tr><td>비슷한 책 가운데 인기 책은</td><td>600권 중 11권(1.8%). <b>기준 책 30권 중 24권은 개인 추천이 텅 빕니다</b>(인기 범위를 400권으로 넓혀도 16권이 빔)</td></tr>
+</table>
+<p class="cap">원본: dev <code>docs/reports/cycle23-pretest-2026-10-24.md</code>. plan 정리: <code>docs/cycles/23-for-you-picks/pretest-review.md</code></p>
+</div>
+
+<div class="card item"><h2><span class="num">1</span>스테디셀러가 위에 오지 않게:<br>누적 순위는 빼고, 새 책에 가산</h2>
+<p class="changed">앞의 안 #1("누적 순위는 가장 높은 사이트 하나만")은 미승인하셨습니다("스테디셀러가 위에 안 왔으면 해"). 고친 안입니다. 다시 골라 주세요.</p>
+<p class="concl"><span class="chip" data-n="6">안 #1 고친 안</span> 세 가지를 함께 바꿉니다.<br>
+① <b>누적 순위는 점수에서 뺍니다.</b> 교보·YES24 누적 목록은 "후보를 찾는 그물"로만 씁니다.<br>
+② <b>최근 수요(대출 중 + 2 × 예약)에 출판 연도 가산</b>을 곱합니다: 3년 안 ×1.5, 4~6년 ×1.0, 7~10년 ×0.6, 그보다 오래 ×0.3.<br>
+③ <b>출판유통 판매 순위의 가중치를 1.0 → 1.5</b>로 올립니다. 지금 팔리는 책이라 가장 트렌디한 재료입니다. 「화제의 책 200선」도 같은 쪽입니다.</p>
+<p class="cap"><b>①+② 결과</b> (교보·YES24 시험 자료만, 출판유통은 아직 없음) · 상위 40권 출판 연도 가운데값 2020.5, 2023년 이후 9권, 2015년 이전 0권 (지금 명세 2016.5·2권·다수)</p>
+<div style="overflow-x:auto"><table><tr><th>#</th><th>책 (전자책이 나온 해)</th><th>점수</th></tr><tr><td>1</td><td>세이노의 가르침 / 세이노 (2023)</td><td>87</td></tr><tr><td>2</td><td>달러구트 꿈 백화점 / 이미예 (2020)</td><td>84</td></tr><tr><td>3</td><td>아주 작은 습관의 힘 / 제임스 클리어 (2019)</td><td>65</td></tr><tr><td>4</td><td>내면소통 : 삶의 변화를 가져오는 마음근력 훈련 / 김주환 저 (2023)</td><td>60</td></tr><tr><td>5</td><td>마흔에 읽는 쇼펜하우어 : 마음의 위기를 다스리는 철학 / 강용수 저 (2023)</td><td>60</td></tr><tr><td>6</td><td>도시와 그 불확실한 벽 / 무라카미 하루키 (2023)</td><td>57</td></tr><tr><td>7</td><td>도둑맞은 집중력 / 요한 하리 (2023)</td><td>52</td></tr><tr><td>8</td><td>작별하지 않는다 / 한강 (2021)</td><td>44</td></tr><tr><td>9</td><td>바깥은 여름 / 김애란 (2017)</td><td>43</td></tr><tr><td>10</td><td>불편한 편의점 / 김호연 (2021)</td><td>42</td></tr><tr><td>11</td><td>아주 희미한 빛으로도 / 최은영 (2023)</td><td>41</td></tr><tr><td>12</td><td>물고기는 존재하지 않는다 / 룰루 밀러 (2022)</td><td>38</td></tr><tr><td>13</td><td>이기적 유전자(40주년 기념판) / 리처드 도킨스 (2018)</td><td>37</td></tr><tr><td>14</td><td>사는 게 고통일 때, 쇼펜하우어 : 욕망과 권태 사이에 / 박찬국 저 (2021)</td><td>36</td></tr><tr><td>15</td><td>돈의 속성 / 김승호 저 (2020)</td><td>33</td></tr><tr><td>16</td><td>부자의 그릇 : 돈을 다루는 능력을 키우는 법 / 이즈미 마사토 저/ (2020)</td><td>33</td></tr><tr><td>17</td><td>프로젝트 헤일메리 / 앤디 위어 저/강동 (2021)</td><td>31</td></tr><tr><td>18</td><td>돈의 속성(100쇄 기념 에디션) / 김승호 (2020)</td><td>31</td></tr><tr><td>19</td><td>부의 시나리오 : 불확실성을 기회로 만드는 4가지 투자 / 오건영 저 (2021)</td><td>29</td></tr><tr><td>20</td><td>애쓰지 않고 편안하게 / 김수현 (2020)</td><td>29</td></tr></table></div>
+<p class="ex">21~40위는 <code>pretest-review.md</code>에 있습니다. 한계: 교보·YES24 그물은 누적 상위라 2025년 이후 새 책은 아직 안 들어옵니다. 새 책은 ③ 출판유통 판매 순위가 들여옵니다. 더 필요하면 교보·YES24 "최신순" 앞쪽을 받아 대출·예약을 보는 그물을 더할 수 있습니다(요청이 늘어서 시험 뒤에 다시 여쭙니다). 출판 연도는 전자책이 나온 해라 종이책보다 늦을 수 있습니다(「1Q84」가 2020으로 나옴).</p>
+<p class="alt">다른 선택: ②의 가산 없이 최근 수요만 — 가운데값 2019, 2015년 이전 12권. 가산을 더 세게(10년 넘은 책 ×0.1) — 오래된 책이 거의 사라지지만 「아주 작은 습관의 힘」(2019) 같은 지금도 많이 빌리는 책도 내려갑니다.</p>
+</div>
+<div class="card item"><h2><span class="num">2</span>인기 출처 사이트는 교보 일반 4곳 +<br>YES24 옛 화면 2곳, 사이트마다 앞 100권</h2>
+<p class="concl"><span class="chip" data-n="2">안 #2</span> 교보 구독형(<code>*.dkyobobook.co.kr</code>)에는 지금처럼 요청하지 않습니다. 시험한 여섯 곳(교보 일반: 서초 반포·연천·도봉·부천, YES24 V1: 국립세종·성남)에서 매일 앞 100권만 받습니다. 하루 요청은 교보 2쪽 × 4 + YES24 2쪽 × 2 = 12번 안팎입니다.</p>
+<p class="ex">사이트마다 상위 100권이 많이 달라서(겹침 2~36권) 여섯 곳만 합쳐도 서로 다른 책이 460권입니다. 연천처럼 지금 대출이 0권인 작은 곳은 빼고 다른 V1 사이트로 바꿀 수 있습니다.</p>
+<p class="alt">다른 선택: 교보 구독형도 받기 — 사이클 13에서 정한 "요청하지 않음"을 다시 정해야 합니다. 사이트를 더 늘리기 — 책 수는 늘지만 요청도 늘고, 얼마나 느는지는 다시 재야 합니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">3</span>개인 추천을 고르는 차례<br>(질문에 답하고 다시 여쭙니다)</h2>
+<p class="changed">"본 책 빼기는 정확히 뭐야? 지금 로직 설명 다시 좀"에 대한 답입니다. 읽어 보시고 아래 안을 다시 골라 주세요.</p>
+<p><b>개인 추천은 이 차례로 만듭니다.</b></p>
+<table>
+<tr><th>차례</th><th>하는 일</th><th>예</th></tr>
+<tr><td>①</td><td><b>기준 책 3권</b>: 브라우저가 최근 30일 동안 센 점수(연 적 1 + 10초 넘게 봄 2 + 도서관 누름 3)가 높은 3권</td><td>「책 A」 6점, 「책 B」 3점, 「책 C」 1점</td></tr>
+<tr><td>②</td><td><b>이웃 모으기</b>: 기준 책마다 미리 계산해 둔 "비슷한 책" 20권 → 최대 60권</td><td>A의 이웃 20 + B의 이웃 20 + C의 이웃 20</td></tr>
+<tr><td>③</td><td><b>본 책 빼기</b>: 이 브라우저에서 이미 열어 본 책(최근 30일, 기준 책 포함)은 추천에서 뺍니다. 이미 아는 책을 다시 추천하지 않으려는 것입니다</td><td>B의 이웃에 「책 D」가 있는데 D를 지난주에 열어 봤으면 D는 빠짐</td></tr>
+<tr><td>④</td><td><b>내 도서관에 있는 책만</b>: 계획 도서관 가운데 한 곳이라도 가진 책</td><td>60권 → 예를 들어 35권</td></tr>
+<tr><td>⑤</td><td><b>차례 정하기 (안 #3)</b>: 인기 점수가 있는 책을 먼저(인기 높은 순), 그다음 나머지(내 도서관에 많이 있는 순)</td><td>인기 책 3권이 맨 앞, 그 뒤 32권</td></tr>
+<tr><td>⑥</td><td>같은 저자는 연달아 2권까지, 20권씩 보이고 "비슷한 책 더 보기"</td><td></td></tr>
+</table>
+<p class="ex">헷갈리기 쉬운 것: ③ "본 책 빼기"는 <b>추천 목록에서</b> 이미 본 책을 빼는 것이고, 앞 페이지에서 정한 "기준 책 바꾸기" 창의 [빼기]는 <b>기준 책 후보에서</b> 그 책을 빼는 것입니다(그 책과 비슷한 책을 찾지 않게).</p>
+<p class="changed">"유튜브 알고리즘은 이미 본 영상 같은거 많이 띄워주긴 하는데.... 본 거는 가끔 더 보여주는 건?"에 따라 ③을 고친 안입니다.</p>
+<p class="concl"><span class="chip" data-n="9">안 #3 고친 안</span> ⑤처럼 인기 책을 앞에 두고, 인기 책이 없어도 비슷한 책을 보여 개인 추천이 비지 않게 합니다. ③ "본 책 빼기"는 <b>가끔 다시 보여 주기</b>로 바꿉니다: 개인 추천 20권마다 본 책을 <b>2권까지</b> 다시 섞습니다. 고르는 조건은 (가) 본 지 3일 넘음 (나) 도서관을 누르지 않은 책(아직 빌리러 가지 않은 책) (다) 지금 기준 책이 아님 (라) "기준 책 바꾸기"에서 빼지 않은 책. 자리는 각 20권의 중간쯤(예: 8번째·16번째), 꼬리말은 붙이지 않습니다(출처 꼬리말은 추천목록만, 앞서 정하심).</p>
+<p class="ex">예: 지난주에 「책 D」를 열어 보고 도서관은 누르지 않았다면, 비슷한 책 20권 사이에 D가 한 번 더 나올 수 있습니다. 도서관까지 누른 책은 이미 빌리러 간 것으로 보고 다시 띄우지 않습니다.</p>
+<p class="alt">다른 선택: 본 책은 늘 빼기(앞의 안) — 같은 책이 다시 안 나오지만, 망설이다 놓친 책을 다시 볼 기회가 없습니다. 다시 섞는 책에 "최근 본 책" 표시 — 왜 다시 나왔는지 알 수 있지만 꼬리말 규칙의 예외가 됩니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">4</span>소개 원문을 넣는 시험 +<br>원문 없는 책은 다른 곳에서 찾기</h2>
+<p class="changed">"원문이 없는 책은 다른 데서 소개글을 찾아와봐"에 따라 고친 안입니다.</p>
+<p class="concl"><span class="chip" data-n="8">안 #4 고친 안</span> 비슷한 책 계산과 추천 글에 소개 원문을 넣습니다. 원문이 없는 책은 아래 차례로 찾아 채웁니다. 먼저 수집 세션이 <b>원문이 없는 책이 몇 권인지, 각 출처로 몇 권이 채워지는지</b>를 재고, 같은 30권으로 이웃 품질을 다시 잽니다.</p>
+<table>
+<tr><th>차례</th><th>출처</th><th>알고 있는 것</th></tr>
+<tr><td>①</td><td>같은 책의 <b>다른 도서관 줄</b>에 있는 원문 (내 PC 수집 DB)</td><td>새 요청이 없음. 알라딘·포털·서울 목록에서만 온 책도 다른 플랫폼에 같은 책이 있으면 채워짐</td></tr>
+<tr><td>②</td><td><b>카카오 책 검색 API</b> <code>contents</code> (출판사 소개 앞부분)</td><td>추천목록 AI 요약에 이미 씀(ADR-0142). 약관상 저장·가공이 되는지 [확인 필요]</td></tr>
+<tr><td>③</td><td><b>도서관 정보나루</b> 도서 상세</td><td>하루 30,000건(same-book-isbn.md). 소개 칸이 있는지·전자책이 있는지 [확인 필요]</td></tr>
+<tr><td>④</td><td><b>국립중앙도서관 ISBN 서지 API</b> <code>BOOK_INTRODUCTION</code></td><td>2021년 2월까지 만든 자료만 있음, 인증키·담당자 승인 필요(law.md)</td></tr>
+</table>
+<p class="ex">알라딘 API는 2026-10-30에 끝나서 뺐습니다(공지 https://blog.aladin.co.kr/openapi/17486624). 네이버 책 검색은 끝난 것으로 보이나 공식 공지를 확인하지 못해 뺐습니다. 원문은 어느 출처든 PC에만 두고 서비스로는 내보내지 않습니다. ②~④의 약관은 이 클라우드 환경에서 열 수 없어 PC에서 확인해야 합니다.</p>
+<p class="alt">다른 선택: ①만(새 요청 없음, 가장 안전) — 채워지는 책 수가 가장 적습니다. ②까지만 — 이미 쓰는 출처라 일이 적습니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">5</span>처음 한 번은 내 PC로 며칠에 나눠 돌리고,<br>그다음은 새 책만</h2>
+<p class="concl"><span class="chip" data-n="5">안 #5</span> 서비스 책 전체 계산(약 38시간, 원문을 넣으면 더 김)은 처음 한 번만 PC에서 밤마다 나눠 돌립니다. 그 뒤로는 목록을 새로 반영할 때 <b>새로 들어온 책만</b> 계산하고 이웃을 고칩니다.</p>
+<p class="alt">다른 선택: GPU를 잠깐 빌리기 — 몇 시간이면 끝나지만 돈이 들고 아직 재지 않았습니다. 대상을 보유 도서관이 많은 책(예: 3만 권)으로 줄이기 — 빠르지만, 사용자가 본 책이 그 밖이면 개인 추천이 없습니다.</p>
+</div>
+
+<p class="foot">원본: docs/cycles/23-for-you-picks/spec.md R2-2·R2-3·R6-1·R6-1a·R7-2·R7-3·R7-4, pretest-review.md, dev docs/reports/cycle23-pretest-2026-10-24.md (2026-10-24)</p>
+</main>
+<script>
+(function(){
+  const items=[...document.querySelectorAll('.chip')].map(ch=>{
+    const n=+ch.dataset.n; const box=ch.closest('.item');
+    const h=box.querySelector('h2'); const t=(h?h.textContent:'').replace(/^\s*\d+/,'').trim();
+    const d=document.createElement('div'); d.className='dec';
+    d.innerHTML='<div class="btns" role="group" aria-label="안 #'+n+' 결정">'+
+      ['승인','미승인','기타'].map(c=>'<button type="button" data-c="'+c+'" aria-pressed="false">'+c+'</button>').join('')+'</div>'+
+      '<textarea id="note-'+n+'" placeholder="덧붙일 말 (미승인 이유, 질문, 채널 이름 등)"></textarea>'+
+      '<div class="btns"><button type="button" class="save">저장</button><span class="st" aria-live="polite">아직 고르지 않았습니다</span></div>';
+    box.appendChild(d);
+    const st={n,title:t,chip:ch,el:d,pick:null};
+    d.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{st.pick=b.dataset.c;paint(st);d.querySelector('.st').textContent='"저장"을 눌러야 기록됩니다';});
+    d.querySelector('.save').onclick=()=>save(st);
+    return st;
+  });
+  const bar=document.getElementById('bar');
+  function paint(st){st.el.querySelectorAll('[data-c]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.c===st.pick)));}
+  let db=null; const saved={};
+  function count(){const k=Object.keys(saved).length;bar.innerHTML='저장한 것 <b>'+k+' / '+items.length+'</b>'+(db?' · 저장하면 Claude가 읽습니다':' · 저장 기능을 아직 불러오지 못했습니다(claude.ai에 로그인한 채로 열어 주세요)');}
+  count();
+  async function save(st){
+    const s=st.el.querySelector('.st');
+    if(!st.pick){s.textContent='먼저 승인·미승인·기타 중 하나를 고르세요';return;}
+    if(!db){s.textContent='저장할 수 없습니다. 로그인한 채로 claude.ai에서 열어 주세요';return;}
+    const note=st.el.querySelector('textarea').value.trim();
+    s.textContent='저장하는 중…';
+    try{await db.doc('choices/q'+st.n).set({n:st.n,title:st.title,choice:st.pick,note,savedAt:new Date().toISOString()});s.textContent='저장했습니다';}
+    catch(e){s.textContent='저장하지 못했습니다 ('+(e&&e.code||'오류')+'). 잠시 뒤 다시 눌러 주세요';}
+  }
+  (async()=>{
+    try{db=window.claude?await window.claude.use('db'):null;}catch(e){db=null;}
+    count(); if(!db) return;
+    db.collection('choices').onSnapshot(snap=>{
+      snap.docs.forEach(doc=>{const v=doc.data();const st=items.find(i=>i.n===v.n);if(!st)return;saved[v.n]=v;
+        if(document.activeElement!==st.el.querySelector('textarea')) st.el.querySelector('textarea').value=v.note||'';
+        st.pick=v.choice;paint(st);st.chip.classList.add('done');st.chip.textContent='안 #'+v.n+' · '+v.choice;
+        st.el.querySelector('.st').textContent='저장됨: '+v.choice+' ('+new Date(v.savedAt).toLocaleString('ko-KR')+')';});
+      count();
+    },()=>{});
+  })();
+})();
+</script>

@@ -143,3 +143,13 @@
 | [ADR-0135](0135-no-scope-switch-nationwide-per-search.md) | 검색 범위 스위치를 없애고 늘 빌릴 수 있는 곳으로 찾음; 전국은 결과 안 링크·상세검색 "☐ 전국에서 찾기"로 그 검색에만(저장 안 함); 로그인 계정 값을 읽을 때까지 대기(사이클 06 "읽는 동안 전체"를 바꿈) | Accepted | 2026-10-18 | 22 |
 | [ADR-0138](0138-first-screen-scope-line-and-browser-hints.md) | 첫 화면 "찾을 도서관" 줄 하나로(부품 셋 삭제, 처음 온 사람은 [사는 곳·일하는 곳 고르기] 단추만), 방문 가입 빼기는 값 하나에 입구 셋, 브라우저 저장 칸 `planCount`·`openCount`·`saveHintClosed`, 전체 도서관 목록은 필요할 때만 | Accepted | 2026-10-18 | 22 |
 | [ADR-0139](0139-first-user-onboarding-copy-and-cues.md) | 첫 사용자 안내: 머리글 이득·불편 순서("거주 · 재직 · 상관없이"), 지역 줄에서 "조건·설정" 말 빼기 + "왜 묻나요?" 한 줄, "우리 동네만?" 오해는 특정 지역 없는 알약 그림, 체크 직후 내 숫자(목록 요청 1회), 꼬리표는 가입 근거([서울 거주 가입]), 뺀 도서관은 맨 아래 한 줄 [전국에서 찾기], 로그인 창 문구, 소개 창 없음, 탈퇴는 계정 칸 안 | Accepted | 2026-10-20 | 22 (5-A단계) |
+| [ADR-0140](0140-region-guess-by-ip.md) | 첫 화면 예시용 IP 시·도 추정 `GET /api/v1/regions/guess`(DB-IP, 저장 안 함), 처리방침 2판; v1.9.8부터 웹이 부르지 않음 (사후 기록) | Accepted | 2026-10-23 | 22 회고 |
+| [ADR-0141](0141-visit-outside-region.md) | 「지역 외는 방문 가입」 `library.visit_outside_region` 칸, 실효 방문 = `visitRequired || (visitOutsideRegion && !ELIGIBLE)` (사후 기록) | Accepted | 2026-10-23 | 22 회고 |
+| [ADR-0142](0142-picks-ai-summaries.md) | 추천목록 책 창 AI 요약 `ai-summaries.tsv`(빌드에 실음, ISBN → 목록+제목), 카카오 소개 입력, 「AI 요약 ⓘ」 (사후 기록) | Accepted | 2026-10-23 | 22 회고 |
+| [ADR-0143](0143-kaist-nobel-lists-and-lists-import-mode.md) | 추천목록 KAIST·노벨, 가져오기 `lists` 모드(지금 DB에 바로 맞춤), 기본 탭 KAIST, 메인 책장 `/api/v1/picks/shelf` (사후 기록) | Accepted | 2026-10-23 | 22 회고 |
+| [ADR-0144](0144-list-covers-as-files.md) | 추천목록 표지는 nginx `/covers/<sha1>.jpg` 파일, DB에는 사서 표지만 (사후 기록) | Accepted | 2026-10-23 | 22 회고 |
+| [ADR-0145](0145-seoul-elib-platform.md) | 서울도서관 화면 종류 `SEOUL_ELIB_V1` (사후 기록) | Accepted | 2026-10-23 | 22 회고 |
+| [ADR-0146](0146-lookup-sample-and-cycle20-phase1.md) | 조회 운영 표본 `availability.lookup_sample`(10초, 달 파티션, 90일), 사이클 20 1단계 일부 (사후 기록) | Accepted | 2026-10-23 | 22 회고 |
+| [ADR-0147](0147-kpipa-sales-rank-as-for-you-input.md) | 출판유통통합전산망 판매 순위·「화제의 책 200선」을 「나에게 맞는 책」 기본 목록 재료로 씀 (승인 거절을 알고 위험 감수, 카드 출처 표시 없음) | Accepted | 2026-10-24 | 23 |
+| [ADR-0148](0148-for-you-popular-fetch-and-covers.md) | 「나에게 맞는 책」 인기 목록은 운영 서버(`foryou`)가 새벽에 받음(`availability` 조회 줄, 출처마다 끄기, 수집 때마다 검증), 표지는 PC `fetch-covers`를 범위만 옮김 | Accepted | 2026-10-24 | 23 |
+| [ADR-0149](0149-for-you-module-neighbours-and-split.md) | 「나에게 맞는 책」 새 모듈 `foryou`, 꼬리표·사전(DB 표)은 `picks`, 이웃 표 책마다 한 줄(4바이트 배열)·`neighbours` 넣기, `book-texts` kind, 한 번 호출 배치, 개인 추천 서버·브라우저 나누기, 판 모으기 | Accepted | 2026-10-24 | 23 |
