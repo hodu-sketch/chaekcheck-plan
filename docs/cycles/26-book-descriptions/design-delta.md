@@ -168,7 +168,7 @@ erDiagram
 | `book_profile.*` | text / boolean / text[] | 어휘 CHECK 없음 | 지금 `book-profiles.tsv` 칸 그대로 (설계 #7 승인) | [확정] |
 | `book_search.line` | text COLLATE "C" | NULL 또는 1~300, `line`·`line_source`·`line_made_on` 함께 있거나 함께 없음 | 찾기용 한 줄 — `aisearch.search_book`에서 옮김 | [확정] (명세 #3) |
 | `book_search.search_text` | text COLLATE "C" | NOT NULL, `gin_bigm_ops` 색인 | 찾기 글 (제목은 이제 `catalog.book.title`로 만듦, architect 0-3) | [확정] |
-| `book_search.library_ids` | integer[] | — | **설계 #6 대기** (둘지, `catalog.book`과 이어 읽을지) | [확인 필요] |
+| `book_search.library_ids` | integer[] | NOT NULL | 찾기 전용 칸(같은 모듈 안 `catalog.book.library_ids`와 같은 값). 측정: 캐시 빈 상태 중간값 106ms ↔ 이어 읽기 230ms, 최대 234ms ↔ 1,054ms (dev `plan-feedback.md` "# 사이클 26 질의 속도", 2026-10-28) | [안] (설계 결정 #8, 사용자 "속도가 우선") |
 | `tag_dictionary`, `book_tag` | — | 지금 `picks` 표 규칙 그대로, `book_tag.tag_code → tag_dictionary.code` FK | 지금 0줄 | [확정] |
 | `collection.catalog_import.description_deleted_count` | integer | `>= 0` | 바꿔 끼울 때 지운 설명 수 | [안] |
 
@@ -222,7 +222,7 @@ erDiagram
 
 | # | 항목 | 방법 | 막는 단계 |
 |---|---|---|---|
-| 1 | 설계 #6: `book_search.library_ids`를 둘 때와 `catalog.book`과 이어 읽을 때의 질의 시간 차이 | dev 24 세션 측정(운영 꼴 사본, EXPLAIN ANALYZE), dev `plan-feedback.md` "# 사이클 26 질의 속도" | 설계 확정 |
+| 1 | ~~설계 #6 질의 시간 차이~~ → 잼(2026-10-28), 결정 페이지 #8 | — | — |
 | 2 | 운영 사서추천 목록이 첫 배포 뒤 그대로인지(서버 받기 꺼짐) | dev 운영 DB `picks.fetch_run` | 인계 |
 | 3 | 목록 책 AI 카드 제목·`search_text`가 `catalog.book.title`로 바뀌는 영향 | dev 24, AC-7 전후 비교 | 인계 |
 | 4 | 운영 프로필 파일 줄 수 (주석 27,227 ↔ 문서 77,551) | dev 24 | 인계 |
