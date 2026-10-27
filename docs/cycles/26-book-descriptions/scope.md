@@ -63,6 +63,11 @@
 | 23·24 dev 세션이 지금 이 표들을 어디까지 고쳤는지 | design-delta 전에 dev main과 23·24 브랜치 다시 읽기 |
 | 사이클 25(plan 진행 중)가 같은 표를 건드리는지 | 사이클 25 세션 문서가 올라오면 확인 |
 
+## dev 세션이 알려 준 제약 (design-delta에서 지킬 것)
+
+- dev 24 세션 (2026-10-27): 배포 대기 v1.19.0(브랜치 `claude/aisearch-faster-first`)은 `AiSearchFlow.Cards`에서 표지·요약을 Haiku 호출과 동시에 비동기로 읽음(첫 카드 때 기다림). `catalog` 공개 API로 바꿔도 「표지·요약은 카드에만 쓰고 2차 프롬프트에는 안 들어감 → 호출과 겹쳐 읽음」을 유지 [확인 필요: design-delta 전 그 브랜치 코드 확인]
+- dev 24 세션: `MlFirstCall`은 시작 때 `book-profiles.tsv` 77,551권을 메모리에 모두 읽어 `shelfCounts`·`bonus`·`rulesOut`에 씀. DB 표로 옮겨도 요청마다 DB를 읽지 않게(시작 때 한 번 또는 캐시) 해야 첫 글 시간이 늘지 않음. 운영 상태는 dev main `docs/maintenance/6-aisearch.md` 0절
+
 ## 슬라이스 선택 기록
 
 - ICE 점수 없음. 사용자가 dev 제안을 보고 이 세션에 맡김 ("니가 좀 담당해보자", 2026-10-27)
