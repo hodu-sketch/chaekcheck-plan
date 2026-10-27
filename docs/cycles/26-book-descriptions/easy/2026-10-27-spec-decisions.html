@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>책 설명 명세 결정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+
+.v-flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.v-box{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:7px 11px;font-size:15px;text-align:center;min-width:90px}
+.v-box small{display:block;color:var(--muted);font-size:12px}
+.v-hi{border-color:var(--accent);background:var(--accent-bg)}
+.v-warn{border-color:var(--warn);background:var(--warn-bg)}
+.v-ok{border-color:var(--ok);background:var(--ok-bg)}
+.v-arr{color:var(--muted);font-size:18px}
+.v-file{border:2px solid var(--line);border-radius:12px;background:var(--card);padding:10px;margin:10px 0;max-width:560px}
+.v-file .v-part{border:1px dashed var(--line);border-radius:8px;padding:8px 10px;margin:6px 0;font-size:14px}
+.v-file .v-part.v-new{border-color:var(--accent);background:var(--accent-bg)}
+.v-tl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0;font-size:13px;text-align:center}
+.v-tl div{border-top:4px solid var(--line);padding-top:6px}
+.v-tl div.v-hi{border-top-color:var(--accent);background:none}
+.v-cv{display:inline-flex;width:70px;aspect-ratio:2/3;border-radius:7px;border:1px solid var(--line);background:var(--accent-bg);align-items:center;justify-content:center;font-size:11px;text-align:center;padding:3px;vertical-align:top;margin:4px}
+.v-cv.v-img{background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 6px,var(--card) 6px,var(--card) 12px)}
+.v-mini{border:1px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;margin:8px 0;max-width:420px}
+.v-mini .v-bar{display:flex;gap:10px;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line);font-size:13px}
+.v-mini .v-body{padding:10px 12px;font-size:13px}
+.v-pill{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-weight:800;font-size:12px}
+@media (max-width:700px){main table{display:block;overflow-x:auto;max-width:100%}.v-tl{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.v-code{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:var(--code-bg);border-radius:8px;padding:8px 10px;overflow-x:auto;white-space:pre}
+.card h3{margin:0 0 14px;font-size:24px}
+
+.mk{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start;margin:12px 0}
+.mk .dev{border:2px solid var(--line);border-radius:12px;background:var(--bg);padding:10px;font-size:13px;line-height:1.5}
+.mk .dev b.t{display:block;color:var(--muted);font-weight:500;font-size:12px;margin-bottom:6px}
+.mk .pc{width:420px;max-width:100%}.mk .tab{width:300px;max-width:100%}.mk .ph{width:190px}
+.mk .row{display:flex;gap:10px}
+.mk .cv{flex:none;width:58px;aspect-ratio:2/3;border-radius:5px;border:1px solid var(--line);background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 5px,var(--card) 5px,var(--card) 10px)}
+.mk .ph .cv{width:44px}
+.mk .ttl{font-weight:700;font-size:15px}
+.mk .sum{background:var(--warn-bg);border:1px dashed var(--warn);border-radius:7px;padding:6px 8px;margin:8px 0}
+.mk .lib{border-top:1px solid var(--line);padding:5px 0;color:var(--muted)}
+</style>
+</head>
+
+<body>
+<main class="doc">
+<p class="lead">명세에서 고르실 것은 4개입니다.<br>나머지는 범위 결정(1~7번)을 그대로 옮겼습니다.</p>
+<p class="sub">사이클 26 「책 설명 한 곳에 모으기」의 기능 명세(spec.md)입니다. 범위 결정으로 정해진 것(요약은 책첵 요약 한 종류, 책 프로필도 DB로, 책 상세에 표지·요약, 26 먼저 개발)은 다시 묻지 않습니다. 설명 넣기 파일의 칸 이름 같은 개발 세부는 설계 단계에서 정합니다.</p>
+
+<div class="card item"><h3><span class="num">1</span>모든 화면에서 요약 위에 「AI 요약 ⓘ」,<br>요약이 없는 책은 요약 칸 없이</h3>
+<p class="concl">[안] 지금 추천목록 책 창에만 있는 「AI 요약 ⓘ」 표시를 책첵 추천 카드, AI 검색 카드, 책 상세 화면에도 똑같이 붙입니다. 요약이 없는 책(12,666권)은 "요약 없음" 같은 글 없이 요약 칸 자체를 보이지 않습니다.</p>
+<div class="mk">
+<div class="dev pc"><b class="t">요약 있는 책</b><div class="row"><span class="cv"></span><div><div class="ttl">채식주의자</div><div>한강 · 창비</div></div></div><div class="sum"><b>AI 요약 ⓘ</b> 평범한 주부가 고기를 끊겠다고 선언하면서 가족과 갈등을 겪어요.</div></div>
+<div class="dev tab"><b class="t">요약 없는 책</b><div class="row"><span class="cv"></span><div><div class="ttl">어떤 책</div><div>저자 · 출판사</div></div></div><div class="lib">도서관 목록 (요약 칸 없음)</div></div>
+</div>
+<p class="cap">자리만 그린 그림입니다. 요약 글은 예시입니다.</p>
+<p><b>지금과 다른 점:</b> 책첵 추천 탭은 지금 탭 맨 위에 "책 소개 글은 AI가 썼어요" 한 줄만 두고 카드마다 표시를 붙이지 않기로 했습니다(2026-10-23, "AI 각각 붙여서 너무 많지 않아? 간단하게 통으로"). 이 제안은 <b>카드가 아니라 책 창(책을 눌러 여는 창)과 책 상세 화면</b>에만 표시를 붙이고, 책첵 추천 탭 카드 목록은 지금처럼 맨 위 한 줄로 둡니다.</p>
+<p class="alt">다른 선택: 표시를 모두 빼고 서비스 안내에만 적기 — 화면이 깔끔하지만, 인공지능이 만든 글이라는 표시가 화면에서 사라집니다(사이클 23에서 AI 표시를 두기로 함).</p>
+</div>
+
+<div class="card item"><h3><span class="num">2</span>추천목록의 표지는<br>추천목록에 그대로 둠</h3>
+<p class="concl">[안] 표지 중 <b>책 표지</b>(책첵 추천·AI 검색이 쓰는 8만 권)는 <code>catalog</code>로 옮기지만, <b>추천목록 표지</b>(사서추천·KAIST·서울대 등 목록마다 받아 둔 표지)는 추천목록 모듈에 그대로 둡니다. 추천목록 표지가 없는 책만 책 표지를 씁니다.</p>
+<p><b>까닭:</b> 추천목록에는 우리 책 목록에 없는 책(전자도서관에 없는 종이책 등)도 들어 있습니다. 이런 책은 책 번호가 없어서 책 번호로 저장하는 <code>catalog</code> 표에 넣을 수 없습니다.</p>
+<p><b>보이는 결과:</b> 같은 책이 추천목록 탭에서는 목록 표지로, 책 상세 화면에서는 책 표지로 보일 수 있습니다. 둘 다 같은 책의 표지이고 판만 다를 수 있습니다. AI 검색은 지금도 이 순서(목록 표지 먼저)로 고릅니다.</p>
+<p class="alt">다른 선택: 책 번호가 있는 추천목록 책의 표지도 <code>catalog</code>로 옮겨 하나로 — 어디서나 같은 표지가 보이지만, 목록 표지를 두 곳에 나눠 두게 되고(책 번호 있는 책은 <code>catalog</code>, 없는 책은 추천목록) 매달 사서추천 갱신 때 두 곳을 고쳐야 합니다.</p>
+</div>
+
+<div class="card item"><h3><span class="num">3</span>AI 검색의 찾기용 한 줄은<br>AI 검색에 그대로 둠</h3>
+<p class="concl">[안] AI 검색이 책을 찾을 때만 쓰는 한 줄(76,759권, 화면에는 안 보임)은 옮기지 않습니다. 범위 결정 4번에서 "책 프로필도 DB로"라고만 하셔서 이 줄은 처음 제안대로 두었습니다.</p>
+<p><b>까닭:</b> 이 줄은 AI 검색의 검색용 사본 표 안에 제목·저자와 함께 들어 있어, 한 표에서 글자 검색을 합니다. 따로 떼면 검색할 때마다 두 표를 이어 읽어 느려질 수 있습니다.</p>
+<p class="alt">다른 선택: 이것도 <code>catalog</code>로 — "책 설명은 모두 한 곳"이 완전해지지만, AI 검색은 검색용 사본에 다시 복사해야 해서 결국 두 곳에 같은 글이 남습니다.</p>
+</div>
+
+<div class="card item"><h3><span class="num">4</span>한 번의 배포로 옮기고,<br>옛 표는 다음 배포에서 지움</h3>
+<p class="concl">[안] 범위 결정 6번에서 순서(26 먼저)만 바꾸셨고 옮기는 방식은 말씀이 없어 처음 제안대로 적었습니다. 한 번의 배포에서 새 표를 만들고, 옛 표 내용을 복사하고, 읽는 곳을 모두 바꿉니다. 옛 표는 화면 넷의 요약·표지 수가 맞는 것을 확인한 다음 배포에서 지웁니다. 추천목록 요약 파일은 복사하지 않고 그 배포에서 지웁니다.</p>
+<div class="v-tl"><div class="v-hi">배포 1: 새 표 + 복사 + 읽는 곳 바꿈</div><div>수 비교 (요약 68,414 · 표지 80,091 · 프로필 77,551)</div><div>23·24 dev가 맞춰 고침</div><div>배포 2: 옛 표 지움</div></div>
+<p class="alt">다른 선택: 배포 1에서 옛 표까지 지움 — 배포가 한 번으로 끝나지만, 잘못되면 되돌릴 옛 표가 없습니다.</p>
+</div>
+
+<div class="card"><h2>설계 단계로 넘기는 개발 세부 (묻지 않음)</h2>
+<table>
+<tr><th>세부</th><th>명세에 적은 방향</th></tr>
+<tr><td>설명 넣기 파일 첫 줄의 가져오기 번호</td><td>이웃 책 넣기와 같은 모양으로</td></tr>
+<tr><td>프로필 넣기</td><td>설명 넣기 파일의 새 종류로</td></tr>
+<tr><td>지운 설명 수</td><td>가져오기 기록에 남김</td></tr>
+<tr><td>AI 검색 빠르기</td><td>프로필은 서버가 한 번 읽어 메모리에, 카드 표지·요약은 AI 호출과 동시에 (dev 24 요청)</td></tr>
+</table>
+</div>
+
+<p class="foot">원본: docs/cycles/26-book-descriptions/spec.md (2026-10-27). 지금 상태는 dev main 905eab7 코드에서 확인.</p>
+</main></body></html>
