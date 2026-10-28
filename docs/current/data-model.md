@@ -17,9 +17,10 @@
 사이클 15·16·18 회고 (2026-10-15): 구현됨으로 바꾸고 실제 이름·값을 맞춤. 15 `usagelog`·16 `sitecontent` 구현됨, 18은 A1·A2·B 구현됨(dev main `a0e438a`), C(운영 반영)는 `docs/backlog.md` "사이클 18 C"로 옮김 (사용자: "운영 반영은 백로그랑 CYCLE19 PLAN에게 알려주고 이거 마무리하자", 2026-10-15). 근거 `docs/cycles/15-usage-log/retro.md`, `docs/cycles/16-notices-and-policies/retro.md`, `docs/cycles/18-empty-library-holdings/retro.md`, dev `plan-feedback.md` "# 사이클 15"·"# 사이클 16"·"# 사이클 18".
 사이클 19 cycle-close (2026-10-15): 저자·제목 표기 정리 — 설계됨(미구현, 사이클 19). ADR-0113~0117. `catalog` 표·칸 변경 없음(값의 뜻만: `book.author_display`, `book_contributor`, 수집 11·12·15의 `holding.author_raw`·`publisher_raw`), `usagelog.library_response_daily.cached_count` 새 칸(`usagelog/002`), dev 규칙 파일 `supplier_families.tsv`·`author_publisher_swapped.tsv`와 가져오기 설정 `rules-dir`. 근거 `docs/cycles/19-author-angle-brackets/design-delta.md` "데이터".
 사이클 21 cycle-close (2026-10-16): 추천도서 세 목록 — 설계됨(미구현, 사이클 21). ADR-0122~0126. 스키마 `picks`에 새 표 `list_field`·`list_book`, `pick`은 줄을 `list_book`으로 옮긴 뒤 지움(`picks/002-curated-lists.yaml`), `fetch_run`·`cover` 그대로. `usagelog.screen_event.picks_list` 새 칸(`usagelog/003`). 반영 파일 형식 번호 2 → 3, `load_manifest.notes.listPart`(새 표 없음). 이동진·서울대 줄은 `book_id`를 값으로 저장(FK 없음, ADR-0124). 근거 `docs/cycles/21-recommended-books/design-delta.md` "데이터".
-사이클 20 cycle-close (2026-10-17): 조회 상태 신호와 브라우저 확장 조회 — 설계됨(미구현, 사이클 20). ADR-0118·0119·0132·0133. 새 표 없음. `usagelog/004`: `library_response_daily.source` CHECK에 `extension`·`server_for_extension`, `rejected_event.reason` CHECK에 `invalid_plan`·`invalid_client_key`, 새 칸 `library_response_daily.body_too_large_count`. `availability`의 계획 보관함·호스트 대기·브라우저 번호 장부·확장 결과 캐시는 메모리만(아래 "`availability` 메모리 값"). 근거 `docs/cycles/20-lookup-status-and-extension/design-delta.md` "데이터".
+사이클 20 cycle-close (2026-10-17): 조회 상태 신호와 브라우저 확장 조회 — 설계됨, 1단계 일부만 구현(v1.4.0: `GET /api/v1/lookup-status`·`HostQueueBoard`·`ParseSlots`·`BodyLimit`·`usagelog-004`; 웹 머리말 상태 불은 지움, `extension/` 없음 — ADR-0146, 2026-10-23 dev main 확인. 사이클 20 회고 전). ADR-0118·0119·0132·0133. 새 표 없음. `usagelog/004`: `library_response_daily.source` CHECK에 `extension`·`server_for_extension`, `rejected_event.reason` CHECK에 `invalid_plan`·`invalid_client_key`, 새 칸 `library_response_daily.body_too_large_count`. `availability`의 계획 보관함·호스트 대기·브라우저 번호 장부·확장 결과 캐시는 메모리만(아래 "`availability` 메모리 값"). 근거 `docs/cycles/20-lookup-status-and-extension/design-delta.md` "데이터".
 사이클 21 회고 (2026-10-17): 스키마 `picks`의 `list_field`·`list_book`, `pick` 지움, `usagelog.screen_event.picks_list`, 반영 파일 형식 번호 3·`notes.listPart` 구현됨 — dev main `836bd7b`, `picks/002-curated-lists.yaml`(changeset `picks-002-list-field`·`picks-002-list-book`·`picks-002-move-librarian`)·`usagelog/003-screen-event-picks-list.yaml`(changeset `usagelog-003-screen-event-picks-list`), 칸·목록별 CHECK가 설계와 같고 dev가 CHECK 둘·색인 하나를 더함. 운영 역할 DB(db-ops) 반영 기록 13번, 내 PC 원래 DB 13번 SUCCEEDED (2026-10-17). 근거 `docs/cycles/21-recommended-books/retro.md`.
 사이클 19 회고 (2026-10-18): 저자·제목 표기 정리 구현됨 (dev main `1c129e8`, 운영 역할 DB 반영 기록 12번, 2026-10-16). `catalog` 표·칸 변경 없음, 값만 바뀜(책 1,568,453 → 1,331,194, `author_display`·`name_exact`에 꺾쇠 0). `usagelog/002`의 `cached_count` 구현됨. 규칙 파일 두 개와 `rules-dir` 구현됨, 공급사 코드 키에 비교 제목·출판사가 더해짐(ADR-0114 "결정 고침 (2026-10-16)" 절 [확정] (사용자 승인, 2026-10-18, 회고 결정 #1)), 국가서지 원문 표 읽기 설정 `stored-bibliography`를 더함. 근거 `docs/cycles/19-author-angle-brackets/retro.md`, dev `plan-feedback.md` "# 사이클 19".
+사이클 26 cycle-close (2026-10-28): 책 설명 한 곳에 모으기 — 설계됨(미구현, 사이클 26). ADR-0160~0166. 스키마 `catalog`에 새 표 6개(`book_summary`, `book_cover`, `book_profile`, `book_search`, `tag_dictionary`, `book_tag`), `collection.catalog_import.description_deleted_count`. 배포 1에서 옛 표 내용을 한 번 복사하고, 배포 2에서 `foryou.book_blurb`·`book_cover`, `picks.book_tag`·`tag_dictionary`·`cover`, `aisearch.search_book`을 지움(ADR-0166). 근거 `docs/cycles/26-book-descriptions/design-delta.md`. 이 문서 끝 「책 설명 표 (사이클 26)」
 
 사이클 13 cycle-close (2026-10-12, 사이클 12와 나란히 미리 한 plan, 사이클 12 뒤에 개발): 수집기 dev로 갈아타기 + 새 도서관 넣기 명령 — 새 표 `collection.library_insert_run`(넣기 실행 기록), `collection.catalog_import.candidate_library_count` → `other_library_count` 이름 바꿈(배포 전 규칙으로 `collection/001`을 고치고 로컬 `db`·`db-ops`는 이름 바꾸기 SQL + 체크섬 비우기로 맞춤(데이터 유지, 사용자 선택 2026-10-12)), `library.library` 1215 이름 고침 changeset, 반영 파일 판 2(`load_manifest.notes.libraryPart`, 새 표 없음), 앞으로 도서관 seed changeset을 만들지 않음 — 구현됨 (사이클 13, 회고 2026-10-14). `library` 칸 변경 없음. 근거 `docs/cycles/13-crawler-to-dev/design-delta.md` "데이터", ADR-0083~0087·0093. 이름·번호는 따로 적지 않으면 [안] (dev가 바꿀 수 있음).
 사이클 08 cycle-close (2026-10-11): `catalog` 가져오기를 새 표(`catalog_next`)에 쓰고 바꿔 끼우기, 소장 번호 잇기, `collection.catalog_import` 칸 추가, `collection.national_bibliography_record`·`national_bibliography_source`, `library.library.mobile_site_differs`, 도서관 이름 고침 changeset, `library`·`region` `updated_at` 트리거, 교보 대여·혼합 11곳 seed에서 뺌, 정리 규칙을 바꿀 때의 순서 — 구현됨 (사이클 08). 근거 `docs/cycles/08-polish-swap-memory/design-delta.md` "데이터"·"정리 규칙을 바꿀 때"·"이름 고치기", ADR-0065~0070. 이름·숫자는 따로 적지 않으면 [안].
@@ -218,6 +219,8 @@ ADR-0071(이름에는 기관 이름만, 업체·대출 방식은 분류로), ADR
 - 사이클 07 (구현됨 (사이클 07)): 이 규칙은 `join_survey = 'SURVEYED'`·`'NOT_FOUND'` 도서관에 그대로 적용합니다. `MEMBERS_ONLY`·`NOT_SURVEYED`는 규칙 줄이 없어도 "자격 미확인"으로 전체 검색에 넣지 않고 직접 추가했을 때만 넣습니다 [확정] (ADR-0053, ADR-0013 보완). 사이클 07에서 넣은 곳 중 가입 조건을 조사한 공공도서관(`public-join-2026-10-05.tsv`, `decision` 칸)은 `SURVEYED` + 이 표에 규칙 줄을 seed로 넣음 [확정]. 넣은 규칙 253줄(증평군 추가 뒤) [확정] (dev 구현 확인, 2026-10-05). 기관 소속 규칙(`AFFILIATION` + `INSTITUTION`)은 기관 표가 없어 쓰지 않음 → 대구학생전자도서관(100049)은 `MEMBERS_ONLY` [확정] (사용자 결정 "구성원용으로", 2026-10-05)
 
 ## 스키마 `catalog` (소유: `catalog` 모듈) — 구현됨(사이클 04), 사이클 07 변경 구현됨 (사이클 07), 사이클 08 바꿔 끼우기 구현됨 (사이클 08)
+
+> 사이클 26 — 설계됨(미구현, 사이클 26): 책 설명 표 6개(`book_summary`·`book_cover`·`book_profile`·`book_search`·`tag_dictionary`·`book_tag`)가 이 스키마에 더해짐. 가져오기 바꿔 끼우기는 책 목록 표 4개만 DROP·SET SCHEMA하고, 설명 표는 남기되 버려진 책 번호의 줄을 같은 트랜잭션에서 지움(ADR-0162). 이 문서 끝 「책 설명 표 (사이클 26)」
 
 수집한 전자책 목록(사실 정보)입니다. 데이터는 Liquibase가 아니라 가져오기(importer)가 넣습니다(ADR-0031). 사이클 04~06에는 `catalog` importer가 넣었고, 사이클 07부터는 `collection` 모듈이 가져오기를 맡아 `catalog`의 공개 기능 `CatalogLoad.replaceAll(source, loader)`로 이 표들을 통째로 바꿉니다 — 구현됨 (사이클 07), ADR-0060이 ADR-0031의 가져오기 위치를 바꿈. **바꾸는 방식은 새 표에 쓰고 바꿔 끼우기**입니다 — 구현됨 (사이클 08), ADR-0065·0070 (아래 "가져오기: 새 표에 쓰고 바꿔 끼우기"). 사이클 07 코드는 한 트랜잭션에서 임시 표에 COPY → 책 번호 잇기 → `TRUNCATE`로 표 비우고 옮김 → 커밋 뒤 `VACUUM (ANALYZE)`이라 쓰는 동안 검색이 기다리고 소장 번호를 새로 매겼습니다(사이클 08 가져오기 #1에서 검색이 멈춘 시간 9분 37초). 사이클 08 가져오기 #2(2026-10-11, 교보 대여·혼합 11곳을 뺀 같은 사본): 책 1,615,125, 사람 1,810,906, 소장 17,714,665, kept 1,615,125 / new 0 / dropped 0, 끝난 뒤 DB 8,550MB(`holding` 6,714MB, `book` 1,000MB, `book_contributor` 312MB) (dev 측정). 책 번호 잇기: 옛 `holding`과 `(library_id, item_key)`로 맞대어 `docs/research/ebook-catalog/catalog-refresh.md` 5.2절 규칙대로 옛 번호를 이어 줌 [확정] (사용자: "이것도 같이 구현해 줘", 모듈 "catalog 해줘", 2026-10-05). 실데이터 2회차(같은 사본): kept 1,617,445, new 0, dropped 0. 로컬 DB 적재(2026-10-05): 책 1,617,445, 사람 1,812,646, 소장 20,383,882, DB 전체 9,812MB(`holding` 8,353MB, `book_library_ids_gin` 48MB). 주기 갱신은 별도 사이클(`docs/research/ebook-catalog/catalog-refresh.md`), 앞으로 갱신도 `collection`에서.
 
@@ -485,6 +488,7 @@ erDiagram
 | `catalog_import.failure_detail` | text | NULL | 실패 설명 글. 구현됨 (사이클 08) | [확정] (dev 구현 확인, 2026-10-11) |
 | `catalog_import.export_id` | uuid | NULL 허용(내보내기를 거치지 않은 줄) | 반영(`apply`)·마저(`finish`) 줄이 받은 파일의 `load_manifest.export_id`. 한 내보내기에 운영 반영 한 줄 + 내 PC `finish` 한 줄을 이음. 구현됨 (사이클 11, 회고 2026-10-14) | 칸·뜻 [확정] (설계 #7), 이름 [안]. 근거 ADR-0078 |
 | `catalog_import.exported_at` | timestamptz | NULL 허용. CHECK `(export_id IS NULL) = (exported_at IS NULL)` | 그 파일을 내보낸 시각(`load_manifest.exported_at`). 구현됨 (사이클 11, 회고 2026-10-14) | 칸·뜻 [확정] (설계 #7), 이름·제약 이름 [안] |
+| `catalog_import.description_deleted_count` | integer | `>= 0` | 바꿔 끼울 때 지운 설명 줄 수(설명 표 5개 합). 설계됨(미구현, 사이클 26), changeset `collection/007-description-deleted-count.yaml` [안: 번호] (ADR-0162) | [안] |
 | `national_bibliography_record` | 표 | 없음(가져오기만 읽음) | 국가서지 TTL(Turtle, https://www.w3.org/TR/turtle/ 확인 2026-10-11)에서 뽑은 원문. 칸: `id` bigint 기본 키 `national_bibliography_record_pkey`, `isbn13` text NOT NULL(13자리), `title_raw` text NOT NULL, `author_raw` text NULL, `publisher_raw` text NULL. 색인 없음(가져오기가 처음부터 끝까지 읽기만 함) [확정] (사용자 승인, 2026-10-11, 설계 검토). **한 기록에 ISBN이 여럿이면 ISBN마다 한 줄**(`isbn13`은 13자리 유지) — 같은 키에 다른 ISBN이 둘 오므로 지금 규칙대로 "애매함"이 되어 결과는 같음 (dev). ISBN이나 제목이 없는 기록은 남기지 않음. 3,999,211줄(ISBN별), TTL을 풀며 쓰는 데 7분 55초 (dev 측정, 2026-10-11). 다듬지 않은 값이라 정리 규칙이 바뀌어도 그대로 씀. 가져올 때마다 지금 규칙으로 다듬어 키 → ISBN을 만듦. 구현됨 (사이클 08) (`collection/004-national-bibliography.yaml`, 코드 `NationalBibliographyStore`). 표에서 다시 읽는 시간(AC-15)은 측정 중 [확인 필요] | ISBN마다 한 줄 [확정] (사용자 승인, 2026-10-11, `easy/2026-10-11-midpoint-decisions.html`; 이유 [이유 미확인]). 남기기 [확정] (사용자 승인, 2026-10-10), 원문으로 [확정] (`catalog` 절 "정리 규칙을 바꿀 때"), 이름 [확정] (dev 구현 확인, 2026-10-11). 근거: ADR-0065(결과 남기기) → ADR-0069(원문으로) | 남기기 [확정] (사용자 승인, 2026-10-10), 원문으로 [확정] (`catalog` 절 "정리 규칙을 바꿀 때"), 이름 [안]. 근거: ADR-0065(결과 남기기) → ADR-0069(원문으로) |
 | `national_bibliography_source` | 표 (한 줄) | — | 원문을 뽑은 파일: `source_fingerprint` text NOT NULL, `built_at` timestamptz NOT NULL. 지문은 TTL 파일마다 `상대경로\|크기\|고친 시각(Instant)`을 경로 순으로 `;`로 이은 글자(TTL 20개) [확정] (dev 구현 확인, 2026-10-11; 설계는 "파일 이름 + 크기 + 고친 시각을 `\|`로"). 항상 한 줄. 지문이 같으면 원문을 다시 쓰고, 다르면 ① 지문 줄 지우고 커밋 → ② (한 트랜잭션) 원문 표 TRUNCATE + COPY + 지문 줄 INSERT → 커밋. 중간에 멈추면 지문이 없어 다음 가져오기가 처음부터 다시 풂 [확정] (사용자 승인, 2026-10-11, 설계 검토; 순서는 `NationalBibliographyTests`로 확인). 구현됨 (사이클 08) | 표로 남김 [확정] (사용자 승인, 2026-10-11), 이름 [확정] (dev 구현 확인, 2026-10-11). 근거: ADR-0069 |
 | `library_insert_run.id` | bigint | PK, IDENTITY | 새 도서관 넣기 실행마다 한 줄(지우지 않음). 넣을 곳 0이면 줄 없음. 구현됨 (사이클 13, 회고 2026-10-14) | 표 [확정] (scope 도서관 날짜 3), 이름 [확정] (dev 구현 확인, 2026-10-14) |
@@ -718,7 +722,7 @@ erDiagram
 | `list_book.book_id` | bigint | NULL, CHECK `book_id >= 1` (dev가 더함) | 이동진·서울대: export 때 맞춘 우리 책 번호(`catalog.book.id` 값, FK 없음). 사서는 늘 NULL | [확정] (ADR-0124) |
 | `list_book.cover_source` | text | NULL. 사서 ⇒ `LIKE 'https://www.nl.go.kr/afile/%'`, 그 밖 ⇒ `LIKE 'https://%'` | `cover.source_url`과 맞춤. 색인 `list_book_cover_source_idx`(표지 정리용, dev가 더함). 접두 검사는 목록별 CHECK 안 | [안]. 이동진·서울대 접두 `https://`: 수집기가 `http`를 `https`로 바꿔 적음, ISBN 서지 `TITLE_URL` 호스트 셋(`http://www.nl.go.kr`·`https://nl.go.kr`·`https://www.nl.go.kr`, 경로 `/seoji/fu/ecip/`, 키 없음) [확정] (dev 0단계 API 시험, 2026-10-16) |
 | 목록별 CHECK | | 대칭으로: `librarian` ⇒ `source_no`·`recommended_month` NOT NULL, `book_id`·`toc_no`·`video_id`·`year_book` NULL. `leedongjin` ⇒ `recommended_month`·`video_id` NOT NULL, `source_no`·`registered_on`·`toc_no` NULL. `snu100` ⇒ `toc_no` NOT NULL, `source_no`·`registered_on`·`recommended_month`·`video_id`·`year_book` NULL | 이름 `list_book_librarian_check`·`list_book_leedongjin_check`·`list_book_snu100_check`, 부분 UNIQUE `list_book_snu100_toc_no_key`·`list_book_librarian_source_no_key`, 색인 `list_book_field_idx` | [안] (dev 구현 확인, 2026-10-17) |
-| `cover` | | 그대로 (`source_url` UNIQUE, 200px JPEG, 아래 사이클 14 표) | 이동진·서울대 표지는 `replace`가 넣음: `ON CONFLICT (source_url) DO NOTHING`, `content_type = image/jpeg`, `byte_size` = 그림 길이, `fetched_at` = 수집기가 받은 때 | [확정] (ADR-0123) |
+| `cover` | | **사이클 26 배포 2에서 지움 (설계됨)** — 그림은 S3 `covers/<sha1>.jpg`로 옮김(ADR-0163). 지금은 그대로 (`source_url` UNIQUE, 200px JPEG, 아래 사이클 14 표) | 이동진·서울대 표지는 `replace`가 넣음: `ON CONFLICT (source_url) DO NOTHING`, `content_type = image/jpeg`, `byte_size` = 그림 길이, `fetched_at` = 수집기가 받은 때 | [확정] (ADR-0123) |
 | `fetch_run` | | 그대로(아래 사이클 14 표). "목록 없음" 판단은 `list_book`의 `librarian` 줄로 | 사서 받기 기록 | [확정] (ADR-0122) |
 
 - 누가 어느 줄을 바꾸나 [확정: ADR-0122]: 서버 사서 받기는 `list_key = 'librarian'` 줄만(지우고 넣기 + `fetch_run` 한 트랜잭션, 사이클 14와 같은 규칙), 가져오기 `replace`는 `leedongjin`·`snu100` 줄만(`list_book` 지우기 → `list_field` 지우기 → 넣기, 책 표를 바꿔 끼운 뒤 한 트랜잭션). 두 쓰기가 겹칠 때는 `list_book` 줄 잠금 대신 목록별 `pg_advisory_xact_lock(hashtext('picks.list_book'), hashtext(list_key))` 하나 [안] (dev `PicksStore`·`CuratedLists`). 사서 받기는 저장할 때 `position`을 `BOOK_ORDER` 순서로 매기고, 새 분야는 `list_field` 끝에 붙임(이름은 API 이름, 없으면 "기타"), 이미 있는 분야는 이름·자리를 그대로 둠. "같은 목록인가" 비교에서 분야 이름은 뺌 [안] [이유 미확인 — dev가 적은 이유: 아는 분야는 우리 짧은 이름으로 저장돼 API 이름과 달라 매주 "바뀜"이 됨]. `missingCoverSources`는 `librarian` 줄만, `deleteUnusedCovers`는 모든 목록 줄 기준
@@ -734,6 +738,8 @@ erDiagram
 - 목록 파일(이동진·서울대 줄의 원본)은 DB가 아니라 dev `scripts/crawl/lists/`(UTF-8 TSV, 머리 줄; 칸은 머리 줄 이름으로 읽어 순서 무관, 모르는 칸은 무시) — 구현됨 (사이클 21, 회고 2026-10-17): `fields.tsv`(`list, code, name, position`, 이동진·서울대만), `leedongjin.tsv`(`month, position, year_book, video_id, field, title, author, publisher, isbn13, cover_url, pinned_title, pinned_author, pinned_publisher, pinned_isbn13, pinned_by, checked_on, note`; (연월, position) 겹침 안 됨), `snu100.tsv`(`toc_no, field, title, author, cover_url, cover_title, pinned_title, pinned_author, pinned_publisher, pinned_isbn13, pinned_by, note`; `cover_title`은 dev가 더한 표지 찾기용 제목 [안]; toc_no 겹침 안 됨), `covers/<sha1(cover_url)>.jpg`(폭 200px, JPEG 품질 0.8, 원본 5MB 넘으면 받지 않음 [확정]; `http://` 주소는 `https://`로 바꿔 적음 [확정] (dev 0단계)) — 여기까지 export에 실림(`pinned_by`·`checked_on`·`note` 빼고). 수집기만 쓰는 것: `subject_fields.tsv`(`subject, field_suggestion, note`), `leedongjin_pending.tsv`(`video_id, month, reason, title, author, isbn13, field_suggestion`), 규칙 파일 `collector_words.tsv`(`kind, word, note`: `year_book_title`·`not_a_book`·`excluded_title`·`excluded_publisher`·`excluded_name`), `cover_sources.tsv`(표지 차례 다섯), `cover_hosts.tsv`, `cover_placeholders.tsv`(빈 그림 해시) [확정: ADR-0128 위치, 칸 이름 안]. 영상 제목·설명은 어느 파일에도 두지 않음 [확정] (spec R4-5)
 
 ### 사이클 14 표 — 구현됨 (사이클 14, 회고 2026-10-14). `pick`은 사이클 21에서 `list_book`의 `librarian` 줄로 옮긴 뒤 지움 — 구현됨 (사이클 21, 회고 2026-10-17)
+
+> `picks.cover`는 사이클 26 배포 2에서 지움 (설계됨): 그림은 S3로 옮기고 `/api/v1/picks/covers/{coverId}`도 지움 (ADR-0163·0166)
 
 국립중앙도서관 사서추천도서 Open API에서 주 1회 받은 최근 12번(추천 연월이 다른 최근 12개 달, 약 2년) 추천 책 [확정] (사용자 결정, dev 2026-10-14; 처음 6번, ADR-0108), 줄인 표지, 받기 기록입니다(ADR-0089·0091). 사이클 10 스키마 `popular`(`fetch_run`, `ranking_month`, `ranking_category`, `ranking_entry`, `cover`, 출판유통통합전산망 순위)를 대체하고 `popular`는 지웠습니다 [확정] (ADR-0089) — 구현됨 (사이클 14). 스키마 이름 `picks`, 표·칸 이름 [확정] (사용자 승인 "이름·값: … 승인", 2026-10-12). 다른 모듈과 FK·조인이 없고, `catalog`와는 값으로만 맞춥니다(공용 캐시를 만들 때 `BookLookup.byIsbn13` → `BookLookup.byTitleAndAuthor`, ADR-0090). JPA 엔티티 없이 JdbcClient. 근거 `docs/cycles/14-librarian-picks/design-delta.md` "데이터".
 
@@ -940,9 +946,9 @@ erDiagram
 | `screen_event.picks_list` — 구현됨 (사이클 21, 회고 2026-10-17) | `text` | NULL, CHECK IN (`librarian`,`leedongjin`,`snu100`), `picks_*` 종류일 때만 NOT NULL (종류별 칸 CHECK 고침) | 어느 목록 (사용 알림 `list`) | [확정] (ADR-0126) |
 | `library_response_daily` | (day, library_id, source) PK, 수 `integer`, 시간 ms | `source` CHECK (`direct_search`,`holding_fill`; 사이클 20에서 `extension`·`server_for_extension`을 더함 — 아래 줄), `day`는 서울 날짜 | 서비스 메모리에서 세다가 5초 묶음 때 `ON CONFLICT (day, library_id, source) DO UPDATE SET …_count = …_count + EXCLUDED…, ok_ms_total = … + EXCLUDED…, ok_ms_max = GREATEST(…)`. 보관 1년 | [확정] ([요약 방법](../cycles/15-usage-log/easy/2026-10-13-summary-method.html) #1~#3, [남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2) |
 | `library_response_daily.cached_count` — 구현됨 (사이클 19, 회고 2026-10-18) | `integer` | NOT NULL DEFAULT 0, CHECK `library_response_daily_cached_count_check (cached_count >= 0)` | 그 날·도서관·갈래에서 3분 캐시로 답한 수. 캐시에서 답을 꺼낼 때마다 1(결과 값 `CACHED`). 응답 시간·성공/실패 수·서버 로그 줄에는 넣지 않음 (ADR-0116) | [확정] (사용자 제안 2026-10-15 회고 결정 #3, 모양·때 사용자 승인 2026-10-15 회고 이어서 #2). 칸 이름 `cached_count` [확정] (명세 결정 #10), 제약 [확정] (설계 결정 #9) |
-| `library_response_daily.source` 값 더함 — 설계됨(미구현, 사이클 20) | `text` (그대로) | CHECK `library_response_daily_source_check`를 지우고 같은 이름으로 `IN ('direct_search','holding_fill','extension','server_for_extension')` | 확장 모드의 도서관 응답(검색·소장·더 보기)은 `extension`, 확장 모드 중 서버 대행 목록 도서관을 서버가 부른 것은 `server_for_extension`. 확장 모드는 서버 캐시를 보지 않아 `cached_count`는 0, 보내지 못한 것은 `skipped_count`(close의 `notSent`) | `extension` [확정] (설계 결정 #9) / `server_for_extension` 기록 [확정] (세 관점 검토 #16), 값 이름 [안] |
-| `library_response_daily.body_too_large_count` — 설계됨(미구현, 사이클 20) | `integer` | NOT NULL DEFAULT 0, CHECK `library_response_daily_body_too_large_count_check (body_too_large_count >= 0)` | 서버 모드 도서관 응답이 본문 상한(풀었을 때 포함 1MB)을 넘어 실패한 수. 같은 건이 `failed_count`에도 들어감 (ADR-0132) | [확정] (사용자 승인, 2026-10-17, 마무리 확인 #6) |
-| `rejected_event.reason` | `text` | CHECK | `unknown_library`,`invalid_place`,`invalid_screen`,`invalid_book_id`,`malformed`,`unknown_type`,`invalid_value`. 사이클 20 — 설계됨(미구현, 사이클 20): CHECK `rejected_event_reason_check`를 지우고 같은 이름으로 그 7개 + `invalid_plan`·`invalid_client_key`. 두 줄은 IP·이유마다 1분 1줄 [안], `raw_values`에 본문 없음(planId·itemId·이유만). `client_ip_changed`는 정상 경우라 남기지 않음 [안] | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2, [검증](../cycles/15-usage-log/easy/2026-10-14-verify-decisions.html) #2) |
+| `library_response_daily.source` 값 더함 — 설계됨, 1단계 일부만 구현(v1.4.0: `GET /api/v1/lookup-status`·`HostQueueBoard`·`ParseSlots`·`BodyLimit`·`usagelog-004`; 웹 머리말 상태 불은 지움, `extension/` 없음 — ADR-0146, 2026-10-23 dev main 확인. 사이클 20 회고 전) | `text` (그대로) | CHECK `library_response_daily_source_check`를 지우고 같은 이름으로 `IN ('direct_search','holding_fill','extension','server_for_extension')` | 확장 모드의 도서관 응답(검색·소장·더 보기)은 `extension`, 확장 모드 중 서버 대행 목록 도서관을 서버가 부른 것은 `server_for_extension`. 확장 모드는 서버 캐시를 보지 않아 `cached_count`는 0, 보내지 못한 것은 `skipped_count`(close의 `notSent`) | `extension` [확정] (설계 결정 #9) / `server_for_extension` 기록 [확정] (세 관점 검토 #16), 값 이름 [안] |
+| `library_response_daily.body_too_large_count` — 설계됨, 1단계 일부만 구현(v1.4.0: `GET /api/v1/lookup-status`·`HostQueueBoard`·`ParseSlots`·`BodyLimit`·`usagelog-004`; 웹 머리말 상태 불은 지움, `extension/` 없음 — ADR-0146, 2026-10-23 dev main 확인. 사이클 20 회고 전) | `integer` | NOT NULL DEFAULT 0, CHECK `library_response_daily_body_too_large_count_check (body_too_large_count >= 0)` | 서버 모드 도서관 응답이 본문 상한(풀었을 때 포함 1MB)을 넘어 실패한 수. 같은 건이 `failed_count`에도 들어감 (ADR-0132) | [확정] (사용자 승인, 2026-10-17, 마무리 확인 #6) |
+| `rejected_event.reason` | `text` | CHECK | `unknown_library`,`invalid_place`,`invalid_screen`,`invalid_book_id`,`malformed`,`unknown_type`,`invalid_value`. 사이클 20 — 설계됨, 1단계 일부만 구현(v1.4.0: `GET /api/v1/lookup-status`·`HostQueueBoard`·`ParseSlots`·`BodyLimit`·`usagelog-004`; 웹 머리말 상태 불은 지움, `extension/` 없음 — ADR-0146, 2026-10-23 dev main 확인. 사이클 20 회고 전): CHECK `rejected_event_reason_check`를 지우고 같은 이름으로 그 7개 + `invalid_plan`·`invalid_client_key`. 두 줄은 IP·이유마다 1분 1줄 [안], `raw_values`에 본문 없음(planId·itemId·이유만). `client_ip_changed`는 정상 경우라 남기지 않음 [안] | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2, [검증](../cycles/15-usage-log/easy/2026-10-14-verify-decisions.html) #2) |
 | `rejected_event.raw_values` | `jsonb` | 2KB 넘으면 잘라 냄 | 받은 값 | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #4) |
 | `dropped_batch.reason` | `text` | CHECK (`db_failure`,`buffer_full`) | 버린 이유 | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #2) |
 | 색인 | BRIN `(received_at)` 각 표 | — | 지우기·기간 조회 | [확정] ([남은 제안](../cycles/15-usage-log/easy/2026-10-14-remaining-proposals.html) #3) |
@@ -964,7 +970,7 @@ erDiagram
 - 사이클 21 — 구현됨 (사이클 21, 회고 2026-10-17) (ADR-0126): 새 파일 `db/changelog/usagelog/003-screen-event-picks-list.yaml`(changeset `usagelog-003-screen-event-picks-list`) — 칸 `screen_event.picks_list` + CHECK `screen_event_picks_list_check` 더함 → 있던 `picks_*` 줄을 `librarian`으로 채움 → `screen_event_kind_fields_check`를 지우고 picks 종류일 때 `picks_list IS NOT NULL`, 그 밖일 때 NULL로 다시 검 [확정] (dev 구현 확인, 2026-10-17). 번호: 002는 사이클 19, **003은 21, 사이클 20은 004** [확정] (사용자 승인, 2026-10-16, 사이클 21 설계 검토 #4). 21이 19보다 먼저 main에 들어가면 번호를 바꾸지 말고 master 순서만 맞춤(나중에 합치는 쪽이 자기 줄을 끝으로)
 - 사이클 15 [확인 필요] 결과 (회고 2026-10-15, dev `plan-feedback.md` 4354~4361행): pgjdbc 42.7.13 [확정] (dev 확인). 1만 줄 넣기 `id` PK·부분 색인 있음 27.6ms / 없음 13.1ms → 둘 다 둠. 공용 `@Scheduled` 실행기는 Spring Boot 기본 스레드 1개(04:30 정리가 회원 정리·사서추천 받기와 같은 스레드), 5초 쓰기는 자기 스레드 `usagelog-flush`. 남은 [확인 필요]: 모니터링 도구를 켠 상태의 메모리, nginx realip·광고 차단 비율·로봇의 API 호출(배포 뒤, 사이클 17·운영)
 
-## `availability` 메모리 값 (DB 표 없음) — 설계됨(미구현, 사이클 20)
+## `availability` 메모리 값 (DB 표 없음) — 설계됨, 1단계 일부만 구현(v1.4.0: `GET /api/v1/lookup-status`·`HostQueueBoard`·`ParseSlots`·`BodyLimit`·`usagelog-004`; 웹 머리말 상태 불은 지움, `extension/` 없음 — ADR-0146, 2026-10-23 dev main 확인. 사이클 20 회고 전)
 
 `availability`는 스키마가 없습니다. 사이클 20이 더하는 값은 모두 서버 메모리에 두고, 서버를 다시 켜면 비워집니다. 근거 `docs/cycles/20-lookup-status-and-extension/design-delta.md` "데이터", 도메인 모델은 `module-map.md` "대출 조회 상태·확장 계획 도메인 모델", 숫자 근거는 [`../settings-index.md`](../settings-index.md). 괄호 = dev 단계.
 
@@ -1227,7 +1233,7 @@ erDiagram
 
 ## 확인 필요 (사이클 20)
 
-설계됨(미구현, 사이클 20). 근거 `docs/cycles/20-lookup-status-and-extension/design-delta.md` "확인 필요".
+설계됨, 1단계 일부만 구현(v1.4.0: `GET /api/v1/lookup-status`·`HostQueueBoard`·`ParseSlots`·`BodyLimit`·`usagelog-004`; 웹 머리말 상태 불은 지움, `extension/` 없음 — ADR-0146, 2026-10-23 dev main 확인. 사이클 20 회고 전). 근거 `docs/cycles/20-lookup-status-and-extension/design-delta.md` "확인 필요".
 
 | 항목 | 방법 | 막는 단계 |
 |---|---|---|
@@ -1271,3 +1277,216 @@ erDiagram
 | 덤프 크기, 복원 시간, 운영 디스크 최대, 상한 1GB에서 색인 시간(AC-14) | 606MB, 복원 65초, 운영 역할 DB 최대 17.4GB(시작 9.0GB), 색인 2분 30초, `OOMKilled` 없음 [확정] (새 사본 2026-10-12 01:35) |
 | `sql` 방식 사슬 반복 수·시간·임시 표 디스크, 43분 안 | 실데이터(새 사본) 약 34분(43분 안), 1GB 힙에서 끝까지, 실행마다 임시 쓰기 약 61GB(그중 묶기 약 40GB), DB 최대 약 27GB(시작 약 9GB) [확정] (dev 측정, `plan-feedback.md` 3029·3105행). 실데이터 반복 수는 로그에 없음(시험 데이터: ② 6~14번, ③④ 1~2번, 3,000단위 사슬 12번, 상한 1000번) [확인 필요: 다음에 `sql`로 가져올 때 — 기본이 아니라 급하지 않음] |
 | 비교(`count(*)` 약 1,770만 줄 등) 시간 | `compare` 3.2초 [확정] |
+
+## 사이클 22 이후 dev 변경 (사후 정리, 2026-10-23)
+
+사이클 22 회고 때 dev main `d3c2696`(v1.9.10)을 읽고 정리함. 모두 [확정] (dev 구현 확인, 2026-10-23). 결정 기록은 ADR-0140~0146(사후 기록), 화면이 바뀐 이유는 `docs/cycles/22-first-screen-usability/retro.md`.
+
+| 표·칸 | 내용 | changeset | ADR |
+|---|---|---|---|
+| `library.library.visit_outside_region` | `boolean NOT NULL DEFAULT false`. 데이터 `library-018`·`019`·`021` | `library-017-visit-outside-region` | 0141 |
+| `library.library.platform_type` CHECK | `SEOUL_ELIB_V1` 더함 | `library-020-platform-seoul-elib` | 0145 |
+| `picks.list_field`·`list_book` | 목록 키 `kaist`(`year_book` 필수, 색인 `(year_book, position) WHERE list_key='kaist'`), `nobel`(부분 UNIQUE `(field_code, position) WHERE list_key='nobel'`) | `picks-003`·`004`·`005` | 0143 |
+| `picks.cover` | 사서추천 표지만 남음(나머지 목록 표지는 nginx 파일). 사이클 26 배포 2에서 지움 (설계됨), 그림은 S3로 | — | 0144 |
+| `availability.lookup_sample` | `sampled_at timestamptz` PK + 셈 칸 19개(`window_ms`, `slots_max`, `slots_in_use`, `slots_max_in_use`, `refused`, `library_requests`, `body_too_large`, `db_errors`, `parse_max`, `parse_in_use`, `parse_max_in_use`, `queued_libraries`, `paused_lanes`, `heap_used_mb`, `heap_max_mb`(NULL 허용), `egress_mode text`, `lane_requests`, `lane_pauses`, `lane_retests`, `lane_resumes`), `PARTITION BY RANGE (sampled_at)` 달마다 + 기본 파티션, 함수 `lookup_sample_ensure_partitions`·`lookup_sample_drop_before` | `availability-001`·`002`(runOnChange)·`003` | 0146 |
+| `usagelog.book_view`·`library_click`·`screen_event` | `visit_key text`(16~64 영숫자 CHECK), `account_id bigint`(>0), FK·색인 없음 | `usagelog-005-visit-key-account-id` | 0134 |
+| `usagelog.screen_event.picks_list` | CHECK에 `kaist`·`nobel` | `usagelog-006`·`007` | 0143 |
+| `sitecontent.document_version` | `('PRIVACY_POLICY', 2, DATE '2026-10-20', …)` | `sitecontent-003-privacy-policy-v2` | 0140 |
+
+DB 밖:
+- `backend/src/main/resources/picks/ai-summaries.tsv`(칸 `list, isbn13, title, summary`, 약 2,804줄) — 빌드에 실림 (ADR-0142) — 사이클 26에서 없앰, 요약은 `catalog.book_summary` (설계됨, ADR-0161)
+- `backend/src/main/resources/geo/kr-sido.csv.gz`(줄 `4|시작|끝|시도`·`6|…`) (ADR-0140)
+- 운영 `/srv/chaekcheck/covers/<sha1(url)>.jpg` (ADR-0144) — 사이클 26 배포 2에서 치움, 그림은 S3 + CloudFront (설계됨, ADR-0163)
+- 수집 DB(내 PC): `holding.intro_raw`(목록 화면 소개 원문, 교보 500자·YES24 "…" 잘림, 알라딘·포털·서울 NULL), `covers/covers.sqlite`(`fetch-covers`, 서비스가 안 씀)
+
+
+## 사이클 23 「나에게 맞는 책」 — 설계됨(미구현, 사이클 23)
+
+근거: `docs/cycles/23-for-you-picks/design-delta.md`, ADR-0147·0148·0149, spec·flow 같은 폴더. 사이클 24(`aisearch`, `ListedBooks`, `book-texts`)는 다른 브랜치 설계라 여기 없음 — 먼저 개발하는 쪽이 공통 부분을 만듦
+
+
+- 스키마: `foryou` (새), `picks` (표 둘 더함)
+
+```mermaid
+erDiagram
+  BUILD_RUN {
+    bigint id PK
+    date built_on
+    timestamptz started_at
+    timestamptz finished_at
+    text status
+    text note
+  }
+  POPULAR_ROW {
+    bigint id PK
+    bigint run_id FK
+    text source
+    bigint site_library_id
+    text period
+    smallint rank
+    int loans_now
+    int reservations
+    text title
+    text author
+    text publisher
+    text isbn13
+    bigint book_id
+  }
+  BOOK_SCORE {
+    bigint run_id PK
+    bigint book_id PK
+    real score
+  }
+  BASE_ENTRY {
+    bigint run_id PK
+    smallint position PK
+    bigint book_id
+    boolean from_popular
+  }
+  BOOK_NEIGHBOUR {
+    bigint book_id PK
+    int_array neighbour_ids
+    date computed_on
+  }
+  BOOK_BLURB {
+    bigint book_id PK
+    text blurb
+    date made_on
+  }
+  BOOK_COVER {
+    bigint book_id PK
+    text file_key
+  }
+  TAG_DICTIONARY {
+    text code PK
+    text axis
+    text name
+    text thema_code
+  }
+  BOOK_TAG {
+    bigint book_id PK
+    text tag_code PK
+    date made_on
+  }
+  BUILD_RUN ||--o{ POPULAR_ROW : run_id
+  BUILD_RUN ||--o{ BOOK_SCORE : run_id
+  BUILD_RUN ||--o{ BASE_ENTRY : run_id
+  TAG_DICTIONARY ||--o{ BOOK_TAG : tag_code
+```
+
+| 테이블.컬럼 | 타입 | 제약 | 설명 | 상태 태그 |
+|---|---|---|---|---|
+| `foryou.build_run.id` | bigint | identity PK | | [안] |
+| `foryou.build_run.built_on` | date | NOT NULL | Asia/Seoul 날짜 | [안] |
+| `foryou.build_run.status` | text | NOT NULL, CHECK IN (`running`,`succeeded`,`failed`), 색인 `(status, built_on DESC)` | 마지막 성공 목록 찾기 | [안] |
+| `foryou.build_run.note` | text | NULL | 출처별 받은 줄 수·맞춘 수 (검증 노트 [to-dev-popular-list-check.md](to-dev-popular-list-check.md) 5번) | [안] |
+| `foryou.popular_row.run_id` | bigint | FK `build_run` ON DELETE CASCADE | 같은 모듈 안 FK | [안] |
+| `foryou.popular_row.source` | text | NOT NULL, CHECK IN (`kyobo_elib`,`yes24_elib`,`kpipa_rank`,`kpipa_200`,`klwave`) | 출처 | [안] |
+| `foryou.popular_row.site_library_id` | bigint | NULL (출판유통·KLWAVE), FK 없음 | `library.id` 값 | [안] |
+| `foryou.popular_row.period` | text | NULL, CHECK IN (`day`,`week`,`month`,`quarter`) | 출판유통·KLWAVE 기간 | [안] |
+| `foryou.popular_row.rank` | smallint | NOT NULL, ≥ 1 | | [안] |
+| `foryou.popular_row.loans_now`·`reservations` | int | NULL, ≥ 0 | 교보·YES24만 | [안] |
+| `foryou.popular_row.title`·`author`·`publisher`·`isbn13` | text | title NOT NULL | 맞추기 전 원래 값 | [안] |
+| `foryou.popular_row.book_id` | bigint | NULL | 맞춘 책 | [안] |
+| `foryou.popular_row` 보관 | | 실행 기록과 함께 30일 지난 것 지움. **마지막 succeeded 실행 하나는 30일이 지나도 지우지 않음** [확정] (사용자 승인 2026-10-24, 마무리 검토 페이지 #2) | 가중치 조정(R2-3a) 원재료 | 30일 [안] |
+| `foryou.popular_row.run_id` 색인 | | 색인 `(run_id)` | CASCADE·30일 정리 | [안] |
+| `foryou.build_run` 남은 `running` | | 서버를 켤 때 오래된 `running`은 `failed`로 바꿈 [확정] (사용자 승인 2026-10-24, 마무리 검토 페이지 #2) | 크래시 뒤 정리 | |
+| `foryou.book_score` | PK (`run_id`, `book_id`), `score real` NOT NULL ≥ 0 | FK `build_run` CASCADE | 판을 모은 뒤 대표 판에만. 개인 추천 "인기 먼저" 정렬 | [안] |
+| `foryou.base_entry` | PK (`run_id`, `position`), `book_id` NOT NULL, `from_popular boolean` NOT NULL | `position` 1~40, UNIQUE (`run_id`, `book_id`), FK CASCADE | 기본 목록 차례 | 40 [안] (R2-4) |
+| `foryou.book_neighbour.book_id` | bigint | PK | | [안] |
+| `foryou.book_neighbour.neighbour_ids` | integer[] | NOT NULL, CHECK `cardinality BETWEEN 1 AND 20`, `array_ndims = 1` | 가까운 차례. 자기 자신·중복 없음(넣을 때 검사). 책 번호가 2,147,483,647을 넘으면 넣기 거부 | 20 [확정] (R6-1), 4바이트 [확정] (결정 #3) |
+| `foryou.book_neighbour.computed_on` | date | NOT NULL | 반년 전체 다시(결정 #8) 판단용 | [안] |
+| `foryou.book_blurb` | **사이클 26 배포 2에서 지움 (설계됨)** — `catalog`로 옮김. `book_id` PK, `blurb text` NOT NULL, `made_on date` NOT NULL | `char_length(blurb)` 1~300 | 80~150자 규칙(R8-4)은 PC가 지킴 | 300 [안] |
+| `foryou.book_cover` | **사이클 26 배포 2에서 지움 (설계됨)** — `catalog`로 옮김. `book_id` PK, `file_key text` NOT NULL | `~ '^[0-9a-f]{40}$'` | `/covers/<file_key>.jpg` | [안] |
+| `picks.tag_dictionary` | **사이클 26 배포 2에서 지움 (설계됨)** — `catalog`로 옮김. `code text` PK, `axis text` NOT NULL, `name text` NOT NULL, `thema_code text` NULL, `active boolean` NOT NULL DEFAULT true | `code ~ '^[A-Za-z0-9_]{1,20}$'`, `axis` IN (`mood`,`subject`,`audience`) | 사전 (결정 #9). 사전에서 빠진 코드는 지우지 않고 `active=false` | [안] |
+| `picks.book_tag` | **사이클 26 배포 2에서 지움 (설계됨)** — `catalog`로 옮김. PK (`book_id`, `tag_code`), `made_on date` NOT NULL (사전 쪽 `tag_code` 색인은 두지 않음: 사전은 지우지 않고 `active=false`만 하므로 FK 검사 조회가 없음) | FK `tag_code → picks.tag_dictionary(code)` | 추천목록 책만(R9-1). 카드에는 `active` 코드 가운데 느낌 1 + 주제 1~2 | [안] |
+
+- 크기 어림 [추론]: 이웃 약 0.2GB(134만 줄), 탭 글 약 15MB(3.3만 줄), 표지 파일 약 0.3GB(3.3만 장 × 약 10KB, 수집 세션이 잼 [확인 필요]), 나머지 작음
+- 다른 모듈과 FK·조인 없음. 가져오기로 사라진 책 번호는 `BookLookup`이 돌려주지 않아 읽을 때 빠짐
+- 바뀌는 기존 CHECK: `usagelog.screen_event.picks_list`에 `for_you` 더함(서버 검사 상수도). `picks.list_field`·`list_book`의 목록 키 CHECK는 그대로(`for_you`는 목록이 아님)
+- Liquibase: 새 changelog 파일로 추가 (기존 changeset 수정 없음), 번호는 23·24를 합칠 때 다음 번호
+  - `db/changelog/foryou/001-for-you.yaml` — 스키마 `foryou`, 표 일곱, CHECK는 changeset 안 `sql`
+  - `db/changelog/picks/006-tag-dictionary-and-book-tag.yaml` [안: 번호]
+  - `db/changelog/usagelog/00N-picks-list-for-you.yaml` — CHECK 지우고 다시 만듦, 24 `usagelog-ai-search-event` 다음
+  - master 끝에 include
+
+
+## 책 설명 표 (스키마 `catalog`, 사이클 26) — 설계됨(미구현, 사이클 26)
+
+근거: `docs/cycles/26-book-descriptions/design-delta.md` "데이터", ADR-0160~0166. 종류마다 표 하나 [확정] (설계 #1 승인, ADR-0161). 다른 모듈은 이 표를 직접 읽지 않고 `catalog` 공개 API(`BookTexts`·`CoverUrls`·`BookProfiles`·`AiSearchIndex`, 쓰기 `BookTextsTransfer`)로만 씀.
+
+```mermaid
+erDiagram
+  book ||--o| book_summary : "book_id"
+  book ||--o| book_cover : "book_id"
+  book ||--o| book_profile : "book_id"
+  book ||--o| book_search : "book_id"
+  book ||--o{ book_tag : "book_id"
+  tag_dictionary ||--o{ book_tag : "code"
+  book_summary {
+    bigint book_id PK
+    text summary
+    date made_on
+  }
+  book_cover {
+    bigint book_id PK
+    text file_key
+  }
+  book_profile {
+    bigint book_id PK
+    text field
+    text subfield
+    boolean fiction
+    text_arr genres
+    text country
+    text audience
+    text level
+    text_arr forms
+  }
+  book_search {
+    bigint book_id PK
+    text line
+    text line_source
+    date line_made_on
+    text search_text
+    int_arr library_ids
+    timestamptz imported_at
+  }
+  tag_dictionary {
+    text code PK
+    text axis
+    text name
+    text thema_code
+    boolean active
+  }
+  book_tag {
+    bigint book_id PK
+    text tag_code PK
+    date made_on
+  }
+```
+
+`book`과의 선은 값으로만 맞춤(FK 없음). `book_tag.tag_code → tag_dictionary.code`만 FK.
+
+| 테이블.컬럼 | 타입 | 제약 | 설명 | 상태 태그 |
+|---|---|---|---|---|
+| `book_summary.book_id` (설명 표 다섯 모두 같음) | bigint | PK, `>= 1`, FK 없음 | `catalog.book.id` 값. 가져오기 때 `book`을 DROP하므로 FK 없음, 바꿔 끼우기 DELETE로 지킴 (ADR-0162) | [안] |
+| `book_summary.summary` | text | `char_length` 1~300 | 책첵 요약(해요체), 책마다 하나 — 옛 `foryou.book_blurb.blurb` 규칙 그대로 | [확정] (범위 #3) |
+| `book_summary.made_on` | date | NOT NULL | 만든 날 | [안] |
+| `book_cover.file_key` | text | `^[0-9a-f]{40}$` | 그림 이름(sha1). 주소는 `CoverUrls`가 `<base-url>/covers/<key>.jpg`로 만듦(`chaekcheck.covers.base-url`) | [확정] (지금 규칙) |
+| `book_profile.*` | text / boolean / text[] | 어휘 CHECK 없음 | 지금 `book-profiles.tsv` 칸 그대로. 서버 시작 때 `BookProfiles.all()`로 한 번 읽음 (ADR-0165) | [확정] (설계 #7 승인) |
+| `book_search.line` | text COLLATE "C" | NULL 또는 1~300, `line`·`line_source`·`line_made_on` 함께 있거나 함께 없음 | 찾기용 한 줄 — `aisearch.search_book`에서 옮김 | [확정] (명세 #3) |
+| `book_search.search_text` | text COLLATE "C" | NOT NULL, `gin_bigm_ops` 색인 | 찾기 글 (제목은 `catalog.book.title`로 만듦, 저자·제목 칸은 두지 않음) | [확정] |
+| `book_search.library_ids` | integer[] | NOT NULL | 찾기 전용 칸(같은 모듈 안 `catalog.book.library_ids`와 같은 값). 측정: 캐시 빈 상태 중간값 106ms ↔ 이어 읽기 230ms, 최대 234ms ↔ 1,054ms (dev `plan-feedback.md` "# 사이클 26 질의 속도", 2026-10-28) | [확정] 예외 (사용자 "승인하고 예외라고 기록해 줘", 2026-10-28, ADR-0160) |
+| `book_search.imported_at` | timestamptz | | 넣은 시각 | [안] |
+| `tag_dictionary`, `book_tag` | — | 옛 `picks` 표 규칙 그대로(`code ~ '^[A-Za-z0-9_]{1,20}$'`, `axis` IN (`mood`,`subject`,`audience`), `active`; `book_tag` PK (`book_id`, `tag_code`)), `book_tag.tag_code → tag_dictionary.code` FK | 지금 0줄 | [확정] |
+| `collection.catalog_import.description_deleted_count` | integer | `>= 0` | 바꿔 끼울 때 지운 설명 수 (위 `collection` 절) | [안] |
+
+- 다시 가져오기 바꿔 끼우기 [확정] (ADR-0162): `swap`의 첫 트랜잭션에서 DROP 앞에 설명 표 5개(`book_summary`·`book_cover`·`book_profile`·`book_search`·`book_tag`)를 `DELETE … WHERE NOT EXISTS (catalog_next.book)`로 지움(`tag_dictionary`는 `book_id`가 없어 제외). 잠금 시간을 넘기면 지운 것도 되돌아가고 쉬었다 다시. `createIndexesAndConstraints`는 `t.relname = ANY(TABLES)`로 책 목록 표만 거름
+- 설명 넣기 파일(`book-texts`, 새 모드 `book-profiles`)은 `# export_id=` 줄을 운영 `catalog_import.export_id`와 대조, 다르면 멈춤(`neighbours`와 같은 강제 설정) [확정] (ADR-0162)
+- 크기 [추론]: `book_cover` 134만 줄 약 110MB + PK 약 30MB, `book_summary` 약 25MB, `book_search`는 옛 `aisearch.search_book`에서 옮김(약 70MB + bigm 색인). 배포 1~2 사이 옛 표·새 표 함께 약 +110~150MB(디스크 여유 11GB 안)
+- Liquibase (새 changelog 파일, 기존 changeset 수정 없음) [안: 번호는 23·24 브랜치와 겹치면 올림] (ADR-0166)
+  - 배포 1: `catalog/002-book-descriptions.yaml` — 표 6개, 색인, 한 번 복사(`foryou.book_blurb` → `book_summary`, `foryou.book_cover` → `book_cover`, `picks.tag_dictionary` → `tag_dictionary` 다음 `picks.book_tag` → `book_tag`, `aisearch.search_book` → `book_search`(제목·저자 빼고)), 줄 수를 옛 표와 비교(AC-4). `collection/007-description-deleted-count.yaml`
+  - 배포 2: `foryou/002-drop-book-blurb-cover.yaml`, `picks/007-drop-moved-tables.yaml`(`book_tag`, `tag_dictionary`, `cover`), `aisearch/005-drop-search-book.yaml`
+  - 프로필은 배포 1 뒤 `book-profiles` 모드로 처음 넣음
+- 사이클 26 배포 2에서 지우는 옛 표 (설계됨): `foryou.book_blurb`·`foryou.book_cover`(위 사이클 23 절), `picks.book_tag`·`picks.tag_dictionary`(위 사이클 23 절), `picks.cover`(위 `picks` 절), `aisearch.search_book`(사이클 24 표, 이 문서에 따로 절이 없음 — 사이클 24는 다른 브랜치 설계라 plan에 폴더가 없음, 근거 ADR-0165)

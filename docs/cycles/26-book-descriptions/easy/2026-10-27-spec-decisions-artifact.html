@@ -1,0 +1,337 @@
+<title>책 설명 명세 결정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+
+.v-flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.v-box{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:7px 11px;font-size:15px;text-align:center;min-width:90px}
+.v-box small{display:block;color:var(--muted);font-size:12px}
+.v-hi{border-color:var(--accent);background:var(--accent-bg)}
+.v-warn{border-color:var(--warn);background:var(--warn-bg)}
+.v-ok{border-color:var(--ok);background:var(--ok-bg)}
+.v-arr{color:var(--muted);font-size:18px}
+.v-file{border:2px solid var(--line);border-radius:12px;background:var(--card);padding:10px;margin:10px 0;max-width:560px}
+.v-file .v-part{border:1px dashed var(--line);border-radius:8px;padding:8px 10px;margin:6px 0;font-size:14px}
+.v-file .v-part.v-new{border-color:var(--accent);background:var(--accent-bg)}
+.v-tl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0;font-size:13px;text-align:center}
+.v-tl div{border-top:4px solid var(--line);padding-top:6px}
+.v-tl div.v-hi{border-top-color:var(--accent);background:none}
+.v-cv{display:inline-flex;width:70px;aspect-ratio:2/3;border-radius:7px;border:1px solid var(--line);background:var(--accent-bg);align-items:center;justify-content:center;font-size:11px;text-align:center;padding:3px;vertical-align:top;margin:4px}
+.v-cv.v-img{background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 6px,var(--card) 6px,var(--card) 12px)}
+.v-mini{border:1px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;margin:8px 0;max-width:420px}
+.v-mini .v-bar{display:flex;gap:10px;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line);font-size:13px}
+.v-mini .v-body{padding:10px 12px;font-size:13px}
+.v-pill{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-weight:800;font-size:12px}
+@media (max-width:700px){main table{display:block;overflow-x:auto;max-width:100%}.v-tl{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.v-code{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:var(--code-bg);border-radius:8px;padding:8px 10px;overflow-x:auto;white-space:pre}
+.card h3{margin:0 0 14px;font-size:24px}
+
+.mk{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start;margin:12px 0}
+.mk .dev{border:2px solid var(--line);border-radius:12px;background:var(--bg);padding:10px;font-size:13px;line-height:1.5}
+.mk .dev b.t{display:block;color:var(--muted);font-weight:500;font-size:12px;margin-bottom:6px}
+.mk .pc{width:420px;max-width:100%}.mk .tab{width:300px;max-width:100%}.mk .ph{width:190px}
+.mk .row{display:flex;gap:10px}
+.mk .cv{flex:none;width:58px;aspect-ratio:2/3;border-radius:5px;border:1px solid var(--line);background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 5px,var(--card) 5px,var(--card) 10px)}
+.mk .ph .cv{width:44px}
+.mk .ttl{font-weight:700;font-size:15px}
+.mk .sum{background:var(--warn-bg);border:1px dashed var(--warn);border-radius:7px;padding:6px 8px;margin:8px 0}
+.mk .lib{border-top:1px solid var(--line);padding:5px 0;color:var(--muted)}
+
+:root{color-scheme:light}
+body{background:var(--bg);color:var(--text)}
+.chip{display:inline-block;font-size:15px;font-weight:700;color:var(--warn);background:var(--warn-bg);border:1px solid var(--warn);border-radius:999px;padding:0 10px;margin-right:6px;line-height:1.6}
+.chip.done{color:var(--ok);background:var(--ok-bg);border-color:var(--ok)}
+.dec{margin:12px 0 18px;padding:14px 16px;border:1px solid var(--line);border-radius:10px;background:var(--code-bg);display:flex;flex-direction:column;gap:10px}
+.dec .btns{display:flex;flex-wrap:wrap;gap:8px}
+.dec button{font:inherit;font-size:17px;padding:6px 16px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer}
+.dec button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.dec button[aria-pressed="true"][data-c="승인"]{background:var(--ok-bg);border-color:var(--ok);color:var(--ok);font-weight:700}
+.dec button[aria-pressed="true"][data-c="미승인"]{background:var(--no-bg);border-color:var(--no);color:var(--no);font-weight:700}
+.dec button[aria-pressed="true"][data-c="기타"]{background:var(--accent-bg);border-color:var(--accent);color:var(--accent);font-weight:700}
+.dec textarea{font:inherit;font-size:17px;width:100%;min-height:64px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--text);resize:vertical}
+.dec .save{background:var(--accent);color:var(--card);border-color:var(--accent);font-weight:700}
+.dec .st{font-size:15px;color:var(--muted)}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:0 0 24px;font-size:17px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.bar b{font-variant-numeric:tabular-nums}
+</style>
+<main class="doc">
+<div class="bar" id="bar">불러오는 중</div>
+
+<p class="lead">명세에서 고르실 것은 4개입니다.<br>나머지는 범위 결정(1~7번)을 그대로 옮겼습니다.</p>
+<p class="sub">사이클 26 「책 설명 한 곳에 모으기」의 기능 명세(spec.md)입니다. 범위 결정으로 정해진 것(요약은 책첵 요약 한 종류, 책 프로필도 DB로, 책 상세에 표지·요약, 26 먼저 개발)은 다시 묻지 않습니다. 설명 넣기 파일의 칸 이름 같은 개발 세부는 설계 단계에서 정합니다.</p>
+
+<div class="card"><h2>고르신 결과 (2026-10-27)</h2>
+<table>
+<tr><th>항목</th><th>고르신 것</th><th>반영</th></tr>
+<tr><td>1 「AI 요약 ⓘ」, 요약 없으면 칸 없음</td><td class="okc">승인</td><td>그대로</td></tr>
+<tr><td>2 추천목록 표지</td><td>기타</td><td>"아니 왜 굳이 따로 있어야 해? … 일원화할건데" → 아래 5번에 답과 새 제안</td></tr>
+<tr><td>3 찾기용 한 줄</td><td class="red">미승인</td><td>"지금 더 군데 중복저장되는거는 없었으면해" → 찾기용 한 줄도 옮김. 같은 원칙에 걸리는 곳이 하나 더 있어 아래 6번</td></tr>
+<tr><td>4 한 번 배포, 옛 표는 다음 배포</td><td class="okc">승인</td><td>그대로</td></tr>
+<tr><td>6 AI 검색 사본 표 없앰</td><td class="okc">승인</td><td>그대로</td></tr>
+<tr><td>5 표지 한 곳</td><td>기타</td><td>"따로갈까 어떻게하지 / 어떻게 해야 결과적으로 데이터를 잘 나눈걸까" → 6번 아래 7번에 나누는 기준과 다시 낸 제안</td></tr>
+<tr><td>13 표지 둘 곳</td><td class="okc">대화에서 결정</td><td>"S3 + CloudFront 이걸로 하자" (2026-10-28) → 모든 표지를 S3에 두고 CloudFront로. 도메인·올리는 권한은 설계에서</td></tr>
+<tr><td>7 나누는 기준</td><td>기타</td><td>"지금 추천목록은 여러 판을 하나로 관리한다는것에서 좀다르지 않나?" → 8번: 맞음, 목록 표지는 추천목록에</td></tr>
+</table>
+</div>
+
+<div class="card item"><h3><span class="num">1</span>모든 화면에서 요약 위에 「AI 요약 ⓘ」,<br>요약이 없는 책은 요약 칸 없이</h3>
+<p class="concl"><span class="chip" data-n="1">안 #1</span> 지금 추천목록 책 창에만 있는 「AI 요약 ⓘ」 표시를 책첵 추천 카드, AI 검색 카드, 책 상세 화면에도 똑같이 붙입니다. 요약이 없는 책(12,666권)은 "요약 없음" 같은 글 없이 요약 칸 자체를 보이지 않습니다.</p>
+<div class="mk">
+<div class="dev pc"><b class="t">요약 있는 책</b><div class="row"><span class="cv"></span><div><div class="ttl">채식주의자</div><div>한강 · 창비</div></div></div><div class="sum"><b>AI 요약 ⓘ</b> 평범한 주부가 고기를 끊겠다고 선언하면서 가족과 갈등을 겪어요.</div></div>
+<div class="dev tab"><b class="t">요약 없는 책</b><div class="row"><span class="cv"></span><div><div class="ttl">어떤 책</div><div>저자 · 출판사</div></div></div><div class="lib">도서관 목록 (요약 칸 없음)</div></div>
+</div>
+<p class="cap">자리만 그린 그림입니다. 요약 글은 예시입니다.</p>
+<p><b>지금과 다른 점:</b> 책첵 추천 탭은 지금 탭 맨 위에 "책 소개 글은 AI가 썼어요" 한 줄만 두고 카드마다 표시를 붙이지 않기로 했습니다(2026-10-23, "AI 각각 붙여서 너무 많지 않아? 간단하게 통으로"). 이 제안은 <b>카드가 아니라 책 창(책을 눌러 여는 창)과 책 상세 화면</b>에만 표시를 붙이고, 책첵 추천 탭 카드 목록은 지금처럼 맨 위 한 줄로 둡니다.</p>
+<p class="alt">다른 선택: 표시를 모두 빼고 서비스 안내에만 적기 — 화면이 깔끔하지만, 인공지능이 만든 글이라는 표시가 화면에서 사라집니다(사이클 23에서 AI 표시를 두기로 함).</p>
+</div>
+
+<div class="card item"><h3><span class="num">2</span>추천목록의 표지는<br>추천목록에 그대로 둠</h3>
+<p class="concl"><span class="chip" data-n="2">안 #2</span> 표지 중 <b>책 표지</b>(책첵 추천·AI 검색이 쓰는 8만 권)는 <code>catalog</code>로 옮기지만, <b>추천목록 표지</b>(사서추천·KAIST·서울대 등 목록마다 받아 둔 표지)는 추천목록 모듈에 그대로 둡니다. 추천목록 표지가 없는 책만 책 표지를 씁니다.</p>
+<p><b>까닭:</b> 추천목록에는 우리 책 목록에 없는 책(전자도서관에 없는 종이책 등)도 들어 있습니다. 이런 책은 책 번호가 없어서 책 번호로 저장하는 <code>catalog</code> 표에 넣을 수 없습니다.</p>
+<p><b>보이는 결과:</b> 같은 책이 추천목록 탭에서는 목록 표지로, 책 상세 화면에서는 책 표지로 보일 수 있습니다. 둘 다 같은 책의 표지이고 판만 다를 수 있습니다. AI 검색은 지금도 이 순서(목록 표지 먼저)로 고릅니다.</p>
+<p class="alt">다른 선택: 책 번호가 있는 추천목록 책의 표지도 <code>catalog</code>로 옮겨 하나로 — 어디서나 같은 표지가 보이지만, 목록 표지를 두 곳에 나눠 두게 되고(책 번호 있는 책은 <code>catalog</code>, 없는 책은 추천목록) 매달 사서추천 갱신 때 두 곳을 고쳐야 합니다.</p>
+</div>
+
+<div class="card item"><h3><span class="num">3</span>AI 검색의 찾기용 한 줄은<br>AI 검색에 그대로 둠</h3>
+<p class="concl"><span class="chip" data-n="3">안 #3</span> AI 검색이 책을 찾을 때만 쓰는 한 줄(76,759권, 화면에는 안 보임)은 옮기지 않습니다. 범위 결정 4번에서 "책 프로필도 DB로"라고만 하셔서 이 줄은 처음 제안대로 두었습니다.</p>
+<p><b>까닭:</b> 이 줄은 AI 검색의 검색용 사본 표 안에 제목·저자와 함께 들어 있어, 한 표에서 글자 검색을 합니다. 따로 떼면 검색할 때마다 두 표를 이어 읽어 느려질 수 있습니다.</p>
+<p class="alt">다른 선택: 이것도 <code>catalog</code>로 — "책 설명은 모두 한 곳"이 완전해지지만, AI 검색은 검색용 사본에 다시 복사해야 해서 결국 두 곳에 같은 글이 남습니다.</p>
+</div>
+
+<div class="card item"><h3><span class="num">4</span>한 번의 배포로 옮기고,<br>옛 표는 다음 배포에서 지움</h3>
+<p class="concl"><span class="chip" data-n="4">안 #4</span> 범위 결정 6번에서 순서(26 먼저)만 바꾸셨고 옮기는 방식은 말씀이 없어 처음 제안대로 적었습니다. 한 번의 배포에서 새 표를 만들고, 옛 표 내용을 복사하고, 읽는 곳을 모두 바꿉니다. 옛 표는 화면 넷의 요약·표지 수가 맞는 것을 확인한 다음 배포에서 지웁니다. 추천목록 요약 파일은 복사하지 않고 그 배포에서 지웁니다.</p>
+<div class="v-tl"><div class="v-hi">배포 1: 새 표 + 복사 + 읽는 곳 바꿈</div><div>수 비교 (요약 68,414 · 표지 80,091 · 프로필 77,551)</div><div>23·24 dev가 맞춰 고침</div><div>배포 2: 옛 표 지움</div></div>
+<p class="alt">다른 선택: 배포 1에서 옛 표까지 지움 — 배포가 한 번으로 끝나지만, 잘못되면 되돌릴 옛 표가 없습니다.</p>
+</div>
+
+<div class="card item"><h3><span class="num">5</span>(2번 답) 표지도 <code>catalog</code> 한 곳에.<br>우리 책 목록에 없는 추천목록 책만 예외</h3>
+<p><b>따로 두자고 한 까닭:</b> 비용 때문이 아니었습니다. <code>catalog</code>의 표는 책 번호로 저장하는데, 추천목록에는 우리 책 목록에 아예 없는 책(어느 전자도서관에도 없는 종이책)이 있어 책 번호가 없습니다. 추천목록 표지는 "모든 줄에 표지"(2026-10-16 "책 표지 무조건 다 보였으면 해")로 이런 책까지 받아 둡니다.</p>
+<p class="concl"><span class="chip" data-n="5">안 #5</span> 책 번호가 있는 책의 표지는 추천목록 표지든 책 표지든 모두 <code>catalog</code> 표지 표 하나에 둡니다. 어느 화면이든 그 책은 같은 표지를 씁니다. 책 번호가 없는 추천목록 책만 그 목록 줄에 표지를 둡니다(그 책은 <code>catalog</code>에 없으므로 겹치지 않음). 사서추천 표지는 지금 DB에 그림으로 저장되어 있는데, 다른 목록처럼 표지 파일(<code>/covers/…jpg</code>)로 바꿔 저장 방식도 하나로 합니다.</p>
+<div class="v-flow"><span class="v-box">새 사서추천 책</span><span class="v-arr">→</span><span class="v-box v-warn">책 번호 있나</span><span class="v-arr">있음 →</span><span class="v-box v-hi"><code>catalog</code> 표지 표</span><span class="v-arr">없음 →</span><span class="v-box">목록 줄 표지</span></div>
+<p class="cap">한 책의 표지는 늘 한 곳에만 있습니다. 매달 갱신 때도 책마다 한 곳만 씁니다.</p>
+<p><b>같은 책에 표지가 둘일 때:</b> 지금 추천목록 표지와 책 표지가 둘 다 있는 책은 추천목록 표지(사람이 차례를 정한 출처에서 받은 것)를 남깁니다. 그 수는 dev가 세어 알려 드립니다.</p>
+<p class="alt">다른 선택: 책 번호가 없는 추천목록 책은 표지를 보이지 않음 — 표지가 완전히 한 곳이 되지만, "모든 줄에 표지"(2026-10-16) 결정과 맞지 않습니다.</p>
+</div>
+
+<div class="card item"><h3><span class="num">6</span>(3번 답) AI 검색의 사본 표도 없애고,<br>AI 검색은 <code>catalog</code>에서 찾음</h3>
+<p><b>같은 원칙에 걸리는 곳:</b> AI 검색에는 찾기용 한 줄 말고도 책 제목·저자·가진 도서관 목록을 <code>catalog</code>에서 복사해 둔 사본 표가 있습니다(76,759권). 이것도 같은 내용이 두 곳에 저장된 것입니다. 이 밖에 같은 내용을 두 번 저장한 곳은 찾지 못했습니다(이웃 책 표는 책 번호만 가짐, 추천목록 줄의 제목은 목록 원본의 글).</p>
+<p class="concl"><span class="chip" data-n="6">안 #6</span> AI 검색의 사본 표를 없앱니다. 찾기용 한 줄과 그 글자 검색 색인을 <code>catalog</code>로 옮기고, AI 검색은 <code>catalog</code>의 찾기 기능을 불러 후보 책을 받습니다. 검색 방식(같은 글자 색인, 같은 질의)은 그대로 옮겨 빠르기가 같게 합니다. dev가 옮기기 전후 첫 글 시간을 재서, 늘었으면 옛 사본 표를 지우기 전에 알립니다(배포 2 전에 확인).</p>
+<p><b>dev 24에 생기는 일:</b> AI 검색 코드가 자기 표 대신 <code>catalog</code>의 찾기 기능을 부르도록 바뀝니다. 26 설계 뒤 알립니다.</p>
+<p class="alt">다른 선택: 찾기용 한 줄만 옮기고 사본 표(제목·저자·도서관 목록)는 AI 검색에 둠 — AI 검색 코드가 덜 바뀌지만, 제목·저자가 두 곳에 남습니다.</p>
+</div>
+
+<div class="card item"><h3><span class="num">7</span>(5번 질문 "어떻게 해야 데이터를 잘 나눈 걸까")<br>한 가지 사실은 그 사실의 주인에게 한 번만</h3>
+<p><b>나누는 기준:</b> 데이터마다 "이건 무엇에 대한 사실인가"를 묻고, 그 주인 모듈에 한 번만 둡니다. 다른 곳은 복사하지 않고 번호로 가리키기만 합니다.</p>
+<table>
+<tr><th>사실</th><th>무엇에 대한 것</th><th>주인</th></tr>
+<tr><td>이 책의 제목·저자·요약·표지</td><td>책</td><td><code>catalog</code></td></tr>
+<tr><td>이 목록에 어떤 책이 몇 번째로 있나, 추천한 달</td><td>목록</td><td>추천목록 (<code>picks</code>)</td></tr>
+<tr><td>이 이용자가 무엇을 봤나</td><td>이용 기록</td><td>이용 기록 (<code>usagelog</code>)</td></tr>
+<tr><td>표지 그림 파일 자체</td><td>그림</td><td>표지 파일 한 곳 (<code>/covers/…jpg</code>, 그림 내용으로 이름이 정해져 같은 그림은 한 장)</td></tr>
+</table>
+<p><b>이 기준으로 보면:</b> 표지는 "책"의 사실이라 <code>catalog</code>가 주인입니다. 추천목록은 "이 줄은 몇 번 책"이라고 가리키기만 하면 됩니다. 추천목록이 표지를 따로 가지면 같은 책의 표지가 두 곳에 생깁니다(따로 가는 안이 이것).</p>
+<p><b>예외처럼 보이는 곳:</b> 우리 책 목록에 없는 책(어느 전자도서관에도 없는 종이책)은 <code>catalog</code>에 그 책이 없습니다. 그 책에 대한 기록은 목록 줄 하나뿐이라, 그 책의 제목·저자는 지금도 목록 줄에 있습니다. 표지도 같은 자리에 두면 "그 책의 사실은 그 책의 유일한 기록에" 원칙과 맞습니다. 그 책이 나중에 전자도서관에 들어와 책 번호가 생기면, 목록 줄은 번호만 가리키고 표지는 <code>catalog</code>로 갑니다.</p>
+<div class="v-flow"><span class="v-box">목록 줄<small>책 번호 있음</small></span><span class="v-arr">가리킴 →</span><span class="v-box v-hi"><code>catalog</code> 책<small>제목·요약·표지</small></span><span class="v-arr">→</span><span class="v-box">표지 파일 한 장</span></div>
+<div class="v-flow"><span class="v-box">목록 줄<small>책 번호 없음: 제목·저자·표지를 줄에</small></span><span class="v-arr">→</span><span class="v-box">표지 파일 한 장</span></div>
+<p class="cap">어느 경우든 한 책의 표지는 한 곳에만 적히고, 그림은 한 장만 저장됩니다.</p>
+<p class="concl"><span class="chip" data-n="7">안 #7</span> 위 기준으로 5번 제안 그대로 갑니다: 책 번호가 있는 책의 표지는 <code>catalog</code>, 책 번호가 없는 목록 줄만 그 줄에. 사서추천 표지 그림(지금 DB 안)은 표지 파일로 옮겨 그림 저장 자리도 하나로 합니다. 이 기준은 설계 결정 기록(ADR)으로 남겨 다음 사이클에서도 씁니다.</p>
+<p class="alt">다른 선택: 따로 감(추천목록 표지는 모두 추천목록에) — 추천목록 갱신 코드는 덜 바뀌지만, 책 번호가 있는 추천목록 책은 표지가 두 곳에 있어 화면마다 다른 표지가 보일 수 있습니다.</p>
+</div>
+
+<div class="card item"><h3><span class="num">8</span>(7번 질문 "추천목록은 여러 판을 하나로 관리한다는 것에서 좀 다르지 않나?")<br>맞습니다. 목록 표지는 목록의 사실이라 추천목록에 둡니다</h3>
+<p><b>dev 코드로 다시 확인한 것:</b> 추천목록의 한 줄은 판 하나가 아니라 <b>추천된 책 하나</b>입니다. 같은 책의 여러 판 가운데 가장 많은 도서관이 가진 판 하나(세트면 1권)를 골라 그 책 번호로 보여 줍니다(dev 「판 고르기」 규칙). 표지도 그 줄에 맞춰 출처 차례(국립중앙도서관 → 서점 → …)로 따로 찾고, 우리 책 목록에 없는 책까지 받아 둡니다.</p>
+<table>
+<tr><th>사실</th><th>무엇에 대한 것</th><th>주인</th></tr>
+<tr><td>이 판(책 번호)의 표지·요약</td><td>판 하나</td><td><code>catalog</code></td></tr>
+<tr><td>이 추천을 어떤 표지·제목으로 보이나</td><td>목록 줄 (여러 판을 대표)</td><td>추천목록 (<code>picks</code>)</td></tr>
+</table>
+<p><b>그래서:</b> 둘은 같은 사실의 중복이 아니라 다른 사실입니다. 7번의 기준("한 가지 사실은 그 주인에게 한 번만")은 그대로 맞고, 추천목록 표지를 <code>catalog</code>로 옮기자고 한 5·7번 제안이 이 구분을 놓쳤습니다.</p>
+<p class="red">이 8번 제안은 9번(사용자 제안)으로 바뀌었습니다. 고르지 않으셔도 됩니다.</p>
+<p class="concl"><span class="chip" data-n="8">안 #8</span> 추천목록 표지는 모두 추천목록에 둡니다(책 번호가 있든 없든). <code>catalog</code> 표지 표는 판(책 번호)마다의 표지만 가집니다. 추천목록 화면과 그 책 창은 목록 표지를, 책 상세 화면(<code>/books/책번호</code>, 판 하나)과 책첵 추천·AI 검색 카드는 <code>catalog</code> 표지를 씁니다(AI 검색은 지금처럼 목록 표지가 있으면 먼저). 그림 저장 방식만 하나로: 사서추천 표지 그림(지금 DB 안)도 표지 파일로 옮깁니다. 이 구분은 결정 기록(ADR)에 같이 남깁니다.</p>
+<p><b>보이는 결과:</b> 「토지」 추천 줄은 목록이 고른 표지로, 그 줄에서 들어간 책 상세 화면은 그 판의 표지로 보입니다. 같은 판이면 대개 같은 그림이지만 출처가 달라 다를 수 있습니다.</p>
+<p class="alt">다른 선택: 5번처럼 책 번호가 있으면 <code>catalog</code>로 — 화면마다 표지가 같아지지만, "여러 판을 대표하는 목록 줄의 표지"가 판 하나의 표지로 바뀌고, 목록이 고른 판이 바뀔 때(다시 가져오기 뒤) 표지도 따라 바뀝니다.</p>
+</div>
+
+<div class="card item"><h3><span class="num">9</span>(사용자 제안) 우리 책 목록에 있는 책이면 그 책의 표지를 쓰고,<br>없는 책만 추천목록이 따로</h3>
+<p>사용자: "그냥 이미지를 입히는 게 아니라 만약에 카탈로그에 있는 거면 그거 가져다가 쓰고 없는 거만 따로 처리 안되나" (2026-10-28). 됩니다. 추천목록 줄은 이미 "이 줄은 몇 번 책(고른 판)"을 알고 있으니, 그 책의 표지를 <code>catalog</code>에서 가져다 쓰면 됩니다.</p>
+<table>
+<tr><th>추천목록 줄</th><th>표지</th></tr>
+<tr><td>책 번호 있음, <code>catalog</code>에 그 책 표지 있음</td><td><code>catalog</code> 표지를 그대로 씀</td></tr>
+<tr><td>책 번호 있음, <code>catalog</code>에 표지 없음</td><td>아래 제안</td></tr>
+<tr><td>책 번호 없음 (우리 책 목록에 없는 책)</td><td>추천목록이 찾은 표지를 그 줄에</td></tr>
+</table>
+<p class="concl"><span class="chip" data-n="9">안 #9</span> 책 번호는 있는데 <code>catalog</code>에 표지가 없는 책은, 추천목록 수집이 찾은 표지(국립중앙도서관 등 지금 출처 차례)를 <b>그 책의 표지로 <code>catalog</code>에 넣습니다</b>. 그러면 책 번호가 있는 책의 표지는 언제나 <code>catalog</code> 한 곳에만 있고, 그 책은 추천목록·책첵 추천·AI 검색·책 상세 어디서나 같은 표지입니다. 추천목록이 따로 가지는 표지는 책 번호가 없는 줄뿐입니다. 사서추천 표지 그림(지금 DB 안)은 그림 파일로 옮기고 <code>picks.cover</code> 표는 지웁니다.</p>
+<p><b>지금과 달라지는 점:</b> <code>catalog</code>에 표지가 이미 있는 책은, 지금 추천목록이 보이던 표지 대신 <code>catalog</code> 표지가 보입니다(같은 판이라 대개 같은 그림). 고른 판이 다시 가져오기 뒤 바뀌면 표지도 그 판의 것으로 바뀝니다.</p>
+<p class="alt">다른 선택: <code>catalog</code>에 표지가 없는 책은 추천목록 줄에만 둠 — <code>catalog</code>에는 수집기가 받은 표지만 남지만, 그 책은 추천목록에서만 표지가 보이고 책첵 추천·책 상세에서는 제목 글자 표지가 됩니다.</p>
+</div>
+
+<div class="card item"><h3><span class="num">10</span>(9번 답 "이거 따로 표기해야 할 것 같은데 판이 다른 도서의 표지가 들어가거나..")<br>표지마다 출처와 "같은 판 확인됨"을 적음</h3>
+<p><b>맞는 걱정입니다.</b> 추천목록 수집이 표지를 찾는 차례(dev <code>4-picks.md</code> 6-3절) 가운데 일부는 판을 확인하지 못합니다.</p>
+<table>
+<tr><th>표지를 찾은 곳</th><th>같은 판인가</th></tr>
+<tr><td>고른 판의 ISBN으로 국립중앙도서관 서지 표지</td><td class="okc">확인됨 (ISBN이 같음)</td></tr>
+<tr><td>그 책을 가진 도서관 소장 줄의 표지 (수집기가 받은 것, 지금 책첵 추천 표지 8만 권도 이것)</td><td class="okc">확인됨 (그 판의 소장 줄)</td></tr>
+<tr><td>국립중앙도서관 소장자료 검색을 ISBN으로</td><td class="okc">확인됨</td></tr>
+<tr><td>국립중앙도서관 소장자료 검색을 제목 + 저자로, ISBN 서지 제목 검색</td><td class="red">확인 안 됨 (다른 판일 수 있음)</td></tr>
+<tr><td>사람이 손으로 받은 표지 (예: 출판사 페이지)</td><td>사람이 적은 메모를 따름</td></tr>
+</table>
+<p class="red">이 10번 제안은 11번(사용자가 낸 구조)으로 바뀌어 필요 없어졌습니다. 추천목록 표지를 <code>catalog</code>에 넣지 않으므로 출처 표기가 필요 없습니다. 고르지 않으셔도 됩니다.</p>
+<p class="concl"><span class="chip" data-n="10">안 #10</span> <code>catalog</code> 표지마다 <b>출처</b>(소장 줄, 국립중앙도서관 ISBN, 국립중앙도서관 제목 검색, 손으로)와 <b>같은 판 확인 여부</b>를 함께 적습니다. 화면에는 둘 다 똑같이 보입니다. 다만 규칙 두 개를 둡니다: ① 같은 판으로 확인된 표지가 들어오면 확인 안 된 표지를 바꿈 ② 확인 안 된 표지는 확인된 표지를 덮어쓰지 않음. 확인 안 된 표지 수는 넣을 때 기록에 남겨, 나중에 사람이 볼 수 있게 합니다.</p>
+<p class="alt">다른 선택: 같은 판으로 확인된 표지만 <code>catalog</code>에 넣고, 확인 안 된 표지는 추천목록 줄에만 둠 — <code>catalog</code> 표지가 늘 그 판의 것이지만, 그 책은 책첵 추천·책 상세에서 제목 글자 표지가 됩니다.</p>
+</div>
+
+<div class="card item"><h3><span class="num">11</span>(사용자가 낸 구조) 추천목록 표지:<br>우리 책의 판 표지 → 없으면 추천목록 그림</h3>
+<p>사용자 (2026-10-28):</p>
+<table>
+<tr><th>추천 책 (여러 판일 수 있음)</th><th>표지</th></tr>
+<tr><td>우리 책 목록에 있고, 판 가운데 표지가 있는 판이 있음</td><td>최신 판(먼저) 또는 소장 많은 판(다음)의 <code>catalog</code> 표지</td></tr>
+<tr><td>우리 책 목록에 있지만 어느 판에도 표지가 없음</td><td>추천목록이 찾은 그림</td></tr>
+<tr><td>우리 책 목록에 없음</td><td>추천목록이 찾은 그림</td></tr>
+</table>
+<p>추천목록 그림을 <code>catalog</code>에 넣지 않으므로 9·10번에서 걱정하신 "다른 판의 표지가 <code>catalog</code>에 들어가는 일"이 없어집니다. 이 구조는 그대로 명세에 적었습니다.</p>
+<p><b>지금 추천목록이 여러 판을 묶는 방법</b> (dev <code>BookChoice</code>, ADR-0125):</p>
+<table>
+<tr><th>차례</th><th>하는 일</th></tr>
+<tr><td>1. 후보 찾기</td><td>목록 줄의 ISBN, 없으면 제목 + 첫 저자로 우리 책을 찾음 (모두 같은 저자)</td></tr>
+<tr><td>2. 세트 묶기</td><td>판 표시·권 번호를 뗀 제목과 출판사가 같고 권 번호만 다른 책은 한 판(세트)으로 봄</td></tr>
+<tr><td>3. 판 하나 고르기</td><td>소장 많은 판. 소장 = 구독형이 아닌 도서관 수 + 구독형 도서관에 하나라도 있으면 1. 세트는 1권(또는 (상))</td></tr>
+<tr><td>4. 같으면</td><td>책 번호가 작은 판</td></tr>
+</table>
+<p class="cap">줄 하나는 이렇게 고른 판 하나의 책 번호로 연결됩니다. 출판일(최신)은 지금 고르는 데 쓰지 않습니다. 수집기(<code>recommended_lists.py</code>)도 같은 규칙으로 판을 고정합니다.</p>
+<p><b>정할 것 하나 — 표지의 판과 누르면 열리는 판:</b> 지금 추천목록 줄은 <b>소장 많은 판</b> 하나를 골라 그 책으로 연결합니다(위 표). 표지만 최신 판으로 고르면, 「토지」 줄이 2024년 판 표지를 보이는데 누르면 2012년 판(소장이 더 많은 판) 책 창이 열릴 수 있습니다.</p>
+<p class="concl"><span class="chip" data-n="11">안 #11</span> 표지는 <b>줄이 연결하는 판(소장 많은 판)의 표지를 먼저</b> 쓰고, 그 판에 표지가 없을 때만 같은 책의 다른 판 가운데 최신 판 → 소장 많은 판 순서로 고릅니다. 그러면 대부분 표지와 열리는 책이 같은 판입니다.</p>
+<p class="alt">다른 선택: (가) 말씀하신 그대로 표지는 최신 판 먼저 — 새 표지가 보이지만 누르면 다른 판이 열릴 수 있습니다. (나) 줄이 연결하는 판 자체를 최신 판 먼저로 바꿈(지금 판 고르기 규칙 변경) — 표지·연결이 같은 최신 판이 되지만, 소장 도서관이 적은 판으로 연결될 수 있어 "내 도서관에 있음"이 줄 수 있습니다. 이 규칙은 사이클 21에서 정한 것이라(ADR-0125) 바꾸면 기록도 고칩니다.</p>
+</div>
+
+<div class="card item"><h3><span class="num">12</span>(사용자 질문 "카탈로그에도 표지가 있도록 수집해야 하는 거 아니야? 지금 수집 중이고 반영할 것이지 않나?")<br>네, 모든 책 표지를 운영에 올리면 됩니다. 운영 디스크만 늘리면 됩니다</h3>
+<p><b>지금 상태 (dev 기록):</b> 수집 PC가 모든 책의 표지를 받고 있습니다(2026-10-24 시작 때 대기 131만 권). 운영에 올린 것은 책첵 추천·AI 검색 범위 약 8만 권뿐입니다. 어느 도서관 사이트에도 그림이 없는 책은 먼저 받은 범위에서 약 0.8%(81,194권 중 680권)였습니다.</p>
+<p><b>그래서 "우리 책인데 표지만 없음"은</b> 다 받아 올리고 나면 그림이 원래 없는 책(약 1% 안팎 [추론])만 남습니다. 그 책만 추천목록 그림을 씁니다.</p>
+<p><b>걸리는 것 — 운영 디스크:</b></p>
+<table>
+<tr><th>값</th><th>출처</th></tr>
+<tr><td>표지 한 장 약 9~11KB (200px JPEG)</td><td>dev 기록: 5만 장 약 450MB, 29,586장 331MB</td></tr>
+<tr><td>책 1,340,875권 모두면 약 12~15GB [추론]</td><td>위 값 × 책 수</td></tr>
+<tr><td>운영 디스크 30GB, 여유 약 11GB, 책 표 다시 반영할 때 최저 여유 약 3.4~3.9GB</td><td>dev 기록 2026-10-20·27, 사이클 17 research</td></tr>
+</table>
+<p class="red">이 12번은 13번(둘 곳 비교)으로 이어집니다. 고르지 않으셔도 됩니다.</p>
+<p class="concl"><span class="chip" data-n="12">안 #12</span> 모든 책 표지를 운영 서버 그림 폴더에 올리고, 그 전에 운영 디스크(EBS)를 30GB에서 50GB로 늘립니다. 늘리는 것은 서버를 끄지 않고 할 수 있는 AWS 기능이며, 비용은 늘어난 20GB만큼 한 달 약 2달러 안팎입니다 [추론: 기본 가격 GB당 월 0.08달러, 시드니 가격은 확인 못 함]. 가져오기를 다시 할 때마다 새 책 표지만 더 올립니다(지금 dev 절차 그대로).</p>
+<p class="alt">다른 선택: (가) 화면에 자주 나오는 책(추천목록·책첵 추천·AI 검색 대상 약 10만 권)만 올림 — 디스크를 늘리지 않아도 되지만, 일반 검색으로 연 책 상세 화면 대부분에 표지가 없습니다(명세 R3과 어긋남). (나) 표지를 AWS S3 같은 별도 저장소에 — 서버 디스크와 무관해지지만 새 서비스·설정·권한이 늘어납니다.</p>
+</div>
+
+<div class="card item"><h3><span class="num">13</span>(12번 답 "S3이라던가 프리티어에서 할 수 있는 거, 아니면 라이트세일") 표지 약 15GB를 둘 곳:<br>지금 서버 디스크를 늘리는 쪽이 가장 단순합니다</h3>
+<p><b>먼저 알아 둘 것:</b> 지금 계정은 AWS 새 무료 플랜(Free plan)입니다. 이 플랜에는 "무료로 몇 GB"가 아니라 <b>크레딧</b>(가입 100달러 + 활동 최대 100달러)이 있고, 디스크·S3·라이트세일 모두 그 크레딧에서 빠집니다. 예전의 "S3 5GB 무료"는 지금 가격 페이지에 없습니다. 정말 늘 무료인 것은 CloudFront(매달 전송 1TB)뿐입니다.</p>
+<table>
+<tr><th>방법</th><th>한 달 비용 (시드니)</th><th>바뀌는 것</th></tr>
+<tr><td><b>(가) 지금 서버 디스크 30 → 50GB</b></td><td>약 1.9달러 (무료 플랜 동안은 크레딧에서)</td><td>거의 없음. 서버를 끄지 않고 늘림. 화면·보안 설정 그대로. 다시 줄일 수는 없음</td></tr>
+<tr><td>(나) S3 (+ CloudFront)</td><td>약 0.4달러 + 처음 올릴 때 한 번 약 7.4달러</td><td>저장소·올리는 단계·권한 설정이 생김. 그림 주소가 다른 도메인이면 화면 보안 설정(CSP)도 바꿈</td></tr>
+<tr><td>(다) 라이트세일로 이사 (2GB, SSD 60GB)</td><td>12달러 (서버 포함)</td><td>서버 전체를 옮김(DB, 주소 연결). 지금 서버 비용과 비교는 확인 못 함</td></tr>
+<tr><td>(라) Cloudflare R2</td><td>약 0.1달러 (10GB까지 무료)</td><td>새 회사 계정·키·도메인 설정, CSP 바꿈, 올리는 단계</td></tr>
+<tr><td>(마) WebP로 줄여 지금 디스크에</td><td>0</td><td>약 8~11GB로 줄지만 [추론] 여유 11GB와 거의 같아 곧 모자람. 134만 장 다시 만들기</td></tr>
+</table>
+<p class="cap">가격은 AWS·Cloudflare 공식 가격 자료(2026-10-28 확인). 그림 보기 전송은 한 달 1GB 미만으로 보아 무료 한도 안입니다 [추론]. 자세한 출처는 research.md 1절.</p>
+<p><b>무료 플랜(크레딧)에서 되는지 다시 확인한 것</b> (사용자 질문 "무료 크레딧에서 되는 것들인지 확인하고 그것들만 알려줘, EC2도 일부만 되자나", 2026-10-28):</p>
+<table>
+<tr><th>방법</th><th>무료 플랜에서</th><th>근거</th></tr>
+<tr><td>(가) 서버 디스크(EBS gp3) 늘리기</td><td>gp3는 무료 플랜 대상 종류. <b>30GB를 넘겨 늘리는 것이 막히는지는 문서에 없음</b> (확인 못 함)</td><td>EC2 문서 "Free Tier benefits" 표</td></tr>
+<tr><td>(나) S3 + CloudFront</td><td class="okc">됨. S3는 "두 플랜 모두"에 있음, CloudFront는 늘 무료(매달 1TB)</td><td>aws.amazon.com/free, /free/networking</td></tr>
+<tr><td>(다) 라이트세일</td><td class="okc">됨. "두 플랜에서 크레딧으로"</td><td>aws.amazon.com/free/compute/lightsail</td></tr>
+<tr><td>(라) Cloudflare R2</td><td>AWS 크레딧과 무관. R2 자체 무료 10GB</td><td>developers.cloudflare.com/r2/pricing</td></tr>
+<tr><td>(마) WebP로 줄이기</td><td>비용 없음</td><td>—</td></tr>
+</table>
+<p class="cap">EC2는 무료 플랜에서 t3.micro·t3.small·t4g.micro·t4g.small·c7i-flex.large·m7i-flex.large만 됩니다(지금 서버 t4g.small은 대상). (가)가 막히는지는 콘솔의 볼륨 수정 화면에서 바로 알 수 있습니다.</p>
+<p class="concl"><span class="chip" data-n="13">안 #13</span> (가) 지금 서버 디스크를 30GB에서 50GB로 늘립니다. 한 달 약 2달러로, 바뀌는 코드·설정이 없고 지금 dev의 표지 올리기 절차 그대로 씁니다. 표지가 아주 많이 늘거나 서버를 옮길 때 S3·R2를 다시 봅니다.</p>
+<p class="alt">다른 선택: 가장 싼 쪽은 (라) R2(한 달 약 0.1달러)나 (나) S3(약 0.4달러)이지만, 새 저장소·키·도메인·보안 설정이 생겨 운영할 것이 늘어납니다. (다) 라이트세일 이사는 표지 때문만이라면 일이 가장 큽니다.</p>
+<p><b>방법과 상관없이 챙길 것:</b> 무료 플랜은 6개월(약 2027-04)이 지나면 끝나고, 그때 유료 플랜으로 올리지 않으면 계정이 정지되고 90일 뒤 지워집니다(AWS 공식 문서). 크레딧 만료일은 공식 문서끼리 6개월·12개월로 달라 콘솔에서 확인해야 합니다. 이건 사이클 17 운영 일로 넘깁니다.</p>
+</div>
+
+<div class="card"><h2>설계 단계로 넘기는 개발 세부 (묻지 않음)</h2>
+<table>
+<tr><th>세부</th><th>명세에 적은 방향</th></tr>
+<tr><td>설명 넣기 파일 첫 줄의 가져오기 번호</td><td>이웃 책 넣기와 같은 모양으로</td></tr>
+<tr><td>프로필 넣기</td><td>설명 넣기 파일의 새 종류로</td></tr>
+<tr><td>지운 설명 수</td><td>가져오기 기록에 남김</td></tr>
+<tr><td>AI 검색 빠르기</td><td>프로필은 서버가 한 번 읽어 메모리에, 카드 표지·요약은 AI 호출과 동시에 (dev 24 요청)</td></tr>
+</table>
+</div>
+
+<p class="foot">원본: docs/cycles/26-book-descriptions/spec.md (2026-10-27). 지금 상태는 dev main 905eab7 코드에서 확인.</p>
+
+</main>
+
+<script>
+(function(){
+  const items=[...document.querySelectorAll('.chip')].map(ch=>{
+    const n=+ch.dataset.n; const box=ch.closest('.item')||ch.parentElement;
+    const h=box.querySelector('h3'); const t=(h?h.textContent:'').replace(/^\s*\d+/, '').trim();
+    const d=document.createElement('div'); d.className='dec';
+    d.innerHTML='<div class="btns" role="group" aria-label="안 #'+n+' 결정">'+
+      ['승인','미승인','기타'].map(c=>'<button type="button" data-c="'+c+'" aria-pressed="false">'+c+'</button>').join('')+'</div>'+
+      '<textarea id="note-'+n+'" placeholder="덧붙일 말 (미승인 이유, 질문, 제안)"></textarea>'+
+      '<div class="btns"><button type="button" class="save">저장</button><span class="st" aria-live="polite">아직 고르지 않았습니다</span></div>';
+    box.appendChild(d);
+    const st={n,title:t,chip:ch,el:d,pick:null};
+    d.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{st.pick=b.dataset.c;paint(st);d.querySelector('.st').textContent='"저장"을 눌러야 기록됩니다';});
+    d.querySelector('.save').onclick=()=>save(st);
+    return st;
+  });
+  const bar=document.getElementById('bar');
+  function paint(st){st.el.querySelectorAll('[data-c]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.c===st.pick)));}
+  let db=null; const saved={};
+  function count(){const k=Object.keys(saved).length;bar.innerHTML='고른 것 <b>'+k+' / '+items.length+'</b>'+(db?' · 저장하면 Claude가 읽습니다':' · 저장 기능을 아직 불러오지 못했습니다');}
+  count();
+  async function save(st){
+    const s=st.el.querySelector('.st');
+    if(!st.pick){s.textContent='먼저 승인·미승인·기타 중 하나를 고르세요';return;}
+    if(!db){s.textContent='저장할 수 없습니다. 로그인한 채로 claude.ai에서 열어 주세요';return;}
+    const note=st.el.querySelector('textarea').value.trim();
+    s.textContent='저장하는 중…';
+    try{await db.doc('choices/q'+st.n).set({n:st.n,title:st.title,choice:st.pick,note,savedAt:new Date().toISOString()});s.textContent='저장했습니다';}
+    catch(e){s.textContent='저장하지 못했습니다 ('+(e&&e.code||'오류')+'). 잠시 뒤 다시 눌러 주세요';}
+  }
+  (async()=>{
+    try{db=window.claude&&await window.claude.use('db');}catch(e){db=null;}
+    count(); if(!db) return;
+    db.collection('choices').onSnapshot(snap=>{
+      snap.docs.forEach(doc=>{const v=doc.data();const st=items.find(i=>i.n===v.n);if(!st)return;saved[v.n]=v;
+        if(document.activeElement!==st.el.querySelector('textarea')) st.el.querySelector('textarea').value=v.note||'';
+        st.pick=v.choice;paint(st);st.chip.classList.add('done');st.chip.textContent='안 #'+v.n+' · '+v.choice;
+        st.el.querySelector('.st').textContent='저장됨: '+v.choice+' ('+new Date(v.savedAt).toLocaleString('ko-KR')+')';});
+      count();
+    },()=>{});
+  })();
+})();
+</script>

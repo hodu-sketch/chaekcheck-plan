@@ -1,0 +1,172 @@
+<title>책 설명 결정 기록</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+
+.v-flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.v-box{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:7px 11px;font-size:15px;text-align:center;min-width:90px}
+.v-box small{display:block;color:var(--muted);font-size:12px}
+.v-hi{border-color:var(--accent);background:var(--accent-bg)}
+.v-warn{border-color:var(--warn);background:var(--warn-bg)}
+.v-ok{border-color:var(--ok);background:var(--ok-bg)}
+.v-arr{color:var(--muted);font-size:18px}
+.v-file{border:2px solid var(--line);border-radius:12px;background:var(--card);padding:10px;margin:10px 0;max-width:560px}
+.v-file .v-part{border:1px dashed var(--line);border-radius:8px;padding:8px 10px;margin:6px 0;font-size:14px}
+.v-file .v-part.v-new{border-color:var(--accent);background:var(--accent-bg)}
+.v-tl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0;font-size:13px;text-align:center}
+.v-tl div{border-top:4px solid var(--line);padding-top:6px}
+.v-tl div.v-hi{border-top-color:var(--accent);background:none}
+.v-cv{display:inline-flex;width:70px;aspect-ratio:2/3;border-radius:7px;border:1px solid var(--line);background:var(--accent-bg);align-items:center;justify-content:center;font-size:11px;text-align:center;padding:3px;vertical-align:top;margin:4px}
+.v-cv.v-img{background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 6px,var(--card) 6px,var(--card) 12px)}
+.v-mini{border:1px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;margin:8px 0;max-width:420px}
+.v-mini .v-bar{display:flex;gap:10px;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line);font-size:13px}
+.v-mini .v-body{padding:10px 12px;font-size:13px}
+.v-pill{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-weight:800;font-size:12px}
+@media (max-width:700px){main table{display:block;overflow-x:auto;max-width:100%}.v-tl{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.v-code{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:var(--code-bg);border-radius:8px;padding:8px 10px;overflow-x:auto;white-space:pre}
+.card h3{margin:0 0 14px;font-size:24px}
+
+.mk{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start;margin:12px 0}
+.mk .dev{border:2px solid var(--line);border-radius:12px;background:var(--bg);padding:10px;font-size:13px;line-height:1.5}
+.mk .dev b.t{display:block;color:var(--muted);font-weight:500;font-size:12px;margin-bottom:6px}
+.mk .pc{width:420px;max-width:100%}.mk .tab{width:300px;max-width:100%}.mk .ph{width:190px}
+.mk .row{display:flex;gap:10px}
+.mk .cv{flex:none;width:58px;aspect-ratio:2/3;border-radius:5px;border:1px solid var(--line);background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 5px,var(--card) 5px,var(--card) 10px)}
+.mk .ph .cv{width:44px}
+.mk .ttl{font-weight:700;font-size:15px}
+.mk .sum{background:var(--warn-bg);border:1px dashed var(--warn);border-radius:7px;padding:6px 8px;margin:8px 0}
+.mk .lib{border-top:1px solid var(--line);padding:5px 0;color:var(--muted)}
+
+:root{color-scheme:light}
+body{background:var(--bg);color:var(--text)}
+.chip{display:inline-block;font-size:15px;font-weight:700;color:var(--warn);background:var(--warn-bg);border:1px solid var(--warn);border-radius:999px;padding:0 10px;margin-right:6px;line-height:1.6}
+.chip.done{color:var(--ok);background:var(--ok-bg);border-color:var(--ok)}
+.dec{margin:12px 0 18px;padding:14px 16px;border:1px solid var(--line);border-radius:10px;background:var(--code-bg);display:flex;flex-direction:column;gap:10px}
+.dec .btns{display:flex;flex-wrap:wrap;gap:8px}
+.dec button{font:inherit;font-size:17px;padding:6px 16px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer}
+.dec button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.dec button[aria-pressed="true"][data-c="승인"]{background:var(--ok-bg);border-color:var(--ok);color:var(--ok);font-weight:700}
+.dec button[aria-pressed="true"][data-c="미승인"]{background:var(--no-bg);border-color:var(--no);color:var(--no);font-weight:700}
+.dec button[aria-pressed="true"][data-c="기타"]{background:var(--accent-bg);border-color:var(--accent);color:var(--accent);font-weight:700}
+.dec textarea{font:inherit;font-size:17px;width:100%;min-height:64px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--text);resize:vertical}
+.dec .save{background:var(--accent);color:var(--card);border-color:var(--accent);font-weight:700}
+.dec .st{font-size:15px;color:var(--muted)}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:0 0 24px;font-size:17px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.bar b{font-variant-numeric:tabular-nums}
+</style>
+<main class="doc">
+<div class="bar" id="bar">불러오는 중</div>
+
+<p class="lead">사이클 26 결정 기록(ADR) 초안 5개입니다.<br>모두 이미 고르신 것을 기록으로 옮긴 것입니다.</p>
+<p class="sub">승인하신 초안만 결정 기록 파일(<code>docs/adr/0161~0165</code>)로 만듭니다. 기록에 적는 "이유"는 대화에서 하신 말만 옮기고, 고르기만 하신 곳은 [이유 미확인]으로 둡니다. 0154~0159는 사이클 25가 쓸 수 있게 비워 둡니다. 초안 원문: <code>docs/cycles/26-book-descriptions/adr-drafts.md</code></p>
+<div class="card item"><h3><span class="num">1</span>ADR-0161: 책 설명은 <code>catalog</code>가 맡고,<br>다른 모듈은 읽기 기능으로만</h3>
+<p class="concl"><span class="chip" data-n="1">안 #1</span> 요약(한 종류)·판 표지·꼬리표·프로필·AI 찾기를 <code>catalog</code>의 종류별 표 6개에 두고, 추천목록·책첵 추천·AI 검색은 목적별 읽기 기능으로만 읽습니다. 추천목록 요약 파일은 없앱니다. 26을 먼저 만들고 23·24가 맞춥니다.</p>
+<p><b>이유로 적는 말:</b> "추천목록에 요약을 아예 빼 그리고 일원화해", "책 프로필도 DB로 / AI 검색이든 뭐든 사용하는데 지장없도록 해", "지금 이거 먼저 하고 DEV23,24에게 알려줘서 알아서 고치라고 해". 맡는 모듈·표 모양·읽는 길은 승인만 하셔서 [이유 미확인]으로 적습니다.</p>
+<p class="alt">함께 적는 다른 선택: 새 모듈 <code>bookinfo</code> / 표 하나에 종류 칸 / 지금처럼 흩어 둠. 이전 기록 두 개(꼬리표는 <code>picks</code>, 찾기용 한 줄은 AI 검색 표)의 해당 부분을 이 기록이 대신합니다.</p>
+</div>
+
+<div class="card item"><h3><span class="num">2</span>ADR-0162: 설명은 책 번호로, 다시 가져올 때 버려진 번호의 설명을 지우고,<br>넣기 파일의 가져오기 번호를 검사</h3>
+<p class="concl"><span class="chip" data-n="2">안 #2</span> 설명은 책 번호로 저장합니다. 책 목록을 다시 가져와 바꿔 끼울 때 같은 작업 안에서 버려진 번호의 설명을 지우고 그 수를 남깁니다. 설명·프로필 넣기 파일 첫 줄에 가져오기 번호를 적고, 지금과 다르면 거절합니다.</p>
+<p><b>이유로 적는 말:</b> 승인만 하셔서 [이유 미확인]으로 적습니다.</p>
+<p class="alt">함께 적는 다른 선택: ISBN 기준(ISBN 없는 책은 설명 불가) / 작품 키를 새로 만들기.</p>
+</div>
+
+<div class="card item"><h3><span class="num">3</span>ADR-0163: 모든 표지 그림은 S3 + CloudFront 기본 주소,<br>PC만 올림</h3>
+<p class="concl"><span class="chip" data-n="3">안 #3</span> 판 표지와 추천목록 그림을 비공개 S3 버킷에 두고 CloudFront 기본 주소로 보냅니다. DB에는 그림 이름만 둡니다. PC만 올리고 운영 서버에는 권한을 주지 않습니다. DB 안의 사서추천 그림은 파일로 꺼내 올리고 그 표는 지웁니다.</p>
+<p><b>이유로 적는 말:</b> "디스크는 뭐 따로 S3이라던가 프리티어에서 할 수 있는 거 생각해보자 …", "무료 크레딧에서 되는 것들인지 확인하고 그것들만 알려줘", "S3 + CloudFront 이걸로 하자", "나는 DB에 이미지를 넣는게 이해가 안 가거든". 기본 주소·PC만은 [이유 미확인]. 근거 가격·무료 플랜 출처(AWS 공식, 2026-10-28)도 기록에 넣습니다.</p>
+<p class="alt">함께 적는 다른 선택: 운영 디스크 늘리기 / 라이트세일 이사 / Cloudflare R2 / WebP로 줄이기 / 그림 전용 하위 도메인 / 운영 서버도 올리기. 이전 기록 두 개(사서추천 그림을 DB에, 표지를 운영 서버 폴더에)의 해당 부분을 이 기록이 대신합니다.</p>
+</div>
+
+<div class="card item"><h3><span class="num">4</span>ADR-0164: 데이터는 "무엇에 대한 사실인가"의 주인에게 한 번만,<br>추천목록 줄 표지는 우리 책의 판 표지 먼저</h3>
+<p class="concl"><span class="chip" data-n="4">안 #4</span> 원칙: 데이터는 그 사실의 주인 모듈에 한 번만 두고 다른 곳은 번호로 가리킵니다(예외는 ADR-0160). 추천목록 줄 표지는 ① 줄이 연결한 판의 표지 ② 같은 책 다른 판의 최신 판 → 소장 많은 판 표지 ③ 없거나 우리 책 목록에 없으면 추천목록 그림. 추천목록 그림은 <code>catalog</code>에 넣지 않습니다.</p>
+<p><b>이유로 적는 말:</b> "어떻게 해야 결과적으로 데이터를 잘 나눈걸까", "지금 추천목록은 여러 판을 하나로 관리한다는것에서 좀다르지 않나?", "만약에 카탈로그에 있는 거면 그거 가져다가 쓰고 없는 거만 따로 처리 안되나", 표지 구조 원문, "그건 카탈로그에 표지도 있도록 수집해야 하는 거 아니야?".</p>
+<p class="alt">함께 적는 다른 선택: 추천목록 표지는 모두 추천목록에(명세 #8) / 추천목록 그림을 <code>catalog</code>에 넣고 출처 표기(#9·#10) / 최신 판 표지 먼저.</p>
+</div>
+
+<div class="card item"><h3><span class="num">5</span>ADR-0165: AI 검색 사본 표를 없애고 <code>catalog</code>에서 찾음,<br>책 프로필은 DB에 두고 서버 시작 때 한 번 읽음</h3>
+<p class="concl"><span class="chip" data-n="5">안 #5</span> AI 검색이 따로 들던 사본 표를 없애고, 찾기용 한 줄·찾기 색인·찾기 전용 도서관 목록(ADR-0160)을 <code>catalog</code> 찾기 표에 둡니다. 표지·요약은 AI 호출과 겹쳐 읽는 지금 방식 그대로입니다. 프로필은 칸마다 형식을 정해 DB에 두고, 새 넣기 명령으로 바꾸며, 서버가 시작할 때 한 번 읽습니다.</p>
+<p><b>이유로 적는 말:</b> "지금 더 군데 중복저장되는거는 없었으면해", "책 프로필도 DB로 …". 대상 위치·프로필 칸은 [이유 미확인]. dev 24가 낸 조건 두 개도 적습니다.</p>
+<p class="alt">함께 적는 다른 선택: 찾기용 한 줄만 옮기고 사본은 둠 / 지금 자리에 둠 / 프로필을 JSON 한 칸에. 이전 기록(AI 검색 표 사본에서 낱말 맞추기)의 해당 부분을 이 기록이 대신합니다.</p>
+</div>
+
+<p class="foot">원본: docs/cycles/26-book-descriptions/adr-drafts.md (2026-10-28)</p>
+
+</main>
+
+<script>
+(function(){
+  const items=[...document.querySelectorAll('.chip')].map(ch=>{
+    const n=+ch.dataset.n; const box=ch.closest('.item')||ch.parentElement;
+    const h=box.querySelector('h3'); const t=(h?h.textContent:'').replace(/^\s*\d+/, '').trim();
+    const d=document.createElement('div'); d.className='dec';
+    d.innerHTML='<div class="btns" role="group" aria-label="안 #'+n+' 결정">'+
+      ['승인','미승인','기타'].map(c=>'<button type="button" data-c="'+c+'" aria-pressed="false">'+c+'</button>').join('')+'</div>'+
+      '<textarea id="note-'+n+'" placeholder="덧붙일 말 (미승인 이유, 질문, 제안)"></textarea>'+
+      '<div class="btns"><button type="button" class="save">저장</button><span class="st" aria-live="polite">아직 고르지 않았습니다</span></div>';
+    box.appendChild(d);
+    const st={n,title:t,chip:ch,el:d,pick:null};
+    d.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{st.pick=b.dataset.c;paint(st);d.querySelector('.st').textContent='"저장"을 눌러야 기록됩니다';});
+    d.querySelector('.save').onclick=()=>save(st);
+    return st;
+  });
+  const bar=document.getElementById('bar');
+  function paint(st){st.el.querySelectorAll('[data-c]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.c===st.pick)));}
+  let db=null; const saved={};
+  function count(){const k=Object.keys(saved).length;bar.innerHTML='고른 것 <b>'+k+' / '+items.length+'</b>'+(db?' · 저장하면 Claude가 읽습니다':' · 저장 기능을 아직 불러오지 못했습니다');}
+  count();
+  async function save(st){
+    const s=st.el.querySelector('.st');
+    if(!st.pick){s.textContent='먼저 승인·미승인·기타 중 하나를 고르세요';return;}
+    if(!db){s.textContent='저장할 수 없습니다. 로그인한 채로 claude.ai에서 열어 주세요';return;}
+    const note=st.el.querySelector('textarea').value.trim();
+    s.textContent='저장하는 중…';
+    try{await db.doc('choices/q'+st.n).set({n:st.n,title:st.title,choice:st.pick,note,savedAt:new Date().toISOString()});s.textContent='저장했습니다';}
+    catch(e){s.textContent='저장하지 못했습니다 ('+(e&&e.code||'오류')+'). 잠시 뒤 다시 눌러 주세요';}
+  }
+  (async()=>{
+    try{db=window.claude&&await window.claude.use('db');}catch(e){db=null;}
+    count(); if(!db) return;
+    db.collection('choices').onSnapshot(snap=>{
+      snap.docs.forEach(doc=>{const v=doc.data();const st=items.find(i=>i.n===v.n);if(!st)return;saved[v.n]=v;
+        if(document.activeElement!==st.el.querySelector('textarea')) st.el.querySelector('textarea').value=v.note||'';
+        st.pick=v.choice;paint(st);st.chip.classList.add('done');st.chip.textContent='안 #'+v.n+' · '+v.choice;
+        st.el.querySelector('.st').textContent='저장됨: '+v.choice+' ('+new Date(v.savedAt).toLocaleString('ko-KR')+')';});
+      count();
+    },()=>{});
+  })();
+})();
+</script>

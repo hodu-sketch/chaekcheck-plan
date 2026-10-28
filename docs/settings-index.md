@@ -42,7 +42,7 @@
 
 | 값 | 지금 값 | 들어 있는 곳 | 상태 | 정한 문서 | 근거 | 태그 | 함께 바꿀 곳 |
 |---|---|---|---|---|---|---|---|
-| 동시 검색 자리 (바로 검색 묶음 1개·대출 상태 조회 묶음 1개·「더 보기」 1번이 각각 1자리) | 지금 20 → **40** (넘으면 바로 503 `server_busy`) | `be.yml` `max-concurrent-searches` (환경 변수 `CHAEKCHECK_AVAILABILITY_MAXCONCURRENTSEARCHES`) | 20 구현됨, 40 인계 예정 (사이클 20 1단계) | [전반 점검 #13](cycles/20-lookup-status-and-extension/easy/2026-10-17-overall-review.html) (2026-10-17) | 사용자: "이걸 올리는 게 나을 것 같은데 사이클 20에게 알려줘" (2026-10-17), 40은 제안 → 승인. 어림(측정 아님): 20이면 초당 약 3~4검색에서 503, 40이면 약 6~8, 보통 응답(약 0.2MB) 기준 힙 어림 약 150MB ([multi-source-ip](research/deploy/multi-source-ip.md) 10절, [부하·메모리 어림](research/deploy/easy/2026-10-17-load-memory-sim.html) 6번 카드). 해석 메모리는 6-1절 해석 자리 8이 맡음. 1MB 쪽만 오는 최악 = 진행 중 요청 200건(검색 자리 40 × 묶음 5) × 1MB + 해석 자리 8 × 약 8MB(1MB 쪽 해석 실측 7.4MB) ≈ 200 + 64 = 약 264MB(바탕 힙 약 77MB를 더하면 약 340MB, 힙 512MB 안) [안: 어림, 배포 뒤 측정] (6-1절과 같은 값, design-delta 전반 점검 #4). 배포 뒤 1분 요약 로그(힙·503)로 60을 볼지 정함. 처음 20: "개인 서비스에 몇 초 안 20검색은 드묾" (dev 주석) | [확정] | 상태 불 단계(20 노랑·40 빨강, 사이클 20 R1), 6-1절 해석 자리 |
+| 동시 검색 자리 (바로 검색 묶음 1개·대출 상태 조회 묶음 1개·「더 보기」 1번이 각각 1자리) | 지금 20 → 40 → **60** (v1.2.0, dev `application.yml` `chaekcheck.availability.max-concurrent-searches: 60`, 커밋 `21dd568`, 이유 [이유 미확인] — 사이클 22 회고 2026-10-23) (넘으면 바로 503 `server_busy`) | `be.yml` `max-concurrent-searches` (환경 변수 `CHAEKCHECK_AVAILABILITY_MAXCONCURRENTSEARCHES`) | 20 구현됨, 40 인계 예정 (사이클 20 1단계) | [전반 점검 #13](cycles/20-lookup-status-and-extension/easy/2026-10-17-overall-review.html) (2026-10-17) | 사용자: "이걸 올리는 게 나을 것 같은데 사이클 20에게 알려줘" (2026-10-17), 40은 제안 → 승인. 어림(측정 아님): 20이면 초당 약 3~4검색에서 503, 40이면 약 6~8, 보통 응답(약 0.2MB) 기준 힙 어림 약 150MB ([multi-source-ip](research/deploy/multi-source-ip.md) 10절, [부하·메모리 어림](research/deploy/easy/2026-10-17-load-memory-sim.html) 6번 카드). 해석 메모리는 6-1절 해석 자리 8이 맡음. 1MB 쪽만 오는 최악 = 진행 중 요청 200건(검색 자리 40 × 묶음 5) × 1MB + 해석 자리 8 × 약 8MB(1MB 쪽 해석 실측 7.4MB) ≈ 200 + 64 = 약 264MB(바탕 힙 약 77MB를 더하면 약 340MB, 힙 512MB 안) [안: 어림, 배포 뒤 측정] (6-1절과 같은 값, design-delta 전반 점검 #4). 배포 뒤 1분 요약 로그(힙·503)로 60을 볼지 정함. 처음 20: "개인 서비스에 몇 초 안 20검색은 드묾" (dev 주석) | [확정] | 상태 불 단계(20 노랑·40 빨강, 사이클 20 R1), 6-1절 해석 자리 |
 | 묶음당 동시 도서관 (적용: 바로 검색, 책 기준 검색 뒤 대출 상태 조회 / 적용 안 됨: 책 찾기 `/books`, 도서관 한 곳 「더 보기」) | 5 | `be.yml` `batch.parallelism` | 구현됨 | 사이클 02 [design-delta](cycles/02-library-expansion/design-delta.md) 261행 (제안값, "프로토타입으로 확인"), 쉬운 설명: [결정 페이지](cycles/20-lookup-status-and-extension/easy/2026-10-16-review-decisions.html) 카드 「질문에 답: 묶음을 왜 5곳으로 했나」 | [이유 미확인] — 사용자 결정·측정 기록 없음. 배포 뒤 "검색 한 번이 묶음을 몇 번 도는지"로 맞춤 | [안] | 확장 전체 동시 5 |
 | 묶음 줄 상한 (**2026-10-18 바뀜: '도서관에서 직접 찾기'에만 적용** / 적용 안 됨: 바로 보기 = 위 「바로 보기 묶음 크기」 10을 씀, 책 찾기 `/books`, 「더 보기」) | **10줄** | `be.yml` `batch.row-limit` | 구현·배포됨 | 사이클 20 명세 R15, 검토 #23; 적용 범위 좁힘 dev `bb26e0d` (2026-10-18) | 사용자: "검색 결과 수를 줄여야겠다 10개로" (2026-10-16). 바로 보기는 R15-1 대체로 `holding-batch-size` 10을 쓰게 되어, row-limit 10은 도서관 직접 찾기에만 남음 | [확정] | 확장 모드 같은 값 |
 | 책 기준 검색 한 쪽 책 수 | 지금 기본 20 → **기본 10** (최대 20) | 지금 dev `catalog/internal/web/BookParams.java` 상수 `MAX_PAGE_SIZE = 20` 하나가 기본값·최대를 함께 맡음(2026-10-16 읽음) → 기본값을 설정 속성으로 분리. 값은 서버 설정 속성 하나에서 정함 [확정] (검토 #30 승인 2026-10-16: 서버 설정 속성 하나, 웹은 `pageSize`를 보내지 않음) | 인계 예정 | 사이클 20 명세 R15, 검토 #23 | 같음. 이어지는 대출 조회(`book-availabilities/stream`)도 대략 반 | 10 [확정] / 정하는 곳 [안] | — |
@@ -147,7 +147,7 @@
 
 | 값 | 환경 변수 | 지금 기본값 |
 |---|---|---|
-| 동시 검색 자리 | `CHAEKCHECK_AVAILABILITY_MAXCONCURRENTSEARCHES` | 20 → 40 (사이클 20, 전반 점검 #13) |
+| 동시 검색 자리 | `CHAEKCHECK_AVAILABILITY_MAXCONCURRENTSEARCHES` | 20 → 40 (사이클 20, 전반 점검 #13) → 60 (v1.2.0, 사이클 22 회고) |
 | 묶음당 동시 도서관 | `CHAEKCHECK_AVAILABILITY_BATCH_PARALLELISM` | 5 |
 | 도서관 직접 찾기 줄 상한 (2026-10-18부터 바로 보기엔 미적용) | `CHAEKCHECK_AVAILABILITY_BATCH_ROWLIMIT` | 10 |
 | 바로 보기 묶음 크기 (R15-1 대체) | `CHAEKCHECK_AVAILABILITY_BATCH_HOLDINGBATCHSIZE` [안] | 10 (dev `bb26e0d`, 2026-10-18) |
@@ -237,3 +237,45 @@
 | 조회 서버 쪽 시간(연결 1초·읽기 7초·쉼 30초, 7절)이 맞는지, 근거 | 사이클 17 배포 뒤 기록으로 |
 | 도서관 응답 gzip 압축률 (6-1절) | dev가 도서관 몇 곳에서 측정 |
 | 브라우저 번호 장부 줄 하나 크기(어림 약 100B → 5만 줄 약 5MB) | 배포 뒤 측정 |
+
+## 사이클 22 이후 dev가 더한 값 (사후 정리, 2026-10-23)
+
+| 값 | 지금 | 어디 | 근거 |
+|---|---|---|---|
+| 운영 서비스 힙 | `-Xmx640m -XX:+ExitOnOutOfMemoryError` | dev `deploy/prod/compose.yaml` `JAVA_TOOL_OPTIONS` | dev main `d3c2696` 확인. plan-feedback에는 "반영 때 512MB OOM → 1GB" 기록이 있어 어긋남 [확인 필요] |
+| 조회 운영 표본 간격·보관 | 10초 · 90일 | `chaekcheck.availability.ops-sample.interval=10s`, `retention=90d`, `enabled=true` | ADR-0146 |
+| 추천목록 표지 파일 캐시 | 7일 | nginx `/covers/` `Cache-Control "public, max-age=604800"` | ADR-0144 |
+| 사서추천 표지 캐시 | 30일, immutable | `/api/v1/picks/covers/{id}` | ADR-0144 |
+
+
+## 사이클 23 「나에게 맞는 책」 — 설계됨(미구현, 사이클 23)
+
+근거: `docs/cycles/23-for-you-picks/design-delta.md` "설정" 절, ADR-0148·0149. 이름은 모두 [안], dev가 정함
+
+| 값 | 설계 값 | 어디 (예정) | 상태 태그 |
+|---|---|---|---|
+| 새벽 기본 목록 만들기 시각 | 05:00 사서 받기와 겹치지 않는 새벽(예 04:00), 켤 때 오늘 것 없으면 만듦 | `chaekcheck.foryou.build.cron` | 새벽 [확정] (spec R2-5) / 시각 [안] |
+| 인기 사이트·쪽 | 교보 일반 4곳 + YES24 V1 2곳, 사이트마다 앞 100권, 호스트당 1건·1초(`availability` 조회 줄) | `chaekcheck.foryou.sources.*` | [확정] (spec R2-2) |
+| 출판유통·KLWAVE 요청 | 연결 5초·읽기 10초·간격 1초, 출처마다 `enabled` | `chaekcheck.foryou.sources.<source>.*` | [안] |
+| 출처 빼기 기준 | 0줄 또는 책 맞춤 90% 미만 | 같음 | [안] |
+| 점수 | 예약 2배, 연도 구간 3·6·10년 가산 1.5·1.0·0.6·0.3, 출판유통 × 1.5, KLWAVE × 0.3 | `chaekcheck.foryou.score.*` | 예약·연도·출판유통 [확정] (spec R2-3, 조정 가능 R2-3a) / KLWAVE [안] |
+| 기본 목록 권수 | 40 | | [확정] (spec R2-4) |
+| 기록 보관 | 30일, 마지막 succeeded 하나는 남김 | | 30일 [안] / 남김 [확정] |
+| 이웃·개인 추천 | 이웃 20, 개인 추천 최대 60, 한 쪽 20, 다시 보여 주기 20권마다 2·후보 6 | | [확정] (spec R6) |
+| 브라우저 본 책 | 200권·30일·10초(보일 때만)·다시 보여 주기 3일·S19 빼기 30일 | 웹 상수 | [확정] (spec R5·R6-1b·R6-4) |
+| 메모리 사본 다시 읽기 | 만든 뒤 + 10분 | | [안] (PicksCache와 같게) |
+| 이웃 전체 다시 계산 | 반년에 한 번쯤 (PC) | dev 수집 절차 | [확정] (설계 결정 #8) |
+
+
+## 사이클 26 책 설명 한 곳에 모으기 — 설계됨(미구현, 사이클 26)
+
+근거: `docs/cycles/26-book-descriptions/design-delta.md` "외부 연동"·"서버 자원"·"settings-index.md에 올릴 값" 절, ADR-0162·0163·0165. 이름은 따로 적지 않으면 [안], dev가 정함
+
+| 값 | 설계 값 | 어디 (예정) | 상태 태그 |
+|---|---|---|---|
+| 표지 주소 기준 | CloudFront 기본 도메인 `https://<id>.cloudfront.net`. `CoverUrls`가 `<base-url>/covers/<sha1>.jpg`를 만듦 | `chaekcheck.covers.base-url` (be.yml, 운영 환경 변수) | 방식 [확정] (ADR-0163) / 설정 이름 [안] |
+| S3 표지 객체 캐시 | `Cache-Control: public, max-age=604800` (7일, 지금 nginx `/covers/`와 같은 값) | PC 올리기(`aws s3 sync`) 때 객체 메타데이터 | [확정] (ADR-0163, design-delta "외부 연동") |
+| CSP `img-src` | `'self' data: https://<id>.cloudfront.net` (CloudFront 주소를 더함) | 운영 nginx CSP 머리, 웹 `safeCoverUrl` 허용 주소(빌드 설정) | 방식 [확정] (ADR-0163) / 주소 [안] |
+| PC IAM 권한 | 표지 버킷에 `s3:PutObject`·`s3:ListBucket`만, PC의 AWS CLI 프로필 하나(IAM 사용자 키). 운영 서버에는 권한 없음 | AWS IAM (PC) | 방식 [확정] (설계 #4 승인) / 버킷·사용자 이름 [안]. 단기 자격 증명으로 바꿀 수 있는지 [확인 필요] |
+| 책 프로필 메모리 | 77,551권, 같은 값 문자열을 나눠 쓰면 약 12~16MB (힙 `-Xmx640m` 안), 서버 시작 때 `BookProfiles.all()`로 한 번 읽음 | `aisearch` 메모리 | [추론] (design-delta "서버 자원") |
+| 바꿔 끼우기 `lock_timeout` | 지금 값 그대로(2초, 실패하면 10초 뒤 다시, 최대 5번 — `data-model.md` `catalog` 절). 사이클 26부터 설명 표 5개 DELETE가 같은 트랜잭션(DROP 앞)에 들어가 이 한도 안에서 돎. 잠금 시간을 넘기면 DELETE도 되돌아감 | `JdbcCatalogLoad.swap` `SET LOCAL lock_timeout` | 값 [확정] (사이클 08, 사용자 승인 2026-10-11) / DELETE를 같은 트랜잭션에 넣음 [확정] (ADR-0162). 트랜잭션 안 DELETE 시간 [확인 필요] (dev가 시험 DB에서 잼) |

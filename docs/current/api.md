@@ -16,11 +16,12 @@
 사이클 15·16·18 회고 (2026-10-15): 구현됨으로 바꾸고 실제 이름·값을 맞춤. 15 `usagelog`·16 `sitecontent` 구현됨, 18은 A1·A2·B 구현됨(dev main `a0e438a`), C(운영 반영)는 `docs/backlog.md` "사이클 18 C"로 옮김 (사용자: "운영 반영은 백로그랑 CYCLE19 PLAN에게 알려주고 이거 마무리하자", 2026-10-15). 근거 `docs/cycles/15-usage-log/retro.md`, `docs/cycles/16-notices-and-policies/retro.md`, `docs/cycles/18-empty-library-holdings/retro.md`, dev `plan-feedback.md` "# 사이클 15"·"# 사이클 16"·"# 사이클 18".
 사이클 19 cycle-close (2026-10-15): 저자·제목 표기 정리 — 설계됨(미구현, 사이클 19). ADR-0113~0117. REST 모양 변경 없음, `GET /api/v1/books` 저자 검색어에 기호 떼기, 책 묶음·`author_display` 값만 바뀜. 근거 `docs/cycles/19-author-angle-brackets/design-delta.md` "API".
 사이클 21 cycle-close (2026-10-16): 추천도서 세 목록 — 설계됨(미구현, 사이클 21). ADR-0126. `GET /api/v1/picks/{listKey}`(`librarian`·`leedongjin`·`snu100`)가 `GET /api/v1/picks`를 대신하고 그 주소는 지움, 새 오류 코드 `list_not_found`, 책 칸 `recomNo` → `id` 등, 표지 주소 그대로, 사용 알림 `picks_*`에 `list` 필수. 근거 `docs/cycles/21-recommended-books/design-delta.md` "API".
-사이클 22 cycle-close (2026-10-18): 첫 화면 사용성 — 설계됨(미구현, 사이클 22), **웹만 바뀜·API 변경 없음**. 웹이 보내는 `scope`는 늘 `joinable`이고 결과 안 [전국에서 찾기]·[전국에서 더 찾기]·상세검색 "☐ 전국에서 찾기"일 때만 `all`(그 검색만). `GET /api/v1/libraries`(지역 없이)는 직접 추가 이름·이름 찾기에 필요할 때만 한 번. 이용 기록 새 이벤트 없음. ADR-0135~0137. 근거 `docs/cycles/22-first-screen-usability/design-delta.md`.
+사이클 22 cycle-close (2026-10-18): 첫 화면 사용성 — 구현됨 v1.1.0, 뒤에 화면이 많이 바뀜(사이클 22 회고 2026-10-23 — 지금 모습은 이 문서 끝 "사이클 22 이후 dev 변경" 절과 `docs/cycles/22-first-screen-usability/retro.md`), **웹만 바뀜·API 변경 없음**. 웹이 보내는 `scope`는 늘 `joinable`이고 결과 안 [전국에서 찾기]·[전국에서 더 찾기]·상세검색 "☐ 전국에서 찾기"일 때만 `all`(그 검색만). `GET /api/v1/libraries`(지역 없이)는 직접 추가 이름·이름 찾기에 필요할 때만 한 번. 이용 기록 새 이벤트 없음. ADR-0135~0137. 근거 `docs/cycles/22-first-screen-usability/design-delta.md`.
 
-사이클 20 cycle-close (2026-10-17): 조회 상태 신호와 브라우저 확장 조회 — 설계됨(미구현, 사이클 20). ADR-0118·0119·0131·0132. 새 요청 `GET /api/v1/lookup-status`(1단계), 확장 모드 계획·올리기·닫기 `POST /api/v1/lookup-plans/*`(2단계), 새 오류 코드 `invalid_plan`·`client_ip_changed`(2단계)·`invalid_client_key`·`lookup_ip_limited`(3단계)·`payload_too_large`, 결과 10(`/books` `pageSize` 기본 10, 묶음 `rowLimit` 10), 동시 검색 상한 40, 도서관 응답 본문 1MB·gzip, `stopReason` `CLIENT_GONE`. 기존 요청 모양은 그대로. 근거 `docs/cycles/20-lookup-status-and-extension/design-delta.md` "API"·"외부 연동". 이름은 따로 적지 않으면 [안].
+사이클 20 cycle-close (2026-10-17): 조회 상태 신호와 브라우저 확장 조회 — 설계됨, 1단계 일부만 구현(v1.4.0: `GET /api/v1/lookup-status`·`HostQueueBoard`·`ParseSlots`·`BodyLimit`·`usagelog-004`; 웹 머리말 상태 불은 지움, `extension/` 없음 — ADR-0146, 2026-10-23 dev main 확인. 사이클 20 회고 전). ADR-0118·0119·0131·0132. 새 요청 `GET /api/v1/lookup-status`(1단계), 확장 모드 계획·올리기·닫기 `POST /api/v1/lookup-plans/*`(2단계), 새 오류 코드 `invalid_plan`·`client_ip_changed`(2단계)·`invalid_client_key`·`lookup_ip_limited`(3단계)·`payload_too_large`, 결과 10(`/books` `pageSize` 기본 10, 묶음 `rowLimit` 10), 동시 검색 상한 40, 도서관 응답 본문 1MB·gzip, `stopReason` `CLIENT_GONE`. 기존 요청 모양은 그대로. 근거 `docs/cycles/20-lookup-status-and-extension/design-delta.md` "API"·"외부 연동". 이름은 따로 적지 않으면 [안].
 사이클 21 회고 (2026-10-17): `GET /api/v1/picks/{listKey}`·`list_not_found`·응답 칸(`list`, `id`, `listTitle`, `yearBook`, `videoId`, `tocNo`)·사용 알림 `list` 구현됨, 이름·칸이 설계 그대로 (dev `PicksController.java` 57·138~158행, main `836bd7b`). 웹은 `listTitle`을 받지만 화면에 쓰지 않음(사용자, 2026-10-17). 추천도서 책 창은 같은 대출 현황 스트림을 `holdingLimit` 3 → 6 → 10 → 20으로 넓혀 다시 부름(새 API 없음). 근거 `docs/cycles/21-recommended-books/retro.md`.
 사이클 19 회고 (2026-10-18): 책 검색 저자 칸 기호 떼기 구현됨 (dev main `1c129e8`, 운영 역할 DB 반영 기록 12번). REST 모양 변경 없음 그대로. 근거 `docs/cycles/19-author-angle-brackets/retro.md`, dev `plan-feedback.md` "# 사이클 19".
+사이클 26 cycle-close (2026-10-28): 책 설명 한 곳에 모으기 — 설계됨(미구현, 사이클 26). ADR-0161·0163·0164. `GET /api/v1/books/{bookId}`에 `coverUrl`·`summary`(없으면 null), `GET /api/v1/picks/{listKey}`의 `coverUrl`은 ADR-0164 차례로 고르고 `aiSummary` 값은 `catalog` 요약, 「나에게 맞는 책」 카드는 `aiSummary` 칸 없이 `blurb` 하나, 표지 주소는 CloudFront 기준(`chaekcheck.covers.base-url`), `GET /api/v1/picks/covers/{coverId}`는 배포 2에서 지움. 근거 `docs/cycles/26-book-descriptions/design-delta.md` "API". 이 문서 끝 「책 설명 (사이클 26)」
 
 사이클 13 cycle-close (2026-10-12, 사이클 12와 나란히 미리 한 plan, 사이클 12 뒤에 개발): 새 요청 `GET /api/v1/join-surveys/latest`(모듈 `collection`, 인증 없음, 가입 조건 조사 기준일)와 S12 `/about` 공지 한 줄 — 구현됨 (사이클 13, 회고 2026-10-14). 다른 요청·응답·오류 코드는 그대로(새로 넣은 도서관은 `/libraries`·스트림에 지금 모양으로 나옴, 1215 이름은 "한화S&C"). 근거 `docs/cycles/13-crawler-to-dev/design-delta.md` "API", flow.md S12, ADR-0087·0093.
 사이클 08 cycle-close (2026-10-11): `GET /api/v1/libraries` 항목과 스트림 `targets.libraries[]`에 `mobileSiteDiffers`, 503 `server_busy`에 `Retry-After: 5`, 대출 현황 스트림의 도서관별 실패 코드 `holding_not_found`, 429·503 화면 안내 문구를 따로 둠 — 구현됨 (사이클 08). 요청 모양은 그대로. 근거 `docs/cycles/08-polish-swap-memory/design-delta.md` "API"·"웹", ADR-0070.
@@ -59,14 +60,14 @@
 | GET | `/api/v1/ebook-searches/batches/stream?{title\|author\|publisher}=&filter=&batchNo=&candidates=libraryId:page,…` | `availability` | 다음 묶음 (SSE). 브라우저가 계획에서 고른 후보(최대 K=50 [안])만 조회. 이벤트는 위에서 `targets`를 뺀 것. `batchNo`는 2 이상, 쪽 번호 최대 5자리. 조회 후보는 `candidates`로만 정함(후보가 이미 계획에서 나옴). 사이클 15부터 기록용 쿼리 값 `scope`·`visit`·`residenceRegionIds`·`workRegionIds`·`libraryIds`도 받음 — `search_more`에 남기기만 하고 조회 범위에는 쓰지 않음, 틀린 값이어도 400 없이 그 칸만 비움 [확정] (사용자: "그래 이대로 해", 2026-10-14; dev `EbookBatchStreamController.java` 40~44행) |
 | GET | `/api/v1/availability/libraries/{libraryId}/ebooks?{title\|author\|publisher}=&page=` | `availability` | 도서관 하나의 한 페이지 (도서관별 더 보기). 판정이 나중에 정해지는 줄은 판정을 읽은 뒤(최대 30초) 응답. `page`가 없으면 1. 사이클 15부터 기록용 쿼리 값 `filter`·`scope`·`visit`·`residenceRegionIds`·`workRegionIds`·`libraryIds`도 받음 — `search_more`에 남기기만 하고 응답에는 쓰지 않음, 틀린 값이어도 400 없이 그 칸만 비움 [확정] (사용자: "그래 이대로 해", 2026-10-14; dev `LibraryEbookController.java` 69~73행) |
 | GET | `/api/v1/books?title=&author=&publisher=&exact=&roles=&sort=&residenceRegionIds=&workRegionIds=&scope=&visit=&libraryIds=&page=&pageSize=` | `catalog` | 수집 목록 책 검색 (도서관 요청 없음). 채운 칸끼리 AND, 칸 안은 띄어쓰기로 나눈 단어 AND(정리값 비교), `exact`(title,author,publisher), `roles`(translator,illustrator,editor), `sort`(default\|newest\|oldest). `pageSize` 1~20(기본 20; 사이클 20에서 기본 10을 설정 속성 하나로, 최대 20 그대로, 웹은 `pageSize`를 보내지 않음 — 설계됨(미구현, 사이클 20, 1단계) [확정] (세 관점 검토 #23·#30)), `page` 1 이상. 검증 순서 조건 칸 → `exact`·`roles`·`sort` → `scope`·`visit` → `page`·`pageSize` → 지역. `errors[].code`: `required`, `duplicate`, `invalid_format`, 지역 `too_many`, 칸 길이는 `invalid_query`. 채우지 않은 칸의 `exact`와 저자 칸 없는 `roles`는 무시(오류 아님, dev 결정). 응답: 페이지 객체 + `collectedFrom`·`collectedTo`(결과 전체의 책을 가진 계획 도서관 기준, 한국 날짜). 계획 도서관이 없는 책은 뺌. 검색어의 `%`·`_`는 이스케이프. 구현됨. 사이클 06: `libraryIds`를 받고, 정렬 첫 키가 `joinTier` `CHOSEN`(항목 `joinTier: "CHOSEN"`) — 구현됨 (사이클 06). 검증 순서(사이클 06 기준): 조건 칸 → `exact`·`roles`·`sort` → `scope` → `visit` → `libraryIds` → `page`·`pageSize` → 지역 [확정] (dev 구현 확인, 2026-10-05). `/books`에는 `filter`가 없음. 사이클 07 (구현됨 (사이클 07)): 응답 모양 그대로, 계획 도서관 번호 배열 `:planned`로 `b.library_ids && :planned` 거르기, 등급·도서관 수·기준일은 `unnest(b.library_ids)`와 계획을 맞춰 구하고 `holding`은 읽지 않음 [확정] (ADR-0055). 계획 도서관이 50곳 [안] 이하면 GIN `book_library_ids_gin`으로 거르고, 넘으면 GIN 없이 거름(제목·출판사·사람 인덱스가 찾은 줄만) — [이유 미확인: dev가 정함] (385곳에서 GIN 1.4초 → 바꾼 뒤 393ms, 결과 57개 같음), 회고에서 그대로 둠 [확정] (사용자 승인, 2026-10-05). 책 한 권(`/books/{bookId}`)은 그대로 `holding`을 읽음. 목표: 정해 둔 검색어 묶음("사랑", "소년", "해리", "역사", "김영하", "민음사", 제목+저자 AND 2개, 출판일순 1개)에서 첫 쪽 1초 안 [확정] (spec R7-1, 사용자 승인 2026-10-05) — 결과 가장 느린 첫 쪽 393ms, 통과 (dev 측정, 2026-10-05) |
-| GET | `/api/v1/books/{bookId}?…&libraryIds=` | `catalog` | 책 하나(S3): 대표 서지, `holdingLibraryCount`(범위·방문 반영), `libraries[]{libraryId, collectedAt(+09:00)}`. 없는 책·숫자가 아닌 id 404 `book_not_found`. 구현됨. `libraryIds`도 구현됨 (사이클 06) |
+| GET | `/api/v1/books/{bookId}?…&libraryIds=` | `catalog` | 책 하나(S3): 대표 서지, `holdingLibraryCount`(범위·방문 반영), `libraries[]{libraryId, collectedAt(+09:00)}`. 없는 책·숫자가 아닌 id 404 `book_not_found`. 구현됨. `libraryIds`도 구현됨 (사이클 06). **사이클 26 — 설계됨(미구현, 사이클 26)**: 응답에 `coverUrl`(그 판의 `catalog` 표지, CloudFront 완성 주소 또는 null)·`summary`(책첵 요약 또는 null) 더함, 버전·오류 그대로 [안: 칸 이름] |
 | GET | `/api/v1/book-availabilities/stream?bookIds=&residenceRegionIds=&workRegionIds=&filter=&scope=&visit=&libraryIds=` | `availability` | 책을 가진 계획 도서관의 상세 페이지를 읽는 소장 단위 스트림. `bookIds` 최대 20 [안]. 검증 순서 `bookIds` → `filter` → `scope` → `visit` → 지역, id 목록 오류 `required`/`invalid_format`/`duplicate`/`too_many`. 이벤트 `targets`(`libraries[]`는 계획 전체가 아니라 **소장이 있는 계획 도서관만**(dev 결정), `holdings[]{holdingId, bookId, libraryId}`는 `bookIds` 순서·한 책 안은 계획 순서) → `holding-requested` / `holding-result`(`item`은 페이지 줄과 같은 모양, `rank` 0, `titleKey` `book:<bookId>`, `cached`는 3분 캐시) / `holding-failed` → `batch-done` → `done`. `row-verdict` 없음. 교보 구독형은 요청 없이 `SUBSCRIPTION`. 호스트가 다른 `detail_url`은 요청 없이 `holding-failed` `upstream_error`. 꺼진·없는 도서관은 `library_not_found`. 소장 번호가 지금 목록에 없으면(가져오기로 빠진 소장) `holding-failed` `holding_not_found`로 나눔 [확정] (사용자 승인, 2026-10-11, ADR-0070) — 구현됨 (사이클 08) (사이클 07까지는 둘 다 `library_not_found`). 소장 번호는 가져오기 뒤에도 같은 소장이면 그대로라 바꿔 끼우기 전에 연 화면의 남은 소장은 정상으로 답함(ADR-0070). 캐시 키 `(libraryId, detailUrl)`. 구현됨. `libraryIds`(검증은 `visit` 다음, 지역 앞)와 `targets.libraries[].chosen`도 구현됨 (사이클 06). 사이클 07 (구현됨 (사이클 07), ADR-0056): 북큐브(`BOOKCUBE_FX`)는 상세 주소 `/product/view/?num=`을 같은 호스트의 XML `/xml/productView/?num=`로 바꿔 읽음(`detailFetchUri`), 북큐브 대여형은 `SUBSCRIPTION`, 교보 구독형 화면이어도 `lending_model = OWNED`인 도서관만 요청해서 상세 쪽의 숫자를 읽음(그 밖은 요청 없이 `SUBSCRIPTION`), 알라딘(`ALADIN_V1`)은 상세 HTML "보유현황". `targets.libraries[]`에 `joinSurvey`·`logoUrl`. 사이클 08 (구현됨 (사이클 08), ADR-0066): 소장은 계획에 든 도서관 줄만 DB에서 읽음(`CatalogHoldings.holdingsOf(bookIds, libraryIds)`, 옛 `holdingsOf(bookIds)`는 지움), 응답 모양 그대로. 바꿔 끼우기 전에 받은 소장 번호로 바꿔 끼운 뒤 다음 묶음을 불러도 정상 (AC-8c). **사이클 10 — 구현됨 (사이클 10)**: 선택 파라미터 `holdingLimit` [확정] (dev 구현 확인, 2026-10-12) — 1~20 정수. 있으면 그 책을 가진 계획 도서관 소장 가운데 **앞의 N개만** `targets.holdings[]`에 넣고 그것만 요청함. 책이 여럿이면 계획 순서 → 책 순서 → 원래 자리로 앞의 N개를 고르고, 보내는 순서는 원래 순서 그대로. 없으면 지금과 같음(기존 화면 영향 없음) [확정 동작] (사용자: "가. 앞의 3곳만 확인 이걸로 해줘 api좀 손봐줘", 2026-10-12, `docs/cycles/10-popular-books/easy/2026-10-12-handoff-review.html` #1). 검증 [확정] (dev 구현 확인, 2026-10-12): 1~20 정수만(`007`, `3.0`, `0`, `21`은 400 `validation_error`, `field: holdingLimit`, `invalid_format`), 두 번 → `duplicate`, 빈 값은 없는 것과 같음. 지역 형식 검사 뒤, 계획 만들기(422 `invalid_region`) 앞에서 검사. 다음 묶음(`…/batches/stream`)은 이 옵션의 영향을 받지 않음, 웹은 첫 묶음만 씀. 사서추천도서(사이클 10 인기 도서) S14가 `holdingLimit=3`으로 부름. 사이클 21 — 구현됨 (사이클 21, 회고 2026-10-17): 추천도서 세 목록 S14는 첫 3곳에 지금 빌릴 수 있는 곳(`AVAILABLE`)이 없고 더 볼 도서관이 있으면 같은 요청을 `holdingLimit` 6 → 10 → 20으로 다시 부름(앞서 본 도서관은 서버 캐시 3분에서) [확정] (사용자, 2026-10-17) |
 | GET | `/api/v1/book-availabilities/batches/stream?filter=&batchNo=&candidates=holdingId,…` | `availability` | 다음 묶음 (K=50 [안]). 구현됨. 사이클 20 — 설계됨(미구현, 사이클 20, 1단계): 웹이 자동으로 이어 부르는 것은 첫 묶음 포함 최대 3묶음, 그 뒤는 「더 보기」를 누를 때 [확정] (전반 점검 #7, ADR-0132) |
 | GET | `/api/v1/lookup-status` | `availability` | **사이클 20 — 설계됨(미구현, 사이클 20, 1단계)** (ADR-0118). 조회 상태 신호 값, 도서관을 부르지 않음, 인증 없음. 아래 "조회 상태와 확장 모드 계획" |
 | POST | `/api/v1/lookup-plans/searches`·`/holdings`·`/more`, `/{planId}/items/{itemId}`, `/{planId}/close` | `availability` | **사이클 20 — 설계됨(미구현, 사이클 20, 2단계)** (ADR-0119). 확장 모드 계획·받은 원본 올리기·닫기. 아래 "조회 상태와 확장 모드 계획" |
-| GET | `/api/v1/picks/{listKey}?residenceRegionIds=&workRegionIds=&scope=&visit=&libraryIds=` | `picks` | **사이클 21 — 구현됨 (사이클 21, 회고 2026-10-17)** (ADR-0126). 추천 목록 하나: `listKey` = `librarian`(사서 추천도서)·`leedongjin`(이동진 추천도서)·`snu100`(서울대 100선). 인증 없음. 계획 파라미터는 아래 사이클 14 `GET /api/v1/picks`와 같음. 200 `{list, fetchedAt, categories[]}`, 목록이 없으면 빈 `categories`. 오류 404 `list_not_found`, 400 `validation_error`, 422 `invalid_region`, 500 `internal_error` (ProblemDetail) [확정] (ADR-0126). 모양·칸 뜻은 아래 "추천도서 세 목록" |
+| GET | `/api/v1/picks/{listKey}?residenceRegionIds=&workRegionIds=&scope=&visit=&libraryIds=` | `picks` | **사이클 21 — 구현됨 (사이클 21, 회고 2026-10-17)** (ADR-0126). 추천 목록 하나: `listKey` = `librarian`(사서 추천도서)·`leedongjin`(이동진 추천도서)·`snu100`(서울대 100선). 인증 없음. 계획 파라미터는 아래 사이클 14 `GET /api/v1/picks`와 같음. 200 `{list, fetchedAt, categories[]}`, 목록이 없으면 빈 `categories`. 오류 404 `list_not_found`, 400 `validation_error`, 422 `invalid_region`, 500 `internal_error` (ProblemDetail) [확정] (ADR-0126). 모양·칸 뜻은 아래 "추천도서 세 목록". **사이클 26 — 설계됨(미구현, 사이클 26)**: 책의 `coverUrl`은 ADR-0164 차례(연결한 판 표지 → 같은 작품 다른 판 표지 → 목록 그림)로 고른 CloudFront 완성 주소, `aiSummary` 값은 `catalog` 요약(칸 이름 그대로) [안] |
 | ~~GET~~ | ~~`/api/v1/picks?residenceRegionIds=&workRegionIds=&scope=&visit=&libraryIds=`~~ | `picks` | 사이클 21에서 지움 — 구현됨 (사이클 21, 회고 2026-10-17) (배포 전, 웹만 부름, ADR-0089 선례; 웹 `/picks`는 `/picks/librarian`으로 넘김). 아래는 사이클 14 구현 기록. **사이클 14 — 구현됨 (사이클 14, 회고 2026-10-14)** (ADR-0089·0090). `/api/v1/popular-books`(사이클 10)를 대체했고 옛 경로는 지움. 최근 12번 사서추천(추천 연월이 다른 최근 12개 달, 약 2년, 분류별) + 전자책 있음/없음 [확정] (사용자 결정, dev 2026-10-14; 처음 6번). 측정: 강서구 계획 p50 27.4ms·p95 35.9ms, 응답 51,207바이트(108권, 분류 6개) (dev, 2026-10-14). 인증 없음 [확정] (spec R7-3). 계획 파라미터는 `/api/v1/books`와 같은 이름·검증 규칙, 페이지 없음. 서버가 `LibraryCatalog.planSearch`로 계획 도서관을 만들고(실패 422 `invalid_region`) 공용 캐시의 목록과 책별 `(bookId, libraryIds)`로 `available`을 요청마다 계산. 200 `{fetchedAt, categories[{code, name, books[{recomNo, category, recommendedMonth, title, coverUrl, bookId, available}]}]}` — 모양·칸 뜻은 아래 "사서추천도서". 목록이 없으면 200 `{"fetchedAt": null, "categories": []}` [확정]. 오류 400 `validation_error`, 422 `invalid_region`, 500 `internal_error` (ProblemDetail). 도서관 사이트를 부르지 않으므로 nginx `limit_req` 대상 아님 |
-| GET | `/api/v1/picks/covers/{coverId}` | `picks` | 사이클 21: 그대로, 세 목록 표지를 함께 줌(이동진·서울대 표지는 수집기가 줄여 가져오기로 넣음, ADR-0123) — 구현됨 (사이클 21, 회고 2026-10-17). **사이클 14 — 구현됨 (사이클 14)** (ADR-0091). `/api/v1/popular-books/covers/{coverId}`를 대체(옛 경로 지움). 저장한 국립중앙도서관 표지(폭 200px JPEG로 줄인 것). 인증 없음. 200 그림(`Content-Type: image/jpeg`), `Cache-Control: public, max-age=2592000, immutable`(30일) [확정]. 없으면 404 `cover_not_found` [확정] → 웹은 제목 글자. 도서관 사이트를 부르지 않으므로 nginx `limit_req` 대상 아님. CSP는 바꾸지 않음(우리 주소) |
+| GET | `/api/v1/picks/covers/{coverId}` | `picks` | **사이클 26 배포 2에서 지움 (설계됨)** (그림은 S3 + CloudFront, ADR-0163·0166). 사이클 21: 그대로, 세 목록 표지를 함께 줌(이동진·서울대 표지는 수집기가 줄여 가져오기로 넣음, ADR-0123) — 구현됨 (사이클 21, 회고 2026-10-17). **사이클 14 — 구현됨 (사이클 14)** (ADR-0091). `/api/v1/popular-books/covers/{coverId}`를 대체(옛 경로 지움). 저장한 국립중앙도서관 표지(폭 200px JPEG로 줄인 것). 인증 없음. 200 그림(`Content-Type: image/jpeg`), `Cache-Control: public, max-age=2592000, immutable`(30일) [확정]. 없으면 404 `cover_not_found` [확정] → 웹은 제목 글자. 도서관 사이트를 부르지 않으므로 nginx `limit_req` 대상 아님. CSP는 바꾸지 않음(우리 주소) |
 | GET | `/api/v1/join-surveys/latest` | `collection` | **사이클 13 — 구현됨 (사이클 13, 회고 2026-10-14)** (ADR-0087·0093). 가입 조건 조사 기준일: 성공한 넣기 실행 기록(`collection.library_insert_run`, `status = 'SUCCEEDED'`) 중 `join_surveyed_on` 최댓값 [확정] (dev 구현 확인, 2026-10-14). 내 PC·운영 흉내 DB 모두 `2026-10-05` (AC-4·AC-7). 경로 [확정] (ADR-0093). 요청 파라미터 없음, 인증 없음(`SecurityConfiguration`은 `/api/v1/me/**`만 보호). 200 `{"surveyedOn": "2026-10-05"}`(`YYYY-MM-DD`), 기록이 없으면 200 `{"surveyedOn": null}`. 오류는 일반 500 `internal_error`(ProblemDetail). `collection` 컨트롤러(Java 공개 API는 없음). `/libraries`에 싣지 않음(큰 목록 약 874KB [안: architect 추정, 재지 않음], `library → collection` 의존 고리) (ADR-0087). 운영 DB에서도 값이 나오도록 운영 반영이 실행 기록 줄을 옮김 (ADR-0093, AC-7). 웹 S12 `/about`이 "가입 조건은 {YYYY}년 {M}월에 조사한 내용입니다."로 보임, 로딩 중 비움, `null`·오류면 줄 없음 [확정] (flow S12). 도서관 사이트를 부르지 않으므로 nginx `limit_req` 대상 아님 |
 | POST | `/api/v1/usage-events` | `usagelog` | **사이클 15 — 구현됨 (사이클 15, 회고 2026-10-15)** (ADR-0097). 사용 알림(도서관 클릭·화면 행동)을 한 주소로 받음, 늘 204. 아래 "사용 알림" 절 |
 | GET | `/api/v1/notices?page=` | `sitecontent` | **사이클 16 — 구현됨 (사이클 16, 회고 2026-10-15)** (ADR-0098). 공지 목록 10개씩, 1쪽이면 고정 공지를 `pinned`에. 아래 "공지·안내·약관 글" 절 |
@@ -83,7 +84,7 @@
 | 메서드 | 경로 | 설명 | 요청 | 응답 | 오류 |
 |---|---|---|---|---|---|
 | GET | `/api/v1/picks/{listKey}` | 목록 하나 (인증 없음) | `listKey` = `librarian`·`leedongjin`·`snu100`, 계획 파라미터 `residenceRegionIds`·`workRegionIds`·`scope`·`visit`·`libraryIds` (사이클 14와 같음) | 200 `{list, fetchedAt, categories[]}`. 목록이 없으면 빈 `categories` | 404 `list_not_found`, 400 `validation_error`, 422 `invalid_region`, 500 `internal_error` (ProblemDetail) |
-| GET | `/api/v1/picks/covers/{coverId}` | 표지 (그대로, 세 목록 함께) | | `image/jpeg` | 404 `cover_not_found` |
+| GET | `/api/v1/picks/covers/{coverId}` | 표지 (그대로, 세 목록 함께). 사이클 26 배포 2에서 지움 (설계됨) | | `image/jpeg` | 404 `cover_not_found` |
 | ~~GET~~ | ~~`/api/v1/picks`~~ | 지움 (배포 전, 웹만 부름, ADR-0089 선례) | | | |
 | POST | `/api/v1/usage-events` | 사용 알림에 `list` 필수 (`picks_list_view`·`picks_book_view`) | | 그대로 | 틀리면 `rejected_event` (그대로) |
 
@@ -117,7 +118,7 @@
 - 사용 알림 예: `{"type":"picks_list_view","list":"snu100","category":"korean_lit"}`
 - 위 값(번호·영상 ID)은 예시 값
 
-## 조회 상태와 확장 모드 계획 (`availability`) — 설계됨(미구현, 사이클 20)
+## 조회 상태와 확장 모드 계획 (`availability`) — 설계됨, 1단계 일부만 구현(v1.4.0: `GET /api/v1/lookup-status`·`HostQueueBoard`·`ParseSlots`·`BodyLimit`·`usagelog-004`; 웹 머리말 상태 불은 지움, `extension/` 없음 — ADR-0146, 2026-10-23 dev main 확인. 사이클 20 회고 전)
 
 근거 `docs/cycles/20-lookup-status-and-extension/design-delta.md` "API"·"외부 연동"·"개발 단계", ADR-0118·0119·0131·0132. 괄호 = dev 단계. 흐름은 `flows.md` 흐름 49~51.
 
@@ -541,13 +542,13 @@ data: {"result":"ok","bookIds":[1203344,88012,51007]}
 | `library_not_found` | 404 | 더 보기 — 없거나 꺼진 도서관. 다음 묶음에서는 그 도서관만 `library-failed`. 사이클 06(구현됨 (사이클 06)): `PUT /api/v1/me/libraries/{libraryId}` — 없음·꺼짐·숫자가 아닌 id, `DELETE /api/v1/me/libraries/{libraryId}` — 숫자가 아닌 id |
 | `library_import_not_empty` | 409 | 사이클 07 (구현됨 (사이클 07)): `POST /api/v1/me/library-imports` — 계정에 이미 직접 추가한 도서관이 있음 [확정] (dev 구현 확인, 2026-10-05) |
 | `too_many_requests` | 429 | 사이클 07 (구현됨 (사이클 07)): nginx가 붙임(앱이 아님). 도서관을 부르는 API(검색·소장 스트림 4개, `/api/v1/availability/`)에서 IP별 `limit_req`·`limit_conn` 한도를 넘음. `Retry-After: 2` |
-| `server_busy` | 503 | 사이클 07 (구현됨 (사이클 07)): 묶음 스트림(묶음 실행기 `BatchRunner`를 쓰는 스트림)과 도서관별 더 보기 — 동시 검색 `max-concurrent-searches`(20 [안])이 다 참, 줄 세우지 않음. 사이클 08: `Retry-After: 5` [확정] (사용자 승인, 2026-10-11) — 구현됨 (사이클 08). 사이클 20 — 설계됨(미구현, 사이클 20): 상한 40 [확정] (전반 점검 #13), 화면은 받자마자 상태 점 빨강; 확장 모드 올리기(`/api/v1/lookup-plans/{planId}/items/{itemId}`)에서 해석 자리 8을 2초 못 얻음(2단계), 계획 보관함 가득이면 계획 요청 503(2단계) |
+| `server_busy` | 503 | 사이클 07 (구현됨 (사이클 07)): 묶음 스트림(묶음 실행기 `BatchRunner`를 쓰는 스트림)과 도서관별 더 보기 — 동시 검색 `max-concurrent-searches`(20 [안])이 다 참, 줄 세우지 않음. 사이클 08: `Retry-After: 5` [확정] (사용자 승인, 2026-10-11) — 구현됨 (사이클 08). 사이클 20 — 설계됨, 1단계 일부만 구현(v1.4.0: `GET /api/v1/lookup-status`·`HostQueueBoard`·`ParseSlots`·`BodyLimit`·`usagelog-004`; 웹 머리말 상태 불은 지움, `extension/` 없음 — ADR-0146, 2026-10-23 dev main 확인. 사이클 20 회고 전): 상한 40 [확정] (전반 점검 #13), 화면은 받자마자 상태 점 빨강; 확장 모드 올리기(`/api/v1/lookup-plans/{planId}/items/{itemId}`)에서 해석 자리 8을 2초 못 얻음(2단계), 계획 보관함 가득이면 계획 요청 503(2단계) |
 | `invalid_plan` | 400 | 사이클 20 — 설계됨(미구현, 사이클 20, 2단계): `/api/v1/lookup-plans/{planId}/items/{itemId}`·`/close` — 계획 없음·만료·지워짐·쪽 번호 없음·이미 받음·계획을 만든 번호와 다름·Origin 다름. 화면은 남은 줄을 「확인하지 못한 도서관」으로, 오류 화면 없음. 거절 기록 `invalid_plan` [확정] (설계 결정 #6) |
 | `client_ip_changed` | 400 | 사이클 20 — 설계됨(미구현, 사이클 20, 2단계): 올리기·닫기·`replaces` — 2단계는 계획을 만든 IP와, 3단계는 번호를 받은 IP와 지금 IP(/64)가 다름(폰 회선 바뀜). 화면이 남은 도서관만 조용히 다시 계획, 잠금에 안 셈 [확정] (검토 #32, 전반 점검 #1), 이름 [안] |
 | `invalid_client_key` | 400 | 사이클 20 — 설계됨(미구현, 사이클 20, 3단계): 올리기·닫기 — 번호 쿠키 없음·장부에 없음(서버 재시작·장부에서 밀려남 포함). 화면이 새 번호를 받고 남은 도서관만 다시 계획 [확정] (검토 #32, 전반 점검 #10), 이름 [안] |
 | `lookup_ip_limited` | 429 | 사이클 20 — 설계됨(미구현, 사이클 20, 3단계): 계획 만들기 — 공인 IP 울타리 둘(그 IP의 계획 무게 20% 넘음 / 새 번호 1분 30개 넘음) 중 하나, `detail`에 어느 것인지. 화면 「잠시 후 다시」, 서버 모드로 넘기지 않음 [확정] (검토 #31, 전반 점검 #12), 이름 [안] |
 | `payload_too_large` | 413 | 사이클 20 — 설계됨(미구현, 사이클 20, 2단계): 확장 모드 올리기 본문이 1MB를 넘음(nginx `client_max_body_size`, 앱도 상한까지만 읽음), 이름 [안] |
-| `cover_not_found` | 404 | 사이클 10: `GET /api/v1/popular-books/covers/{coverId}`(사이클 14에서 지움) → 사이클 14 — 구현됨 (사이클 14): `GET /api/v1/picks/covers/{coverId}` — 저장된 표지가 없음(지웠거나 없는 번호). 웹은 제목 글자 [확정] (사용자 승인, 2026-10-11, design-delta 확인) |
+| `cover_not_found` | 404 | 사이클 10: `GET /api/v1/popular-books/covers/{coverId}`(사이클 14에서 지움) → 사이클 14 — 구현됨 (사이클 14): `GET /api/v1/picks/covers/{coverId}` — 저장된 표지가 없음(지웠거나 없는 번호). 웹은 제목 글자 [확정] (사용자 승인, 2026-10-11, design-delta 확인). 사이클 26 배포 2에서 그 주소와 함께 없어짐 (설계됨) |
 | `holding_not_found` | (스트림 안 실패 코드) | 사이클 08 (구현됨 (사이클 08), 서버 `MissingHolding`): 대출 현황 스트림(`/book-availabilities/stream`, `…/batches/stream`)의 `holding-failed` — 소장 번호가 지금 목록에 없음(가져오기로 빠진 소장). 도서관이 없거나 꺼진 `library_not_found`와 나눔. 화면은 책 화면 그 도서관 줄에 "이 도서관 목록에서 빠졌어요" [확정] (사용자 승인, 2026-10-11, ADR-0070) |
 | `library_limit_reached` | 409 | 내 도서관 직접 추가 — 이미 20곳인데 새 도서관을 더함 [확정] (dev 구현 확인, 2026-10-05). 구현됨 (사이클 06) |
 | `upstream_error` | 502 | 더 보기, 스트림의 `library-failed` — 도서관 오류 응답, 3xx, 파싱 실패, 모든 조회 서버가 쉼. 사이클 07: 도서관 응답 본문이 4MB [안]을 넘음. 사이클 20 — 설계됨(미구현, 사이클 20, 1단계): 상한 1MB(풀었을 때 포함) [확정] (검토 #7, 전반 점검 #6) |
@@ -570,3 +571,117 @@ data: {"result":"ok","bookIds":[1203344,88012,51007]}
 | `internal_error` | 5xx | 예상하지 못한 서버 오류(500)와 모듈이 `code`를 붙이지 않은 5xx. 사이클 13(구현됨 (사이클 13, 회고 2026-10-14)): `GET /api/v1/join-surveys/latest`의 유일한 오류 |
 
 `not_found`부터 7개는 dev `ApiExceptionHandler`가 붙입니다. 모듈이 `code`를 붙이지 않은 오류에만 HTTP 상태로 골라 붙입니다(2026-09-27 코드 확인).
+
+## 사이클 22 이후 dev 변경 (사후 정리, 2026-10-23)
+
+사이클 22 회고 때 dev main `d3c2696`(v1.9.10)을 읽고 정리함. 모두 [확정] (dev 구현 확인, 2026-10-23). 결정 기록은 ADR-0140~0146(사후 기록), 화면이 바뀐 이유는 `docs/cycles/22-first-screen-usability/retro.md`.
+
+| 주소 | 내용 | ADR |
+|---|---|---|
+| `GET /api/v1/regions/guess` | `{"sido": "부산" \| null}`, `Cache-Control: no-store`, `X-Real-IP`로 시·도 추정, 저장 안 함. **v1.9.8부터 웹이 부르지 않음** | 0140 |
+| `GET /api/v1/picks/{listKey}` | `listKey` = `librarian`·`leedongjin`·`snu100`·`kaist`·`nobel`, 그 밖 404 `list_not_found`. 응답 `{list, fetchedAt, categories:[{code, name, books:[{id, category, title, listTitle, coverUrl, bookId, available, recommendedMonth, yearBook, videoId, tocNo, aiSummary}]}]}`. 한 목록 안 같은 책 한 번. Cache-Control 따로 없음. 사이클 26: `coverUrl` 차례·`aiSummary` 출처 바뀜 (설계됨, 끝 「책 설명 (사이클 26)」) | 0142·0143 |
+| `GET /api/v1/picks/shelf` | `{list: "kaist", books:[…위 책 모양]}`, `no-store`. 분야마다 1권(누구나 가입 도서관이 가진 책, 표지 있음, 보유 수 상위 10권 중 무작위) | 0143 |
+| `GET /api/v1/picks/covers/{id}` | 사서추천 표지만, `public, max-age=2592000, immutable`. 사이클 26 배포 2에서 지움 (설계됨) | 0144 |
+| `/covers/<sha1>.jpg` | nginx 정적 파일(API 아님), `public, max-age=604800`. 사이클 26 배포 2에서 치우고 CloudFront `<base-url>/covers/<sha1>.jpg`로 (설계됨, ADR-0163) | 0144 |
+| 검색 스트림 `targets.libraries[]`, `GET /api/v1/libraries` | 칸 `visitRequired`(서버 계산 실효값), `visitOutsideRegion`(저장값) | 0141 |
+| `GET /api/v1/lookup-status` | `{slots, inUse, level(GREEN\|YELLOW\|RED\|GRAY), reason(NONE\|VENDOR_PAUSED\|NO_LANE\|DB_ERROR), queuedLibraryIds, serverTime}`, `no-cache`. 웹은 지금 부르지 않음(상태 불 지움) | 0146 |
+| 책 화면 요청 헤더 `X-Visit-Key`, 사용 알림 본문 `visitKey` | 형식이 틀리면 NULL로 저장 | 0134 |
+
+
+## 사이클 23 「나에게 맞는 책」 (`foryou`) — 설계됨(미구현, 사이클 23)
+
+근거: `docs/cycles/23-for-you-picks/design-delta.md`, ADR-0147·0148·0149, spec·flow 같은 폴더. 사이클 24(`aisearch`, `ListedBooks`, `book-texts`)는 다른 브랜치 설계라 여기 없음 — 먼저 개발하는 쪽이 공통 부분을 만듦
+
+> 사이클 26에서 바뀜 — 설계됨(미구현, 사이클 26): 카드의 `blurb`·`coverUrl` 출처가 `catalog`(`BookTexts`)로 바뀌고, 카드에 `aiSummary` 칸은 두지 않고 `blurb` 하나만 [안, dev 23]. `coverUrl`은 `/covers/…`가 아니라 CloudFront 완성 주소. 넣는 명령 `book-texts`의 `for_you_blurb`·`tags`·`cover_file`은 `catalog.BookTextsTransfer`가 받음. 이 문서 끝 「책 설명 (사이클 26)」
+
+
+| 메서드 | 경로 | 설명 | 요청 | 응답 | 에러 |
+|---|---|---|---|---|---|
+| GET | `/api/v1/for-you/books` [안] | 오늘 기본 목록 가운데 계획 도서관에 있는 책 | 계획 파라미터(`residenceRegionIds`·`workRegionIds`·`scope`·`visit`·`libraryIds`, `/api/v1/picks/{listKey}`와 같은 이름·검증) | 200 `{builtOn, books[]}`. 한 번도 못 만들면 `builtOn: null` + 추천목록만 | 400 `validation_error`, 422 `invalid_region`, 500 `internal_error` |
+| GET | `/api/v1/for-you/similar-books` [안] | 기준 책의 비슷한 책 | `baseBookIds`(1~3, 쉼표, 필수), `reshowBookIds`(0~6), 계획 파라미터 | 200 `{baseBooks[], books[] ≤60, reshowBooks[]}`. 모르는 번호는 조용히 뺌 | 400 `validation_error`(`errors[].field` `baseBookIds`·`reshowBookIds`, `code` `required`·`invalid_format`·`too_many`·`duplicate`), 422, 500 |
+
+- 인증 없음, GET이라 CSRF 없음. nginx 일반 `/api/` 구역(5r/s) [확정] (사용자 승인 2026-10-13, 사이클 17 결정 #1, `docs/settings-index.md` "nginx 기존 한도" 줄). `Cache-Control`은 정하지 않음(picks 목록과 같음) [안]
+- 카드 칸: `bookId`, `title`, `author`, `publisher`, `coverUrl`(없으면 null), `blurb`(없으면 null), `tags[{code, axis, name}]`(추천목록 책만), `planLibraryCount`(≥ 1), `lists`(목록 키만, "KAIST 추천목록에 있어요" 문구는 웹이 탭 이름으로 만듦), similar에는 `authorKey`(첫 저자 `name_exact`)
+- 인기 점수·출처 이름은 내보내지 않음(R3-2)
+- `similar-books` 정렬: 기준 책 빼기 → 계획 도서관 0곳 빼기 → 마지막 succeeded 실행의 `book_score`가 있는 책 점수 높은 순(오늘 만들기가 실패해도 전날 점수로) → 나머지 `planLibraryCount` 많은 순 → `bookId` [안: 마지막 차례]
+
+요청/응답 예시 (값은 보기)
+
+```json
+GET /api/v1/for-you/books?residenceRegionIds=1114
+{
+  "builtOn": "2026-10-25",
+  "books": [
+    { "bookId": 1203344, "title": "책 제목", "author": "저자", "publisher": "출판사",
+      "coverUrl": "/covers/3f2a….jpg", "blurb": "해요체 한두 문장.", "tags": [],
+      "planLibraryCount": 3, "lists": [] },
+    { "bookId": 78100, "title": "책 제목", "author": "저자", "publisher": "출판사",
+      "coverUrl": null, "blurb": null,
+      "tags": [ {"code": "m03", "axis": "mood", "name": "잔잔한"} ],
+      "planLibraryCount": 1, "lists": ["snu100", "kaist"] }
+  ]
+}
+```
+
+```json
+GET /api/v1/for-you/similar-books?baseBookIds=11,22,33&reshowBookIds=44&residenceRegionIds=1114
+{
+  "baseBooks": [ {"bookId": 11, "title": "책 A"}, {"bookId": 22, "title": "책 B"} ],
+  "books": [ { "bookId": 501, "title": "…", "author": "…", "publisher": "…", "coverUrl": null,
+               "blurb": null, "tags": [], "planLibraryCount": 2, "lists": [], "authorKey": "…" } ],
+  "reshowBooks": [ { "bookId": 44, "title": "…", "author": "…", "publisher": "…", "coverUrl": null,
+                     "blurb": "…", "tags": [], "planLibraryCount": 1, "lists": [], "authorKey": "…" } ]
+}
+```
+
+```json
+400
+{ "title": "Bad Request", "status": 400, "code": "validation_error",
+  "errors": [ { "field": "baseBookIds", "code": "too_many" } ] }
+```
+
+- 사용 알림: `{"type":"picks_list_view","list":"for_you",…}`, `{"type":"picks_book_view","list":"for_you","bookId":501,…}`. `category` 값 [확인 필요]
+
+### 넣는 명령 (PC → 운영, `collection-import` 프로필)
+
+| 모드 | 파일 | 동작 | 상태 태그 |
+|---|---|---|---|
+| `neighbours` (새) | TSV `book_id\tneighbour_ids`(쉼표), 머리말 `export_id`, `full`·`add` | `full`: `foryou.book_neighbour_next`에 COPY → 한 트랜잭션에서 이름 바꿔 끼움. `add`: `ON CONFLICT (book_id) DO UPDATE`. 운영 `catalog_import.export_id`와 다르면 멈춤(`--force`로만) | [안] |
+| `tag-dictionary` (새) | TSV `code\taxis\tname\tthema_code` | upsert, 파일에 없는 코드는 `active=false` | [안] (결정 #9) |
+| `book-texts` (24가 정한 모드) | `kind\tbook_id\tsource\tmade_on\ttext` | kind `for_you_blurb` → `foryou.book_blurb`, `tags` → `picks.book_tag`(`text` = 코드 쉼표 목록, 그 책의 꼬리표를 통째로 바꿈, 사전에 없는 코드는 건너뜀), `cover_file` → `foryou.book_cover`(`text` = sha1), `search_line` → 24 `aisearch`. 모르는 kind는 건너뛰고 수 보고 | kind 이름 [안] |
+
+### 외부 연동
+
+| 대상 | 방식 | 제한·키 관리 | 실패 시 동작 | 상태 태그 |
+|---|---|---|---|---|
+| 교보 일반 전자도서관 4곳 (서초 반포·연천·도봉·부천) | 운영 서버 `availability` 길, `contentList.ink?…orderByKey=loanNmvl`, 앞 100권 | 호스트당 1건·1초, 나가는 길 설정(프록시) 그대로, 키 없음. 교보문고 약관 제11조⑨가 걸리는지 [확인 필요] | 그 사이트만 빠짐 | 사이트 [확정] (시험 결과 결정 #2), 쪽 크기 [확인 필요: 사전 시험은 쪽당 80 받음] |
+| YES24 V1 전자도서관 2곳 (국립세종·성남) | 같은 길, `/search/?…&sort=lending`, 앞 100권 | 같음 | 그 사이트만 빠짐 | [확정] (같음) |
+| `*.dkyobobook.co.kr` | 보내지 않음 | 사이트 목록에서 빼고 어댑터 앞에서 막음 | — | [확정] (사이클 13 R1-6) |
+| 출판유통통합전산망 판매 순위·「화제의 책 200선」 | `foryou` 안 HTTP 클라이언트, 간격 1초. 운영 나가는 길 설정("프록시만", 사용자 2026-10-18)을 따르는지 [확인 필요: dev·사이클 17 운영 설정] — 따르지 않으면 허용 근거를 인계서에 | 위험 감수(ADR-0147). 출처만 끄는 설정 `chaekcheck.foryou.sources.<source>.enabled` [안: 이름]. 받을 범위(일·주·월 Top100 vs Thema 월간 Top50) [확인 필요] | 그 출처만 빠짐 | [확정: 쓰기] / 방식 [확인 필요] |
+| KLWAVE (공공데이터포털 15159949) | 파일인지 API인지 [확인 필요] | 공공데이터 이용 조건 [확인 필요] | 그 출처만 빠짐 | [확인 필요]. 파일이면 PC 파일 모드가 더 필요함 |
+| 표지 | PC `fetch-covers` → 범위만 운영 `/srv/chaekcheck/covers/`로 복사 | 서버는 책 사이트에 요청하지 않음. 출처별 이용 조건은 공개 배포 전 [확인 필요] | 표지 없으면 제목 글자 표지 | 방식 [확정] (결정 #5), 범위 보고 수집 세션 [확인 필요] |
+| Claude Haiku (PC 배치) | Message Batches, 한 번 호출로 탭 글·꼬리표·찾기용 한 줄 | 키는 PC에만, 서비스는 부르지 않음 | 실패한 책은 다음 배치 | [확정] (결정 #7) |
+
+
+## 책 설명 (사이클 26) — 설계됨(미구현, 사이클 26)
+
+근거: `docs/cycles/26-book-descriptions/design-delta.md` "API"·"외부 연동", ADR-0161·0163·0164·0166. 새 주소 없음, 칸과 값의 출처만 바뀜. 버전 그대로(`/api/v1`).
+
+| 메서드 | 경로 | 바뀌는 것 | 요청 | 응답 | 에러 |
+|---|---|---|---|---|---|
+| GET | `/api/v1/books/{bookId}` | 책 상세 (`BookSearchController`) — 칸 더함 | 그대로 | `BookDetail`에 `coverUrl`(완성 주소 또는 null), `summary`(또는 null) | 그대로 (없는 책 404 `book_not_found`) |
+| GET | `/api/v1/picks/{listKey}` | 추천목록 | 그대로 | `coverUrl` = ADR-0164 차례로 고른 완성 주소, `aiSummary` 값 = `catalog` 요약 (칸 이름 그대로) [안] | 그대로 |
+| GET | `/api/v1/picks/covers/{coverId}` | 사서추천 DB 그림 | — | 배포 2에서 지움 | — |
+| GET | `/api/v1/for-you/books`, `/similar-books` | 카드의 `blurb`·`coverUrl` 출처만 `catalog`. 카드의 `aiSummary` 칸은 없애고 `blurb` 하나(같은 값이 두 칸에 오지 않게; 추천목록 응답의 `aiSummary`는 웹 책 창이 이미 그 이름으로 읽어서 이름만 유지) [안, dev 23] | 그대로 | | 그대로 |
+
+```json
+GET /api/v1/books/812345
+{ "id": 812345, "title": "코스모스", "authorDisplay": "칼 세이건", "publisher": "사이언스북스",
+  "publishedOn": "2006-12-20", "isbn13": "9788983711892", "holdingLibraryCount": 41,
+  "coverUrl": "https://<id>.cloudfront.net/covers/7f2abb2f74006f006d47b182ecb398a9febfd23d.jpg",
+  "summary": "우주와 인류의 기원을 …해요.", "libraries": [] }
+```
+
+- 표지 주소: 모든 응답의 `coverUrl`은 `CoverUrls.of(fileKey)`가 만드는 `<chaekcheck.covers.base-url>/covers/<sha1>.jpg`(CloudFront 기본 도메인 `<id>.cloudfront.net`) [확정: 방식] (ADR-0163) / 설정 이름 [안]. 옛 우리 주소(`/api/v1/picks/covers/{id}`, nginx `/covers/…`)는 배포 2에서 없어짐
+- 웹: `safeCoverUrl`이 `^https://<CloudFront 주소>/covers/[0-9a-f]{40}\.jpg$`도 받음(주소는 빌드 설정), CSP `img-src 'self' data: https://<id>.cloudfront.net` [안: 주소]. 그림을 못 받으면 제목 글자 표지(`CoverImage` 지금 동작). 책 상세에 표지·「AI 요약 ⓘ」 칸 (flow S2)
+- 넣는 명령 `book-texts`(kind `for_you_blurb`·`tags`·`cover_file`·`search_line`)와 새 모드 `book-profiles`는 `catalog.BookTextsTransfer`로 들어가고, 파일의 `# export_id=` 줄이 운영 `catalog_import.export_id`와 다르면 멈춤 [확정] (ADR-0162)
