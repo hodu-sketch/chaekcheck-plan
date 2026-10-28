@@ -84,6 +84,7 @@
 2. 운영 사서추천 목록이 첫 배포 뒤 그대로인지: 운영 역할 DB `picks.fetch_run`(운영은 받기 꺼짐, `deploy/prod/compose.yaml:67`)
 3. 옮기기 전 고아 id 수: `foryou.book_blurb`·`foryou.book_cover`·`picks.book_tag`·`aisearch.search_book`의 `book_id` 중 `catalog.book`에 없는 수. 복사는 다 함(AC-4). 0이 아니면 보고, 처리는 plan이 사용자에게 물음
 4. 요약이 사라지는 추천목록 책 수: 지금 `ai-summaries.tsv`로 요약이 보이지만 책첵 요약이 없는 줄(책 번호 없는 줄 포함). 배포 1 전 plan에
+   - **결과와 결정 (2026-10-28)**: 운영 추천목록 2,793줄 중 1,633줄 — 책 번호 없는 838줄(정한 대로 요약 없음) + 책 번호는 있지만 책첵 요약이 없는 783권(795줄). 사용자 "그래"(783권을 배포 1 전에 채울지 물음) → **783권은 배포 1 전에 PC Haiku 배치(`foryou_blurbs.py` 또는 `build_100k.py` 방식)로 `for_you_blurb`를 만들어 지금 `book-texts`로 넣음**, 배포 1 복사로 `catalog.book_summary`에 옮겨짐 [확정]
 5. AI 검색 전후 비교(AC-7·12): dev 24가 `scripts/aisearch/eval/prod_timing.py`(같은 첫 질문 24개를 운영에 보내 첫 글 시간·서버 단계를 잼, v1.19.0 값이 기준)로 함. 후보(카드 bookId·제목)도 남기게 고침. **배포 1 직전과 직후에 dev 24에 알림**("전"은 v1.19.0 값이 있어 생략 가능) [확정: dev 24 답 2026-10-28]
 6. 기준 빌드: `./gradlew build`, `npm run build`
 
