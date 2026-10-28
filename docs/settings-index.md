@@ -245,3 +245,17 @@
 | 브라우저 본 책 | 200권·30일·10초(보일 때만)·다시 보여 주기 3일·S19 빼기 30일 | 웹 상수 | [확정] (spec R5·R6-1b·R6-4) |
 | 메모리 사본 다시 읽기 | 만든 뒤 + 10분 | | [안] (PicksCache와 같게) |
 | 이웃 전체 다시 계산 | 반년에 한 번쯤 (PC) | dev 수집 절차 | [확정] (설계 결정 #8) |
+
+
+## 사이클 26 책 설명 한 곳에 모으기 — 설계됨(미구현, 사이클 26)
+
+근거: `docs/cycles/26-book-descriptions/design-delta.md` "외부 연동"·"서버 자원"·"settings-index.md에 올릴 값" 절, ADR-0162·0163·0165. 이름은 따로 적지 않으면 [안], dev가 정함
+
+| 값 | 설계 값 | 어디 (예정) | 상태 태그 |
+|---|---|---|---|
+| 표지 주소 기준 | CloudFront 기본 도메인 `https://<id>.cloudfront.net`. `CoverUrls`가 `<base-url>/covers/<sha1>.jpg`를 만듦 | `chaekcheck.covers.base-url` (be.yml, 운영 환경 변수) | 방식 [확정] (ADR-0163) / 설정 이름 [안] |
+| S3 표지 객체 캐시 | `Cache-Control: public, max-age=604800` (7일, 지금 nginx `/covers/`와 같은 값) | PC 올리기(`aws s3 sync`) 때 객체 메타데이터 | [확정] (ADR-0163, design-delta "외부 연동") |
+| CSP `img-src` | `'self' data: https://<id>.cloudfront.net` (CloudFront 주소를 더함) | 운영 nginx CSP 머리, 웹 `safeCoverUrl` 허용 주소(빌드 설정) | 방식 [확정] (ADR-0163) / 주소 [안] |
+| PC IAM 권한 | 표지 버킷에 `s3:PutObject`·`s3:ListBucket`만, PC의 AWS CLI 프로필 하나(IAM 사용자 키). 운영 서버에는 권한 없음 | AWS IAM (PC) | 방식 [확정] (설계 #4 승인) / 버킷·사용자 이름 [안]. 단기 자격 증명으로 바꿀 수 있는지 [확인 필요] |
+| 책 프로필 메모리 | 77,551권, 같은 값 문자열을 나눠 쓰면 약 12~16MB (힙 `-Xmx640m` 안), 서버 시작 때 `BookProfiles.all()`로 한 번 읽음 | `aisearch` 메모리 | [추론] (design-delta "서버 자원") |
+| 바꿔 끼우기 `lock_timeout` | 지금 값 그대로(2초, 실패하면 10초 뒤 다시, 최대 5번 — `data-model.md` `catalog` 절). 사이클 26부터 설명 표 5개 DELETE가 같은 트랜잭션(DROP 앞)에 들어가 이 한도 안에서 돎. 잠금 시간을 넘기면 DELETE도 되돌아감 | `JdbcCatalogLoad.swap` `SET LOCAL lock_timeout` | 값 [확정] (사이클 08, 사용자 승인 2026-10-11) / DELETE를 같은 트랜잭션에 넣음 [확정] (ADR-0162). 트랜잭션 안 DELETE 시간 [확인 필요] (dev가 시험 DB에서 잼) |
