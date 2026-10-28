@@ -2,7 +2,8 @@
 
 - 작성 2026-10-27, plan 세션 `chaekcheck-plan-cycle-26`. 이 파일 하나를 계속 고쳐 씀 (요약 왕복 대신)
 - 사용자 결정 (2026-10-27): "지금 이거 먼저 하고 DEV23,24에게 알려줘서 알아서 고치라고 해", "그쪽을 바꿔야 하면 DEV24, 추천을 바꿔야하면 DEV23에게 알려주고"
-- 지금 단계 (2026-10-28): **설계 끝** (`design-delta.md`, ADR-0160~0165). 3절이 바뀌는 표·API와 할 일
+- 지금 단계 (2026-10-28): **인계 끝** (`handoff.md`, ADR-0160~0166). 3절이 바뀌는 표·API
+- **바뀜 (사용자 "26 dev가 같이하고 dev/plan 23/24에게 알려줘", 2026-10-28)**: 3절의 "dev 23 몫"·"dev 24 몫"은 **dev 26이 배포 1에서 main의 지금 코드에 직접** 합니다. 23·24는 진행 중인 브랜치를 그 뒤 rebase해서 `catalog` API 쪽으로 맞추면 됩니다. dev 24는 AI 검색 전후 비교(AC-7·12)와 운영 프로필 줄 수 확인만 맡습니다
 
 ## 1. 정해진 방향 [확정]
 
@@ -31,15 +32,15 @@
 
 - 새 `catalog` 표: `book_summary`, `book_cover`, `book_profile`, `book_search`, `tag_dictionary`, `book_tag`
 - 새 `catalog` 공개 API [안: 이름]: 읽기 `BookTexts`(`summaries`, `coverUrls`, `listCoverUrls`, `tags`), `CoverUrls`(`of(fileKey)`), `BookProfiles`(`all`, `version`), `AiSearchIndex`(`find`, `planCounts`, `lines`, `books`, `version`, `compact`) / 쓰기 `BookTextsTransfer`
-- 배포 순서: 26 배포 1(새 표 + 복사 + 읽는 곳 바꿈) → 확인 → 134만 표지·프로필 넣기 → 26 배포 2(옛 표 지움). 23·24는 배포 2 전에 옛 표·API를 쓰지 않게 맞춤
+- 배포 순서: 26 배포 1(새 표 + 복사 + `picks`·`foryou`·`aisearch` 읽는 곳 바꿈) → 확인 → 134만 표지·프로필 넣기 → 26 배포 2(옛 표 지움). 23·24 브랜치는 rebase 때 옛 표·API(`foryou.BookBlurbs`·`BookCovers`, `aisearch.search_book`, `book-profiles.tsv` 파일 읽기)를 쓰는 새 코드가 없게 맞춤
 
-### dev 23 몫 (`foryou`)
+### `foryou`에서 바뀌는 것 (dev 26이 함, dev 23은 rebase로 맞춤)
 - `BookTexts`(internal)의 요약·표지 질의 → `catalog.BookTexts.summaries`/`coverUrls`
 - `BookBlurbs`·`BookCovers`·`ForYouTransfer`의 요약·표지 쓰기 없앰 (`ForYouTransfer`는 이웃만)
 - 카드 응답의 `aiSummary` 칸 없애고 `blurb` 하나, 웹 `forYouBook.ts`의 `aiSummary ?? blurb`도
 - 꼬리표는 `ListedBook.tags`(picks가 `catalog`에서 읽음) 그대로
 
-### dev 24 몫 (`aisearch`)
+### `aisearch`에서 바뀌는 것 (dev 26이 함, dev 24는 rebase로 맞춤 + 전후 비교)
 - `CandidateQuery`(find·planCounts·lines) → `catalog.AiSearchIndex`, 질의는 표 이름만 바뀜(`library_ids` 남음)
 - `SearchBooks` → `AiSearchIndex.books()/version()`(1분 확인 그대로)
 - 카드 표지·요약: `foryou.BookCovers`/`BookBlurbs` → `catalog.BookTexts`, **겹쳐 읽기(beside) 그대로**

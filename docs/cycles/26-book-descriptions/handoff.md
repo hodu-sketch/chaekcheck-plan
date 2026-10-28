@@ -19,7 +19,7 @@
   4. 나머지 표지 약 134만 장을 올리고 `book-texts` `cover_file`로 연결
   5. `book-profiles`로 프로필을 처음 넣고 서버를 다시 켬
   6. 배포 2(옛 표 지움)
-- **배포 1과 23·24 맞춤의 관계** [확인 필요: 사용자 결정 대기]: 배포 1부터 `book-texts`는 `catalog`에만 씁니다. `foryou`·`aisearch`가 옛 표를 읽고 있으면 그 뒤 넣은 요약·표지·찾기 줄이 두 기능에 보이지 않습니다. 결정 전까지 배포 1 뒤 `book-texts`를 넣지 않습니다
+- **배포 1에서 `foryou`·`aisearch`의 읽는 곳도 dev 26이 바꿈** [확정] (사용자 "26 dev가 같이하고 dev/plan 23/24에게 알려줘", 2026-10-28): main에 이미 있는 `foryou`·`aisearch` 코드의 요약·표지·찾기·프로필 읽기를 배포 1에서 `catalog` API로 바꿉니다(아래 "dev 23·24가 맞출 것"의 항목을 dev 26이 main에서 함). 진행 중인 23·24 브랜치는 그 뒤 rebase로 맞춥니다. 그래서 배포 1 뒤에도 새로 넣은 설명이 모든 화면에 보입니다
 - **Liquibase 번호** [안: 23·24 브랜치와 겹치면 그쪽이 올림]
   - 배포 1: `catalog/002-book-descriptions.yaml`, `collection/007-description-deleted-count.yaml`
   - 배포 2: `foryou/002-drop-book-blurb-cover.yaml`, `picks/007-drop-moved-tables.yaml`, `aisearch/005-drop-search-book.yaml`
@@ -68,7 +68,6 @@
 
 | 할 일 | 언제 | 결과 |
 |---|---|---|
-| 배포 1과 23·24 맞춤의 관계 정하기(위) | 0단계 뒤 | 배포 1 시점 |
 | AWS 콘솔에서 S3 버킷(시드니), CloudFront 배포(OAC), PC용 IAM 사용자 키. dev가 사용자 자격으로 CLI로 할 수 있으면 dev가 하고 사용자는 키 발급만 [안] | 1단계 | 버킷 이름, CloudFront 도메인, PC 프로필 |
 | 무료 플랜 끝·크레딧 만료 날짜를 콘솔 Billing Settings에서 확인 | 운영 일 | 날짜를 plan에 |
 | 화면 확인, 실제 폰(Samsung Internet) 확인 | 8단계 끝 | 진행 / 고침 |
@@ -176,9 +175,9 @@
 
 ### 10단계: 배포 1과 확인
 
-1. 사용자 승인 뒤 배포(23·24 맞춤과의 관계는 사용자 결정대로)
+1. 사용자 승인 뒤 배포(`foryou`·`aisearch` 읽는 곳 바꿈 포함)
 2. 배포 직후 AC-4 SQL을 운영에서
-3. 화면: AC-1(같은 책을 추천목록 책 창·책첵 추천 카드·AI 검색 카드·책 상세에서, 책첵 추천·AI 검색은 23·24 맞춤 뒤), AC-2·3, AC-9(줄 세 권), AC-10(네 화면 CSP 오류 없음)
+3. 화면: AC-1(같은 책을 추천목록 책 창·책첵 추천 카드·AI 검색 카드·책 상세에서), AC-2·3, AC-9(줄 세 권), AC-10(네 화면 CSP 오류 없음)
 4. AI 검색 전후 비교(AC-7·12, dev 24). 첫 글 시간이 늘면 배포 2 전에 plan에 [확정] (R8)
 
 ### 11단계: 나머지 표지 올리기와 연결
@@ -210,9 +209,9 @@
 3. `docs/maintenance/3-import.md`: 바꿔 끼우기 안 DELETE, `description_deleted_count`, `book-texts`·`book-profiles` `export_id` 검사
 4. 표지 올리기 절차(1·11단계, 새 책 표지, `picks.cover` 꺼내기)를 `docs/maintenance/`에 [안: 자리], 다른 Claude 세션이 문서만 읽고 돌릴 수 있게
 
-## dev 23·24가 맞출 것 (`to-dev23-24.md` 3절과 같음)
+## `foryou`·`aisearch`에서 바꿀 것 (dev 26이 배포 1에서 main에, 23·24는 rebase로 맞춤 — `to-dev23-24.md` 3절과 같음)
 
-배포 2 전에 옛 표·API를 쓰지 않아야 합니다.
+dev 26이 main의 지금 코드에서 아래를 바꿉니다. 23·24 브랜치가 같은 곳을 새로 고쳤으면 rebase 때 `catalog` API 쪽으로 맞춥니다. dev 24의 전후 비교(AC-7·12)는 dev 24가 합니다.
 
 ### dev 23 몫 (`foryou`)
 - `foryou/internal/store/BookTexts.java`의 요약·표지 질의 → `catalog.BookTexts.summaries`/`coverUrls`
@@ -254,7 +253,7 @@ plan이 같은 변경으로 `docs/settings-index.md`에 올리고, dev는 실제
 
 | AC | 확인 방법 | 단계 |
 |---|---|---|
-| AC-1 네 곳 요약 글자까지 같음 | `PicksCache` 시험 + 화면(책첵 추천·AI 검색은 23·24 맞춤 뒤) | 6, 10 |
+| AC-1 네 곳 요약 글자까지 같음 | `PicksCache` 시험 + 화면 | 6, 10 |
 | AC-2 책 상세에 표지·요약, 검색 결과 줄에는 없음 | 컨트롤러 시험 + vitest + 화면 | 7, 8, 10 |
 | AC-3 요약 없음 → 칸 없음, 표지 없음 → 글 왼쪽 | vitest + 화면 | 8, 10 |
 | AC-4 옛 표·새 표 줄 수 같음, 프로필 = 파일 줄 수 | SQL 다섯 쌍, `book_profile` ↔ 파일 | 9, 10, 12 |
@@ -295,13 +294,12 @@ plan이 같은 변경으로 `docs/settings-index.md`에 올리고, dev는 실제
 | spec 5 | 사이클 25가 같은 표를 건드리는지 | plan | 배포 1 |
 | — | 바꿔 끼우기 DELETE 시간 | dev 26, 시험 DB | 4, 9 |
 | — | CloudFront 도메인 값 | 1단계 결과 | 8 |
-| — | 배포 1과 23·24 맞춤의 관계 | 사용자 | 10 |
 
 ## 이번에 하지 않는 것
 
 - 요약 없는 책 12,666권의 요약 만들기(backlog), 일반 검색 결과 줄의 요약·표지, 책 프로필·꼬리표 화면 표시, 요약 출처 여러 개
 - 다시 가져오기 직후 `book_search.library_ids` 새로 고치기, 서버 사서추천 받기 때 EC2 역할로 S3, 표지 하위 도메인·WebP (backlog)
-- `foryou`·`aisearch` 코드 고치기(dev 23·24 몫), plan `docs/current/` 고치기(plan이 함)
+- plan `docs/current/` 고치기(plan이 함)
 
 ## 개발 후 plan 쪽에 알려줄 것
 

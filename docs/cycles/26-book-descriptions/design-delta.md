@@ -98,8 +98,8 @@ classDiagram
 |---|---|---|---|---|---|
 | `catalog` | 변경 | 책 목록 + 책 설명(요약·판 표지·프로필·AI 찾기·꼬리표) [확정] (범위 #1, 설계 #1) | 읽기 `BookTexts`(`summaries`, `coverUrls`, `listCoverUrls`, `tags`), `CoverUrls`(`of(fileKey)`), `BookProfiles`(`all`, `version`), `AiSearchIndex`(`find`, `planCounts`, `lines`, `books`, `version`, `compact`) / 쓰기 `BookTextsTransfer`(`upsertSummaries`, `upsertCovers`, `replaceTags`, `replaceTagDictionary`, `replaceProfiles`, `replaceSearchBooks`) — 이름 [안] (설계 #2 승인) | 없음 | 기존 4 + `book_summary`, `book_cover`, `book_profile`, `book_search`, `tag_dictionary`, `book_tag` |
 | `picks` | 변경 | 추천목록. `ListedBook.aiSummary` 값 = `catalog` 요약, `coverPath` = 위 차례 | `ListedBooks` 그대로 | 없음 | `picks.cover`, `book_tag`, `tag_dictionary` 없앰(배포 2). `AiSummaries`, `BookTagTransfer` 없앰 |
-| `foryou` | 변경 (dev 23) | 요약·표지 읽기를 `catalog`로 | `BookBlurbs`, `BookCovers` 없앰. `ForYouTransfer`는 이웃만 | 없음 | `book_blurb`, `book_cover` 없앰(배포 2) |
-| `aisearch` | 변경 (dev 24) | 찾기를 `catalog.AiSearchIndex`로, 프로필을 `BookProfiles.all()`로(시작 때 한 번) | `AiSearchBookTexts` 없앰 | 없음 | `search_book` 없앰(배포 2) |
+| `foryou` | 변경 (배포 1에서 dev 26, 사용자 2026-10-28) | 요약·표지 읽기를 `catalog`로 | `BookBlurbs`, `BookCovers` 없앰. `ForYouTransfer`는 이웃만 | 없음 | `book_blurb`, `book_cover` 없앰(배포 2) |
+| `aisearch` | 변경 (배포 1에서 dev 26, 사용자 2026-10-28) | 찾기를 `catalog.AiSearchIndex`로, 프로필을 `BookProfiles.all()`로(시작 때 한 번) | `AiSearchBookTexts` 없앰 | 없음 | `search_book` 없앰(배포 2) |
 | `collection` | 변경 | `book-texts`가 `catalog` 쓰기 API를 부름, `# export_id=` 검사(`neighbours`와 같은 강제 설정), 새 모드 `book-profiles` | 없음 | 없음 | `catalog_import`에 지운 수 칸 [안] |
 
 - 함정 고침 [확정: 코드]: `JdbcCatalogLoad.createIndexesAndConstraints`에 `t.relname = ANY(TABLES)` 거르기(안 하면 다시 가져오기가 새 표에서 깨짐), `swap`의 `first`에 DELETE 5줄(`book_summary`·`book_cover`·`book_profile`·`book_search`·`book_tag`, `tag_dictionary`는 `book_id`가 없어 제외; `NOT EXISTS`로 쓰고 실행 계획 확인; DROP 앞, 같은 트랜잭션)
