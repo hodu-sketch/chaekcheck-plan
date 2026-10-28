@@ -291,11 +291,11 @@ plan이 같은 변경으로 `docs/settings-index.md`에 올리고, dev는 실제
 | 6 | 23·24 Liquibase 번호 겹침 | dev 23·24·26 | 2, 13 |
 | 7 | 매달 새 사서추천 책 요약 절차 | dev 26, 14단계 1 | 14 |
 | 8 | 무료 플랜 끝·크레딧 만료 날짜 | 사용자, 콘솔 Billing Settings | 운영 일 |
-| 9 | PC 단기 자격 증명 가능 여부 | dev 26, AWS 공식 문서 | 1 |
+| 9 | ~~PC 단기 자격 증명 가능 여부~~ → 관리 작업은 `aws login` 단기 자격으로 함, 올리기는 IAM 사용자 키 (dev 26, 2026-10-28) | 닫힘 | — |
 | spec 1 | 요약이 사라지는 추천목록 책 수 | dev 26 | 배포 1 |
 | spec 5 | 사이클 25가 같은 표를 건드리는지 | plan | 배포 1 |
 | — | 바꿔 끼우기 DELETE 시간 | dev 26, 시험 DB | 4, 9 |
-| — | CloudFront 도메인 값 | 1단계 결과 | 8 |
+| — | ~~CloudFront 도메인 값~~ → `d1bdzw8sfjph5d.cloudfront.net` (dev 26 1단계, 2026-10-28) | 닫힘 | — |
 
 ## 이번에 하지 않는 것
 
