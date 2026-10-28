@@ -211,7 +211,8 @@
 1. `docs/maintenance/4-picks.md` 8절 다시 쓰기 [확정: 방향] (architect F3): 운영 DB에서 추천목록 책 중 `catalog.book_summary`가 없는 책 번호 뽑기(질의를 문서에) → PC 배치(`for_you_blurb` 방식, `build_100k.py` 흐름) → `book-texts`(첫 줄 `# export_id=`) → 새 사서추천 줄 목록 그림은 PC가 S3에. 빌드·배포 필요 없어짐. 234행 "AI 요약은 8절대로 넣음"도 맞춤
 2. `docs/maintenance/7-foryou.md:41` [확정: 코드] (F2-a): 요약·표지는 넣으면 바로, 꼬리표는 `picks` 캐시로 10분 안, 프로필은 서버 다시 켬. 모드 목록(`catalog`로 씀)과 `book-profiles` 더함
 3. `docs/maintenance/3-import.md`: 바꿔 끼우기 안 DELETE, `description_deleted_count`, `book-texts`·`book-profiles` `export_id` 검사
-4. 표지 올리기 절차(1·11단계, 새 책 표지, `picks.cover` 꺼내기)를 `docs/maintenance/`에 [안: 자리], 다른 Claude 세션이 문서만 읽고 돌릴 수 있게
+4. AI 검색 문서 (dev 24 정리, 2026-10-29): AI 책 찾기 문서는 dev `docs/aisearch/`로 옮겨짐(색인 `README.md`, 지금 동작 `1-how-it-works.md` — v1.19.0 기준, 버전별 `2-versions.md`). `aisearch` 코드를 고칠 때 ① `1-how-it-works.md`를 `catalog.AiSearchIndex`·`BookTexts`·`BookProfiles` 기준으로 맞추고 ② 코드 주석(`AiSearchFlow`·`Fusion`·`NamedBook`·`QuestionVectors`·`AiSearchProperties` 등)이 가리키는 옛 경로(`docs/reports/ai-search-*.md`, `docs/cycle24-session-handoff.md`)를 새 경로로 바꾸고 dev 24에 알림(그 뒤 dev 24가 옛 경로 안내 파일을 지움). 숫자 폴더 `docs/reports/ai-search-eval/`은 그대로
+5. 표지 올리기 절차(1·11단계, 새 책 표지, `picks.cover` 꺼내기)를 `docs/maintenance/`에 [안: 자리], 다른 Claude 세션이 문서만 읽고 돌릴 수 있게
 
 ## `foryou`·`aisearch`에서 바꿀 것 (dev 26이 배포 1에서 main에, 23·24는 rebase로 맞춤 — `to-dev23-24.md` 3절과 같음)
 
