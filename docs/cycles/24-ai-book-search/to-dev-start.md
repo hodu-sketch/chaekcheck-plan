@@ -9,7 +9,7 @@ chaekcheck 사이클 24 "AI 책 찾기"를 개발합니다. 이 세션은 클라
 
 1. **plan 저장소를 붙입니다.**
    - 이 세션에 `hodu-sketch/chaekcheck-plan`이 없으면 `add_repo`로 읽기 권한을 붙입니다.
-   - 브랜치 **`claude/compassionate-lovelace-mzvp4f`**를 받습니다. 사이클 24는 아직 plan main에 없고 이 브랜치에만 있습니다.
+   - 브랜치 **`claude/compassionate-lovelace-mzvp4f`**를 받습니다. 사이클 24는 2026-10-28 plan main에 합쳤습니다(이 브랜치도 그대로 있음).
 2. **이 순서로 읽습니다.**
    1. `docs/cycles/24-ai-book-search/handoff.md`: 인계서입니다. 이대로 진행합니다.
    2. 같은 폴더의 `design-delta.md`: 설계의 기준입니다. "검토 뒤 덧붙임"과 "확인 필요" 절까지 읽습니다.

@@ -1057,7 +1057,7 @@
 
 ## 사이클 24 인계 알림 (2026-10-24)
 
-사이클 24 AI 책 찾기(첫 화면 탭 "AI"/"직접", 대화 화면 `/ai-search`, Claude Haiku 5.5 실시간, 새 모듈 `aisearch`)의 인계서는 plan `docs/cycles/24-ai-book-search/handoff.md`에 있습니다(plan 브랜치 `claude/compassionate-lovelace-mzvp4f`, 아직 main에 없음). 사이클 23과 나란히 만들고, 이 파일의 사이클 20 내용은 그대로입니다. dev 클라우드 세션 시작 글: plan `docs/cycles/24-ai-book-search/to-dev-start.md`. ADR-0150~0153.
+사이클 24 AI 책 찾기(첫 화면 탭 "AI"/"직접", 대화 화면 `/ai-search`, Claude Haiku 5.5 실시간, 새 모듈 `aisearch`)의 인계서는 plan `docs/cycles/24-ai-book-search/handoff.md`에 있습니다(plan main에 합침 2026-10-28). 사이클 23과 나란히 만들고, 이 파일의 사이클 20 내용은 그대로입니다. dev 클라우드 세션 시작 글: plan `docs/cycles/24-ai-book-search/to-dev-start.md`. ADR-0150~0153.
 
 ## 표지 받기 작업 요청 (2026-10-23, 사이클 밖)
 
