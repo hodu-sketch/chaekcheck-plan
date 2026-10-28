@@ -240,6 +240,7 @@ erDiagram
 - [ADR-0164](../../adr/0164-data-owner-principle-and-list-covers.md) 데이터 주인 원칙과 추천목록 표지 차례 (Accepted)
 - [ADR-0162](../../adr/0162-description-cleanup-and-export-id.md) 설명 정리·가져오기 번호 검사 (Accepted)
 - [ADR-0165](../../adr/0165-drop-aisearch-copy-profiles-in-db.md) AI 검색 사본 표 없앰, 프로필 DB (Accepted)
+- [ADR-0166](../../adr/0166-one-copy-migration-drop-next-deploy.md) 한 번 복사, 옛 표는 다음 배포에서 지움 (Accepted)
 
 ## 확인 필요
 
@@ -253,5 +254,4 @@ erDiagram
 | 6 | 23·24 브랜치 Liquibase 번호 겹침 | `to-dev23-24.md` 3절 | 인계 |
 | 8 | 무료 플랜 끝·크레딧 만료 날짜 (ADR-0163의 "약 2027-04"는 research.md 1-1절 기준, 공식 문서끼리 6개월·12개월이 섞임) | 콘솔 Billing Settings에서 확인 | 인계 (운영 일) |
 | 9 | PC에서 IAM 사용자 키 대신 단기 자격 증명을 쓸 수 있는지 | 공식 문서 확인 못 함 (architect) | 인계 |
-| 10 | 한 번 복사·옛 표는 다음 배포에서 지우는 방식(명세 결정 #4)의 결정 기록 | 사용자에게 ADR 초안 확인 | 인계 |
 | 7 | 매달 새 사서추천 책 요약: 목록 책 중 `catalog` 요약 없는 책 → PC 배치 → `book-texts` (dev `4-picks.md` 8절 고쳐 씀) | 인계서 | 인계 |
