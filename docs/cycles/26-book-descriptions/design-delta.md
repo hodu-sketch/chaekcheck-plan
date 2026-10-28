@@ -217,7 +217,11 @@ erDiagram
 ## 결정 기록
 
 - [ADR-0160](../../adr/0160-search-entry-library-ids-exception.md) AI 찾기 표의 `library_ids`는 중복 저장 금지의 예외 (Accepted)
-- ADR 초안(사용자 확인 전): 책 설명은 `catalog`가 맡음 / 다시 가져오기 때 설명 정리와 가져오기 번호 검사 / 표지는 S3 + CloudFront, PC만 올림 / 추천목록 표지 차례와 데이터 나누는 기준 / AI 검색 사본 표 없앰(#6 결과와 함께) / 책 프로필은 DB, 시작 때 한 번. 번호는 사이클 24·25가 쓴 번호 다음으로 정함
+- [ADR-0161](../../adr/0161-book-descriptions-owned-by-catalog.md) 책 설명은 `catalog`가 맡음 (Accepted)
+- [ADR-0163](../../adr/0163-covers-on-s3-cloudfront.md) 표지는 S3 + CloudFront, PC만 올림 (Accepted)
+- [ADR-0164](../../adr/0164-data-owner-principle-and-list-covers.md) 데이터 주인 원칙과 추천목록 표지 차례 (Accepted)
+- ADR-0162(설명 정리·가져오기 번호), ADR-0165(사본 표 없앰·프로필): 사용자 질문에 답하는 중 — 초안 [adr-drafts.md](adr-drafts.md)
+- (옛 메모) ADR 초안(사용자 확인 전): 책 설명은 `catalog`가 맡음 / 다시 가져오기 때 설명 정리와 가져오기 번호 검사 / 표지는 S3 + CloudFront, PC만 올림 / 추천목록 표지 차례와 데이터 나누는 기준 / AI 검색 사본 표 없앰(#6 결과와 함께) / 책 프로필은 DB, 시작 때 한 번. 번호는 사이클 24·25가 쓴 번호 다음으로 정함
 
 ## 확인 필요
 
