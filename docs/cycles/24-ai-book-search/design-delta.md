@@ -340,6 +340,14 @@ data: {"result":"ok","bookIds":[1203344,88012,51007]}
 - 시간: 1차 5초 + 2차 15초 = 한 질문 최대 약 21초 → nginx `proxy_read_timeout`이 이보다 길어야 함 [확인 필요: dev `deploy/nginx`]
 - `Retry-After` 값: 1분 제한이면 남은 초, 하루 제한이면 한국 자정까지 [안]
 
+## 사이클 26이 바꾼 것 (2026-10-28, 사이클 26 계획 세션이 알림)
+
+- `aisearch.search_book` → 사이클 26 배포 2에서 지우고 `catalog.book_search`에서 찾음 (ADR-0165가 ADR-0151의 "aisearch 표 사본에서 낱말 맞추기" 부분을 대신함). `library_ids`만 중복 저장 예외 (ADR-0160)
+- 책 프로필 → `catalog.book_profile`, 새 넣기 모드 `book-profiles`. `book-texts`에 `export_id` 검사 (ADR-0162)
+- `aisearch` 코드 변경은 dev 사이클 26 배포 1에서 함(사용자 결정). 24 dev 브랜치는 rebase로 맞춤
+- 24를 plan main에 합칠 때 `docs/current/data-model.md`의 `aisearch` 절에 "사이클 26 배포 2에서 지움"을 남김(이 브랜치에 이미 적음). ADR 0154~0159는 비어 있음(26이 비움)
+- PC 배치 합치기는 dev가 2026-10-26 이미 끝냄 → `to-cycle23-batch-proposal.md` 끝
+
 ## 확인 필요
 
 | 항목 | 확인 방법 |

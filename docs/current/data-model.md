@@ -1044,6 +1044,8 @@ erDiagram
 
 ## 스키마 `aisearch` (소유: `aisearch` 모듈) — 설계됨(미구현, 사이클 24)
 
+> **사이클 26이 바꿈 (2026-10-28, plan main 2440b84):** `aisearch.search_book`은 **사이클 26 배포 2에서 지움** — 낱말 맞추기는 `catalog.book_search`로 옮김(ADR-0165, ADR-0151의 "aisearch 표 사본에서 낱말 맞추기" 부분을 대신함), `library_ids`만 중복 저장 예외(ADR-0160). 책 프로필은 `catalog.book_profile` + 새 넣기 모드 `book-profiles`, `book-texts`에 `export_id` 검사(ADR-0162). `aisearch` 코드 변경은 dev 사이클 26 배포 1에서 함(사용자 결정), 24 dev 브랜치는 rebase로 맞춤. 아래 `search_book` 설명은 사이클 24 설계 당시 그대로 둠
+
 ADR-0151·0152. 모듈 넘는 FK 없음(`book_id`는 `catalog.book.id` 값, ADR-0124와 같은 원칙). Liquibase 새 파일 `aisearch/001-aisearch-schema.yaml` [안], `usagelog/00N-ai-search-event.yaml`(번호는 23과 합칠 때) [안]. `search_book`은 넣기 명령 `book-texts`가 한 트랜잭션에서 지우고 넣음(`ListedBooks.loadFromDb()`가 0권이면 거부). 목록 책이 늘면 다시 넣기 전까지 AI 찾기에 안 나옴(감수, 사용자 "추천도서가 중간에 바뀌기는 어렵고 일단 있는 것으로 해줘").
 
 ```mermaid
