@@ -10,3 +10,5 @@
 | 2026-10-28-design-decisions.html | 설계 결정 7개: 표 모양, 읽는 길, 표지 주소, S3 올리기, AI 검색 대상, 찾기 표의 도서관 목록, 프로필 | architect-proposal.md | 0 (#1~#5·#7 승인, #6 → #8 승인 2026-10-28) |
 | 2026-10-28-design-decisions-artifact.html | 위 페이지의 외부용 판 — https://claude.ai/artifact/4sSxMZZzZnqdFBGNZjdpTP | 2026-10-28-design-decisions.html | 0 |
 | 2026-10-28-design-diagrams.html | design-delta 그림 6개 (Mermaid) | design-delta.md | 0 |
+| 2026-10-28-adr-drafts.html | ADR-0161~0165 초안 확인 | adr-drafts.md | 5 |
+| 2026-10-28-adr-drafts-artifact.html | 위 페이지의 외부용 판 — https://claude.ai/artifact/MXVToanukjELaj4GYh4VaB | 2026-10-28-adr-drafts.html | 5 |
