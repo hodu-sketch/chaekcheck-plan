@@ -9,7 +9,7 @@
 
 ```mermaid
 flowchart TB
-  collection -->|"BookTextsTransfer · AiSearchIndex.replace · MostHeldBooks"| catalog
+  collection -->|"BookTextsTransfer(replaceSearchBooks 등) · MostHeldBooks"| catalog
   collection -->|"ListedBooks.loadFromDb (대상 고르기)"| picks
   picks -->|"BookTexts.summaries · listCoverUrls · tags · CoverUrls"| catalog
   foryou -->|"BookTexts.summaries · coverUrls · BookCards"| catalog
@@ -52,7 +52,7 @@ sequenceDiagram
   participant C as collection(apply/finish/replaceAll)
   participant DB as PostgreSQL
   C->>DB: BEGIN, SET LOCAL lock_timeout
-  C->>DB: DELETE 설명 표 6개 WHERE book_id NOT IN catalog_next.book
+  C->>DB: DELETE 설명 표 5개 WHERE NOT EXISTS (catalog_next.book)
   C->>DB: DROP catalog 책 목록 표 4개, SET SCHEMA, DROP SCHEMA catalog_next
   alt 잠금 시간 넘김
     C->>DB: ROLLBACK (지운 것도 되돌아감), 쉬었다 다시
@@ -102,7 +102,7 @@ classDiagram
 | `aisearch` | 변경 (dev 24) | 찾기를 `catalog.AiSearchIndex`로, 프로필을 `BookProfiles.all()`로(시작 때 한 번) | `AiSearchBookTexts` 없앰 | 없음 | `search_book` 없앰(배포 2) |
 | `collection` | 변경 | `book-texts`가 `catalog` 쓰기 API를 부름, `# export_id=` 검사(`neighbours`와 같은 강제 설정), 새 모드 `book-profiles` | 없음 | 없음 | `catalog_import`에 지운 수 칸 [안] |
 
-- 함정 고침 [확정: 코드]: `JdbcCatalogLoad.createIndexesAndConstraints`에 `t.relname = ANY(TABLES)` 거르기(안 하면 다시 가져오기가 새 표에서 깨짐), `swap`의 `first`에 DELETE 6줄(DROP 앞, 같은 트랜잭션)
+- 함정 고침 [확정: 코드]: `JdbcCatalogLoad.createIndexesAndConstraints`에 `t.relname = ANY(TABLES)` 거르기(안 하면 다시 가져오기가 새 표에서 깨짐), `swap`의 `first`에 DELETE 5줄(`book_summary`·`book_cover`·`book_profile`·`book_search`·`book_tag`, `tag_dictionary`는 `book_id`가 없어 제외; `NOT EXISTS`로 쓰고 실행 계획 확인; DROP 앞, 같은 트랜잭션)
 
 ## 데이터
 
@@ -184,7 +184,7 @@ erDiagram
 | GET | `/api/v1/books/{bookId}` | 책 상세 (지금 `BookSearchController`) — 칸 더함, 버전 그대로 | 그대로 | `BookDetail`에 `coverUrl`(완성 주소 또는 null), `summary`(또는 null) | 그대로 (없는 책 404) |
 | GET | `/api/v1/picks/{listKey}` | 추천목록 | 그대로 | `coverUrl` = 새 차례로 고른 완성 주소, `aiSummary` 값 = `catalog` 요약 (칸 이름 그대로) [안] | 그대로 |
 | GET | `/api/v1/picks/covers/{coverId}` | 사서추천 DB 그림 | — | 배포 2에서 없앰 | — |
-| GET | `/api/v1/for-you/books`, `/similar-books` | 카드의 `blurb`·`coverUrl` 출처만 `catalog`. 카드의 `aiSummary` 칸은 없애고 `blurb` 하나 [안, dev 23] | 그대로 | | 그대로 |
+| GET | `/api/v1/for-you/books`, `/similar-books` | 카드의 `blurb`·`coverUrl` 출처만 `catalog`. 카드의 `aiSummary` 칸은 없애고 `blurb` 하나(같은 값이 두 칸에 오지 않게; 추천목록 응답의 `aiSummary`는 웹 책 창이 이미 그 이름으로 읽어서 이름만 유지) [안, dev 23] | 그대로 | | 그대로 |
 
 ```json
 { "id": 812345, "title": "코스모스", "authorDisplay": "칼 세이건", "publisher": "사이언스북스",
@@ -200,7 +200,7 @@ erDiagram
 | 대상 | 방식 | 제한·키 관리 | 실패 시 동작 | 상태 태그 |
 |---|---|---|---|---|
 | Amazon S3 (시드니) | 비공개 버킷 `covers/<sha1>.jpg`, `Cache-Control: public, max-age=604800` | PC의 AWS CLI 프로필 하나(IAM 사용자 키, 그 버킷 `s3:PutObject`·`s3:ListBucket`만). 운영 서버에는 권한 없음 (설계 #4 승인) | 올리기 실패면 `cover_file` 줄을 넣지 않음 ("그림 먼저, 연결 나중") | [확정] 방식 / 버킷·사용자 이름 [안] |
-| Amazon CloudFront | 기본 도메인 `<id>.cloudfront.net`, S3는 OAC로만 읽음 (설계 #3 승인) | CSP `img-src 'self' data: https://<id>.cloudfront.net`, 서버 설정 `chaekcheck.covers.base-url` [안] | 그림을 못 받으면 웹이 제목 글자 표지(`CoverImage` 지금 동작) | [확정] 방식 |
+| Amazon CloudFront | 기본 도메인 `<id>.cloudfront.net`, S3는 OAC로만 읽음 (설계 #3 승인; OAC 권장·버킷 정책 예시 https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html, 2026-10-28 확인) | CSP `img-src 'self' data: https://<id>.cloudfront.net`, 서버 설정 `chaekcheck.covers.base-url` [안] | 그림을 못 받으면 웹이 제목 글자 표지(`CoverImage` 지금 동작) | [확정] 방식 |
 | 비용 | 저장 월 약 $0.38, 첫 올리기 PUT 약 $7.4(한 번), 전송은 CloudFront 늘 무료 1TB 안 [추론] | 무료 플랜 동안 크레딧 (research.md 1절) | — | [확정] 가격 / 사용량 [추론] |
 
 ## 서버 자원 [추론]
@@ -212,7 +212,25 @@ erDiagram
 | `book_summary` | 약 25MB |
 | `book_search` | 지금 `aisearch.search_book`에서 옮김(약 70MB + bigm 색인) |
 | 배포 1~2 사이 | 옛 표·새 표 함께 약 +110~150MB, 디스크 여유 11GB 안 |
-| 바꿔 끼우기 DELETE | 트랜잭션 안 약 1~3초, 검색 멈춤 시간은 지금과 같음 |
+| 바꿔 끼우기 DELETE | 트랜잭션 안에서 도는 시간은 근거 없는 어림이라 dev가 시험 DB에서 잼 [확인 필요]. 검색이 멈추는 것은 `catalog` 잠금을 잡는 DROP 단계뿐이라 지금과 같음 |
+
+## 공개 API 보충
+
+- `BookTexts.listCoverUrls(Map<listRowKey, bookId>)` [안: 모양]: 추천목록 줄이 연결한 책 번호마다 ADR-0164 차례로 판 표지 주소를 돌려줌(없으면 비움 → `picks`가 목록 그림 `CoverUrls.of(sha1(cover_source))`). "같은 책 다른 판"은 지금 `catalog.BookCards.workKeys`와 같은 규칙(본제목 정리값 + 저자 `name_exact` 공유)으로 `catalog` 안에서 찾고, 최신 = `published_on` 큰 판, 다음 소장 많은 판(`cardinality(library_ids)`)
+- `MostHeldBooks`, `BookCards`는 지금 있는 `catalog` 공개 API(바뀌지 않음)
+
+## 배포 순서 [안: 차례는 표지가 깨지지 않게 정함]
+
+1. S3 버킷·CloudFront(OAC)·PC IAM 키 만들기, 지금 운영 `/srv/chaekcheck/covers/`의 약 8만 장과 `picks.cover` 그림(sha1 파일로 꺼냄)을 S3에 올림
+2. 배포 1: 새 표 + 복사(Liquibase), 읽는 곳 바꿈, `coverUrl`을 CloudFront 기준으로(`chaekcheck.covers.base-url`), CSP `img-src` 추가, 웹 `safeCoverUrl`
+3. 화면 확인(AC-1·2·4·9·10), AI 검색 전후 비교(AC-7·12)
+4. 나머지 표지 약 134만 장 올리기 → `book-texts` `cover_file`로 연결
+5. `book-profiles`로 프로필 처음 넣기 → 서버 다시 켬
+6. 배포 2: 옛 표(`foryou.book_blurb`·`book_cover`, `picks.book_tag`·`tag_dictionary`·`cover`, `aisearch.search_book`)와 `/api/v1/picks/covers/{id}` 지움. nginx `/covers/` 위치와 운영 디스크의 옛 표지 폴더도 이때 치움
+
+## settings-index.md에 올릴 값 (인계 때 같은 변경으로)
+
+`chaekcheck.covers.base-url`, S3 객체 `Cache-Control: public, max-age=604800`, CSP `img-src` 추가 주소, PC IAM 권한(`s3:PutObject`·`s3:ListBucket`), 바꿔 끼우기 `lock_timeout`(DELETE가 같은 트랜잭션에 들어감), 프로필 메모리(약 12~16MB [추론])
 
 ## 결정 기록
 
@@ -233,4 +251,7 @@ erDiagram
 | 4 | 운영 프로필 파일 줄 수 (주석 27,227 ↔ 문서 77,551) | dev 24 | 인계 |
 | 5 | 옮기기 전 고아 id 수 | dev, 운영 역할 DB | 배포 1 |
 | 6 | 23·24 브랜치 Liquibase 번호 겹침 | `to-dev23-24.md` 3절 | 인계 |
+| 8 | 무료 플랜 끝·크레딧 만료 날짜 (ADR-0163의 "약 2027-04"는 research.md 1-1절 기준, 공식 문서끼리 6개월·12개월이 섞임) | 콘솔 Billing Settings에서 확인 | 인계 (운영 일) |
+| 9 | PC에서 IAM 사용자 키 대신 단기 자격 증명을 쓸 수 있는지 | 공식 문서 확인 못 함 (architect) | 인계 |
+| 10 | 한 번 복사·옛 표는 다음 배포에서 지우는 방식(명세 결정 #4)의 결정 기록 | 사용자에게 ADR 초안 확인 | 인계 |
 | 7 | 매달 새 사서추천 책 요약: 목록 책 중 `catalog` 요약 없는 책 → PC 배치 → `book-texts` (dev `4-picks.md` 8절 고쳐 씀) | 인계서 | 인계 |
