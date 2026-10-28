@@ -153,3 +153,4 @@
 | [ADR-0147](0147-kpipa-sales-rank-as-for-you-input.md) | 출판유통통합전산망 판매 순위·「화제의 책 200선」을 「나에게 맞는 책」 기본 목록 재료로 씀 (승인 거절을 알고 위험 감수, 카드 출처 표시 없음) | Accepted | 2026-10-24 | 23 |
 | [ADR-0148](0148-for-you-popular-fetch-and-covers.md) | 「나에게 맞는 책」 인기 목록은 운영 서버(`foryou`)가 새벽에 받음(`availability` 조회 줄, 출처마다 끄기, 수집 때마다 검증), 표지는 PC `fetch-covers`를 범위만 옮김 | Accepted | 2026-10-24 | 23 |
 | [ADR-0149](0149-for-you-module-neighbours-and-split.md) | 「나에게 맞는 책」 새 모듈 `foryou`, 꼬리표·사전(DB 표)은 `picks`, 이웃 표 책마다 한 줄(4바이트 배열)·`neighbours` 넣기, `book-texts` kind, 한 번 호출 배치, 개인 추천 서버·브라우저 나누기, 판 모으기 | Accepted | 2026-10-24 | 23 |
+| [ADR-0160](0160-search-entry-library-ids-exception.md) | AI 찾기 표(`catalog.book_search`)의 `library_ids`는 중복 저장 금지의 예외로 둠 (속도 측정 근거). 0154~0159는 사이클 25 몫으로 비워 둠 [안] | Accepted | 2026-10-28 | 26 |

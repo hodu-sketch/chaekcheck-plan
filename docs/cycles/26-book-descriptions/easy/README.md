@@ -7,6 +7,6 @@
 | 2026-10-27-spec-decisions.html | 명세 결정: 「AI 요약 ⓘ」 표시·요약 없을 때, 추천목록 표지 그대로, 찾기용 한 줄 그대로, 옮기는 방식 | spec.md | 0 (#1~#4·#6·#11 승인, #5·#7~#10·#12는 사용자 제안·질문으로 바뀜, #13은 대화에서 S3 + CloudFront, 2026-10-28) |
 | 2026-10-27-spec-decisions-artifact.html | 위 페이지의 외부용 판 — https://claude.ai/artifact/1t75qE9CPYjA32BMdNELfD | 2026-10-27-spec-decisions.html | 0 |
 | 2026-10-28-flow.html | 화면 흐름 그림 (Mermaid 두 개) | flow.md | 0 |
-| 2026-10-28-design-decisions.html | 설계 결정 7개: 표 모양, 읽는 길, 표지 주소, S3 올리기, AI 검색 대상, 찾기 표의 도서관 목록, 프로필 | architect-proposal.md | 1 (#6 측정 대기; 나머지 승인 2026-10-28) |
-| 2026-10-28-design-decisions-artifact.html | 위 페이지의 외부용 판 — https://claude.ai/artifact/4sSxMZZzZnqdFBGNZjdpTP | 2026-10-28-design-decisions.html | 1 |
+| 2026-10-28-design-decisions.html | 설계 결정 7개: 표 모양, 읽는 길, 표지 주소, S3 올리기, AI 검색 대상, 찾기 표의 도서관 목록, 프로필 | architect-proposal.md | 0 (#1~#5·#7 승인, #6 → #8 승인 2026-10-28) |
+| 2026-10-28-design-decisions-artifact.html | 위 페이지의 외부용 판 — https://claude.ai/artifact/4sSxMZZzZnqdFBGNZjdpTP | 2026-10-28-design-decisions.html | 0 |
 | 2026-10-28-design-diagrams.html | design-delta 그림 6개 (Mermaid) | design-delta.md | 0 |

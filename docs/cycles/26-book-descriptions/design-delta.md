@@ -1,7 +1,7 @@
 # 설계 변경: 사이클 26 책 설명 한 곳에 모으기
 
 - 작성 2026-10-28. 근거 [spec.md](spec.md), [flow.md](flow.md), [architect-proposal.md](architect-proposal.md)(코드 사실 F1~F6, dev main `905eab7`·v1.19.0 `claude/aisearch-faster-first`)
-- 설계 결정 (결정 페이지 [easy/2026-10-28-design-decisions.html](easy/2026-10-28-design-decisions.html), 2026-10-28): #1·#2·#3·#4·#5·#7 승인, #6 기타("나는 속도가 우선이긴 한데 그렇게 차이가 많이나나? 조사해서 알려줘") → dev 24 세션에 측정 부탁, 결과 대기
+- 설계 결정 (결정 페이지 [easy/2026-10-28-design-decisions.html](easy/2026-10-28-design-decisions.html), 2026-10-28): #1·#2·#3·#4·#5·#7 승인, #6 기타("나는 속도가 우선이긴 한데 그렇게 차이가 많이나나? 조사해서 알려줘") → 측정 뒤 #8 승인 "승인하고 예외라고 기록해 줘" (ADR-0160)
 
 ## 구조 그림
 
@@ -81,7 +81,7 @@ classDiagram
   class Summary { text 1~300; madeOn }
   class Cover { fileKey sha1 }
   class Profile { field; subfield; fiction; genres; country; audience; level; forms }
-  class SearchEntry { line?; searchText; libraryIds? }
+  class SearchEntry { line?; searchText; libraryIds }
   class Tag { code; madeOn }
   class TagWord { code; axis; name; active }
   Book "1" -- "0..1" Summary
@@ -168,7 +168,7 @@ erDiagram
 | `book_profile.*` | text / boolean / text[] | 어휘 CHECK 없음 | 지금 `book-profiles.tsv` 칸 그대로 (설계 #7 승인) | [확정] |
 | `book_search.line` | text COLLATE "C" | NULL 또는 1~300, `line`·`line_source`·`line_made_on` 함께 있거나 함께 없음 | 찾기용 한 줄 — `aisearch.search_book`에서 옮김 | [확정] (명세 #3) |
 | `book_search.search_text` | text COLLATE "C" | NOT NULL, `gin_bigm_ops` 색인 | 찾기 글 (제목은 이제 `catalog.book.title`로 만듦, architect 0-3) | [확정] |
-| `book_search.library_ids` | integer[] | NOT NULL | 찾기 전용 칸(같은 모듈 안 `catalog.book.library_ids`와 같은 값). 측정: 캐시 빈 상태 중간값 106ms ↔ 이어 읽기 230ms, 최대 234ms ↔ 1,054ms (dev `plan-feedback.md` "# 사이클 26 질의 속도", 2026-10-28) | [안] (설계 결정 #8, 사용자 "속도가 우선") |
+| `book_search.library_ids` | integer[] | NOT NULL | 찾기 전용 칸(같은 모듈 안 `catalog.book.library_ids`와 같은 값). 측정: 캐시 빈 상태 중간값 106ms ↔ 이어 읽기 230ms, 최대 234ms ↔ 1,054ms (dev `plan-feedback.md` "# 사이클 26 질의 속도", 2026-10-28) | [확정] 예외 (사용자 "승인하고 예외라고 기록해 줘", 2026-10-28, [ADR-0160](../../adr/0160-search-entry-library-ids-exception.md)) |
 | `tag_dictionary`, `book_tag` | — | 지금 `picks` 표 규칙 그대로, `book_tag.tag_code → tag_dictionary.code` FK | 지금 0줄 | [확정] |
 | `collection.catalog_import.description_deleted_count` | integer | `>= 0` | 바꿔 끼울 때 지운 설명 수 | [안] |
 
@@ -216,6 +216,7 @@ erDiagram
 
 ## 결정 기록
 
+- [ADR-0160](../../adr/0160-search-entry-library-ids-exception.md) AI 찾기 표의 `library_ids`는 중복 저장 금지의 예외 (Accepted)
 - ADR 초안(사용자 확인 전): 책 설명은 `catalog`가 맡음 / 다시 가져오기 때 설명 정리와 가져오기 번호 검사 / 표지는 S3 + CloudFront, PC만 올림 / 추천목록 표지 차례와 데이터 나누는 기준 / AI 검색 사본 표 없앰(#6 결과와 함께) / 책 프로필은 DB, 시작 때 한 번. 번호는 사이클 24·25가 쓴 번호 다음으로 정함
 
 ## 확인 필요
