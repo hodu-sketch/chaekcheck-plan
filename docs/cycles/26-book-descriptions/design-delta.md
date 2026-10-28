@@ -249,7 +249,7 @@ erDiagram
 | 1 | ~~설계 #6 질의 시간 차이~~ → 잼(2026-10-28), 결정 페이지 #8 | — | — |
 | 2 | 운영 사서추천 목록이 첫 배포 뒤 그대로인지(서버 받기 꺼짐) | dev 운영 DB `picks.fetch_run` | 인계 |
 | 3 | 목록 책 AI 카드 제목·`search_text`가 `catalog.book.title`로 바뀌는 영향 | dev 24, AC-7 전후 비교 | 인계 |
-| 4 | 운영 프로필 파일 줄 수 (주석 27,227 ↔ 문서 77,551) | dev 24 | 인계 |
+| 4 | ~~운영 프로필 파일 줄 수~~ → 77,551줄 [확정] (dev 24, 2026-10-28). 27,227은 옛 판(서버 `book-profiles.tsv.27k`)과 낡은 javadoc(`aisearch/internal/firstcall/BookProfiles.java:14`) | 닫힘 | — |
 | 5 | 옮기기 전 고아 id 수 | dev, 운영 역할 DB | 배포 1 |
 | 6 | 23·24 브랜치 Liquibase 번호 겹침 | `to-dev23-24.md` 3절 | 인계 |
 | 8 | 무료 플랜 끝·크레딧 만료 날짜 (ADR-0163의 "약 2027-04"는 research.md 1-1절 기준, 공식 문서끼리 6개월·12개월이 섞임) | 콘솔 Billing Settings에서 확인 | 인계 (운영 일) |

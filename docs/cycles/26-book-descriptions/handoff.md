@@ -84,7 +84,7 @@
 2. 운영 사서추천 목록이 첫 배포 뒤 그대로인지: 운영 역할 DB `picks.fetch_run`(운영은 받기 꺼짐, `deploy/prod/compose.yaml:67`)
 3. 옮기기 전 고아 id 수: `foryou.book_blurb`·`foryou.book_cover`·`picks.book_tag`·`aisearch.search_book`의 `book_id` 중 `catalog.book`에 없는 수. 복사는 다 함(AC-4). 0이 아니면 보고, 처리는 plan이 사용자에게 물음
 4. 요약이 사라지는 추천목록 책 수: 지금 `ai-summaries.tsv`로 요약이 보이지만 책첵 요약이 없는 줄(책 번호 없는 줄 포함). 배포 1 전 plan에
-5. AI 검색 "전" 기준값(AC-7·12): 배포 1 전에 dev 24가 같은 질문 묶음의 후보와 첫 글 시간을 기록했는지. 없으면 dev 24에 부탁 [안: `6-aisearch.md` 기록 방법]
+5. AI 검색 전후 비교(AC-7·12): dev 24가 `scripts/aisearch/eval/prod_timing.py`(같은 첫 질문 24개를 운영에 보내 첫 글 시간·서버 단계를 잼, v1.19.0 값이 기준)로 함. 후보(카드 bookId·제목)도 남기게 고침. **배포 1 직전과 직후에 dev 24에 알림**("전"은 v1.19.0 값이 있어 생략 가능) [확정: dev 24 답 2026-10-28]
 6. 기준 빌드: `./gradlew build`, `npm run build`
 
 ### 1단계: S3·CloudFront·IAM 준비와 지금 표지 올리기 (코드 변경 없음)
@@ -191,7 +191,7 @@
 
 1. 운영 모델 폴더 `book-profiles.tsv` 첫 줄에 그 파일을 만든 내보내기의 `export_id`를 적고 `book-profiles`로 넣음(기준이 다르면 거절 → PC에서 다시 만듦, dev 24)
 2. 서버 다시 켬(`MlFirstCall`이 `BookProfiles.all()`을 읽는 것은 dev 24 맞춤 뒤)
-3. AC-4(프로필): `catalog.book_profile` 줄 수 = 파일 줄 수, 줄 수는 [확인 필요](주석 27,227 ↔ 문서 77,551)
+3. AC-4(프로필): `catalog.book_profile` 줄 수 = 파일 줄 수 = 77,551 [확정] (dev 24 확인 2026-10-28: 운영 파일 md5가 PC `chaekcheck-data/ml/aisearch-model-100k`와 같음). `aisearch/internal/firstcall/BookProfiles.java:14`의 "27,227" javadoc은 옛 판 설명이라 `BookProfiles.all()`로 바꿀 때 같이 지움
 
 ### 13단계: 배포 2 (옛 표 지우기)
 
@@ -284,7 +284,6 @@ plan이 같은 변경으로 `docs/settings-index.md`에 올리고, dev는 실제
 |---|---|---|---|
 | 2 | 운영 사서추천 목록이 첫 배포 뒤 그대로인지 | dev 26, `picks.fetch_run` | 0, 1 |
 | 3 | AI 카드 제목·`search_text`가 `catalog.book.title`로 바뀌는 영향 | dev 24, AC-7·12 전후 비교 | 10, 13 |
-| 4 | 운영 프로필 파일 줄 수(27,227 ↔ 77,551) | dev 24 | 12 |
 | 5 | 옮기기 전 고아 id 수 | dev 26 | 배포 1 |
 | 6 | 23·24 Liquibase 번호 겹침 | dev 23·24·26 | 2, 13 |
 | 7 | 매달 새 사서추천 책 요약 절차 | dev 26, 14단계 1 | 14 |
