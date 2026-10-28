@@ -33,7 +33,7 @@
 - 진행 중인 24 브랜치 없음: v1.19.0(`claude/aisearch-faster-first`)은 main에 들어가 운영 중, `claude/aisearch-agent`는 보관이라 rebase 없음. Liquibase는 `aisearch-004`가 마지막이라 겹침 없음
 - 전후 비교: `scripts/aisearch/eval/prod_timing.py`로 배포 1 직전·직후(“전”은 v1.19.0 값으로 생략 가능), 후보도 남기게 고침 → dev 26이 배포 1 직전·직후에 dev 24에 알림
 - 운영 `book-profiles.tsv` = 77,551줄. 27,227은 옛 판과 낡은 javadoc(`BookProfiles.java:14`) → dev 26이 지움
-- `build_100k.py` 결과를 `book-texts` + `book-profiles`로 내는 일은 사용자 확인 뒤
+- `build_100k.py` 결과를 `book-texts` + `book-profiles`로 내는 일: 사용자 "진행해"(2026-10-28) → 끝남. `-export.tsv`(첫 줄 `# export_id=d09d649f-…`, 가져오기 14번)와 첫 줄 없는 파일을 함께 씀, 위치 `chaekcheck-data/aisearch/100k/` (handoff 12단계)
 
 ## 3. 바뀌는 표·API와 고칠 것 (2026-10-28, 상세는 `design-delta.md`)
 

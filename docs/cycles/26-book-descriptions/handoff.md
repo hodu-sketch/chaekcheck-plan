@@ -189,6 +189,8 @@
 
 ### 12단계: 프로필 처음 넣기
 
+- 넣을 파일은 dev 24가 이미 만들어 둠 (2026-10-28, dev `plan-feedback.md` "# 사이클 26 (dev 24 몫, 2026-10-28)"): `chaekcheck-data/aisearch/100k/book-profiles-export.tsv`(77,551줄, 9칸, 운영 모델 폴더 파일과 md5 같음)와 `book-texts-100k-exclude-2026-10-28-export.tsv`(search_line 76,759 · search_exclude 23,772 · for_you_blurb 43,227). 둘 다 첫 줄 `# export_id=d09d649f-feb6-44ad-8f92-687dcee85243`(가져오기 14번, PC·운영 같음). 첫 줄 없는 같은 내용 파일도 옆에 있음 — 5단계(`export_id` 검사·`book-profiles` 모드) 전에는 첫 줄 없는 파일, 뒤에는 `-export.tsv`를 씀 (지금 넣기 명령은 첫 줄이 머리줄이 아니면 파일 전체 거절)
+
 1. 운영 모델 폴더 `book-profiles.tsv` 첫 줄에 그 파일을 만든 내보내기의 `export_id`를 적고 `book-profiles`로 넣음(기준이 다르면 거절 → PC에서 다시 만듦, dev 24)
 2. 서버 다시 켬(`MlFirstCall`이 `BookProfiles.all()`을 읽는 것은 dev 24 맞춤 뒤)
 3. AC-4(프로필): `catalog.book_profile` 줄 수 = 파일 줄 수 = 77,551 [확정] (dev 24 확인 2026-10-28: 운영 파일 md5가 PC `chaekcheck-data/ml/aisearch-model-100k`와 같음). `aisearch/internal/firstcall/BookProfiles.java:14`의 "27,227" javadoc은 옛 판 설명이라 `BookProfiles.all()`로 바꿀 때 같이 지움
