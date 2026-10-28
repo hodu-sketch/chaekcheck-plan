@@ -1,6 +1,6 @@
 # 사이클 26 ADR 초안 (사용자 확인 전, 2026-10-28)
 
-확인 페이지: [easy/2026-10-28-adr-drafts.html](easy/2026-10-28-adr-drafts.html). 승인된 초안만 `docs/adr/NNNN-*.md`로 옮김. 0154~0159는 사이클 25 몫으로 비워 둠 [안].
+**모두 기록됨 (2026-10-28): ADR-0161~0165 Accepted.** 확인 페이지: [easy/2026-10-28-adr-drafts.html](easy/2026-10-28-adr-drafts.html). 승인된 초안만 `docs/adr/NNNN-*.md`로 옮김. 0154~0159는 사이클 25 몫으로 비워 둠 [안].
 
 ---
 

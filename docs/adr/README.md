@@ -158,3 +158,4 @@
 | [ADR-0163](0163-covers-on-s3-cloudfront.md) | 모든 표지 그림은 S3(시드니) + CloudFront 기본 주소에 두고, PC만 올림 | Accepted | 2026-10-28 | 26 |
 | [ADR-0164](0164-data-owner-principle-and-list-covers.md) | 데이터는 "무엇에 대한 사실인가"의 주인에게 한 번만 두고, 추천목록 줄 표지는 우리 책의 판 표지를 먼저 씀 | Accepted | 2026-10-28 | 26 |
 | [ADR-0162](0162-description-cleanup-and-export-id.md) | 설명은 책 번호로 저장하고, 다시 가져오기 때 버려진 번호의 설명을 같은 작업에서 지우며, 설명 넣기 파일에 가져오기 번호를 검사함 | Accepted | 2026-10-28 | 26 |
+| [ADR-0165](0165-drop-aisearch-copy-profiles-in-db.md) | AI 검색 사본 표(`aisearch.search_book`)를 없애고 `catalog`에서 찾으며, 책 프로필은 DB에 두고 서버 시작 때 한 번 읽음 | Accepted | 2026-10-28 | 26 |
