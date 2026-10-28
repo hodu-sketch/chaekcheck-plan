@@ -207,6 +207,26 @@
 | Webshare 사용량 확인 | 사용량 API `/api/v2/stats/aggregate/`를 1시간마다, 우리가 센 양과 비교해 큰 값, 80% 경고·90% 정적 길 멈춤 | 인계 예정 (사이클 17, ADR-0130) | [multi-source-ip](research/deploy/multi-source-ip.md) 8절 #3 (97행), 사용자 승인 (2026-10-16) | [확정] |
 | 알림 메일 반복 | 같은 일 1시간에 한 번 | 4절 "알림 메일" 줄 | 같은 문서 8절 #1 | [확정] |
 
+## 10. AI 책 찾기 (사이클 24, 인계 예정)
+
+이름은 모두 [안] (설계 `cycles/24-ai-book-search/design-delta.md` "설정값"). 값의 출처는 결정 페이지 번호.
+
+| 값 | 지금 값 | 들어 있는 곳 | 상태 | 정한 문서 | 근거 | 태그 | 함께 바꿀 곳 |
+|---|---|---|---|---|---|---|---|
+| 기능 켜기 `chaekcheck.aisearch.enabled` | 기본 false, 운영에서 true | `be.yml`·`prod.env` | 인계 예정 | design-delta | [이유 미확인] | [안] | 웹 AI 탭 |
+| 1차 Haiku 시간 제한 | 5초 | `be.yml` | 인계 예정 | [spec R6-3](cycles/24-ai-book-search/spec.md) | 사용자 "이대로" (명세 규칙 #3, 2026-10-24) | [확정] 처음 값 | 프로토타입 뒤 다시 |
+| 2차 Haiku 시간 제한(호출 전체) | 15초 | `be.yml` | 인계 예정 | spec R6-3 | 같음 | [확정] 처음 값 | 같음 |
+| 같은 IP 요청 | 1분 10번, 하루 100번 | `be.yml`(메모리 카운터) | 인계 예정 | spec R7-1 | 사용자 "1분 10번 하루 100번 하루2달러로 업" (명세 규칙 #4) | [확정] | 이어서 묻기도 같이 셈 |
+| 하루 Haiku 비용 상한 | $2 (한국 날짜) | `be.yml`, `aisearch.daily_usage` | 인계 예정 | spec R8-1 | 같음 | [확정] | 가격 값 |
+| Haiku 가격 | 입력 $0.10·출력 $0.50 / 100만 토큰 (10만 토큰 이하 요청) | `be.yml` | 인계 예정 | design-delta | https://platform.claude.com/docs/en/about-claude/pricing (2026-10-24) | [확정] | 가격이 바뀌면 |
+| 후보 / 한 답 / 앞 대화 / 대화 최대 | 30권 / 8권 / 5번 / 20번(웹) | `be.yml`, 웹 | 인계 예정 | spec R3-4·R11-3, 설계 결정 #8 | 사용자 선택 (2026-10-24) | [확정] | — |
+| 질문 / 카드 글 / 찾기용 한 줄 최대 | 200자 / 300자 / 300자 | `be.yml`, DB CHECK | 인계 예정 | 설계 결정 #8, spec R4-3·R12-3 | 사용자 "이 값으로" | [확정] | — |
+| 1차·2차 `max_tokens` | — | `be.yml` | — | — | — | [확인 필요: 프로토타입] | 비용 계산 |
+| 1차 낱말 수 / 낱말 최소 길이 | 8개 / 정리 뒤 2자 | `be.yml` | 인계 예정 | design-delta "낱말 맞추기" | [이유 미확인] | [안] | — |
+| `Retry-After` | 1분 제한: 남은 초, 하루 제한: 한국 자정까지 | 서버 코드 | 인계 예정 | design-delta "검토 뒤 덧붙임" | [이유 미확인] | [안] | — |
+| 한 질문 최대 시간과 nginx | 1차 5초 + 2차 15초 ≈ 21초 → `proxy_read_timeout`이 더 길어야 함 | nginx 템플릿 | — | design-delta | — | [확인 필요: dev `deploy/nginx`] | nginx |
+| API 키 이름 | SSM `/chaekcheck/prod/CHAEKCHECK_AISEARCH_ANTHROPIC_API_KEY` → env `CHAEKCHECK_AISEARCH_ANTHROPIC_API_KEY` | SSM, `up.sh` | 인계 예정 | design-delta "외부 연동" | 사이클 17 규칙 | [안] | 8절 환경 변수 표 |
+
 ## 확인 필요
 
 | 항목 | 확인 방법 |

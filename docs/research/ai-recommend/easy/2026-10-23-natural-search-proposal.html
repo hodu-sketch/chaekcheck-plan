@@ -1,0 +1,265 @@
+<title>말로 책 찾기 제안</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+
+.v-flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.v-box{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:7px 11px;font-size:15px;text-align:center;min-width:90px}
+.v-box small{display:block;color:var(--muted);font-size:12px}
+.v-hi{border-color:var(--accent);background:var(--accent-bg)}
+.v-warn{border-color:var(--warn);background:var(--warn-bg)}
+.v-ok{border-color:var(--ok);background:var(--ok-bg)}
+.v-arr{color:var(--muted);font-size:18px}
+.v-file{border:2px solid var(--line);border-radius:12px;background:var(--card);padding:10px;margin:10px 0;max-width:560px}
+.v-file .v-part{border:1px dashed var(--line);border-radius:8px;padding:8px 10px;margin:6px 0;font-size:14px}
+.v-file .v-part.v-new{border-color:var(--accent);background:var(--accent-bg)}
+.v-tl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0;font-size:13px;text-align:center}
+.v-tl div{border-top:4px solid var(--line);padding-top:6px}
+.v-tl div.v-hi{border-top-color:var(--accent);background:none}
+.v-cv{display:inline-flex;width:70px;aspect-ratio:2/3;border-radius:7px;border:1px solid var(--line);background:var(--accent-bg);align-items:center;justify-content:center;font-size:11px;text-align:center;padding:3px;vertical-align:top;margin:4px}
+.v-cv.v-img{background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 6px,var(--card) 6px,var(--card) 12px)}
+.v-mini{border:1px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;margin:8px 0;max-width:420px}
+.v-mini .v-bar{display:flex;gap:10px;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line);font-size:13px}
+.v-mini .v-body{padding:10px 12px;font-size:13px}
+.v-pill{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-weight:800;font-size:12px}
+@media (max-width:700px){main table{display:block;overflow-x:auto;max-width:100%}.v-tl{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.v-code{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:var(--code-bg);border-radius:8px;padding:8px 10px;overflow-x:auto;white-space:pre}
+main{padding-block:40px 90px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.flow{display:grid;gap:10px;margin:14px 0}
+.step{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:start;border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--card)}
+.step b.k{display:inline-block;min-width:30px;height:30px;line-height:30px;border-radius:50%;text-align:center;background:var(--accent-bg);color:var(--accent);font-size:16px}
+.step.llm{border-color:var(--warn);background:var(--warn-bg)}
+.step.db{border-color:var(--accent);background:var(--accent-bg)}
+.step p{margin:0;font-size:17px}.step p small{color:var(--muted);display:block;font-size:15px}
+.mocks{display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,1.4fr) minmax(0,1fr);gap:14px;align-items:start;margin:12px 0}
+.dev{border:2px solid var(--line);border-radius:12px;background:var(--bg);padding:10px;min-width:0}
+.dev .lbl{font-size:13px;color:var(--muted);margin:0 0 6px}
+.qbox{display:flex;gap:6px;margin:0 0 8px}
+.qbox span{flex:1;min-width:0;border:1px solid var(--accent);border-radius:8px;background:var(--card);padding:5px 8px;font-size:12px}
+.qbox i{font-style:normal;border-radius:8px;background:var(--accent);color:var(--card);padding:5px 8px;font-size:12px}
+.note{font-size:11px;color:var(--muted);margin:0 0 6px}
+.res{display:grid;gap:8px}
+.res.two{grid-template-columns:1fr 1fr}
+.bk{display:flex;gap:8px;border:1px solid var(--line);border-radius:8px;background:var(--card);padding:7px;min-width:0}
+.bk .cv{flex:0 0 auto;width:38px;aspect-ratio:2/3;border-radius:4px;border:1px solid var(--line);background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 5px,var(--card) 5px,var(--card) 10px)}
+.bk.big .cv{width:60px}
+.bk div{min-width:0;font-size:11px;line-height:1.45}
+.bk .t{font-weight:700;font-size:12px}.bk.big .t{font-size:14px}
+.bk .why{display:block;margin-top:3px;color:var(--warn);font-weight:500}
+.bk .lib{color:var(--ok)}
+@media (max-width:760px){.mocks{grid-template-columns:minmax(0,1fr)}.res.two{grid-template-columns:1fr}}
+.opt{width:100%}
+.chip{display:inline-block;font-size:15px;font-weight:700;color:var(--warn);background:var(--warn-bg);border:1px solid var(--warn);border-radius:999px;padding:0 10px;margin-right:6px;line-height:1.6}
+.chip.done{color:var(--ok);background:var(--ok-bg);border-color:var(--ok)}
+.dec{margin:14px 0 0;padding:14px 16px;border:1px solid var(--line);border-radius:10px;background:var(--code-bg);display:flex;flex-direction:column;gap:10px}
+.dec .btns{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.dec button{font:inherit;font-size:16px;padding:6px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer;text-align:left}
+.dec button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.dec button[aria-pressed="true"]{background:var(--accent-bg);border-color:var(--accent);color:var(--accent);font-weight:700}
+.dec textarea{font:inherit;font-size:17px;width:100%;min-height:64px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--text);resize:vertical}
+.dec .save{background:var(--accent);color:var(--card);border-color:var(--accent);font-weight:700}
+.dec .st{font-size:15px;color:var(--muted)}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:0 0 24px;font-size:17px}
+.bar b{font-variant-numeric:tabular-nums}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.card{max-width:100%;overflow-x:auto}
+</style>
+<main class="doc">
+<div class="bar" id="bar">불러오는 중</div>
+<p class="lead">"이런 책 찾고 싶어"라고 쓰면 우리 DB에 있는 책 중에서 맞는 책 5~8권을 표지, 소개, 찾은 이유와 함께 보여 주는 기능의 제안입니다.</p>
+<p class="sub">아래 네 가지를 각 카드 맨 아래에서 고르고 "저장"을 눌러 주세요. 저장한 것은 Claude가 읽습니다. 원칙은 하나입니다. LLM이 책을 지어내지 않도록 <b>후보는 우리 DB에서 뽑고</b>, LLM은 후보 번호 중에서 고르고 이유만 씁니다. 표지, 제목, 저자는 LLM의 답이 아니라 DB에서 붙입니다. 이 페이지는 사이클 밖 제안이라 아직 아무것도 정해지지 않았습니다.</p>
+
+<div class="card">
+<h2>한 번 찾을 때 일어나는 일</h2>
+<p class="concl">사용자가 문장을 쓰면 우리 서버가 후보를 30권 뽑고, LLM은 그중에서 고르고 이유를 씁니다. 화면에 나오는 책은 모두 우리 DB에 있는 책입니다.</p>
+<div class="flow">
+<div class="step"><b class="k">1</b><p>사용자가 입력합니다: "출근길에 가볍게 읽을 과학책"</p></div>
+<div class="step llm"><b class="k">2</b><p>LLM이 문장을 꼬리표 번호로 바꿉니다 (예: 분야 "과학", 느낌 "가벼움")<small>꼬리표는 이미 정한 꼬리표 사전(Thema 한국어판 기반 150개 안팎)에서만 고릅니다. 아래 1번 "찾는 방식"에서 이 단계를 뺄 수도 있습니다.</small></p></div>
+<div class="step db"><b class="k">3</b><p>우리 서버가 DB에서 후보 30권을 뽑습니다<small>꼬리표가 맞는 책 + 문장 뜻이 가까운 책(임베딩 KURE-v1로 계산해 둔 값). 내 계획 도서관에 있는 책만 남깁니다.</small></p></div>
+<div class="step llm"><b class="k">4</b><p>LLM이 후보 30권 가운데 5~8권의 번호와 찾은 이유 한 줄을 정해진 JSON 형식으로 돌려줍니다</p></div>
+<div class="step db"><b class="k">5</b><p>우리 서버가 확인하고 화면에 보냅니다<small>후보에 없는 번호는 버립니다. 표지, 제목, 저자, 소개는 DB에서 붙입니다. LLM이 응답하지 않거나 늦으면 3단계 순서대로 이유 없이 보여 줍니다.</small></p></div>
+</div>
+<p class="cap">노란 칸만 LLM이 하는 일이고, 파란 칸은 우리 서버와 DB가 하는 일입니다.</p>
+</div>
+
+<div class="card">
+<h2>화면 예시 (PC · 태블릿 · 폰)</h2>
+<p class="concl">입력칸 아래에 맨 위 한 권은 크게, 나머지는 두 권씩 보여 줍니다. 이미 정하신 "나에게 맞는 책" 탭의 짜임과 같습니다.</p>
+<div class="mocks">
+<div class="dev"><p class="lbl">PC</p>
+<div class="qbox"><span>출근길에 가볍게 읽을 과학책</span><i>찾기</i></div>
+<p class="note">책 소개와 찾은 이유는 AI가 썼어요</p>
+<div class="res">
+<div class="bk big"><span class="cv"></span><div><span class="t">책 제목 A</span><br>저자 · 출판사 <span class="lib">· 내 도서관 3곳</span><br>책 소개 1~2문장(미리 만들어 둔 글)<span class="why">찾은 이유: 짧은 글 묶음이라 출퇴근길에 끊어 읽기 좋음</span></div></div>
+<div class="res two">
+<div class="bk"><span class="cv"></span><div><span class="t">책 제목 B</span><br>책 소개<span class="why">찾은 이유 한 줄</span></div></div>
+<div class="bk"><span class="cv"></span><div><span class="t">책 제목 C</span><br>책 소개<span class="why">찾은 이유 한 줄</span></div></div>
+</div></div></div>
+<div class="dev"><p class="lbl">태블릿</p>
+<div class="qbox"><span>출근길에 가볍게…</span><i>찾기</i></div>
+<p class="note">AI가 썼어요</p>
+<div class="res">
+<div class="bk big"><span class="cv"></span><div><span class="t">책 제목 A</span><br>책 소개<span class="why">찾은 이유</span></div></div>
+<div class="res two">
+<div class="bk"><span class="cv"></span><div><span class="t">B</span><span class="why">이유</span></div></div>
+<div class="bk"><span class="cv"></span><div><span class="t">C</span><span class="why">이유</span></div></div>
+</div></div></div>
+<div class="dev"><p class="lbl">폰</p>
+<div class="qbox"><span>출근길에…</span><i>찾기</i></div>
+<div class="res">
+<div class="bk big"><span class="cv"></span><div><span class="t">A</span><br>소개<span class="why">이유</span></div></div>
+<div class="bk"><span class="cv"></span><div><span class="t">B</span><span class="why">이유</span></div></div>
+</div></div>
+</div>
+<p class="cap">위치와 순서만 보여 주는 그림입니다. 색과 모양은 아닙니다. dev의 지금 화면과는 맞춰 보지 않았습니다.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">1</span>찾는 방식:<br>LLM을 몇 번 부르고, 소개는 언제 만드나</h2>
+<p class="concl">추천: LLM이 꼬리표로 바꾸고 이유를 쓰는 두 번 호출, 책 소개는 미리 만들어 DB에 저장하는 방식(다).</p>
+<table class="opt">
+<tr><th>방식</th><th>좋은 점</th><th>잃는 것</th></tr>
+<tr><td>(가) 한 번 호출: 위 2단계를 빼고 임베딩으로만 후보를 뽑음. LLM은 고르고 소개와 이유를 씀</td><td>가장 단순하고 빠름</td><td>"가볍게", "출근길" 같은 조건이 후보에 잘 반영되지 않을 수 있음. 소개를 매번 새로 써서 같은 책인데 글이 달라짐</td></tr>
+<tr><td>(나) 두 번 호출: 꼬리표로 바꾸기 + 고르기·소개·이유</td><td>모은 꼬리표를 제대로 씀</td><td>느림. 출력이 길어 비용도 큼</td></tr>
+<tr><td>(다) 두 번 호출 + 소개는 미리: 실시간 LLM은 "찾은 이유"만 씀</td><td>출력이 짧아 빠름. 소개 글이 늘 같음</td><td>소개를 미리 만드는 일이 필요함. 이 일은 이미 정하신 Haiku 배치 문구와 같은 작업이라 따로 생기지 않음</td></tr>
+</table>
+<p class="prop"><span class="chip" data-n="1" data-title="찾는 방식" data-opts="(다) 두 번 호출 + 소개는 미리|(가) 한 번 호출|(나) 두 번 호출, 소개도 실시간|기타">[안] #1</span> 방식 (다): 꼬리표로 바꾸기 → DB 후보 30권 → LLM이 5~8권과 찾은 이유. 책 소개는 미리 만든 글을 씁니다.</p>
+<p class="alt">다른 선택: (가) 한 번 호출, (나) 두 번 호출하고 소개도 실시간.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">2</span>실시간 LLM을 어디서 돌리나:<br>vast.ai를 켜 두기 / Claude Haiku API</h2>
+<p class="concl">말씀하신 대로 vast.ai에 LLM을 켜 두고 우리 서버가 부를 수 있습니다. 다만 2026-10-17에 정하신 "vast.ai는 빌려서 일괄로만 쓰고, 서버가 실시간으로 부르지 않음"을 바꾸는 일입니다.</p>
+<table class="opt">
+<tr><th></th><th>vast.ai에 켜 두기 (vLLM)</th><th>Claude Haiku 5.5 API</th></tr>
+<tr><td>비용</td><td>켜 둔 시간만큼: 2026-10-17 조회 시세로 RTX 3090 $0.16/시간이면 한 달 약 $115, 4090 $0.40/시간이면 약 $290 (24시간 켜 둘 때). 지금 시세는 확인 못 함</td><td>쓴 만큼: 입력 $0.10, 출력 $0.50 (100만 토큰당). 한 번에 입력 5천·출력 400토큰으로 가정하면 약 $0.0007. 하루 1,000번이면 한 달 약 $20 (가정에서 계산한 값)</td></tr>
+<tr><td>모델</td><td>Qwen3 8B/14B 또는 Kakao Kanana 1.5 8B (둘 다 Apache-2.0, 상업 이용 허용). LG EXAONE은 상업 이용 금지라 뺌</td><td>Haiku 5.5</td></tr>
+<tr><td>멈출 때</td><td>장비 주인이 내리거나 주소가 바뀌면 이유 없이 보여 줌</td><td>Anthropic 장애 때만</td></tr>
+<tr><td>보안</td><td>vLLM의 <code>--api-key</code>는 일부 주소만 막는다고 공식 문서가 경고함. 우리 서버 주소만 들어오게 막아야 함. vast.ai 보안 FAQ에 "장비 주인이 데이터를 못 본다"는 문장은 없음</td><td>따로 할 일 적음</td></tr>
+</table>
+<p class="prop"><span class="chip" data-n="2" data-title="실시간 LLM을 어디서" data-opts="Haiku API로 시작, 나중에 vast.ai|처음부터 vast.ai에 켜 두기|기타">[안] #2</span> 실시간은 Claude Haiku 5.5 API로 시작하고, 하루 이용이 많아져 켜 두는 비용이 더 싸지면 vast.ai로 옮깁니다. vast.ai로 가더라도 서버는 OpenAI 호환 형식 하나로 부르게 만들어 주소만 바꾸면 되게 합니다.</p>
+<p class="alt">다른 선택: 처음부터 vast.ai에 켜 두기. 내 LLM을 쓰고 프롬프트가 밖으로 나가지 않지만, 이용자가 적을 때도 한 달 $115 이상 들고, 내려가면 이유 없이 보여 줍니다. 이 선택은 2026-10-17 결정을 바꾸므로 ADR로 남깁니다.</p>
+<p class="ex">근거: vast.ai 시세와 보안 FAQ는 <code>infra-cost.md</code> 1절(2026-10-17 확인), Haiku 가격은 같은 문서 3절(https://platform.claude.com/docs/en/about-claude/pricing). vLLM의 OpenAI 호환 서버와 <code>--api-key</code> 경고: https://github.com/vllm-project/vllm/blob/main/docs/serving/online_serving/openai_compatible_server.md, JSON 형식 강제(<code>response_format</code> <code>json_schema</code>): https://github.com/vllm-project/vllm/blob/main/docs/features/structured_outputs.md (둘 다 2026-10-23 확인). 한 번에 드는 토큰 수는 재 보지 않은 가정입니다.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">3</span>LLM에 보내는 책 정보:<br>소개 원문은 보내지 않음</h2>
+<p class="concl">2026-10-23에 "책 소개 원문은 내 PC 수집 DB에만 저장, 서비스에는 올리지 않음"으로 정하셨습니다. 실시간 LLM은 운영 서버에서 부르므로 원문 대신 미리 만든 짧은 소개와 꼬리표를 보냅니다.</p>
+<p>LLM에 가는 것: 사용자가 쓴 문장, 후보 30권의 번호·제목·저자·꼬리표·미리 만든 소개 1~2문장.<br>가지 않는 것: 소개 원문, 회원 번호, 이용 기록, 내 도서관 목록.</p>
+<p class="prop"><span class="chip" data-n="3" data-title="LLM에 보내는 책 정보" data-opts="원문은 보내지 않음 (미리 만든 소개 + 꼬리표)|원문 일부도 보냄|기타">[안] #3</span> 원문 대신 미리 만든 소개와 꼬리표만 보냅니다. 2026-10-23 결정을 그대로 지킵니다.</p>
+<p class="alt">다른 선택: 원문 일부를 운영 DB에 올려 LLM에 보내기. 이유가 더 정확해질 수 있지만 2026-10-23 결정을 바꾸고, 원문 저작권 검토(<code>law.md</code>)가 다시 필요합니다.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">4</span>화면 자리:<br>"나에게 맞는 책" 탭 맨 위 입력칸</h2>
+<p class="concl">이미 정하신 "나에게 맞는 책" 탭(추천도서 메뉴 맨 앞) 맨 위에 입력칸을 두고, 찾으면 그 아래 목록이 바뀝니다. AI 표시는 탭 맨 위 한 줄로 이미 정하셨으니 그 문구를 "책 소개와 찾은 이유는 AI가 썼어요"로 넓힙니다.</p>
+<p>"나에게 맞는 책" 탭은 폰에서 이유 줄을 빼기로 하셨습니다. 이 기능은 찾은 이유가 핵심이라 폰에서도 이유 한 줄을 보여 주는 것으로 제안합니다.</p>
+<p class="prop"><span class="chip" data-n="4" data-title="화면 자리" data-opts="&quot;나에게 맞는 책&quot; 탭 맨 위 입력칸|첫 화면 검색창 옆 &quot;말로 찾기&quot; 단추|기타">[안] #4</span> "나에게 맞는 책" 탭 맨 위 입력칸, 폰에서도 찾은 이유를 보여 줌, AI 표시는 탭 맨 위 한 줄.</p>
+<p class="alt">다른 선택: 첫 화면 책 검색창 옆에 "말로 찾기" 단추. 더 눈에 띄지만, 제목을 찾는 검색과 섞여 어느 쪽 결과인지 헷갈릴 수 있습니다.</p>
+</div>
+
+<div class="card">
+<h2>어떤 안을 고르셔도 넣는 안전장치</h2>
+<p class="concl">아래 다섯 가지는 고를 것이 아니라 기본으로 넣는 것입니다.</p>
+<table>
+<tr><td>없는 책 막기</td><td>LLM이 돌려준 번호가 후보 30권에 없으면 버립니다.</td></tr>
+<tr><td>멈춰도 보이기</td><td>LLM이 정해진 시간 안에 답하지 않으면 후보 순서대로 이유 없이 보여 줍니다. 시간 값은 사이클에서 정합니다.</td></tr>
+<tr><td>개인정보</td><td>회원 정보와 이용 기록은 LLM에 보내지 않습니다.</td></tr>
+<tr><td>AI 표시</td><td>인공지능 기본법 제31조②에 따라 AI가 만든 글임을 표시합니다 (<code>law.md</code>).</td></tr>
+<tr><td>남용 막기</td><td>한 사람이 짧은 시간에 너무 많이 찾지 못하게 횟수를 제한합니다. 값은 사이클에서 정합니다.</td></tr>
+</table>
+</div>
+
+<div class="card">
+<h2>확인 못 한 것</h2>
+<table>
+<tr><td>응답 시간</td><td>두 번 호출할 때 몇 초 걸리는지 재 보지 않았습니다. 사이클에서 시험해 봅니다.</td></tr>
+<tr><td>지금 vast.ai 시세</td><td>2026-10-17 조회 값입니다. 고르시기 전에 다시 봅니다.</td></tr>
+<tr><td>한 번에 드는 토큰 수</td><td>입력 5천·출력 400은 가정입니다. 표본으로 재 봅니다.</td></tr>
+<tr><td>8B 모델의 한국어 이유 품질</td><td>vast.ai로 옮길 때 표본 100개로 Haiku와 비교합니다.</td></tr>
+</table>
+</div>
+
+<p class="foot">바탕: 사용자 요청 (2026-10-23) "내가 모은 수집 데이터베이스로(도서,상세설명,태그) … 책 표지랑 같이 그의 요구에 맞는 여러 책을 찾아주고 싶은데 … vast.ai(내가 llm)랑 소통하도록 해서 … 책에 대한 간단한 설명과 찾은이유도 있어야 해". 근거 문서 <code>docs/research/ai-recommend/overview.md</code> (1절, 6-1절), <code>infra-cost.md</code>, <code>tag-vocabulary.md</code> 3절, <code>law.md</code>. 사이클 밖 제안이라 모듈·표·API는 정하지 않았습니다.</p>
+</main>
+
+<script>
+(function(){
+  const items=[...document.querySelectorAll('.chip')].map(ch=>{
+    const n=+ch.dataset.n, title=ch.dataset.title, opts=ch.dataset.opts.split('|');
+    const box=ch.closest('.card');
+    const d=document.createElement('div'); d.className='dec';
+    const g=document.createElement('div'); g.className='btns'; g.setAttribute('role','group'); g.setAttribute('aria-label',n+'번 '+title+' 고르기');
+    opts.forEach(c=>{const b=document.createElement('button');b.type='button';b.dataset.c=c;b.setAttribute('aria-pressed','false');b.textContent=c;g.appendChild(b);});
+    const ta=document.createElement('textarea'); ta.id='note-'+n; ta.placeholder='덧붙일 말 (기타를 고르셨다면 내용, 질문, 조건)';
+    const r=document.createElement('div'); r.className='btns';
+    const sv=document.createElement('button'); sv.type='button'; sv.className='save'; sv.textContent='저장';
+    const st=document.createElement('span'); st.className='st'; st.setAttribute('aria-live','polite'); st.textContent='아직 고르지 않았습니다';
+    r.append(sv,st); d.append(g,ta,r); box.appendChild(d);
+    const it={n,title,chip:ch,el:d,ta,st,pick:null};
+    g.querySelectorAll('button').forEach(b=>b.onclick=()=>{it.pick=b.dataset.c;paint(it);st.textContent='"저장"을 눌러야 기록됩니다';});
+    sv.onclick=()=>save(it);
+    return it;
+  });
+  const bar=document.getElementById('bar');
+  function paint(it){it.el.querySelectorAll('[data-c]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.c===it.pick)));}
+  let db=null; const saved={};
+  function count(){const k=Object.keys(saved).length;bar.innerHTML='고른 것 <b>'+k+' / '+items.length+'</b>'+(db?' · 저장하면 Claude가 읽습니다':' · 저장 기능을 아직 불러오지 못했습니다');}
+  count();
+  async function save(it){
+    if(!it.pick){it.st.textContent='먼저 하나를 고르세요';return;}
+    if(!db){it.st.textContent='저장할 수 없습니다. 로그인한 채로 claude.ai에서 열어 주세요';return;}
+    const note=it.ta.value.trim();
+    if(it.pick==='기타'&&!note){it.st.textContent='기타를 고르셨다면 덧붙일 말을 적어 주세요';return;}
+    it.st.textContent='저장하는 중…';
+    try{await db.doc('choices/q'+it.n).set({n:it.n,title:it.title,choice:it.pick,note,savedAt:new Date().toISOString()});it.st.textContent='저장했습니다';}
+    catch(e){it.st.textContent='저장하지 못했습니다 ('+(e&&e.code||'오류')+'). 잠시 뒤 다시 눌러 주세요';}
+  }
+  (async()=>{
+    try{db=window.claude&&await window.claude.use('db');}catch(e){db=null;}
+    count(); if(!db) return;
+    db.collection('choices').onSnapshot(snap=>{
+      snap.docs.forEach(doc=>{const v=doc.data();const it=items.find(i=>i.n===v.n);if(!it)return;saved[v.n]=v;
+        if(document.activeElement!==it.ta) it.ta.value=v.note||'';
+        it.pick=v.choice;paint(it);it.chip.classList.add('done');it.chip.textContent='#'+v.n+' · '+v.choice;
+        it.st.textContent='저장됨: '+v.choice+' ('+new Date(v.savedAt).toLocaleString('ko-KR')+')';});
+      count();
+    },()=>{});
+  })();
+})();
+</script>

@@ -1,0 +1,233 @@
+<title>PC 배치 하나로 합치기</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+
+.v-flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.v-box{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:7px 11px;font-size:15px;text-align:center;min-width:90px}
+.v-box small{display:block;color:var(--muted);font-size:12px}
+.v-hi{border-color:var(--accent);background:var(--accent-bg)}
+.v-warn{border-color:var(--warn);background:var(--warn-bg)}
+.v-ok{border-color:var(--ok);background:var(--ok-bg)}
+.v-arr{color:var(--muted);font-size:18px}
+.v-file{border:2px solid var(--line);border-radius:12px;background:var(--card);padding:10px;margin:10px 0;max-width:560px}
+.v-file .v-part{border:1px dashed var(--line);border-radius:8px;padding:8px 10px;margin:6px 0;font-size:14px}
+.v-file .v-part.v-new{border-color:var(--accent);background:var(--accent-bg)}
+.v-tl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0;font-size:13px;text-align:center}
+.v-tl div{border-top:4px solid var(--line);padding-top:6px}
+.v-tl div.v-hi{border-top-color:var(--accent);background:none}
+.v-cv{display:inline-flex;width:70px;aspect-ratio:2/3;border-radius:7px;border:1px solid var(--line);background:var(--accent-bg);align-items:center;justify-content:center;font-size:11px;text-align:center;padding:3px;vertical-align:top;margin:4px}
+.v-cv.v-img{background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 6px,var(--card) 6px,var(--card) 12px)}
+.v-mini{border:1px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;margin:8px 0;max-width:420px}
+.v-mini .v-bar{display:flex;gap:10px;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line);font-size:13px}
+.v-mini .v-body{padding:10px 12px;font-size:13px}
+.v-pill{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-weight:800;font-size:12px}
+@media (max-width:700px){main table{display:block;overflow-x:auto;max-width:100%}.v-tl{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.v-code{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:var(--code-bg);border-radius:8px;padding:8px 10px;overflow-x:auto;white-space:pre}
+main{padding-block:40px 90px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.flow{display:grid;gap:10px;margin:14px 0}
+.step{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:start;border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--card)}
+.step b.k{display:inline-block;min-width:30px;height:30px;line-height:30px;border-radius:50%;text-align:center;background:var(--accent-bg);color:var(--accent);font-size:16px}
+.step.llm{border-color:var(--warn);background:var(--warn-bg)}
+.step.db{border-color:var(--accent);background:var(--accent-bg)}
+.step p{margin:0;font-size:17px}.step p small{color:var(--muted);display:block;font-size:15px}
+.mocks{display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,1.4fr) minmax(0,1fr);gap:14px;align-items:start;margin:12px 0}
+.dev{border:2px solid var(--line);border-radius:12px;background:var(--bg);padding:10px;min-width:0}
+.dev .lbl{font-size:13px;color:var(--muted);margin:0 0 6px}
+.qbox{display:flex;gap:6px;margin:0 0 8px}
+.qbox span{flex:1;min-width:0;border:1px solid var(--accent);border-radius:8px;background:var(--card);padding:5px 8px;font-size:12px}
+.qbox i{font-style:normal;border-radius:8px;background:var(--accent);color:var(--card);padding:5px 8px;font-size:12px}
+.note{font-size:11px;color:var(--muted);margin:0 0 6px}
+.res{display:grid;gap:8px}
+.res.two{grid-template-columns:1fr 1fr}
+.bk{display:flex;gap:8px;border:1px solid var(--line);border-radius:8px;background:var(--card);padding:7px;min-width:0}
+.bk .cv{flex:0 0 auto;width:38px;aspect-ratio:2/3;border-radius:4px;border:1px solid var(--line);background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 5px,var(--card) 5px,var(--card) 10px)}
+.bk.big .cv{width:60px}
+.bk div{min-width:0;font-size:11px;line-height:1.45}
+.bk .t{font-weight:700;font-size:12px}.bk.big .t{font-size:14px}
+.bk .why{display:block;margin-top:3px;color:var(--warn);font-weight:500}
+.bk .lib{color:var(--ok)}
+@media (max-width:760px){.mocks{grid-template-columns:minmax(0,1fr)}.res.two{grid-template-columns:1fr}}
+.opt{width:100%}
+.chip{display:inline-block;font-size:15px;font-weight:700;color:var(--warn);background:var(--warn-bg);border:1px solid var(--warn);border-radius:999px;padding:0 10px;margin-right:6px;line-height:1.6}
+.chip.done{color:var(--ok);background:var(--ok-bg);border-color:var(--ok)}
+.dec{margin:14px 0 0;padding:14px 16px;border:1px solid var(--line);border-radius:10px;background:var(--code-bg);display:flex;flex-direction:column;gap:10px}
+.dec .btns{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.dec button{font:inherit;font-size:16px;padding:6px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer;text-align:left}
+.dec button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.dec button[aria-pressed="true"]{background:var(--accent-bg);border-color:var(--accent);color:var(--accent);font-weight:700}
+.dec textarea{font:inherit;font-size:17px;width:100%;min-height:64px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--text);resize:vertical}
+.dec .save{background:var(--accent);color:var(--card);border-color:var(--accent);font-weight:700}
+.dec .st{font-size:15px;color:var(--muted)}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:0 0 24px;font-size:17px}
+.bar b{font-variant-numeric:tabular-nums}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.card{max-width:100%;overflow-x:auto}
+.ex2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin:10px 0}
+.ex2>div{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--card);font-size:16px;min-width:0}
+.ex2 .q{color:var(--accent);font-weight:700}
+.same{background:var(--code-bg);border-radius:8px;padding:6px 10px;font-size:15px;margin:6px 0}
+.ai{border:2px solid var(--accent);border-radius:10px;background:var(--accent-bg);padding:8px;margin:0 0 8px}
+.ai .h{font-size:12px;font-weight:700;color:var(--accent);margin:0 0 6px}
+.row3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.row2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.libres{border:1px dashed var(--line);border-radius:8px;padding:6px 8px;font-size:11px;color:var(--muted);background:var(--card)}
+.steps{display:grid;gap:8px;margin:10px 0}
+.steps div{border-left:4px solid var(--accent);padding:4px 12px;font-size:17px}
+@media (max-width:760px){.ex2{grid-template-columns:1fr}}
+.decided{background:var(--ok-bg);border:1px solid var(--ok);border-radius:10px;padding:12px 16px;margin:0 0 10px}
+.decided b{color:var(--ok)}
+.tabs{display:flex;gap:4px;margin:0 0 -1px}
+.tabs span{font-size:11px;border:1px solid var(--line);border-bottom:none;border-radius:6px 6px 0 0;padding:3px 8px;background:var(--code-bg);color:var(--muted)}
+.tabs span.on{background:var(--card);color:var(--accent);font-weight:700;border-color:var(--accent)}
+.qbox.t span{border-radius:0 8px 8px 8px}
+.arrow{font-size:13px;color:var(--muted);margin:6px 0;text-align:center}
+.flowrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+.flowrow .v-box{font-size:15px}
+.scroll{overflow-x:auto;max-width:100%}
+pre.adr{white-space:pre-wrap;font-size:14px;background:var(--code-bg);border-radius:8px;padding:10px;max-height:420px;overflow:auto}
+details summary{cursor:pointer;color:var(--accent);margin:6px 0}
+</style>
+<main class="doc">
+<div class="bar" id="bar">불러오는 중</div>
+<p class="concl"><b>닫힘 (2026-10-27):</b> 고르실 필요가 없습니다. dev가 2026-10-26 10만 권 작업에서 스크립트 하나로 Haiku Message Batches를 써서 찾기용 한 줄(49,726권)·책첵 요약(새로 43,227권)·책 프로필(50,324권)을 함께 만들었습니다. 꼬리표는 사전이 없어 아직입니다. 세 결과를 <code>book-texts</code> 파일 하나로 내보내는 일은 사이클 26이 맡습니다. (사이클 26 계획 세션 답, 2026-10-27)</p>
+<p class="lead">사이클 23이 "PC Haiku 배치를 하나로, 책 한 권당 한 번 호출로 세 가지를 같이 만들기"를 정했습니다. 24 쪽 배치를 거기에 맞추려면 정하실 것이 세 개입니다.</p>
+<p class="sub">23의 결정(사용자 승인 2026-10-24, ADR-0149 결정 3): 책 한 권당 Haiku 5.5를 한 번 불러 <b>탭 추천 글</b>(23), <b>꼬리표</b>(23), <b>찾기용 한 줄</b>(24)을 함께 만들고, Message Batches로 돌리고, 결과는 <code>book-texts.tsv</code> 한 파일에 종류별로 담아 넣기 명령 한 번으로 넣습니다. 그런데 24 dev는 지금 "PC 스크립트가 한 권씩 바로 부르기"로 만들고 있어서 두 방식을 하나로 맞춰야 합니다. 각 카드 맨 아래에서 고르고 "저장"을 눌러 주세요.</p>
+
+<div class="card">
+<h2>하나로 합친 모양</h2>
+<div class="flowrow"><span class="v-box">대상 책 목록 파일</span><span class="v-arr">→</span><span class="v-box v-warn">PC 스크립트 하나<br><small>책마다 요청 1개</small></span><span class="v-arr">→</span><span class="v-box v-warn">Haiku 5.5<br><small>Message Batches</small></span><span class="v-arr">→</span><span class="v-box v-hi">답 하나에 세 칸</span><span class="v-arr">→</span><span class="v-box v-ok">book-texts.tsv<br><small>kind별 줄</small></span><span class="v-arr">→</span><span class="v-box">넣기 명령 한 번</span></div>
+<p class="cap">원문(전자도서관 소개)은 PC에서 한 번만 읽고 밖으로 나가지 않습니다. API 키도 PC에만 둡니다.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">1</span>24도 Message Batches로 바꾸기</h2>
+<p class="concl">24 dev가 정한 "한 권씩 바로 부르기"를 버리고 23과 같이 Message Batches로 돌리는 것을 추천합니다. 23 결정을 이미 승인하셨고, 정해진 답 형식(JSON)도 배치에서 그대로 쓸 수 있으며 값이 절반입니다.</p>
+<table>
+<tr><th>Message Batches</th><th>공식 문서 내용 (2026-10-24 확인)</th></tr>
+<tr><td>값</td><td>보통 값의 50%. Haiku 5.5 입력 $0.05·출력 $0.25 (100만 토큰당, 10만 토큰 이하 요청)</td></tr>
+<tr><td>시간</td><td>대부분 1시간 안에 끝남. 24시간 안에 안 끝나면 만료</td></tr>
+<tr><td>크기</td><td>한 묶음 최대 10만 요청 또는 256MB</td></tr>
+<tr><td>요청 이름</td><td><code>custom_id</code> 1~64자, 영문·숫자·<code>-</code>·<code>_</code>만 → 책 번호(<code>book_id</code>)를 그대로 씀</td></tr>
+<tr><td>정해진 답 형식</td><td>구조화 출력을 배치에서 50% 할인으로 쓸 수 있음</td></tr>
+</table>
+<p><b>답 하나의 모양 [안]</b>: 책마다 JSON 한 개에 세 칸 — <code>search_line</code>(찾기용 한 줄, 최대 300자, 모르면 비움), <code>for_you_blurb</code>(23 탭 추천 글), <code>tags</code>(23 꼬리표 사전 번호), 그리고 원문으로 썼는지 서지만으로 썼는지(<code>source</code>). 23 칸의 길이·사전은 23이 정한 대로 둡니다. 스크립트가 이 답을 <code>book-texts.tsv</code>의 줄로 나눕니다(<code>kind</code>마다 한 줄).</p>
+<p class="ex">근거: https://platform.claude.com/docs/en/build-with-claude/batch-processing , https://platform.claude.com/docs/en/build-with-claude/structured-outputs (2026-10-24 확인).</p>
+<p class="prop"><span class="chip" data-n="1" data-title="배치 방식" data-opts="Message Batches로 바꿈|24는 바로 부르기 유지|기타">[안] #1</span> 24 배치도 Message Batches로 바꾸고, 책 한 권당 요청 하나(<code>custom_id</code> = 책 번호), 답 하나에 세 칸을 담습니다.</p>
+<p class="alt">다른 선택: 24만 바로 부르기를 유지 — 결과가 바로 나오지만 값이 두 배이고, 스크립트가 둘로 나뉘어 23 결정("한 번 호출로 세 가지")과 어긋납니다.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">2</span>스크립트는 누가 만들고<br>언제 돌리나</h2>
+<p class="concl">24가 먼저 main에 들어가고 23은 그 위에 더하기로 하셨으니, 24 dev가 스크립트 하나를 만들어 찾기용 한 줄 칸만 먼저 넣고, 23 dev가 같은 스크립트에 23의 두 칸을 더하는 것을 추천합니다. 전체 책을 다 돌리는 것은 세 칸이 다 갖춰진 뒤 한 번만 합니다.</p>
+<table class="opt">
+<tr><th>안</th><th>좋은 점</th><th>잃는 것</th></tr>
+<tr><td>(가) 24가 스크립트를 만들고 23이 칸을 더함, 전체 실행은 23 뒤 한 번</td><td>원문을 한 번만 읽고 돈도 한 번만 씀. 24 시험은 표본 수십 권으로</td><td>24 화면을 끝까지 시험할 때까지 전체 한 줄이 없음(그동안 제목·저자로 시험)</td></tr>
+<tr><td>(나) 24가 지금 추천목록 책 한 줄만 먼저 돌리고, 23 때 세 칸으로 다시 돌림</td><td>24가 진짜 한 줄로 빨리 시험</td><td>추천목록 책은 두 번 돌려 돈이 더 듦(약 2,800권, 값은 재 보지 않음)</td></tr>
+<tr><td>(다) 23 dev가 스크립트를 만들고 24는 기다림</td><td>23 결정 그대로</td><td>23이 24 뒤에 오기로 해서 24가 오래 기다림</td></tr>
+</table>
+<p class="prop"><span class="chip" data-n="2" data-title="스크립트 순서" data-opts="(가) 24가 만들고 23이 더함, 전체는 한 번|(나) 24 먼저 돌리고 나중에 다시|(다) 23이 만듦|기타">[안] #2</span> (가) 24 dev가 하나의 PC 스크립트를 만들고(찾기용 한 줄 칸만), 23 dev가 두 칸을 더합니다. 전체 실행은 세 칸이 갖춰진 뒤 한 번, 그다음부터는 새 책만.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">3</span>찾기용 한 줄을<br>어느 책까지 만들까</h2>
+<p class="concl">23의 대상은 추천목록 책 약 2,800권에 더해 "보유 도서관이 많은 책 3만 권"까지입니다. 24는 지금 추천목록 책 안에서만 찾으므로, 3만 권의 한 줄은 지금 당장은 쓰이지 않습니다. 다만 같은 호출에 한 칸을 더하는 것이라 값이 조금 늘 뿐이고, 나중에 찾는 범위를 넓힐 때(범위 결정 #1 "글이 붙는 대로 넓힘") 다시 돌리지 않아도 됩니다.</p>
+<table class="opt">
+<tr><th>안</th><th>좋은 점</th><th>잃는 것</th></tr>
+<tr><td>(가) 23 대상 전부(약 3만 2,800권)에 같이 만듦</td><td>나중에 범위를 넓힐 때 바로 씀. 다시 돌리지 않음</td><td>출력이 조금 늘어 값이 조금 더 듦. 지금은 넣어도 추천목록 밖 책은 건너뜀</td></tr>
+<tr><td>(나) 추천목록 책에만</td><td>지금 필요한 만큼만</td><td>범위를 넓힐 때 3만 권을 다시 돌려야 함</td></tr>
+</table>
+<p class="prop"><span class="chip" data-n="3" data-title="한 줄 대상" data-opts="(가) 23 대상 전부|(나) 추천목록 책에만|기타">[안] #3</span> (가) 23 대상 책 전부에 찾기용 한 줄도 같이 만듭니다. 24의 넣기 명령은 지금처럼 추천목록 책 줄만 넣고 나머지는 건너뛰므로, 파일은 PC에 두었다가 범위를 넓힐 때 씁니다.</p>
+<p class="alt">값은 재 보지 않았습니다. 한 줄 출력이 책 한 권에 수십 토큰이면 3만 권에도 배치 값으로는 크지 않을 것으로 봅니다 [추론]. 정확한 값은 표본으로 잽니다.</p>
+</div>
+
+<p class="foot">바탕: 사이클 23 dev 세션이 보낸 글(사용자가 붙여 넣음, 2026-10-24): 23 설계 결정 #7, ADR-0149 결정 3. 24 <code>handoff.md</code> 2단계, ADR-0151, <code>to-cycle23-batch-proposal.md</code>. 결과는 dev <code>docs/plan-feedback.md</code> "# 사이클 23" → "24와의 일"의 "알린 날·받은 답" 줄에 적을 수 있게 따로 정리해 드립니다.</p>
+</main>
+
+
+
+
+
+
+
+
+<script>
+(function(){
+  const items=[...document.querySelectorAll('.chip')].map(ch=>{
+    const n=+ch.dataset.n, title=ch.dataset.title, opts=ch.dataset.opts.split('|');
+    const box=ch.closest('.card');
+    const d=document.createElement('div'); d.className='dec';
+    const g=document.createElement('div'); g.className='btns'; g.setAttribute('role','group'); g.setAttribute('aria-label',n+'번 '+title+' 고르기');
+    opts.forEach(c=>{const b=document.createElement('button');b.type='button';b.dataset.c=c;b.setAttribute('aria-pressed','false');b.textContent=c;g.appendChild(b);});
+    const ta=document.createElement('textarea'); ta.id='note-'+n; ta.placeholder='덧붙일 말 (기타를 고르셨다면 내용, 질문, 조건)';
+    const r=document.createElement('div'); r.className='btns';
+    const sv=document.createElement('button'); sv.type='button'; sv.className='save'; sv.textContent='저장';
+    const st=document.createElement('span'); st.className='st'; st.setAttribute('aria-live','polite'); st.textContent='아직 고르지 않았습니다';
+    r.append(sv,st); d.append(g,ta,r); box.appendChild(d);
+    const it={n,title,chip:ch,el:d,ta,st,pick:null};
+    g.querySelectorAll('button').forEach(b=>b.onclick=()=>{it.pick=b.dataset.c;paint(it);st.textContent='"저장"을 눌러야 기록됩니다';});
+    sv.onclick=()=>save(it);
+    return it;
+  });
+  const bar=document.getElementById('bar');
+  function paint(it){it.el.querySelectorAll('[data-c]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.c===it.pick)));}
+  let db=null; const saved={};
+  function count(){const k=Object.keys(saved).length;bar.innerHTML='고른 것 <b>'+k+' / '+items.length+'</b>'+(db?' · 저장하면 Claude가 읽습니다':' · 저장 기능을 아직 불러오지 못했습니다');}
+  count();
+  async function save(it){
+    if(!it.pick){it.st.textContent='먼저 하나를 고르세요';return;}
+    if(!db){it.st.textContent='저장할 수 없습니다. 로그인한 채로 claude.ai에서 열어 주세요';return;}
+    const note=it.ta.value.trim();
+    if(it.pick==='기타'&&!note){it.st.textContent='기타를 고르셨다면 덧붙일 말을 적어 주세요';return;}
+    it.st.textContent='저장하는 중…';
+    try{await db.doc('batch24/q'+it.n).set({n:it.n,title:it.title,choice:it.pick,note,savedAt:new Date().toISOString()});it.st.textContent='저장했습니다';}
+    catch(e){it.st.textContent='저장하지 못했습니다 ('+(e&&e.code||'오류')+'). 잠시 뒤 다시 눌러 주세요';}
+  }
+  (async()=>{
+    try{db=window.claude&&await window.claude.use('db');}catch(e){db=null;}
+    count(); if(!db) return;
+    db.collection('batch24').onSnapshot(snap=>{
+      snap.docs.forEach(doc=>{const v=doc.data();const it=items.find(i=>i.n===v.n);if(!it)return;saved[v.n]=v;
+        if(document.activeElement!==it.ta) it.ta.value=v.note||'';
+        it.pick=v.choice;paint(it);it.chip.classList.add('done');it.chip.textContent='#'+v.n+' · '+v.choice;
+        it.st.textContent='저장됨: '+v.choice+' ('+new Date(v.savedAt).toLocaleString('ko-KR')+')';});
+      count();
+    },()=>{});
+  })();
+})();
+</script>

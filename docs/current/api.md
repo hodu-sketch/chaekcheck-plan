@@ -35,6 +35,8 @@
 
 마지막 반영: 사이클 04 회고 (2026-10-01). 모두 dev 컨트롤러 코드(커밋 `c6028c9`)와 대조했습니다(구현됨). 책 검색·소장 스트림의 요청·응답 예시는 `docs/cycles/04-and-search/design-delta.md`, 개발 중 바뀐 것은 같은 폴더 `retro.md`. 사이클 03 예시는 `docs/cycles/03-search-conditions/design-delta.md`.
 
+사이클 24 cycle-close (2026-10-24, 브랜치 `claude/compassionate-lovelace-mzvp4f`, 사이클 23과 나란히): AI 책 찾기 — `POST /api/v1/ai-searches/stream`(SSE, 질문은 본문에만), 새 오류 코드 `ai_search_paused` — . 근거 `docs/cycles/24-ai-book-search/design-delta.md`, ADR-0150~0153. 설계됨(미구현, 사이클 24)
+
 ## 공통 규칙 (ADR-0008)
 
 - 성공 응답은 감싸지 않고 결과를 그대로 돌려줍니다. 필드 이름은 camelCase.
@@ -472,7 +474,62 @@
 - 409 예: `{"title":"Conflict","status":409,"detail":"At most 20 libraries can be added","code":"library_limit_reached"}`
 - 웹: 403 `csrf_invalid`면 새 토큰을 받아 한 번 다시(사이클 05). 409·404·500·연결 끊김이면 화면에 먼저 보인 추가를 되돌리고 안내(흐름 14).
 
+
+## AI 책 찾기 (`aisearch`) — 설계됨(미구현, 사이클 24)
+
+ADR-0150·0152·0153.
+
+| 메서드 | 경로 | 설명 | 요청 | 응답 | 에러 |
+|---|---|---|---|---|---|
+| POST | `/api/v1/ai-searches/stream` [안] | 질문 하나에 답을 흘려 보냄. 질문은 본문에만(주소·접속 기록에 없음) | JSON 본문 (아래) | SSE (`event:` kebab-case) | 스트림 열기 전 ProblemDetail: 400 `validation_error`, 400 `invalid_query`(2자 미만·200자 초과), 422 `invalid_region`, 429 `too_many_requests` + `Retry-After`, 503 `ai_search_paused`(새), 404 `not_found`(기능 꺼짐) |
+
+- 인증 없음. 로그인 기능이 켜져 있으면 CSRF 검사는 `POST /api/v1/usage-events`와 같이 [안]
+- 스트림 관례는 지금과 같음: 오류는 열기 전, `produces` 없음, 웹은 `fetch` + `ReadableStream`(EventSource는 POST 불가). nginx 이 경로 버퍼링 끔(`X-Accel-Buffering: no`), gzip 안 함 [안]
+
+요청 [안]
+```json
+{
+  "question": "잠들기 전에 조금씩 읽을 과학책",
+  "turnNo": 2,
+  "history": [ { "question": "과학책 추천해줘", "bookIds": [1203344, 88012] } ],
+  "residenceRegionIds": [1168], "workRegionIds": [], "libraryIds": [],
+  "scope": "joinable", "visit": "none"
+}
+```
+- `question` 2자 [확정]~200자 [확정] (결정 #8), `history` 최대 5 [확정] (화면 흐름 #3), 한 턴 `bookIds` 최대 8 [확정] (결정 #8), 목록 밖 번호는 조용히 버림. 20번 상한은 웹이 셈. `turnNo`(1~20)는 웹이 보내는 몇 번째 질문 — `usagelog.ai_search_event.turn_no`에 씀 [확정] (인계서 확인 #2, 2026-10-24; 서버는 `history`를 5개만 받아 셀 수 없음)
+
+스트림 이벤트 [안: 이름]
+
+| event | data | 언제 |
+|---|---|---|
+| `title-guess` | `{"title":"채식주의자"}` | 1차가 제목·저자 같다고 할 때 맨 먼저. 제목은 질문 글 안에 있는 말만, 아니면 질문 전체 |
+| `head-delta` | `{"text":"…"}` | 머리말 조각 |
+| `card` | `{"no":1,"bookId":1203344,"title":"…","author":"…","coverUrl":"…","myLibraryCount":3}` | 번호가 후보 안·중복 아님을 확인한 뒤만. 대신하는 길이면 앞 8권 |
+| `card-delta` | `{"bookId":1203344,"text":"…"}` | 그 카드 글 조각, 300자에서 끊음 |
+| `done` | `{"result":"ok"\|"no_match"\|"no_text"\|"partial","bookIds":[…]}` | 끝. 웹이 대화(sessionStorage)에 넣음 |
+| `error` | `{"code":"internal_error"}` | 연 뒤 예상 못 한 오류(받은 카드는 남음) |
+
+```
+event: title-guess
+data: {"title":"채식주의자"}
+
+event: head-delta
+data: {"text":"「채식주의자」와 결이 닮은 "}
+
+event: card
+data: {"no":1,"bookId":1203344,"title":"채식주의자","author":"한강","coverUrl":"/covers/3f…e1.jpg","myLibraryCount":4}
+
+event: card-delta
+data: {"bookId":1203344,"text":"찾으시던 그 책이에요. "}
+
+event: done
+data: {"result":"ok","bookIds":[1203344,88012,51007]}
+```
+
+
 ## 오류 코드
+
+- `ai_search_paused` (503): 오늘 AI 책 찾기 비용 상한($2)에 닿음 — 설계됨(미구현, 사이클 24). AI 찾기의 429는 지금 코드 `too_many_requests` + `Retry-After`를 다시 씀
 
 | code | HTTP | 어디서 |
 |---|---|---|

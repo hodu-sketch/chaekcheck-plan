@@ -153,6 +153,10 @@
 | [ADR-0147](0147-kpipa-sales-rank-as-for-you-input.md) | 출판유통통합전산망 판매 순위·「화제의 책 200선」을 「나에게 맞는 책」 기본 목록 재료로 씀 (승인 거절을 알고 위험 감수, 카드 출처 표시 없음) | Accepted | 2026-10-24 | 23 |
 | [ADR-0148](0148-for-you-popular-fetch-and-covers.md) | 「나에게 맞는 책」 인기 목록은 운영 서버(`foryou`)가 새벽에 받음(`availability` 조회 줄, 출처마다 끄기, 수집 때마다 검증), 표지는 PC `fetch-covers`를 범위만 옮김 | Accepted | 2026-10-24 | 23 |
 | [ADR-0149](0149-for-you-module-neighbours-and-split.md) | 「나에게 맞는 책」 새 모듈 `foryou`, 꼬리표·사전(DB 표)은 `picks`, 이웃 표 책마다 한 줄(4바이트 배열)·`neighbours` 넣기, `book-texts` kind, 한 번 호출 배치, 개인 추천 서버·브라우저 나누기, 판 모으기 | Accepted | 2026-10-24 | 23 |
+| [ADR-0150](0150-aisearch-module-haiku-realtime.md) | AI 책 찾기: 새 모듈 `aisearch`(`picks`에는 읽기 API `ListedBooks` 하나), Haiku 5.5 실시간 두 번 호출(낱말 → 고르기·글), LLM 부르는 곳 하나(JDK `HttpClient` 직접, Anthropic만) | Accepted | 2026-10-24 | 24 |
+| [ADR-0151](0151-search-lines-import-and-db-match.md) | 찾기용 한 줄: `collection` 따로 넣는 모드 `book-texts`(`kind` 칸, 23의 글도 나중에 같이), `aisearch.search_book`에 목록 책 제목·저자 사본 + 한 줄, pg_bigm 낱말 맞추기 | Accepted | 2026-10-24 | 24 |
+| [ADR-0152](0152-no-question-storage-quota.md) | 질문 글·대화를 서버에 남기지 않음(POST 본문, 대화는 브라우저 탭 최근 5번), IP 1분 10·하루 100은 메모리, 하루 $2는 `aisearch.daily_usage`, 기록 칸, 처리방침 Anthropic 위탁+국외 이전 | Accepted | 2026-10-24 | 24 |
+| [ADR-0153](0153-streamed-answers-number-first-title-guess.md) | 답을 조금씩 흘리되 책 번호를 먼저 확인한 뒤 카드·글, 제목만 넣으면 `title-guess` 줄 + 평소 답(서버는 `catalog`에서 제목을 찾지 않음) | Accepted | 2026-10-24 | 24 |
 | [ADR-0160](0160-search-entry-library-ids-exception.md) | AI 찾기 표(`catalog.book_search`)의 `library_ids`는 중복 저장 금지의 예외로 둠 (속도 측정 근거). 0154~0159는 사이클 25 몫으로 비워 둠 [안] | Accepted | 2026-10-28 | 26 |
 | [ADR-0161](0161-book-descriptions-owned-by-catalog.md) | 책 설명(요약·판 표지·꼬리표·프로필·AI 찾기)은 `catalog`가 맡고, 다른 모듈은 공개 API로만 읽음 | Accepted | 2026-10-28 | 26 |
 | [ADR-0163](0163-covers-on-s3-cloudfront.md) | 모든 표지 그림은 S3(시드니) + CloudFront 기본 주소에 두고, PC만 올림 | Accepted | 2026-10-28 | 26 |

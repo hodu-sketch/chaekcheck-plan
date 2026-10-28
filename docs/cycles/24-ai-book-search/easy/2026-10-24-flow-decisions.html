@@ -1,0 +1,332 @@
+<title>사이클 24 화면 흐름</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+
+.v-flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.v-box{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:7px 11px;font-size:15px;text-align:center;min-width:90px}
+.v-box small{display:block;color:var(--muted);font-size:12px}
+.v-hi{border-color:var(--accent);background:var(--accent-bg)}
+.v-warn{border-color:var(--warn);background:var(--warn-bg)}
+.v-ok{border-color:var(--ok);background:var(--ok-bg)}
+.v-arr{color:var(--muted);font-size:18px}
+.v-file{border:2px solid var(--line);border-radius:12px;background:var(--card);padding:10px;margin:10px 0;max-width:560px}
+.v-file .v-part{border:1px dashed var(--line);border-radius:8px;padding:8px 10px;margin:6px 0;font-size:14px}
+.v-file .v-part.v-new{border-color:var(--accent);background:var(--accent-bg)}
+.v-tl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0;font-size:13px;text-align:center}
+.v-tl div{border-top:4px solid var(--line);padding-top:6px}
+.v-tl div.v-hi{border-top-color:var(--accent);background:none}
+.v-cv{display:inline-flex;width:70px;aspect-ratio:2/3;border-radius:7px;border:1px solid var(--line);background:var(--accent-bg);align-items:center;justify-content:center;font-size:11px;text-align:center;padding:3px;vertical-align:top;margin:4px}
+.v-cv.v-img{background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 6px,var(--card) 6px,var(--card) 12px)}
+.v-mini{border:1px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;margin:8px 0;max-width:420px}
+.v-mini .v-bar{display:flex;gap:10px;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line);font-size:13px}
+.v-mini .v-body{padding:10px 12px;font-size:13px}
+.v-pill{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-weight:800;font-size:12px}
+@media (max-width:700px){main table{display:block;overflow-x:auto;max-width:100%}.v-tl{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.v-code{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:var(--code-bg);border-radius:8px;padding:8px 10px;overflow-x:auto;white-space:pre}
+main{padding-block:40px 90px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.flow{display:grid;gap:10px;margin:14px 0}
+.step{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:start;border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--card)}
+.step b.k{display:inline-block;min-width:30px;height:30px;line-height:30px;border-radius:50%;text-align:center;background:var(--accent-bg);color:var(--accent);font-size:16px}
+.step.llm{border-color:var(--warn);background:var(--warn-bg)}
+.step.db{border-color:var(--accent);background:var(--accent-bg)}
+.step p{margin:0;font-size:17px}.step p small{color:var(--muted);display:block;font-size:15px}
+.mocks{display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,1.4fr) minmax(0,1fr);gap:14px;align-items:start;margin:12px 0}
+.dev{border:2px solid var(--line);border-radius:12px;background:var(--bg);padding:10px;min-width:0}
+.dev .lbl{font-size:13px;color:var(--muted);margin:0 0 6px}
+.qbox{display:flex;gap:6px;margin:0 0 8px}
+.qbox span{flex:1;min-width:0;border:1px solid var(--accent);border-radius:8px;background:var(--card);padding:5px 8px;font-size:12px}
+.qbox i{font-style:normal;border-radius:8px;background:var(--accent);color:var(--card);padding:5px 8px;font-size:12px}
+.note{font-size:11px;color:var(--muted);margin:0 0 6px}
+.res{display:grid;gap:8px}
+.res.two{grid-template-columns:1fr 1fr}
+.bk{display:flex;gap:8px;border:1px solid var(--line);border-radius:8px;background:var(--card);padding:7px;min-width:0}
+.bk .cv{flex:0 0 auto;width:38px;aspect-ratio:2/3;border-radius:4px;border:1px solid var(--line);background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 5px,var(--card) 5px,var(--card) 10px)}
+.bk.big .cv{width:60px}
+.bk div{min-width:0;font-size:11px;line-height:1.45}
+.bk .t{font-weight:700;font-size:12px}.bk.big .t{font-size:14px}
+.bk .why{display:block;margin-top:3px;color:var(--warn);font-weight:500}
+.bk .lib{color:var(--ok)}
+@media (max-width:760px){.mocks{grid-template-columns:minmax(0,1fr)}.res.two{grid-template-columns:1fr}}
+.opt{width:100%}
+.chip{display:inline-block;font-size:15px;font-weight:700;color:var(--warn);background:var(--warn-bg);border:1px solid var(--warn);border-radius:999px;padding:0 10px;margin-right:6px;line-height:1.6}
+.chip.done{color:var(--ok);background:var(--ok-bg);border-color:var(--ok)}
+.dec{margin:14px 0 0;padding:14px 16px;border:1px solid var(--line);border-radius:10px;background:var(--code-bg);display:flex;flex-direction:column;gap:10px}
+.dec .btns{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.dec button{font:inherit;font-size:16px;padding:6px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer;text-align:left}
+.dec button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.dec button[aria-pressed="true"]{background:var(--accent-bg);border-color:var(--accent);color:var(--accent);font-weight:700}
+.dec textarea{font:inherit;font-size:17px;width:100%;min-height:64px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--text);resize:vertical}
+.dec .save{background:var(--accent);color:var(--card);border-color:var(--accent);font-weight:700}
+.dec .st{font-size:15px;color:var(--muted)}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:0 0 24px;font-size:17px}
+.bar b{font-variant-numeric:tabular-nums}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.card{max-width:100%;overflow-x:auto}
+.ex2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin:10px 0}
+.ex2>div{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--card);font-size:16px;min-width:0}
+.ex2 .q{color:var(--accent);font-weight:700}
+.same{background:var(--code-bg);border-radius:8px;padding:6px 10px;font-size:15px;margin:6px 0}
+.ai{border:2px solid var(--accent);border-radius:10px;background:var(--accent-bg);padding:8px;margin:0 0 8px}
+.ai .h{font-size:12px;font-weight:700;color:var(--accent);margin:0 0 6px}
+.row3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.row2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.libres{border:1px dashed var(--line);border-radius:8px;padding:6px 8px;font-size:11px;color:var(--muted);background:var(--card)}
+.steps{display:grid;gap:8px;margin:10px 0}
+.steps div{border-left:4px solid var(--accent);padding:4px 12px;font-size:17px}
+@media (max-width:760px){.ex2{grid-template-columns:1fr}}
+.decided{background:var(--ok-bg);border:1px solid var(--ok);border-radius:10px;padding:12px 16px;margin:0 0 10px}
+.decided b{color:var(--ok)}
+.tabs{display:flex;gap:4px;margin:0 0 -1px}
+.tabs span{font-size:11px;border:1px solid var(--line);border-bottom:none;border-radius:6px 6px 0 0;padding:3px 8px;background:var(--code-bg);color:var(--muted)}
+.tabs span.on{background:var(--card);color:var(--accent);font-weight:700;border-color:var(--accent)}
+.qbox.t span{border-radius:0 8px 8px 8px}
+.arrow{font-size:13px;color:var(--muted);margin:6px 0;text-align:center}
+.flowrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+.flowrow .v-box{font-size:15px}
+.topline{font-size:11px;color:var(--muted);border-bottom:1px solid var(--line);padding:0 0 6px;margin:0 0 8px}
+.topline b{color:var(--accent)}
+.me{margin:6px 0 6px auto;max-width:75%;width:fit-content;background:var(--accent);color:var(--card);border-radius:12px 12px 2px 12px;padding:6px 10px;font-size:12px}
+.ai2{margin:6px 0;max-width:95%;background:var(--card);border:1px solid var(--line);border-radius:12px 12px 12px 2px;padding:8px}
+.lead2{font-size:12px;margin:0 0 6px;font-weight:500}
+.bk.ghost{min-height:34px;background:var(--code-bg);border-style:dashed}
+.qbox.bottom{margin:10px 0 0;border-top:1px solid var(--line);padding-top:8px}
+</style>
+<main class="doc">
+<div class="bar" id="bar">불러오는 중</div>
+<p class="lead">AI 책 찾기 결과를 ChatGPT처럼 대화 모양으로 바꾸고, 질문을 이어서 할 수 있게 화면 흐름을 다시 그렸습니다. 정하실 것이 여섯 개입니다.</p>
+<p class="sub">적으신 말: "그리고 ai 책 검색칸 결과 ui는 마치 chatgpt처럼하고 질문을 연달아서 하는것이 가능했으면 해" (2026-10-24). 이어서 묻기는 범위에서 "제외"였는데 이번에 "포함"으로 옮겼습니다. 그림은 위치와 순서만 보여 주고, 지금 첫 화면은 dev 코드로 맞춰 보지 않았습니다. 각 카드 맨 아래에서 고르고 "저장"을 눌러 주세요.</p>
+
+<div class="card">
+<h2>화면 사이 이동</h2>
+<p class="concl">첫 화면 AI 탭에서 찾으면 대화 화면이 열리고, 같은 화면 아래 입력칸으로 계속 물을 수 있습니다. 카드를 누르면 지금 책 화면으로 가고, 뒤로 오면 대화가 그대로 있습니다.</p>
+<pre class="mermaid">
+flowchart LR
+  A["첫 화면 · AI 책 찾기 탭"] -->|탭| B["첫 화면 · 도서관 탭"]
+  B -->|탭| A
+  A -->|찾기| C["대화 화면 · 답 기다림"]
+  C -->|답 옴| D["답 말풍선 · 머리말 + 책 카드"]
+  C -->|못 찾음| D0["못 찾았어요 + 예시"]
+  C -->|제한 · 오류| DX["안내 말풍선"]
+  D -->|이어서 물음| C
+  D0 -->|이어서 물음| C
+  D -->|카드 누름| S3["책 화면"]
+  S3 -->|뒤로 가기| D
+  D -->|새 대화| E["빈 대화"]
+  E -->|물음| C
+</pre>
+<p class="cap">한 대화 안에서 "질문 → 답"이 계속 반복됩니다.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">1</span>첫 화면의 탭 두 개</h2>
+<p class="concl">검색창 위에 탭 두 개, AI 책 찾기가 왼쪽에서 처음 열립니다. AI 탭에는 안내 글과 예시 질문 칩 3개가 있고, 상세검색과 ⚙은 숨깁니다. 찾기를 누르면 그 질문이 대화 화면의 첫 말풍선이 됩니다.</p>
+<div class="mocks">
+<div class="dev"><p class="lbl">PC · 첫 화면</p>
+<div class="tabs"><span class="on">AI 책 찾기</span><span>도서관에서 책 찾기</span></div>
+<div class="qbox t"><span>어떤 책을 찾으세요? 예: 잠들기 전에 조금씩 읽을 과학책</span><i>찾기</i></div>
+<p class="note">[출근길 가벼운 과학책] [위로가 되는 에세이] [경제 입문서]</p>
+<div class="libres">찾을 도서관 줄 (지금 그대로)</div>
+<p class="arrow">첫 화면 아래 내용 (KAIST 추천 책장 등) 그대로</p>
+</div>
+<div class="dev"><p class="lbl">태블릿</p>
+<div class="tabs"><span class="on">AI 책 찾기</span><span>도서관에서</span></div>
+<div class="qbox t"><span>어떤 책을 찾으세요?</span><i>찾기</i></div>
+<p class="note">[예시 1] [예시 2] [예시 3]</p>
+<div class="libres">찾을 도서관 줄</div>
+</div>
+<div class="dev"><p class="lbl">폰</p>
+<div class="tabs"><span class="on">AI 책 찾기</span><span>도서관</span></div>
+<div class="qbox t"><span>어떤 책을…</span><i>찾기</i></div>
+<p class="note">[예시 1] [예시 2] → 옆으로</p>
+<div class="libres">내 도서관 칩</div>
+</div>
+</div>
+<p class="prop"><span class="chip" data-n="1" data-title="첫 화면 탭" data-opts="이대로|예시 칩 없이|기타">[안] #1</span> AI 탭 왼쪽·처음 열림, 안내 글 + 예시 질문 칩 3개, AI 탭에서는 상세검색·⚙을 숨깁니다.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">2</span>대화 화면의 모양<br>(ChatGPT식)</h2>
+<p class="concl">내 질문은 오른쪽 말풍선, 답은 왼쪽에 머리말 한 줄과 책 카드로 쌓입니다. 입력칸은 화면 맨 아래에 붙어 있고, 맨 위에는 [새 대화]와 AI 표시 한 줄이 있습니다. 답의 머리말("잠들기 전에 읽기 좋은 과학책 5권이에요")도 Haiku가 씁니다.</p>
+<div class="mocks">
+<div class="dev"><p class="lbl">PC · 대화</p>
+<div class="topline"><b>[새 대화]</b> · 책 설명은 AI가 질문에 맞춰 썼어요 · 내 도서관: 서울 강남구</div>
+<div class="me">잠들기 전에 조금씩 읽을 과학책</div>
+<div class="ai2"><p class="lead2">잠들기 전에 읽기 좋은 과학책 5권이에요.</p>
+<div class="res">
+<div class="bk big"><span class="cv"></span><div><span class="t">책 A</span><br>저자 <span class="lib">· 내 도서관 3곳</span><span class="why">질문에 맞춘 글 2~3문장</span></div></div>
+<div class="res two">
+<div class="bk"><span class="cv"></span><div><span class="t">책 B</span><span class="why">맞춘 글</span></div></div>
+<div class="bk"><span class="cv"></span><div><span class="t">책 C</span><span class="why">맞춘 글</span></div></div>
+</div></div></div>
+<div class="me">이 중에 소설만</div>
+<div class="ai2"><p class="lead2">책을 찾고 있어요…</p><div class="res two"><div class="bk ghost"></div><div class="bk ghost"></div></div></div>
+<div class="qbox bottom"><span>이어서 물어보세요. 예: 더 짧은 걸로</span><i>보내기</i></div>
+</div>
+<div class="dev"><p class="lbl">태블릿</p>
+<div class="topline"><b>[새 대화]</b> · AI가 썼어요</div>
+<div class="me">잠들기 전에 읽을 과학책</div>
+<div class="ai2"><p class="lead2">5권이에요.</p>
+<div class="res"><div class="bk big"><span class="cv"></span><div><span class="t">책 A</span><span class="why">맞춘 글</span></div></div>
+<div class="res two"><div class="bk"><span class="cv"></span><div><span class="t">B</span></div></div><div class="bk"><span class="cv"></span><div><span class="t">C</span></div></div></div></div></div>
+<div class="qbox bottom"><span>이어서 물어보세요</span><i>보내기</i></div>
+</div>
+<div class="dev"><p class="lbl">폰</p>
+<div class="topline"><b>[새 대화]</b> · AI</div>
+<div class="me">잠들기 전에…</div>
+<div class="ai2"><p class="lead2">5권이에요.</p>
+<div class="res"><div class="bk big"><span class="cv"></span><div><span class="t">A</span><span class="why">맞춘 글</span></div></div>
+<div class="bk"><span class="cv"></span><div><span class="t">B</span><span class="why">맞춘 글</span></div></div></div></div>
+<div class="qbox bottom"><span>이어서…</span><i>보내기</i></div>
+</div>
+</div>
+<p class="prop"><span class="chip" data-n="2" data-title="대화 모양" data-opts="이대로|머리말 없이 카드만|기타">[안] #2</span> 오른쪽 내 질문, 왼쪽 답(머리말 한 줄 + 큰 카드 1 + 두 권씩, 폰은 한 권씩), 아래 고정 입력칸, 맨 위 [새 대화]·AI 표시·내 도서관 요약.</p>
+<h3>답: "이거 질문 여러 개가 되도록 하기가 되나"</h3>
+<p class="ex">적으신 말: "이건데 이거 질문 여러개가 되도록 하기가 되나" (2026-10-24)</p>
+<p class="concl">네, 됩니다. 한 대화에서 질문을 20번까지 이어서 할 수 있습니다(3번 카드에서 정하신 값). 질문과 답이 위에서 아래로 계속 쌓이고, 위로 올리면 앞 답을 다시 볼 수 있습니다.</p>
+<p>다만 ChatGPT의 왼쪽 목록처럼 <b>대화 여러 개를 따로 저장해 두고 골라 보는 것</b>은 이번에 없습니다. 4번에서 "이 탭 안에서만 남음"을 고르셔서 대화는 한 탭에 하나뿐이고, [새 대화]를 누르면 앞 대화는 지워집니다. 대화 목록이 필요하시면 기타에 적어 주세요. 그러면 대화를 브라우저에 더 오래 두는 방식(4번의 (다))과 함께 다시 여쭙겠습니다.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">3</span>이어서 묻기의 규칙</h2>
+<p class="concl">서버는 대화를 저장하지 않습니다. 브라우저가 앞 대화(앞 질문과 그때 보여 준 책 번호)를 다음 질문과 함께 보내고, Haiku는 그걸 보고 "이 중에 소설만" 같은 말을 알아듣습니다. 범위에서 정한 "질문 글은 남기지 않음"을 지키는 방법입니다.</p>
+<table>
+<tr><th>규칙</th><th>처음 값</th><th>뜻</th></tr>
+<tr><td>Haiku에 보내는 앞 대화</td><td>최근 5번</td><td>길수록 문맥을 잘 알지만 입력이 늘어 비싸고 느려짐</td></tr>
+<tr><td>한 대화에서 물을 수 있는 수</td><td>20번</td><td>넘으면 "새 대화를 시작해 주세요"</td></tr>
+<tr><td>이미 보여 준 책</td><td>따로 묻지 않으면 다시 안 냄</td><td>"다른 책도"에 같은 책이 또 나오지 않게</td></tr>
+<tr><td>횟수·비용 제한</td><td>이어서 묻는 것도 똑같이 셈</td><td>1분 10번·하루 100번·하루 $2</td></tr>
+</table>
+<p class="prop"><span class="chip" data-n="3" data-title="이어서 묻기 규칙" data-opts="이 값으로|값을 바꾸고 싶음|기타">[안] #3</span> 브라우저가 앞 대화를 보내고 서버는 저장하지 않음, 앞 대화 최근 5번, 한 대화 20번, 본 책은 다시 안 냄.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">4</span>새로 고치면 대화가<br>남아 있어야 하나</h2>
+<p class="concl">이 브라우저 탭 안에서는 새로 고쳐도 대화가 남고, 탭을 닫으면 사라지게 하는 것을 추천합니다. 대화는 사용자 브라우저에만 있고 서버에는 가지 않습니다.</p>
+<table class="opt">
+<tr><th>안</th><th>좋은 점</th><th>잃는 것</th></tr>
+<tr><td>(가) 새로 고치면 사라짐</td><td>가장 단순함</td><td>실수로 새로 고치면 대화가 다 없어짐</td></tr>
+<tr><td>(나) 이 탭 안에서는 남음, 탭을 닫으면 사라짐</td><td>새로 고침·책 화면 갔다 오기에 안전. 서버엔 안 감</td><td>같은 컴퓨터를 쓰는 사람이 그 탭을 열면 볼 수 있음</td></tr>
+<tr><td>(다) 브라우저를 닫아도 남음 (며칠)</td><td>다음에 와서 이어 봄</td><td>공용 컴퓨터에서 남이 볼 수 있음. 지울 방법을 따로 둬야 함</td></tr>
+</table>
+<p class="prop"><span class="chip" data-n="4" data-title="대화 보관" data-opts="(나) 이 탭 안에서는 남음|(가) 새로 고치면 사라짐|(다) 브라우저를 닫아도 남음|기타">[안] #4</span> (나) 대화는 이 브라우저 탭 안에서만 남고, 탭을 닫으면 사라집니다.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">5</span>답이 나오는 방식:<br>한 번에 / 조금씩</h2>
+<p class="concl">ChatGPT는 글이 조금씩 써지며 나옵니다. 우리 답은 책 카드(번호)와 글이 함께 정해진 형식으로 와야 해서, 조금씩 흘리려면 일이 꽤 늘어납니다. 이번에는 기다리는 동안 "책을 찾고 있어요 → 설명을 쓰고 있어요"처럼 단계만 보여 주고 답은 한 번에 내는 것을 추천합니다.</p>
+<table class="opt">
+<tr><th>안</th><th>좋은 점</th><th>잃는 것</th></tr>
+<tr><td>(가) 단계 문구 + 답은 한 번에</td><td>만들기 쉬움. 후보 밖 책을 걸러낸 뒤 보여 줌</td><td>글이 써지는 모습은 없음</td></tr>
+<tr><td>(나) 카드 먼저, 글은 조금씩 (ChatGPT처럼)</td><td>더 빨라 보임</td><td>서버·화면 둘 다 일이 늘어남. 형식 검사를 다 끝내기 전에 글이 보임</td></tr>
+</table>
+<p class="prop"><span class="chip" data-n="5" data-title="답 나오는 방식" data-opts="(가) 단계 문구 + 한 번에|(나) 글이 조금씩|기타">[안] #5</span> (가) 기다리는 동안 단계 문구만 바꿔 보여 주고, 답은 한 번에 냅니다. 조금씩 흘리기는 백로그로.</p>
+<h3>답: "형식 검사는 또 뭐야"</h3>
+<p class="ex">적으신 말: "형식 검사는 또 뭐야" (2026-10-24)</p>
+<p class="concl">Haiku의 답을 화면에 보내기 전에 우리 서버가 하는 확인입니다. 명세에서 정한 "없는 책 막기"가 이 단계에서 일어납니다.</p>
+<table>
+<tr><th>서버가 확인하는 것</th><th>틀리면</th></tr>
+<tr><td>답이 정해진 모양(책 번호 + 글)으로 왔는지</td><td>글 없이 후보를 보여 줌</td></tr>
+<tr><td>책 번호가 우리가 넘긴 후보 30권 안에 있는지</td><td>그 책을 버림 (없는 책이 나오지 않게)</td></tr>
+<tr><td>같은 책이 두 번 나오지 않았는지</td><td>두 번째를 버림</td></tr>
+<tr><td>글이 비었거나 너무 길지 않은지 (300자)</td><td>그 책은 글 없이</td></tr>
+</table>
+<p>답을 한 번에 내면(가) 이 확인을 다 끝낸 뒤 보여 주므로, 버릴 책은 화면에 아예 나오지 않습니다. 글을 조금씩 흘리면(나) 확인이 끝나기 전에 글이 먼저 보여서, 나중에 버린 책의 글이 잠깐 보였다가 사라질 수 있습니다. 그래서 (가)를 추천합니다. 위에서 다시 골라 저장해 주세요.</p>
+</div>
+
+<div class="card">
+<h2><span class="num">6</span>화면 주소와 번호</h2>
+<p class="concl">대화 화면 주소는 <code>/ai-search</code>, 문서 속 화면 번호는 S30입니다. 사이클 23이 새 번호를 쓸 수 있어 S18~S29는 비워 둡니다. 질문은 주소에 넣지 않습니다(이미 정함).</p>
+<p class="prop"><span class="chip" data-n="6" data-title="주소·번호" data-opts="/ai-search, S30|다른 주소|기타">[안] #6</span> 주소 <code>/ai-search</code>, 화면 번호 S30.</p>
+</div>
+
+<p class="foot">바탕: <code>docs/cycles/24-ai-book-search/flow.md</code>(대화 모양으로 고침), <code>spec.md</code> R2-0·R11(새로 더함), <code>scope.md</code> 포함 8. 이 페이지에서 처음 나온 것: 답 머리말, 이어서 묻기 값, 대화 보관 방식, 답 나오는 방식.</p>
+</main>
+
+
+
+
+
+
+
+
+<script>
+(function(){
+  const items=[...document.querySelectorAll('.chip')].map(ch=>{
+    const n=+ch.dataset.n, title=ch.dataset.title, opts=ch.dataset.opts.split('|');
+    const box=ch.closest('.card');
+    const d=document.createElement('div'); d.className='dec';
+    const g=document.createElement('div'); g.className='btns'; g.setAttribute('role','group'); g.setAttribute('aria-label',n+'번 '+title+' 고르기');
+    opts.forEach(c=>{const b=document.createElement('button');b.type='button';b.dataset.c=c;b.setAttribute('aria-pressed','false');b.textContent=c;g.appendChild(b);});
+    const ta=document.createElement('textarea'); ta.id='note-'+n; ta.placeholder='덧붙일 말 (기타를 고르셨다면 내용, 질문, 조건)';
+    const r=document.createElement('div'); r.className='btns';
+    const sv=document.createElement('button'); sv.type='button'; sv.className='save'; sv.textContent='저장';
+    const st=document.createElement('span'); st.className='st'; st.setAttribute('aria-live','polite'); st.textContent='아직 고르지 않았습니다';
+    r.append(sv,st); d.append(g,ta,r); box.appendChild(d);
+    const it={n,title,chip:ch,el:d,ta,st,pick:null};
+    g.querySelectorAll('button').forEach(b=>b.onclick=()=>{it.pick=b.dataset.c;paint(it);st.textContent='"저장"을 눌러야 기록됩니다';});
+    sv.onclick=()=>save(it);
+    return it;
+  });
+  const bar=document.getElementById('bar');
+  function paint(it){it.el.querySelectorAll('[data-c]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.c===it.pick)));}
+  let db=null; const saved={};
+  function count(){const k=Object.keys(saved).length;bar.innerHTML='고른 것 <b>'+k+' / '+items.length+'</b>'+(db?' · 저장하면 Claude가 읽습니다':' · 저장 기능을 아직 불러오지 못했습니다');}
+  count();
+  async function save(it){
+    if(!it.pick){it.st.textContent='먼저 하나를 고르세요';return;}
+    if(!db){it.st.textContent='저장할 수 없습니다. 로그인한 채로 claude.ai에서 열어 주세요';return;}
+    const note=it.ta.value.trim();
+    if(it.pick==='기타'&&!note){it.st.textContent='기타를 고르셨다면 덧붙일 말을 적어 주세요';return;}
+    it.st.textContent='저장하는 중…';
+    try{await db.doc('flow24/q'+it.n).set({n:it.n,title:it.title,choice:it.pick,note,savedAt:new Date().toISOString()});it.st.textContent='저장했습니다';}
+    catch(e){it.st.textContent='저장하지 못했습니다 ('+(e&&e.code||'오류')+'). 잠시 뒤 다시 눌러 주세요';}
+  }
+  (async()=>{
+    try{db=window.claude&&await window.claude.use('db');}catch(e){db=null;}
+    count(); if(!db) return;
+    db.collection('flow24').onSnapshot(snap=>{
+      snap.docs.forEach(doc=>{const v=doc.data();const it=items.find(i=>i.n===v.n);if(!it)return;saved[v.n]=v;
+        if(document.activeElement!==it.ta) it.ta.value=v.note||'';
+        it.pick=v.choice;paint(it);it.chip.classList.add('done');it.chip.textContent='#'+v.n+' · '+v.choice;
+        it.st.textContent='저장됨: '+v.choice+' ('+new Date(v.savedAt).toLocaleString('ko-KR')+')';});
+      count();
+    },()=>{});
+  })();
+})();
+</script>

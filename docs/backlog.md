@@ -352,6 +352,11 @@
 - **각 전자도서관 앱 바로 열기(딥링크)** — 친구 피드백 2026-10-20 "모바일은 각 전자도서관 어플이랑 연결시켜 줘야". 지금 [대여하기]는 도서관 사이트(웹)로 감. 업체(교보·북큐브·YES24·자체)마다 앱·딥링크 방식이 달라 조사 필요. 출처 `docs/research/screen-feedback/first-user-retention.md`
 - 표지 받기(데이터 폴더 `covers\`, 책마다 한 장, 200px)를 서비스 화면에 보이기 — 출판사 권리 확인 뒤 사이클로. 받기 자체는 dev 요청 `docs/research/ebook-catalog/to-dev-fetch-covers-2026-10-23.md` (사용자 승인 2026-10-23, 결정 #5)
 - 책 꼬리표(Thema 한국어판 뼈대 + 느낌 축, Haiku 배치, 사전에서만 고름) — AI 추천(맞춤 탭) 사이클에서. 결정 `docs/research/ai-recommend/tag-vocabulary.md` 3절 (사용자 승인 2026-10-23)
+- → 사이클 24 (`docs/cycles/24-ai-book-search`, 2026-10-24; 로컬 LLM·vast.ai·튜닝·원문 대 메모 비교는 사이클 밖으로 남음) **말로 책 찾기 (AI 책 찾기, 실시간 LLM)** — 첫 화면 검색창 탭 "AI"(처음 열면 이 탭, 옆은 "직접"), 따로 된 결과 화면, 질문에 맞춘 글 실시간, Haiku 먼저, LLM 부르는 곳을 한 군데로 모아 나중에 내 LLM(Ollama→vast.ai)을 붙일 수 있게. 사용자 요청 2026-10-23, 결정 기록 `docs/research/ai-recommend/natural-search.md`, 시험 세트 `llm-test-set.md`. 표지 보이기는 위 "표지 받기" 줄의 권리 확인에 묶임
+- 로컬 LLM(Ollama, 노트북 qwen3:4b·8b) → vast.ai vLLM 연결, LoRA 튜닝 — 사이클 24에서 뺌, 사용자 "로컬 llm은 별개야" (2026-10-24). 시험 `docs/research/ai-recommend/local-llm-guide.md`, 서버에 붙일 때 2026-10-17 결정 3번(vast.ai 실시간 호출 안 함)을 바꾸는 ADR
+- AI 책 찾기 범위를 추천도서 목록 밖(수집 목록 전체)으로 넓히기 — 사이클 24 범위 결정 #1 "(다) 글이 붙는 대로 넓힘", 그때 낱말 맞추기·책 출처를 다시 정함 (2026-10-24)
+- AI 책 찾기 회원 맞춤(본 책 반영) — 사이클 24 제외, 23·나중 사이클 (2026-10-24)
+- 소개 원문 대 내용 메모 비교 시험(PC, 질문 20개) — 사이클 24 제외, `docs/research/ai-recommend/llm-test-set.md` (2026-10-24)
 
 ## 사이클 22 회고에서 (2026-10-23)
 
