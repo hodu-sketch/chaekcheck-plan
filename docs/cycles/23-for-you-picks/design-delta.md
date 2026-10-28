@@ -1,5 +1,7 @@
 # 설계 변경: 사이클 23 추천 도서 탭 「나에게 맞는 책」
 
+> **사이클 26 뒤 바뀐 점 (2026-10-28, 사이클 26 인계 `2440b84`)**: 탭 추천 글·표지 연결·꼬리표·꼬리표 사전의 표와 넣는 길은 이 문서가 아니라 사이클 26 설계를 따릅니다. `foryou.book_blurb`·`book_cover`, `picks.book_tag`·`tag_dictionary`는 `catalog.book_summary`·`book_cover`·`book_tag`·`tag_dictionary`로 옮기고(ADR-0161, ADR-0149의 "꼬리표·사전은 `picks`" 부분을 대신함), 카드에는 `blurb` 하나만 둡니다. 표지는 운영 `/covers/` 대신 S3 + CloudFront 주소입니다(ADR-0163, ADR-0148의 표지 자리를 대신함). `foryou` 코드 변경은 dev 26이 배포 1에서 하고, dev 23 브랜치는 rebase로 맞춥니다(사용자 2026-10-28). 자세한 것: `docs/cycles/26-book-descriptions/design-delta.md`, `to-dev23-24.md` 3절. 아래 결정 기록과 ADR-0149 본문은 그대로 둡니다.
+
 - 사용자 검토 승인 2026-10-24 (검토 페이지 easy/2026-10-24-design-review.html #1)
 - 쓴 날: 2026-10-24. 기준: [spec.md](spec.md), [flow.md](flow.md), [architect-proposal.md](architect-proposal.md), 설계 결정 페이지 [easy/2026-10-24-design-decisions.html](easy/2026-10-24-design-decisions.html) (claude.ai Artifact, 사용자 답 2026-10-24)
 - dev 기준: main `adba2d3` (GitHub로 읽음). 사이클 24(`aisearch`, `ListedBooks`, `book-texts`)는 다른 브랜치에서 설계됨, 아직 dev에 없음 — 두 사이클 중 먼저 개발하는 쪽이 공통 부분(`ListedBooks`, `book-texts` 모드)을 만듦

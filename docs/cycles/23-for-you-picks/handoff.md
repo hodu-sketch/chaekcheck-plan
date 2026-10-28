@@ -1,5 +1,7 @@
 # 개발 인계서: 사이클 23 추천 도서 탭 「나에게 맞는 책」
 
+> **사이클 26 뒤 바뀐 점 (2026-10-28, 사이클 26 인계 `2440b84`)**: 탭 추천 글·표지 연결·꼬리표·꼬리표 사전의 표와 넣는 길은 이 문서가 아니라 사이클 26 설계를 따릅니다. `foryou.book_blurb`·`book_cover`, `picks.book_tag`·`tag_dictionary`는 `catalog.book_summary`·`book_cover`·`book_tag`·`tag_dictionary`로 옮기고(ADR-0161, ADR-0149의 "꼬리표·사전은 `picks`" 부분을 대신함), 카드에는 `blurb` 하나만 둡니다. 표지는 운영 `/covers/` 대신 S3 + CloudFront 주소입니다(ADR-0163, ADR-0148의 표지 자리를 대신함). `foryou` 코드 변경은 dev 26이 배포 1에서 하고, dev 23 브랜치는 rebase로 맞춥니다(사용자 2026-10-28). 자세한 것: `docs/cycles/26-book-descriptions/design-delta.md`, `to-dev23-24.md` 3절. 아래 결정 기록과 ADR-0149 본문은 그대로 둡니다.
+
 - 기준 문서: plan `docs/cycles/23-for-you-picks/design-delta.md`(사용자 검토 승인 2026-10-24)를 따라 구현합니다. `architect-proposal.md`는 결정 기록입니다. 그 안의 `bigint[]` 이웃 배열과 "사전은 빌드 리소스" 안은 **무효**입니다. 이웃은 4바이트 `integer[]`(결정 #3), 사전은 DB 표(결정 #9)입니다
 - ADR: 0147(출판유통 판매 순위를 위험을 감수하고 씀), 0148(인기 목록은 운영 서버가 새벽에 받음, 표지는 PC 표지를 옮김), 0149(모듈 `foryou`, 이웃 표와 넣는 길, 개인 추천 나누기, 판 모으기, 한 번 호출 배치, 꼬리표 사전 표). 모두 Accepted, 2026-10-24
 - 이 인계서의 자리: plan `docs/cycles/23-for-you-picks/handoff.md`. dev에서는 `../chaekcheck-plan/docs/cycles/23-for-you-picks/handoff.md`로 읽습니다
