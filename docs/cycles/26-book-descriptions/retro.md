@@ -108,3 +108,4 @@
      - 시험: 표가 비었을 때 1차 호출이 꺼지는지(서버는 뜸), 표가 있을 때 지금과 같은지
      - 운영 모델 폴더의 `book-profiles.tsv`는 코드가 나간 뒤 지워도 됨(사용자에게 묻고). 프로필 원본은 PC `chaekcheck-data/aisearch/100k/book-profiles-export.tsv`
      - 배포는 다른 dev 세션 배포와 차례를 맞춰 다음 판에 함께
+   - 결과 (dev 26, 2026-10-29): dev main `c5524b19`에 들어감, 아직 배포 전(v1.21.4 다음 판에 함께). 파일 대체 읽기와 `BookProfiles.read`를 지움. 표가 비면 시작 경고 한 줄을 남기고 ML 1차 호출이 꺼져 Haiku로 감. 시험 `FirstCallTests.theFirstCallIsOffWhileTheProfileTableIsEmpty`(폴더에 tsv가 있어도 꺼짐), 백엔드 시험 1,440개 통과. 운영 표에 77,551줄이 있어 동작은 같음. 운영 모델 폴더의 `book-profiles.tsv`는 그 판이 나간 뒤 dev 26이 사용자에게 묻고 지움
