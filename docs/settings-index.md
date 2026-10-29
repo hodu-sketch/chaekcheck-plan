@@ -279,3 +279,14 @@
 | PC IAM 권한 | 표지 버킷에 `s3:PutObject`·`s3:ListBucket`만, PC의 AWS CLI 프로필 하나(IAM 사용자 `chaekcheck-covers-uploader` 키 [확정: dev 26, 2026-10-28]; 관리 작업은 `aws login` 단기 자격). 운영 서버에는 권한 없음 | AWS IAM (PC) | 방식 [확정] (설계 #4 승인) / 버킷·사용자 이름 [안]. 단기 자격 증명으로 바꿀 수 있는지 [확인 필요] |
 | 책 프로필 메모리 | 77,551권, 같은 값 문자열을 나눠 쓰면 약 12~16MB (힙 `-Xmx640m` 안), 서버 시작 때 `BookProfiles.all()`로 한 번 읽음 | `aisearch` 메모리 | [추론] (design-delta "서버 자원") |
 | 바꿔 끼우기 `lock_timeout` | 지금 값 그대로(2초, 실패하면 10초 뒤 다시, 최대 5번 — `data-model.md` `catalog` 절). 사이클 26부터 설명 표 5개 DELETE가 같은 트랜잭션(DROP 앞)에 들어가 이 한도 안에서 돎. 잠금 시간을 넘기면 DELETE도 되돌아감 | `JdbcCatalogLoad.swap` `SET LOCAL lock_timeout` | 값 [확정] (사이클 08, 사용자 승인 2026-10-11) / DELETE를 같은 트랜잭션에 넣음 [확정] (ADR-0162). 트랜잭션 안 DELETE 시간 [확인 필요] (dev가 시험 DB에서 잼) |
+
+## 사이클 27 무중단 배포 — 명세됨(미구현, 사이클 27)
+
+근거: `docs/cycles/27-zero-downtime-deploy/spec.md` "입력과 출력", 명세 결정 페이지 #2~#4 (사용자 승인 2026-10-29). 들어갈 곳은 설계(`design-delta.md`)에서 정함
+
+| 값 | 설계 값 | 어디 (예정) | 근거 | 상태 태그 |
+|---|---|---|---|---|
+| 옛 판 정상 종료 최대 대기 | 40초 | 백엔드 `spring.lifecycle.timeout-per-shutdown-phase` | 가장 긴 대출 조회 스트림 35초(`streamDuration` 30초 + 5초) + 여유 5초. Spring 기본 30초면 끝 5초가 잘림 | [확정] (명세 결정 #2) |
+| Docker가 백엔드를 기다리는 시간 | 60초 | prod compose `stop_grace_period` | 정상 종료 40초 뒤 이용 기록 마지막 저장 등 뒷정리. Docker 기본 10초면 잘림 | [확정] (명세 결정 #2) |
+| 새 판 준비 기다리는 최대 | 180초 | `release.sh`/`up.sh` | 시작 시간 측정 전 임시 값. 재면 줄임 | [확정] (명세 결정 #3, 값은 측정 뒤 다시) |
+| 배포를 멈추는 새벽 시간 | 03:25~05:10 | `release.sh` | 03:30·04:00·04:30·05:00 정해진 일이 두 판에서 두 번 돌지 않게 (잠금 없음) | [확정] (명세 결정 #4) |
