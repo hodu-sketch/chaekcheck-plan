@@ -15,7 +15,7 @@ p{color:var(--muted)}
   D1 --&gt;|예| X1[&quot;멈춤: 정해진 일 도는 시간이라 알림&lt;br/&gt;(배포 안 함)&quot;]
   D1 --&gt;|아니오| D2[&quot;이미지 준비&lt;br/&gt;(서버에 없으면 빌드·전송)&quot;]
   D2 --&gt; D3[&quot;빈 자리(파랑 또는 초록)에&lt;br/&gt;새 판 백엔드 띄움&quot;]
-  D3 --&gt; D4{&quot;준비 확인 통과?&lt;br/&gt;(서버 안, 최대 180초)&quot;}
+  D3 --&gt; D4{&quot;준비 확인 통과?&lt;br/&gt;(서버 안, 최대 60초)&quot;}
   D4 --&gt;|아니오| X2[&quot;실패: 새 판 내림&lt;br/&gt;이유 + 새 판 로그 마지막 줄&lt;br/&gt;옛 판 그대로, 실패 코드&quot;]
   D4 --&gt;|예| D5[&quot;nginx가 새 자리를 바라보게&lt;br/&gt;설정 다시 읽기(reload)&quot;]
   D5 --&gt; D6[&quot;옛 판에 정상 종료 신호&lt;br/&gt;(하던 요청 최대 40초, Docker 60초)&quot;]

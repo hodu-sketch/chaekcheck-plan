@@ -22,6 +22,7 @@
 사이클 21 회고 (2026-10-17): 추천도서 세 목록 구현됨 (dev main `836bd7b`, 운영 역할 DB 반영 기록 13번). Modulith `components.puml`(2026-10-17)이 Collection → Catalog·Library·Picks, Picks → Catalog·Library로 설계와 같음. 실제 이름(`CuratedListTransfer.check`·`read`·`replace`, `IdBook`, `lendingKinds()` → `Map<Long, Boolean>`, `ShownTitle`)과 사용자가 dev 화면에서 바꾼 것(머리말 큰 메뉴 셋 「도서검색」·「추천도서」·「마이페이지」, PC 누르면 펼침, 폰 ☰ 없이 줄 누르기 + ▾, 표지 아래 글자·화면 아래 출처 줄·책 창 "목록 이름" 줄 없음, 목록 이름 붙박이, 책 창 조회 넓히기 3 → 6 → 10 → 20, 표지 출처 다섯)을 반영. 근거 `docs/cycles/21-recommended-books/retro.md`, dev `plan-feedback.md` "# 사이클 21".
 사이클 19 회고 (2026-10-18): 저자·제목 표기 정리 구현됨 (dev main `1c129e8`, 운영 역할 DB 반영 기록 12번, 2026-10-16). Modulith `components.puml`(2026-10-17)에서 모듈 관계는 설계 그대로(새 모듈·이벤트·REST·의존 없음). 인계서 [안] 이름이 모두 그대로 쓰여 [확정]. 달라진 것: 공급사 코드 키에 그 줄의 비교 제목·출판사가 더해짐(자리 채움 출판사·공급사 「기타」는 코드로 잇지 않음 — ADR-0114 "결정 고침 (2026-10-16)" 절 [확정] (사용자 승인, 2026-10-18, 회고 결정 #1)), 국가서지를 저장된 원문 표에서 읽는 설정 `stored-bibliography`, `rules-dir`는 사본을 읽는 모드(`in-place`·`export`)에서만 읽음. 근거 `docs/cycles/19-author-angle-brackets/retro.md`, dev `plan-feedback.md` "# 사이클 19".
 사이클 26 cycle-close (2026-10-28): 책 설명 한 곳에 모으기 — 구현됨 (사이클 26, 회고 2026-10-29). ADR-0160~0166. `catalog`가 요약·판 표지·프로필·AI 찾기·꼬리표를 맡고(새 표 6개, 새 공개 `BookTexts`·`CoverUrls`·`BookProfiles`·`AiSearchIndex`·`BookTextsTransfer`), `foryou.BookBlurbs`·`BookCovers`, `aisearch.AiSearchBookTexts`, `picks`의 `AiSummaries`·`BookTagTransfer`를 없앰. `aisearch → foryou` 의존은 표지·요약만 없어지고 `BookNeighbours`로 남음, `collection → aisearch` 의존은 배포 2에서 없앰 (회고). 표지 그림은 S3 + CloudFront. 새 모듈·새 이벤트 없음. 근거 `docs/cycles/26-book-descriptions/design-delta.md`, spec.md, flow.md. 이름은 따로 적지 않으면 [안]. 이 문서 끝 「책 설명 (사이클 26)」
+사이클 27 cycle-close (2026-10-29): 무중단 배포 — 설계됨(미구현, 사이클 27). ADR-0167~0171. 도메인 모듈·표·REST API 변경 없음. 백엔드에 Actuator `health`(서버 안에서만 `/actuator/health/readiness`)와 정상 종료 40초, 배포는 같은 서버 백엔드 두 자리 `backend-blue`·`backend-green` + 고정 nginx + 서버 `bin/switch.sh`·`slots.env`. DB 변경 규칙(ADR-0170: 옛 판·새 판이 같이 돌아도 되는 변경만, 아니면 두 번 나누거나 점검 배포)은 이후 모든 사이클에 적용. 근거 `docs/cycles/27-zero-downtime-deploy/design-delta.md`, spec.md, flow.md. 이 문서 끝 「배포 구성 (사이클 27)」
 
 사이클 13 cycle-close (2026-10-12, 사이클 12와 나란히 미리 한 plan, 사이클 12 뒤에 개발): 수집기 dev로 갈아타기 + 새 도서관 넣기 명령 — `library`(새 공개 `LibraryRegistry`: `add`·`nextId`·`listAll`, Java가 도서관을 처음 씀), `collection`(명령 프로필 `library-insert` 미리 보기·넣기, 보고서 파일, 넣기 실행 기록 `library_insert_run`, `GET /api/v1/join-surveys/latest`, 반영 파일에 `notes.libraryPart`, 반영 때 도서관 부분 먼저, 칸 이름 `other_library_count`), `catalog`(반영 파일 판 2), 웹(S12 `/about` 공지 한 줄) — 구현됨 (사이클 13, 회고 2026-10-14). 새 모듈·새 이벤트 없음, 모듈 의존 방향 그대로(`collection → catalog, library`). 근거 `docs/cycles/13-crawler-to-dev/design-delta.md`, spec.md, flow.md, ADR-0083~0088·0093. 이름(프로필·설정·표·칸·명령)은 따로 적지 않으면 [안]이고 dev가 바꿀 수 있음 [확정] (사용자 선택, 2026-10-12).
 사이클 08 cycle-close (2026-10-11): 다듬기 + 가져오기 바꿔 끼우기 + 메모리 줄이기 — `catalog`(새 표에 쓰고 바꿔 끼우기, 소장 번호 잇기, 계획 도서관 소장만 읽기), `collection`(국가서지 원문 남기기, 수집 기간·단계별 시간), `library`(`mobileSiteDiffers`, 계획에 들어갈 도서관만 읽기, `updated_at` 트리거, 교보 대여·혼합 11곳 뺌, 이름 고침), `region`(`updated_at` 트리거), `availability`(캐시 통계·상한, 503 `Retry-After`, 응답 본문 복사 줄임, `holding_not_found`), 웹 — 구현됨 (사이클 08). 모듈 의존 방향·이벤트는 그대로. 근거 `docs/cycles/08-polish-swap-memory/design-delta.md`, ADR-0065~0070. 이름·숫자는 따로 적지 않으면 [안].
@@ -1695,3 +1696,36 @@ classDiagram
   Book "1" -- "0..*" Tag
   Tag "*" --> "1" TagWord
 ```
+
+## 배포 구성 (사이클 27) — 설계됨(미구현, 사이클 27)
+
+운영 서버 한 대 안에서 컨테이너가 어떻게 이어지는지입니다(도메인 모듈과 따로). 백엔드 두 자리 중 한 자리만 일하고, nginx 컨테이너는 판이 바뀌어도 다시 만들지 않습니다. 근거 `docs/cycles/27-zero-downtime-deploy/design-delta.md`, ADR-0167~0169. 값은 `docs/settings-index.md` 사이클 27 절.
+
+```mermaid
+flowchart TB
+  CF["cloudflared<br/>(그대로)"] -->|"http://nginx:80"| N["web = nginx 고정 판<br/>컨테이너는 다시 만들지 않음"]
+  N -->|"화면 파일"| W["/srv/chaekcheck/web/current<br/>→ releases/X"]
+  N -->|"/api/ (active-backend.conf가 가리키는 한 자리)"| B["backend-blue"]
+  N -.->|"전환 뒤"| G["backend-green"]
+  B --> DB[("db (그대로)")]
+  G --> DB
+  S["bin/switch.sh"] -->|"읽고 씀"| E["/srv/chaekcheck/slots.env"]
+  S -->|"만듦"| C["/srv/chaekcheck/nginx/active-backend.conf"]
+  C --> N
+  R["release.sh (PC)"] -->|"이미지·설정 전송 후 호출"| S
+```
+
+### 자리 상태
+
+```mermaid
+stateDiagram-v2
+  [*] --> 쉼
+  쉼 --> 뜨는중: switch.sh up
+  뜨는중 --> 쉼: 60초 초과·종료 → stop (실패)
+  뜨는중 --> 일함: 준비 UP → nginx reload
+  일함 --> 내려가는중: 다른 자리가 일함이 됨 → stop
+  내려가는중 --> 쉼: 정상 종료 (최대 40초, Docker 60초)
+```
+
+- 서버에 새로 생기는 것: `/srv/chaekcheck/slots.env`, `/srv/chaekcheck/nginx/`(설정 + `active-backend.conf`), `/srv/chaekcheck/web/releases/<판>/`, `/srv/chaekcheck/web/current`
+- 점검 배포(짧은 중단, 지금 방식): db·cloudflared·nginx 이미지 판 올리기, 두 번에 나눌 수 없는 DB 변경 (ADR-0170)

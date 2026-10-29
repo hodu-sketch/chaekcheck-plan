@@ -283,13 +283,17 @@
 | AI 낱말 찾기 방식 나누는 계획 도서관 수 | 한 낱말이거나 계획 도서관 500곳 이하 → 함수(`catalog/004-plan-library-count`, COST 1000), 그 밖 → SubPlan | `JdbcAiSearchIndex` | 구현됨 v1.20.4. 500 [안] (200과 1,000 사이, dev 측정), COST 1000 [확정: 1,000/3,000/10,000 비교 측정] (사용자 "최적의 결과물을 운영에 반영해줘") |
 | 바꿔 끼우기 `lock_timeout` | 지금 값 그대로(2초, 실패하면 10초 뒤 다시, 최대 5번 — `data-model.md` `catalog` 절). 사이클 26부터 설명 표 5개 DELETE가 같은 트랜잭션(DROP 앞)에 들어가 이 한도 안에서 돎. 잠금 시간을 넘기면 DELETE도 되돌아감 | `JdbcCatalogLoad.swap` `SET LOCAL lock_timeout` | 값 [확정] (사이클 08, 사용자 승인 2026-10-11) / DELETE를 같은 트랜잭션에 넣음 [확정] (ADR-0162). 트랜잭션 안 DELETE 시간: 시험 DB 134만 줄 중 5,000줄 0.6초, 복사본 다시 가져오기 swap 1.06초(지운 줄 0) [확정: dev 측정 2026-10-29] |
 
-## 사이클 27 무중단 배포 — 명세됨(미구현, 사이클 27)
+## 사이클 27 무중단 배포 — 설계됨(미구현, 사이클 27)
 
-근거: `docs/cycles/27-zero-downtime-deploy/spec.md` "입력과 출력", 명세 결정 페이지 #2~#4 (사용자 승인 2026-10-29). 들어갈 곳은 설계(`design-delta.md`)에서 정함
+근거: `docs/cycles/27-zero-downtime-deploy/spec.md` "입력과 출력", `design-delta.md` "배포 설정", ADR-0167~0171 (명세·설계 결정 사용자 승인 2026-10-29)
 
-| 값 | 설계 값 | 어디 (예정) | 근거 | 상태 태그 |
+| 값 | 설계 값 | 어디 (예정, dev) | 근거 | 상태 태그 |
 |---|---|---|---|---|
-| 옛 판 정상 종료 최대 대기 | 40초 | 백엔드 `spring.lifecycle.timeout-per-shutdown-phase` | 가장 긴 대출 조회 스트림 35초(`streamDuration` 30초 + 5초) + 여유 5초. Spring 기본 30초면 끝 5초가 잘림 | [확정] (명세 결정 #2) |
-| Docker가 백엔드를 기다리는 시간 | 60초 | prod compose `stop_grace_period` | 정상 종료 40초 뒤 이용 기록 마지막 저장 등 뒷정리. Docker 기본 10초면 잘림 | [확정] (명세 결정 #2) |
-| 새 판 준비 기다리는 최대 | 60초 (1초 간격) | 서버 `bin/switch.sh` | 실측 시작 19.4초(2026-10-29)의 약 3배, 두 판이 CPU 2코어를 나눠 씀 | [확정] (명세 결정 #3, 사용자 "60초로 줄이고" 2026-10-29) |
-| 배포를 멈추는 새벽 시간 | 03:25~05:10 | `release.sh` | 03:30·04:00·04:30·05:00 정해진 일이 두 판에서 두 번 돌지 않게 (잠금 없음) | [확정] (명세 결정 #4) |
+| 옛 판 정상 종료 최대 대기 | 40초 | 백엔드 `application.yml` `spring.lifecycle.timeout-per-shutdown-phase` | 가장 긴 대출 조회 스트림 35초(`streamDuration` 30초 + 5초) + 여유 5초. Spring 기본 30초(요약으로만 확인)면 끝 5초가 잘림 | [확정] (명세 결정 #2) |
+| Docker가 백엔드를 기다리는 시간 | 60초 | `deploy/prod/compose.yaml` `stop_grace_period` (`backend-blue`·`backend-green`) | 정상 종료 40초 뒤 이용 기록 마지막 저장 등 뒷정리. Docker 기본 10초(요약으로만 확인)면 잘림 | [확정] (명세 결정 #2) |
+| 새 판 준비 기다리는 최대 | 60초 (1초 간격) | 서버 `deploy/prod/bin/switch.sh` | 실측 시작 19.4초(2026-10-29)의 약 3배, 두 판이 CPU 2코어를 나눠 씀 | [확정] (명세 결정 #3, 사용자 "60초로 줄이고" 2026-10-29) |
+| 배포를 멈추는 새벽 시간 (서울 시각) | 03:25~05:10 | PC `deploy/prod/bin/release.sh` 시작 때 + 서버 `switch.sh` | 03:30·04:00·04:30·05:00 정해진 일이 두 판에서 두 번 돌지 않게 (잠금 없음) | [확정] (명세 결정 #4, ADR-0171) |
+| nginx reload 뒤 옛 자리 내리기 전 기다림 | 2초 | 서버 `switch.sh` | 옛 자리에 이어진 keepalive 연결이 새 요청을 거절당하는 틈을 막음 | 값 [확정] (설계 결정 #5 승인) / 충분한지 [확인 필요: AC-1 감시] |
+| 화면 판 폴더 남기는 수 | 두 판 (지금 + 앞 판) | 서버 `/srv/chaekcheck/web/releases/`, `release.sh` 정리 단계 | 되돌리기는 앞 판 하나면 됨, 이미지 정리 규칙(이번 판·앞 판)과 같음 | [확정] (설계 결정 #3, ADR-0168) |
+| Actuator 여는 범위 | `health`만, 같은 포트 8080. 바깥 `/actuator/` 404 | 백엔드 `application.yml` `management.endpoints.web.exposure.include`, `management.endpoint.health.probes.enabled: true`; `deploy/nginx/chaekcheck-locations.conf` | 준비 확인만 필요, 서버 안에서만 | [확정] (설계 결정 #4, ADR-0169) |
+| 전환 중 메모리 | 백엔드 하나 더 약 713MB, 남는 메모리 467MB → 약 250MB 스왑 | 서버 `/swapfile` 2GB (이미 있음, swappiness 10) | 실측 2026-10-29 (`server-measure.md`) | [확정] (실측) |

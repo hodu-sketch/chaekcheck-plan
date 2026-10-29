@@ -33,7 +33,7 @@ architect 서브에이전트 제안 (2026-10-29, dev 파일 읽기만). 결정�
 
 - 포트 **A (추천)**: 같은 8080, Actuator는 `health`만 엶. nginx가 넘기지 않아 바깥에서 404. 안전 장치로 `location ^~ /actuator/ { return 404; }` 한 줄 더
 - 포트 B: `management.server.port` 따로 — 연결·스레드가 더 생기고 설정이 늘어남
-- 부르기 **(i) 추천**: `docker compose exec -T web wget -qO- http://backend-green:8080/actuator/health/readiness` — 새 포트 없음, nginx가 쓸 바로 그 길을 확인, `/api/v1/version`으로 판 번호도 확인. 1초 간격 최대 180초. 컨테이너가 끝났거나 다시 시작한 적 있으면 바로 실패
+- 부르기 **(i) 추천**: `docker compose exec -T web wget -qO- http://backend-green:8080/actuator/health/readiness` — 새 포트 없음, nginx가 쓸 바로 그 길을 확인, `/api/v1/version`으로 판 번호도 확인. 1초 간격 최대 180초 (승인 때 실측을 보고 60초로 줄임, spec.md 입력과 출력). 컨테이너가 끝났거나 다시 시작한 적 있으면 바로 실패
 - (ii) 자리별 서버 포트 + curl — 포트 둘 관리
 - (iii) compose `healthcheck` — 백엔드 이미지에 curl 없음, 10초마다 프로세스 하나 더
 

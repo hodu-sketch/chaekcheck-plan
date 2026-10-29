@@ -2191,3 +2191,51 @@ sequenceDiagram
   A->>A: 한 트랜잭션: 지우고 넣음, search_text 다시 만듦
   A-->>C: 넣은 수 · 한 줄 있는 수 · 목록에 없는 번호 수
 ```
+
+## 흐름 64: 백엔드 무중단 배포 (정상·실패) — 설계됨(미구현, 사이클 27)
+
+근거 `docs/cycles/27-zero-downtime-deploy/design-delta.md`, ADR-0167·0169·0171. 새 판이 시작할 때 Liquibase가 돌므로 DB 변경은 ADR-0170 규칙을 따름 (이후 모든 사이클).
+
+```mermaid
+sequenceDiagram
+  participant R as release.sh (PC)
+  participant S as switch.sh (서버)
+  participant G as 새 자리
+  participant N as nginx (web)
+  participant B as 옛 자리
+  R->>R: 03:25~05:10이면 거부
+  R->>S: backend X.Y.Z (이미지 전송 뒤)
+  S->>S: 03:25~05:10이면 거부, slots.env에 새 자리 판 번호
+  S->>G: up -d --no-deps (시작 때 Liquibase)
+  loop 1초마다, 최대 60초
+    S->>N: exec wget G:8080/actuator/health/readiness
+  end
+  alt 60초 초과 또는 새 자리 종료·재시작
+    S->>G: logs --tail, stop
+    S-->>R: 실패 (이유, 옛 판 번호), 종료 코드 1
+  else UP
+    S->>N: exec wget G:8080/api/v1/version (판 번호 확인)
+    S->>N: active-backend.conf 쓰기 → nginx -t → nginx -s reload
+    S->>S: 2초 기다림, slots.env ACTIVE_SLOT 변경
+    S->>B: stop (Docker 60초, Spring 정상 종료 40초)
+    S-->>R: 성공 (새 판 번호)
+  end
+```
+
+## 흐름 65: 화면(web) 배포와 되돌리기 — 설계됨(미구현, 사이클 27)
+
+근거 같은 문서, ADR-0168.
+
+```mermaid
+sequenceDiagram
+  participant R as release.sh (PC)
+  participant S as switch.sh (서버)
+  participant N as nginx (web)
+  R->>S: web X.Y.Z (web 이미지 전송 뒤)
+  S->>S: 이미지에서 dist 꺼내 releases/X 에 둠, 앞 판 assets 함께 복사
+  S->>S: current 링크 → releases/X (ln -sfn + mv -T)
+  S->>N: nginx -t → nginx -s reload
+  S->>S: slots.env WEB_VERSION 변경, releases는 두 판만 남김
+  S-->>R: 성공
+  Note over R,S: 되돌리기 = release.sh --switch-only 앞판 (서버에 이미지·폴더가 있으면 만들기·전송 없이 같은 전환)
+```

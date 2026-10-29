@@ -1070,3 +1070,7 @@
 ## 사이클 26 책 설명 한 곳에 모으기 인계 (2026-10-28, 사이클 폴더에만) — 구현됨 (배포 1 v1.20.0, 배포 2 v1.20.6, 2026-10-29), 회고 `docs/cycles/26-book-descriptions/retro.md`
 
 책 요약·판 표지·꼬리표·프로필·AI 찾기를 `catalog`의 새 표 여섯으로 모으고(ADR-0160~0166), 모든 표지를 S3 + CloudFront로 옮기며, 책 상세 화면에 표지와 「AI 요약 ⓘ」을 붙이는 인계서는 plan `docs/cycles/26-book-descriptions/handoff.md`에 있습니다(dev에서는 `../chaekcheck-plan/docs/cycles/26-book-descriptions/handoff.md`). **사이클 26이 23·24보다 먼저**이고, 배포 1에서 `foryou`·`aisearch`의 읽는 곳도 dev 26이 바꿉니다. 23·24 브랜치는 rebase로 맞춥니다(사용자 2026-10-28). dev 23·24용 요약은 `docs/cycles/26-book-descriptions/to-dev23-24.md`.
+
+## 사이클 27 무중단 배포 인계 (2026-10-29, 사이클 폴더에만) — 설계됨(미구현)
+
+같은 서버에서 백엔드 두 자리(`backend-blue`·`backend-green`)를 번갈아 쓰고 nginx는 다시 만들지 않는 무중단 배포(ADR-0167~0171) 인계서는 plan `docs/cycles/27-zero-downtime-deploy/handoff.md`에 있습니다(dev에서는 `../chaekcheck-plan/docs/cycles/27-zero-downtime-deploy/handoff.md`). dev 사이클 27 세션이 자기 worktree에서 만들고, 23·24와 겹치는 `deploy/prod/*`는 합칠 때 풉니다. **ADR-0170 DB 변경 규칙(옛 판·새 판이 같이 돌아도 되는 변경만, 아니면 두 번 나누거나 점검 배포)은 이후 모든 사이클에 적용**하며, 체크리스트는 그 인계서 "ADR-0170 DB 변경 체크리스트" 절입니다.
