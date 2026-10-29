@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>무중단 배포 명세</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+
+.v-flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.v-box{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:7px 11px;font-size:15px;text-align:center;min-width:90px}
+.v-box small{display:block;color:var(--muted);font-size:12px}
+.v-hi{border-color:var(--accent);background:var(--accent-bg)}
+.v-warn{border-color:var(--warn);background:var(--warn-bg)}
+.v-ok{border-color:var(--ok);background:var(--ok-bg)}
+.v-arr{color:var(--muted);font-size:18px}
+.v-file{border:2px solid var(--line);border-radius:12px;background:var(--card);padding:10px;margin:10px 0;max-width:560px}
+.v-file .v-part{border:1px dashed var(--line);border-radius:8px;padding:8px 10px;margin:6px 0;font-size:14px}
+.v-file .v-part.v-new{border-color:var(--accent);background:var(--accent-bg)}
+.v-tl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0;font-size:13px;text-align:center}
+.v-tl div{border-top:4px solid var(--line);padding-top:6px}
+.v-tl div.v-hi{border-top-color:var(--accent);background:none}
+.v-cv{display:inline-flex;width:70px;aspect-ratio:2/3;border-radius:7px;border:1px solid var(--line);background:var(--accent-bg);align-items:center;justify-content:center;font-size:11px;text-align:center;padding:3px;vertical-align:top;margin:4px}
+.v-cv.v-img{background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 6px,var(--card) 6px,var(--card) 12px)}
+.v-mini{border:1px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;margin:8px 0;max-width:420px}
+.v-mini .v-bar{display:flex;gap:10px;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line);font-size:13px}
+.v-mini .v-body{padding:10px 12px;font-size:13px}
+.v-pill{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-weight:800;font-size:12px}
+@media (max-width:700px){main table{display:block;overflow-x:auto;max-width:100%}.v-tl{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.v-code{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:var(--code-bg);border-radius:8px;padding:8px 10px;overflow-x:auto;white-space:pre}
+.card h3{margin:0 0 14px;font-size:24px}
+
+.mk{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start;margin:12px 0}
+.mk .dev{border:2px solid var(--line);border-radius:12px;background:var(--bg);padding:10px;font-size:13px;line-height:1.5}
+.mk .dev b.t{display:block;color:var(--muted);font-weight:500;font-size:12px;margin-bottom:6px}
+.mk .pc{width:420px;max-width:100%}.mk .tab{width:300px;max-width:100%}.mk .ph{width:190px}
+.mk .row{display:flex;gap:10px}
+.mk .cv{flex:none;width:58px;aspect-ratio:2/3;border-radius:5px;border:1px solid var(--line);background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 5px,var(--card) 5px,var(--card) 10px)}
+.mk .ph .cv{width:44px}
+.mk .ttl{font-weight:700;font-size:15px}
+.mk .sum{background:var(--warn-bg);border:1px dashed var(--warn);border-radius:7px;padding:6px 8px;margin:8px 0}
+.mk .lib{border-top:1px solid var(--line);padding:5px 0;color:var(--muted)}
+</style>
+
+<body>
+<main class="doc">
+<p class="lead">배포할 때 몇 초를 기다리고, 언제는 배포를 멈추고,<br>무엇은 지금과 같아도 괜찮은지 정합니다.</p>
+<p class="sub">사이클 27 명세(<code>spec.md</code>)에서 아직 정하지 않은 것만 모았습니다. dev 코드를 직접 읽어 확인한 내용이 근거입니다. 정할 것은 6개입니다.</p>
+
+<div class="card"><h2>먼저: 코드를 읽어 보니</h2>
+<p class="concl">바꿔 끼우는 방법 자체에는 문제가 없습니다. 다만 지금 설정 그대로면 세 군데가 막습니다. 이건 설계에서 고칩니다.</p>
+<table>
+<tr><th>막는 곳</th><th>지금</th><th>고치는 방향</th></tr>
+<tr><td>자리 이름·포트</td><td>서비스가 서버 포트 8080을 혼자 잡고, nginx는 이름 하나(<code>backend-host</code>)만 압니다. 둘째 서비스를 띄울 자리가 없습니다.</td><td>파랑·초록 자리마다 이름을 따로 둡니다(설계).</td></tr>
+<tr><td>기다리는 시간</td><td>Docker는 서비스를 내릴 때 10초만 기다리고 강제로 끕니다. 대출 조회 답은 최대 35초까지 이어집니다.</td><td>2번 항목에서 정합니다.</td></tr>
+<tr><td>준비 확인</td><td>"다 떴다"를 알려 주는 주소가 서비스에 없습니다. <code>release.sh</code>도 확인 없이 끝납니다.</td><td>3번 항목에서 정합니다.</td></tr>
+</table>
+<p>좋은 소식: AI 책 찾기에서 이어 묻기는 브라우저가 앞 대화를 매번 같이 보내서, 서비스가 바뀌어도 이어집니다. AI 하루 예산도 DB에 있어 서비스가 둘이어도 맞게 셉니다.</p>
+</div>
+
+<div class="card item"><h3><span class="num">1</span>바뀌는 순간 잠깐 달라지는 것은<br>그대로 받아들이기</h3>
+<p class="concl">[안] 아래 것들은 서비스마다 따로 기억합니다. 새 판은 처음부터 다시 셉니다. 대부분 지금 배포(내렸다 다시 띄우기)에서도 똑같이 일어나서, 따로 고치지 않습니다.</p>
+<table>
+<tr><th>무엇</th><th>바뀔 때</th><th>지금 배포와</th></tr>
+<tr><td>막힌 Webshare 길 쉬게 하기</td><td>새 판은 모름 → 길마다 다시 5번 실패해야 쉼</td><td>같음</td></tr>
+<tr><td>AI 검색 한도 (한 사람 분당 10번·하루 100번)</td><td>새 판은 0부터</td><td>같음</td></tr>
+<tr><td>검색 결과 캐시</td><td>새 판은 비어 있어 처음 몇 분 도서관 요청이 조금 늘어남</td><td>같음</td></tr>
+<tr><td>카카오 로그인하는 중이던 사람</td><td>드물게 "다시 로그인" 화면</td><td>같음</td></tr>
+<tr><td>도서관마다 "한 번에 1개, 1초 간격"</td><td>옛 판이 하던 요청을 끝내는 최대 35초 동안 잠깐 2개까지</td><td>새로 생김 (짧음)</td></tr>
+</table>
+<p class="alt">다른 선택: 두 서비스가 같이 쓰는 저장소(Redis)를 새로 두기 — 메모리를 더 쓰고 관리할 것이 늘어납니다. 겹치는 시간이 짧아 얻는 것이 적습니다.</p>
+</div>
+
+<div class="card item"><h3><span class="num">2</span>옛 판을 내릴 때<br>최대 40초 기다리기</h3>
+<p class="concl">[안] 옛 판은 하던 요청을 끝낼 때까지 최대 40초 기다립니다(서비스 설정). Docker는 그보다 넉넉히 60초 기다린 뒤에야 강제로 끕니다.</p>
+<table>
+<tr><th>값</th><th>왜</th></tr>
+<tr><td>40초</td><td>가장 긴 대출 조회 답이 35초 + 여유 5초. AI 책 찾기 답은 최대 30초.</td></tr>
+<tr><td>60초</td><td>40초 뒤에 이용 기록 마지막 저장 같은 뒷정리가 남아 있어서. 지금 Docker 기본값 10초면 이게 빠질 수 있습니다.</td></tr>
+</table>
+<p>예: 배포 10초 전에 대출 조회를 시작한 사람은 25초 더 답을 받고 끝납니다. 그 사이 새로 들어온 사람은 이미 새 판으로 갑니다.</p>
+<p class="alt">다른 선택: 30초(서비스 기본값)로 두기 — 35초 걸리는 조회는 끝 5초가 잘릴 수 있습니다.</p>
+</div>
+
+<div class="card item"><h3><span class="num">3</span>새 판 "준비됐다" 확인:<br>서버 안에서만, 최대 3분 기다리기</h3>
+<p class="concl">[안] 서비스에 준비 확인 주소(<code>/actuator/health/readiness</code>)를 넣습니다. 이 주소는 서버 안에서만 부를 수 있고, <code>chaekcheck.com</code>으로는 열리지 않습니다. 새 판이 3분 안에 준비되지 않으면 실패로 보고 새 판을 내립니다. 사이트는 옛 판 그대로입니다.</p>
+<p>3분은 임시 값입니다. 새 판은 시작할 때 책 벡터 80MB와 AI 첫 단계 모델을 읽고, 책 정보 약 7만 7천 줄도 불러옵니다. 실제로 뜨는 데 걸리는 시간을 재 보고 그에 맞춰 줄입니다.</p>
+<p class="alt">다른 선택: 이미 있는 버전 주소(<code>/api/v1/version</code>)로 확인 — 새로 넣을 것이 없지만, "웹 서버가 떴다"까지만 알고 시작 때 하는 일이 다 끝났는지는 모릅니다.</p>
+</div>
+
+<div class="card item"><h3><span class="num">4</span>새벽 3시 25분 ~ 5시 10분에는<br>배포하지 않기</h3>
+<p class="concl">[안] 이 시간에 <code>release.sh</code>를 돌리면 배포하지 않고 "정해진 일이 도는 시간"이라고 알립니다.</p>
+<table>
+<tr><th>시각</th><th>서비스가 하는 일</th></tr>
+<tr><td>03:30</td><td>「나에게 맞는 책」 목록 만들기 (지금은 꺼 둠)</td></tr>
+<tr><td>04:00</td><td>지난 로그인 기록·탈퇴 계정 정리 (카카오에 묻기 포함)</td></tr>
+<tr><td>04:30</td><td>오래된 이용 기록 정리</td></tr>
+<tr><td>05:00</td><td>추천도서 가져오기 (지금은 꺼 둠)</td></tr>
+</table>
+<p>그 순간 서비스가 둘이면 같은 일을 두 번 합니다. 카카오에 묻는 횟수도 두 배가 됩니다.</p>
+<p class="alt">다른 선택: 두 번 돌지 않게 DB 잠금(ShedLock 등)을 넣기 — 새벽 배포도 되지만, 서비스 코드를 고칠 곳이 늘어납니다.</p>
+</div>
+
+<div class="card item"><h3><span class="num">5</span>메모리가 모자라면<br>디스크 메모리(스왑)를 두기</h3>
+<p class="concl">[안] 서버 메모리를 잰 뒤, 서비스 둘이 잠깐 같이 떠도 남는 메모리가 넉넉하지 않으면 스왑 파일을 둡니다. 평소에는 거의 쓰이지 않고, 바꿔 끼우는 몇십 초 동안만 씁니다.</p>
+<table>
+<tr><th>무엇</th><th>메모리</th></tr>
+<tr><td>서비스 하나 (dev 문서 실측)</td><td>약 648MB</td></tr>
+<tr><td>바꿔 끼우는 동안 하나 더</td><td>약 648MB 더</td></tr>
+<tr><td>서버 전체 (배포 설정 주석)</td><td>약 2GB [아직 못 잼]</td></tr>
+</table>
+<p class="alt">다른 선택: 서비스 Java 메모리를 640MB보다 줄이기 — AI 책 벡터 80MB 등을 들고 있어서 평소에 모자랄 수 있습니다.</p>
+<p class="alt">다른 선택: 서버를 한 단계 큰 것으로 — 매달 값이 오릅니다.</p>
+</div>
+
+<div class="card item"><h3><span class="num">6</span>운영자가 보는 것과<br>더 확인할 것</h3>
+<p class="concl">[안] 명령은 지금과 같은 <code>release.sh 1.21.0</code>. 되돌릴 때 서버에 이미 있는 판이면 다시 만들지 않고 바꿔 끼우기만 합니다. 실패하면 이유와 새 판 로그 마지막 몇 줄을 보여 주고 실패 코드로 끝납니다.</p>
+<p>범위에서 정한 확인 넷에 더해, 아래도 끝났는지 볼 때 확인합니다.</p>
+<table>
+<tr><th>더 확인할 것</th><th>보이면 되는 것</th></tr>
+<tr><td>화면만 배포</td><td>실패 0번이고 첫 화면이 새 화면으로 바뀜</td></tr>
+<tr><td>옛 판이 곱게 내려감</td><td>배포 뒤 서비스가 하나만 돌고, 옛 판 로그 끝이 강제 종료가 아님</td></tr>
+<tr><td>이용 기록이 안 빠짐</td><td>배포 직전 몇 초 기록이 남아 있음</td></tr>
+<tr><td>새벽 배포 막힘</td><td>4번 시간에 돌리면 배포하지 않고 알림</td></tr>
+<tr><td>준비 확인 주소 숨김</td><td><code>chaekcheck.com/actuator/…</code>가 열리지 않음</td></tr>
+</table>
+</div>
+
+<div class="card"><h2>아직 재야 하는 것</h2>
+<p>서버 실제 메모리·스왑과 서비스가 뜨는 시간입니다. 설계는 먼저 쓰고, <b>설계를 확정하기 전에</b> 잽니다. 서버에서 아래 결과를 보내 주시거나 dev 세션에서 재면 됩니다.</p>
+<p><code>free -m; swapon --show; docker stats --no-stream; docker logs chaekcheck-backend-1 2>&amp;1 | grep Started</code></p>
+</div>
+
+<p class="foot">원본: <code>docs/cycles/27-zero-downtime-deploy/spec.md</code>, 근거는 <code>research.md</code> 3·4절. 2026-10-29.</p>
+</main>
+</body>
+</html>
