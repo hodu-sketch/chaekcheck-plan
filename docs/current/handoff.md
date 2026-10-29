@@ -1067,6 +1067,6 @@
 
 추천도서 탭 맨 앞 「나에게 맞는 책」(새 모듈 `foryou`, ADR-0147~0149) 인계서는 plan `docs/cycles/23-for-you-picks/handoff.md`에 있습니다(dev에서는 `../chaekcheck-plan/docs/cycles/23-for-you-picks/handoff.md`). 이 파일(사이클 20)을 대신하지 않습니다. 사이클 24와 `picks.ListedBooks`·`collection` `book-texts` 모드를 같이 쓰며, 먼저 개발하는 쪽이 24 설계대로 만듭니다. 개발 차례는 사용자가 정합니다.
 
-## 사이클 26 책 설명 한 곳에 모으기 인계 (2026-10-28, 사이클 폴더에만)
+## 사이클 26 책 설명 한 곳에 모으기 인계 (2026-10-28, 사이클 폴더에만) — 구현됨 (배포 1 v1.20.0, 배포 2 v1.20.6, 2026-10-29), 회고 `docs/cycles/26-book-descriptions/retro.md`
 
 책 요약·판 표지·꼬리표·프로필·AI 찾기를 `catalog`의 새 표 여섯으로 모으고(ADR-0160~0166), 모든 표지를 S3 + CloudFront로 옮기며, 책 상세 화면에 표지와 「AI 요약 ⓘ」을 붙이는 인계서는 plan `docs/cycles/26-book-descriptions/handoff.md`에 있습니다(dev에서는 `../chaekcheck-plan/docs/cycles/26-book-descriptions/handoff.md`). **사이클 26이 23·24보다 먼저**이고, 배포 1에서 `foryou`·`aisearch`의 읽는 곳도 dev 26이 바꿉니다. 23·24 브랜치는 rebase로 맞춥니다(사용자 2026-10-28). dev 23·24용 요약은 `docs/cycles/26-book-descriptions/to-dev23-24.md`.

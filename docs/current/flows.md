@@ -2040,13 +2040,13 @@ sequenceDiagram
   Note over CO: search_line은 24의 aisearch로, 모르는 kind는 건너뜀
 ```
 
-> 사이클 26에서 바뀜 — 설계됨(미구현, 사이클 26): 위 흐름 57의 `book-texts` kind(`for_you_blurb`·`cover_file`·`tags`·`search_line`)와 `tag-dictionary`는 `foryou`·`picks`·`aisearch`가 아니라 `catalog.BookTextsTransfer`가 받고, `book-texts`도 `# export_id=`를 검사함 (ADR-0161·0162). 아래 흐름 58~60
+> 사이클 26에서 바뀜 — 구현됨 (사이클 26, 회고 2026-10-29): 위 흐름 57의 `book-texts` kind(`for_you_blurb`·`cover_file`·`tags`·`search_line`)와 `tag-dictionary`는 `foryou`·`picks`·`aisearch`가 아니라 `catalog.BookTextsTransfer`가 받고, `book-texts`도 `# export_id=`를 검사함 (ADR-0161·0162). 아래 흐름 58~60
 
-## 책 설명 (사이클 26) — 설계됨(미구현, 사이클 26)
+## 책 설명 (사이클 26) — 구현됨 (사이클 26, 회고 2026-10-29)
 
 근거: `docs/cycles/26-book-descriptions/design-delta.md` "주요 흐름", flow.md, ADR-0162·0164·0165.
 
-## 흐름 58: AI 검색 카드 — 표지·요약을 AI 호출과 겹쳐 읽기 — 설계됨(미구현, 사이클 26)
+## 흐름 58: AI 검색 카드 — 표지·요약을 AI 호출과 겹쳐 읽기 — 구현됨 (사이클 26, 회고 2026-10-29)
 
 ```mermaid
 sequenceDiagram
@@ -2067,9 +2067,10 @@ sequenceDiagram
 ```
 
 - 찾기는 `aisearch` 사본 표가 아니라 `catalog.book_search`(+ 제목·저자는 `catalog.book`)에서 [확정] (ADR-0165). 카드용 읽기는 AI 2차 호출과 겹쳐 돌아 첫 글 시간을 늘리지 않음(dev 24 제약 유지, AC-7). 읽기가 실패하면 표지·요약 없이 카드를 보임
-- 프로필은 서버 시작 때 `BookProfiles.all()`로 한 번 읽어 메모리에 둠(약 12~16MB [추론]) [확정] (ADR-0165)
+- 프로필은 서버 시작 때 `BookProfiles.all()`로 한 번 읽어 메모리에 둠(약 12~16MB [추론]) [확정] (ADR-0165). 구현: `MlFirstCall`은 `catalog.book_profile`이 비면 아직 `book-profiles.tsv`를 읽음(지울지 사용자 결정 남음, 회고)
+- 구현 뒤 바뀐 것 (회고 `docs/cycles/26-book-descriptions/retro.md`): `find`는 `SET LOCAL plan_cache_mode = force_custom_plan` 안에서 돎(v1.20.1, pgjdbc 일반 계획으로 여러 낱말 질문이 3~5초 되던 것). 낱말이 하나이거나 계획 도서관 500곳 이하면 `catalog/004-plan-library-count` 함수, 아니면 SubPlan(v1.20.3·v1.20.4). 카드 제목은 `catalog.book.title`에서 와서 76,759권 중 87권에 판 표시가 붙음(「토지. 1(1부 1권)」), 사용자 "그대로 두자" (2026-10-29) [확정]
 
-## 흐름 59: 다시 가져오기 바꿔 끼우기 — 버려진 책 번호의 설명 지우기 — 설계됨(미구현, 사이클 26)
+## 흐름 59: 다시 가져오기 바꿔 끼우기 — 버려진 책 번호의 설명 지우기 — 구현됨 (사이클 26, 회고 2026-10-29)
 
 ```mermaid
 sequenceDiagram
@@ -2086,9 +2087,9 @@ sequenceDiagram
 ```
 
 - 설명 표 5개 = `book_summary`·`book_cover`·`book_profile`·`book_search`·`book_tag` (`tag_dictionary`는 `book_id`가 없어 제외). DELETE는 DROP 앞, 같은 트랜잭션 [확정] (ADR-0162). `lock_timeout`·다시 시도는 지금 바꿔 끼우기 값 그대로(흐름 위쪽 사이클 08 절: 2초, 10초 뒤 다시, 최대 5번)
-- 지운 수는 `collection.catalog_import.description_deleted_count` [안]. 트랜잭션 안 DELETE 시간은 dev가 시험 DB에서 잼 [확인 필요]. 검색이 멈추는 것은 `catalog` 잠금을 잡는 DROP 단계뿐이라 지금과 같음
+- 지운 수는 `collection.catalog_import.description_deleted_count` [안] — 성공한 가져오기에만 적고 실패·내보내기는 NULL. 트랜잭션 안 DELETE 시간: 시험 DB 134만 줄 기준 0.6초 (회고). 검색이 멈추는 것은 `catalog` 잠금을 잡는 DROP 단계뿐이라 지금과 같음
 
-## 흐름 60: 추천목록 줄 표지 고르기 — 설계됨(미구현, 사이클 26)
+## 흐름 60: 추천목록 줄 표지 고르기 — 구현됨 (사이클 26, 회고 2026-10-29)
 
 ```mermaid
 flowchart TD
@@ -2100,7 +2101,7 @@ flowchart TD
   R -->|책 번호 없음| L2["목록 그림 sha1(cover_source)"]
 ```
 
-- [확정] (명세 결정 #11, ADR-0164). `catalog.BookTexts.listCoverUrls(Map<listRowKey, bookId>)` [안: 모양]가 판 표지 주소를 돌려주고, 없으면 `picks`가 `CoverUrls.of(sha1(cover_source))`. "같은 작품"은 `catalog.BookCards.workKeys`와 같은 규칙(본제목 정리값 + 저자 `name_exact` 공유), 최신 = `published_on` 큰 판, 다음 소장 많은 판(`cardinality(library_ids)`)
+- [확정] (명세 결정 #11, ADR-0164). `catalog.BookTexts.listCoverUrls(Collection<Long> bookIds) → Map<bookId, 주소>`(구현; 설계는 `Map<listRowKey, bookId>`를 받음, 줄 → 책 번호는 `picks`가 찾음)가 판 표지 주소를 돌려주고, 없으면 `picks`가 `CoverUrls.of(sha1(cover_source))`. "같은 작품"은 `catalog.BookCards.workKeys`와 같은 규칙(본제목 정리값 + 저자 `name_exact` 공유), 최신 = `published_on` 큰 판, 다음 소장 많은 판(`cardinality(library_ids)`)
 - 그림은 모두 CloudFront(`chaekcheck.covers.base-url`)에서 받음, 못 받으면 제목 글자 표지
 
 ## 흐름 61: AI 책 찾기 — 질문 하나 (S1 AI 탭 → S30) — 설계됨(미구현, 사이클 24)

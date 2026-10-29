@@ -381,3 +381,5 @@ dev가 plan에 묻거나 결정을 기다리는 것. 근거 `docs/cycles/22-firs
 - 서버가 오늘 새로 든 인기 책 표지만 YES24 표지 주소에서 받기(교보 쪽은 요청 금지 서버라 못 받음, 이용 조건 확인 필요) — 사이클 23 ADR-0148 표지 C안, 2026-10-24
 - 무중단 배포에서 뺀 것 (사이클 27 범위, 2026-10-29): 서버 두 대 + 로드밸런서, GitHub Actions 자동 배포, `db`·`cloudflared` 판 올리기의 무중단. 사이클 27 `scope.md` 제외
 - 운영에서도 Liquibase `contexts: test-data`가 돎 (dev `application.yml` 11-14행 TODO, prod compose가 덮어쓰지 않음) — 사이클 27 조사 중 발견, 2026-10-29
+- 같은 작품 판정을 한 곳으로: 지금 PC `foryou_neighbours.py` `same_work`, 서버 `JdbcBookCards.workKeys`(추천목록 다른 판 표지 `listCoverUrls`도), AI 검색 `NamedBook` 세 규칙이 따로 있음. dev 제안은 `catalog` 가져오기 때 책마다 작품 번호 칸을 계산해 셋이 함께 읽기 (정할 것: 칸 위치·기준 규칙·다시 가져오기 때 계산 차례·I-14 쌍 분류기와 같이 할지) — dev plan-feedback "같은 작품 판정 한 곳으로", 사이클 26 회고, 2026-10-29
+- AI 검색 대화 점검의 남은 결정 넷: 세션당 질문 수 N(dev 안 10), 마지막 정리(`tail`) 꼴·위치, 책 밖 말을 짧은 모델 호출로 답할 때 첫 글 0.3 → 1.5~2초를 받아들일지, 1차 길 나누기에 「대화」 갈래를 더할지 — dev plan-feedback "AI 검색 대화 점검"(2026-10-28), 사이클 26 회고에서 옮김, 2026-10-29

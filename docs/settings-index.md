@@ -267,9 +267,9 @@
 | 이웃 전체 다시 계산 | 반년에 한 번쯤 (PC) | dev 수집 절차 | [확정] (설계 결정 #8) |
 
 
-## 사이클 26 책 설명 한 곳에 모으기 — 설계됨(미구현, 사이클 26)
+## 사이클 26 책 설명 한 곳에 모으기 — 구현됨 (사이클 26, 회고 2026-10-29)
 
-근거: `docs/cycles/26-book-descriptions/design-delta.md` "외부 연동"·"서버 자원"·"settings-index.md에 올릴 값" 절, ADR-0162·0163·0165. 이름은 따로 적지 않으면 [안], dev가 정함
+근거: `docs/cycles/26-book-descriptions/design-delta.md` "외부 연동"·"서버 자원"·"settings-index.md에 올릴 값" 절, ADR-0162·0163·0165. 이름은 따로 적지 않으면 [안], dev가 정함. 실제 값은 회고 `docs/cycles/26-book-descriptions/retro.md` (2026-10-29)
 
 | 값 | 설계 값 | 어디 (예정) | 상태 태그 |
 |---|---|---|---|
@@ -278,7 +278,10 @@
 | CSP `img-src` | `'self' data: https://<id>.cloudfront.net` (CloudFront 주소를 더함) | 운영 nginx CSP 머리, 웹 `safeCoverUrl` 허용 주소(빌드 설정) | 방식 [확정] (ADR-0163) / 주소 [안] |
 | PC IAM 권한 | 표지 버킷에 `s3:PutObject`·`s3:ListBucket`만, PC의 AWS CLI 프로필 하나(IAM 사용자 `chaekcheck-covers-uploader` 키 [확정: dev 26, 2026-10-28]; 관리 작업은 `aws login` 단기 자격). 운영 서버에는 권한 없음 | AWS IAM (PC) | 방식 [확정] (설계 #4 승인) / 버킷·사용자 이름 [안]. 단기 자격 증명으로 바꿀 수 있는지 [확인 필요] |
 | 책 프로필 메모리 | 77,551권, 같은 값 문자열을 나눠 쓰면 약 12~16MB (힙 `-Xmx640m` 안), 서버 시작 때 `BookProfiles.all()`로 한 번 읽음 | `aisearch` 메모리 | [추론] (design-delta "서버 자원") |
-| 바꿔 끼우기 `lock_timeout` | 지금 값 그대로(2초, 실패하면 10초 뒤 다시, 최대 5번 — `data-model.md` `catalog` 절). 사이클 26부터 설명 표 5개 DELETE가 같은 트랜잭션(DROP 앞)에 들어가 이 한도 안에서 돎. 잠금 시간을 넘기면 DELETE도 되돌아감 | `JdbcCatalogLoad.swap` `SET LOCAL lock_timeout` | 값 [확정] (사이클 08, 사용자 승인 2026-10-11) / DELETE를 같은 트랜잭션에 넣음 [확정] (ADR-0162). 트랜잭션 안 DELETE 시간 [확인 필요] (dev가 시험 DB에서 잼) |
+| 웹 표지 주소 기준 | `VITE_COVERS_BASE_URL`, 값이 없으면 `https://d1bdzw8sfjph5d.cloudfront.net` | 웹 빌드 설정(`picksText.ts` `safeCoverUrl`) | 구현됨, 이름 [안] (dev 26 8단계) |
+| AI 낱말 찾기 실행 계획 | `find`만 `SET LOCAL plan_cache_mode = force_custom_plan` (읽기 전용 트랜잭션 안). pgjdbc `prepareThreshold` 5는 그대로 | `JdbcAiSearchIndex.find` | 구현됨 v1.20.1 [확정: 운영 측정 — 일반 계획 5.17초 ↔ 맞춤 계획 0.24초] |
+| AI 낱말 찾기 방식 나누는 계획 도서관 수 | 한 낱말이거나 계획 도서관 500곳 이하 → 함수(`catalog/004-plan-library-count`, COST 1000), 그 밖 → SubPlan | `JdbcAiSearchIndex` | 구현됨 v1.20.4. 500 [안] (200과 1,000 사이, dev 측정), COST 1000 [확정: 1,000/3,000/10,000 비교 측정] (사용자 "최적의 결과물을 운영에 반영해줘") |
+| 바꿔 끼우기 `lock_timeout` | 지금 값 그대로(2초, 실패하면 10초 뒤 다시, 최대 5번 — `data-model.md` `catalog` 절). 사이클 26부터 설명 표 5개 DELETE가 같은 트랜잭션(DROP 앞)에 들어가 이 한도 안에서 돎. 잠금 시간을 넘기면 DELETE도 되돌아감 | `JdbcCatalogLoad.swap` `SET LOCAL lock_timeout` | 값 [확정] (사이클 08, 사용자 승인 2026-10-11) / DELETE를 같은 트랜잭션에 넣음 [확정] (ADR-0162). 트랜잭션 안 DELETE 시간: 시험 DB 134만 줄 중 5,000줄 0.6초, 복사본 다시 가져오기 swap 1.06초(지운 줄 0) [확정: dev 측정 2026-10-29] |
 
 ## 사이클 27 무중단 배포 — 명세됨(미구현, 사이클 27)
 
