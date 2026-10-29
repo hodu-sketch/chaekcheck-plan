@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>무중단 배포 설계</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+
+.v-flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.v-box{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:7px 11px;font-size:15px;text-align:center;min-width:90px}
+.v-box small{display:block;color:var(--muted);font-size:12px}
+.v-hi{border-color:var(--accent);background:var(--accent-bg)}
+.v-warn{border-color:var(--warn);background:var(--warn-bg)}
+.v-ok{border-color:var(--ok);background:var(--ok-bg)}
+.v-arr{color:var(--muted);font-size:18px}
+.v-file{border:2px solid var(--line);border-radius:12px;background:var(--card);padding:10px;margin:10px 0;max-width:560px}
+.v-file .v-part{border:1px dashed var(--line);border-radius:8px;padding:8px 10px;margin:6px 0;font-size:14px}
+.v-file .v-part.v-new{border-color:var(--accent);background:var(--accent-bg)}
+.v-tl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0;font-size:13px;text-align:center}
+.v-tl div{border-top:4px solid var(--line);padding-top:6px}
+.v-tl div.v-hi{border-top-color:var(--accent);background:none}
+.v-cv{display:inline-flex;width:70px;aspect-ratio:2/3;border-radius:7px;border:1px solid var(--line);background:var(--accent-bg);align-items:center;justify-content:center;font-size:11px;text-align:center;padding:3px;vertical-align:top;margin:4px}
+.v-cv.v-img{background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 6px,var(--card) 6px,var(--card) 12px)}
+.v-mini{border:1px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;margin:8px 0;max-width:420px}
+.v-mini .v-bar{display:flex;gap:10px;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line);font-size:13px}
+.v-mini .v-body{padding:10px 12px;font-size:13px}
+.v-pill{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-weight:800;font-size:12px}
+@media (max-width:700px){main table{display:block;overflow-x:auto;max-width:100%}.v-tl{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.v-code{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:var(--code-bg);border-radius:8px;padding:8px 10px;overflow-x:auto;white-space:pre}
+.card h3{margin:0 0 14px;font-size:24px}
+
+.mk{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start;margin:12px 0}
+.mk .dev{border:2px solid var(--line);border-radius:12px;background:var(--bg);padding:10px;font-size:13px;line-height:1.5}
+.mk .dev b.t{display:block;color:var(--muted);font-weight:500;font-size:12px;margin-bottom:6px}
+.mk .pc{width:420px;max-width:100%}.mk .tab{width:300px;max-width:100%}.mk .ph{width:190px}
+.mk .row{display:flex;gap:10px}
+.mk .cv{flex:none;width:58px;aspect-ratio:2/3;border-radius:5px;border:1px solid var(--line);background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 5px,var(--card) 5px,var(--card) 10px)}
+.mk .ph .cv{width:44px}
+.mk .ttl{font-weight:700;font-size:15px}
+.mk .sum{background:var(--warn-bg);border:1px dashed var(--warn);border-radius:7px;padding:6px 8px;margin:8px 0}
+.mk .lib{border-top:1px solid var(--line);padding:5px 0;color:var(--muted)}
+</style>
+
+<body>
+<main class="doc">
+<p class="lead">서버 안에서 파랑·초록 두 자리를 어떻게 두고,<br>무엇으로 바꿔 끼울지 정합니다.</p>
+<p class="sub">사이클 27 설계 제안(<code>architect-proposal.md</code>)입니다. dev의 배포 파일을 직접 읽고 썼습니다. 새 모듈·표·API는 없고 배포 파일만 바뀝니다. 정할 것은 6개입니다.</p>
+
+<div class="card"><h2>먼저: 바뀐 뒤 서버 모습</h2>
+<table>
+<tr><th>칸</th><th>지금</th><th>바뀐 뒤</th></tr>
+<tr><td>서비스(백엔드)</td><td><code>backend</code> 하나</td><td><code>backend-blue</code>, <code>backend-green</code> 둘. 평소엔 하나만 떠 있음</td></tr>
+<tr><td>nginx</td><td>화면 파일·설정이 이미지 안에 → 판 바꿀 때마다 다시 만듦</td><td>고정 판 nginx. 화면 파일·설정은 서버 폴더에서 읽음 → 다시 만들지 않음</td></tr>
+<tr><td>어느 자리가 일하나</td><td>—</td><td>서버 파일 하나에 적음</td></tr>
+<tr><td>배포 명령</td><td><code>release.sh 1.21.0</code></td><td>같음. 서버에서 새 스크립트가 바꿔 끼움</td></tr>
+</table>
+<p><b>새로 확인한 것:</b> 화면은 처음에 한 번에 다 받는 구조라(나중에 나눠 받는 조각 없음), 화면 판을 바꿔도 이미 열린 화면은 그대로 돕니다. 계정 삭제 뒤처리는 두 번 돌아도 결과가 같습니다(dev 코드 확인).</p>
+<p><b>처음 한 번:</b> 지금 구조에서 새 구조로 옮기는 첫 배포 때만 짧게 끊깁니다(점검 배포).</p>
+</div>
+
+<div class="card item"><h3><span class="num">1</span>두 자리는<br>서비스 두 개로</h3>
+<p class="concl">[안] 배포 설정에 서비스를 <code>backend-blue</code>, <code>backend-green</code> 두 개로 둡니다. 이름이 달라서 nginx가 정확히 한쪽만 가리킬 수 있습니다. 공통 설정은 한 번만 쓰고 둘이 같이 씁니다.</p>
+<p>지금 서비스가 잡고 있는 서버 포트 8080은 없앱니다. 운영 스크립트·문서에서 쓰는 곳이 없습니다(PC에서 재는 스크립트만 씀).</p>
+<p class="alt">다른 선택: 서비스 하나를 둘로 늘리기 — 둘이 같은 이름이라 nginx가 옛 판·새 판에 나눠 보냅니다.</p>
+<p class="alt">다른 선택: 자리마다 배포 묶음을 따로 — 비밀값·네트워크 설정이 두 벌이 됩니다.</p>
+</div>
+
+<div class="card item"><h3><span class="num">2</span>어느 자리가 일하는지<br>서버 파일 하나에 적기</h3>
+<p class="concl">[안] <code>/srv/chaekcheck/slots.env</code>에 "지금 일하는 자리, 파랑 판 번호, 초록 판 번호, 화면 판 번호"를 적습니다. 배포 설정이 이 파일에서 판 번호를 읽어서, 지금처럼 PC에서 설정 파일을 고쳐 보낼 필요가 없어집니다.</p>
+<p>예: <code>ACTIVE_SLOT=blue</code>, <code>BACKEND_BLUE_VERSION=1.20.0</code>, <code>BACKEND_GREEN_VERSION=1.21.0</code>, <code>WEB_VERSION=1.21.0</code></p>
+<p>바꿔 끼우다 중간에 끊겨도, 다음에 서버를 올릴 때 이 파일을 기준으로 nginx가 가리킬 곳을 다시 만듭니다. "일하는 자리"는 nginx 전환이 끝난 뒤에만 바꿉니다.</p>
+</div>
+
+<div class="card item"><h3><span class="num">3</span>화면 판은 폴더 바꾸기로,<br>nginx는 그대로</h3>
+<p class="concl">[안] nginx는 판을 고정한 기본 이미지로 바꾸고, 화면 파일과 nginx 설정은 서버 폴더(<code>/srv/chaekcheck/web</code>, <code>/srv/chaekcheck/nginx</code>)에서 읽게 합니다. 새 화면은 판마다 폴더(<code>releases/1.21.0</code>)에 두고 "지금 판" 표시(<code>current</code> 링크)만 바꾼 뒤 nginx가 다시 읽게 합니다. 되돌리기는 표시를 앞 판으로 돌리는 것입니다.</p>
+<p>화면 파일은 지금처럼 이미지로 만들어 보내고, 서버에서 꺼내 폴더에 둡니다. 그래서 만들기·보내기·정리 흐름은 거의 그대로입니다. 폴더는 판 두 개만 남깁니다. 앞 판의 화면 조각도 새 폴더에 같이 두어, 바뀌는 순간에 화면을 막 연 사람이 조각을 못 받는 일을 막습니다.</p>
+<p>nginx 프로그램 판을 올릴 때는 컨테이너를 다시 만들어야 해서 점검 배포입니다(DB·Tunnel과 같은 취급).</p>
+<p class="alt">다른 선택: 화면 이미지를 없애고 파일 묶음을 바로 보내기 — 판 관리·되돌리기 규칙을 새로 짜야 합니다.</p>
+<p class="alt">다른 선택: 떠 있는 nginx에 파일을 밀어 넣기 — 컨테이너가 다시 만들어지면 옛 화면으로 돌아갑니다.</p>
+</div>
+
+<div class="card item"><h3><span class="num">4</span>준비 확인은 같은 포트,<br>nginx 컨테이너 안에서 부르기</h3>
+<p class="concl">[안] 준비 확인 주소는 서비스의 원래 포트(8080)에 둡니다. nginx는 <code>/api/</code>만 서비스로 넘겨서 바깥에서는 이미 404이고, 안전하게 <code>/actuator/</code>를 막는 줄을 하나 더 둡니다. 확인은 nginx 컨테이너 안에서 새 자리를 1초마다 부릅니다(최대 3분). 새 자리가 꺼지거나 다시 시작한 적이 있으면 바로 실패로 봅니다.</p>
+<p>nginx 안에서 부르면 nginx가 실제로 쓸 바로 그 길을 확인하게 됩니다. 같은 길로 판 번호(<code>/api/v1/version</code>)도 맞는지 봅니다.</p>
+<p class="alt">다른 선택: 준비 확인만 다른 포트로 — 연결·스레드가 더 생기고 설정이 늘어납니다.</p>
+<p class="alt">다른 선택: Docker 건강 검사 기능 — 서비스 이미지에 확인 도구(curl)가 없고, 10초마다 프로세스가 하나 더 뜹니다.</p>
+</div>
+
+<div class="card item"><h3><span class="num">5</span>바꿔 끼우기는<br>서버의 새 스크립트 하나로</h3>
+<p class="concl">[안] 서버에 <code>bin/switch.sh</code>를 새로 둡니다. 새벽 시간 검사 → 새 자리 띄우기 → 준비 확인 → nginx 전환 → 2초 기다림 → 옛 자리 내리기 → 결과 한 줄. <code>release.sh</code>는 마지막에 이걸 부릅니다. 되돌리기는 <code>release.sh --switch-only 1.20.0</code>로, 서버에 있는 판이면 만들기·보내기 없이 전환만 합니다.</p>
+<p>2초 기다림: nginx가 전환된 직후 옛 자리에 이어져 있던 연결이 새 요청을 거절당하는 짧은 틈을 막습니다. 실제로 충분한지는 완료 확인(1초마다 불러 보기) 때 봅니다.</p>
+<p>옛 자리 컨테이너는 내리기만 하고 지우지 않아, 문제가 있으면 로그를 볼 수 있습니다. 새벽 검사는 PC에서도 시작할 때 한 번 해서, 이미지를 다 만든 뒤에야 막히는 일이 없게 합니다.</p>
+<p class="alt">다른 선택: 지금 있는 <code>up.sh</code>에 덧붙이기 — 비밀값 읽기와 전환이 한 파일에 섞입니다.</p>
+</div>
+
+<div class="card item"><h3><span class="num">6</span>새 이름들</h3>
+<p class="concl">[안] 아래 이름으로 씁니다.</p>
+<table>
+<tr><th>이름</th><th>무엇</th></tr>
+<tr><td><code>backend-blue</code>, <code>backend-green</code></td><td>서비스 두 자리</td></tr>
+<tr><td><code>/srv/chaekcheck/slots.env</code></td><td>일하는 자리·판 번호 기록</td></tr>
+<tr><td><code>active-backend.conf</code></td><td>nginx가 가리킬 자리 (서버 <code>/srv/chaekcheck/nginx/</code>)</td></tr>
+<tr><td><code>/srv/chaekcheck/web/releases/</code>, <code>current</code></td><td>화면 판 폴더와 "지금 판" 표시</td></tr>
+<tr><td><code>bin/switch.sh</code></td><td>바꿔 끼우는 스크립트</td></tr>
+<tr><td><code>release.sh --switch-only</code></td><td>되돌리기·전환만</td></tr>
+</table>
+</div>
+
+<div class="card"><h2>아직 재야 하는 것</h2>
+<p>서버 메모리·스왑, 서비스가 뜨는 시간. 설계 확정(인계) 전에 필요합니다. 서비스 둘이 겹칠 때 메모리가 바닥나면 리눅스가 DB를 끌 수도 있어서, 측정 뒤 스왑 크기를 정합니다.</p>
+<p><code>free -m; swapon --show; docker stats --no-stream; docker logs chaekcheck-backend-1 2>&amp;1 | grep Started</code></p>
+<p>준비 확인이 쿠버네티스 밖에서도 켜지는지와 2초가 충분한지는 dev가 처음 만들 때 확인합니다.</p>
+</div>
+
+<p class="foot">원본: <code>docs/cycles/27-zero-downtime-deploy/architect-proposal.md</code>. 2026-10-29.</p>
+</main>
+</body>
+</html>
