@@ -2067,7 +2067,7 @@ sequenceDiagram
 ```
 
 - 찾기는 `aisearch` 사본 표가 아니라 `catalog.book_search`(+ 제목·저자는 `catalog.book`)에서 [확정] (ADR-0165). 카드용 읽기는 AI 2차 호출과 겹쳐 돌아 첫 글 시간을 늘리지 않음(dev 24 제약 유지, AC-7). 읽기가 실패하면 표지·요약 없이 카드를 보임
-- 프로필은 서버 시작 때 `BookProfiles.all()`로 한 번 읽어 메모리에 둠(약 12~16MB [추론]) [확정] (ADR-0165). 구현: `MlFirstCall`은 `catalog.book_profile`이 비면 아직 `book-profiles.tsv`를 읽음(지울지 사용자 결정 남음, 회고)
+- 프로필은 서버 시작 때 `BookProfiles.all()`로 한 번 읽어 메모리에 둠(약 12~16MB [추론]) [확정] (ADR-0165). 구현: `MlFirstCall`은 `catalog.book_profile`이 비면 아직 `book-profiles.tsv`를 읽음(지우기로 정함, 사용자 "지우기해줘" 2026-10-29 — 지우면 표가 빌 때 ML 1차 호출을 끄고 Haiku로 감, dev 할 일)
 - 구현 뒤 바뀐 것 (회고 `docs/cycles/26-book-descriptions/retro.md`): `find`는 `SET LOCAL plan_cache_mode = force_custom_plan` 안에서 돎(v1.20.1, pgjdbc 일반 계획으로 여러 낱말 질문이 3~5초 되던 것). 낱말이 하나이거나 계획 도서관 500곳 이하면 `catalog/004-plan-library-count` 함수, 아니면 SubPlan(v1.20.3·v1.20.4). 카드 제목은 `catalog.book.title`에서 와서 76,759권 중 87권에 판 표시가 붙음(「토지. 1(1부 1권)」), 사용자 "그대로 두자" (2026-10-29) [확정]
 
 ## 흐름 59: 다시 가져오기 바꿔 끼우기 — 버려진 책 번호의 설명 지우기 — 구현됨 (사이클 26, 회고 2026-10-29)

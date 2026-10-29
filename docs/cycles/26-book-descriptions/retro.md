@@ -98,6 +98,13 @@
 - 같은 작품 판정이 세 곳에 따로 있음: PC `foryou_neighbours.py` `same_work`, 서버 `JdbcBookCards.workKeys`(= `listCoverUrls`), AI 검색 `NamedBook`. dev 제안은 `catalog` 가져오기 때 작품 번호 칸을 두는 것 → 백로그 (plan이 정할 것: 칸 위치, 기준 규칙, 다시 가져오기 때 계산 차례)
 - AI 검색 대화 점검의 남은 결정 4개(세션당 질문 수 N, 마지막 정리, 책 밖 말 첫 글 시간, 1차 「대화」 갈래) → 백로그 (사이클 24 쪽)
 
-## 사용자에게 확인할 것
+## 사용자에게 확인할 것 — 끝남 (2026-10-29)
 
-1. **프로필 파일 대체 읽기 남은 것** (ADR-0165): 표가 비면 `book-profiles.tsv`를 읽는 코드(`MlFirstCall`)가 배포 2 뒤에도 남아 있음. 지금 운영 표는 77,551줄이라 쓰이지 않음. [안] dev 다음 작은 고침에서 지움 — 표가 비면 ML 1차 호출이 꺼지고 Haiku로 감(로그 경고). 다른 안: 비상용으로 그대로 둠(파일과 표, 두 곳을 맞춰 둬야 함)
+1. **프로필 파일 대체 읽기 남은 것** (ADR-0165): **지움** [확정] (사용자 "지우기해줘", 2026-10-29)
+   - 물은 내용: 표가 비면 `book-profiles.tsv`를 읽는 코드(`MlFirstCall` 121행 근처)가 배포 2 뒤에도 남아 있음. 운영 표는 77,551줄이라 쓰이지 않음. [안] 지움 / 다른 안: 비상용으로 둠(파일과 표 두 곳을 맞춰 둬야 함)
+   - dev 할 일 (dev 26 세션에 전달, 2026-10-29)
+     - `MlFirstCall`의 파일 대체 읽기와 `aisearch/internal/firstcall/BookProfiles.read`(파일 읽기)를 지움. 표가 비면 ML 1차 호출을 끄고 Haiku로 감, 시작 로그에 경고 한 줄
+     - 그 경로를 말하는 javadoc·`application.yml` 443행 주석·`AiSearchProperties` 124행 주석을 표 기준으로 고침
+     - 시험: 표가 비었을 때 1차 호출이 꺼지는지(서버는 뜸), 표가 있을 때 지금과 같은지
+     - 운영 모델 폴더의 `book-profiles.tsv`는 코드가 나간 뒤 지워도 됨(사용자에게 묻고). 프로필 원본은 PC `chaekcheck-data/aisearch/100k/book-profiles-export.tsv`
+     - 배포는 다른 dev 세션 배포와 차례를 맞춰 다음 판에 함께
