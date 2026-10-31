@@ -1,6 +1,6 @@
 # ADR-0104: 첫 배포 호스트는 AWS EC2 t4g.medium(4GB·서울), 무료 크레딧으로 최대 6개월 운영, 비밀 값은 IAM 역할로 접근 키 없이
 
-Status: Proposed
+Status: Superseded by 0172
 Date: 2026-10-14
 Cycle: 17-first-deploy
 Supersedes: 없음

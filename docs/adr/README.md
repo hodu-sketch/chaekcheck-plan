@@ -106,8 +106,8 @@
 | [ADR-0100](0100-privacy-policy-public-regardless-of-login.md) | 처리방침은 로그인 기능과 상관없이 공개 (사이클 05 제약 35 일부 변경) | Accepted | 2026-10-13 | 16 |
 | [ADR-0101](0101-terms-change-notice-or-reconsent.md) | 약관이 바뀔 때: 가벼우면 공지 + 시행일, 중요하면 다음 로그인 때 다시 동의(화면은 나중) | Accepted | 2026-10-13 | 16 |
 | [ADR-0102](0102-access-cookie-api-v1-and-login-status-reader.md) | 액세스 토큰 쿠키 경로를 `/api/v1`로 넓히고, 로그인 상태 판별은 `auth`의 부품 하나에 모음 (만료돼도 서명 맞으면 로그인함, 로그인 꺼짐이면 쿠키를 보지 않음; ADR-0042의 액세스 쿠키 경로 부분을 바꿈) | Accepted (2026-10-14) | 2026-10-14 | 15 |
-| [ADR-0103](0103-production-server-layout.md) | 첫 운영 서버는 compose 한 벌(edge·app 네트워크), 비밀 값은 띄우기 스크립트가 Parameter Store에서, 지표는 별도 포트·Micrometer 카운터·접속 기록 exporter·cAdvisor, 백업은 수집 목록 빼고 Tunnel SSH로 받음 | Proposed | 2026-10-14 | 17 |
-| [ADR-0104](0104-first-deploy-host-ec2-credit-iam-role.md) | 첫 배포 호스트는 AWS EC2 t4g.medium(4GB·서울), 무료 크레딧으로 최대 6개월 운영, 비밀 값은 IAM 역할로 접근 키 없이(ADR-0103의 접근 키 전제를 이 호스트에서 대체) | Proposed | 2026-10-14 | 17 |
+| [ADR-0103](0103-production-server-layout.md) | 첫 운영 서버는 compose 한 벌(edge·app 네트워크), 비밀 값은 띄우기 스크립트가 Parameter Store에서, 지표는 별도 포트·Micrometer 카운터·접속 기록 exporter·cAdvisor, 백업은 수집 목록 빼고 Tunnel SSH로 받음 | Superseded by 0172 | 2026-10-14 | 17 |
+| [ADR-0104](0104-first-deploy-host-ec2-credit-iam-role.md) | 첫 배포 호스트는 AWS EC2 t4g.medium(4GB·서울), 무료 크레딧으로 최대 6개월 운영, 비밀 값은 IAM 역할로 접근 키 없이(ADR-0103의 접근 키 전제를 이 호스트에서 대체) | Superseded by 0172 | 2026-10-14 | 17 |
 | [ADR-0105](0105-grouping-three-modes-default-compact.md) | 책 묶는 방식 셋(compact·objects·sql)을 모두 남기고 기본은 compact, 옛 이름 current → objects (ADR-0079 덧붙임의 "current 지움"을 바꿈) | Accepted | 2026-10-14 | 11·12 (회고) |
 | [ADR-0106](0106-grouping-step4-author-title-subtitle-split-volume-numbers.md) | 네 번째 묶기 단계 보완: 본제목이 저자 이름이면 전체 제목, 부제는 같은 도서관이 따로 가질 때만 나눔, 권 숫자는 권·판처럼 보이는 것만, 로마·한자 숫자, 꼬리 넷 (ADR-0082 보완) | Accepted | 2026-10-14 | 12 (회고) |
 | [ADR-0107](0107-library-insert-additions.md) | 넣기 명령 보탬: 새 곳 최종 주소 줄 필수, 확인한 사라진 곳 gone_known.tsv, 번호는 nextId()부터, 종료 5, 운영 반영은 같은 번호가 다른 도서관이면 멈춤 (ADR-0084·0085·0086 보완) | Accepted | 2026-10-14 | 13 (회고) |
@@ -169,5 +169,6 @@
 | [ADR-0169](0169-readiness-actuator-same-port-from-nginx.md) | 준비 확인은 Actuator readiness, 같은 포트 8080, nginx 컨테이너 안에서 부름, 바깥 `/actuator/` 404 | Accepted | 2026-10-29 | 27 |
 | [ADR-0170](0170-db-changes-expand-contract.md) | DB 변경은 옛 판·새 판이 같이 돌아도 되는 것만, 아니면 두 번에 나누거나 점검 배포 (이후 모든 사이클) | Accepted | 2026-10-29 | 27 |
 | [ADR-0171](0171-accept-per-instance-state-no-dawn-deploy.md) | 바뀌는 순간 서버별 메모리 상태는 받아들이고, 03:25~05:10에는 배포하지 않음 | Accepted | 2026-10-29 | 27 |
+| [ADR-0172](0172-first-production-server-as-built.md) | 첫 운영 서버의 실제 구성: EC2 t4g.small 2GB 시드니, compose 한 네트워크, CloudWatch 감시, 같은 포트 Actuator, 고정 IP SSH (0103·0104 대체, 매일 DB 백업 확인 필요) | Accepted | 2026-10-31 | 17·27 |
 
 - 사이클 26이 일부를 바꾼 기록 (2026-10-28): ADR-0149의 "꼬리표·사전은 `picks`" → ADR-0161, ADR-0091의 "사서추천 표지 `picks.cover`" → ADR-0163, ADR-0148의 운영 서버 표지 폴더 → ADR-0163, ADR-0151(plan 브랜치 `claude/compassionate-lovelace-mzvp4f`, main에 아직 없음)의 "AI 검색 표 사본에서 낱말 맞추기" → ADR-0165

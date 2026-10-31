@@ -1,6 +1,6 @@
 # ADR-0103: 첫 운영 서버는 compose 한 벌(edge·app 네트워크), 비밀 값은 띄우기 스크립트가 Parameter Store에서, 지표는 별도 포트, 백업은 수집 목록을 빼고 Tunnel SSH로 받음
 
-Status: Proposed
+Status: Superseded by 0172
 Date: 2026-10-14
 Cycle: 17-first-deploy
 Supersedes: 없음
