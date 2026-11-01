@@ -74,3 +74,16 @@ chaekcheck-db-1        chaekcheck/postgres-bigm:18        Up 10 days (healthy)
 | DB 컨테이너 메모리 | 279.8 MB (15.25%) |
 | 백엔드 시작 시간 | **19.4초** (프로세스 20.6초) |
 | 벡터 적재 | 396 ms (81,078 books x 1024) |
+
+## 2026-11-01 14:01 KST 재측정 (v1.23.1 green, 벡터 24만 줄 파일 매핑 이후)
+
+사용자가 서버에서 직접 실행(`free -m; docker stats --no-stream; docker exec chaekcheck-backend-green-1 grep -e ^anon -e ^file /sys/fs/cgroup/memory.stat`). [확정]
+
+| 항목 | 값 |
+|---|---|
+| 서버 전체 | total 1,834MB · used 1,277 · buff/cache 653 · available 557 · swap 390/2,047 사용 |
+| chaekcheck-backend-green-1 | 661.4MiB (docker stats) = anon 608.7MiB + 파일 캐시 일부. cgroup file 108.7MiB, 그중 file_mapped 79.0MiB(벡터 파일 `book-vectors.bin` 235.5MB 가운데 건드린 쪽) |
+| chaekcheck-db-1 | 89.4MiB (2026-10-29의 279.8MiB보다 작음, 재시작 뒤 아직 덜 올라온 것으로 보임 [확인 필요]) |
+| chaekcheck-web-1 / cloudflared | 10.1MiB / 27.4MiB |
+
+읽는 법: 백엔드의 힙·메타스페이스 등 프로세스 자체 메모리는 anon 609MB이고, 매핑한 벡터 파일은 79MB만 메모리에 올라와 있으며 이것은 힙 밖(커널이 필요하면 버릴 수 있는 파일 캐시)이다. 10-29 측정(백엔드 713MB)은 단일 백엔드·v1.21.3 때라 구성 자체가 다르다.
