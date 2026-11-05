@@ -14,15 +14,16 @@
 ## 일하는 방식
 
 ```mermaid
-flowchart LR
-  A[범위 정하기<br/>scope.md] --> B[요구사항<br/>spec.md]
-  B --> C[화면 흐름<br/>flow.md]
-  C --> D[설계 변경분<br/>design-delta.md]
-  D --> E[개발 인계서<br/>handoff.md]
-  E --> F[dev 저장소에서 개발]
-  F --> G[회고<br/>retro.md]
+flowchart TB
+  subgraph P["기획 저장소 (여기)"]
+    direction LR
+    A["범위<br/>scope.md"] --> B["요구사항<br/>spec.md"] --> C["화면 흐름<br/>flow.md"] --> D["설계<br/>design-delta.md"]
+  end
+  D --> E["인계서<br/>handoff.md"]
+  E --> F["개발 저장소에서 개발"]
+  F --> G["회고: 코드와 설계 대조<br/>retro.md"]
   G -->|다음 사이클| A
-  D -.결정마다.-> H[ADR]
+  D -.->|결정마다| H["ADR"]
 ```
 
 - **작은 조각으로 반복**: 제품 전체를 처음에 설계하지 않고, 사이클마다 한 조각만 끝까지 갑니다. 다음 사이클은 실제로 만들어진 코드를 보고 시작합니다.
