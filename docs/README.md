@@ -8,7 +8,7 @@
 |---|---|---|
 | 지금 설계 전체(모듈·표·API·흐름) | [current/](current/) — `module-map.md`, `data-model.md`, `api.md`, `flows.md` | "설계됨(미구현)" 표시는 아직 dev에 없는 것 |
 | 지금 dev가 만드는 것 | [cycles/README.md](cycles/README.md) (사이클 순서와 상태) | 각 사이클 폴더 `handoff.md` |
-| 왜 이렇게 정했나 | [adr/README.md](adr/README.md) (ADR 165건 목록) | ADR 본문의 "이유(사용자 발언)"와 "검토한 대안" |
+| 왜 이렇게 정했나 | [adr/README.md](adr/README.md) (ADR 목록, 0001~0172) | ADR 본문의 "이유(사용자 발언)"와 "검토한 대안" |
 | 숫자(시간·크기·동시 수)의 근거 | [settings-index.md](settings-index.md) | dev `docs/maintenance/settings-index.md` |
 | 수집·도서관 분류·책 묶기 다시 하기 | [reference-index.md](reference-index.md) | `research/` 해당 폴더 |
 | 아직 사이클에 안 들어간 생각 | [backlog.md](backlog.md) | |
@@ -19,9 +19,11 @@
 |---|---|---|
 | `cycles/NN-slug/` | 사이클 하나의 `scope`·`spec`·`flow`·`design-delta`·`handoff`·`retro`, `easy/`(결정 페이지) | 27개 |
 | `current/` | 지금 설계의 합본(사이클이 끝날 때 합침). `handoff.md`는 dev `CLAUDE.md`가 불러오는 인계서 자리 | |
-| `adr/` | 결정 기록 `NNNN-slug.md` + `README.md` 목록 | 0001~0171 |
+| `adr/` | 결정 기록 `NNNN-slug.md` + `README.md` 목록 | 0001~0172 |
 | `research/<주제>/` | 사이클 밖에서 한 조사(데이터 출처, 수집 방법, 배포, AI 추천 등). 설계는 넣지 않음 | 17주제 |
 | `easy/` | 사이클 밖 결정 페이지 몇 개(2026-10-12, 10-17) | |
+
+**`easy/` 폴더들(사이클·조사·current 아래 모두)**: 결정을 내릴 때 본 쉬운 말 설명 페이지(HTML)입니다. 정할 것마다 맥락·예시·제안과 승인/미승인 선택이 있고, `-original.html`은 문서 원문을 그림까지 렌더링한 읽기용, `-artifact.html`은 원격에서 답할 때 쓴 사본입니다. 결과는 원문 문서와 ADR에 이미 들어가 있으니, 처음 읽을 때는 건너뛰어도 됩니다. 폴더마다 `README.md`에 어떤 결정이었는지 표가 있습니다.
 
 ## 규칙 (요약, 원문은 저장소 맨 위 `CLAUDE.md`·`.claude/rules/`)
 
