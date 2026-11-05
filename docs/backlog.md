@@ -165,7 +165,6 @@
 - 사서추천 표지 EC2 역할로 S3 업로드 — [원문](backlog-archive.md#b136)
 - 표지 그림 전용 도메인·WebP — [원문](backlog-archive.md#b137)
 - 도메인 구매(.com) `[확인 필요]` — [원문](backlog-archive.md#b172)
-- 사이클 18 C 운영 반영 `[확인 필요]` — [원문](backlog-archive.md#b186)
 - 특정 IP 계속 막기 — [원문](backlog-archive.md#b188)
 - 사서추천 운영 확인(한도·캐시·오류) — [원문](backlog-archive.md#b191)
 - 사서추천 키 설정화·User-Agent `[확인 필요]` — [원문](backlog-archive.md#b192)
