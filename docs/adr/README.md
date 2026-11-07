@@ -170,5 +170,6 @@
 | [ADR-0170](0170-db-changes-expand-contract.md) | DB 변경은 옛 판·새 판이 같이 돌아도 되는 것만, 아니면 두 번에 나누거나 점검 배포 (이후 모든 사이클) | Accepted | 2026-10-29 | 27 |
 | [ADR-0171](0171-accept-per-instance-state-no-dawn-deploy.md) | 바뀌는 순간 서버별 메모리 상태는 받아들이고, 03:25~05:10에는 배포하지 않음 | Accepted | 2026-10-29 | 27 |
 | [ADR-0172](0172-first-production-server-as-built.md) | 첫 운영 서버의 실제 구성: EC2 t4g.small 2GB 시드니, compose 한 네트워크, CloudWatch 감시, 같은 포트 Actuator, 고정 IP SSH (0103·0104 대체, 매일 DB 백업 확인 필요) | Accepted | 2026-10-31 | 17·27 |
+| [ADR-0173](0173-busy-slots-web-keeps-book-list.md) | 동시 검색 자리가 없을 때 서버는 503 `server_busy` 그대로, 「바로 보기」 첫 조회 거절 때 화면이 받아 둔 책 목록을 책 줄로 보이고 「대출 정보 다시 확인」 단추 (서버·API 변경 없음) | Accepted | 2026-11-07 | 28 |
 
 - 사이클 26이 일부를 바꾼 기록 (2026-10-28): ADR-0149의 "꼬리표·사전은 `picks`" → ADR-0161, ADR-0091의 "사서추천 표지 `picks.cover`" → ADR-0163, ADR-0148의 운영 서버 표지 폴더 → ADR-0163, ADR-0151(plan 브랜치 `claude/compassionate-lovelace-mzvp4f`, main에 아직 없음)의 "AI 검색 표 사본에서 낱말 맞추기" → ADR-0165
