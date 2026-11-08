@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 첫 글 지연 결정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+
+.v-flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.v-box{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:7px 11px;font-size:15px;text-align:center;min-width:90px}
+.v-box small{display:block;color:var(--muted);font-size:12px}
+.v-hi{border-color:var(--accent);background:var(--accent-bg)}
+.v-warn{border-color:var(--warn);background:var(--warn-bg)}
+.v-ok{border-color:var(--ok);background:var(--ok-bg)}
+.v-arr{color:var(--muted);font-size:18px}
+.v-file{border:2px solid var(--line);border-radius:12px;background:var(--card);padding:10px;margin:10px 0;max-width:560px}
+.v-file .v-part{border:1px dashed var(--line);border-radius:8px;padding:8px 10px;margin:6px 0;font-size:14px}
+.v-file .v-part.v-new{border-color:var(--accent);background:var(--accent-bg)}
+.v-tl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0;font-size:13px;text-align:center}
+.v-tl div{border-top:4px solid var(--line);padding-top:6px}
+.v-tl div.v-hi{border-top-color:var(--accent);background:none}
+.v-cv{display:inline-flex;width:70px;aspect-ratio:2/3;border-radius:7px;border:1px solid var(--line);background:var(--accent-bg);align-items:center;justify-content:center;font-size:11px;text-align:center;padding:3px;vertical-align:top;margin:4px}
+.v-cv.v-img{background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 6px,var(--card) 6px,var(--card) 12px)}
+.v-mini{border:1px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;margin:8px 0;max-width:420px}
+.v-mini .v-bar{display:flex;gap:10px;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line);font-size:13px}
+.v-mini .v-body{padding:10px 12px;font-size:13px}
+.v-pill{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-weight:800;font-size:12px}
+@media (max-width:700px){main table{display:block;overflow-x:auto;max-width:100%}.v-tl{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.v-code{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:var(--code-bg);border-radius:8px;padding:8px 10px;overflow-x:auto;white-space:pre}
+.card h3{margin:0 0 14px;font-size:24px}
+
+.mk{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start;margin:12px 0}
+.mk .dev{border:2px solid var(--line);border-radius:12px;background:var(--bg);padding:10px;font-size:13px;line-height:1.5}
+.mk .dev b.t{display:block;color:var(--muted);font-weight:500;font-size:12px;margin-bottom:6px}
+.mk .pc{width:420px;max-width:100%}.mk .tab{width:300px;max-width:100%}.mk .ph{width:190px}
+.mk .row{display:flex;gap:10px}
+.mk .cv{flex:none;width:58px;aspect-ratio:2/3;border-radius:5px;border:1px solid var(--line);background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 5px,var(--card) 5px,var(--card) 10px)}
+.mk .ph .cv{width:44px}
+.mk .ttl{font-weight:700;font-size:15px}
+.mk .sum{background:var(--warn-bg);border:1px dashed var(--warn);border-radius:7px;padding:6px 8px;margin:8px 0}
+.mk .lib{border-top:1px solid var(--line);padding:5px 0;color:var(--muted)}
+</style>
+
+<style>
+.mk .note{background:var(--warn-bg);border:1px solid var(--warn);border-radius:7px;padding:6px 8px;margin:6px 0;font-size:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.mk .btn{display:inline-block;border:1px solid var(--accent);color:var(--accent);background:var(--card);border-radius:999px;padding:2px 10px;font-size:11px;font-weight:700;white-space:nowrap}
+.mk .bk{display:flex;justify-content:space-between;gap:8px;border-top:1px solid var(--line);padding:6px 0}
+.mk .bk .t{font-weight:700}.mk .bk .m{color:var(--muted);font-size:11px}
+.mk .bk .c{color:var(--muted);font-size:11px;white-space:nowrap}
+.mk .hd{display:flex;gap:8px;margin-bottom:6px}.mk .hd .cv{width:40px}
+.mk .grp{color:var(--muted);font-size:11px;margin-top:6px}
+.mk .tag{display:inline-block;background:var(--code-bg);border-radius:4px;padding:0 5px;font-size:10px}
+.mk .st{color:var(--muted);font-size:11px}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.cmp>div{min-width:0}.mk{max-width:100%}.mk .dev{min-width:0;max-width:100%}.mk .dev.pc{width:100%;max-width:420px}
+@media (max-width:700px){.cmp{grid-template-columns:1fr}}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">AI 책 찾기 첫 글이 가끔 3~7초 걸리던 까닭과, 고칠 것을 한 장으로 다시 정리했습니다.</p>
+<p class="sub">어제 페이지 두 장을 대신합니다. 이미 정하신 것은 맨 위에 적고, 남은 6개만 골라 주세요. 원 숫자: <code>measurements.md</code>.</p>
+
+<div class="card"><h2>이미 정한 것</h2>
+<p class="concl">[확정] AI 검색은 책 목록을 메모리에 들고 있고, 1분마다 책 표 전체를 세던 일(손님 질문 안에서 1.3초)을 없앱니다. 서버가 켜질 때 한 번 읽고, 가져오기가 끝나면 백엔드의 「다시 읽기」 REST 요청 하나로 새 판을 적용합니다. 다시 읽는 동안은 옛 목록으로 계속 답합니다.</p>
+<div class="v-flow"><span class="v-box">가져오기 끝</span><span class="v-arr">→</span><span class="v-box">「다시 읽기」 요청 1번<small>서버 안에서만, 밖에서 안 닿음</small></span><span class="v-arr">→</span><span class="v-box v-ok">뒤에서 새 목록 읽고 바꿔 끼움<small>손님은 기다리지 않음</small></span></div>
+</div>
+
+<div class="card"><h2>왜 가져오기 직후 10초를 기다리나</h2>
+<p>가져오기는 AI 검색 표의 줄을 <b>모두 지우고 새로 넣습니다</b>. PostgreSQL은 지운 줄의 자리를 바로 돌려주지 않아서 넣은 직후 표가 두 배 가까이 부풀고(운영 2026-10-26: 216MB), 통계를 다시 내는 자동 작업이 몇 분~15분 CPU를 썼습니다. 그래서 dev가 넣기 끝에 <code>VACUUM (FULL, ANALYZE)</code>(표를 통째로 새로 써서 빈자리를 없애고 통계를 냄)를 붙였습니다. 이 작업은 표를 잠가서 그동안(약 10초) AI 검색이 기다립니다(dev <code>docs/maintenance/6-aisearch.md</code> 238·242행, <code>JdbcAiSearchIndex.java</code> 322행, 2026-11-08 확인).</p>
+<p>즉 꼭 필요한 기다림은 아닙니다. 빈자리 정리를 잠그지 않는 방법으로 하면 됩니다. 아래 1번.</p>
+</div>
+
+<h2>남은 결정</h2>
+<div class="card item"><h3><span class="num">1</span>가져오기 직후 10초 기다림 없애기</h3>
+<p class="concl">[안] 가져오기를 「새 표에 다 넣고 → 이름을 바꿔 끼우기」로 바꿉니다. 손님은 넣는 동안 옛 표로 검색하고, 바꿔 끼우는 순간(1초 안)만 지나면 새 표를 씁니다. 옛 표는 통째로 지워 빈자리가 남지 않으니 <code>VACUUM FULL</code>이 필요 없습니다. dev 문서에 이미 적힌 개선안입니다(244행).</p>
+<p class="alt">다른 선택 ㄱ: <code>VACUUM FULL</code> 대신 잠그지 않는 보통 <code>VACUUM (ANALYZE)</code> — 바꿀 코드가 한 줄. 기다림은 없어지지만 빈자리가 디스크에 남아(다음 넣기 때 다시 씀) 표가 커진 채 있고, 메모리가 빠듯한 서버라 읽는 양이 늘 수 있습니다.</p>
+<p class="alt">다른 선택 ㄴ: 그대로 두기 — 가져오기는 드물게(책 목록이 바뀔 때만) 하므로 10초는 드문 일.</p>
+</div>
+
+<div class="card item"><h3><span class="num">2</span>DB 미리 데우기는 지금 하지 않기</h3>
+<p class="concl">[안] 가져오기 직후·오래 쉰 뒤 첫 질문이 느린 것(가까운 책 찾기 0.4~2.1초)은 이번에 손대지 않고, 1분 세기를 없앤 뒤 다시 재서 정합니다. 서버 남은 메모리 87MB·스왑 633MB라 억지로 올리면 다른 것이 밀려납니다.</p>
+<p class="alt">다른 선택: <code>pg_prewarm</code>으로 AI 검색 색인만 미리 올리기 / 서버 메모리 늘리기(금액 확인 못 함).</p>
+</div>
+
+<div class="card item"><h3><span class="num">3</span>바깥 연결 유지 설정은 넣지 않기</h3>
+<p class="concl">[안] Haiku·임베딩 서버 연결을 붙잡아 두는 설정은 넣지 않습니다. 60초·5분 쉰 뒤에도 그 단계 시간이 평소와 같았습니다.</p>
+</div>
+
+<div class="card item"><h3><span class="num">4</span>「찾는 중」 신호 먼저 보내기는 백로그로</h3>
+<p class="concl">[안] 실제 시간을 줄이는 일이 아니라 이번에 넣지 않고 백로그에 한 줄로 둡니다.</p>
+</div>
+
+<div class="card item"><h3><span class="num">5</span>고친 뒤 같은 질문 10개로 다시 재고 닫기</h3>
+<p class="concl">[안] 배포 뒤 이번과 같은 질문·같은 쉬는 시간으로 다시 재서 <code>measurements.md</code>에 「고친 뒤」 표를 붙입니다. 목표: 1분 넘긴 요청의 1.3초 멈춤 0, 가져오기 직후 기다림 0(1번을 고치면).</p>
+</div>
+
+<div class="card item"><h3><span class="num">6</span>ADR 하나로 남기기</h3>
+<p class="concl">[안] ADR-0174 「AI 검색 책 목록은 손님 요청 안에서 다시 확인하지 않는다」: 켜질 때 읽기 + 가져오기 뒤 다시 읽기 요청, (1번을 고르면) 새 표 바꿔 끼우기. 측정 숫자를 근거로.</p>
+</div>
+</main>
+</body>
+</html>
