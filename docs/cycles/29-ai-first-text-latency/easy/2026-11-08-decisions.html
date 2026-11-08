@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 첫 글 지연 고치기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+
+.v-flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.v-box{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:7px 11px;font-size:15px;text-align:center;min-width:90px}
+.v-box small{display:block;color:var(--muted);font-size:12px}
+.v-hi{border-color:var(--accent);background:var(--accent-bg)}
+.v-warn{border-color:var(--warn);background:var(--warn-bg)}
+.v-ok{border-color:var(--ok);background:var(--ok-bg)}
+.v-arr{color:var(--muted);font-size:18px}
+.v-file{border:2px solid var(--line);border-radius:12px;background:var(--card);padding:10px;margin:10px 0;max-width:560px}
+.v-file .v-part{border:1px dashed var(--line);border-radius:8px;padding:8px 10px;margin:6px 0;font-size:14px}
+.v-file .v-part.v-new{border-color:var(--accent);background:var(--accent-bg)}
+.v-tl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0;font-size:13px;text-align:center}
+.v-tl div{border-top:4px solid var(--line);padding-top:6px}
+.v-tl div.v-hi{border-top-color:var(--accent);background:none}
+.v-cv{display:inline-flex;width:70px;aspect-ratio:2/3;border-radius:7px;border:1px solid var(--line);background:var(--accent-bg);align-items:center;justify-content:center;font-size:11px;text-align:center;padding:3px;vertical-align:top;margin:4px}
+.v-cv.v-img{background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 6px,var(--card) 6px,var(--card) 12px)}
+.v-mini{border:1px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;margin:8px 0;max-width:420px}
+.v-mini .v-bar{display:flex;gap:10px;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line);font-size:13px}
+.v-mini .v-body{padding:10px 12px;font-size:13px}
+.v-pill{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-weight:800;font-size:12px}
+@media (max-width:700px){main table{display:block;overflow-x:auto;max-width:100%}.v-tl{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.v-code{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:var(--code-bg);border-radius:8px;padding:8px 10px;overflow-x:auto;white-space:pre}
+.card h3{margin:0 0 14px;font-size:24px}
+
+.mk{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start;margin:12px 0}
+.mk .dev{border:2px solid var(--line);border-radius:12px;background:var(--bg);padding:10px;font-size:13px;line-height:1.5}
+.mk .dev b.t{display:block;color:var(--muted);font-weight:500;font-size:12px;margin-bottom:6px}
+.mk .pc{width:420px;max-width:100%}.mk .tab{width:300px;max-width:100%}.mk .ph{width:190px}
+.mk .row{display:flex;gap:10px}
+.mk .cv{flex:none;width:58px;aspect-ratio:2/3;border-radius:5px;border:1px solid var(--line);background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 5px,var(--card) 5px,var(--card) 10px)}
+.mk .ph .cv{width:44px}
+.mk .ttl{font-weight:700;font-size:15px}
+.mk .sum{background:var(--warn-bg);border:1px dashed var(--warn);border-radius:7px;padding:6px 8px;margin:8px 0}
+.mk .lib{border-top:1px solid var(--line);padding:5px 0;color:var(--muted)}
+</style>
+
+<style>
+.mk .note{background:var(--warn-bg);border:1px solid var(--warn);border-radius:7px;padding:6px 8px;margin:6px 0;font-size:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.mk .btn{display:inline-block;border:1px solid var(--accent);color:var(--accent);background:var(--card);border-radius:999px;padding:2px 10px;font-size:11px;font-weight:700;white-space:nowrap}
+.mk .bk{display:flex;justify-content:space-between;gap:8px;border-top:1px solid var(--line);padding:6px 0}
+.mk .bk .t{font-weight:700}.mk .bk .m{color:var(--muted);font-size:11px}
+.mk .bk .c{color:var(--muted);font-size:11px;white-space:nowrap}
+.mk .hd{display:flex;gap:8px;margin-bottom:6px}.mk .hd .cv{width:40px}
+.mk .grp{color:var(--muted);font-size:11px;margin-top:6px}
+.mk .tag{display:inline-block;background:var(--code-bg);border-radius:4px;padding:0 5px;font-size:10px}
+.mk .st{color:var(--muted);font-size:11px}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.cmp>div{min-width:0}.mk{max-width:100%}.mk .dev{min-width:0;max-width:100%}.mk .dev.pc{width:100%;max-width:420px}
+@media (max-width:700px){.cmp{grid-template-columns:1fr}}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">AI 책 찾기에서 가끔 첫 글이 3~7초 걸리던 가장 큰 까닭을 찾았습니다.<br>1분에 한 번, 손님의 질문을 처리하는 도중에 서버가 책 표 전체(242MB)를 세고 있었습니다.</p>
+<p class="sub">사이클 29는 원인을 하나씩 재 보는 사이클입니다. 바깥에서 질문 10개를 보내 시간을 쟀고, 같은 시각 서버 로그의 단계별 시간과 맞춰 봤습니다. 아래 6가지를 정해 주세요. 원 숫자는 <code>docs/cycles/29-ai-first-text-latency/measurements.md</code>에 있습니다.</p>
+
+<div class="card"><h2>먼저: 무엇을 쟀고 무엇이 나왔나</h2>
+<p class="concl">첫 글이 뜰 때까지 = 인터넷 왕복(약 0.5초) + 서버가 책 후보를 고르는 시간 + Haiku가 첫 글자를 내는 시간(약 1초). 늦을 때 늘어난 것은 거의 모두 가운데 몫이었습니다.</p>
+<div class="v-flow"><span class="v-box">인터넷<small>약 0.5초 · 늘 같음</small></span><span class="v-arr">→</span><span class="v-box v-warn">서버: 후보 고르기<small>보통 0.1~0.4초<br>1분 넘긴 요청 1.4~1.6초<br>오래 쉰 첫 요청 5.1초</small></span><span class="v-arr">→</span><span class="v-box">Haiku 첫 글자<small>약 1초 · 늘 같음</small></span></div>
+<p class="cap">같은 질문 「고양이」: 10초 쉬고 1.65초, 60초 쉬고 3.0초, 5분 쉬고 3.19초, 오래 쉰 뒤 첫 요청 6.89초.</p>
+<table>
+<tr><th>의심했던 원인</th><th>결과</th><th>숫자</th></tr>
+<tr><td><b>1분마다 책 표 전체 세기</b> (재다가 새로 찾음)</td><td><b>확인 · 가장 큼</b></td><td>직전 확인에서 1분 지난 요청 9건 모두 1.3~1.4초 멈춤(첫 요청은 2.6초). 1분 안의 요청 14건은 0초</td></tr>
+<tr><td>DB 내용이 메모리에서 밀려남</td><td>확인 · 일부</td><td>처음 보는 질문·오래 쉰 뒤 「가까운 책 찾기」 0.4~2.1초(평소 0.1초). 서버 남은 메모리 87MB, 디스크로 밀린 메모리(스왑) 633MB</td></tr>
+<tr><td>쉬는 동안 바깥 연결이 끊김(30초)</td><td>미확정 · 작음</td><td>60초·5분 쉰 뒤에도 Haiku·임베딩 단계 시간은 평소와 같음</td></tr>
+<tr><td>임베딩 서버가 느림</td><td>아님</td><td>질문을 숫자로 바꾸는 데 0.04~0.33초</td></tr>
+<tr><td>Haiku 첫 글자 흔들림</td><td>늘 있는 몫</td><td>0.9~1.5초</td></tr>
+<tr><td>짧은 첫 질문은 되묻기라 늦음</td><td>미확정 · 작음</td><td>이번 질문엔 되묻기가 없었고 짧은·긴 질문 차이 없음</td></tr>
+</table>
+<p class="note">근거: dev <code>SearchBooks.java</code> 33·83~106행(1분마다, 요청 안에서 확인), <code>JdbcAiSearchIndex.java</code> 307~311행(<code>count(*)</code>와 <code>max(imported_at)</code>를 <code>catalog.book_search</code> 전체에서), 2026-11-08 확인. JDK 연결 유지 기본 30초는 Oracle Java 21·25 <code>java.net.http</code> 문서(https://docs.oracle.com/en/java/javase/21/docs/api/java.net.http/module-summary.html, 2026-11-08 확인).</p>
+</div>
+
+<h2>고칠 것</h2>
+<div class="card item"><h3><span class="num">1</span>책 표 세기를 손님 요청 밖으로 빼기</h3>
+<p class="concl">[안] AI 검색이 쓰는 책 목록이 바뀌었는지 1분마다 확인하는 일을, 손님 질문 처리 도중이 아니라 서버 뒤편의 정해진 작업(1분마다 따로 도는 일)으로 옮깁니다. 질문은 늘 메모리에 있는 목록을 바로 씁니다. 바뀐 표를 알아채는 데 걸리는 시간(최대 1분)은 지금과 같습니다.</p>
+<p class="ex">예: 점심에 한 사람이 2분 만에 다시 물으면, 지금은 그 질문이 1.3초 멈춘 뒤 답이 시작됩니다. 바뀐 뒤에는 멈춤 없이 지금 빠른 경우(첫 글 약 1.7~2.1초)와 같아집니다.</p>
+<p class="alt">다른 선택 ㄱ: 확인 쿼리를 싸게 만들기(예: 가져오기가 끝날 때 작은 표에 "몇 번째 판"을 적고 그것만 읽기). 표를 하나 더 두거나 가져오기 코드를 고쳐야 하고, 손님 요청 안에서 DB를 묻는 것은 남습니다.</p>
+<p class="alt">다른 선택 ㄴ: 확인 간격을 1분 → 10분으로 늘리기. 가장 작은 변경이지만 10분마다 한 사람은 여전히 1.3초 이상 기다립니다.</p>
+<p>추천: 이 안(뒤편 작업). 세는 쿼리 자체는 그대로 1분에 한 번이라 서버 자원은 지금과 같습니다.</p>
+</div>
+
+<div class="card item"><h3><span class="num">2</span>DB 미리 데우기(<code>pg_prewarm</code>)는 지금 하지 않기</h3>
+<p class="concl">[안] DB 내용을 미리 메모리에 올려 두는 일은 이번에 하지 않고, 1번을 고친 뒤 같은 질문 10개로 다시 재서 그래도 늦으면 그때 정합니다.</p>
+<p class="ex">까닭: 서버에 남은 메모리가 87MB이고 이미 633MB가 디스크로 밀려 있습니다. 벡터·책 표(수백 MB)를 억지로 올리면 다른 것(자바 서버, 대출 조회)이 밀려나 다른 곳이 느려질 수 있습니다.</p>
+<p class="alt">다른 선택 ㄱ: 지금 <code>pg_prewarm</code>으로 AI 검색에 쓰는 색인만 올리기 — 효과는 첫 요청에 몇백 ms~2초, 대신 메모리 경쟁.</p>
+<p class="alt">다른 선택 ㄴ: 서버를 메모리 4GB로 키우기 — 가장 확실하지만 매달 돈이 듭니다. 금액은 확인 못 함(결정하면 AWS 공식 가격표로 확인).</p>
+</div>
+
+<div class="card item"><h3><span class="num">3</span>바깥 연결 유지(쉬는 동안 신호 보내기)는 하지 않기</h3>
+<p class="concl">[안] Haiku·임베딩 서버와의 연결을 붙잡아 두는 설정이나 주기 신호는 넣지 않습니다. 60초·5분 쉰 뒤에도 그 단계 시간이 평소와 같아 효과가 보이지 않았습니다.</p>
+<p class="alt">다른 선택: 그래도 30초 → 5분으로 연결 유지 시간을 늘리기 — 비용은 거의 없지만 이번 측정으로는 빨라지는 것을 보이지 못합니다.</p>
+</div>
+
+<div class="card item"><h3><span class="num">4</span>Haiku 전에 "찾는 중" 신호 먼저 보내기는 백로그로</h3>
+<p class="concl">[안] 서버가 후보를 다 고르기 전에 화면에 무언가 먼저 보내는 일은 이번 사이클에 넣지 않고 백로그에 한 줄로 남깁니다. 실제 시간을 줄이지는 않고 느낌만 바꾸는 일이라, 원인을 고치는 이 사이클과 따로 정하는 것이 맞다고 봤습니다.</p>
+<p class="alt">다른 선택: 이번에 함께 넣기 — 화면·스트림 이벤트를 하나 더 정해야 해서 사이클이 커집니다.</p>
+</div>
+
+<h2>마무리</h2>
+<div class="card item"><h3><span class="num">5</span>고친 뒤 같은 방법으로 다시 재고 닫기</h3>
+<p class="concl">[안] dev가 1번을 배포하면 이번과 같은 질문 10개(같은 쉬는 시간)를 다시 보내고 서버 로그와 맞춰 <code>measurements.md</code>에 "고친 뒤" 표를 붙입니다. 목표: 1분 넘긴 요청의 1.3초 멈춤이 0이 되는 것.</p>
+</div>
+
+<div class="card item"><h3><span class="num">6</span>ADR 하나로 남기기</h3>
+<p class="concl">[안] ADR-0174 「AI 검색은 손님 요청 안에서 큰 표를 세지 않는다」: 바뀜 확인은 뒤편 작업이 하고, 요청은 메모리 목록만 읽는다. 측정 숫자와 1번 결정을 근거로 적습니다.</p>
+</div>
+
+<p class="foot">원 숫자와 서버 로그: <code>measurements.md</code>. 질문 글은 로그에 남지 않습니다.</p>
+</main>
+</body>
+</html>
