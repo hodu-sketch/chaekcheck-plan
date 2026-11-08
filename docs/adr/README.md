@@ -173,3 +173,4 @@
 | [ADR-0173](0173-busy-slots-web-keeps-book-list.md) | 동시 검색 자리가 없을 때 서버는 503 `server_busy` 그대로, 「바로 보기」 첫 조회 거절 때 화면이 받아 둔 책 목록을 책 줄로 보이고 「대출 정보 다시 확인」 단추 (서버·API 변경 없음) | Accepted | 2026-11-07 | 28 |
 
 - 사이클 26이 일부를 바꾼 기록 (2026-10-28): ADR-0149의 "꼬리표·사전은 `picks`" → ADR-0161, ADR-0091의 "사서추천 표지 `picks.cover`" → ADR-0163, ADR-0148의 운영 서버 표지 폴더 → ADR-0163, ADR-0151(plan 브랜치 `claude/compassionate-lovelace-mzvp4f`, main에 아직 없음)의 "AI 검색 표 사본에서 낱말 맞추기" → ADR-0165
+| [ADR-0174](0174-aisearch-books-no-check-in-request.md) | AI 검색 책 목록은 켜질 때 읽고 가져오기 뒤 내부 「다시 읽기」 REST 요청으로만 바꿈(1분 `count(*)` 없앰), `book-texts` 넣기는 새 표 바꿔 끼우기(VACUUM FULL 없앰), 그 뒤 pg_prewarm 시험 | Accepted | 2026-11-09 | 29 |

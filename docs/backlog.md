@@ -200,3 +200,4 @@
 - Modulith Documenter 대조 — [원문](backlog-archive.md#b308)
 - dev 직접 수정으로 plan 문서 뒤처짐 `[확인 필요]` — [원문](backlog-archive.md#b375)
 - 자리 거절 때도 도서관별 줄·도서관 책 페이지 링크 보이기 (서버가 스트림을 열고 소장마다 `holding-failed server_busy`를 보내는 가안, `docs/cycles/28-busy-keeps-book-list/architect-proposal.md`) — 사이클 28은 화면만 고치는 다안으로 감 (ADR-0173, 2026-11-07)
+- AI 책 찾기: 서버가 후보를 다 고르기 전에 「찾는 중」 이벤트를 먼저 보내 첫 반응을 앞당기기 — 사이클 29 결정 4, 2026-11-08

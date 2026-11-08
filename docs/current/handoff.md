@@ -6,6 +6,7 @@
 
 | 사이클 | 상태 | 인계서 |
 |---|---|---|
+| 29 AI 책 찾기 첫 글 지연 | **인계 끝 2026-11-09** (1분 `count(*)` 없애고 다시 읽기 REST 요청, `book-texts` 넣기 표 바꿔 끼우기, 그 뒤 pg_prewarm 시험, ADR-0174) | `docs/cycles/29-ai-first-text-latency/handoff.md` |
 | 28 자리가 다 차도 책 목록은 보이기 | **인계 끝 2026-11-07** (번외·아주 작게, 화면만 고침, ADR-0173, 새 모듈·표·API 없음) | `docs/cycles/28-busy-keeps-book-list/handoff.md` |
 | 24 AI 책 찾기 | 인계 끝, dev 진행 중 | `docs/cycles/24-ai-book-search/handoff.md` |
 | 20 조회 상태 신호 + 확장 | 인계 끝, 1단계 dev main. 2·3단계는 백로그 | `docs/cycles/20-lookup-status-and-extension/handoff.md` |
