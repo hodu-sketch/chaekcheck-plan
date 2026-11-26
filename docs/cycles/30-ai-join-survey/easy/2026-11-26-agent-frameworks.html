@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>에이전트 틀 비교</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1f2328;--muted:#5b636e;--line:#dcd9d2;--accent:#2f5d8a;--accent-bg:#e7eef6;--ok:#1f7a45;--ok-bg:#e3f3ea;--warn:#8a5a00;--warn-bg:#fbf0d9;--no:#a1302b;--no-bg:#f8e3e1;--code-bg:#f0eee9;
+--orange:var(--warn);--orange-glow:var(--warn-bg);--green:var(--ok);--green-glow:var(--ok-bg);--red:var(--no);--red-glow:var(--no-bg);--accent-glow:var(--accent-bg);--pink:#a13b78;--surface:var(--card);--border-light:var(--line);--border:var(--line);--bg3:var(--code-bg);--text2:var(--muted);--shadow-lg:0 8px 24px rgba(0,0,0,.18);--font:"Noto Sans KR",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:20px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+main{max-width:920px;margin:0 auto;padding:40px 16px 90px}
+h1,h2,h3{text-wrap:balance;line-height:1.35}
+p,li,td{text-wrap:pretty}
+.lead{font-size:28px;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 26px;margin:0 0 28px}
+.card h2{margin:0 0 14px;font-size:24px}
+.num{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:var(--accent);color:var(--card);font-size:18px;margin-right:10px}
+.concl{background:var(--accent-bg);border-radius:10px;padding:14px 18px;margin:0 0 18px;font-weight:500}
+.prop{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0 0}
+.alt{color:var(--muted);font-size:18px;margin:10px 0 0}
+.ex{color:var(--muted);font-size:18px}
+code{background:var(--code-bg);border-radius:5px;padding:1px 6px;font-size:17px}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}
+td,th{border-top:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.fig svg{width:100%;max-width:640px;height:auto;display:block;margin:8px 0}
+.cap{color:var(--muted);font-size:17px;margin:4px 0 0}
+.red{color:var(--no);font-weight:700}.okc{color:var(--ok);font-weight:700}
+svg .bx{fill:var(--card);stroke:var(--line);stroke-width:2}
+svg .bxok{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+svg .bxno{fill:var(--no-bg);stroke:var(--no);stroke-width:2}
+svg .bxa{fill:var(--accent-bg);stroke:var(--accent);stroke-width:2}
+svg .lb{font:500 16px "Noto Sans KR",sans-serif;fill:var(--text)}
+svg .sm{font:400 14px "Noto Sans KR",sans-serif;fill:var(--muted)}
+svg .rt{fill:var(--no);font-weight:700}
+svg .ar{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .ah{fill:var(--accent)}
+.foot{color:var(--muted);font-size:16px;margin-top:40px}
+@media (max-width:700px){body{font-size:18px}.card{padding:22px 16px}.lead{font-size:24px}td,th{font-size:16px}}
+
+.v-flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.v-box{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:7px 11px;font-size:15px;text-align:center;min-width:90px}
+.v-box small{display:block;color:var(--muted);font-size:12px}
+.v-hi{border-color:var(--accent);background:var(--accent-bg)}
+.v-warn{border-color:var(--warn);background:var(--warn-bg)}
+.v-ok{border-color:var(--ok);background:var(--ok-bg)}
+.v-arr{color:var(--muted);font-size:18px}
+.v-file{border:2px solid var(--line);border-radius:12px;background:var(--card);padding:10px;margin:10px 0;max-width:560px}
+.v-file .v-part{border:1px dashed var(--line);border-radius:8px;padding:8px 10px;margin:6px 0;font-size:14px}
+.v-file .v-part.v-new{border-color:var(--accent);background:var(--accent-bg)}
+.v-tl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0;font-size:13px;text-align:center}
+.v-tl div{border-top:4px solid var(--line);padding-top:6px}
+.v-tl div.v-hi{border-top-color:var(--accent);background:none}
+.v-cv{display:inline-flex;width:70px;aspect-ratio:2/3;border-radius:7px;border:1px solid var(--line);background:var(--accent-bg);align-items:center;justify-content:center;font-size:11px;text-align:center;padding:3px;vertical-align:top;margin:4px}
+.v-cv.v-img{background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 6px,var(--card) 6px,var(--card) 12px)}
+.v-mini{border:1px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;margin:8px 0;max-width:420px}
+.v-mini .v-bar{display:flex;gap:10px;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line);font-size:13px}
+.v-mini .v-body{padding:10px 12px;font-size:13px}
+.v-pill{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-weight:800;font-size:12px}
+@media (max-width:700px){main table{display:block;overflow-x:auto;max-width:100%}.v-tl{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.v-code{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:var(--code-bg);border-radius:8px;padding:8px 10px;overflow-x:auto;white-space:pre}
+.card h3{margin:0 0 14px;font-size:24px}
+
+.mk{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start;margin:12px 0}
+.mk .dev{border:2px solid var(--line);border-radius:12px;background:var(--bg);padding:10px;font-size:13px;line-height:1.5}
+.mk .dev b.t{display:block;color:var(--muted);font-weight:500;font-size:12px;margin-bottom:6px}
+.mk .pc{width:420px;max-width:100%}.mk .tab{width:300px;max-width:100%}.mk .ph{width:190px}
+.mk .row{display:flex;gap:10px}
+.mk .cv{flex:none;width:58px;aspect-ratio:2/3;border-radius:5px;border:1px solid var(--line);background:repeating-linear-gradient(135deg,var(--accent-bg),var(--accent-bg) 5px,var(--card) 5px,var(--card) 10px)}
+.mk .ph .cv{width:44px}
+.mk .ttl{font-weight:700;font-size:15px}
+.mk .sum{background:var(--warn-bg);border:1px dashed var(--warn);border-radius:7px;padding:6px 8px;margin:8px 0}
+.mk .lib{border-top:1px solid var(--line);padding:5px 0;color:var(--muted)}
+</style>
+
+<style>
+.mk .note{background:var(--warn-bg);border:1px solid var(--warn);border-radius:7px;padding:6px 8px;margin:6px 0;font-size:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.mk .btn{display:inline-block;border:1px solid var(--accent);color:var(--accent);background:var(--card);border-radius:999px;padding:2px 10px;font-size:11px;font-weight:700;white-space:nowrap}
+.mk .bk{display:flex;justify-content:space-between;gap:8px;border-top:1px solid var(--line);padding:6px 0}
+.mk .bk .t{font-weight:700}.mk .bk .m{color:var(--muted);font-size:11px}
+.mk .bk .c{color:var(--muted);font-size:11px;white-space:nowrap}
+.mk .hd{display:flex;gap:8px;margin-bottom:6px}.mk .hd .cv{width:40px}
+.mk .grp{color:var(--muted);font-size:11px;margin-top:6px}
+.mk .tag{display:inline-block;background:var(--code-bg);border-radius:4px;padding:0 5px;font-size:10px}
+.mk .st{color:var(--muted);font-size:11px}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.cmp>div{min-width:0}.mk{max-width:100%}.mk .dev{min-width:0;max-width:100%}.mk .dev.pc{width:100%;max-width:420px}
+@media (max-width:700px){.cmp{grid-template-columns:1fr}}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+</style>
+</head>
+<body>
+<main class="doc">
+<p class="lead">AI가 여러 단계를 거쳐 일하게 만드는 방법 다섯 가지를, 「도서관 한 곳의 가입 조건 알아내기」라는 같은 일에 대 보며 비교합니다.</p>
+<p class="sub">결정 페이지 7번(어떤 틀로 짤지)에서 「LangGraph나 다른 대안들을 특징·공통점·차이점·실제 예시와 함께 쉽게」 요청하신 답입니다. 맨 끝에 고를 것 하나가 있습니다.</p>
+
+<div class="card"><h2><span class="num">1</span>다섯 가지가 모두 하는 일</h2>
+<p class="concl">다섯 가지 모두 속에서는 같은 일을 되풀이합니다. Claude에게 「쓸 수 있는 도구 목록」과 할 일을 주고, Claude가 도구를 쓰겠다고 하면 그 도구를 실행해 결과를 돌려주고, Claude가 「끝」이라고 할 때까지 반복합니다.</p>
+<div class="v-flow">
+<div class="v-box">① 할 일 + 도구 목록을 Claude에게</div><span class="v-arr">→</span>
+<div class="v-box v-hi">② Claude: 「이 페이지를 받아 줘」<small>도구를 쓰겠다는 답</small></div><span class="v-arr">→</span>
+<div class="v-box">③ 프로그램이 페이지를 받아 결과를 돌려줌</div><span class="v-arr">→</span>
+<div class="v-box v-ok">④ ②~③ 반복, Claude가 「끝, 답은 이것」</div>
+</div>
+<p class="cap">이 되풀이를 흔히 「에이전트 반복(agent loop)」이라고 부릅니다. 다섯 가지의 차이는 이 반복을 누가 짜고, 어디서 돌리고, 반복 바깥의 순서를 누가 정하느냐입니다.</p>
+<p>또 하나 같은 점: 어느 쪽을 골라도 Claude는 Anthropic API로 부르고, 「승인 전에는 서비스에 넣지 않음」「같은 사이트 1.1초 간격」 같은 우리 규칙은 우리가 코드로 지켜야 합니다. 틀이 대신 지켜 주지 않습니다.</p>
+</div>
+
+<div class="card"><h2><span class="num">2</span>다섯 가지 한눈에</h2>
+<p class="concl">위로 갈수록 내가 짜는 것이 많고, 아래로 갈수록 남(라이브러리·Anthropic)이 해 주는 것이 많습니다.</p>
+<table>
+<tr><th>방법</th><th>무엇인가</th><th>내가 짜는 것</th><th>어디서 도나</th></tr>
+<tr><td><b>가. Python + Anthropic SDK 직접</b></td><td>Anthropic 공식 Python 라이브러리로 Claude를 부르고, 반복과 순서를 내가 다 씀</td><td>반복, 순서, 끊겼을 때 이어 가기, 승인 대기 전부</td><td>내 PC</td></tr>
+<tr><td><b>나. SDK의 도구 실행기(tool runner)</b></td><td>같은 Anthropic 라이브러리 안의 도우미. 도구 함수만 주면 「도구 쓰기 → 결과 돌려주기」 반복을 라이브러리가 돌림</td><td>도구 함수, 반복 바깥의 순서</td><td>내 PC</td></tr>
+<tr><td><b>다. LangGraph</b></td><td>여러 단계를 「상자(노드)와 화살표」 그림으로 짜는 Python 라이브러리. 갈라지는 길, 진행 상태 저장, 멈췄다 이어 가기를 줌</td><td>상자마다 할 일(그 안에서 Claude를 부름), 화살표</td><td>내 PC</td></tr>
+<tr><td><b>라. Claude Agent SDK</b></td><td>Claude Code를 라이브러리로 만든 것. 파일 읽기·쓰기, 명령 실행, 웹 검색 도구와 반복이 처음부터 들어 있음</td><td>할 일 글(프롬프트)과 허용할 도구</td><td>내 PC</td></tr>
+<tr><td><b>마. Managed Agents</b></td><td>Anthropic이 반복을 대신 돌려 주는 서비스. 도구는 Anthropic의 클라우드 작업 공간이나 내 PC에서 실행</td><td>에이전트 설정(할 일, 도구), 결과 받기</td><td>반복은 Anthropic, 도구는 클라우드 또는 내 PC</td></tr>
+</table>
+<table>
+<tr><th>방법</th><th>순서를 누가 정하나</th><th>끊기면 이어 가기</th><th>추가 비용</th><th>배울 수 있는 것</th></tr>
+<tr><td>가</td><td>내 코드</td><td>직접 만들어야 함</td><td>없음</td><td>API 자체, 반복의 원리</td></tr>
+<tr><td>나</td><td>반복 안은 Claude, 바깥은 내 코드</td><td>직접 만들어야 함</td><td>없음</td><td>도구 정의하는 법</td></tr>
+<tr><td>다</td><td>그림(내가 그린 화살표) + 상자 안에서 Claude</td><td>있음 (상태를 파일에 저장)</td><td>없음 (오픈소스, MIT)</td><td>워크플로·에이전트 설계, 상태 관리, 사람 승인 끼우기</td></tr>
+<tr><td>라</td><td>거의 Claude</td><td>세션 단위로 있음</td><td>없음</td><td>Claude Code 같은 범용 에이전트 쓰는 법</td></tr>
+<tr><td>마</td><td>거의 Claude</td><td>있음 (Anthropic이 보관)</td><td>세션이 도는 동안 시간당 $0.08 + 토큰</td><td>호스팅되는 에이전트 운영</td></tr>
+</table>
+<p class="ex">근거(확인 2026-11-26): LangGraph — PyPI langgraph 1.2.24 (2026-11-20, MIT), LangGraph 문서 graph-api·persistence. Claude Agent SDK — https://code.claude.com/docs/en/agent-sdk/overview ("Claude Code를 움직이는 도구·반복·맥락 관리"를 Python·TypeScript로). 도구 실행기 — https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview ("SDK가 도구를 실행하고 결과를 자동으로 돌려줌"), Anthropic SDK의 beta 기능. Managed Agents — https://platform.claude.com/docs/en/managed-agents/overview (beta), 내 PC에서 도구 실행: …/managed-agents/self-hosted-sandboxes, 요금: https://platform.claude.com/docs/en/about-claude/pricing ("Session runtime $0.08 per session-hour", 도는 동안만). 자세한 것: <code>research.md</code> 1·2절.</p>
+</div>
+
+<div class="card"><h2><span class="num">3</span>같은 일을 다섯 가지로 하면</h2>
+<p class="concl">할 일: 「광산구통합도서관의 가입 조건을 원문 인용과 함께 알아내고, 지금 값과 다르면 승인을 받는다」. 각 방법에서 무엇을 쓰게 되는지 보입니다.</p>
+
+<h3>가. Python + SDK 직접</h3>
+<div class="v-flow">
+<div class="v-box">근거 모으기 스크립트 실행</div><span class="v-arr">→</span>
+<div class="v-box v-hi">if 근거 있음: Claude 한 번 호출<small>값+인용</small></div><span class="v-arr">→</span>
+<div class="v-box v-hi">else: while 반복을 직접 씀<small>페이지 받기 ↔ Claude</small></div><span class="v-arr">→</span>
+<div class="v-box">인용 대조, 보고서 파일</div>
+</div>
+<p class="ex">중간에 PC가 꺼지면? 「어디까지 했나」를 적는 파일을 직접 만들어야 합니다. 승인은 보고서를 연 뒤 다시 다른 명령으로 반영합니다.</p>
+
+<h3>나. 도구 실행기</h3>
+<div class="v-flow">
+<div class="v-box">근거 모으기 스크립트 실행</div><span class="v-arr">→</span>
+<div class="v-box v-hi">못 찾은 곳: 도구 함수 「같은 사이트 페이지 받기」만 주고 실행기 호출<small>반복은 라이브러리가</small></div><span class="v-arr">→</span>
+<div class="v-box">인용 대조, 보고서</div>
+</div>
+<p class="ex">가와 같지만 while 반복을 안 씁니다. 「최대 5장」은 도구 함수 안에서 세어 막습니다. 이어 가기·승인 대기는 가처럼 직접.</p>
+
+<h3>다. LangGraph</h3>
+<div class="v-flow">
+<div class="v-box">[근거 모으기]</div><span class="v-arr">→</span>
+<div class="v-box v-warn">근거 있나?<small>갈림길</small></div><span class="v-arr">→</span>
+<div class="v-box v-hi">있음 → [값 읽기]<br>없음 → [사이트 찾기 에이전트] → [값 읽기]</div><span class="v-arr">→</span>
+<div class="v-box">[인용 대조]</div><span class="v-arr">→</span>
+<div class="v-box v-warn">[승인 기다림]<small>여기서 멈춤</small></div><span class="v-arr">→</span>
+<div class="v-box v-ok">[파일 반영]</div>
+</div>
+<p class="ex">대괄호 하나가 상자(노드) 하나입니다. 상자 안은 보통 Python 함수라 Anthropic SDK를 그대로 부릅니다. 진행 상태가 내 PC의 파일 하나(SQLite)에 저장돼, 400곳 중 200곳에서 끊겨도 201번째부터 이어 갑니다. 「승인 기다림」에서 멈춰 두었다가 승인하면 그 자리에서 이어 갑니다. 주의: 이어 갈 때 그 상자는 처음부터 다시 돌아서, 같은 페이지를 또 받지 않게 짜야 합니다.</p>
+
+<h3>라. Claude Agent SDK</h3>
+<div class="v-flow">
+<div class="v-box">할 일 글: 「이 도서관 사이트에서 가입 조건을 찾아 이 칸들로 적어라」</div><span class="v-arr">→</span>
+<div class="v-box v-hi">Claude가 알아서 웹 받기·파일 쓰기·명령 실행을 골라 씀</div><span class="v-arr">→</span>
+<div class="v-box">결과 파일</div>
+</div>
+<p class="ex">지금 이 대화의 Claude Code가 하는 방식과 같습니다. 짜는 것은 가장 적지만, 파일 쓰기·명령 실행까지 쥔 AI가 도서관 페이지 글을 읽게 됩니다. 페이지 속에 AI에게 시키는 글이 숨어 있으면 위험이 큽니다(결정 페이지 3번에서 「같은 사이트 페이지 받기 하나만」으로 정한 것과 맞지 않음). 도구를 좁힐 수는 있습니다.</p>
+
+<h3>마. Managed Agents</h3>
+<div class="v-flow">
+<div class="v-box">에이전트 설정 한 번 등록</div><span class="v-arr">→</span>
+<div class="v-box">도서관마다 「세션」 시작</div><span class="v-arr">→</span>
+<div class="v-box v-hi">Anthropic이 반복을 돌림, 도구 호출은 클라우드 또는 내 PC 워커가 실행</div><span class="v-arr">→</span>
+<div class="v-box">결과를 받아 내 PC에서 보고서</div>
+</div>
+<p class="ex">반복을 내 PC에서 돌리지 않아도 됩니다. 도구를 Anthropic 클라우드에서 실행하면 해외에서 도서관 사이트에 접속하게 되어, 국내 접속만 받는 사이트는 막힐 수 있습니다(추론). 내 PC 워커로 돌리면 이 문제는 없지만 그만큼 설정이 늘어납니다. 아직 beta이고, 도는 시간만큼 시간당 $0.08이 붙습니다.</p>
+</div>
+
+<div class="card"><h2><span class="num">4</span>이번 사이클(세 갈래)에 대어 보면</h2>
+<p class="concl">이번 일은 「정해진 순서 + 군데군데 AI 판단 + 사람 승인 + 수백 곳을 돌다 끊기면 이어 가기」라서, 순서는 그림으로 짜고 일부 상자만 에이전트인 다(LangGraph)가 가장 잘 맞습니다.</p>
+<table>
+<tr><th>필요한 것</th><th>가</th><th>나</th><th>다</th><th>라</th><th>마</th></tr>
+<tr><td>정해진 순서 (근거 모으기 → 값 읽기 → 대조 → 보고서)</td><td>직접</td><td>직접</td><td class="okc">그림으로</td><td>AI에게 맡김</td><td>AI에게 맡김</td></tr>
+<tr><td>못 찾은 곳만 AI가 사이트 안 찾기 (도구 하나, 최대 5장)</td><td>직접</td><td class="okc">잘 맞음</td><td class="okc">상자 하나로</td><td>도구가 많아 좁혀야 함</td><td>가능</td></tr>
+<tr><td>사용자 승인에서 멈췄다 이어 가기</td><td>직접</td><td>직접</td><td class="okc">기본 기능</td><td>직접</td><td>가능</td></tr>
+<tr><td>400곳 돌다 끊기면 이어 가기</td><td>직접</td><td>직접</td><td class="okc">기본 기능</td><td>직접</td><td>가능</td></tr>
+<tr><td>국내 도서관 사이트 접속</td><td class="okc">내 PC</td><td class="okc">내 PC</td><td class="okc">내 PC</td><td class="okc">내 PC</td><td>내 PC 워커일 때만</td></tr>
+<tr><td>추가 비용·베타 위험</td><td class="okc">없음</td><td>도구 실행기는 beta</td><td class="okc">없음</td><td class="okc">없음</td><td class="red">beta, 시간 요금</td></tr>
+</table>
+<p class="cap">초록은 그 필요를 따로 만들지 않고 얻는 칸입니다.</p>
+<p>갈래 2(도서관 찾기: 종류·같은 사이트 판단 초안)와 갈래 3(책 수집: 깨졌을 때 원인 보고)도 같은 모양(모으기 → AI 판단 → 보고서 → 승인)이라, 그래프 세 개를 같은 틀로 짤 수 있습니다. 학습용이라는 목적에도 다가 가장 많이 배울 거리를 줍니다.</p>
+</div>
+
+<div class="card item"><h2><span class="num">5</span>고를 것: 틀</h2>
+<p class="concl">[안] 세 갈래의 흐름은 LangGraph(다)로 짭니다. 진행 상태는 내 PC의 SQLite 파일 하나에 두고, 상자 안에서는 Anthropic 공식 Python SDK로 Claude를 부릅니다(LangChain의 모델 묶음은 쓰지 않음). 「사이트 찾기」 상자 안의 반복은 SDK로 짜며, 도구는 같은 사이트 페이지 받기 하나만 줍니다. 운영 서버는 바뀌지 않습니다.</p>
+<p class="alt">다른 선택: 가(SDK 직접) — 가장 단순하지만 이어 가기·승인 대기를 손으로 만듭니다. 라(Agent SDK) — 짜기는 가장 쉽지만 도구가 넓어 도서관 페이지 속 지시문에 약합니다. 마(Managed Agents) — beta·시간 요금, 국내 사이트 접속 때문에 결국 내 PC 워커가 필요합니다.</p>
+</div>
+
+<p class="foot">원본: docs/cycles/30-ai-join-survey/scope.md, research.md. 이 페이지는 결정 페이지 2026-11-26-scope-decisions.html 7번의 후속입니다. CrewAI 등 다른 에이전트 라이브러리는 이번에 확인하지 않았습니다.</p>
+</main>
+</body>
+</html>
